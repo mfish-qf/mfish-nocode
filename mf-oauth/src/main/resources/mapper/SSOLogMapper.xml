@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.mfish.oauth.mapper.SSOLogMapper">
+    <insert id="insert">
+        insert into sso_logs(id,user_id,client_id,interface_name,ip,session_id,create_time,state,remark)
+        values(#{id},#{userId}, #{clientId}, #{interfaceName}, #{ip},#{sessionId}, now(),#{state},#{remark})
+    </insert>
+</mapper>

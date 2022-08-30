@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mf-common</artifactId>
+        <groupId>cn.com.mfish</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <description>摸鱼认证中心核心</description>
+    <artifactId>mf-common-oauth</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-redis</artifactId>
+        </dependency>
+    </dependencies>
+</project>

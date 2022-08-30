@@ -1,0 +1,62 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view wx:if="{{isBind}}" class="page" style="margin-top:20px">
+    <view class="weui-cells__title">已绑定</view>
+    <view class="page__bd page__bd_spacing">
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">账号</view>
+          <view class="weui-cell__ft">{{username}}</view>
+        </view>
+      </view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">姓名</view>
+          <view class="weui-cell__ft">{{nickname}}</view>
+        </view>
+      </view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">手机号</view>
+          <view class="weui-cell__ft">{{phone}}</view>
+        </view>
+      </view>
+      <button class="weui-btn" style="margin-top:10px" type="primary" bindtap="getScancode">扫码
+      </button>
+    </view>
+  </view>
+  <view wx:if="{{ !isBind }}" class="page">
+    <view class="page__hd">
+      <view class="page__title">统一登录</view>
+      <view class="page__desc">采用OAuth2实现统一登录</view>
+    </view>
+    <view class="page__bd page__bd_spacing">
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell ">
+          <view class="weui-cell__hd">
+            <view class="weui-label">用户名</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" placeholder="用户名" bindinput="inputUserName" value="{{username}}" />
+          </view>
+        </view>
+        <view class="weui-cell ">
+          <view class="weui-cell__hd">
+            <view class="weui-label">密码</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="password" placeholder="密码" bindinput="inputPassword" value="{{password}}" />
+          </view>
+        </view>
+      </view>
+      <button class="weui-btn" style="margin-top:10px" type="primary" bindtap="bindWeChat">登录</button>
+    </view>
+  </view>
+</view>

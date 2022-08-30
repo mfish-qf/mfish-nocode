@@ -1,0 +1,18 @@
+swagger:
+  enabled : true
+  title : 摸鱼框架
+  description : 摸鱼框架接口文档
+  license : Powered By mfish
+  licenseUrl : http://www.mfish.com.cn
+  version : 版本号:V1.0
+  termsOfServiceUrl : http://www.mfish.com.cn
+  contact:
+    name: mfish
+    email: qiufeng9862@qq.com
+    url: http://www.mfish.com.cn
+  needAuth : true
+#增加下面属性防止swagger页面无法查看接口，报错no operations defined in spec错误
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
