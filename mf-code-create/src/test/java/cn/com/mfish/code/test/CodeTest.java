@@ -27,7 +27,7 @@ public class CodeTest {
     FreemarkerUtils freemarkerUtils;
 
     @Test
-    public void testLoadTemplate() {
+    public void testBuildCode() {
         CodeInfo codeInfo = new CodeInfo();
         codeInfo.setPackageName("cn.com.mfish.code");
         codeInfo.setEntityName(StringUtils.toCamelBigCase("test_code"));
@@ -38,6 +38,18 @@ public class CodeTest {
         codeInfo.setTableInfo(new TableInfo().setTableName("test_table").setTableDesc("测试").setColumns(list));
         String aaa = freemarkerUtils.buildCode("entity", codeInfo);
         System.out.println(aaa);
+    }
+    @Test
+    public void testGetCode() {
+        CodeInfo codeInfo = new CodeInfo();
+        codeInfo.setPackageName("cn.com.mfish.code");
+        codeInfo.setEntityName(StringUtils.toCamelBigCase("test_code"));
+        List<FieldInfo> list = new ArrayList<>();
+        list.add(new FieldInfo().setFieldName("F1").setDbType("VARCHAR").setType("String").setComment("字段1").setIsPrimary(true));
+        list.add(new FieldInfo().setFieldName("F2").setDbType("INT").setType("Integer").setComment("字段2"));
+        list.add(new FieldInfo().setFieldName("F3").setDbType("INT").setType("Integer").setComment("字段3"));
+        codeInfo.setTableInfo(new TableInfo().setTableName("test_table").setTableDesc("测试").setColumns(list));
+        freemarkerUtils.getCode(codeInfo);
     }
 
 }

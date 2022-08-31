@@ -19,7 +19,7 @@ import ${packageName}.common.enums.BusinessType;
 
 import ${packageName}.entity.${entityName};
 import ${packageName}.req.Req${entityName};
-import ${packageName}.service.I${entityName}Service;
+import ${packageName}.service.${entityName}Service;
 
 /**
  * @Description: ${tableInfo.tableDesc}
@@ -33,7 +33,7 @@ import ${packageName}.service.I${entityName}Service;
 @RequestMapping("/${entityName?uncap_first}")
 public class ${entityName}Controller {
 	@Resource
-	private I${entityName}Service ${entityName?uncap_first}Service;
+	private ${entityName}Service ${entityName?uncap_first}Service;
 
 	/**
 	 * 分页列表查询

@@ -9,6 +9,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Date: ${.now?string["yyyy-MM-dd"]}
  * @Version: V1.0
  */
-public interface I${entityName}Service extends IService<${entityName}> {
+public interface ${entityName}Service extends IService<${entityName}> {
 
 }
