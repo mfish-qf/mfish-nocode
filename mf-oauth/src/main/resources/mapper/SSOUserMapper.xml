@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SSOUserMapper">
     <insert id="insert" parameterType="cn.com.mfish.oauth.model.SSOUser">
-        insert into sso_user(id,account,phone,email,password,old_password,nickname,headImgUrl
+        insert into sso_user(id,account,phone,email,password,old_password,nickname,head_img_url
             ,telephone,birthday,sex,status,salt,openid,create_time)
         values(#{id},#{account},#{phone},#{email},#{password},#{old_password},#{nickname},#{headImgUrl},#{telephone}
                   ,#{birthday},#{sex},#{status},#{salt},#{openid},now())
@@ -30,7 +30,7 @@
                 nickname = #{nickname},
             </if>
             <if test="headImgUrl != null">
-                headImgUrl = #{headImgUrl},
+                head_img_url = #{headImgUrl},
             </if>
             <if test="telephone != null">
                 telephone = #{telephone},

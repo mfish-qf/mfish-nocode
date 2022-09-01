@@ -85,6 +85,9 @@ public class FreemarkerUtils {
         }
         codeInfo.setEntityName(entityName);
         List<FieldInfo> list = mysqlTableService.getColumns(schema, tableName);
+        for (FieldInfo info : list) {
+            info.setFieldName(StringUtils.toCamelCase(info.getFieldName()));
+        }
         codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(tableName).setTableComment(tableComment));
         return getCode(codeInfo);
     }
