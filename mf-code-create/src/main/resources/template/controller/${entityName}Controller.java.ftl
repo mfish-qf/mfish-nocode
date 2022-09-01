@@ -1,34 +1,29 @@
 package ${packageName}.controller;
 
-import java.util.Arrays;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
-import ${packageName}.common.annotation.Log;
-import ${packageName}.common.core.domain.AjaxTResult;
-import ${packageName}.common.enums.BusinessType;
-
+import cn.com.mfish.common.core.annotation.Log;
+import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.web.Result;
 import ${packageName}.entity.${entityName};
 import ${packageName}.req.Req${entityName};
 import ${packageName}.service.${entityName}Service;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import java.util.Arrays;
 
 /**
- * @Description: ${tableInfo.tableDesc}
+ * @Description: ${tableInfo.tableComment}
  * @Author: mfish
  * @Date: ${.now?string["yyyy-MM-dd"]}
  * @Version: V1.0
  */
 @Slf4j
-@Api(tags = "${tableInfo.tableDesc}")
+@Api(tags = "${tableInfo.tableComment}")
 @RestController
 @RequestMapping("/${entityName?uncap_first}")
 public class ${entityName}Controller {
@@ -43,13 +38,13 @@ public class ${entityName}Controller {
 	 * @param pageSize
 	 * @return
 	 */
-	@ApiOperation(value = "${tableInfo.tableDesc}-分页列表查询", notes = "${tableInfo.tableDesc}-分页列表查询")
+	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
-	public AjaxTResult<IPage<${entityName}>> queryPageList(Req${entityName} req${entityName},
+	public Result<IPage<${entityName}>> queryPageList(Req${entityName} req${entityName},
                                                            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(new Page<>(pageNo, pageSize));
-		return new AjaxTResult().success(pageList);
+		return Result.ok(pageList, "查询成功!");
 	}
 
 	/**
@@ -58,14 +53,14 @@ public class ${entityName}Controller {
 	 * @param ${entityName?uncap_first}
 	 * @return
 	 */
-	@Log(title = "${tableInfo.tableDesc}-添加", businessType = BusinessType.INSERT)
-	@ApiOperation(value = "${tableInfo.tableDesc}-添加", notes = "${tableInfo.tableDesc}-添加")
+	@Log(title = "${tableInfo.tableComment}-添加", operateType = OperateType.INSERT)
+	@ApiOperation(value = "${tableInfo.tableComment}-添加", notes = "${tableInfo.tableComment}-添加")
 	@PostMapping
-	public AjaxTResult<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
+	public Result<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})){
-		   return new AjaxTResult().success("添加成功！", ${entityName?uncap_first});
+			return Result.ok(${entityName?uncap_first}, "添加成功!");
 		}
-		return new AjaxTResult().error("添加失败!");
+        return Result.fail("错误:添加失败!");
 	}
 
 	/**
@@ -74,14 +69,14 @@ public class ${entityName}Controller {
 	 * @param ${entityName?uncap_first}
 	 * @return
 	 */
-	@Log(title = "${tableInfo.tableDesc}-编辑", businessType = BusinessType.UPDATE)
-	@ApiOperation(value = "${tableInfo.tableDesc}-编辑", notes = "${tableInfo.tableDesc}-编辑")
+	@Log(title = "${tableInfo.tableComment}-编辑", operateType = OperateType.UPDATE)
+	@ApiOperation(value = "${tableInfo.tableComment}-编辑", notes = "${tableInfo.tableComment}-编辑")
 	@PutMapping
-	public AjaxTResult<?> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
+	public Result<?> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})){
-		    return new AjaxTResult().success("编辑成功!");
+		    return Result.ok("编辑成功!");
 		}
-		return new AjaxTResult().error("编辑失败!");
+		return Result.fail("错误:编辑失败!");
 	}
 
 	/**
@@ -90,14 +85,14 @@ public class ${entityName}Controller {
 	 * @param id
 	 * @return
 	 */
-	@Log(title = "${tableInfo.tableDesc}-通过id删除", businessType = BusinessType.DELETE)
-	@ApiOperation(value = "${tableInfo.tableDesc}-通过id删除", notes = "${tableInfo.tableDesc}-通过id删除")
+	@Log(title = "${tableInfo.tableComment}-通过id删除", operateType = OperateType.DELETE)
+	@ApiOperation(value = "${tableInfo.tableComment}-通过id删除", notes = "${tableInfo.tableComment}-通过id删除")
 	@DeleteMapping("/{id}")
-	public AjaxTResult<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+	public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		if (${entityName?uncap_first}Service.removeById(id)){
-		    return new AjaxTResult().success("删除成功!");
+			return Result.ok("删除成功!");
 		}
-		return new AjaxTResult().error("删除失败!");
+		return Result.fail("错误:删除失败!");
 	}
 
 	/**
@@ -106,14 +101,14 @@ public class ${entityName}Controller {
 	 * @param ids
 	 * @return
 	 */
-	@Log(title = "${tableInfo.tableDesc}-批量删除", businessType = BusinessType.DELETE)
-	@ApiOperation(value = "${tableInfo.tableDesc}-批量删除", notes = "${tableInfo.tableDesc}-批量删除")
+	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
+	@ApiOperation(value = "${tableInfo.tableComment}-批量删除", notes = "${tableInfo.tableComment}-批量删除")
 	@DeleteMapping("/batch")
-	public AjaxTResult<?> deleteBatch(@RequestParam(name = "ids") String ids) {
+	public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))){
-		    return new AjaxTResult().success("批量删除成功！");
+		    return Result.ok("批量删除成功!");
 		}
-		return new AjaxTResult().error("批量删除失败!");
+		return Result.fail("错误:批量删除失败!");
 	}
 
 	/**
@@ -122,10 +117,10 @@ public class ${entityName}Controller {
 	 * @param id
 	 * @return
 	 */
-	@ApiOperation(value = "${tableInfo.tableDesc}-通过id查询", notes = "${tableInfo.tableDesc}-通过id查询")
+	@ApiOperation(value = "${tableInfo.tableComment}-通过id查询", notes = "${tableInfo.tableComment}-通过id查询")
 	@GetMapping("/{id}")
-	public AjaxTResult<${entityName}> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+	public Result<${entityName}> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
-		return new AjaxTResult().success("查询成功",${entityName?uncap_first});
+		return Result.ok(${entityName?uncap_first}, "查询成功!");
 	}
 }

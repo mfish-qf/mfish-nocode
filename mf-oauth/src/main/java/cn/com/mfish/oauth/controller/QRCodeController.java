@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.model.QRCode;
@@ -56,7 +56,7 @@ public class QRCodeController {
 
     @ApiOperation("生成二维码")
     @GetMapping("/build")
-    public AjaxTResult<QRCodeImg> buildQRCode() {
+    public Result<QRCodeImg> buildQRCode() {
         String error = "错误:生成二维码异常!";
         try {
             Hashtable<EncodeHintType, Comparable> hints = new Hashtable<>();
@@ -73,7 +73,7 @@ public class QRCodeController {
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
             if (ImageIO.write(bufferedImage, "png", byteArrayOutputStream)) {
                 RedisQrCode qrCode = saveQRCode(code);
-                return AjaxTResult.ok(buildResponseCode(qrCode, byteArrayOutputStream));
+                return Result.ok(buildResponseCode(qrCode, byteArrayOutputStream));
             }
             throw new MyRuntimeException(error);
         } catch (WriterException | IOException e) {
@@ -118,14 +118,14 @@ public class QRCodeController {
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query"),
             @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true)
     })
-    public AjaxTResult<QRCode> qrCodeLoginCheck(String code) throws InvocationTargetException, IllegalAccessException {
+    public Result<QRCode> qrCodeLoginCheck(String code) throws InvocationTargetException, IllegalAccessException {
         RedisQrCode redisQrCode = qrCodeService.checkQRCode(code);
         if (redisQrCode == null) {
-            return AjaxTResult.ok(null, "未检测到扫码状态");
+            return Result.ok(null, "未检测到扫码状态");
         }
         QRCode qrCode = new QRCode();
         BeanUtils.copyProperties(qrCode, redisQrCode);
-        return AjaxTResult.ok(qrCode);
+        return Result.ok(qrCode);
     }
 
     @ApiOperation("扫描二维码登录")
@@ -135,7 +135,7 @@ public class QRCodeController {
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query"),
             @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true)
     })
-    public AjaxTResult<String> scanQrCode(HttpServletRequest request) {
+    public Result<String> scanQrCode(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.未扫描, SerConstant.ScanStatus.已扫描);
     }
 
@@ -147,7 +147,7 @@ public class QRCodeController {
             @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true),
             @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true)
     })
-    public AjaxTResult<String> qrCodeLogin(HttpServletRequest request) {
+    public Result<String> qrCodeLogin(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已确认);
     }
 
@@ -159,7 +159,7 @@ public class QRCodeController {
             @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true),
             @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true)
     })
-    public AjaxTResult<String> qrCodeCancel(HttpServletRequest request) {
+    public Result<String> qrCodeCancel(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已取消);
     }
 
@@ -171,7 +171,7 @@ public class QRCodeController {
      * @param destStatus
      * @return
      */
-    private AjaxTResult<String> qrCodeOperator(HttpServletRequest request, SerConstant.ScanStatus origStatus, SerConstant.ScanStatus destStatus) {
+    private Result<String> qrCodeOperator(HttpServletRequest request, SerConstant.ScanStatus origStatus, SerConstant.ScanStatus destStatus) {
         CheckWithResult<WeChatToken> result = weChatTokenValidator.validate(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
@@ -179,16 +179,16 @@ public class QRCodeController {
         String code = request.getParameter(SerConstant.QR_CODE);
         RedisQrCode redisQrCode = qrCodeService.checkQRCode(code);
         if (redisQrCode == null) {
-            return AjaxTResult.fail("错误:code不正确");
+            return Result.fail("错误:code不正确");
         }
         if (!StringUtils.isEmpty(redisQrCode.getAccessToken())
                 && !result.getResult().getAccess_token().equals(redisQrCode.getAccessToken())) {
-            return AjaxTResult.fail("错误:两次请求token不相同");
+            return Result.fail("错误:两次请求token不相同");
         }
         if (!StringUtils.isEmpty(redisQrCode.getSecret())) {
             String secret = request.getParameter(SerConstant.QR_SECRET);
             if (!redisQrCode.getSecret().equals(secret)) {
-                return AjaxTResult.fail("错误:传入密钥不正确");
+                return Result.fail("错误:传入密钥不正确");
             }
         }
         if (origStatus.toString().equals(redisQrCode.getStatus())) {
@@ -197,8 +197,8 @@ public class QRCodeController {
             redisQrCode.setAccount(result.getResult().getAccount());
             redisQrCode.setSecret(UUID.randomUUID().toString());
             qrCodeService.updateQRCode(redisQrCode);
-            return AjaxTResult.ok(redisQrCode.getSecret(), "操作成功");
+            return Result.ok(redisQrCode.getSecret(), "操作成功");
         }
-        return AjaxTResult.fail("错误:二维码状态不正确");
+        return Result.fail("错误:二维码状态不正确");
     }
 }

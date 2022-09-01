@@ -35,7 +35,7 @@ public class CodeTest {
         list.add(new FieldInfo().setFieldName("F1").setDbType("VARCHAR").setType("String").setComment("字段1").setIsPrimary(true));
         list.add(new FieldInfo().setFieldName("F2").setDbType("INT").setType("Integer").setComment("字段2"));
         list.add(new FieldInfo().setFieldName("F3").setDbType("INT").setType("Integer").setComment("字段3"));
-        codeInfo.setTableInfo(new TableInfo().setTableName("test_table").setTableDesc("测试").setColumns(list));
+        codeInfo.setTableInfo(new TableInfo().setTableName("test_table").setTableComment("测试").setColumns(list));
         String aaa = freemarkerUtils.buildCode("entity", codeInfo);
         System.out.println(aaa);
     }
@@ -48,7 +48,7 @@ public class CodeTest {
         list.add(new FieldInfo().setFieldName("F1").setDbType("VARCHAR").setType("String").setComment("字段1").setIsPrimary(true));
         list.add(new FieldInfo().setFieldName("F2").setDbType("INT").setType("Integer").setComment("字段2"));
         list.add(new FieldInfo().setFieldName("F3").setDbType("INT").setType("Integer").setComment("字段3"));
-        codeInfo.setTableInfo(new TableInfo().setTableName("test_table").setTableDesc("测试").setColumns(list));
+        codeInfo.setTableInfo(new TableInfo().setTableName("test_table").setTableComment("测试").setColumns(list));
         freemarkerUtils.getCode(codeInfo);
     }
 

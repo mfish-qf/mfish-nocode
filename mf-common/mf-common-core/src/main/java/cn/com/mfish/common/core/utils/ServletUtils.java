@@ -2,7 +2,7 @@ package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.utils.text.Convert;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
@@ -234,7 +234,7 @@ public class ServletUtils {
     public static Mono<Void> webFluxResponseWriter(ServerHttpResponse response, String contentType, HttpStatus status, Object value, int code) {
         response.setStatusCode(status);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, contentType);
-        AjaxTResult<?> result = AjaxTResult.fail(code, value.toString());
+        Result<?> result = Result.fail(code, value.toString());
         DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(result).getBytes());
         return response.writeWith(Mono.just(dataBuffer));
     }

@@ -1,7 +1,7 @@
 package cn.com.mfish.gateway.service;
 
 import cn.com.mfish.common.core.exception.CaptchaException;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,7 +18,7 @@ public interface CheckCodeService {
      * @throws IOException
      * @throws CaptchaException
      */
-    AjaxTResult<Map<String,Object>> createCaptcha();
+    Result<Map<String,Object>> createCaptcha();
 
     /**
      * 校验验证码

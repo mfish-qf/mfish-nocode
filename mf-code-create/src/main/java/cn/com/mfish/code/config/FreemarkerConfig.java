@@ -44,6 +44,7 @@ public class FreemarkerConfig {
             //使用模版路径作为模版KEY值
             String pName = parent.replace("\\", "/").substring(index + properties.getPath().length() + 1);
             stringTemplateLoader.putTemplate(pName, getTemplate(file));
+            properties.getTemplateName().put(pName, file.getName());
         }
         config.setTemplateLoader(stringTemplateLoader);
         return config;

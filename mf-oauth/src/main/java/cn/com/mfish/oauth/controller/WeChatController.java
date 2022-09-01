@@ -4,7 +4,7 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.LogAnnotation;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
@@ -130,12 +130,12 @@ public class WeChatController {
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
     @LogAnnotation("weChatGetUser")
-    public AjaxTResult<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
         CheckWithResult<WeChatToken> result = weChatTokenValidator.validate(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return AjaxTResult.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
+        return Result.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
     }
 
     @PostMapping("/login/pwd")

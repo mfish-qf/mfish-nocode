@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 /**
- * @Description: ${tableInfo.tableDesc}
+ * @Description: ${tableInfo.tableComment}
  * @Author: mfish
  * @Date: ${.now?string["yyyy-MM-dd"]}
  * @Version: V1.0

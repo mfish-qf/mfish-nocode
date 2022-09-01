@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.controller;
 
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.common.Utils;
 import cn.com.mfish.oauth.service.LoginService;
 import io.swagger.annotations.Api;
@@ -42,14 +42,14 @@ public class LoginController {
     @PostMapping("/sendMsg")
     @ResponseBody
     @ApiImplicitParam(name = "phone", value = "手机号", paramType = "query", required = true)
-    public AjaxTResult<String> sendMsg(String phone) throws NoSuchAlgorithmException {
+    public Result<String> sendMsg(String phone) throws NoSuchAlgorithmException {
         if (StringUtils.isEmpty(phone)) {
-            return AjaxTResult.fail("错误:手机号不允许为空");
+            return Result.fail("错误:手机号不允许为空");
         }
         Long codeTime = loginService.getSmsCodeTime(phone);
         //一分钟内返回code倒计时剩余时间
         if (codeTime > 0) {
-            return AjaxTResult.fail(codeTime.toString(), "一分钟内不允许重复发送");
+            return Result.fail(codeTime.toString(), "一分钟内不允许重复发送");
         }
         String code = loginService.getSmsCode(phone);
         //如果5分钟内不重新生成code
@@ -60,6 +60,6 @@ public class LoginController {
         loginService.saveSmsCodeTime(phone);
         loginService.sendMsg(phone, code);
         //测试环境返回生成验证码值,生产环境需要隐藏短信码返回值
-        return AjaxTResult.ok(code);
+        return Result.ok(code);
     }
 }

@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.remote;
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.fallback.RemoteUserFallbackFactory;
 import cn.com.mfish.oauth.model.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -25,7 +25,7 @@ public interface RemoteUserService {
      * @return
      */
     @GetMapping("/user/info")
-    AjaxTResult<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.FROM_SOURCE) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
+    Result<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.FROM_SOURCE) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
 
     /**
      * 获取当前用户信息 web浏览器通过oauth2登录可以直接请求
@@ -34,5 +34,5 @@ public interface RemoteUserService {
      * @return
      */
     @GetMapping("/user/current")
-    AjaxTResult<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.FROM_SOURCE) String origin);
+    Result<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.FROM_SOURCE) String origin);
 }

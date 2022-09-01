@@ -1,7 +1,7 @@
 package cn.com.mfish.common.core.advice;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -31,9 +31,9 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(OAuthValidateException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public AjaxTResult exception(OAuthValidateException exception) {
+    public Result exception(OAuthValidateException exception) {
         log.error("401校验异常", exception);
-        return AjaxTResult.fail(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
+        return Result.fail(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
     }
 
     /**
@@ -43,9 +43,9 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler({AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public AjaxTResult badRequestException(AccessDeniedException exception) {
+    public Result badRequestException(AccessDeniedException exception) {
         log.error("403异常", exception);
-        return AjaxTResult.fail(HttpStatus.FORBIDDEN.value(), exception.getMessage());
+        return Result.fail(HttpStatus.FORBIDDEN.value(), exception.getMessage());
     }
 
     /**
@@ -57,9 +57,9 @@ public class ExceptionHandlerAdvice {
             , HttpMessageNotReadableException.class, UnsatisfiedServletRequestParameterException.class
             , MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public AjaxTResult badRequestException(Exception exception) {
+    public Result badRequestException(Exception exception) {
         log.error("400异常", exception);
-        return AjaxTResult.fail(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+        return Result.fail(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 
     /**
@@ -71,8 +71,8 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public AjaxTResult handleException(Exception exception, HttpServletRequest request) {
+    public Result handleException(Exception exception, HttpServletRequest request) {
         log.error("请求地址'{}',发生系统异常.", request.getRequestURI(), exception);
-        return AjaxTResult.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
+        return Result.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
     }
 }

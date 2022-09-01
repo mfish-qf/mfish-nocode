@@ -20,7 +20,7 @@ public class TableInfo implements Serializable {
     @ApiModelProperty("表名称")
     private String tableName;
     @ApiModelProperty("表描述信息")
-    private String tableDesc;
+    private String tableComment;
     @ApiModelProperty("列信息")
     private List<FieldInfo> columns;
 }

@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.controller;
 
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.InnerUser;
 import cn.com.mfish.oauth.annotation.LogAnnotation;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
@@ -52,37 +52,37 @@ public class UserInfoController {
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
     @LogAnnotation("getUser")
-    public AjaxTResult<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
         CheckWithResult<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return AjaxTResult.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
+        return Result.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
     }
 
     @InnerUser
     @ApiOperation("获取当前用户信息")
     @GetMapping("/current")
-    public AjaxTResult<UserInfo> getCurUserInfo() throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfo> getCurUserInfo() throws InvocationTargetException, IllegalAccessException {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
             return null;
         }
         String userId = (String) subject.getPrincipal();
-        return AjaxTResult.ok(oAuth2Service.getUserInfo(userId));
+        return Result.ok(oAuth2Service.getUserInfo(userId));
     }
 
     @ApiOperation("用户登出")
     @GetMapping("/revoke")
-    public AjaxTResult<String> revoke() {
+    public Result<String> revoke() {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
             String error = "未获取到用户登录状态,无需登出";
-            return AjaxTResult.ok(error);
+            return Result.ok(error);
         }
         String userId = (String) subject.getPrincipal();
         userTokenCache.delUserDevice(SerConstant.DeviceType.Web, userId);
         subject.logout();
-        return AjaxTResult.ok("成功登出");
+        return Result.ok("成功登出");
     }
 }

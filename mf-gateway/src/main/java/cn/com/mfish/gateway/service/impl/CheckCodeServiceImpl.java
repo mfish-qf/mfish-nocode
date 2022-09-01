@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.Base64;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.web.AjaxTResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.gateway.config.properties.CaptchaProperties;
 import cn.com.mfish.gateway.service.CheckCodeService;
 import com.google.code.kaptcha.Producer;
@@ -38,8 +38,8 @@ public class CheckCodeServiceImpl implements CheckCodeService {
     private CaptchaProperties captchaProperties;
 
     @Override
-    public AjaxTResult<Map<String, Object>> createCaptcha() {
-        AjaxTResult<Map<String, Object>> ajax = AjaxTResult.ok(new HashMap());
+    public Result<Map<String, Object>> createCaptcha() {
+        Result<Map<String, Object>> ajax = Result.ok(new HashMap());
         boolean captchaOnOff = captchaProperties.getEnabled();
         ajax.getData().put("captchaOnOff", captchaOnOff);
         if (!captchaOnOff) {
@@ -67,7 +67,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
         try {
             ImageIO.write(img, "jpg", os);
         } catch (IOException e) {
-            return AjaxTResult.fail(e.getMessage());
+            return Result.fail(e.getMessage());
         }
         ajax.getData().put("captchaKey", uuid);
         ajax.getData().put("img", Base64.encode(os.toByteArray()));

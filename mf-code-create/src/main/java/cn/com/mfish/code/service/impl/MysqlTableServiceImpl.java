@@ -1,6 +1,7 @@
 package cn.com.mfish.code.service.impl;
 
 import cn.com.mfish.code.entity.FieldInfo;
+import cn.com.mfish.code.entity.TableInfo;
 import cn.com.mfish.code.mapper.MysqlTableMapper;
 import cn.com.mfish.code.service.MysqlTableService;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class MysqlTableServiceImpl implements MysqlTableService {
     @Override
     public List<FieldInfo> getColumns(String schema, String tableName) {
         return mysqlTableMapper.getColumns(schema, tableName);
+    }
+
+    @Override
+    public TableInfo getTableInfo(String schema, String tableName) {
+        return mysqlTableMapper.getTableInfo(schema, tableName);
     }
 }

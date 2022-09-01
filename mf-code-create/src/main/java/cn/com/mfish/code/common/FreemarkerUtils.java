@@ -5,23 +5,22 @@ import cn.com.mfish.code.entity.CodeInfo;
 import cn.com.mfish.code.entity.FieldInfo;
 import cn.com.mfish.code.entity.TableInfo;
 import cn.com.mfish.code.service.MysqlTableService;
+import cn.com.mfish.code.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.utility.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.HashMap;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ：qiufeng
@@ -37,33 +36,48 @@ public class FreemarkerUtils {
     FreemarkerProperties freemarkerProperties;
     @Resource
     MysqlTableService mysqlTableService;
+    @Value("${code.savePath}")
+    String savePath;
 
-    public Map<String, String> getCode(String schema, String tableName, String packageName) {
-        //TODO 表描述从数据库获取预留
-        String tableDesc = "";
-        return getCode(schema, tableName, tableDesc, packageName, null);
-    }
-    /**
-     * @param schema      库名
-     * @param tableName   表名
-     * @param tableDesc   表描述
-     * @param packageName 项目包名
-     *
-     * @return
-     */
-    public Map<String, String> getCode(String schema, String tableName, String tableDesc, String packageName) {
-        return getCode(schema, tableName, tableDesc, packageName, null);
+    public List<CodeVo> getCode(String schema, String tableName) {
+        return getCode(schema, tableName, "cn.com.mfish.code");
     }
 
     /**
      * @param schema      库名
      * @param tableName   表名
-     * @param tableDesc   表描述
      * @param packageName 项目包名
-     * @param entityName  entity属性名
      * @return
      */
-    public Map<String, String> getCode(String schema, String tableName, String tableDesc, String packageName, String entityName) {
+    public List<CodeVo> getCode(String schema, String tableName, String packageName) {
+        TableInfo tableInfo = mysqlTableService.getTableInfo(schema, tableName);
+        String tableComment = "";
+        if (tableInfo != null) {
+            tableComment = StringUtils.isEmpty(tableInfo.getTableComment()) ? "" : tableInfo.getTableComment();
+        }
+        return getCode(schema, tableName, tableComment, packageName);
+    }
+
+    /**
+     * @param schema       库名
+     * @param tableName    表名
+     * @param tableComment 表描述
+     * @param packageName  项目包名
+     * @return
+     */
+    public List<CodeVo> getCode(String schema, String tableName, String tableComment, String packageName) {
+        return getCode(schema, tableName, tableComment, packageName, null);
+    }
+
+    /**
+     * @param schema       库名
+     * @param tableName    表名
+     * @param tableComment 表描述
+     * @param packageName  项目包名
+     * @param entityName   entity属性名
+     * @return
+     */
+    public List<CodeVo> getCode(String schema, String tableName, String tableComment, String packageName, String entityName) {
         CodeInfo codeInfo = new CodeInfo();
         codeInfo.setPackageName(packageName);
         if (StringUtils.isEmpty(entityName)) {
@@ -71,29 +85,42 @@ public class FreemarkerUtils {
         }
         codeInfo.setEntityName(entityName);
         List<FieldInfo> list = mysqlTableService.getColumns(schema, tableName);
-        codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(tableName).setTableDesc(tableDesc));
+        codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(tableName).setTableComment(tableComment));
         return getCode(codeInfo);
     }
 
     /**
      * 获取生成的代码并返回前端
      *
+     * @param codeInfo 代码参数信息
+     * @return
+     */
+    public List<CodeVo> getCode(CodeInfo codeInfo) {
+        List<CodeVo> list = new ArrayList<>();
+        for (String key : freemarkerProperties.getKeys()) {
+            CodeVo codeVo = new CodeVo();
+            String tempName = freemarkerProperties.getTemplateName().get(key);
+            tempName = tempName.replace(".ftl", "")
+                    .replace("${entityName}", codeInfo.getEntityName());
+            codeVo.setName(tempName).setPath(key);
+//            if (key.contains("xml")) {
+//                //xml需要转义后返回
+//                codeVo.setCode(StringUtil.XMLEnc(buildCode(key, codeInfo)));
+//                continue;
+//            }
+            codeVo.setCode(buildCode(key, codeInfo));
+            list.add(codeVo);
+        }
+        return list;
+    }
+
+    /**
+     * 模版代码构建
+     *
+     * @param template
      * @param codeInfo
      * @return
      */
-    public Map<String, String> getCode(CodeInfo codeInfo) {
-        Map<String, String> map = new HashMap<>();
-        for (String key : freemarkerProperties.getKeys()) {
-            if (key.contains("xml")) {
-                //xml需要转义后返回
-                map.put(key, StringUtil.XMLEnc(buildCode(key, codeInfo)));
-                continue;
-            }
-            map.put(key, buildCode(key, codeInfo));
-        }
-        return map;
-    }
-
     public String buildCode(String template, CodeInfo codeInfo) {
         StringWriter stringWriter = new StringWriter();
         try (Writer out = new BufferedWriter(stringWriter)) {
@@ -105,5 +132,29 @@ public class FreemarkerUtils {
             throw new MyRuntimeException(e);
         }
         return stringWriter.toString();
+    }
+
+    /**
+     * 保存代码到本地
+     *
+     * @param list
+     * @return
+     */
+    public boolean saveCode(List<CodeVo> list) {
+        savePath = savePath.replace("\\", "/");
+        if (StringUtils.isEmpty(savePath)) {
+            savePath = "/mfish/";
+        } else if (!savePath.endsWith("/")) {
+            savePath += "/";
+        }
+        for (CodeVo code : list) {
+            try {
+                FileUtils.writeStringToFile(new File(savePath + code.getPath(), code.getName())
+                        , code.getCode(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                log.error("错误:文件保存异常", e);
+            }
+        }
+        return true;
     }
 }
