@@ -1,14 +1,14 @@
 mfish:
   version: 1.0.0
 # Tomcat
-server: 
-  port: 9219
+server:
+  port: 9221
 
 # Spring
 spring: 
   application:
     # 应用名称
-    name: mf-test
+    name: mf-sys
   profiles:
     # 环境配置
     active: dev

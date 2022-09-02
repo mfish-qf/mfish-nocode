@@ -1,3 +1,5 @@
+mfish:
+  version: 1.0.0
 # Tomcat
 server: 
   port: 9220

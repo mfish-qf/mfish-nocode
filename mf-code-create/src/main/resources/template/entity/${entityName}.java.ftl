@@ -41,10 +41,10 @@ public class ${entityName} extends Req${entityName} {
 	<#else>
     <#if fieldInfo.type =='Date'>
     <#if fieldInfo.dbType =='DATE'>
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     <#elseif fieldInfo.dbType =='DATETIME'>
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     </#if>
     </#if>

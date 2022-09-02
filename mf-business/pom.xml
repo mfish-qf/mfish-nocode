@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>mf-web</module>
+        <module>mf-sys</module>
     </modules>
 
     <properties>

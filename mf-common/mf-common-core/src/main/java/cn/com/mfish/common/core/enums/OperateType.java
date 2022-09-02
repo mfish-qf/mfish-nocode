@@ -8,6 +8,8 @@ package cn.com.mfish.common.core.enums;
 public enum OperateType {
     //其他操作
     OTHER,
+    //查询
+    QUERY,
     //新增
     INSERT,
     //更新

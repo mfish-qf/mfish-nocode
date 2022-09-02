@@ -42,7 +42,7 @@ public class CodeController {
         }
     }
 
-    @ApiOperation("代码生成")
+    @ApiOperation("代码生成并保存到本地")
     @PostMapping
     @ApiImplicitParams({
             @ApiImplicitParam(name = "schema", value = "库名", required = true, paramType = "query"),
