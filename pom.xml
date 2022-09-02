@@ -14,6 +14,7 @@
         <module>mf-test</module>
         <module>mf-business</module>
         <module>mf-code-create</module>
+        <module>ase</module>
     </modules>
 
     <properties>
@@ -313,7 +314,6 @@
             <!-- 防止src/main/java中的mapper xml配置不被放到target目录下 -->
             <resource>
                 <directory>src/main/java</directory>
-                <filtering>true</filtering>
                 <includes>
                     <include>**/*.xml</include>
                 </includes>
