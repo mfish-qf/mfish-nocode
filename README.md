@@ -35,6 +35,10 @@
         <td>mf_oauth.sql</td>
         <td>认证数据库</td>
     </tr>
+    <tr>
+        <td>mf_system.sql</td>
+        <td>系统管理数据库</td>
+    </tr>
 </table>
 
 #### swagger访问地址
