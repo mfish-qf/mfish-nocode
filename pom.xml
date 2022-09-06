@@ -14,6 +14,7 @@
         <module>mf-test</module>
         <module>mf-business</module>
         <module>mf-code-create</module>
+        <module>mf-api</module>
     </modules>
 
     <properties>
@@ -123,6 +124,11 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
             <!-- Swagger 依赖配置 -->
             <dependency>
                 <groupId>io.swagger</groupId>
@@ -230,6 +236,11 @@
                 <version>${wechat.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-core</artifactId>
                 <version>${mfish.version}</version>
@@ -252,6 +263,16 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-oauth</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-log</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
         </dependencies>

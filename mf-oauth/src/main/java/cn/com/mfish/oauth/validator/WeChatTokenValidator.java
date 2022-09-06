@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.common.Utils;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.oauth.model.WeChatToken;
 import cn.com.mfish.oauth.service.WeChatService;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +30,7 @@ public class WeChatTokenValidator implements IBaseValidator<WeChatToken> {
         WeChatToken weChatToken;
         if (result == null || result.getResult() == null) {
             result = new CheckWithResult<>();
-            String accessToken = Utils.getAccessToken(request);
+            String accessToken = AuthUtils.getAccessToken(request);
             if (StringUtils.isEmpty(accessToken)) {
                 return result.setSuccess(false).setMsg("错误:token不正确");
             }

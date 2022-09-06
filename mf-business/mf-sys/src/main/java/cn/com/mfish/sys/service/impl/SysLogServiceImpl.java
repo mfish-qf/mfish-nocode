@@ -1,11 +1,10 @@
 package cn.com.mfish.sys.service.impl;
 
-import cn.com.mfish.sys.entity.SysLog;
+import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.mapper.SysLogMapper;
 import cn.com.mfish.sys.service.SysLogService;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 
 /**
  * @Description: 系统日志

@@ -1,5 +1,6 @@
 package cn.com.mfish.sys;
 
+import cn.com.mfish.common.core.annotation.AutoFeignClients;
 import cn.com.mfish.common.swagger.annotation.AutoSwagger;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @AutoSwagger
 @Slf4j
 @MapperScan({"cn.com.mfish.**.mapper"})
+@AutoFeignClients
 public class MfSysApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfSysApplication.class, args);

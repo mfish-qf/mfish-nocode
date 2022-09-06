@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.common;
+package cn.com.mfish.common.core.utils.html;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import org.springframework.web.context.request.NativeWebRequest;

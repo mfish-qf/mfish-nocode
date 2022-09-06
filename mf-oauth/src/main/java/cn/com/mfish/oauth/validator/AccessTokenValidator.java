@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.common.Utils;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.oauth.model.RedisAccessToken;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class AccessTokenValidator implements IBaseValidator<RedisAccessToken> {
         RedisAccessToken token;
         if (result == null || result.getResult() == null) {
             result = new CheckWithResult<>();
-            String accessToken = Utils.getAccessToken(request);
+            String accessToken = AuthUtils.getAccessToken(request);
             if (StringUtils.isEmpty(accessToken)) {
                 return result.setSuccess(false).setMsg("错误:token不正确");
             }

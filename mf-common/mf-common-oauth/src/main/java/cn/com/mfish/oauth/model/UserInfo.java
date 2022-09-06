@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,8 +15,10 @@ import java.util.Date;
  */
 @ApiModel("用户基础信息")
 @Data
-@EqualsAndHashCode(callSuper=true)
-public class UserInfo extends BaseEntity<String>{
+@Accessors(chain = true)
+public class UserInfo implements Serializable {
+    @ApiModelProperty("唯一ID")
+    private String id;
     @ApiModelProperty("账号")
     private String account;
     @ApiModelProperty("手机号")
@@ -29,11 +32,16 @@ public class UserInfo extends BaseEntity<String>{
     @ApiModelProperty("电话")
     private String telephone;
     @ApiModelProperty("生日")
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date birthday;
     @ApiModelProperty("性别")
     private Integer sex;
     @ApiModelProperty("状态 0删除 1正常 2禁用")
     private Integer status;
-
+    @ApiModelProperty("创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime = new Date();
+    @ApiModelProperty("更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime = new Date();
 }

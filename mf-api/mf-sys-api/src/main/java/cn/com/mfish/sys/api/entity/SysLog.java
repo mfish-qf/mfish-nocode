@@ -1,6 +1,5 @@
-package cn.com.mfish.sys.entity;
+package cn.com.mfish.sys.api.entity;
 
-import cn.com.mfish.sys.req.ReqSysLog;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -8,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -22,10 +21,9 @@ import java.util.Date;
  */
 @Data
 @TableName("sys_log")
-@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @ApiModel(value = "sys_log对象", description = "系统日志")
-public class SysLog extends ReqSysLog {
+public class SysLog implements Serializable {
 
     @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "日志ID")

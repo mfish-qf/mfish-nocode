@@ -6,7 +6,7 @@ import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.oauth.annotation.InnerUser;
-import cn.com.mfish.oauth.common.Utils;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.model.RedisAccessToken;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -33,12 +33,12 @@ public class InnerUserAdvice {
     @Around("@annotation(innerUser)")
     public Object innerAround(ProceedingJoinPoint point, InnerUser innerUser) throws Throwable {
         HttpServletRequest request = ServletUtils.getRequest();
-        String source = request.getHeader(CredentialConstants.FROM_SOURCE);
+        String source = request.getHeader(CredentialConstants.REQ_ORIGIN);
         // 内部请求验证
         if (CredentialConstants.INNER.equals(source) && !innerUser.validateUser()) {
             return point.proceed();
         }
-        String token = Utils.getAccessToken(request);
+        String token = AuthUtils.getAccessToken(request);
         if (StringUtils.isEmpty(token)) {
             throw new OAuthValidateException("错误:token不允许为空");
         }

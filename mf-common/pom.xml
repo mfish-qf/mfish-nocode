@@ -19,6 +19,7 @@
         <module>mf-common-swagger</module>
         <module>mf-common-oauth</module>
         <module>mf-common-ds</module>
+        <module>mf-common-log</module>
     </modules>
 
 </project>

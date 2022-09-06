@@ -1,55 +1,54 @@
-package cn.com.mfish.oauth.advice;
+package cn.com.mfish.common.log.advice;
 
+import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.remote.RemoteUserService;
+import cn.com.mfish.sys.api.entity.SysLog;
+import cn.com.mfish.sys.api.remote.RemoteLogService;
 import com.alibaba.fastjson.JSON;
-import cn.com.mfish.oauth.annotation.LogAnnotation;
-import cn.com.mfish.oauth.common.Utils;
-import cn.com.mfish.oauth.mapper.SSOLogMapper;
-import cn.com.mfish.oauth.model.SSOLog;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
 
 /**
- * @author qiufeng
- * @date 2020/2/21 19:17
+ * @author ：qiufeng
+ * @description：日志记录切面
+ * @date ：2022/9/4 12:05
  */
 @Aspect
 @Component
 @Slf4j
 public class LogAdvice {
+    ThreadLocal<SysLog> ssoLogThreadLocal = new ThreadLocal<>();
     @Resource
-    SSOLogMapper ssoLogMapper;
+    RemoteLogService remoteLogService;
+    @Resource
+    RemoteUserService remoteUserService;
 
-    ThreadLocal<SSOLog> ssoLogThreadLocal = new ThreadLocal<>();
-
-    @Before("@annotation(cn.com.mfish.oauth.annotation.LogAnnotation)")
+    @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
-        SSOLog ssoLog = new SSOLog();
-        ssoLog.setId(UUID.randomUUID().toString());
+        SysLog sysLog = new SysLog();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        ssoLog.setClientId(request.getParameter(OAuth.OAUTH_CLIENT_ID));
-        ssoLog.setIp(Utils.getRemoteIP(request));
+        sysLog.setOperIp(AuthUtils.getRemoteIP(request));
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String method;
-        LogAnnotation logAnnotation = methodSignature.getMethod().getDeclaredAnnotation(LogAnnotation.class);
-        method = logAnnotation.value();
+        Log aLog = methodSignature.getMethod().getDeclaredAnnotation(Log.class);
+        method = aLog.title();
         if (StringUtils.isEmpty(method)) {
             ApiOperation apiOperation = methodSignature.getMethod().getDeclaredAnnotation(ApiOperation.class);
             if (apiOperation != null) {
@@ -58,27 +57,26 @@ public class LogAdvice {
                 method = methodSignature.getName();
             }
         }
-        ssoLog.setInterfaceName(method);
-        ssoLogThreadLocal.set(ssoLog);
+        sysLog.setMethod(method);
+        ssoLogThreadLocal.set(sysLog);
     }
 
-    @AfterReturning(value = "@annotation(cn.com.mfish.oauth.annotation.LogAnnotation)", returning = "returnValue")
+    @AfterReturning(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", returning = "returnValue")
     public void doAfterReturning(Object returnValue) {
         setReturn(0, JSON.toJSONString(returnValue));
     }
 
-    @AfterThrowing(value = "@annotation(cn.com.mfish.oauth.annotation.LogAnnotation)", throwing = "e")
+    @AfterThrowing(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", throwing = "e")
     public void doAfterThrowing(Throwable e) {
         setReturn(1, e.getMessage());
     }
 
     private void setReturn(int state, String remark) {
-        SSOLog ssoLog = ssoLogThreadLocal.get();
-        Subject subject = SecurityUtils.getSubject();
-        ssoLog.setSessionId(subject.getSession().getId().toString());
-        ssoLog.setUserId((String) subject.getPrincipal());
-        ssoLog.setState(state);
-        ssoLog.setRemark(remark);
-        ssoLogMapper.insert(ssoLog);
+        SysLog sysLog = ssoLogThreadLocal.get();
+        Result<UserInfo> user = remoteUserService.getUserInfo(CredentialConstants.INNER);
+        if(user.isSuccess()){
+            sysLog.setOperName(user.getData().getAccount());
+        }
+        remoteLogService.add(CredentialConstants.INNER, sysLog);
     }
 }

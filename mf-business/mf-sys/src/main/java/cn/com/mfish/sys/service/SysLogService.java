@@ -1,6 +1,7 @@
 package cn.com.mfish.sys.service;
 
-import cn.com.mfish.sys.entity.SysLog;
+
+import cn.com.mfish.sys.api.entity.SysLog;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

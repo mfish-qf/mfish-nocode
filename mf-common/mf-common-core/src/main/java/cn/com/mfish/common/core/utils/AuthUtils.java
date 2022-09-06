@@ -1,6 +1,7 @@
-package cn.com.mfish.oauth.common;
+package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
+import cn.com.mfish.common.core.utils.html.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -14,7 +15,7 @@ import java.security.SecureRandom;
  * @date 2020/2/12 13:47
  */
 @Slf4j
-public class Utils {
+public class AuthUtils {
     /**
      * 获取accessToken
      *

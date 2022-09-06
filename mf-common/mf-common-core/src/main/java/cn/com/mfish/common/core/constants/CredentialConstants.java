@@ -22,7 +22,7 @@ public class CredentialConstants {
     /**
      * 请求来源
      */
-    public static final String FROM_SOURCE = "from-source";
+    public static final String REQ_ORIGIN = "req-origin";
     /**
      * 内部请求
      */

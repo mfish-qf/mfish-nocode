@@ -4,18 +4,18 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.annotation.LogAnnotation;
+import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.common.Utils;
 import cn.com.mfish.oauth.model.AccessToken;
-import cn.com.mfish.oauth.model.UserInfo;
 import cn.com.mfish.oauth.model.WeChatToken;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.WeChatService;
 import cn.com.mfish.oauth.validator.WeChatTokenValidator;
+import cn.com.mfish.oauth.model.UserInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -129,7 +129,7 @@ public class WeChatController {
             @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer+token组合，例如Bearer39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
-    @LogAnnotation("weChatGetUser")
+    @SSOLogAnnotation("weChatGetUser")
     public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
         CheckWithResult<WeChatToken> result = weChatTokenValidator.validate(request);
         if (!result.isSuccess()) {
@@ -156,7 +156,7 @@ public class WeChatController {
         }
         CheckWithResult<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "false");
         if (StringUtils.isEmpty(nickname)) {
-            nickname = Utils.phoneMasking(phone);
+            nickname = AuthUtils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getResult(), nickname)) {
             return new AccessToken(weChatService
@@ -201,7 +201,7 @@ public class WeChatController {
         String phone = phoneNoInfo.getPhoneNumber();
         CheckWithResult<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "false");
         if (StringUtils.isEmpty(nickname)) {
-            nickname = Utils.phoneMasking(phone);
+            nickname = AuthUtils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getResult(), nickname)) {
             return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getResult()));

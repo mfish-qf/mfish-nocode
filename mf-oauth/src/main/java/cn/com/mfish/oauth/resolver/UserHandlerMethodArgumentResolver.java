@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.resolver;
 
 import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.oauth.advice.CurUserId;
-import cn.com.mfish.oauth.common.Utils;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.exception.UserValidateException;
 import cn.com.mfish.oauth.model.RedisAccessToken;
@@ -32,7 +32,7 @@ public class UserHandlerMethodArgumentResolver implements HandlerMethodArgumentR
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String token = Utils.getAccessToken(webRequest);
+        String token = AuthUtils.getAccessToken(webRequest);
         if (StringUtils.isEmpty(token)) {
             throw new UserValidateException("token不允许为空");
         }

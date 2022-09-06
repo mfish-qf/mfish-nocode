@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class RemoteUserFallbackFactory implements FallbackFactory<RemoteUserService> {
+public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
     @Override
     public RemoteUserService create(Throwable cause) {
         log.error("token服务调用失败:" + cause.getMessage());

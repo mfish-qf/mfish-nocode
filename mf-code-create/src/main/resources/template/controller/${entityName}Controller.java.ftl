@@ -1,6 +1,6 @@
 package ${packageName}.controller;
 
-import cn.com.mfish.common.core.annotation.Log;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import ${packageName}.entity.${entityName};

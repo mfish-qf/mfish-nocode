@@ -78,7 +78,6 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>${swagger.fox.version}</version>
         </dependency>
-
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-oauth</artifactId>

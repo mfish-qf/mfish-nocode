@@ -54,7 +54,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return unauthorizedResponse(exchange, "错误:token不存在或已过期");
         }
         // 内部请求来源参数清除
-        removeHeader(mutate, CredentialConstants.FROM_SOURCE);
+        removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
         return chain.filter(exchange.mutate().request(mutate.build()).build());
     }
 

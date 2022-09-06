@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.mapper;
 
-import cn.com.mfish.sys.entity.SysLog;
+import cn.com.mfish.sys.api.entity.SysLog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

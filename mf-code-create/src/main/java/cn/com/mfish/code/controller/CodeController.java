@@ -2,7 +2,9 @@ package cn.com.mfish.code.controller;
 
 import cn.com.mfish.code.common.FreemarkerUtils;
 import cn.com.mfish.code.vo.CodeVo;
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.log.annotation.Log;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -27,6 +29,7 @@ public class CodeController {
     @Resource
     FreemarkerUtils freemarkerUtils;
 
+    @Log(title = "生成代码", operateType = OperateType.QUERY)
     @ApiOperation("代码生成")
     @GetMapping
     @ApiImplicitParams({

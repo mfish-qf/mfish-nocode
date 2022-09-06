@@ -1,12 +1,12 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.InnerUser;
-import cn.com.mfish.oauth.annotation.LogAnnotation;
+import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.model.RedisAccessToken;
 import cn.com.mfish.oauth.model.UserInfo;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -51,7 +51,7 @@ public class UserInfoController {
             @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer+token组合，例如Bearer39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
-    @LogAnnotation("getUser")
+    @SSOLogAnnotation("getUser")
     public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
         CheckWithResult<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {

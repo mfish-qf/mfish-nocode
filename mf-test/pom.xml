@@ -37,11 +37,15 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-oauth</artifactId>
+            <artifactId>mf-sys-api</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-swagger</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-oauth</artifactId>
         </dependency>
     </dependencies>
 

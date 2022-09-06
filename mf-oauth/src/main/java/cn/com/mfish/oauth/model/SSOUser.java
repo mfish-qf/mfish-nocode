@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 @ApiModel("用户全部信息")
 @Data
 @EqualsAndHashCode(callSuper=true)
-public class SSOUser extends UserInfo{
+public class SSOUser extends UserInfo {
     @ApiModelProperty("密码加密盐")
     private String salt;
     @ApiModelProperty("密码")

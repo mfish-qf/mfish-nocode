@@ -1,4 +1,4 @@
-package cn.com.mfish.common.core.annotation;
+package cn.com.mfish.common.log.annotation;
 
 import cn.com.mfish.common.core.enums.OperateType;
 

@@ -51,6 +51,10 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-ds</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-log</artifactId>
+        </dependency>
         <!-- Mysql Connector -->
         <dependency>
             <groupId>mysql</groupId>

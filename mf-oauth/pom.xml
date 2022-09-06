@@ -48,7 +48,6 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-            <version>${shiro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.oltu.oauth2</groupId>
@@ -96,6 +95,10 @@
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-ds</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-sys-api</artifactId>
         </dependency>
     </dependencies>
     <build>

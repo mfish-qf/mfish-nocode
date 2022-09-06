@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.com.mfish.sys.api.fallback.RemoteLogFallback
