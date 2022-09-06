@@ -7,19 +7,27 @@ package cn.com.mfish.common.core.enums;
  */
 public enum OperateType {
     //其他操作
-    OTHER,
+    OTHER(0),
     //查询
-    QUERY,
+    QUERY(1),
     //新增
-    INSERT,
+    INSERT(2),
     //更新
-    UPDATE,
+    UPDATE(3),
     //删除
-    DELETE,
+    DELETE(4),
     //授权
-    GRANT,
+    GRANT(5),
     //导入
-    IMPORT,
+    IMPORT(6),
     //导出
-    EXPORT,
+    EXPORT(7);
+    private Integer value;
+    OperateType(Integer value){
+        this.value = value;
+    }
+
+    public Integer getValue() {
+        return value;
+    }
 }
