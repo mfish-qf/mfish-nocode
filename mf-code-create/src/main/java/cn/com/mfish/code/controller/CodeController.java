@@ -5,6 +5,7 @@ import cn.com.mfish.code.vo.CodeVo;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import freemarker.template.utility.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -39,7 +40,15 @@ public class CodeController {
     })
     public Result<List<CodeVo>> getCode(String schema, String tableName, String packageName) {
         try {
-            return Result.ok(freemarkerUtils.getCode(schema, tableName, packageName), "生成代码成功");
+            List<CodeVo> list = freemarkerUtils.getCode(schema, tableName, packageName);
+            for (CodeVo code : list) {
+                if (code.getName().contains("xml")) {
+                    //xml需要转义后返回
+                    code.setCode(StringUtil.XMLEnc(code.getCode()));
+                    continue;
+                }
+            }
+            return Result.ok(list, "生成代码成功");
         } catch (Exception ex) {
             return Result.fail("错误:生成代码失败");
         }

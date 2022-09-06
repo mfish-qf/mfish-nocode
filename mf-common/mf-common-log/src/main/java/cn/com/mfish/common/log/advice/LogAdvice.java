@@ -19,11 +19,17 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * @author ：qiufeng
@@ -42,23 +48,62 @@ public class LogAdvice {
 
     @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
-        SysLog sysLog = new SysLog();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        sysLog.setOperIp(AuthUtils.getRemoteIP(request));
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        String method;
+        String title;
         Log aLog = methodSignature.getMethod().getDeclaredAnnotation(Log.class);
-        method = aLog.title();
-        if (StringUtils.isEmpty(method)) {
+        title = aLog.title();
+        if (StringUtils.isEmpty(title)) {
             ApiOperation apiOperation = methodSignature.getMethod().getDeclaredAnnotation(ApiOperation.class);
             if (apiOperation != null) {
-                method = apiOperation.value();
+                title = apiOperation.value();
             } else {
-                method = methodSignature.getName();
+                title = methodSignature.getName();
             }
         }
-        sysLog.setMethod(method);
+        SysLog sysLog = new SysLog();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        sysLog.setReqUri(request.getRequestURI());
+        sysLog.setReqType(request.getMethod());
+        sysLog.setReqParam(argsArrayToString(joinPoint.getArgs()));
+        sysLog.setReqSource(aLog.reqSource().getValue());
+        sysLog.setOperType(aLog.operateType().getValue());
+        sysLog.setOperIp(AuthUtils.getRemoteIP(request));
+        sysLog.setTitle(title);
+        sysLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
         ssoLogThreadLocal.set(sysLog);
+    }
+
+
+    private String argsArrayToString(Object[] paramsArray) {
+        String params = "";
+        if (paramsArray != null && paramsArray.length > 0) {
+            for (Object o : paramsArray) {
+                if (StringUtils.isNotNull(o) && !isFilterObject(o)) {
+                    params += JSON.toJSONString(o);
+                }
+            }
+        }
+        return params.trim();
+    }
+
+    public boolean isFilterObject(final Object o) {
+        Class<?> clazz = o.getClass();
+        if (clazz.isArray()) {
+            return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
+        } else if (Collection.class.isAssignableFrom(clazz)) {
+            Collection collection = (Collection) o;
+            for (Object value : collection) {
+                return value instanceof MultipartFile;
+            }
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            Map map = (Map) o;
+            for (Object value : map.entrySet()) {
+                Map.Entry entry = (Map.Entry) value;
+                return entry.getValue() instanceof MultipartFile;
+            }
+        }
+        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse
+                || o instanceof BindingResult;
     }
 
     @AfterReturning(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", returning = "returnValue")
@@ -74,9 +119,12 @@ public class LogAdvice {
     private void setReturn(int state, String remark) {
         SysLog sysLog = ssoLogThreadLocal.get();
         Result<UserInfo> user = remoteUserService.getUserInfo(CredentialConstants.INNER);
-        if(user.isSuccess()){
+        if (user.isSuccess()) {
             sysLog.setOperName(user.getData().getAccount());
         }
+        sysLog.setOperTime(new Date());
+        sysLog.setOperStatus(state);
+        sysLog.setRemark(remark.substring(0,2000));
         remoteLogService.add(CredentialConstants.INNER, sysLog);
     }
 }

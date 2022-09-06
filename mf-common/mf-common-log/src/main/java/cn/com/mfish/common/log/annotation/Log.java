@@ -1,6 +1,7 @@
 package cn.com.mfish.common.log.annotation;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.enums.ReqSource;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,5 +27,13 @@ public @interface Log {
      * @return
      */
     OperateType operateType() default OperateType.OTHER;
+
+    /**
+     * 请求来源 默认为管理端
+      * @return
+     */
+    ReqSource reqSource() default ReqSource.MANAGER;
+
+
 
 }
