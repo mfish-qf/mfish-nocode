@@ -5,10 +5,10 @@ import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.log.service.AsyncSaveLog;
 import cn.com.mfish.oauth.model.UserInfo;
 import cn.com.mfish.oauth.remote.RemoteUserService;
 import cn.com.mfish.sys.api.entity.SysLog;
-import cn.com.mfish.sys.api.remote.RemoteLogService;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,17 +19,12 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * @author ：qiufeng
@@ -42,7 +37,7 @@ import java.util.Map;
 public class LogAdvice {
     ThreadLocal<SysLog> ssoLogThreadLocal = new ThreadLocal<>();
     @Resource
-    RemoteLogService remoteLogService;
+    AsyncSaveLog asyncSaveLog;
     @Resource
     RemoteUserService remoteUserService;
 
@@ -64,7 +59,7 @@ public class LogAdvice {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         sysLog.setReqUri(request.getRequestURI());
         sysLog.setReqType(request.getMethod());
-        sysLog.setReqParam(argsArrayToString(joinPoint.getArgs()));
+        sysLog.setReqParam(getParams(joinPoint.getArgs()));
         sysLog.setReqSource(aLog.reqSource().getValue());
         sysLog.setOperType(aLog.operateType().getValue());
         sysLog.setOperIp(AuthUtils.getRemoteIP(request));
@@ -74,37 +69,27 @@ public class LogAdvice {
     }
 
 
-    private String argsArrayToString(Object[] paramsArray) {
+    private String getParams(Object[] paramsArray) {
         String params = "";
         if (paramsArray != null && paramsArray.length > 0) {
-            for (Object o : paramsArray) {
-                if (StringUtils.isNotNull(o) && !isFilterObject(o)) {
-                    params += JSON.toJSONString(o);
+            for (Object obj : paramsArray) {
+                if (StringUtils.isNull(obj)) {
+                    continue;
                 }
+                if (obj instanceof String) {
+                    params += "," + obj;
+                    continue;
+                }
+                params += "," + JSON.toJSONString(obj);
+
             }
         }
-        return params.trim();
+        if (StringUtils.isEmpty(params)) {
+            return params;
+        }
+        return params.substring(1);
     }
 
-    public boolean isFilterObject(final Object o) {
-        Class<?> clazz = o.getClass();
-        if (clazz.isArray()) {
-            return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
-        } else if (Collection.class.isAssignableFrom(clazz)) {
-            Collection collection = (Collection) o;
-            for (Object value : collection) {
-                return value instanceof MultipartFile;
-            }
-        } else if (Map.class.isAssignableFrom(clazz)) {
-            Map map = (Map) o;
-            for (Object value : map.entrySet()) {
-                Map.Entry entry = (Map.Entry) value;
-                return entry.getValue() instanceof MultipartFile;
-            }
-        }
-        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse
-                || o instanceof BindingResult;
-    }
 
     @AfterReturning(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", returning = "returnValue")
     public void doAfterReturning(Object returnValue) {
@@ -124,7 +109,7 @@ public class LogAdvice {
         }
         sysLog.setOperTime(new Date());
         sysLog.setOperStatus(state);
-        sysLog.setRemark(remark.substring(0,2000));
-        remoteLogService.add(CredentialConstants.INNER, sysLog);
+        sysLog.setRemark(StringUtils.substring(remark, 0, 2000));
+        asyncSaveLog.saveLog(sysLog);
     }
 }
