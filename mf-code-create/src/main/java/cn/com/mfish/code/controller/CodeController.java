@@ -54,6 +54,7 @@ public class CodeController {
         }
     }
 
+    @Log(title = "代码生成并保存到本地", operateType = OperateType.QUERY)
     @ApiOperation("代码生成并保存到本地")
     @PostMapping
     @ApiImplicitParams({
