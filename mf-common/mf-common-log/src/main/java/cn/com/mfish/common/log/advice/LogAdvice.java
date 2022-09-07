@@ -5,10 +5,10 @@ import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.log.service.AsyncSaveLog;
 import cn.com.mfish.oauth.model.UserInfo;
 import cn.com.mfish.oauth.remote.RemoteUserService;
 import cn.com.mfish.sys.api.entity.SysLog;
-import cn.com.mfish.sys.api.remote.RemoteLogService;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import java.util.Date;
 public class LogAdvice {
     ThreadLocal<SysLog> ssoLogThreadLocal = new ThreadLocal<>();
     @Resource
-    RemoteLogService remoteLogService;
+    AsyncSaveLog asyncSaveLog;
     @Resource
     RemoteUserService remoteUserService;
 
@@ -77,7 +77,7 @@ public class LogAdvice {
                     continue;
                 }
                 if (obj instanceof String) {
-                    params += "," + obj.toString();
+                    params += "," + obj;
                     continue;
                 }
                 params += "," + JSON.toJSONString(obj);
@@ -109,7 +109,7 @@ public class LogAdvice {
         }
         sysLog.setOperTime(new Date());
         sysLog.setOperStatus(state);
-        sysLog.setRemark(remark.substring(0, 2000));
-        remoteLogService.add(CredentialConstants.INNER, sysLog);
+        sysLog.setRemark(StringUtils.substring(remark, 0, 2000));
+        asyncSaveLog.saveLog(sysLog);
     }
 }
