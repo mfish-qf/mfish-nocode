@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author ：qiufeng
@@ -18,7 +17,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Slf4j
 @MapperScan({"cn.com.mfish.code.mapper"})
 @AutoFeignClients
-@EnableAsync
 public class MfCodeApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfCodeApplication.class, args);
