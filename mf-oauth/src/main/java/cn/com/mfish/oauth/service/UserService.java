@@ -13,4 +13,5 @@ public interface UserService {
     CheckWithResult<SSOUser> update(SSOUser user);
     SSOUser getUserByAccount(String account);
     SSOUser getUserById(String userId);
+    Integer getUserClientExist(String account, String clientId);
 }

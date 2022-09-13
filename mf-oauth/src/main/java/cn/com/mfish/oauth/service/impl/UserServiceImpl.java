@@ -99,6 +99,17 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 获取用户客户端是否存在
+     * @param account
+     * @param clientId
+     * @return
+     */
+    @Override
+    public Integer getUserClientExist(String account, String clientId) {
+        return ssoUserMapper.getUserClientExist(account, clientId);
+    }
+
+    /**
      * 密码校验 密码长度必须8~16位
      * 密码必须由数字、字母、特殊字符组合
      *
