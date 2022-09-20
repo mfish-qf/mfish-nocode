@@ -2,13 +2,13 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.common.RedisPrefix;
-import cn.com.mfish.oauth.model.AuthorizationCode;
-import cn.com.mfish.oauth.model.RedisAccessToken;
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.AuthorizationCode;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.TokenService;
 import cn.com.mfish.oauth.service.UserService;
-import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.entity.UserInfo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;

@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -11,10 +11,12 @@ import org.apache.ibatis.annotations.Select;
 public interface SSOUserMapper {
     /**
      * 插入用户信息
+     *
      * @param userInfo
      * @return
      */
     int insert(SSOUser userInfo);
+
     /**
      * 更新用户信息
      *
@@ -42,9 +44,20 @@ public interface SSOUserMapper {
 
     /**
      * 根据微信openId获取用户id
+     *
      * @param openid
      * @return
      */
     @Select("select id from sso_user where openid=#{openId}")
     String getUserIdByOpenId(String openid);
+
+    /**
+     * 判断帐号是否存在该客户端权限
+     *
+     * @param userId
+     * @param clientId
+     * @return
+     */
+    @Select("select count(0) from sso_client_user where client_id=#{clientId} and user_id=#{userId}")
+    Integer getUserClientExist(@Param("userId") String userId, @Param("clientId") String clientId);
 }

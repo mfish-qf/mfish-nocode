@@ -43,18 +43,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-swagger</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-ds</artifactId>
-        </dependency>
         <!-- Mysql Connector -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-web</artifactId>
         </dependency>
     </dependencies>
 </project>

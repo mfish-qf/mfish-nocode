@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.model.SSOLog;
+import cn.com.mfish.oauth.entity.SSOLog;
 
 /**
  * @author qiufeng

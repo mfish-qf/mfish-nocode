@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.fallback;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.entity.UserInfo;
 import cn.com.mfish.oauth.remote.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;

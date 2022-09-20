@@ -8,7 +8,7 @@ import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.oauth.annotation.InnerUser;
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.oauth.model.RedisAccessToken;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

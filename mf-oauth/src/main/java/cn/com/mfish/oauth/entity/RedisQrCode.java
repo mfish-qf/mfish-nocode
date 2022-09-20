@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.model;
+package cn.com.mfish.oauth.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

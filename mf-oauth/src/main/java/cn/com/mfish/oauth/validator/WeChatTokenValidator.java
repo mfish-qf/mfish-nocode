@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.common.core.utils.AuthUtils;
-import cn.com.mfish.oauth.model.WeChatToken;
+import cn.com.mfish.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.WeChatService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SSOUserMapper">
-    <insert id="insert" parameterType="cn.com.mfish.oauth.model.SSOUser">
+    <insert id="insert" parameterType="cn.com.mfish.oauth.entity.SSOUser">
         insert into sso_user(id,account,phone,email,password,old_password,nickname,head_img_url
             ,telephone,birthday,sex,status,salt,openid,create_time)
         values(#{id},#{account},#{phone},#{email},#{password},#{old_password},#{nickname},#{headImgUrl},#{telephone}
@@ -54,7 +54,7 @@
         </set>
         where t.id = #{id}
     </update>
-    <select id="getUserByAccount" resultType="cn.com.mfish.oauth.model.SSOUser">
+    <select id="getUserByAccount" resultType="cn.com.mfish.oauth.entity.SSOUser">
         select * from sso_user
         <where>
             1!=1

@@ -1,16 +1,17 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.oauth.model.AccessToken;
-import cn.com.mfish.oauth.model.AuthorizationCode;
-import cn.com.mfish.oauth.model.OAuthClient;
-import cn.com.mfish.oauth.model.RedisAccessToken;
+import cn.com.mfish.oauth.entity.AccessToken;
+import cn.com.mfish.oauth.entity.AuthorizationCode;
+import cn.com.mfish.oauth.entity.OAuthClient;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
+import cn.com.mfish.oauth.service.UserService;
 import cn.com.mfish.oauth.validator.Code2TokenValidator;
 import cn.com.mfish.oauth.validator.Refresh2TokenValidator;
 import io.swagger.annotations.Api;
@@ -49,6 +50,8 @@ public class AccessTokenController {
     LoginService loginService;
     @Resource
     UserTokenCache userTokenCache;
+    @Resource
+    UserService userService;
 
     @ApiOperation("token获取")
     @PostMapping(value = "/accessToken")
@@ -85,6 +88,9 @@ public class AccessTokenController {
                 break;
             default:
                 throw new OAuthValidateException(result.getMsg());
+        }
+        if (userService.getUserClientExist(token.getUserId(), token.getClientId()) <= 0) {
+            throw new OAuthValidateException("错误:该用户无此客户端权限!");
         }
         //增加用户登录互斥缓存
         userTokenCache.addUserTokenCache(SerConstant.DeviceType.Web
@@ -143,4 +149,5 @@ public class AccessTokenController {
         }
         return oAuth2Service.buildToken(tokenRequest);
     }
+
 }

@@ -4,7 +4,7 @@ import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.mapper.SSOUserMapper;
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +96,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public SSOUser getUserById(String userId) {
         return userTempCache.getCacheInfo(userId);
+    }
+
+    /**
+     * 获取用户客户端是否存在
+     * @param account
+     * @param clientId
+     * @return
+     */
+    @Override
+    public Integer getUserClientExist(String account, String clientId) {
+        return ssoUserMapper.getUserClientExist(account, clientId);
     }
 
     /**

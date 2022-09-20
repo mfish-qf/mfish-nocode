@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.common;
 
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**

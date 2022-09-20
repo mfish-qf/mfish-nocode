@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.fallback.RemoteUserFallback;
-import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.entity.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

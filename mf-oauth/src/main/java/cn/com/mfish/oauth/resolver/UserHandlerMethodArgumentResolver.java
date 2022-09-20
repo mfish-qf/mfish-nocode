@@ -5,7 +5,7 @@ import cn.com.mfish.oauth.advice.CurUserId;
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.exception.UserValidateException;
-import cn.com.mfish.oauth.model.RedisAccessToken;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;

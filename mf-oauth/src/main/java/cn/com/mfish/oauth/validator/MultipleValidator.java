@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.oauth.common.ApplicationContextProvider;
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.model.OAuthClient;
+import cn.com.mfish.oauth.entity.OAuthClient;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 

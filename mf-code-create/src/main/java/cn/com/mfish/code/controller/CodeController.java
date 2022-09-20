@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ import java.util.List;
 @Api(tags = "代码生成")
 @RestController
 @RequestMapping("/code")
+@Slf4j
 public class CodeController {
     @Resource
     FreemarkerUtils freemarkerUtils;
@@ -50,6 +52,7 @@ public class CodeController {
             }
             return Result.ok(list, "生成代码成功");
         } catch (Exception ex) {
+            log.error("错误:生成代码失败", ex);
             return Result.fail("错误:生成代码失败");
         }
     }
@@ -70,6 +73,7 @@ public class CodeController {
             }
             return Result.fail("保存失败");
         } catch (Exception ex) {
+            log.error("错误:生成代码失败", ex);
             return Result.fail("错误:生成代码失败");
         }
     }

@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.oauth.model.AuthorizationCode;
-import cn.com.mfish.oauth.model.RedisAccessToken;
-import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.entity.AuthorizationCode;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.entity.UserInfo;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;

@@ -6,7 +6,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.AsyncSaveLog;
-import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.entity.UserInfo;
 import cn.com.mfish.oauth.remote.RemoteUserService;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.alibaba.fastjson.JSON;

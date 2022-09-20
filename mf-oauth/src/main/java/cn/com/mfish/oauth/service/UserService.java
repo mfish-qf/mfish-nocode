@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 
 /**
  * @author qiufeng
@@ -13,4 +13,5 @@ public interface UserService {
     CheckWithResult<SSOUser> update(SSOUser user);
     SSOUser getUserByAccount(String account);
     SSOUser getUserById(String userId);
+    Integer getUserClientExist(String account, String clientId);
 }
