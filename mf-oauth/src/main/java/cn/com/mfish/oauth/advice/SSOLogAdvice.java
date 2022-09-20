@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.oauth.mapper.SSOLogMapper;
-import cn.com.mfish.oauth.model.SSOLog;
+import cn.com.mfish.oauth.entity.SSOLog;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.oltu.oauth2.common.OAuth;

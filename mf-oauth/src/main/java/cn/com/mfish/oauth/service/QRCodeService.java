@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.oauth.model.RedisQrCode;
+import cn.com.mfish.oauth.entity.RedisQrCode;
 
 /**
  * @author qiufeng

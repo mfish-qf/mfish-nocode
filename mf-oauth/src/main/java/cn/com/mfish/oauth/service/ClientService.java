@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.oauth.model.OAuthClient;
+import cn.com.mfish.oauth.entity.OAuthClient;
 
 /**
  * @author qiufeng

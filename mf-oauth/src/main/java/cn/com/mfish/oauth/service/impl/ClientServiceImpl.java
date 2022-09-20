@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.oauth.cache.temp.ClientTempCache;
-import cn.com.mfish.oauth.model.OAuthClient;
+import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.service.ClientService;
 import org.springframework.stereotype.Service;
 

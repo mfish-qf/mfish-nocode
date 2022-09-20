@@ -4,7 +4,7 @@ import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.UserService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;

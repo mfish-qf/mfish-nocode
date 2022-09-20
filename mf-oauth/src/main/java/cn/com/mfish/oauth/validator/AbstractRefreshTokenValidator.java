@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.model.RedisAccessToken;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.OAuth;
 

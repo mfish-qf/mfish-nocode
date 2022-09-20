@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 
 /**
  * @author qiufeng

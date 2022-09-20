@@ -7,7 +7,7 @@ import cn.com.mfish.common.core.enums.ReqSource;
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.model.UserInfo;
+import cn.com.mfish.oauth.entity.UserInfo;
 import cn.com.mfish.oauth.remote.RemoteUserService;
 import cn.com.mfish.test.entity.TestParam;
 import io.swagger.annotations.Api;

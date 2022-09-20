@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.oauth.common.RedisPrefix;
-import cn.com.mfish.oauth.model.RedisQrCode;
+import cn.com.mfish.oauth.entity.RedisQrCode;
 import cn.com.mfish.oauth.service.QRCodeService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

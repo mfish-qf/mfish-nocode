@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.cache.redis;
 import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.model.RedisAccessToken;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;

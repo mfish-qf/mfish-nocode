@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.realm;
 
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.model.SSOUser;
+import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.*;

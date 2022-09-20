@@ -6,7 +6,7 @@ import cn.com.mfish.common.core.constants.HttpStatus;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
-import cn.com.mfish.oauth.model.RedisAccessToken;
+import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

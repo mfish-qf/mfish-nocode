@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.oauth.model.AccessToken;
-import cn.com.mfish.oauth.model.WeChatToken;
+import cn.com.mfish.oauth.entity.AccessToken;
+import cn.com.mfish.oauth.entity.WeChatToken;
 
 /**
  * @author ：qiufeng

@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.model.OAuthClient;
+import cn.com.mfish.oauth.entity.OAuthClient;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
