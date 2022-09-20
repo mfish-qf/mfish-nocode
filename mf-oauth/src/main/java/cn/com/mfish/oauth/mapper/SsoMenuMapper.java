@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.entity.SysMenu;
+import cn.com.mfish.oauth.entity.SsoMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,6 +9,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Date: 2022-09-20
  * @Version: V1.0
  */
-public interface SysMenuMapper extends BaseMapper<SysMenu> {
+public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
 
 }

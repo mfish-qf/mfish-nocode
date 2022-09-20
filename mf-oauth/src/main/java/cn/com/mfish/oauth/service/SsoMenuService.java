@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.oauth.entity.SysMenu;
+import cn.com.mfish.oauth.entity.SsoMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,6 +9,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Date: 2022-09-20
  * @Version: V1.0
  */
-public interface SysMenuService extends IService<SysMenu> {
+public interface SsoMenuService extends IService<SsoMenu> {
 
 }

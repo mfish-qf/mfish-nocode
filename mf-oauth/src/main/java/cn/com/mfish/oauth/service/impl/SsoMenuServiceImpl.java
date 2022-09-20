@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.service.impl;
 
-import cn.com.mfish.oauth.entity.SysMenu;
-import cn.com.mfish.oauth.mapper.SysMenuMapper;
-import cn.com.mfish.oauth.service.SysMenuService;
+import cn.com.mfish.oauth.entity.SsoMenu;
+import cn.com.mfish.oauth.mapper.SsoMenuMapper;
+import cn.com.mfish.oauth.service.SsoMenuService;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,6 +14,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * @Version: V1.0
  */
 @Service
-public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
+public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> implements SsoMenuService {
 
 }

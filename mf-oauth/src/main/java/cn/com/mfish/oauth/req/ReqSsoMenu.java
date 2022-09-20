@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ApiModel("菜单权限表请求参数")
-public class ReqSysMenu {
+public class ReqSsoMenu {
     
 
 }

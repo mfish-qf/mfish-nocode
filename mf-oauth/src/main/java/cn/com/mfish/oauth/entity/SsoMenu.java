@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.entity;
 
-import cn.com.mfish.oauth.req.ReqSysMenu;
+import cn.com.mfish.oauth.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -20,11 +20,11 @@ import java.util.Date;
  * @Version: V1.0
  */
 @Data
-@TableName("sys_menu")
+@TableName("sso_menu")
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@ApiModel(value = "sys_menu对象", description = "菜单权限表")
-public class SysMenu extends ReqSysMenu {
+@ApiModel(value = "sso_menu对象", description = "菜单权限表")
+public class SsoMenu extends ReqSsoMenu {
 
     @TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "菜单ID")
