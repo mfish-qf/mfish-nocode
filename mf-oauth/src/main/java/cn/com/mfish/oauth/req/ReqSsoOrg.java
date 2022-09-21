@@ -14,6 +14,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("组织结构表请求参数")
 public class ReqSsoOrg {
-    
+
 
 }

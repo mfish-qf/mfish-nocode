@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SsoRoleMapper">
-
+    <insert id="insertRoleMenus">
+        insert into sso_role_menu(role_id, menu_id) values
+        <foreach collection="menuList" item="menu" separator=",">
+            (#{roleId},#{menu})
+        </foreach>
+    </insert>
+    <select id="roleCodeExist" resultType="int">
+        select count(0) from sso_role
+        <where>
+            client_id = #{clientId} and role_code = #{roleCode}
+            <if test="roleId!=null and roleId!=''">
+                and id != #{roleId}
+            </if>
+        </where>
+    </select>
 </mapper>

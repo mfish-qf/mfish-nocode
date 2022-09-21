@@ -10,5 +10,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Version: V1.0
  */
 public interface SsoRoleService extends IService<SsoRole> {
+    boolean insertRole(SsoRole ssoRole);
 
+    boolean updateRole(SsoRole ssoRole);
+
+    boolean deleteRole(String id);
+
+    boolean roleCodeExist(String clientId,String roleId, String roleCode);
 }

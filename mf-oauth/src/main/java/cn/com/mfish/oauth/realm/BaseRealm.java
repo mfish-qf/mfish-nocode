@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.realm;
 
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SSOUser;
@@ -28,13 +29,14 @@ public abstract class BaseRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        //        String account = (String) principalCollection.getPrimaryPrincipal();
-        //        if(user == null) {
-        //            throw new UnknownAccountException();//没找到帐号
-        //        }
-        //        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        //暂时不加权限
-        return new SimpleAuthorizationInfo();
+        String account = (String) principalCollection.getPrimaryPrincipal();
+        if (StringUtils.isEmpty(account)) {
+            throw new UnknownAccountException();//没找到帐号
+        }
+        SSOUser user = userService.getUserByAccount(account);
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+
+        return authorizationInfo;
     }
 
     @Override
