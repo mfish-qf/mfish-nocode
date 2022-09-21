@@ -14,7 +14,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("${tableInfo.tableComment}请求参数")
 public class Req${entityName} {
-    @ApiModelProperty(value="非数据表自定义参数，如果没有前台不需要传")
-    @TableField(exist = false)
-    private P params;
+
 }
