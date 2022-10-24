@@ -47,7 +47,7 @@
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <oauth2.version>1.0.2</oauth2.version>
-        <shiro.version>1.9.1</shiro.version>
+        <shiro.version>1.10.0</shiro.version>
         <wechat.version>4.3.7.B</wechat.version>
     </properties>
     <dependencies>
