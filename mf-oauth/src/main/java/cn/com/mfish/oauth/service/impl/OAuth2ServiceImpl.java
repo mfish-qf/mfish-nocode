@@ -9,7 +9,6 @@ import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.TokenService;
 import cn.com.mfish.oauth.service.UserService;
 import cn.com.mfish.oauth.entity.UserInfo;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -20,6 +19,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -112,7 +112,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     @Override
     public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException, InvocationTargetException, IllegalAccessException {
         RedisAccessToken accessToken = new RedisAccessToken();
-        BeanUtils.copyProperties(accessToken, code);
+        BeanUtils.copyProperties(code, accessToken);
         OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         accessToken.setAccessToken(oauthIssuerImpl.accessToken());
         accessToken.setRefreshToken(oauthIssuerImpl.refreshToken());
@@ -143,7 +143,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
             throw new OAuthValidateException("错误:未获取到用户信息！");
         }
         UserInfo userInfo = new UserInfo();
-        BeanUtils.copyProperties(userInfo, user);
+        BeanUtils.copyProperties(user, userInfo);
         return userInfo;
     }
 }
