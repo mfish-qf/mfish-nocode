@@ -6,6 +6,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.SsoMenuService;
+import cn.com.mfish.oauth.vo.MenuTree;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,10 +14,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: 菜单权限表
@@ -45,14 +49,60 @@ public class SsoMenuController {
     public Result<IPage<SsoMenu>> queryPageList(ReqSsoMenu reqSsoMenu,
                                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        IPage<SsoMenu> pageList = ssoMenuService.page(new Page<>(pageNo, pageSize),
-                new LambdaQueryWrapper<SsoMenu>()
-                        .eq(reqSsoMenu.getClientId() != null, SsoMenu::getClientId, reqSsoMenu.getClientId())
-                        .like(reqSsoMenu.getMenuName() != null, SsoMenu::getMenuName, reqSsoMenu.getMenuName())
-                        .eq(reqSsoMenu.getMenuType() != null, SsoMenu::getMenuType, reqSsoMenu.getMenuType())
-                        .eq(reqSsoMenu.getIsVisible() != null, SsoMenu::getIsVisible, reqSsoMenu.getIsVisible())
-                        .like(reqSsoMenu.getPermissions() != null, SsoMenu::getPermissions, reqSsoMenu.getPermissions()));
+        IPage<SsoMenu> pageList = ssoMenuService.page(new Page<>(pageNo, pageSize), buildQueryCondition(reqSsoMenu));
         return Result.ok(pageList, "查询成功!");
+    }
+
+    @ApiOperation(value = "获取菜单树")
+    @GetMapping("/tree")
+    public Result<List<MenuTree>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
+        List<SsoMenu> list = ssoMenuService.list(buildQueryCondition(reqSsoMenu));
+        List<MenuTree> menuTrees = new ArrayList<>();
+        buildMenuTree("", list, menuTrees);
+        return Result.ok(menuTrees, "查询成功!");
+    }
+
+    /**
+     * 构建菜单树
+     *
+     * @param pId
+     * @param menus
+     * @param menuTrees
+     */
+    private void buildMenuTree(String pId, List<SsoMenu> menus, List<MenuTree> menuTrees) {
+        if (menus == null || menus.size() == 0) {
+            return;
+        }
+        for (int i = 0; i < menus.size(); i++) {
+            SsoMenu menu = menus.get(i);
+            if (!menu.getParentId().equals(pId)) {
+                continue;
+            }
+            menus.remove(i--);
+            MenuTree parent = new MenuTree();
+            BeanUtils.copyProperties(menu, parent);
+            menuTrees.add(parent);
+            List<MenuTree> child = new ArrayList<>();
+            parent.setChildren(child);
+            if (menus.stream().anyMatch(p -> p.getParentId().equals(menu.getId()))) {
+                buildMenuTree(menu.getId(), menus, child);
+            }
+        }
+    }
+
+    /**
+     * 构建菜单查询条件
+     *
+     * @param reqSsoMenu
+     * @return
+     */
+    private LambdaQueryWrapper<SsoMenu> buildQueryCondition(ReqSsoMenu reqSsoMenu) {
+        return new LambdaQueryWrapper<SsoMenu>()
+                .eq(reqSsoMenu.getClientId() != null, SsoMenu::getClientId, reqSsoMenu.getClientId())
+                .like(reqSsoMenu.getMenuName() != null, SsoMenu::getMenuName, reqSsoMenu.getMenuName())
+                .eq(reqSsoMenu.getMenuType() != null, SsoMenu::getMenuType, reqSsoMenu.getMenuType())
+                .eq(reqSsoMenu.getIsVisible() != null, SsoMenu::getIsVisible, reqSsoMenu.getIsVisible())
+                .like(reqSsoMenu.getPermissions() != null, SsoMenu::getPermissions, reqSsoMenu.getPermissions());
     }
 
     /**

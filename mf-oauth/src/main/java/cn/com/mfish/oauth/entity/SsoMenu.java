@@ -38,6 +38,8 @@ public class SsoMenu extends ReqSsoMenu {
 	private String routePath;
     @ApiModelProperty(value = "组件路径")
 	private String component;
+    @ApiModelProperty(value = "是否缓存(1是 0否)")
+    private Integer isKeepalive;
     @ApiModelProperty(value = "是否为外部链接（1是 0否）")
 	private Integer isExternal;
     @ApiModelProperty(value = "描述")
