@@ -102,7 +102,8 @@ public class SsoMenuController {
                 .like(reqSsoMenu.getMenuName() != null, SsoMenu::getMenuName, reqSsoMenu.getMenuName())
                 .eq(reqSsoMenu.getMenuType() != null, SsoMenu::getMenuType, reqSsoMenu.getMenuType())
                 .eq(reqSsoMenu.getIsVisible() != null, SsoMenu::getIsVisible, reqSsoMenu.getIsVisible())
-                .like(reqSsoMenu.getPermissions() != null, SsoMenu::getPermissions, reqSsoMenu.getPermissions());
+                .like(reqSsoMenu.getPermissions() != null, SsoMenu::getPermissions, reqSsoMenu.getPermissions())
+                .orderBy(true, true, SsoMenu::getMenuSort);
     }
 
     /**
