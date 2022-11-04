@@ -282,12 +282,17 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-web</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
-                <artifactId>mf-common-web</artifactId>
+                <artifactId>mf-oauth-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
         </dependencies>

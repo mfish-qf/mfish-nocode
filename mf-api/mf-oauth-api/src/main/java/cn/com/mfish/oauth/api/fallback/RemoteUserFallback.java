@@ -1,8 +1,8 @@
-package cn.com.mfish.oauth.fallback;
+package cn.com.mfish.oauth.api.fallback;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.entity.UserInfo;
-import cn.com.mfish.oauth.remote.RemoteUserService;
+import cn.com.mfish.oauth.api.entity.UserInfo;
+import cn.com.mfish.oauth.api.remote.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
@@ -28,6 +28,7 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
             public Result<UserInfo> getUserInfo(String origin) {
                 return Result.fail("错误:获取当前用户失败" + cause.getMessage());
             }
+
         };
     }
 }

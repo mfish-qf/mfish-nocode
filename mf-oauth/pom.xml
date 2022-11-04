@@ -91,6 +91,10 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-oauth-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

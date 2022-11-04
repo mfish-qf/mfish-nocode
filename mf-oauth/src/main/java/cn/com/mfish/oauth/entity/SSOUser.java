@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.entity;
 
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
