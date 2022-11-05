@@ -44,7 +44,7 @@ public class ${entityName}Controller {
                                                            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(new Page<>(pageNo, pageSize));
-		return Result.ok(pageList, "查询成功!");
+		return Result.ok(pageList, "${tableInfo.tableComment}-查询成功!");
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class ${entityName}Controller {
 	@PostMapping
 	public Result<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})){
-			return Result.ok(${entityName?uncap_first}, "添加成功!");
+			return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-添加成功!");
 		}
         return Result.fail("错误:添加失败!");
 	}
@@ -72,9 +72,9 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-编辑", operateType = OperateType.UPDATE)
 	@ApiOperation(value = "${tableInfo.tableComment}-编辑", notes = "${tableInfo.tableComment}-编辑")
 	@PutMapping
-	public Result<?> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
+	public Result<${entityName}> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})){
-		    return Result.ok("编辑成功!");
+		    return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-编辑成功!");
 		}
 		return Result.fail("错误:编辑失败!");
 	}
@@ -90,7 +90,7 @@ public class ${entityName}Controller {
 	@DeleteMapping("/{id}")
 	public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		if (${entityName?uncap_first}Service.removeById(id)){
-			return Result.ok("删除成功!");
+			return Result.ok("${tableInfo.tableComment}-删除成功!");
 		}
 		return Result.fail("错误:删除失败!");
 	}
@@ -106,7 +106,7 @@ public class ${entityName}Controller {
 	@DeleteMapping("/batch")
 	public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))){
-		    return Result.ok("批量删除成功!");
+		    return Result.ok("${tableInfo.tableComment}-批量删除成功!");
 		}
 		return Result.fail("错误:批量删除失败!");
 	}
@@ -121,6 +121,6 @@ public class ${entityName}Controller {
 	@GetMapping("/{id}")
 	public Result<${entityName}> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
-		return Result.ok(${entityName?uncap_first}, "查询成功!");
+		return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-查询成功!");
 	}
 }

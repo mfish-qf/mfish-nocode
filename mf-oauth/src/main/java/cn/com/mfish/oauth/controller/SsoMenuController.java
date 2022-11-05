@@ -59,7 +59,7 @@ public class SsoMenuController {
         List<SsoMenu> list = ssoMenuService.list(buildQueryCondition(reqSsoMenu));
         List<MenuTree> menuTrees = new ArrayList<>();
         buildMenuTree("", list, menuTrees);
-        return Result.ok(menuTrees, "查询成功!");
+        return Result.ok(menuTrees, "菜单权限表-查询成功!");
     }
 
     /**
@@ -117,7 +117,7 @@ public class SsoMenuController {
     @PostMapping
     public Result<SsoMenu> add(@RequestBody SsoMenu ssoMenu) {
         if (ssoMenuService.save(ssoMenu)) {
-            return Result.ok(ssoMenu, "添加成功!");
+            return Result.ok(ssoMenu, "菜单权限表-添加成功!");
         }
         return Result.fail("错误:添加失败!");
     }
@@ -131,9 +131,9 @@ public class SsoMenuController {
     @Log(title = "菜单权限表-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "菜单权限表-编辑", notes = "菜单权限表-编辑")
     @PutMapping
-    public Result<?> edit(@RequestBody SsoMenu ssoMenu) {
+    public Result<SsoMenu> edit(@RequestBody SsoMenu ssoMenu) {
         if (ssoMenuService.updateById(ssoMenu)) {
-            return Result.ok("编辑成功!");
+            return Result.ok(ssoMenu, "菜单权限表-编辑成功!");
         }
         return Result.fail("错误:编辑失败!");
     }
@@ -149,7 +149,7 @@ public class SsoMenuController {
     @DeleteMapping("/{id}")
     public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (ssoMenuService.removeById(id)) {
-            return Result.ok("删除成功!");
+            return Result.ok("菜单权限表-删除成功!");
         }
         return Result.fail("错误:删除失败!");
     }
@@ -165,7 +165,7 @@ public class SsoMenuController {
     @DeleteMapping("/batch")
     public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.ssoMenuService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok("批量删除成功!");
+            return Result.ok("菜单权限表-批量删除成功!");
         }
         return Result.fail("错误:批量删除失败!");
     }

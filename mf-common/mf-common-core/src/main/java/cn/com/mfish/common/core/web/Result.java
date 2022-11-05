@@ -45,6 +45,10 @@ public class Result<T> implements Serializable {
         return restResult(null, SUCCESS, null);
     }
 
+    public static <T> Result<T> ok(String msg) {
+        return restResult(null, SUCCESS, msg);
+    }
+
     public static <T> Result<T> ok(T data) {
         return restResult(data, SUCCESS, null);
     }
