@@ -73,12 +73,10 @@ public class SsoMenuController {
         if (menus == null || menus.size() == 0) {
             return;
         }
-        for (int i = 0; i < menus.size(); i++) {
-            SsoMenu menu = menus.get(i);
+        for (SsoMenu menu : menus) {
             if (!menu.getParentId().equals(pId)) {
                 continue;
             }
-            menus.remove(i--);
             MenuTree parent = new MenuTree();
             BeanUtils.copyProperties(menu, parent);
             menuTrees.add(parent);
@@ -86,6 +84,10 @@ public class SsoMenuController {
             parent.setChildren(child);
             if (menus.stream().anyMatch(p -> p.getParentId().equals(menu.getId()))) {
                 buildMenuTree(menu.getId(), menus, child);
+            }
+            //没有child设置为空防止前端显示多一个折叠符号
+            if (child.size() == 0) {
+                parent.setChildren(null);
             }
         }
     }
