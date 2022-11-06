@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.common.CheckWithResult;
@@ -68,7 +69,7 @@ public class AccessTokenController {
             @ApiImplicitParam(name = OAuth.OAUTH_REFRESH_TOKEN, value = "密码 grant_type=refresh_token时必须", paramType = "query")
     })
     @SSOLogAnnotation("getToken")
-    public AccessToken token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
+    public Result<AccessToken> token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
         OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
         CheckWithResult<OAuthClient> result = code2TokenValidator.validateClient(request, null);
         if (!result.isSuccess()) {
@@ -96,7 +97,7 @@ public class AccessTokenController {
         userTokenCache.addUserTokenCache(SerConstant.DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()
                 , token.getUserId(), token.getAccessToken());
-        return new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken());
+        return Result.ok(new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken()));
     }
 
     /**

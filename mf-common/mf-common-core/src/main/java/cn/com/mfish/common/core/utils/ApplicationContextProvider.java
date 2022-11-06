@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.common;
+package cn.com.mfish.common.core.utils;
 
 import lombok.Data;
 import org.springframework.context.ApplicationContext;

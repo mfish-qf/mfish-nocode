@@ -43,7 +43,6 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
-            <version>${shiro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -91,6 +90,10 @@
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-oauth-api</artifactId>
         </dependency>
     </dependencies>
     <build>

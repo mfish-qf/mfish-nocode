@@ -16,7 +16,7 @@ import java.util.Date;
 /**
  * @Description: 菜单权限表
  * @Author: mfish
- * @Date: 2022-09-20
+ * @Date: 2022-09-21
  * @Version: V1.0
  */
 @Data
@@ -25,34 +25,25 @@ import java.util.Date;
 @Accessors(chain = true)
 @ApiModel(value = "sso_menu对象", description = "菜单权限表")
 public class SsoMenu extends ReqSsoMenu {
-
     @TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "菜单ID")
 	private String id;
     @ApiModelProperty(value = "父菜单ID")
 	private String parentId;
-    @ApiModelProperty(value = "客户端ID")
-	private String clientId;
-    @ApiModelProperty(value = "菜单名称")
-	private String menuName;
+    @ApiModelProperty(value = "菜单图标")
+	private String menuIcon;
     @ApiModelProperty(value = "菜单顺序")
 	private Integer menuSort;
-    @ApiModelProperty(value = "菜单类型（0目录 1菜单 2按钮）")
-	private Integer menuType;
     @ApiModelProperty(value = "路由地址")
 	private String routePath;
     @ApiModelProperty(value = "组件路径")
 	private String component;
-    @ApiModelProperty(value = "权限标识")
-	private String perms;
+    @ApiModelProperty(value = "是否缓存(1是 0否)")
+    private Integer isKeepalive;
     @ApiModelProperty(value = "是否为外部链接（1是 0否）")
 	private Integer isExternal;
-    @ApiModelProperty(value = "菜单状态（1显示 0隐藏）")
-	private Integer isVisible;
     @ApiModelProperty(value = "描述")
 	private String remark;
-    @ApiModelProperty(value = "菜单图标")
-	private String icon;
     @ApiModelProperty(value = "创建者")
 	private String createBy;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

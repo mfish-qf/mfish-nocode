@@ -22,15 +22,11 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-oauth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-sys-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-oauth-api</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -14,6 +14,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("${tableInfo.tableComment}请求参数")
 public class Req${entityName} {
-    
 
 }

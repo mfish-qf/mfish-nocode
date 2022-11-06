@@ -25,21 +25,21 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <spring-boot.version>2.7.3</spring-boot.version>
-        <spring-cloud.version>2021.0.3</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>
+        <spring-cloud.version>2021.0.4</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
         <alibaba.nacos.version>2.0.4</alibaba.nacos.version>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>
         <tobato.version>1.27.2</tobato.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <pagehelper.boot.version>1.4.3</pagehelper.boot.version>
-        <druid.version>1.2.9</druid.version>
-        <dynamic-ds.version>3.5.1</dynamic-ds.version>
+        <pagehelper.boot.version>1.4.5</pagehelper.boot.version>
+        <druid.version>1.2.12</druid.version>
+        <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <fastjson.version>2.0.11</fastjson.version>
+        <fastjson.version>2.0.15</fastjson.version>
         <minio.version>8.2.2</minio.version>
         <poi.version>4.1.2</poi.version>
         <jwt.version>0.9.1</jwt.version>
@@ -47,7 +47,7 @@
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <oauth2.version>1.0.2</oauth2.version>
-        <shiro.version>1.9.1</shiro.version>
+        <shiro.version>1.10.0</shiro.version>
         <wechat.version>4.3.7.B</wechat.version>
     </properties>
     <dependencies>
@@ -103,6 +103,11 @@
                         <artifactId>log4j-to-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
             <!-- FastDFS 分布式文件系统 -->
             <dependency>
@@ -241,6 +246,11 @@
                 <version>${shiro.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-core</artifactId>
                 <version>${mfish.version}</version>
@@ -272,12 +282,17 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-web</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
-                <artifactId>mf-common-web</artifactId>
+                <artifactId>mf-oauth-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
         </dependencies>

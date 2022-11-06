@@ -1,11 +1,11 @@
 package cn.com.mfish.oauth.resolver;
 
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
-import cn.com.mfish.oauth.advice.CurUserId;
-import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.oauth.exception.UserValidateException;
+import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.oauth.advice.CurUserId;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.exception.UserValidateException;
+import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -31,7 +31,7 @@ public class UserHandlerMethodArgumentResolver implements HandlerMethodArgumentR
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String token = AuthUtils.getAccessToken(webRequest);
         if (StringUtils.isEmpty(token)) {
             throw new UserValidateException("token不允许为空");

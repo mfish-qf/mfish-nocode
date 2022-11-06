@@ -64,5 +64,9 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-oauth</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -1,11 +1,11 @@
-package cn.com.mfish.oauth.remote;
+package cn.com.mfish.oauth.api.remote;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.fallback.RemoteUserFallback;
-import cn.com.mfish.oauth.entity.UserInfo;
+import cn.com.mfish.oauth.api.entity.UserInfo;
+import cn.com.mfish.oauth.api.fallback.RemoteUserFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -35,4 +35,5 @@ public interface RemoteUserService {
      */
     @GetMapping("/user/current")
     Result<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.REQ_ORIGIN) String origin);
+
 }

@@ -7,7 +7,7 @@
 * 当前版本完成oauth2统一认证接入
 * 只需要认证代码可以查看mfish_oauth2_1.0.0分支
   * *[认证----gitee地址](https://gitee.com/qiufeng9862/mfish-cloud/tree/mfish_oauth2_1.0.0/)*
-  * *[认证----github地址](https://github.com/qiufeng9862/mfish-cloud/tree/mfish_oauth2_1.0.0)*
+  * *[认证----github地址](https://github.com/mfish-qf/mfish-cloud/tree/mfish_oauth2_1.0.0)*
 * 持续进行功能完善
 
 ### 一期目标:

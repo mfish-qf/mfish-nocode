@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>mf-sys-api</module>
+        <module>mf-oauth-api</module>
     </modules>
 
     <properties>
