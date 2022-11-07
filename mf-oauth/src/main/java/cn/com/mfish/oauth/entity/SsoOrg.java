@@ -33,6 +33,8 @@ public class SsoOrg extends ReqSsoOrg {
 	private String parentId;
     @ApiModelProperty(value = "组织编码")
 	private String orgCode;
+    @ApiModelProperty(value = "组织级别")
+    private Integer orgLevel;
     @ApiModelProperty(value = "组织名称")
 	private String orgName;
     @ApiModelProperty(value = "排序")

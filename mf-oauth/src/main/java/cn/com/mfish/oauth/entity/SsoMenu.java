@@ -32,6 +32,10 @@ public class SsoMenu extends ReqSsoMenu {
 	private String parentId;
     @ApiModelProperty(value = "菜单图标")
 	private String menuIcon;
+    @ApiModelProperty(value = "菜单编码")
+    private String menuCode;
+    @ApiModelProperty(value = "菜单级别")
+    private Integer menuLevel;
     @ApiModelProperty(value = "菜单顺序")
 	private Integer menuSort;
     @ApiModelProperty(value = "路由地址")

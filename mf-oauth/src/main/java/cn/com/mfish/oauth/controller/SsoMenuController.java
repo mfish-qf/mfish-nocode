@@ -56,6 +56,7 @@ public class SsoMenuController {
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
     public Result<List<MenuTree>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
+        //TODO 过滤查询需要递归查询上级树节点，后期优化
         List<SsoMenu> list = ssoMenuService.list(buildQueryCondition(reqSsoMenu));
         List<MenuTree> menuTrees = new ArrayList<>();
         buildMenuTree("", list, menuTrees);
