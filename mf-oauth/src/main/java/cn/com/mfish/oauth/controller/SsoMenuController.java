@@ -120,7 +120,7 @@ public class SsoMenuController {
     @ApiOperation(value = "菜单权限表-添加", notes = "菜单权限表-添加")
     @PostMapping
     public Result<SsoMenu> add(@RequestBody SsoMenu ssoMenu) {
-        if (ssoMenuService.save(ssoMenu)) {
+        if (ssoMenuService.insertMenu(ssoMenu)) {
             return Result.ok(ssoMenu, "菜单权限表-添加成功!");
         }
         return Result.fail("错误:添加失败!");

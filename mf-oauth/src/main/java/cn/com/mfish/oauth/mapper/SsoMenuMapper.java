@@ -10,5 +10,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Version: V1.0
  */
 public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
-
+    int insertMenu(SsoMenu ssoMenu);
 }
