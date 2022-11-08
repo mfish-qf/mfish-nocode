@@ -21,7 +21,8 @@
         select
         <trim suffixOverrides=",">
             #{id}, #{parentId}, #{clientId},
-            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( menu_code ) FROM sso_menu WHERE parent_id = #{parentId} ), 0),(lvl-1)*5+1)+ 1, 5, 0 )),
+            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( menu_code ) FROM sso_menu WHERE parent_id = #{parentId} ),
+            0),(lvl-1)*5+1)+ 1, 5, 0 )),
             lvl,
             <if test="menuName != null">#{menuName},</if>
             <if test="menuIcon != null">#{menuIcon},</if>
@@ -39,4 +40,31 @@
         from (select IFNULL(menu_code,'') pcode,IFNULL(menu_level,0)+1 lvl from (SELECT '' FROM dual) d left join
         sso_menu on id = #{parentId}) t
     </insert>
+    <sql id="reqCondition">
+        <if test="reqSsoMenu.clientId!=null">and client_id = #{reqSsoMenu.clientId}</if>
+        <if test="reqSsoMenu.menuName != null">and menu_name like concat('%',#{reqSsoMenu.menuName},'%')</if>
+        <if test="reqSsoMenu.menuType!=null">and menu_type = #{reqSsoMenu.menuType}</if>
+        <if test="reqSsoMenu.isVisible!=null">and is_visible = #{reqSsoMenu.isVisible}</if>
+    </sql>
+    <select id="queryMaxLevel" resultType="java.lang.Integer">
+        select max(menu_level) from sso_menu
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+    </select>
+    <select id="queryMenu" resultType="cn.com.mfish.oauth.entity.SsoMenu">
+        SELECT * FROM sso_menu
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+        <foreach collection="levels" item="value">
+            UNION ALL SELECT * FROM sso_menu WHERE menu_code IN (SELECT DISTINCT SUBSTR(menu_code, 1,(menu_level-#{value})*5) FROM
+            sso_menu
+            <where>
+                <include refid="reqCondition"/>
+            </where>
+            )
+        </foreach>
+        order by menu_type, menu_sort
+    </select>
 </mapper>

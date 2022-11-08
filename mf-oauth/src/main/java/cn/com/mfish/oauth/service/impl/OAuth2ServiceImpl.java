@@ -140,7 +140,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     public UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException {
         SSOUser user = userService.getUserById(userId);
         if (user == null) {
-            throw new OAuthValidateException("错误:未获取到用户信息！");
+            throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);
         }
         UserInfo userInfo = new UserInfo();
         BeanUtils.copyProperties(user, userInfo);

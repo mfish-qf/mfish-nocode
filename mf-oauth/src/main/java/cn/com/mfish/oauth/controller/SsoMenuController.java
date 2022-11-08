@@ -57,7 +57,7 @@ public class SsoMenuController {
     @GetMapping("/tree")
     public Result<List<MenuTree>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
         //TODO 过滤查询需要递归查询上级树节点，后期优化
-        List<SsoMenu> list = ssoMenuService.list(buildQueryCondition(reqSsoMenu));
+        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu);
         List<MenuTree> menuTrees = new ArrayList<>();
         buildMenuTree("", list, menuTrees);
         return Result.ok(menuTrees, "菜单权限表-查询成功!");
