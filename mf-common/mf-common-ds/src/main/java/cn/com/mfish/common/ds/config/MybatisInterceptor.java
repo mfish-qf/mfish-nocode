@@ -9,6 +9,7 @@ import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.remote.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -38,9 +39,7 @@ public class MybatisInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-        SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
-        Object parameter = invocation.getArgs()[1];
+        Object parameter = getParameter(invocation);
         if (parameter == null) {
             return invocation.proceed();
         }
@@ -50,6 +49,8 @@ public class MybatisInterceptor implements Interceptor {
             log.warn("保存信息时未取到用户信息!" + result.getMsg());
             return invocation.proceed();
         }
+        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+        SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
         switch (sqlCommandType) {
             case INSERT:
                 for (Field field : list) {
@@ -72,6 +73,25 @@ public class MybatisInterceptor implements Interceptor {
                 }
         }
         return invocation.proceed();
+    }
+
+    /**
+     * 获取请求参数
+     *
+     * @param invocation
+     * @return
+     */
+    private Object getParameter(Invocation invocation) {
+        Object parameter = invocation.getArgs()[1];
+        if (parameter instanceof MapperMethod.ParamMap) {
+            MapperMethod.ParamMap<?> p = (MapperMethod.ParamMap<?>) parameter;
+            if (p.containsKey("et")) {
+                parameter = p.get("et");
+            } else {
+                parameter = p.get("param1");
+            }
+        }
+        return parameter;
     }
 
     private void setFiledValue(Field field, Object obj, Object value) {
