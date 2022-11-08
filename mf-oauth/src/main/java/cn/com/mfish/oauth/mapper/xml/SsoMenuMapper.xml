@@ -21,8 +21,7 @@
         select
         <trim suffixOverrides=",">
             #{id}, #{parentId}, #{clientId},
-            CONCAT(IFNULL(( SELECT menu_code FROM sso_menu WHERE id = #{parentId} ), '' ),LPAD(SUBSTR(IFNULL((SELECT
-            max( menu_code ) FROM sso_menu WHERE parent_id = #{parentId} ), 0 ),(lvl-1)*5+1)+ 1, 5, 0 )),
+            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( menu_code ) FROM sso_menu WHERE parent_id = #{parentId} ), 0),(lvl-1)*5+1)+ 1, 5, 0 )),
             lvl,
             <if test="menuName != null">#{menuName},</if>
             <if test="menuIcon != null">#{menuIcon},</if>
@@ -37,6 +36,7 @@
             <if test="remark != null">#{remark},</if>
             #{createBy}, now()
         </trim>
-        from (select IFNULL(( SELECT menu_level FROM sso_menu WHERE id = #{parentId} ), '0' )+ 1 lvl from dual) t
+        from (select IFNULL(menu_code,'') pcode,IFNULL(menu_level,0)+1 lvl from (SELECT '' FROM dual) d left join
+        sso_menu on id = #{parentId}) t
     </insert>
 </mapper>
