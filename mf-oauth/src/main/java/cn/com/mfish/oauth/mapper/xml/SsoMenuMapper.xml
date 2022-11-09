@@ -58,7 +58,7 @@
             <include refid="reqCondition"/>
         </where>
         <foreach collection="levels" item="value">
-            UNION ALL SELECT * FROM sso_menu WHERE menu_code IN (SELECT DISTINCT SUBSTR(menu_code, 1,(menu_level-#{value})*5) FROM
+            UNION SELECT * FROM sso_menu WHERE menu_code IN (SELECT DISTINCT SUBSTR(menu_code, 1,(menu_level-#{value})*5) FROM
             sso_menu
             <where>
                 <include refid="reqCondition"/>
