@@ -46,7 +46,7 @@
         <if test="reqSsoMenu.menuType!=null">and menu_type = #{reqSsoMenu.menuType}</if>
         <if test="reqSsoMenu.isVisible!=null">and is_visible = #{reqSsoMenu.isVisible}</if>
     </sql>
-    <select id="queryMaxLevel" resultType="java.lang.Integer">
+    <select id="queryMaxMenuLevel" resultType="java.lang.Integer">
         select max(menu_level) from sso_menu
         <where>
             <include refid="reqCondition"/>

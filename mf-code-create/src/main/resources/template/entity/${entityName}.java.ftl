@@ -29,7 +29,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @ApiModel(value = "${tableInfo.tableName}对象", description = "${tableInfo.tableComment}")
-public class ${entityName} extends Req${entityName} {
+public class ${entityName} extends BaseTreeEntity<${fieldInfo.type}> {
 
     <#list tableInfo.columns as fieldInfo>
 	<#if fieldInfo.isPrimary>

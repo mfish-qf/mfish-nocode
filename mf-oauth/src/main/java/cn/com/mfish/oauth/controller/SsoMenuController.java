@@ -2,11 +2,11 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.ds.common.TreeUtils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.SsoMenuService;
-import cn.com.mfish.oauth.vo.MenuTree;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,7 +14,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -50,47 +49,16 @@ public class SsoMenuController {
                                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         IPage<SsoMenu> pageList = ssoMenuService.page(new Page<>(pageNo, pageSize), buildQueryCondition(reqSsoMenu));
-        return Result.ok(pageList, "查询成功!");
+        return Result.ok(pageList, "菜单权限表-查询成功!");
     }
 
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
-    public Result<List<MenuTree>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
-        //TODO 过滤查询需要递归查询上级树节点，后期优化
+    public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
         List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu);
-        List<MenuTree> menuTrees = new ArrayList<>();
-        buildMenuTree("", list, menuTrees);
+        List<SsoMenu> menuTrees = new ArrayList<>();
+        TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
         return Result.ok(menuTrees, "菜单权限表-查询成功!");
-    }
-
-    /**
-     * 构建菜单树
-     *
-     * @param pId
-     * @param menus
-     * @param menuTrees
-     */
-    private void buildMenuTree(String pId, List<SsoMenu> menus, List<MenuTree> menuTrees) {
-        if (menus == null || menus.size() == 0) {
-            return;
-        }
-        for (SsoMenu menu : menus) {
-            if (!menu.getParentId().equals(pId)) {
-                continue;
-            }
-            MenuTree parent = new MenuTree();
-            BeanUtils.copyProperties(menu, parent);
-            menuTrees.add(parent);
-            List<MenuTree> child = new ArrayList<>();
-            parent.setChildren(child);
-            if (menus.stream().anyMatch(p -> p.getParentId().equals(menu.getId()))) {
-                buildMenuTree(menu.getId(), menus, child);
-            }
-            //没有child设置为空防止前端显示多一个折叠符号
-            if (child.size() == 0) {
-                parent.setChildren(null);
-            }
-        }
     }
 
     /**
@@ -123,7 +91,7 @@ public class SsoMenuController {
         if (ssoMenuService.insertMenu(ssoMenu)) {
             return Result.ok(ssoMenu, "菜单权限表-添加成功!");
         }
-        return Result.fail("错误:添加失败!");
+        return Result.fail("错误:菜单权限表-添加失败!");
     }
 
     /**
@@ -139,7 +107,7 @@ public class SsoMenuController {
         if (ssoMenuService.updateById(ssoMenu)) {
             return Result.ok(ssoMenu, "菜单权限表-编辑成功!");
         }
-        return Result.fail("错误:编辑失败!");
+        return Result.fail("错误:菜单权限表-编辑失败!");
     }
 
     /**
@@ -155,7 +123,7 @@ public class SsoMenuController {
         if (ssoMenuService.removeById(id)) {
             return Result.ok("菜单权限表-删除成功!");
         }
-        return Result.fail("错误:删除失败!");
+        return Result.fail("错误:菜单权限表-删除失败!");
     }
 
     /**
@@ -171,7 +139,7 @@ public class SsoMenuController {
         if (this.ssoMenuService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok("菜单权限表-批量删除成功!");
         }
-        return Result.fail("错误:批量删除失败!");
+        return Result.fail("错误:菜单权限表-批量删除失败!");
     }
 
     /**
@@ -184,6 +152,6 @@ public class SsoMenuController {
     @GetMapping("/{id}")
     public Result<SsoMenu> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoMenu ssoMenu = ssoMenuService.getById(id);
-        return Result.ok(ssoMenu, "查询成功!");
+        return Result.ok(ssoMenu, "菜单权限表-查询成功!");
     }
 }
