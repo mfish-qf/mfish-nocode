@@ -21,6 +21,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author ：qiufeng
@@ -85,10 +86,22 @@ public class FreemarkerUtils {
         }
         codeInfo.setEntityName(entityName);
         List<FieldInfo> list = mysqlTableService.getColumns(schema, tableName);
-        for (FieldInfo info : list) {
-            info.setFieldName(StringUtils.toCamelCase(info.getFieldName()));
+        String idType = "";
+        //缺省字段字段不需要生成,获取列时过滤掉
+        for (int i = 0; i < list.size(); i++) {
+            FieldInfo fieldInfo = list.get(i);
+            String fieldName = fieldInfo.getFieldName().toLowerCase(Locale.ROOT);
+            if (DefaultField.values.contains(fieldName)) {
+                //设置唯一ID类型
+                if ("id".equals(fieldName)) {
+                    idType = fieldInfo.getType();
+                }
+                list.remove(i--);
+                continue;
+            }
+            fieldInfo.setFieldName(StringUtils.toCamelCase(fieldName));
         }
-        codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(tableName).setTableComment(tableComment));
+        codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(tableName).setTableComment(tableComment).setIdType(idType));
         return getCode(codeInfo);
     }
 

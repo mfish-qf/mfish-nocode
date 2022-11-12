@@ -1,6 +1,6 @@
 package ${packageName}.entity;
 
-import ${packageName}.req.Req${entityName};
+import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -29,8 +29,16 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @ApiModel(value = "${tableInfo.tableName}对象", description = "${tableInfo.tableComment}")
-public class ${entityName} extends BaseTreeEntity<${fieldInfo.type}> {
-
+public class ${entityName} extends BaseEntity<<#if tableInfo.idType==''>String<#else>${tableInfo.idType}</#if>> {
+    <#if tableInfo.idType=='String'>
+    @ApiModelProperty(value = "唯一ID")
+    @TableId(type = IdType.ASSIGN_UUID)
+    private ${tableInfo.idType} id;
+    <#elseif tableInfo.idType!=''>
+    @ApiModelProperty(value = "唯一ID")
+    @TableId(type = IdType.AUTO)
+    private ${tableInfo.idType} id;
+    </#if>
     <#list tableInfo.columns as fieldInfo>
 	<#if fieldInfo.isPrimary>
     <#if fieldInfo.type=='String'>
