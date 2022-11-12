@@ -1,7 +1,10 @@
 package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.oauth.entity.SsoMenu;
+import cn.com.mfish.oauth.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * @Description: 菜单权限表
@@ -10,5 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Version: V1.0
  */
 public interface SsoMenuService extends IService<SsoMenu> {
+    boolean insertMenu(SsoMenu ssoMenu);
 
+    List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu);
 }

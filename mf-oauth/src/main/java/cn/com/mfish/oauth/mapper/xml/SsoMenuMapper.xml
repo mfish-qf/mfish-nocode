@@ -1,5 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SsoMenuMapper">
-
+    <insert id="insertMenu" parameterType="cn.com.mfish.oauth.entity.SsoMenu">
+        insert into sso_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, parent_id, client_id,menu_code, menu_level,
+            <if test="menuName != null">menu_name,</if>
+            <if test="menuIcon != null">menu_icon,</if>
+            <if test="menuSort != null">menu_sort,</if>
+            <if test="menuType != null">menu_type,</if>
+            <if test="routePath != null">route_path,</if>
+            <if test="component != null">component,</if>
+            <if test="permissions != null">permissions,</if>
+            <if test="isExternal != null">is_external,</if>
+            <if test="isVisible != null">is_visible,</if>
+            <if test="isKeepalive != null">is_keepalive,</if>
+            <if test="remark != null">remark,</if>
+            create_by, create_time
+        </trim>
+        select
+        <trim suffixOverrides=",">
+            #{id}, #{parentId}, #{clientId},
+            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( menu_code ) FROM sso_menu WHERE parent_id = #{parentId} ),
+            0),(lvl-1)*5+1)+ 1, 5, 0 )),
+            lvl,
+            <if test="menuName != null">#{menuName},</if>
+            <if test="menuIcon != null">#{menuIcon},</if>
+            <if test="menuSort != null">#{menuSort},</if>
+            <if test="menuType != null">#{menuType},</if>
+            <if test="routePath != null">#{routePath},</if>
+            <if test="component != null">#{component},</if>
+            <if test="permissions != null">#{permissions},</if>
+            <if test="isExternal != null">#{isExternal},</if>
+            <if test="isVisible != null">#{isVisible},</if>
+            <if test="isKeepalive != null">#{isKeepalive},</if>
+            <if test="remark != null">#{remark},</if>
+            #{createBy}, now()
+        </trim>
+        from (select IFNULL(menu_code,'') pcode,IFNULL(menu_level,0)+1 lvl from (SELECT '' FROM dual) d left join
+        sso_menu on id = #{parentId}) t
+    </insert>
+    <sql id="reqCondition">
+        <if test="reqSsoMenu.clientId!=null">and client_id = #{reqSsoMenu.clientId}</if>
+        <if test="reqSsoMenu.menuName != null">and menu_name like concat('%',#{reqSsoMenu.menuName},'%')</if>
+        <if test="reqSsoMenu.menuType!=null">and menu_type = #{reqSsoMenu.menuType}</if>
+        <if test="reqSsoMenu.isVisible!=null">and is_visible = #{reqSsoMenu.isVisible}</if>
+    </sql>
+    <select id="queryMaxMenuLevel" resultType="java.lang.Integer">
+        select max(menu_level) from sso_menu
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+    </select>
+    <select id="queryMenu" resultType="cn.com.mfish.oauth.entity.SsoMenu">
+        SELECT * FROM sso_menu
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+        <foreach collection="levels" item="value">
+            UNION SELECT * FROM sso_menu WHERE menu_code IN (SELECT DISTINCT SUBSTR(menu_code, 1,(menu_level-#{value})*5) FROM
+            sso_menu
+            <where>
+                <include refid="reqCondition"/>
+            </where>
+            )
+        </foreach>
+        order by menu_type, menu_sort
+    </select>
 </mapper>

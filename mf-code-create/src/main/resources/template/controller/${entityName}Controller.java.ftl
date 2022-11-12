@@ -60,7 +60,7 @@ public class ${entityName}Controller {
 		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})){
 			return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-添加成功!");
 		}
-        return Result.fail("错误:添加失败!");
+        return Result.fail("错误:${tableInfo.tableComment}-添加失败!");
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class ${entityName}Controller {
 		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})){
 		    return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-编辑成功!");
 		}
-		return Result.fail("错误:编辑失败!");
+		return Result.fail("错误:${tableInfo.tableComment}-编辑失败!");
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class ${entityName}Controller {
 		if (${entityName?uncap_first}Service.removeById(id)){
 			return Result.ok("${tableInfo.tableComment}-删除成功!");
 		}
-		return Result.fail("错误:删除失败!");
+		return Result.fail("错误:${tableInfo.tableComment}-删除失败!");
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ${entityName}Controller {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))){
 		    return Result.ok("${tableInfo.tableComment}-批量删除成功!");
 		}
-		return Result.fail("错误:批量删除失败!");
+		return Result.fail("错误:${tableInfo.tableComment}-批量删除失败!");
 	}
 
 	/**

@@ -1,5 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SsoOrgMapper">
-
+    <insert id="insertOrg" parameterType="cn.com.mfish.oauth.entity.SsoOrg">
+        insert into sso_org
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, parent_id, client_id,org_code, org_level,
+            <if test="orgName != null">org_name,</if>
+            <if test="orgSort != null">org_sort,</if>
+            <if test="leader != null">leader,</if>
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            create_by, create_time
+        </trim>
+        select
+        <trim suffixOverrides=",">
+            #{id}, #{parentId},#{clientId},
+            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( org_code ) FROM sso_org WHERE parent_id = #{parentId} ),
+            0),(lvl-1)*5+1)+ 1, 5, 0 )),
+            lvl,
+            <if test="orgName != null">#{orgName},</if>
+            <if test="orgSort != null">#{orgSort},</if>
+            <if test="leader != null">#{leader},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            #{createBy}, now()
+        </trim>
+        from (select IFNULL(org_code,'') pcode,IFNULL(org_level,0)+1 lvl from (SELECT '' FROM dual) d left join
+        sso_org on id = #{parentId}) t
+    </insert>
+    <sql id="reqCondition">
+        <if test="reqSsoOrg.clientId!=null">and client_id = #{reqSsoOrg.clientId}</if>
+        <if test="reqSsoOrg.orgName != null">and org_name like concat('%',#{reqSsoOrg.orgName},'%')</if>
+        <if test="reqSsoOrg.leader != null">and leader like concat('%',#{reqSsoOrg.leader},'%')</if>
+        <if test="reqSsoOrg.phone != null">and phone like concat('%',#{reqSsoOrg.phone},'%')</if>
+        <if test="reqSsoOrg.status!=null">and status = #{reqSsoOrg.status}</if>
+    </sql>
+    <select id="queryMaxOrgLevel" resultType="java.lang.Integer">
+        select max(org_level) from sso_org
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+    </select>
+    <select id="queryOrg" resultType="cn.com.mfish.oauth.entity.SsoOrg">
+        SELECT * FROM sso_org
+        <where>
+            del_flag = 0
+            <include refid="reqCondition"/>
+        </where>
+        <foreach collection="levels" item="value">
+            UNION SELECT * FROM sso_org WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
+            FROM
+            sso_org
+            <where>
+                <include refid="reqCondition"/>
+            </where>
+            )
+        </foreach>
+        order by org_sort
+    </select>
 </mapper>
