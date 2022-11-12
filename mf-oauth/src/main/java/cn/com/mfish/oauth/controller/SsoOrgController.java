@@ -102,7 +102,7 @@ public class SsoOrgController {
     @ApiOperation(value = "组织结构表-通过id删除", notes = "组织结构表-通过id删除")
     @DeleteMapping("/{id}")
     public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (ssoOrgService.removeById(id)) {
+        if (ssoOrgService.removeOrg(id)) {
             return Result.ok("组织结构表-删除成功!");
         }
         return Result.fail("错误:组织结构表-删除失败!");

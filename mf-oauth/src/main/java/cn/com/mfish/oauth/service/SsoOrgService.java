@@ -16,4 +16,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     boolean insertOrg(SsoOrg ssoOrg);
 
     List<SsoOrg> queryOrg(ReqSsoOrg reqSsoOrg);
+
+    boolean removeOrg(String id);
 }

@@ -48,6 +48,7 @@
     <select id="queryOrg" resultType="cn.com.mfish.oauth.entity.SsoOrg">
         SELECT * FROM sso_org
         <where>
+            del_flag = 0
             <include refid="reqCondition"/>
         </where>
         <foreach collection="levels" item="value">

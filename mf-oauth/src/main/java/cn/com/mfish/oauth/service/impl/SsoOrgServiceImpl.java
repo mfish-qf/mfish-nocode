@@ -39,4 +39,10 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         return baseMapper.queryOrg(reqSsoOrg, list);
     }
+
+    @Override
+    public boolean removeOrg(String id) {
+        SsoOrg ssoOrg = new SsoOrg().setId(id).setDelFlag(1);
+        return baseMapper.updateById(ssoOrg) == 1;
+    }
 }

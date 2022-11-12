@@ -44,7 +44,7 @@ public class SsoOrg extends BaseTreeEntity<String> {
     @ApiModelProperty(value = "备注")
     private String remark;
     @ApiModelProperty(value = "状态（0正常 1停用）")
-    private String status;
+    private Integer status;
     @ApiModelProperty(value = "删除标志（0正常 1删除）")
-    private String delFlag;
+    private Integer delFlag;
 }
