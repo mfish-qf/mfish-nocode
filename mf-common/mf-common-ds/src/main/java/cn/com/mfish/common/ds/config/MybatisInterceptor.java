@@ -2,13 +2,11 @@ package cn.com.mfish.common.ds.config;
 
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.HttpStatus;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.ds.common.Constant;
+import cn.com.mfish.common.ds.entity.BaseEntity;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.remote.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -20,9 +18,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author ：qiufeng
@@ -39,11 +35,10 @@ public class MybatisInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object parameter = getParameter(invocation);
+        BaseEntity parameter = getParameter(invocation);
         if (parameter == null) {
             return invocation.proceed();
         }
-        List<Field> list = Utils.getAllFields(parameter);
         Result<UserInfo> result = remoteUserService.getUserInfo(CredentialConstants.INNER);
         if (result == null || HttpStatus.SUCCESS != result.getCode()) {
             log.warn("保存信息时未取到用户信息!" + result.getMsg());
@@ -53,24 +48,13 @@ public class MybatisInterceptor implements Interceptor {
         SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
         switch (sqlCommandType) {
             case INSERT:
-                for (Field field : list) {
-                    if (Constant.CREATE_BY.equals(field.getName())) {
-                        setFiledValue(field, parameter, result.getData().getAccount());
-                    }
-                    if (Constant.CREATE_TIME.equals(field.getName())) {
-                        setFiledValue(field, parameter, new Date());
-                    }
-                }
+                parameter.setCreateBy(result.getData().getAccount());
+                parameter.setCreateTime(new Date());
                 break;
             case UPDATE:
-                for (Field field : list) {
-                    if (Constant.UPDATE_BY.equals(field.getName())) {
-                        setFiledValue(field, parameter, result.getData().getAccount());
-                    }
-                    if (Constant.UPDATE_TIME.equals(field.getName())) {
-                        setFiledValue(field, parameter, new Date());
-                    }
-                }
+                parameter.setUpdateBy(result.getData().getAccount());
+                parameter.setUpdateTime(new Date());
+                break;
         }
         return invocation.proceed();
     }
@@ -81,7 +65,7 @@ public class MybatisInterceptor implements Interceptor {
      * @param invocation
      * @return
      */
-    private Object getParameter(Invocation invocation) {
+    private BaseEntity getParameter(Invocation invocation) {
         Object parameter = invocation.getArgs()[1];
         if (parameter instanceof MapperMethod.ParamMap) {
             MapperMethod.ParamMap<?> p = (MapperMethod.ParamMap<?>) parameter;
@@ -91,21 +75,9 @@ public class MybatisInterceptor implements Interceptor {
                 parameter = p.get("param1");
             }
         }
-        return parameter;
-    }
-
-    private void setFiledValue(Field field, Object obj, Object value) {
-        try {
-            field.setAccessible(true);
-            Object localCreateDate = field.get(obj);
-            if (ObjectUtils.isEmpty(localCreateDate)) {
-                field.set(obj, value);
-            }
-        } catch (IllegalAccessException e) {
-            log.error("设置字段值异常", e);
-        } finally {
-            field.setAccessible(false);
+        if (parameter instanceof BaseEntity) {
+            return (BaseEntity) parameter;
         }
-
+        return null;
     }
 }

@@ -4,7 +4,7 @@
     <insert id="insertOrg" parameterType="cn.com.mfish.oauth.entity.SsoOrg">
         insert into sso_org
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            id, parent_id, org_code, org_level,
+            id, parent_id, client_id,org_code, org_level,
             <if test="orgName != null">org_name,</if>
             <if test="orgSort != null">org_sort,</if>
             <if test="leader != null">leader,</if>
@@ -16,7 +16,7 @@
         </trim>
         select
         <trim suffixOverrides=",">
-            #{id}, #{parentId},
+            #{id}, #{parentId},#{clientId},
             CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( org_code ) FROM sso_org WHERE parent_id = #{parentId} ),
             0),(lvl-1)*5+1)+ 1, 5, 0 )),
             lvl,
@@ -33,6 +33,7 @@
         sso_org on id = #{parentId}) t
     </insert>
     <sql id="reqCondition">
+        <if test="reqSsoOrg.clientId!=null">and client_id = #{reqSsoOrg.clientId}</if>
         <if test="reqSsoOrg.orgName != null">and org_name like concat('%',#{reqSsoOrg.orgName},'%')</if>
         <if test="reqSsoOrg.leader != null">and leader like concat('%',#{reqSsoOrg.leader},'%')</if>
         <if test="reqSsoOrg.phone != null">and phone like concat('%',#{reqSsoOrg.phone},'%')</if>

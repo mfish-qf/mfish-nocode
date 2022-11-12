@@ -15,6 +15,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("组织结构表请求参数")
 public class ReqSsoOrg {
+    @ApiModelProperty(value = "客户端ID")
+    private String clientId;
     @ApiModelProperty(value = "组织名称")
     private String orgName;
     @ApiModelProperty(value = "负责人")
