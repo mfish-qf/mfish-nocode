@@ -3,7 +3,7 @@ package cn.com.mfish.common.ds.config;
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.HttpStatus;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.ds.entity.BaseEntity;
+import cn.com.mfish.common.core.entity.BaseEntity;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.remote.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;

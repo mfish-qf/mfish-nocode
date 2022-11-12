@@ -17,6 +17,8 @@ import java.util.List;
 @ApiModel("表信息")
 @Accessors(chain = true)
 public class TableInfo implements Serializable {
+    @ApiModelProperty("id类型")
+    private String idType;
     @ApiModelProperty("表名称")
     private String tableName;
     @ApiModelProperty("表描述信息")

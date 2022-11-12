@@ -1,4 +1,4 @@
-package cn.com.mfish.common.ds.entity;
+package cn.com.mfish.common.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;

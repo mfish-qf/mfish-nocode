@@ -1,4 +1,4 @@
-package cn.com.mfish.common.ds.entity;
+package cn.com.mfish.common.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;

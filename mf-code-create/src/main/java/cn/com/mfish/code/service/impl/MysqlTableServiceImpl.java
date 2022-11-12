@@ -21,7 +21,9 @@ public class MysqlTableServiceImpl implements MysqlTableService {
 
     @Override
     public List<FieldInfo> getColumns(String schema, String tableName) {
-        return mysqlTableMapper.getColumns(schema, tableName);
+        List<FieldInfo> list = mysqlTableMapper.getColumns(schema, tableName);
+
+        return list;
     }
 
     @Override

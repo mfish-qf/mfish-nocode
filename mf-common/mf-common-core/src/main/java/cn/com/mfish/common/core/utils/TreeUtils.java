@@ -1,7 +1,7 @@
-package cn.com.mfish.common.ds.common;
+package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.ds.entity.BaseTreeEntity;
+import cn.com.mfish.common.core.entity.BaseTreeEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 

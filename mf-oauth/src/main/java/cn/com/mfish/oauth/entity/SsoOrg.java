@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.entity;
 
-import cn.com.mfish.common.ds.entity.BaseTreeEntity;
+import cn.com.mfish.common.core.entity.BaseTreeEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

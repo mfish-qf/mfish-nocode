@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.ds.common.TreeUtils;
+import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
