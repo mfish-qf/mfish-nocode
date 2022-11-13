@@ -4,7 +4,7 @@ import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.entity.SSOUser;
-import cn.com.mfish.oauth.service.UserService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 
 import javax.annotation.Resource;
@@ -16,11 +16,11 @@ import javax.annotation.Resource;
  */
 public class AutoUserCredentialsMatcher extends SimpleCredentialsMatcher {
     @Resource
-    UserService userService;
+    SsoUserService ssoUserService;
 
     protected void insertNewUser(boolean newUser, SSOUser user) {
         if (newUser) {
-            CheckWithResult<SSOUser> result = userService.insert(user);
+            CheckWithResult<SSOUser> result = ssoUserService.insert(user);
             if (!result.isSuccess()) {
                 throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
             }

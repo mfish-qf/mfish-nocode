@@ -51,7 +51,7 @@ public class SsoRoleController {
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
                 .gt(reqSsoRole.getStartDate() != null, SsoRole::getCreateTime, reqSsoRole.getStartDate())
                 .lt(reqSsoRole.getEndDate() != null, SsoRole::getCreateTime, reqSsoRole.getEndDate()));
-        return Result.ok(pageList, "查询成功!");
+        return Result.ok(pageList, "角色信息表-查询成功!");
     }
 
     /**
@@ -65,9 +65,9 @@ public class SsoRoleController {
     @PostMapping
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
         if (ssoRoleService.insertRole(ssoRole)) {
-            return Result.ok(ssoRole, "添加成功!");
+            return Result.ok(ssoRole, "角色信息表-添加成功!");
         }
-        return Result.fail("错误:添加失败!");
+        return Result.fail("错误:角色信息表-添加失败!");
     }
 
     /**
@@ -81,9 +81,9 @@ public class SsoRoleController {
     @PutMapping
     public Result<?> edit(@RequestBody SsoRole ssoRole) {
         if (ssoRoleService.updateRole(ssoRole)) {
-            return Result.ok("编辑成功!");
+            return Result.ok("角色信息表-编辑成功!");
         }
-        return Result.fail("错误:编辑失败!");
+        return Result.fail("错误:角色信息表-编辑失败!");
     }
 
     /**
@@ -97,9 +97,9 @@ public class SsoRoleController {
     @DeleteMapping("/{id}")
     public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (ssoRoleService.deleteRole(id)) {
-            return Result.ok("删除成功!");
+            return Result.ok("角色信息表-删除成功!");
         }
-        return Result.fail("错误:删除失败!");
+        return Result.fail("错误:角色信息表-删除失败!");
     }
 
     /**
@@ -113,9 +113,9 @@ public class SsoRoleController {
     @DeleteMapping("/batch")
     public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.ssoRoleService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok("批量删除成功!");
+            return Result.ok("角色信息表-批量删除成功!");
         }
-        return Result.fail("错误:批量删除失败!");
+        return Result.fail("错误:角色信息表-批量删除失败!");
     }
 
     /**
@@ -128,6 +128,6 @@ public class SsoRoleController {
     @GetMapping("/{id}")
     public Result<SsoRole> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoRole ssoRole = ssoRoleService.getById(id);
-        return Result.ok(ssoRole, "查询成功!");
+        return Result.ok(ssoRole, "角色信息表-查询成功!");
     }
 }

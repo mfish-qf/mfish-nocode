@@ -8,7 +8,7 @@ import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.TokenService;
-import cn.com.mfish.oauth.service.UserService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -38,7 +38,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
     @Resource
-    UserService userService;
+    SsoUserService ssoUserService;
     @Resource
     TokenService webTokenService;
 
@@ -138,7 +138,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
 
     @Override
     public UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException {
-        SSOUser user = userService.getUserById(userId);
+        SSOUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);
         }

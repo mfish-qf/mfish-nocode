@@ -35,7 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 @RestController
 @RequestMapping("/user")
 @Slf4j
-public class UserInfoController {
+public class SsoUserController {
 
     @Resource
     AccessTokenValidator accessTokenValidator;

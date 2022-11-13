@@ -29,7 +29,7 @@ import java.util.List;
 @Slf4j
 @Api(tags = "组织结构表")
 @RestController
-@RequestMapping("/ssoOrg")
+@RequestMapping("/org")
 public class SsoOrgController {
     @Resource
     private SsoOrgService ssoOrgService;
