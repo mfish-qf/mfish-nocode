@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,5 +9,5 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2020/2/13 13:43
  */
 public interface IBaseValidator<T> {
-    CheckWithResult<T> validate(HttpServletRequest request, CheckWithResult<T> result);
+    Result<T> validate(HttpServletRequest request, Result<T> result);
 }

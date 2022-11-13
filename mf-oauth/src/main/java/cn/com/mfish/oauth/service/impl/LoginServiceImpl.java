@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.service.impl;
 
-import cn.com.mfish.oauth.common.RedisPrefix;
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
+import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
@@ -66,7 +66,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     private boolean validateCode(Model model, HttpServletRequest request) {
-        CheckWithResult result = getCodeValidator.validateClient(request, null);
+        Result result = getCodeValidator.validateClient(request, null);
         if (!result.isSuccess()) {
             model.addAttribute(SerConstant.ERROR_MSG, result.getMsg());
             return false;
@@ -82,7 +82,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     public boolean login(Model model, HttpServletRequest request) {
-        CheckWithResult<String> result = login(request);
+        Result<String> result = login(request);
         for (Map.Entry<String, String> entry : result.getParam().entrySet()) {
             model.addAttribute(entry.getKey(), entry.getValue());
         }
@@ -96,7 +96,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
-    public CheckWithResult<String> login(HttpServletRequest request) {
+    public Result<String> login(HttpServletRequest request) {
         String username = request.getParameter(OAuth.OAUTH_USERNAME);
         String password = request.getParameter(OAuth.OAUTH_PASSWORD);
         SerConstant.LoginType loginType = SerConstant.LoginType.getLoginType(request.getParameter(SerConstant.LOGIN_TYPE));
@@ -114,12 +114,12 @@ public class LoginServiceImpl implements LoginService {
      * @param loginType
      * @return
      */
-    public CheckWithResult<String> login(String username, String password, SerConstant.LoginType loginType, String rememberMe) {
+    public Result<String> login(String username, String password, SerConstant.LoginType loginType, String rememberMe) {
         boolean remember = false;
         if (!StringUtils.isEmpty(rememberMe)) {
             remember = Boolean.parseBoolean(rememberMe);
         }
-        CheckWithResult<String> result = new CheckWithResult<>();
+        Result<String> result = new Result<>();
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             result.setSuccess(false).setMsg(SerConstant.INVALID_USER_SECRET_DESCRIPTION)
                     .getParam().put(SerConstant.ERROR_MSG, SerConstant.INVALID_USER_SECRET_DESCRIPTION);
@@ -159,7 +159,7 @@ public class LoginServiceImpl implements LoginService {
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
             return result;
         } finally {
-            result.setResult(token.getUserInfo().getId());
+            result.setData(token.getUserInfo().getId());
             result.getParam().put(OAuth.OAUTH_USERNAME, username);
             result.getParam().put(SerConstant.LOGIN_TYPE, loginType.toString());
         }

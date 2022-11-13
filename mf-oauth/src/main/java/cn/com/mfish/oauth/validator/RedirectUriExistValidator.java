@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 public class RedirectUriExistValidator extends AbstractClientValidator {
 
     @Override
-    public CheckWithResult<OAuthClient> validate(HttpServletRequest request, CheckWithResult<OAuthClient> result) {
-        CheckWithResult<OAuthClient> result1 = getOAuthClient(request, result);
+    public Result<OAuthClient> validate(HttpServletRequest request, Result<OAuthClient> result) {
+        Result<OAuthClient> result1 = getOAuthClient(request, result);
         if (!result1.isSuccess()) {
             return result1;
         }
         String uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
-        if (checkUri(uri, result1.getResult())) {
+        if (checkUri(uri, result1.getData())) {
             return result1;
         }
         return result1.setSuccess(false).setMsg("错误:回调地址不正确!");

@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.OAuth;
 
@@ -17,10 +17,10 @@ public abstract class AbstractRefreshTokenValidator implements IBaseValidator<Re
     @Resource
     WebTokenServiceImpl webTokenService;
 
-    public CheckWithResult<RedisAccessToken> getRefreshToken(HttpServletRequest request, CheckWithResult<RedisAccessToken> result) {
+    public Result<RedisAccessToken> getRefreshToken(HttpServletRequest request, Result<RedisAccessToken> result) {
         RedisAccessToken token;
-        if (result == null || result.getResult() == null) {
-            result = new CheckWithResult<>();
+        if (result == null || result.getData() == null) {
+            result = new Result<>();
             String refreshToken = request.getParameter(OAuth.OAUTH_REFRESH_TOKEN);
             if (StringUtils.isEmpty(refreshToken)) {
                 return result.setSuccess(false).setMsg("错误:token不正确");
@@ -29,7 +29,7 @@ public abstract class AbstractRefreshTokenValidator implements IBaseValidator<Re
             if (token == null) {
                 return result.setSuccess(false).setMsg("错误:token不正确");
             }
-            return result.setResult(token);
+            return result.setData(token);
         }
         return result;
     }

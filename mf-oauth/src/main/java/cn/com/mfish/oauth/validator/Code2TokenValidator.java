@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -34,7 +34,7 @@ public class Code2TokenValidator extends MultipleValidator {
      * @param result
      * @return
      */
-    public CheckWithResult<AuthorizationCode> validateCode(HttpServletRequest request, CheckWithResult<AuthorizationCode> result) {
+    public Result<AuthorizationCode> validateCode(HttpServletRequest request, Result<AuthorizationCode> result) {
         return validate(request, result, validateCodeList);
     }
 
@@ -44,13 +44,13 @@ public class Code2TokenValidator extends MultipleValidator {
     @Component
     public class ClientIdEqualValidator extends AbstractCodeValidator {
         @Override
-        public CheckWithResult<AuthorizationCode> validate(HttpServletRequest request, CheckWithResult<AuthorizationCode> result) {
-            CheckWithResult<AuthorizationCode> result1 = getAuthCode(request, result);
+        public Result<AuthorizationCode> validate(HttpServletRequest request, Result<AuthorizationCode> result) {
+            Result<AuthorizationCode> result1 = getAuthCode(request, result);
             if (!result1.isSuccess()) {
                 return result1;
             }
             String clientId = request.getParameter(OAuth.OAUTH_CLIENT_ID);
-            if(!StringUtils.isEmpty(clientId) && clientId.equals(result1.getResult().getClientId())){
+            if(!StringUtils.isEmpty(clientId) && clientId.equals(result1.getData().getClientId())){
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:获取code和token两次传入的clientId不一致");
@@ -63,13 +63,13 @@ public class Code2TokenValidator extends MultipleValidator {
     @Component
     public class UriEqualValidator extends AbstractCodeValidator {
         @Override
-        public CheckWithResult<AuthorizationCode> validate(HttpServletRequest request, CheckWithResult<AuthorizationCode> result) {
-            CheckWithResult<AuthorizationCode> result1 = getAuthCode(request, result);
+        public Result<AuthorizationCode> validate(HttpServletRequest request, Result<AuthorizationCode> result) {
+            Result<AuthorizationCode> result1 = getAuthCode(request, result);
             if (!result1.isSuccess()) {
                 return result1;
             }
             String uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
-            if(!StringUtils.isEmpty(uri) && uri.equals(result1.getResult().getRedirectUri())){
+            if(!StringUtils.isEmpty(uri) && uri.equals(result1.getData().getRedirectUri())){
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:获取code和token两次传入的uri不一致");

@@ -8,7 +8,6 @@ import cn.com.mfish.oauth.annotation.InnerUser;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -54,11 +53,11 @@ public class SsoUserController {
     })
     @SSOLogAnnotation("getUser")
     public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
-        CheckWithResult<RedisAccessToken> result = accessTokenValidator.validate(request, null);
+        Result<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return Result.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
+        return Result.ok(oAuth2Service.getUserInfo(result.getData().getUserId()));
     }
 
     @InnerUser

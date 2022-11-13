@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.validator;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.cache.temp.ClientTempCache;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import org.apache.oltu.oauth2.common.OAuth;
 
@@ -25,16 +25,16 @@ public abstract class AbstractClientValidator implements IBaseValidator<OAuthCli
      * @param result
      * @return
      */
-    public CheckWithResult<OAuthClient> getOAuthClient(HttpServletRequest request, CheckWithResult<OAuthClient> result) {
+    public Result<OAuthClient> getOAuthClient(HttpServletRequest request, Result<OAuthClient> result) {
         OAuthClient client;
-        if (result == null || result.getResult() == null) {
-            result = new CheckWithResult<>();
+        if (result == null || result.getData() == null) {
+            result = new Result<>();
             String clientId = request.getParameter(OAuth.OAUTH_CLIENT_ID);
             client = clientTempCache.getCacheInfo(clientId);
             if (client == null) {
                 return result.setSuccess(false).setMsg("错误:校验客户端ID失败!");
             }
-            result.setResult(client);
+            result.setData(client);
         }
         return result;
     }

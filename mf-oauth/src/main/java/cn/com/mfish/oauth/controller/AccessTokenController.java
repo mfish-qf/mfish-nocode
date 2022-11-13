@@ -4,7 +4,6 @@ import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
@@ -71,7 +70,7 @@ public class AccessTokenController {
     @SSOLogAnnotation("getToken")
     public Result<AccessToken> token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
         OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
-        CheckWithResult<OAuthClient> result = code2TokenValidator.validateClient(request, null);
+        Result<OAuthClient> result = code2TokenValidator.validateClient(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
@@ -111,11 +110,11 @@ public class AccessTokenController {
      * @throws InvocationTargetException
      */
     private RedisAccessToken code2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) throws OAuthSystemException, IllegalAccessException, InvocationTargetException {
-        CheckWithResult<AuthorizationCode> result = code2TokenValidator.validateCode(request, null);
+        Result<AuthorizationCode> result = code2TokenValidator.validateCode(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return oAuth2Service.code2Token(tokenRequest, result.getResult());
+        return oAuth2Service.code2Token(tokenRequest, result.getData());
     }
 
     /**
@@ -126,11 +125,11 @@ public class AccessTokenController {
      * @throws OAuthSystemException
      */
     private RedisAccessToken refresh2Token(HttpServletRequest request) throws OAuthSystemException {
-        CheckWithResult<RedisAccessToken> result = refresh2TokenValidator.validateToken(request, null);
+        Result<RedisAccessToken> result = refresh2TokenValidator.validateToken(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return oAuth2Service.refresh2Token(result.getResult());
+        return oAuth2Service.refresh2Token(result.getData());
     }
 
     /**
@@ -144,7 +143,7 @@ public class AccessTokenController {
      * @throws InvocationTargetException
      */
     private RedisAccessToken pwd2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) throws OAuthSystemException, IllegalAccessException, InvocationTargetException {
-        CheckWithResult<String> result = loginService.login(request);
+        Result<String> result = loginService.login(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
