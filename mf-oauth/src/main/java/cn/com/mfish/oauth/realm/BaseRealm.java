@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SSOUser;
-import cn.com.mfish.oauth.service.UserService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 public abstract class BaseRealm extends AuthorizingRealm {
     @Autowired
-    UserService userService;
+    SsoUserService ssoUserService;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -33,7 +33,7 @@ public abstract class BaseRealm extends AuthorizingRealm {
         if (StringUtils.isEmpty(account)) {
             throw new UnknownAccountException();//没找到帐号
         }
-        SSOUser user = userService.getUserByAccount(account);
+        SSOUser user = ssoUserService.getUserByAccount(account);
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 
         return authorizationInfo;
@@ -42,7 +42,7 @@ public abstract class BaseRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         MyUsernamePasswordToken myToken = (MyUsernamePasswordToken) authenticationToken;
-        SSOUser user = userService.getUserByAccount(myToken.getUsername());
+        SSOUser user = ssoUserService.getUserByAccount(myToken.getUsername());
         boolean isNew = false;
         if (user == null) {
             //微信登录 短信登录 允许登录时创建账号,其他方式不允许

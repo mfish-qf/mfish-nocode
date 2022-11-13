@@ -30,7 +30,7 @@ import java.util.List;
 @Slf4j
 @Api(tags = "菜单权限表")
 @RestController
-@RequestMapping("/ssoMenu")
+@RequestMapping("/menu")
 public class SsoMenuController {
     @Resource
     private SsoMenuService ssoMenuService;

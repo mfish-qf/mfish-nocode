@@ -7,7 +7,7 @@ import cn.com.mfish.oauth.entity.SSOUser;
  * @author qiufeng
  * @date 2020/2/13 16:50
  */
-public interface UserService {
+public interface SsoUserService {
     CheckWithResult<SSOUser> changePassword(String userId, String newPassword);
     CheckWithResult<SSOUser> insert(SSOUser user);
     CheckWithResult<SSOUser> update(SSOUser user);

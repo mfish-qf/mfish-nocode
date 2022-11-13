@@ -6,7 +6,7 @@ import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.entity.WeChatToken;
-import cn.com.mfish.oauth.service.UserService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.service.WeChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +34,7 @@ public class WeChatServiceImpl implements WeChatService {
     @Resource
     OpenIdTempCache openIdTempCache;
     @Resource
-    UserService userService;
+    SsoUserService ssoUserService;
     @Resource
     RedisTemplate<String, Object> redisTemplate;
 
@@ -49,7 +49,7 @@ public class WeChatServiceImpl implements WeChatService {
         SSOUser user = new SSOUser();
         user.setOpenid(openId);
         user.setId(userId);
-        CheckWithResult<SSOUser> result = userService.update(user);
+        CheckWithResult<SSOUser> result = ssoUserService.update(user);
         return result.isSuccess();
     }
 
@@ -66,7 +66,7 @@ public class WeChatServiceImpl implements WeChatService {
         weChatToken.setAccess_token(UUID.randomUUID().toString());
         weChatToken.setRefresh_token(UUID.randomUUID().toString());
         weChatToken.setUserId(userId);
-        SSOUser user = userService.getUserById(userId);
+        SSOUser user = ssoUserService.getUserById(userId);
         weChatToken.setAccount(user.getAccount());
         weChatToken.setExpires_in(tokenExpire);
         setToken(weChatToken);

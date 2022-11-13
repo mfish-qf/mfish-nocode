@@ -6,7 +6,7 @@ import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.service.LoginService;
-import cn.com.mfish.oauth.service.UserService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class LoginServiceImpl implements LoginService {
     @Resource
-    UserService userService;
+    SsoUserService ssoUserService;
     @Resource
     RedisTemplate<String, Object> redisTemplate;
     @Resource
@@ -167,7 +167,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean retryLimit(String userId, boolean matches) {
-        SSOUser user = userService.getUserById(userId);
+        SSOUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             log.error(userId + SerConstant.INVALID_USER_ID_DESCRIPTION);
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);

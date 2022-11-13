@@ -6,7 +6,7 @@ import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.mapper.SSOUserMapper;
 import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
-import cn.com.mfish.oauth.service.UserService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class SsoSsoUserServiceImpl implements SsoUserService {
     @Resource
     PasswordHelper passwordHelper;
     @Resource
