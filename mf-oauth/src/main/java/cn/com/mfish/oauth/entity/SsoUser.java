@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper=true)
-public class SSOUser extends UserInfo {
+public class SsoUser extends UserInfo {
     @ApiModelProperty("密码加密盐")
     private String salt;
     @ApiModelProperty("密码")

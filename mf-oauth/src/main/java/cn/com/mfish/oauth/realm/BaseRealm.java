@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.realm;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -33,7 +33,7 @@ public abstract class BaseRealm extends AuthorizingRealm {
         if (StringUtils.isEmpty(account)) {
             throw new UnknownAccountException();//没找到帐号
         }
-        SSOUser user = ssoUserService.getUserByAccount(account);
+        SsoUser user = ssoUserService.getUserByAccount(account);
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 
         return authorizationInfo;
@@ -42,7 +42,7 @@ public abstract class BaseRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         MyUsernamePasswordToken myToken = (MyUsernamePasswordToken) authenticationToken;
-        SSOUser user = ssoUserService.getUserByAccount(myToken.getUsername());
+        SsoUser user = ssoUserService.getUserByAccount(myToken.getUsername());
         boolean isNew = false;
         if (user == null) {
             //微信登录 短信登录 允许登录时创建账号,其他方式不允许
@@ -67,8 +67,8 @@ public abstract class BaseRealm extends AuthorizingRealm {
      * @param phone 手机号
      * @return
      */
-    private SSOUser buildUser(String phone) {
-        SSOUser userInfo = new SSOUser();
+    private SsoUser buildUser(String phone) {
+        SsoUser userInfo = new SsoUser();
         userInfo.setPhone(phone);
         userInfo.setId(UUID.randomUUID().toString());
         userInfo.setAccount("用户" + phone.substring(7));
@@ -77,5 +77,5 @@ public abstract class BaseRealm extends AuthorizingRealm {
         return userInfo;
     }
 
-    protected abstract AuthenticationInfo buildAuthenticationInfo(SSOUser user, AuthenticationToken authenticationToken, boolean newUser);
+    protected abstract AuthenticationInfo buildAuthenticationInfo(SsoUser user, AuthenticationToken authenticationToken, boolean newUser);
 }

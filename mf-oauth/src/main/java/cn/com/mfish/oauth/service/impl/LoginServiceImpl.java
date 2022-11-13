@@ -4,7 +4,7 @@ import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;
@@ -167,7 +167,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean retryLimit(String userId, boolean matches) {
-        SSOUser user = ssoUserService.getUserById(userId);
+        SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             log.error(userId + SerConstant.INVALID_USER_ID_DESCRIPTION);
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);

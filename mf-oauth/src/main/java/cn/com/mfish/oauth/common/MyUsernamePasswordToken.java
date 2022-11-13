@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.common;
 
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
@@ -10,7 +10,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 public class MyUsernamePasswordToken extends UsernamePasswordToken {
 
     //用户ID
-    private SSOUser userInfo;
+    private SsoUser userInfo;
     //是否新用户
     private boolean isNew;
 
@@ -34,11 +34,11 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
         this.loginType = loginType;
         return this;
     }
-    public SSOUser getUserInfo() {
+    public SsoUser getUserInfo() {
         return userInfo;
     }
 
-    public void setUserInfo(SSOUser userInfo) {
+    public void setUserInfo(SsoUser userInfo) {
         this.userInfo = userInfo;
     }
     public boolean isNew() {

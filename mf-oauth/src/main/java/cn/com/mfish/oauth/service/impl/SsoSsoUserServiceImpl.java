@@ -3,8 +3,8 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.PasswordHelper;
-import cn.com.mfish.oauth.mapper.SSOUserMapper;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.mapper.SsoUserMapper;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
     @Resource
     PasswordHelper passwordHelper;
     @Resource
-    SSOUserMapper ssoUserMapper;
+    SsoUserMapper ssoUserMapper;
     @Resource
     UserTempCache userTempCache;
     @Resource
@@ -39,12 +39,12 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
      * @return
      */
     @Override
-    public CheckWithResult<SSOUser> changePassword(String userId, String newPassword) {
-        CheckWithResult<SSOUser> result = verifyPassword(newPassword);
+    public CheckWithResult<SsoUser> changePassword(String userId, String newPassword) {
+        CheckWithResult<SsoUser> result = verifyPassword(newPassword);
         if (!result.isSuccess()) {
             return result;
         }
-        SSOUser user = userTempCache.getCacheInfo(userId);
+        SsoUser user = userTempCache.getCacheInfo(userId);
         if (user == null) {
             String error = MessageFormat.format("错误:用户id{0}未获取到用户信息!", userId);
             log.error(error);
@@ -64,8 +64,8 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
     }
 
     @Override
-    public CheckWithResult<SSOUser> insert(SSOUser user) {
-        CheckWithResult<SSOUser> result = new CheckWithResult<SSOUser>().setResult(user);
+    public CheckWithResult<SsoUser> insert(SsoUser user) {
+        CheckWithResult<SsoUser> result = new CheckWithResult<SsoUser>().setResult(user);
         int res = ssoUserMapper.insert(user);
         if (res > 0) {
             userTempCache.updateCacheInfo(user.getId(), user);
@@ -75,8 +75,8 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
     }
 
     @Override
-    public CheckWithResult<SSOUser> update(SSOUser user) {
-        CheckWithResult<SSOUser> result = new CheckWithResult<SSOUser>().setResult(user);
+    public CheckWithResult<SsoUser> update(SsoUser user) {
+        CheckWithResult<SsoUser> result = new CheckWithResult<SsoUser>().setResult(user);
         int res = ssoUserMapper.update(user);
         if (res > 0) {
             //更新用户信息,刷新redis 用户缓存
@@ -88,13 +88,13 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
     }
 
     @Override
-    public SSOUser getUserByAccount(String account) {
+    public SsoUser getUserByAccount(String account) {
         String userId = account2IdTempCache.getCacheInfo(account);
         return getUserById(userId);
     }
 
     @Override
-    public SSOUser getUserById(String userId) {
+    public SsoUser getUserById(String userId) {
         return userTempCache.getCacheInfo(userId);
     }
 
@@ -116,8 +116,8 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
      * @param password
      * @return
      */
-    public CheckWithResult<SSOUser> verifyPassword(String password) {
-        CheckWithResult<SSOUser> result = new CheckWithResult<>();
+    public CheckWithResult<SsoUser> verifyPassword(String password) {
+        CheckWithResult<SsoUser> result = new CheckWithResult<>();
         if (StringUtils.isEmpty(password)) {
             return result.setSuccess(false).setMsg("密码不允许为空");
         }

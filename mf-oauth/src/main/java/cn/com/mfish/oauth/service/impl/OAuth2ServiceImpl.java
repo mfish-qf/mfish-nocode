@@ -5,7 +5,7 @@ import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.TokenService;
 import cn.com.mfish.oauth.service.SsoUserService;
@@ -138,7 +138,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
 
     @Override
     public UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException {
-        SSOUser user = ssoUserService.getUserById(userId);
+        SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);
         }

@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -8,14 +8,14 @@ import org.apache.ibatis.annotations.Select;
  * @author qiufeng
  * @date 2020/2/13 17:13
  */
-public interface SSOUserMapper {
+public interface SsoUserMapper {
     /**
      * 插入用户信息
      *
      * @param userInfo
      * @return
      */
-    int insert(SSOUser userInfo);
+    int insert(SsoUser userInfo);
 
     /**
      * 更新用户信息
@@ -23,7 +23,7 @@ public interface SSOUserMapper {
      * @param ssoUser
      * @return
      */
-    int update(SSOUser ssoUser);
+    int update(SsoUser ssoUser);
 
     /**
      * 根据账号查询用户信息 账号为account,phone,email,userId任意一种
@@ -31,7 +31,7 @@ public interface SSOUserMapper {
      * @param account
      * @return
      */
-    SSOUser getUserByAccount(@Param("account") String account);
+    SsoUser getUserByAccount(@Param("account") String account);
 
     /**
      * 根据用户ID查询用户
@@ -40,7 +40,7 @@ public interface SSOUserMapper {
      * @return
      */
     @Select("select * from sso_user where id = #{id}")
-    SSOUser getUserById(String id);
+    SsoUser getUserById(String id);
 
     /**
      * 根据微信openId获取用户id

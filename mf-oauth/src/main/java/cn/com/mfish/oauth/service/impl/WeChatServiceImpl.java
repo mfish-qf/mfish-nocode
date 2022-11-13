@@ -4,7 +4,7 @@ import cn.com.mfish.oauth.cache.temp.OpenIdTempCache;
 import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AccessToken;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.service.WeChatService;
@@ -46,10 +46,10 @@ public class WeChatServiceImpl implements WeChatService {
 
     @Override
     public boolean bindWeChat(String openId, String userId) {
-        SSOUser user = new SSOUser();
+        SsoUser user = new SsoUser();
         user.setOpenid(openId);
         user.setId(userId);
-        CheckWithResult<SSOUser> result = ssoUserService.update(user);
+        CheckWithResult<SsoUser> result = ssoUserService.update(user);
         return result.isSuccess();
     }
 
@@ -66,7 +66,7 @@ public class WeChatServiceImpl implements WeChatService {
         weChatToken.setAccess_token(UUID.randomUUID().toString());
         weChatToken.setRefresh_token(UUID.randomUUID().toString());
         weChatToken.setUserId(userId);
-        SSOUser user = ssoUserService.getUserById(userId);
+        SsoUser user = ssoUserService.getUserById(userId);
         weChatToken.setAccount(user.getAccount());
         weChatToken.setExpires_in(tokenExpire);
         setToken(weChatToken);

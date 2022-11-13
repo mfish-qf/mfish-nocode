@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.cache.temp;
 
 import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.oauth.common.RedisPrefix;
-import cn.com.mfish.oauth.mapper.SSOUserMapper;
+import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 @Component
 public class OpenIdTempCache extends BaseTempCache<String> {
     @Resource
-    SSOUserMapper ssoUserMapper;
+    SsoUserMapper ssoUserMapper;
 
     @Override
     protected String buildKey(String key) {
