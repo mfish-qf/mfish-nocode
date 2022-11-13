@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 09/11/2022 16:11:49
+ Date: 13/11/2022 11:52:09
 */
 
 SET NAMES utf8mb4;
@@ -115,7 +115,7 @@ INSERT INTO `sso_menu` VALUES ('268d140daddc00dc77823c7d7c2025fb', '76f68d05f505
 INSERT INTO `sso_menu` VALUES ('2a4e024fdc76063da32926c63ca9ead2', '', 'system', '00002', 1, '系统管理', 'ant-design:setting-outlined', 2, 0, '/system', NULL, NULL, 0, 1, NULL, '', 'admin', '2022-11-08 16:59:57', '', NULL);
 INSERT INTO `sso_menu` VALUES ('4527c6c05549e3594f135ac056faaece', '', 'system', '00004', 1, '引导页', 'whh:paintroll', 4, 1, '/setup/index', '/demo/setup/index.vue', NULL, 0, 1, 1, '', 'admin', '2022-11-08 17:11:09', '', NULL);
 INSERT INTO `sso_menu` VALUES ('4bfec85ae3174915cd2a3e8ddd822220', '', 'system', '00005', 1, '关于', 'simple-icons:about-dot-me', 5, 1, '/about/index', '/sys/about/index.vue', '', 0, 1, 1, '', 'admin', '2022-11-08 17:13:12', 'admin', '2022-11-08 17:13:29');
-INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', 'system', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, '', 'admin', '2022-11-08 16:53:57', '', NULL);
+INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', 'system', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, '', 'admin', '2022-11-08 16:53:57', 'admin', '2022-11-13 11:47:33');
 INSERT INTO `sso_menu` VALUES ('6a38a3847b66cc690c3a2eacedb4e81f', '76f68d05f5054818762718ee85d6d0fe', 'system', '000010000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:workbench:update', 0, 0, NULL, '', 'admin', '2022-11-08 16:57:42', 'admin', '2022-11-08 16:58:02');
 INSERT INTO `sso_menu` VALUES ('6e491486dc4cb475e4bd037d06ab2801', '', 'system', '00003', 1, '外部页面', 'ion:tv-outline', 3, 0, '/link', NULL, NULL, 1, 1, NULL, '', 'admin', '2022-11-08 17:08:24', '', NULL);
 INSERT INTO `sso_menu` VALUES ('6fd5cdaf86772d4db0587f3b9281f99b', 'a988f38821885f8f8aaffa49d681aaac', 'system', '000020000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:menu:update', 0, 0, NULL, '', 'admin', '2022-11-08 17:05:12', '', NULL);
@@ -132,6 +132,7 @@ DROP TABLE IF EXISTS `sso_org`;
 CREATE TABLE `sso_org`  (
   `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
   `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '父组织ID',
+  `client_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端ID',
   `org_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '组织编码',
   `org_level` tinyint(4) NULL DEFAULT NULL COMMENT '组织级别',
   `org_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '组织名称',
@@ -139,8 +140,9 @@ CREATE TABLE `sso_org`  (
   `leader` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '负责人',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '联系电话',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
-  `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1停用）',
-  `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0正常 1删除）',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `status` tinyint(1) NULL DEFAULT 0 COMMENT '状态（0正常 1停用）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0正常 1删除）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
@@ -152,6 +154,9 @@ CREATE TABLE `sso_org`  (
 -- ----------------------------
 -- Records of sso_org
 -- ----------------------------
+INSERT INTO `sso_org` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '950736539e99c0521531cc127d5b8712', 'system', '0000100002', 2, '摸鱼二部', 2, 'mfish2', '18922222222', '22@qq.com', '摸鱼二部', 0, 0, 'admin', '2022-11-12 11:09:47', '', NULL);
+INSERT INTO `sso_org` VALUES ('950736539e99c0521531cc127d5b8712', '', 'system', '00001', 1, '摸鱼事业部', 1, 'mfish', '18911111111', '11@qq.com', '摸鱼事业部', 0, 0, 'admin', '2022-11-12 10:57:36', 'admin', '2022-11-13 11:49:15');
+INSERT INTO `sso_org` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', '950736539e99c0521531cc127d5b8712', 'system', '0000100001', 2, '摸鱼一部', 1, 'mfish1', '18922222222', '22@qq.com', '摸鱼一部', 0, 0, 'admin', '2022-11-12 11:07:12', 'admin', '2022-11-13 11:48:20');
 
 -- ----------------------------
 -- Table structure for sso_org_role
@@ -225,6 +230,7 @@ CREATE TABLE `sso_role_menu`  (
 DROP TABLE IF EXISTS `sso_user`;
 CREATE TABLE `sso_user`  (
   `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `client_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端ID',
   `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
@@ -238,7 +244,9 @@ CREATE TABLE `sso_user`  (
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
   `salt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '盐',
   `openid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信唯一id',
+  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `account_index`(`account`) USING BTREE,
@@ -249,7 +257,7 @@ CREATE TABLE `sso_user`  (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('6870e0fe-fa79-468c-86d9-e963e9b5c43f', 'admin', '18911111111', 'qiufeng9862@qq.com', '643ce6d324f7762cada2df58023cd9c6', '$2a$10$WskRinqDYZxZ2KO2O5/Yf.mslpeM7dwhEYz7dUSiwfrmhVNY1mKzG,b23e5b12659873270b76432639538ff0', '管理员', NULL, '02511111111', '1998-06-28', 0, 1, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '2017-04-10 15:21:38', '2021-12-14 10:26:40');
+INSERT INTO `sso_user` VALUES ('6870e0fe-fa79-468c-86d9-e963e9b5c43f', '', 'admin', '18911111111', 'qiufeng9862@qq.com', '643ce6d324f7762cada2df58023cd9c6', '$2a$10$WskRinqDYZxZ2KO2O5/Yf.mslpeM7dwhEYz7dUSiwfrmhVNY1mKzG,b23e5b12659873270b76432639538ff0', '管理员', NULL, '02511111111', '1998-06-28', 0, 1, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '', '2017-04-10 15:21:38', '', '2021-12-14 10:26:40');
 
 -- ----------------------------
 -- Table structure for sso_user_role
