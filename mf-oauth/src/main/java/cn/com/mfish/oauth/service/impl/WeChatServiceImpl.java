@@ -1,7 +1,6 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.oauth.cache.temp.OpenIdTempCache;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -49,8 +48,7 @@ public class WeChatServiceImpl implements WeChatService {
         SsoUser user = new SsoUser();
         user.setOpenid(openId);
         user.setId(userId);
-        CheckWithResult<SsoUser> result = ssoUserService.update(user);
-        return result.isSuccess();
+        return ssoUserService.updateById(user);
     }
 
     @Override

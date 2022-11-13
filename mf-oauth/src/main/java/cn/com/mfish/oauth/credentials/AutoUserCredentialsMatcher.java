@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.credentials;
 
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -20,7 +20,7 @@ public class AutoUserCredentialsMatcher extends SimpleCredentialsMatcher {
 
     protected void insertNewUser(boolean newUser, SsoUser user) {
         if (newUser) {
-            CheckWithResult<SsoUser> result = ssoUserService.insert(user);
+            Result<SsoUser> result = ssoUserService.insert(user);
             if (!result.isSuccess()) {
                 throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
             }
