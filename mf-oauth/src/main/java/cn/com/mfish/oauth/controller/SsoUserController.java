@@ -11,9 +11,12 @@ import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.AccessTokenValidator;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -84,6 +87,23 @@ public class SsoUserController {
         userTokenCache.delUserDevice(SerConstant.DeviceType.Web, userId);
         subject.logout();
         return Result.ok("成功登出");
+    }
+
+    /**
+     * 分页列表查询
+     *
+     * @param reqSsoUser
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
+    @GetMapping
+    public Result<IPage<UserInfo>> queryPageList(ReqSsoUser reqSsoUser,
+                                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        IPage<UserInfo> pageList = ssoUserService.getUserList(new Page<>(pageNo, pageSize), reqSsoUser);
+        return Result.ok(pageList, "用户信息-查询成功!");
     }
 
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)

@@ -1,9 +1,14 @@
 package cn.com.mfish.oauth.mapper;
 
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * @author qiufeng
@@ -40,8 +45,11 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     /**
      * 判断帐号是否存在（帐号可以是邮箱、用户名、手机号）
+     *
      * @param account
      * @return
      */
     Integer isAccountExist(@Param("account") String account);
+
+    List<UserInfo> getUserList(IPage<UserInfo> iPage, @Param("reqSsoUser") ReqSsoUser reqSsoUser);
 }

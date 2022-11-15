@@ -1,12 +1,15 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
+import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -98,6 +101,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     public SsoUser getUserById(String userId) {
         return userTempCache.getCacheInfo(userId);
+    }
+
+    @Override
+    public IPage<UserInfo> getUserList(IPage<UserInfo> iPage, ReqSsoUser reqSsoUser) {
+        return iPage.setRecords(baseMapper.getUserList(iPage, reqSsoUser));
     }
 
     /**

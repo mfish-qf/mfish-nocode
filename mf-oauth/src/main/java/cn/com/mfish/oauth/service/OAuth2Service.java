@@ -29,4 +29,5 @@ public interface OAuth2Service {
     RedisAccessToken refresh2Token(RedisAccessToken token) throws OAuthSystemException;
 
     UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException;
+
 }

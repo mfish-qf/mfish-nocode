@@ -39,7 +39,7 @@ public class SsoRole extends BaseEntity<String> {
     @ApiModelProperty(value = "备注")
     private String remark;
     @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
-    private String delFlag;
+    private Integer delFlag;
     @TableField(exist = false)
     @ApiModelProperty("菜单ID列表")
     private List<String> menuIds;

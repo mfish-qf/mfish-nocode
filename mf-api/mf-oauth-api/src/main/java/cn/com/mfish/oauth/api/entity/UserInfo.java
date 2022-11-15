@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,8 +35,17 @@ public class UserInfo extends BaseEntity<String> {
     @ApiModelProperty("生日")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date birthday;
-    @ApiModelProperty("性别")
+    @ApiModelProperty("性别(1男 0女)")
     private Integer sex;
-    @ApiModelProperty("状态 0删除 1正常 2禁用")
+    @ApiModelProperty(value = "状态（0正常 1停用）")
     private Integer status;
+    @ApiModelProperty(value = "删除标志（0正常 1删除）")
+    private Integer delFlag;
+    @TableField(exist = false)
+    @ApiModelProperty("组织名称")
+    private String orgName;
+    @TableField(exist = false)
+    @ApiModelProperty("组织ID")
+    private String orgId;
+
 }
