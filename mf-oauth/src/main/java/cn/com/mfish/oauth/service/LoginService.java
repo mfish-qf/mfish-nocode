@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.common.SerConstant;
 import org.springframework.ui.Model;
 
@@ -36,7 +36,7 @@ public interface LoginService {
      * @param request
      * @return
      */
-    CheckWithResult<String> login(HttpServletRequest request);
+    Result<String> login(HttpServletRequest request);
 
     /**
      * 登录
@@ -46,7 +46,7 @@ public interface LoginService {
      * @param loginType
      * @return
      */
-    CheckWithResult<String> login(String username, String password, SerConstant.LoginType loginType, String rememberMe);
+    Result<String> login(String username, String password, SerConstant.LoginType loginType, String rememberMe);
 
     /**
      * 登录重试计数

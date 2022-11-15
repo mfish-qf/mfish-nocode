@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.common.core.utils.ApplicationContextProvider;
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,11 @@ public abstract class MultipleValidator {
      * @param result
      * @return
      */
-    public CheckWithResult<OAuthClient> validateClient(HttpServletRequest request, CheckWithResult<OAuthClient> result) {
+    public Result<OAuthClient> validateClient(HttpServletRequest request, Result<OAuthClient> result) {
         return validate(request, result, validateClientList);
     }
 
-    public <T> CheckWithResult<T> validate(HttpServletRequest request, CheckWithResult<T> result, List<Class<? extends IBaseValidator<T>>> list) {
+    public <T> Result<T> validate(HttpServletRequest request, Result<T> result, List<Class<? extends IBaseValidator<T>>> list) {
         for (Class<? extends IBaseValidator<T>> validator : list) {
             result = applicationContextProvider.getBean(validator)
                     .validate(request, result);

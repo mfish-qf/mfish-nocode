@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.realm;
 
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -22,7 +22,7 @@ public class WxPhoneRealm extends BaseRealm {
     LoginService loginService;
 
     @Override
-    protected AuthenticationInfo buildAuthenticationInfo(SSOUser user, AuthenticationToken authenticationToken, boolean newUser) {
+    protected AuthenticationInfo buildAuthenticationInfo(SsoUser user, AuthenticationToken authenticationToken, boolean newUser) {
         String sessionKey = String.valueOf((char[]) authenticationToken.getCredentials());
         String openId = loginService.getOpenIdBySessionKey(sessionKey);
         if (StringUtils.isEmpty(openId)) {

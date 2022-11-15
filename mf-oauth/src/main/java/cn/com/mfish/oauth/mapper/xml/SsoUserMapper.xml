@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.mfish.oauth.mapper.SsoUserMapper">
+    <sql id="byAccount">
+        <if test="account != null and account != ''">
+            or account = #{account}
+            or phone = #{account}
+            or email = #{account}
+        </if>
+    </sql>
+    <select id="getUserByAccount" resultType="cn.com.mfish.oauth.entity.SsoUser">
+        select * from sso_user
+        <where>
+            1!=1 and status = 0 and del_flag = 0
+            <include refid="byAccount"/>
+        </where>
+    </select>
+    <select id="isAccountExist" resultType="java.lang.Integer">
+        select count(0) from sso_user
+        <include refid="byAccount"/>
+    </select>
+    <select id="getUserList" resultType="cn.com.mfish.oauth.api.entity.UserInfo">
+        select u.*,o.org_name,ou.org_id from sso_user u
+        left join sso_org_user ou on ou.user_id = u.id
+        inner join sso_org o on o.id = ou.org_id
+        <where>
+            u.status = 0 and u.del_flag = 0
+            <if test="reqSsoUser.orgId != null">
+                and o.id = #{reqSsoUser.orgId}
+            </if>
+        </where>
+    </select>
+</mapper>

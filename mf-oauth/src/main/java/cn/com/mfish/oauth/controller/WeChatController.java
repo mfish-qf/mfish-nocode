@@ -8,7 +8,6 @@ import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.WeChatToken;
@@ -114,10 +113,10 @@ public class WeChatController {
         if (StringUtils.isEmpty(openid)) {
             throw new OAuthValidateException("错误:未获取openid");
         }
-        CheckWithResult<String> loginResult = loginService.login(request);
-        if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getResult())) {
+        Result<String> loginResult = loginService.login(request);
+        if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData())) {
             return weChatService.convertToken(weChatService
-                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getResult()));
+                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getData()));
         }
         throw new OAuthValidateException("错误:微信账号绑定失败");
     }
@@ -131,11 +130,11 @@ public class WeChatController {
     })
     @SSOLogAnnotation("weChatGetUser")
     public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
-        CheckWithResult<WeChatToken> result = weChatTokenValidator.validate(request);
+        Result<WeChatToken> result = weChatTokenValidator.validate(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return Result.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
+        return Result.ok(oAuth2Service.getUserInfo(result.getData().getUserId()));
     }
 
     @PostMapping("/login/pwd")
@@ -154,13 +153,13 @@ public class WeChatController {
             return new AccessToken(weChatService
                     .buildWeChatToken(openid, session.getSessionKey(), userId));
         }
-        CheckWithResult<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "false");
+        Result<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "false");
         if (StringUtils.isEmpty(nickname)) {
             nickname = AuthUtils.phoneMasking(phone);
         }
-        if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getResult(), nickname)) {
+        if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
             return new AccessToken(weChatService
-                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getResult()));
+                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getData()));
         }
         throw new OAuthValidateException("错误:绑定微信失败");
     }
@@ -199,12 +198,12 @@ public class WeChatController {
         }
         WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNoInfo(sessionKey, encryptedData, iv);
         String phone = phoneNoInfo.getPhoneNumber();
-        CheckWithResult<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "false");
+        Result<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "false");
         if (StringUtils.isEmpty(nickname)) {
             nickname = AuthUtils.phoneMasking(phone);
         }
-        if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getResult(), nickname)) {
-            return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getResult()));
+        if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
+            return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));
         }
         throw new OAuthValidateException("错误:绑定微信失败");
     }

@@ -27,7 +27,7 @@ import java.util.Arrays;
 @Slf4j
 @Api(tags = "角色信息表")
 @RestController
-@RequestMapping("/ssoRole")
+@RequestMapping("/role")
 public class SsoRoleController {
     @Resource
     private SsoRoleService ssoRoleService;

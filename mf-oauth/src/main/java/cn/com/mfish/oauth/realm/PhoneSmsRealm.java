@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.realm;
 
 import cn.com.mfish.oauth.common.SerConstant;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.*;
@@ -18,7 +18,7 @@ public class PhoneSmsRealm extends BaseRealm {
     LoginService loginService;
 
     @Override
-    protected AuthenticationInfo buildAuthenticationInfo(SSOUser user, AuthenticationToken authenticationToken, boolean newUser) {
+    protected AuthenticationInfo buildAuthenticationInfo(SsoUser user, AuthenticationToken authenticationToken, boolean newUser) {
         String code = loginService.getSmsCode(user.getPhone());
         if (StringUtils.isEmpty(code)) {
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_SECRET_DESCRIPTION);

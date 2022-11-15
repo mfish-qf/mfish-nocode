@@ -88,11 +88,11 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-通过id删除", operateType = OperateType.DELETE)
 	@ApiOperation(value = "${tableInfo.tableComment}-通过id删除", notes = "${tableInfo.tableComment}-通过id删除")
 	@DeleteMapping("/{id}")
-	public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+	public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		if (${entityName?uncap_first}Service.removeById(id)){
-			return Result.ok("${tableInfo.tableComment}-删除成功!");
+			return Result.ok(true, "${tableInfo.tableComment}-删除成功!");
 		}
-		return Result.fail("错误:${tableInfo.tableComment}-删除失败!");
+		return Result.fail(false, "错误:${tableInfo.tableComment}-删除失败!");
 	}
 
 	/**
@@ -104,11 +104,11 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
 	@ApiOperation(value = "${tableInfo.tableComment}-批量删除", notes = "${tableInfo.tableComment}-批量删除")
 	@DeleteMapping("/batch")
-	public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
+	public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))){
-		    return Result.ok("${tableInfo.tableComment}-批量删除成功!");
+		    return Result.ok(true, "${tableInfo.tableComment}-批量删除成功!");
 		}
-		return Result.fail("错误:${tableInfo.tableComment}-批量删除失败!");
+		return Result.fail(false, "错误:${tableInfo.tableComment}-批量删除失败!");
 	}
 
 	/**

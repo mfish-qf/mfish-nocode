@@ -1,19 +1,26 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
-import cn.com.mfish.oauth.common.CheckWithResult;
-import cn.com.mfish.oauth.common.PasswordHelper;
-import cn.com.mfish.oauth.mapper.SSOUserMapper;
-import cn.com.mfish.oauth.entity.SSOUser;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
+import cn.com.mfish.oauth.common.PasswordHelper;
+import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.oauth.mapper.SsoUserMapper;
+import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author qiufeng
@@ -21,11 +28,9 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class SsoSsoUserServiceImpl implements SsoUserService {
+public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> implements SsoUserService {
     @Resource
     PasswordHelper passwordHelper;
-    @Resource
-    SSOUserMapper ssoUserMapper;
     @Resource
     UserTempCache userTempCache;
     @Resource
@@ -39,74 +44,85 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
      * @return
      */
     @Override
-    public CheckWithResult<SSOUser> changePassword(String userId, String newPassword) {
-        CheckWithResult<SSOUser> result = verifyPassword(newPassword);
+    public Result<SsoUser> changePassword(String userId, String newPassword) {
+        Result<SsoUser> result = verifyPassword(newPassword);
         if (!result.isSuccess()) {
             return result;
         }
-        SSOUser user = userTempCache.getCacheInfo(userId);
+        SsoUser user = userTempCache.getCacheInfo(userId);
         if (user == null) {
             String error = MessageFormat.format("错误:用户id{0}未获取到用户信息!", userId);
             log.error(error);
-            return result.setSuccess(false).setMsg(error);
+            return Result.fail(error);
         }
 
         user.setOldPassword(setOldPwd(user.getOldPassword(), user.getPassword()));
         user.setPassword(passwordHelper.encryptPassword(userId, newPassword, user.getSalt()));
         if (user.getOldPassword().indexOf(user.getPassword()) >= 0) {
-            return result.setSuccess(false).setMsg("密码5次内不得循环使用");
+            return Result.fail("错误:密码5次内不得循环使用");
         }
         user.setUpdateTime(new Date());
-        ssoUserMapper.update(user);
-        //更新用户信息,刷新redis 用户缓存
-        userTempCache.updateCacheInfo(userId, user);
-        return result.setSuccess(true).setMsg("修改成功").setResult(user);
+        if (baseMapper.updateById(user) == 1) {
+            //更新用户信息,刷新redis 用户缓存
+            userTempCache.updateCacheInfo(userId, user);
+            return Result.ok(user, "用户密码-修改成功");
+        }
+        return Result.fail(user, "错误:修改失败");
     }
 
     @Override
-    public CheckWithResult<SSOUser> insert(SSOUser user) {
-        CheckWithResult<SSOUser> result = new CheckWithResult<SSOUser>().setResult(user);
-        int res = ssoUserMapper.insert(user);
+    public Result<SsoUser> insert(SsoUser user) {
+        int res = baseMapper.insert(user);
         if (res > 0) {
             userTempCache.updateCacheInfo(user.getId(), user);
-            return result;
+            return Result.ok(user, "用户信息-新增成功");
         }
-        return result.setSuccess(false).setMsg("错误:插入用户信息失败!");
+        return Result.fail("错误:插入用户信息失败!");
     }
 
     @Override
-    public CheckWithResult<SSOUser> update(SSOUser user) {
-        CheckWithResult<SSOUser> result = new CheckWithResult<SSOUser>().setResult(user);
-        int res = ssoUserMapper.update(user);
+    public Result<SsoUser> updateUser(SsoUser user) {
+        int res = baseMapper.updateById(user);
         if (res > 0) {
             //更新用户信息,刷新redis 用户缓存
-            user = ssoUserMapper.getUserById(user.getId());
+            user = baseMapper.selectById(user.getId());
             userTempCache.updateCacheInfo(user.getId(), user);
-            return result;
+            return Result.ok(user, "用户信息-更新成功");
         }
-        return result.setSuccess(false).setMsg("未找到用户信息更新数据");
+        return Result.fail("错误:未找到用户信息更新数据");
     }
 
     @Override
-    public SSOUser getUserByAccount(String account) {
+    public SsoUser getUserByAccount(String account) {
         String userId = account2IdTempCache.getCacheInfo(account);
         return getUserById(userId);
     }
 
     @Override
-    public SSOUser getUserById(String userId) {
+    public SsoUser getUserById(String userId) {
         return userTempCache.getCacheInfo(userId);
+    }
+
+    @Override
+    public IPage<UserInfo> getUserList(IPage<UserInfo> iPage, ReqSsoUser reqSsoUser) {
+        return iPage.setRecords(baseMapper.getUserList(iPage, reqSsoUser));
     }
 
     /**
      * 获取用户客户端是否存在
-     * @param account
+     *
+     * @param userId
      * @param clientId
      * @return
      */
     @Override
-    public Integer getUserClientExist(String account, String clientId) {
-        return ssoUserMapper.getUserClientExist(account, clientId);
+    public boolean isUserClientExist(String userId, String clientId) {
+        return baseMapper.isUserClientExist(userId, clientId) > 0;
+    }
+
+    @Override
+    public boolean isAccountExist(String account) {
+        return baseMapper.isAccountExist(account) > 0;
     }
 
     /**
@@ -116,18 +132,17 @@ public class SsoSsoUserServiceImpl implements SsoUserService {
      * @param password
      * @return
      */
-    public CheckWithResult<SSOUser> verifyPassword(String password) {
-        CheckWithResult<SSOUser> result = new CheckWithResult<>();
+    public Result<SsoUser> verifyPassword(String password) {
         if (StringUtils.isEmpty(password)) {
-            return result.setSuccess(false).setMsg("密码不允许为空");
+            return Result.fail("密码不允许为空");
         }
         if (password.length() < 8 || password.length() > 16) {
-            return result.setSuccess(false).setMsg("密码长度必须8~16位");
+            return Result.fail("密码长度必须8~16位");
         }
         if (!password.matches("(?=.*\\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,16}")) {
-            return result.setSuccess(false).setMsg("密码必须由数字、字母、特殊字符组合");
+            return Result.fail("密码必须由数字、字母、特殊字符组合");
         }
-        return result;
+        return Result.ok("校验成功");
     }
 
     /**

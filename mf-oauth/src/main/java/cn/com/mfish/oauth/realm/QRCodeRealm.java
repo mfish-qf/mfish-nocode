@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.realm;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisQrCode;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.QRCodeService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.*;
@@ -19,7 +19,7 @@ public class QRCodeRealm extends BaseRealm {
     QRCodeService qrCodeService;
 
     @Override
-    protected AuthenticationInfo buildAuthenticationInfo(SSOUser user, AuthenticationToken authenticationToken, boolean newUser) {
+    protected AuthenticationInfo buildAuthenticationInfo(SsoUser user, AuthenticationToken authenticationToken, boolean newUser) {
         String[] secret = StringUtils.split(String.valueOf(((MyUsernamePasswordToken) authenticationToken).getPassword()), ",");
         //secret由扫码code值和secret拼接而成
         if (secret == null || secret.length != 2) {

@@ -2,8 +2,8 @@ package cn.com.mfish.oauth.cache.temp;
 
 import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.oauth.common.RedisPrefix;
-import cn.com.mfish.oauth.mapper.SSOUserMapper;
-import cn.com.mfish.oauth.entity.SSOUser;
+import cn.com.mfish.oauth.mapper.SsoUserMapper;
+import cn.com.mfish.oauth.entity.SsoUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import java.text.MessageFormat;
 @Slf4j
 public class Account2IdTempCache extends BaseTempCache<String> {
     @Resource
-    SSOUserMapper ssoUserMapper;
+    SsoUserMapper ssoUserMapper;
 
     @Override
     protected String buildKey(String key) {
@@ -27,7 +27,7 @@ public class Account2IdTempCache extends BaseTempCache<String> {
 
     @Override
     protected String getFromDB(String key) {
-        SSOUser user = ssoUserMapper.getUserByAccount(key);
+        SsoUser user = ssoUserMapper.getUserByAccount(key);
         if (user == null) {
             log.info(MessageFormat.format("错误:账号{0}未找到对应用户!", key));
             return null;

@@ -3,7 +3,6 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.QRCode;
 import cn.com.mfish.oauth.entity.QRCodeImg;
@@ -172,7 +171,7 @@ public class QRCodeController {
      * @return
      */
     private Result<String> qrCodeOperator(HttpServletRequest request, SerConstant.ScanStatus origStatus, SerConstant.ScanStatus destStatus) {
-        CheckWithResult<WeChatToken> result = weChatTokenValidator.validate(request);
+        Result<WeChatToken> result = weChatTokenValidator.validate(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
@@ -182,7 +181,7 @@ public class QRCodeController {
             return Result.fail("错误:code不正确");
         }
         if (!StringUtils.isEmpty(redisQrCode.getAccessToken())
-                && !result.getResult().getAccess_token().equals(redisQrCode.getAccessToken())) {
+                && !result.getData().getAccess_token().equals(redisQrCode.getAccessToken())) {
             return Result.fail("错误:两次请求token不相同");
         }
         if (!StringUtils.isEmpty(redisQrCode.getSecret())) {
@@ -193,8 +192,8 @@ public class QRCodeController {
         }
         if (origStatus.toString().equals(redisQrCode.getStatus())) {
             redisQrCode.setStatus(destStatus.toString());
-            redisQrCode.setAccessToken(result.getResult().getAccess_token());
-            redisQrCode.setAccount(result.getResult().getAccount());
+            redisQrCode.setAccessToken(result.getData().getAccess_token());
+            redisQrCode.setAccount(result.getData().getAccount());
             redisQrCode.setSecret(UUID.randomUUID().toString());
             qrCodeService.updateQRCode(redisQrCode);
             return Result.ok(redisQrCode.getSecret(), "操作成功");

@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.oauth.common.CheckWithResult;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -35,7 +35,7 @@ public class Refresh2TokenValidator extends MultipleValidator {
      * @param result
      * @return
      */
-    public CheckWithResult<RedisAccessToken> validateToken(HttpServletRequest request, CheckWithResult<RedisAccessToken> result) {
+    public Result<RedisAccessToken> validateToken(HttpServletRequest request, Result<RedisAccessToken> result) {
         return validate(request, result, validateTokenList);
     }
 
@@ -45,13 +45,13 @@ public class Refresh2TokenValidator extends MultipleValidator {
     @Component
     public class ClientIdEqualValidator extends AbstractRefreshTokenValidator {
         @Override
-        public CheckWithResult<RedisAccessToken> validate(HttpServletRequest request, CheckWithResult<RedisAccessToken> result) {
-            CheckWithResult<RedisAccessToken> result1 = getRefreshToken(request, result);
+        public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
+            Result<RedisAccessToken> result1 = getRefreshToken(request, result);
             if (!result1.isSuccess()) {
                 return result1;
             }
             String clientId = request.getParameter(OAuth.OAUTH_CLIENT_ID);
-            if (!StringUtils.isEmpty(clientId) && clientId.equals(result1.getResult().getClientId())) {
+            if (!StringUtils.isEmpty(clientId) && clientId.equals(result1.getData().getClientId())) {
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:token和refreshToken两次传入的clientId不一致");
@@ -64,13 +64,13 @@ public class Refresh2TokenValidator extends MultipleValidator {
     @Component
     public class ClientSecretEqualValidator extends AbstractRefreshTokenValidator {
         @Override
-        public CheckWithResult<RedisAccessToken> validate(HttpServletRequest request, CheckWithResult<RedisAccessToken> result) {
-            CheckWithResult<RedisAccessToken> result1 = getRefreshToken(request, result);
+        public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
+            Result<RedisAccessToken> result1 = getRefreshToken(request, result);
             if (!result1.isSuccess()) {
                 return result1;
             }
             String secret = request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
-            if (!StringUtils.isEmpty(secret) && secret.equals(result1.getResult().getClientSecret())) {
+            if (!StringUtils.isEmpty(secret) && secret.equals(result1.getData().getClientSecret())) {
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:token和refreshToken两次传入的clientSecret不一致");
@@ -83,13 +83,13 @@ public class Refresh2TokenValidator extends MultipleValidator {
     @Component
     public class UriEqualValidator extends AbstractRefreshTokenValidator {
         @Override
-        public CheckWithResult<RedisAccessToken> validate(HttpServletRequest request, CheckWithResult<RedisAccessToken> result) {
-            CheckWithResult<RedisAccessToken> result1 = getRefreshToken(request, result);
+        public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
+            Result<RedisAccessToken> result1 = getRefreshToken(request, result);
             if (!result1.isSuccess()) {
                 return result1;
             }
             String uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
-            if (!StringUtils.isEmpty(uri) && uri.equals(result1.getResult().getRedirectUri())) {
+            if (!StringUtils.isEmpty(uri) && uri.equals(result1.getData().getRedirectUri())) {
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:token和refreshToken两次传入的uri不一致");

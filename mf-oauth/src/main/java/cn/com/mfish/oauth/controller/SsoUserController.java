@@ -1,27 +1,28 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.annotation.InnerUser;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
+import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.AccessTokenValidator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,8 @@ public class SsoUserController {
     OAuth2Service oAuth2Service;
     @Resource
     UserTokenCache userTokenCache;
+    @Resource
+    SsoUserService ssoUserService;
 
     @InnerUser
     @ApiOperation("获取用户信息")
@@ -53,11 +56,11 @@ public class SsoUserController {
     })
     @SSOLogAnnotation("getUser")
     public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
-        CheckWithResult<RedisAccessToken> result = accessTokenValidator.validate(request, null);
+        Result<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return Result.ok(oAuth2Service.getUserInfo(result.getResult().getUserId()));
+        return Result.ok(oAuth2Service.getUserInfo(result.getData().getUserId()));
     }
 
     @InnerUser
@@ -84,5 +87,73 @@ public class SsoUserController {
         userTokenCache.delUserDevice(SerConstant.DeviceType.Web, userId);
         subject.logout();
         return Result.ok("成功登出");
+    }
+
+    /**
+     * 分页列表查询
+     *
+     * @param reqSsoUser
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
+    @GetMapping
+    public Result<IPage<UserInfo>> queryPageList(ReqSsoUser reqSsoUser,
+                                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        IPage<UserInfo> pageList = ssoUserService.getUserList(new Page<>(pageNo, pageSize), reqSsoUser);
+        return Result.ok(pageList, "用户信息-查询成功!");
+    }
+
+    @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
+    @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
+    @PostMapping
+    public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
+        if (ssoUserService.save(ssoUser)) {
+            return Result.ok(ssoUser, "用户信息-添加成功!");
+        }
+        return Result.fail("错误:用户信息-添加失败!");
+    }
+
+    /**
+     * 编辑
+     *
+     * @param ssoUser
+     * @return
+     */
+    @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
+    @PutMapping
+    public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
+        if (ssoUserService.updateById(ssoUser)) {
+            return Result.ok(ssoUser, "用户信息-编辑成功!");
+        }
+        return Result.fail("错误:用户信息-编辑失败!");
+    }
+
+    /**
+     * 通过id删除
+     *
+     * @param id
+     * @return
+     */
+    @Log(title = "用户信息-通过id删除", operateType = OperateType.DELETE)
+    @ApiOperation(value = "用户信息-通过id删除", notes = "用户信息-通过id删除")
+    @DeleteMapping("/{id}")
+    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        if (ssoUserService.removeById(id)) {
+            return Result.ok(true, "用户信息-删除成功!");
+        }
+        return Result.fail(false, "错误:用户信息-删除失败!");
+    }
+
+    @ApiOperation("判断用户是否存在")
+    @GetMapping("/exist/{account}")
+    public Result<Boolean> isAccountExist(@ApiParam(name = "account", value = "帐号名称") @PathVariable String account) {
+        if (ssoUserService.isAccountExist(account)) {
+            return Result.ok(true, "帐号存在");
+        }
+        return Result.fail(false, "错误:帐号不存在");
     }
 }

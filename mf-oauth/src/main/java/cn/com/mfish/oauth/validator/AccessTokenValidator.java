@@ -1,9 +1,9 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
-import cn.com.mfish.oauth.common.CheckWithResult;
 import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +20,10 @@ public class AccessTokenValidator implements IBaseValidator<RedisAccessToken> {
     WebTokenServiceImpl webTokenService;
 
     @Override
-    public CheckWithResult<RedisAccessToken> validate(HttpServletRequest request, CheckWithResult<RedisAccessToken> result) {
+    public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
         RedisAccessToken token;
-        if (result == null || result.getResult() == null) {
-            result = new CheckWithResult<>();
+        if (result == null || result.getData() == null) {
+            result = new Result<>();
             String accessToken = AuthUtils.getAccessToken(request);
             if (StringUtils.isEmpty(accessToken)) {
                 return result.setSuccess(false).setMsg("错误:token不正确");
@@ -32,7 +32,7 @@ public class AccessTokenValidator implements IBaseValidator<RedisAccessToken> {
             if (token == null) {
                 return result.setSuccess(false).setMsg("错误:token不正确");
             }
-            return result.setResult(token);
+            return result.setData(token);
         }
         return result;
     }
