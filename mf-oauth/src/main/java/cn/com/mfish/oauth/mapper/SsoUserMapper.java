@@ -36,5 +36,12 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @return
      */
     @Select("select count(0) from sso_client_user where client_id=#{clientId} and user_id=#{userId}")
-    Integer getUserClientExist(@Param("userId") String userId, @Param("clientId") String clientId);
+    Integer isUserClientExist(@Param("userId") String userId, @Param("clientId") String clientId);
+
+    /**
+     * 判断帐号是否存在（帐号可以是邮箱、用户名、手机号）
+     * @param account
+     * @return
+     */
+    Integer isAccountExist(@Param("account") String account);
 }

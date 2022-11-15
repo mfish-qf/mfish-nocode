@@ -89,7 +89,7 @@ public class AccessTokenController {
             default:
                 throw new OAuthValidateException(result.getMsg());
         }
-        if (ssoUserService.getUserClientExist(token.getUserId(), token.getClientId()) <= 0) {
+        if (!ssoUserService.isUserClientExist(token.getUserId(), token.getClientId())) {
             throw new OAuthValidateException("错误:该用户无此客户端权限!");
         }
         //增加用户登录互斥缓存

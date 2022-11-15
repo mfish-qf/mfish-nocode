@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SsoSsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> implements SsoUserService {
+public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> implements SsoUserService {
     @Resource
     PasswordHelper passwordHelper;
     @Resource
@@ -62,9 +62,9 @@ public class SsoSsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> i
         if (baseMapper.updateById(user) == 1) {
             //更新用户信息,刷新redis 用户缓存
             userTempCache.updateCacheInfo(userId, user);
-            return Result.ok(user,"用户密码-修改成功");
+            return Result.ok(user, "用户密码-修改成功");
         }
-        return Result.fail(user,"错误:修改失败");
+        return Result.fail(user, "错误:修改失败");
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SsoSsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> i
         int res = baseMapper.insert(user);
         if (res > 0) {
             userTempCache.updateCacheInfo(user.getId(), user);
-            return Result.ok(user,"用户信息-新增成功");
+            return Result.ok(user, "用户信息-新增成功");
         }
         return Result.fail("错误:插入用户信息失败!");
     }
@@ -84,7 +84,7 @@ public class SsoSsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> i
             //更新用户信息,刷新redis 用户缓存
             user = baseMapper.selectById(user.getId());
             userTempCache.updateCacheInfo(user.getId(), user);
-            return Result.ok(user,"用户信息-更新成功");
+            return Result.ok(user, "用户信息-更新成功");
         }
         return Result.fail("错误:未找到用户信息更新数据");
     }
@@ -103,13 +103,18 @@ public class SsoSsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> i
     /**
      * 获取用户客户端是否存在
      *
-     * @param account
+     * @param userId
      * @param clientId
      * @return
      */
     @Override
-    public Integer getUserClientExist(String account, String clientId) {
-        return baseMapper.getUserClientExist(account, clientId);
+    public boolean isUserClientExist(String userId, String clientId) {
+        return baseMapper.isUserClientExist(userId, clientId) > 0;
+    }
+
+    @Override
+    public boolean isAccountExist(String account) {
+        return baseMapper.isAccountExist(account) > 0;
     }
 
     /**

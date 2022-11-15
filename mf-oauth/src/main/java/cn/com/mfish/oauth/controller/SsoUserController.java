@@ -106,7 +106,7 @@ public class SsoUserController {
     @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
     @PutMapping
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
-        if (ssoUserService.updateById(ssoUser)){
+        if (ssoUserService.updateById(ssoUser)) {
             return Result.ok(ssoUser, "用户信息-编辑成功!");
         }
         return Result.fail("错误:用户信息-编辑失败!");
@@ -121,10 +121,19 @@ public class SsoUserController {
     @Log(title = "用户信息-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "用户信息-通过id删除", notes = "用户信息-通过id删除")
     @DeleteMapping("/{id}")
-    public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (ssoUserService.removeById(id)){
-            return Result.ok("用户信息-删除成功!");
+    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        if (ssoUserService.removeById(id)) {
+            return Result.ok(true, "用户信息-删除成功!");
         }
-        return Result.fail("错误:用户信息-删除失败!");
+        return Result.fail(false, "错误:用户信息-删除失败!");
+    }
+
+    @ApiOperation("判断用户是否存在")
+    @GetMapping("/exist/{account}")
+    public Result<Boolean> isAccountExist(@ApiParam(name = "account", value = "帐号名称") @PathVariable String account) {
+        if (ssoUserService.isAccountExist(account)) {
+            return Result.ok(true, "帐号存在");
+        }
+        return Result.fail(false, "错误:帐号不存在");
     }
 }

@@ -34,13 +34,16 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
         this.loginType = loginType;
         return this;
     }
+
     public SsoUser getUserInfo() {
         return userInfo;
     }
 
-    public void setUserInfo(SsoUser userInfo) {
+    public MyUsernamePasswordToken setUserInfo(SsoUser userInfo) {
         this.userInfo = userInfo;
+        return this;
     }
+
     public boolean isNew() {
         return isNew;
     }
@@ -48,4 +51,5 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
     public void setNew(boolean aNew) {
         isNew = aNew;
     }
+
 }
