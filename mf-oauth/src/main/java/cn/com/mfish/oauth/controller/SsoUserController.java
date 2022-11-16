@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.annotation.InnerUser;
@@ -94,16 +95,13 @@ public class SsoUserController {
      * 分页列表查询
      *
      * @param reqSsoUser
-     * @param pageNo
-     * @param pageSize
+     * @param reqPage
      * @return
      */
     @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
     @GetMapping
-    public Result<PageInfo<UserInfo>> queryPageList(ReqSsoUser reqSsoUser,
-                                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        PageHelper.startPage(pageNo,pageSize);
+    public Result<PageInfo<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
         return Result.ok(new PageInfo<>(pageList), "用户信息-查询成功!");
     }

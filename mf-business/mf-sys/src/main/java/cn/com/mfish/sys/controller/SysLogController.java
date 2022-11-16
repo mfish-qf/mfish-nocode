@@ -1,13 +1,14 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.service.SysLogService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,16 +35,14 @@ public class SysLogController {
     /**
      * 分页列表查询
      *
-     * @param pageNo
-     * @param pageSize
+     * @param reqPage
      * @return
      */
     @ApiOperation(value = "系统日志-分页列表查询", notes = "系统日志-分页列表查询")
     @GetMapping
-    public Result<IPage<SysLog>> queryPageList(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                               @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        IPage<SysLog> pageList = sysLogService.page(new Page<>(pageNo, pageSize));
-        return Result.ok(pageList, "查询成功!");
+    public Result<PageInfo<SysLog>> queryPageList(ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return Result.ok(new PageInfo<>(sysLogService.list()), "查询成功!");
     }
 
     /**

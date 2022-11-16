@@ -1,15 +1,16 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.core.utils.TreeUtils;
+import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.SsoMenuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,17 +40,14 @@ public class SsoMenuController {
      * 分页列表查询
      *
      * @param reqSsoMenu
-     * @param pageNo
-     * @param pageSize
+     * @param reqPage
      * @return
      */
     @ApiOperation(value = "菜单权限表-分页列表查询", notes = "菜单权限表-分页列表查询")
     @GetMapping
-    public Result<IPage<SsoMenu>> queryPageList(ReqSsoMenu reqSsoMenu,
-                                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        IPage<SsoMenu> pageList = ssoMenuService.page(new Page<>(pageNo, pageSize), buildQueryCondition(reqSsoMenu));
-        return Result.ok(pageList, "菜单权限表-查询成功!");
+    public Result<PageInfo<SsoMenu>> queryPageList(ReqSsoMenu reqSsoMenu, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return Result.ok(new PageInfo<>(ssoMenuService.list(buildQueryCondition(reqSsoMenu))), "菜单权限表-查询成功!");
     }
 
     @ApiOperation(value = "获取菜单树")
