@@ -4,7 +4,6 @@ import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -51,5 +50,5 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      */
     Integer isAccountExist(@Param("account") String account);
 
-    List<UserInfo> getUserList(IPage<UserInfo> iPage, @Param("reqSsoUser") ReqSsoUser reqSsoUser);
+    List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
 }

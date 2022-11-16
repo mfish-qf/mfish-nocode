@@ -9,7 +9,6 @@ import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -104,8 +103,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public IPage<UserInfo> getUserList(IPage<UserInfo> iPage, ReqSsoUser reqSsoUser) {
-        return iPage.setRecords(baseMapper.getUserList(iPage, reqSsoUser));
+    public List<UserInfo> getUserList(ReqSsoUser reqSsoUser) {
+        return baseMapper.getUserList(reqSsoUser);
     }
 
     /**
