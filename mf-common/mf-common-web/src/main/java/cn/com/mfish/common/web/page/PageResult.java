@@ -1,4 +1,4 @@
-package cn.com.mfish.common.web.common;
+package cn.com.mfish.common.web.page;
 
 import com.github.pagehelper.PageInfo;
 import lombok.Data;
