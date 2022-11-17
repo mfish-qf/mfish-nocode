@@ -2,10 +2,11 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.web.common.PageResult;
+import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
@@ -17,7 +18,6 @@ import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.AccessTokenValidator;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -100,10 +100,10 @@ public class SsoUserController {
      */
     @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
     @GetMapping
-    public Result<PageInfo<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
+    public Result<PageResult<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
-        return Result.ok(new PageInfo<>(pageList), "用户信息-查询成功!");
+        return Result.ok(new PageResult<>(pageList), "用户信息-查询成功!");
     }
 
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)

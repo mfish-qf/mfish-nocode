@@ -1,15 +1,15 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.web.common.PageResult;
+import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,9 +42,9 @@ public class SsoRoleController {
      */
     @ApiOperation(value = "角色信息表-分页列表查询", notes = "角色信息表-分页列表查询")
     @GetMapping
-    public Result<PageInfo<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
+    public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageInfo<>(ssoRoleService.list(new LambdaQueryWrapper<SsoRole>()
+        return Result.ok(new PageResult<>(ssoRoleService.list(new LambdaQueryWrapper<SsoRole>()
                 .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())

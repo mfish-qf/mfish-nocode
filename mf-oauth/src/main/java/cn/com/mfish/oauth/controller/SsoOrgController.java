@@ -2,14 +2,14 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.TreeUtils;
-import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.web.common.PageResult;
+import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.oauth.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,9 +44,9 @@ public class SsoOrgController {
      */
     @ApiOperation(value = "组织结构表-分页列表查询", notes = "组织结构表-分页列表查询")
     @GetMapping
-    public Result<PageInfo<SsoOrg>> queryPageList(ReqSsoOrg reqSsoOrg, ReqPage reqPage) {
+    public Result<PageResult<SsoOrg>> queryPageList(ReqSsoOrg reqSsoOrg, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageInfo<>(ssoOrgService.list()), "组织结构表-查询成功!");
+        return Result.ok(new PageResult<>(ssoOrgService.list()), "组织结构表-查询成功!");
     }
 
     @ApiOperation(value = "获取组织结构")
