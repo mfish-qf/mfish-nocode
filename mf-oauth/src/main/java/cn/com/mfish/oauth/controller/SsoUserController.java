@@ -2,10 +2,10 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.annotation.InnerUser;
+import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;

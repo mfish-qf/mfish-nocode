@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.oauth.advice.InnerUserAdvice,\
   cn.com.mfish.oauth.service.impl.WebTokenServiceImpl,\
   cn.com.mfish.oauth.interceptor.BearerTokenInterceptor

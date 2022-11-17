@@ -1,6 +1,6 @@
-package cn.com.mfish.common.core.annotation;
+package cn.com.mfish.common.web.annotation;
 
-import cn.com.mfish.common.core.advice.ExceptionHandlerAdvice;
+import cn.com.mfish.common.web.advice.ExceptionHandlerAdvice;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;

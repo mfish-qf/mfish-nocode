@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.entity.SsoRole;

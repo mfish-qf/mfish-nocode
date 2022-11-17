@@ -1,10 +1,10 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.web.common.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.annotation.InnerUser;
+import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.service.SysLogService;
 import com.github.pagehelper.PageHelper;
