@@ -4,6 +4,7 @@ import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -51,4 +52,9 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     Integer isAccountExist(@Param("account") String account);
 
     List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
+
+    int insertUserRole(@Param("userId") String userId, @Param("roles") List<String> roles);
+
+    @Delete("delete from sso_user_role where user_id = #{userId}")
+    int deleteUserRole(String userId);
 }

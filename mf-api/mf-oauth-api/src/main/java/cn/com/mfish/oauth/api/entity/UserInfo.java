@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author qiufeng
@@ -47,5 +48,8 @@ public class UserInfo extends BaseEntity<String> {
     @TableField(exist = false)
     @ApiModelProperty("组织ID")
     private String orgId;
+    @TableField(exist = false)
+    @ApiModelProperty("角色")
+    private List<String> roles;
 
 }

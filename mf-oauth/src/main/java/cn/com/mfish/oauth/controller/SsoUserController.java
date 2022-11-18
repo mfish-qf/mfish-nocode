@@ -110,10 +110,7 @@ public class SsoUserController {
     @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
     @PostMapping
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
-        if (ssoUserService.save(ssoUser)) {
-            return Result.ok(ssoUser, "用户信息-添加成功!");
-        }
-        return Result.fail("错误:用户信息-添加失败!");
+        return ssoUserService.insert(ssoUser);
     }
 
     /**
@@ -126,10 +123,7 @@ public class SsoUserController {
     @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
     @PutMapping
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
-        if (ssoUserService.updateById(ssoUser)) {
-            return Result.ok(ssoUser, "用户信息-编辑成功!");
-        }
-        return Result.fail("错误:用户信息-编辑失败!");
+        return ssoUserService.updateUser(ssoUser);
     }
 
     /**

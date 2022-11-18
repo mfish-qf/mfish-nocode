@@ -47,4 +47,10 @@
             </if>
         </where>
     </select>
+    <insert id="insertUserRole">
+        insert into sso_user_role(role_id, user_id) values
+        <foreach collection="roles" item="role" separator=",">
+            (#{role},#{userId})
+        </foreach>
+    </insert>
 </mapper>
