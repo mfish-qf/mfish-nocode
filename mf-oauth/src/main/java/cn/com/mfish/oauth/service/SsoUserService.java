@@ -4,8 +4,9 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * @author qiufeng
@@ -22,7 +23,7 @@ public interface SsoUserService extends IService<SsoUser> {
 
     SsoUser getUserById(String userId);
 
-    IPage<UserInfo> getUserList(IPage<UserInfo> iPage, ReqSsoUser reqSsoUser);
+    List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
 
     /**
      * 判断客户端下是否存在该用户

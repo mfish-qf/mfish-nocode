@@ -1,14 +1,14 @@
-package cn.com.mfish.oauth.advice;
+package cn.com.mfish.common.web.advice;
 
-import cn.com.mfish.common.core.annotation.GlobalException;
 import cn.com.mfish.common.core.constants.CredentialConstants;
-import cn.com.mfish.common.core.utils.ServletUtils;
-import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
-import cn.com.mfish.oauth.annotation.InnerUser;
-import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.web.annotation.GlobalException;
+import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

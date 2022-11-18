@@ -3,12 +3,13 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: 角色信息表
@@ -36,22 +38,29 @@ public class SsoRoleController {
      * 分页列表查询
      *
      * @param reqSsoRole
-     * @param pageNo
-     * @param pageSize
+     * @param reqPage
      * @return
      */
     @ApiOperation(value = "角色信息表-分页列表查询", notes = "角色信息表-分页列表查询")
     @GetMapping
-    public Result<IPage<SsoRole>> queryPageList(ReqSsoRole reqSsoRole,
-                                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        IPage<SsoRole> pageList = ssoRoleService.page(new Page<>(pageNo, pageSize), new LambdaQueryWrapper<SsoRole>()
+    public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
+    }
+
+    @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
+    @GetMapping("/all")
+    public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
+        return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
+    }
+
+    private LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
+        return new LambdaQueryWrapper<SsoRole>()
                 .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
                 .gt(reqSsoRole.getStartDate() != null, SsoRole::getCreateTime, reqSsoRole.getStartDate())
-                .lt(reqSsoRole.getEndDate() != null, SsoRole::getCreateTime, reqSsoRole.getEndDate()));
-        return Result.ok(pageList, "角色信息表-查询成功!");
+                .lt(reqSsoRole.getEndDate() != null, SsoRole::getCreateTime, reqSsoRole.getEndDate());
     }
 
     /**

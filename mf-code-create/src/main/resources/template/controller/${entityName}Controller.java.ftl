@@ -34,16 +34,16 @@ public class ${entityName}Controller {
 	 * 分页列表查询
 	 *
 	 * @param req${entityName}
-	 * @param pageNo
+	 * @param pageNum
 	 * @param pageSize
 	 * @return
 	 */
 	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
 	public Result<IPage<${entityName}>> queryPageList(Req${entityName} req${entityName},
-                                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                           @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
                                                            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(new Page<>(pageNo, pageSize));
+		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(new Page<>(pageNum, pageSize));
 		return Result.ok(pageList, "${tableInfo.tableComment}-查询成功!");
 	}
 

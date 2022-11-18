@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 13/11/2022 11:52:09
+ Date: 19/11/2022 00:16:18
 */
 
 SET NAMES utf8mb4;
@@ -197,7 +197,7 @@ CREATE TABLE `sso_role`  (
   `role_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色编码',
   `role_sort` int(4) NULL DEFAULT NULL COMMENT '显示顺序',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
@@ -208,7 +208,7 @@ CREATE TABLE `sso_role`  (
 -- ----------------------------
 -- Records of sso_role
 -- ----------------------------
-INSERT INTO `sso_role` VALUES ('1', 'system', '超级管理员', 'admin', 1, '超级管理员', '0', 'admin', '2022-09-19 10:21:49', '', NULL);
+INSERT INTO `sso_role` VALUES ('1', 'system', '超级管理员', 'admin', 1, '超级管理员', 0, 'admin', '2022-09-19 10:21:49', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_role_menu
@@ -229,8 +229,7 @@ CREATE TABLE `sso_role_menu`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user`;
 CREATE TABLE `sso_user`  (
-  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `client_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端ID',
+  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
   `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
@@ -240,8 +239,9 @@ CREATE TABLE `sso_user`  (
   `head_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图片',
   `telephone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '电话',
   `birthday` date NULL DEFAULT NULL COMMENT '生日',
-  `sex` tinyint(1) NULL DEFAULT NULL COMMENT '性别',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `sex` tinyint(1) NULL DEFAULT NULL COMMENT '性别(1男0女)',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态 0正常 1停用',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记(0未删除1删除)',
   `salt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '盐',
   `openid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信唯一id',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
@@ -264,8 +264,8 @@ INSERT INTO `sso_user` VALUES ('6870e0fe-fa79-468c-86d9-e963e9b5c43f', '', 'admi
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user_role`;
 CREATE TABLE `sso_user_role`  (
-  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+  `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
+  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_id`, `role_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户和角色关联表' ROW_FORMAT = Dynamic;
 

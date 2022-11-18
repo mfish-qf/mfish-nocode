@@ -4,7 +4,9 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.annotation.InnerUser;
+import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
@@ -15,8 +17,7 @@ import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.AccessTokenValidator;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * @author qiufeng
@@ -93,27 +95,22 @@ public class SsoUserController {
      * 分页列表查询
      *
      * @param reqSsoUser
-     * @param pageNo
-     * @param pageSize
+     * @param reqPage
      * @return
      */
     @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
     @GetMapping
-    public Result<IPage<UserInfo>> queryPageList(ReqSsoUser reqSsoUser,
-                                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        IPage<UserInfo> pageList = ssoUserService.getUserList(new Page<>(pageNo, pageSize), reqSsoUser);
-        return Result.ok(pageList, "用户信息-查询成功!");
+    public Result<PageResult<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
+        return Result.ok(new PageResult<>(pageList), "用户信息-查询成功!");
     }
 
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
     @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
     @PostMapping
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
-        if (ssoUserService.save(ssoUser)) {
-            return Result.ok(ssoUser, "用户信息-添加成功!");
-        }
-        return Result.fail("错误:用户信息-添加失败!");
+        return ssoUserService.insert(ssoUser);
     }
 
     /**
@@ -126,10 +123,7 @@ public class SsoUserController {
     @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
     @PutMapping
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
-        if (ssoUserService.updateById(ssoUser)) {
-            return Result.ok(ssoUser, "用户信息-编辑成功!");
-        }
-        return Result.fail("错误:用户信息-编辑失败!");
+        return ssoUserService.updateUser(ssoUser);
     }
 
     /**
@@ -152,8 +146,8 @@ public class SsoUserController {
     @GetMapping("/exist/{account}")
     public Result<Boolean> isAccountExist(@ApiParam(name = "account", value = "帐号名称") @PathVariable String account) {
         if (ssoUserService.isAccountExist(account)) {
-            return Result.ok(true, "帐号存在");
+            return Result.fail(true, "帐号[" + account + "]存在");
         }
-        return Result.fail(false, "错误:帐号不存在");
+        return Result.ok(false, "帐号[" + account + "]不存在");
     }
 }

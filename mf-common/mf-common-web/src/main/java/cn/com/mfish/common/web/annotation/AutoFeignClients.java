@@ -1,4 +1,4 @@
-package cn.com.mfish.common.core.annotation;
+package cn.com.mfish.common.web.annotation;
 
 import org.springframework.cloud.openfeign.EnableFeignClients;
 

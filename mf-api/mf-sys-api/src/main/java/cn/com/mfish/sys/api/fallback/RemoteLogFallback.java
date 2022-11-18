@@ -1,5 +1,6 @@
 package cn.com.mfish.sys.api.fallback;
 
+
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.remote.RemoteLogService;
 import lombok.extern.slf4j.Slf4j;

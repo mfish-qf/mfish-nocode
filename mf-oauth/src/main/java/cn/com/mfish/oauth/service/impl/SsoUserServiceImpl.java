@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
@@ -9,18 +10,15 @@ import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author qiufeng
@@ -71,21 +69,34 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
+    @Transactional
     public Result<SsoUser> insert(SsoUser user) {
+        if (isAccountExist(user.getAccount())) {
+            return Result.fail("错误:帐号已存在-新增失败!");
+        }
+        user.setId(Utils.uuid32());
+        user.setSalt(PasswordHelper.buildSalt());
         int res = baseMapper.insert(user);
+        user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
         if (res > 0) {
+            baseMapper.insertUserRole(user.getId(), user.getRoles());
             userTempCache.updateCacheInfo(user.getId(), user);
             return Result.ok(user, "用户信息-新增成功");
         }
-        return Result.fail("错误:插入用户信息失败!");
+        return Result.fail("错误:用户信息-新增失败!");
     }
 
     @Override
+    @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
+        //帐号名称不允许更新
+        String account = user.getAccount();
+        user.setAccount(null);
         int res = baseMapper.updateById(user);
         if (res > 0) {
-            //更新用户信息,刷新redis 用户缓存
-            user = baseMapper.selectById(user.getId());
+            user.setAccount(account);
+            baseMapper.deleteUserRole(user.getId());
+            baseMapper.insertUserRole(user.getId(), user.getRoles());
             userTempCache.updateCacheInfo(user.getId(), user);
             return Result.ok(user, "用户信息-更新成功");
         }
@@ -104,8 +115,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public IPage<UserInfo> getUserList(IPage<UserInfo> iPage, ReqSsoUser reqSsoUser) {
-        return iPage.setRecords(baseMapper.getUserList(iPage, reqSsoUser));
+    public List<UserInfo> getUserList(ReqSsoUser reqSsoUser) {
+        return baseMapper.getUserList(reqSsoUser);
     }
 
     /**

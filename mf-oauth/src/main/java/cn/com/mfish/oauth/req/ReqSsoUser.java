@@ -17,4 +17,12 @@ import lombok.experimental.Accessors;
 public class ReqSsoUser {
     @ApiModelProperty("组织ID")
     private String orgId;
+    @ApiModelProperty("账号")
+    private String account;
+    @ApiModelProperty("手机号")
+    private String phone;
+    @ApiModelProperty("昵称--用于显示")
+    private String nickname;
+    @ApiModelProperty(value = "状态（0正常 1停用）")
+    private Integer status;
 }

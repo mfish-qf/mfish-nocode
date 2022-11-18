@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author ：qiufeng
@@ -25,5 +26,13 @@ public class Utils {
             clazz = clazz.getSuperclass();
         }
         return fieldList;
+    }
+
+    /**
+     * 32位UUID
+     * @return
+     */
+    public static String uuid32() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }
