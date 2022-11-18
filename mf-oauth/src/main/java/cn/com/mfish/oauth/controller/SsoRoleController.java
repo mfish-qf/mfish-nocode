@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: 角色信息表
@@ -44,12 +45,22 @@ public class SsoRoleController {
     @GetMapping
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(ssoRoleService.list(new LambdaQueryWrapper<SsoRole>()
+        return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
+    }
+
+    @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
+    @GetMapping("/all")
+    public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
+        return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
+    }
+
+    private LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
+        return new LambdaQueryWrapper<SsoRole>()
                 .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
                 .gt(reqSsoRole.getStartDate() != null, SsoRole::getCreateTime, reqSsoRole.getStartDate())
-                .lt(reqSsoRole.getEndDate() != null, SsoRole::getCreateTime, reqSsoRole.getEndDate()))), "角色信息表-查询成功!");
+                .lt(reqSsoRole.getEndDate() != null, SsoRole::getCreateTime, reqSsoRole.getEndDate());
     }
 
     /**

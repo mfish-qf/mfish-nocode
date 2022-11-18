@@ -29,9 +29,21 @@
         left join sso_org_user ou on ou.user_id = u.id
         left join sso_org o on o.id = ou.org_id
         <where>
-            u.status = 0 and u.del_flag = 0
+            u.del_flag = 0
             <if test="orgId != null and orgId != ''">
                 and o.id = #{orgId}
+            </if>
+            <if test="phone != null and phone != ''">
+                and u.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="account != null and account != ''">
+                and u.account like concat('%',#{account},'%')
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and u.nickname like concat('%',#{nickname},'%')
+            </if>
+            <if test="status != null and status != ''">
+                and u.status = #{status}
             </if>
         </where>
     </select>
