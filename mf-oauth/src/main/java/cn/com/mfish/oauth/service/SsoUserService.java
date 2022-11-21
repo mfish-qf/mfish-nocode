@@ -19,6 +19,8 @@ public interface SsoUserService extends IService<SsoUser> {
 
     Result<SsoUser> updateUser(SsoUser user);
 
+    boolean removeUser(String id);
+
     SsoUser getUserByAccount(String account);
 
     SsoUser getUserById(String userId);

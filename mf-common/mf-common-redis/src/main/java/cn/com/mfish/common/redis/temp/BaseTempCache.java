@@ -82,6 +82,14 @@ public abstract class BaseTempCache<T> {
     }
 
     /**
+     * 移除缓存
+     * @param key
+     */
+    public void removeCacheInfo(String key){
+        redisTemplate.delete(key);
+    }
+
+    /**
      * 设置缓存
      *
      * @param key   已拼接前缀
