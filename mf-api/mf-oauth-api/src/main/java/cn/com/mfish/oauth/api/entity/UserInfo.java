@@ -1,7 +1,6 @@
 package cn.com.mfish.oauth.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
-import cn.com.mfish.common.core.utils.StringUtils;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -10,8 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -56,13 +53,4 @@ public class UserInfo extends BaseEntity<String> {
     @TableField(exist = false)
     @ApiModelProperty("角色")
     private List<String> roles;
-
-    public UserInfo setRoles(String roles) {
-        if (StringUtils.isEmpty(roles)) {
-            this.roles = new ArrayList<>();
-            return this;
-        }
-        this.roles = Arrays.asList(roles.split(","));
-        return this;
-    }
 }

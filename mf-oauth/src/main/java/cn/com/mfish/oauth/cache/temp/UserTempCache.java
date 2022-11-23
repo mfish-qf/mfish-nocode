@@ -24,7 +24,7 @@ public class UserTempCache extends BaseTempCache<SsoUser> {
 
     @Override
     protected SsoUser getFromDB(String key) {
-        return ssoUserMapper.getUserByAccount(key);
+        return ssoUserMapper.getUserById(key);
     }
 
 }

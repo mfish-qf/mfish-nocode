@@ -1,5 +1,6 @@
 package cn.com.mfish.common.web.advice;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.nio.file.AccessDeniedException;
 
 /**
  * @author ：qiufeng
- * @description：oauth全局异常处理
+ * @description：全局异常处理
  * @date ：2021/12/13 18:06
  */
 @RestControllerAdvice
@@ -38,6 +39,7 @@ public class ExceptionHandlerAdvice {
 
     /**
      * 禁止访问异常
+     *
      * @param exception
      * @return
      */
@@ -50,6 +52,7 @@ public class ExceptionHandlerAdvice {
 
     /**
      * 请求错误异常
+     *
      * @param exception
      * @return
      */
@@ -63,6 +66,20 @@ public class ExceptionHandlerAdvice {
     }
 
     /**
+     * 自定义异常处理
+     *
+     * @param exception
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(MyRuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result myHandleException(Exception exception, HttpServletRequest request) {
+        log.error("请求地址'{}',处理异常.", request.getRequestURI(), exception);
+        return Result.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
+    }
+
+    /**
      * 服务内部异常
      *
      * @param exception
@@ -73,6 +90,6 @@ public class ExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result handleException(Exception exception, HttpServletRequest request) {
         log.error("请求地址'{}',发生系统异常.", request.getRequestURI(), exception);
-        return Result.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
+        return Result.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), "错误:未知异常");
     }
 }

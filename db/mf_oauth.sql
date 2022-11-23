@@ -257,7 +257,7 @@ CREATE TABLE `sso_user`  (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('6870e0fe-fa79-468c-86d9-e963e9b5c43f', '', 'admin', '18911111111', 'qiufeng9862@qq.com', '643ce6d324f7762cada2df58023cd9c6', '$2a$10$WskRinqDYZxZ2KO2O5/Yf.mslpeM7dwhEYz7dUSiwfrmhVNY1mKzG,b23e5b12659873270b76432639538ff0', '管理员', NULL, '02511111111', '1998-06-28', 0, 1, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '', '2017-04-10 15:21:38', '', '2021-12-14 10:26:40');
+INSERT INTO `sso_user` VALUES ('6870e0fe-fa79-468c-86d9-e963e9b5c43f', '', 'admin', '18911111111', 'qiufeng9862@qq.com', '643ce6d324f7762cada2df58023cd9c6', '', '管理员', NULL, '02511111111', '1998-06-28', 0, 1, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '', '2017-04-10 15:21:38', '', '2021-12-14 10:26:40');
 
 -- ----------------------------
 -- Table structure for sso_user_role

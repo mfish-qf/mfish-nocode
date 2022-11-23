@@ -11,11 +11,21 @@
         </if>
         )
     </sql>
+    <sql id="validUser">
+        and status = 0 and del_flag = 0
+    </sql>
     <select id="getUserByAccount" resultType="cn.com.mfish.oauth.entity.SsoUser">
         select * from sso_user
         <where>
             <include refid="byAccount"/>
-            and status = 0 and del_flag = 0
+            <include refid="validUser"/>
+        </where>
+    </select>
+    <select id="getUserById" resultType="cn.com.mfish.oauth.entity.SsoUser">
+        select * from sso_user
+        <where>
+            id = #{userId}
+            <include refid="validUser"/>
         </where>
     </select>
     <select id="isAccountExist" resultType="java.lang.Integer">
@@ -24,7 +34,10 @@
             <include refid="byAccount"/>
         </where>
     </select>
-    <select id="getUserList" resultType="cn.com.mfish.oauth.api.entity.UserInfo">
+    <resultMap id="userMap" type="cn.com.mfish.oauth.api.entity.UserInfo">
+        <result property="roles" column="roles" typeHandler="cn.com.mfish.oauth.handler.RolesTypeHandler"></result>
+    </resultMap>
+    <select id="getUserList" resultMap="userMap">
         select u.*,o.org_name,ou.org_id,GROUP_CONCAT(ur.role_id) roles from sso_user u
         left join sso_org_user ou on ou.user_id = u.id
         left join sso_org o on o.id = ou.org_id

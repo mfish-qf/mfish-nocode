@@ -92,9 +92,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
-        //帐号名称不允许更新
+        //帐号名称密码不在此处更新
         String account = user.getAccount();
         user.setAccount(null);
+        user.setPassword(null);
         int res = baseMapper.updateById(user);
         if (res > 0) {
             user.setAccount(account);

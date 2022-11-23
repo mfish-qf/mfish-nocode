@@ -25,6 +25,13 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     SsoUser getUserByAccount(@Param("account") String account);
 
     /**
+     * 通过ID获取用户
+     * @param userId
+     * @return
+     */
+    SsoUser getUserById(@Param("userId") String userId);
+
+    /**
      * 根据微信openId获取用户id
      *
      * @param openid
