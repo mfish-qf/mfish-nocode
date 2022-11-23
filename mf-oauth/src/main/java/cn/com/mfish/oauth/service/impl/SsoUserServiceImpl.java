@@ -18,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author qiufeng
@@ -89,9 +92,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
-        //帐号名称不允许更新
+        //帐号名称密码不在此处更新
         String account = user.getAccount();
         user.setAccount(null);
+        user.setPassword(null);
         int res = baseMapper.updateById(user);
         if (res > 0) {
             user.setAccount(account);
@@ -101,6 +105,17 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             return Result.ok(user, "用户信息-更新成功");
         }
         return Result.fail("错误:未找到用户信息更新数据");
+    }
+
+    @Override
+    public boolean removeUser(String id) {
+        SsoUser ssoUser = new SsoUser();
+        ssoUser.setDelFlag(1).setId(id);
+        if (baseMapper.updateById(ssoUser) == 1) {
+            userTempCache.removeCacheInfo(id);
+            return true;
+        }
+        return false;
     }
 
     @Override

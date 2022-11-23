@@ -42,7 +42,6 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public boolean removeOrg(String id) {
-        SsoOrg ssoOrg = new SsoOrg().setId(id).setDelFlag(1);
-        return baseMapper.updateById(ssoOrg) == 1;
+        return baseMapper.updateById(new SsoOrg().setId(id).setDelFlag(1)) == 1;
     }
 }
