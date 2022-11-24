@@ -62,4 +62,12 @@ public interface SsoUserService extends IService<SsoUser> {
      * @return
      */
     int insertUserOrg(String userId, String orgList);
+
+    /**
+     * 插入用户所属客户端
+     * @param userId
+     * @param clientId
+     * @return
+     */
+    int insertUserClient(String userId, String clientId);
 }

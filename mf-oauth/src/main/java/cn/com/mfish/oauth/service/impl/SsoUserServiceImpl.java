@@ -79,9 +79,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         user.setId(Utils.uuid32());
         user.setSalt(PasswordHelper.buildSalt());
-        int res = baseMapper.insert(user);
         user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
+        int res = baseMapper.insert(user);
         if (res > 0) {
+            insertUserClient(user.getId(), null);
             insertUserOrg(user.getId(), user.getOrgId());
             insertUserRole(user.getId(), user.getRoles());
             userTempCache.updateCacheInfo(user.getId(), user);
@@ -107,7 +108,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             insertUserOrg(user.getId(), user.getOrgId());
             baseMapper.deleteUserRole(user.getId());
             insertUserRole(user.getId(), user.getRoles());
-            userTempCache.updateCacheInfo(user.getId(), user);
+            //移除缓存下次登录时会自动拉取
+            userTempCache.removeCacheInfo(user.getId());
             return Result.ok(user, "用户信息-更新成功");
         }
         return Result.fail("错误:未找到用户信息更新数据");
@@ -167,11 +169,17 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     public int insertUserOrg(String userId, String orgList) {
-        //暂时只支持一个用户挂在一个组织下，后期根据情况完善是否一个用户挂在多个组织下
+        //todo 暂时只支持一个用户挂在一个组织下，后期根据情况完善是否一个用户挂在多个组织下
         if (StringUtils.isEmpty(orgList)) {
             return 0;
         }
         return baseMapper.insertUserOrg(userId, Arrays.asList(new String[]{orgList}));
+    }
+
+    public int insertUserClient(String userId, String clientId) {
+        //todo 暂时写死system，后面增加客户端后为用户分配客户端
+        clientId = "system";
+        return baseMapper.insertUserClient(userId, Arrays.asList(new String[]{clientId}));
     }
 
     /**

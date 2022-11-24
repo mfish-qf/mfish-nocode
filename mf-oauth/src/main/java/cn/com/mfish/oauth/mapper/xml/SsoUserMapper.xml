@@ -77,4 +77,10 @@
             (#{org},#{userId})
         </foreach>
     </insert>
+    <insert id="insertUserClient">
+        insert into sso_client_user(client_id, user_id) values
+        <foreach collection="clientList" item="client" separator=",">
+            (#{client},#{userId})
+        </foreach>
+    </insert>
 </mapper>
