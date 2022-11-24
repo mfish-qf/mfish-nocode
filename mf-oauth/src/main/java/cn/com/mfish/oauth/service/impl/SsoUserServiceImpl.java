@@ -74,7 +74,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> insert(SsoUser user) {
-        if (isAccountExist(user.getAccount())) {
+        if (isAccountExist(user.getAccount(), null)) {
             return Result.fail("错误:帐号已存在-新增失败!");
         }
         user.setId(Utils.uuid32());
@@ -82,7 +82,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         int res = baseMapper.insert(user);
         user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
         if (res > 0) {
-            baseMapper.insertUserRole(user.getId(), user.getRoles());
+            insertUserOrg(user.getId(), user.getOrgId());
+            insertUserRole(user.getId(), user.getRoles());
             userTempCache.updateCacheInfo(user.getId(), user);
             return Result.ok(user, "用户信息-新增成功");
         }
@@ -92,6 +93,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
+        if (baseMapper.isAccountExist(user.getPhone(), user.getId()) > 0) {
+            return Result.fail("错误:手机号已存在");
+        }
         //帐号名称密码不在此处更新
         String account = user.getAccount();
         user.setAccount(null);
@@ -99,8 +103,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         int res = baseMapper.updateById(user);
         if (res > 0) {
             user.setAccount(account);
+            baseMapper.deleteUserOrg(user.getId());
+            insertUserOrg(user.getId(), user.getOrgId());
             baseMapper.deleteUserRole(user.getId());
-            baseMapper.insertUserRole(user.getId(), user.getRoles());
+            insertUserRole(user.getId(), user.getRoles());
             userTempCache.updateCacheInfo(user.getId(), user);
             return Result.ok(user, "用户信息-更新成功");
         }
@@ -147,8 +153,25 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public boolean isAccountExist(String account) {
-        return baseMapper.isAccountExist(account) > 0;
+    public boolean isAccountExist(String account, String userId) {
+        return baseMapper.isAccountExist(account, userId) > 0;
+    }
+
+    @Override
+    public int insertUserRole(String userId, List<String> roles) {
+        if (roles == null || roles.size() == 0) {
+            return 0;
+        }
+        return baseMapper.insertUserRole(userId, roles);
+    }
+
+    @Override
+    public int insertUserOrg(String userId, String orgList) {
+        //暂时只支持一个用户挂在一个组织下，后期根据情况完善是否一个用户挂在多个组织下
+        if (StringUtils.isEmpty(orgList)) {
+            return 0;
+        }
+        return baseMapper.insertUserOrg(userId, Arrays.asList(new String[]{orgList}));
     }
 
     /**

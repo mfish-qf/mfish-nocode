@@ -26,6 +26,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     /**
      * 通过ID获取用户
+     *
      * @param userId
      * @return
      */
@@ -54,9 +55,10 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * 判断帐号是否存在（帐号可以是邮箱、用户名、手机号）
      *
      * @param account
+     * @param userId  排除自己
      * @return
      */
-    Integer isAccountExist(@Param("account") String account);
+    Integer isAccountExist(@Param("account") String account, @Param("userId") String userId);
 
     List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
 
@@ -64,4 +66,9 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     @Delete("delete from sso_user_role where user_id = #{userId}")
     int deleteUserRole(String userId);
+
+    int insertUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
+
+    @Delete("delete from sso_org_user where user_id = #{userId}")
+    int deleteUserOrg(String userId);
 }

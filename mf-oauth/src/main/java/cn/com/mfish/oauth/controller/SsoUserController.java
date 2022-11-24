@@ -145,7 +145,7 @@ public class SsoUserController {
     @ApiOperation("判断用户是否存在")
     @GetMapping("/exist/{account}")
     public Result<Boolean> isAccountExist(@ApiParam(name = "account", value = "帐号名称") @PathVariable String account) {
-        if (ssoUserService.isAccountExist(account)) {
+        if (ssoUserService.isAccountExist(account, null)) {
             return Result.fail(true, "帐号[" + account + "]存在");
         }
         return Result.ok(false, "帐号[" + account + "]不存在");

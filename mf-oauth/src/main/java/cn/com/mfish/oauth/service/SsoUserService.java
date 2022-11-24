@@ -39,8 +39,27 @@ public interface SsoUserService extends IService<SsoUser> {
     /**
      * 判断帐号是否存在
      *
-     * @param account
+     * @param account 帐号
+     * @param userId  如果存在userId，排除当前userId
      * @return
      */
-    boolean isAccountExist(String account);
+    boolean isAccountExist(String account, String userId);
+
+    /**
+     * 插入用户角色关系
+     *
+     * @param userId
+     * @param roles
+     * @return
+     */
+    int insertUserRole(String userId, List<String> roles);
+
+    /**
+     * 插入用户组织关系
+     *
+     * @param userId
+     * @param orgList
+     * @return
+     */
+    int insertUserOrg(String userId, String orgList);
 }
