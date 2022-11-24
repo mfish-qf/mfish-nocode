@@ -95,7 +95,7 @@ public abstract class BaseTempCache<T> {
      * @param key   已拼接前缀
      * @param value
      */
-    public void setCacheInfo(String key, T value) {
+    private void setCacheInfo(String key, T value) {
         redisTemplate.opsForValue().set(key, value, cacheTime, TimeUnit.DAYS);
     }
 

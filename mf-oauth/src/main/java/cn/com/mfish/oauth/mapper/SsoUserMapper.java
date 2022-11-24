@@ -71,4 +71,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     @Delete("delete from sso_org_user where user_id = #{userId}")
     int deleteUserOrg(String userId);
+
+    int insertUserClient(@Param("userId") String userId, @Param("clientList") List<String> clientList);
 }

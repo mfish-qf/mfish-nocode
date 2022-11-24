@@ -13,8 +13,8 @@ import lombok.experimental.Accessors;
  */
 @ApiModel("用户全部信息")
 @Data
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper=true)
+@Accessors(chain = true)
 public class SsoUser extends UserInfo {
     @ApiModelProperty("密码加密盐")
     private String salt;
