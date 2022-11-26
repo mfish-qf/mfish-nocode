@@ -136,6 +136,9 @@ public class SsoUserController {
     @ApiOperation(value = "用户信息-通过id删除", notes = "用户信息-通过id删除")
     @DeleteMapping("/{id}")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        if ("1".equals(id)) {
+            return Result.fail(false, "错误:admin帐号不允许删除!");
+        }
         if (ssoUserService.removeUser(id)) {
             return Result.ok(true, "用户信息-删除成功!");
         }
