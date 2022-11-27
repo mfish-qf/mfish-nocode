@@ -119,8 +119,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     public boolean removeUser(String id) {
         SsoUser ssoUser = new SsoUser();
         ssoUser.setDelFlag(1).setId(id);
+        userTempCache.removeCacheInfo(id);
         if (baseMapper.updateById(ssoUser) == 1) {
-            userTempCache.removeCacheInfo(id);
             return true;
         }
         return false;
