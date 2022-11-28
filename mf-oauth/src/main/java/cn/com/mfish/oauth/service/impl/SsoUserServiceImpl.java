@@ -74,8 +74,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> insert(SsoUser user) {
-        if (isAccountExist(user.getAccount(), null)) {
-            return Result.fail("错误:帐号已存在-新增失败!");
+        Result<SsoUser> result = validateUser(user, "新增");
+        if (!result.isSuccess()) {
+            return result;
         }
         user.setId(Utils.uuid32());
         user.setSalt(PasswordHelper.buildSalt());
@@ -94,8 +95,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
-        if (baseMapper.isAccountExist(user.getPhone(), user.getId()) > 0) {
-            return Result.fail("错误:手机号已存在");
+        Result<SsoUser> result = validateUser(user, "修改");
+        if (!result.isSuccess()) {
+            return result;
         }
         //帐号名称密码不在此处更新
         String account = user.getAccount();
@@ -113,6 +115,25 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             return Result.ok(user, "用户信息-更新成功");
         }
         return Result.fail("错误:未找到用户信息更新数据");
+    }
+
+    /**
+     * 校验用户帐号 账号，手机，email均不允许重复
+     *
+     * @param user
+     * @return
+     */
+    private Result<SsoUser> validateUser(SsoUser user, String operate) {
+        if (isAccountExist(user.getAccount(), user.getId())) {
+            return Result.fail("错误:帐号已存在-" + operate + "失败!");
+        }
+        if (isAccountExist(user.getPhone(), user.getId())) {
+            return Result.fail("错误:手机号已存在-" + operate + "失败!");
+        }
+        if (isAccountExist(user.getEmail(), user.getId())) {
+            return Result.fail("错误:email已存在-" + operate + "失败!");
+        }
+        return Result.ok(user, "校验成功");
     }
 
     @Override
