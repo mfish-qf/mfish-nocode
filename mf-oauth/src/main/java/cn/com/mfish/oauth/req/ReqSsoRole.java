@@ -26,6 +26,8 @@ public class ReqSsoRole {
     private String roleName;
     @ApiModelProperty(value = "角色编码")
     private String roleCode;
+    @ApiModelProperty(value = "状态（0正常 1停用）")
+    private Integer status;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("开始日期")

@@ -56,7 +56,9 @@ public class SsoRoleController {
 
     private LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
         return new LambdaQueryWrapper<SsoRole>()
+                .eq(SsoRole::getDelFlag,0)
                 .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
+                .eq(reqSsoRole.getStatus() != null, SsoRole::getStatus, reqSsoRole.getStatus())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
                 .gt(reqSsoRole.getStartDate() != null, SsoRole::getCreateTime, reqSsoRole.getStartDate())
@@ -88,11 +90,21 @@ public class SsoRoleController {
     @Log(title = "角色信息表-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "角色信息表-编辑", notes = "角色信息表-编辑")
     @PutMapping
-    public Result<?> edit(@RequestBody SsoRole ssoRole) {
+    public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
         if (ssoRoleService.updateRole(ssoRole)) {
             return Result.ok("角色信息表-编辑成功!");
         }
         return Result.fail("错误:角色信息表-编辑失败!");
+    }
+
+    @Log(title = "角色信息表-设置状态", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "角色信息表-设置状态", notes = "角色信息表-设置状态")
+    @PutMapping("/status")
+    public Result<SsoRole> setStatus(SsoRole ssoRole) {
+        if (ssoRoleService.updateRole(new SsoRole().setId(ssoRole.getId()).setStatus(ssoRole.getStatus()))) {
+            return Result.ok("角色信息表-设置状态成功!");
+        }
+        return Result.fail("错误:角色信息表-设置状态失败!");
     }
 
     /**
@@ -104,7 +116,7 @@ public class SsoRoleController {
     @Log(title = "角色信息表-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "角色信息表-通过id删除", notes = "角色信息表-通过id删除")
     @DeleteMapping("/{id}")
-    public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (ssoRoleService.deleteRole(id)) {
             return Result.ok("角色信息表-删除成功!");
         }
@@ -120,7 +132,7 @@ public class SsoRoleController {
     @Log(title = "角色信息表-批量删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "角色信息表-批量删除", notes = "角色信息表-批量删除")
     @DeleteMapping("/batch")
-    public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
+    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.ssoRoleService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok("角色信息表-批量删除成功!");
         }

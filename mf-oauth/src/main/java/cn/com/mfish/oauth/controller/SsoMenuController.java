@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,10 +118,12 @@ public class SsoMenuController {
     @Log(title = "菜单权限表-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "菜单权限表-通过id删除", notes = "菜单权限表-通过id删除")
     @DeleteMapping("/{id}")
-    public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (ssoMenuService.removeById(id)) {
+            log.info(MessageFormat.format("删除菜单成功,菜单ID:{0}", id));
             return Result.ok("菜单权限表-删除成功!");
         }
+        log.error(MessageFormat.format("错误:删除菜单失败,菜单ID:{0}", id));
         return Result.fail("错误:菜单权限表-删除失败!");
     }
 
@@ -133,7 +136,7 @@ public class SsoMenuController {
     @Log(title = "菜单权限表-批量删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "菜单权限表-批量删除", notes = "菜单权限表-批量删除")
     @DeleteMapping("/batch")
-    public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
+    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.ssoMenuService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok("菜单权限表-批量删除成功!");
         }

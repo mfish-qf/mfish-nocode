@@ -1,12 +1,12 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
 import cn.com.mfish.oauth.service.SsoRoleService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
@@ -25,11 +25,12 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     @Transactional(rollbackFor = Exception.class)
     public boolean insertRole(SsoRole ssoRole) {
         if (baseMapper.insert(ssoRole) >= 1) {
-            log.info(MessageFormat.format("插入角色菜单数量:{0}条",
-                    baseMapper.insertRoleMenus(ssoRole.getId(), ssoRole.getMenuIds())));
-            return true;
+            if (insertRoleMenus(ssoRole)) {
+                return true;
+            }
+            throw new MyRuntimeException("错误:插入角色菜单失败");
         }
-        return false;
+        throw new MyRuntimeException("错误:新增角色失败");
     }
 
     @Override
@@ -38,8 +39,21 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
         if (baseMapper.updateById(ssoRole) >= 1) {
             log.info(MessageFormat.format("删除角色菜单数量:{0}条",
                     baseMapper.deleteRoleMenus(ssoRole.getId())));
-            log.info(MessageFormat.format("插入角色菜单数量:{0}条",
-                    baseMapper.insertRoleMenus(ssoRole.getId(), ssoRole.getMenuIds())));
+            if (insertRoleMenus(ssoRole)) {
+                return true;
+            }
+            throw new MyRuntimeException("错误:更新角色菜单失败");
+        }
+        throw new MyRuntimeException("错误:更新角色失败");
+    }
+
+    private boolean insertRoleMenus(SsoRole ssoRole) {
+        if (ssoRole.getMenuIds() == null || ssoRole.getMenuIds().size() == 0) {
+            return true;
+        }
+        int count = baseMapper.insertRoleMenus(ssoRole.getId(), ssoRole.getMenuIds());
+        log.info(MessageFormat.format("插入角色菜单数量:{0}条", count));
+        if (count > 0) {
             return true;
         }
         return false;
@@ -47,12 +61,11 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
 
     @Override
     public boolean deleteRole(String id) {
-        if (baseMapper.deleteById(id) >= 1) {
-            baseMapper.deleteRoleMenus(id);
-            log.info(MessageFormat.format("删除角色记录,角色ID:{0}", id));
+        if (baseMapper.updateById(new SsoRole().setDelFlag(1).setId(id)) == 1) {
+            log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
             return true;
         }
-        log.error(MessageFormat.format("警告:未删除记录,角色ID:{0}", id));
+        log.error(MessageFormat.format("错误:删除角色失败,角色ID:{0}", id));
         return false;
     }
 

@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,5 +45,5 @@ public class SsoRole extends BaseEntity<String> {
     private Integer delFlag;
     @TableField(exist = false)
     @ApiModelProperty("菜单ID列表")
-    private List<String> menuIds;
+    private List<String> menuIds = new ArrayList<>();
 }
