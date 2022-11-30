@@ -64,6 +64,7 @@
             </if>
         </where>
         group by u.id
+        order by u.create_time desc
     </select>
     <insert id="insertUserRole">
         insert into sso_user_role(role_id, user_id) values

@@ -38,5 +38,6 @@
             </if>
         </where>
         group by r.id
+        order by r.role_sort
     </select>
 </mapper>
