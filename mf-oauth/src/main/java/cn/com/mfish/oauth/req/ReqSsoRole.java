@@ -1,14 +1,9 @@
 package cn.com.mfish.oauth.req;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
 
 /**
  * @Description: 角色信息表
@@ -28,14 +23,4 @@ public class ReqSsoRole {
     private String roleCode;
     @ApiModelProperty(value = "状态（0正常 1停用）")
     private Integer status;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty("开始日期")
-    @TableField(exist = false)
-    private Date startDate;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty("结束日期")
-    @TableField(exist = false)
-    private Date endDate;
 }

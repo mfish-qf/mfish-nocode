@@ -59,7 +59,7 @@
             <if test="nickname != null and nickname != ''">
                 and u.nickname like concat('%',#{nickname},'%')
             </if>
-            <if test="status != null and status != ''">
+            <if test="status != null">
                 and u.status = #{status}
             </if>
         </where>
