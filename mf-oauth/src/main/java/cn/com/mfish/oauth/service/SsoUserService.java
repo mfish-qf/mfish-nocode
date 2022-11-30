@@ -15,7 +15,7 @@ import java.util.List;
 public interface SsoUserService extends IService<SsoUser> {
     Result<SsoUser> changePassword(String userId, String newPassword);
 
-    Result<SsoUser> insert(SsoUser user);
+    Result<SsoUser> insertUser(SsoUser user);
 
     Result<SsoUser> updateUser(SsoUser user);
 

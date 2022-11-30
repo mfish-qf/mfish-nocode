@@ -1,7 +1,11 @@
 package cn.com.mfish.oauth.service;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.oauth.req.ReqSsoRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * @Description: 角色信息表
@@ -10,11 +14,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Version: V1.0
  */
 public interface SsoRoleService extends IService<SsoRole> {
-    boolean insertRole(SsoRole ssoRole);
+    Result<SsoRole> insertRole(SsoRole ssoRole);
 
-    boolean updateRole(SsoRole ssoRole);
+    Result<SsoRole> updateRole(SsoRole ssoRole);
 
     boolean deleteRole(String id);
 
-    boolean roleCodeExist(String clientId,String roleId, String roleCode);
+    boolean roleCodeExist(String clientId, String roleId, String roleCode);
+
+    List<SsoRole> getRoleList(ReqSsoRole reqSsoRole);
 }

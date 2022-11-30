@@ -45,7 +45,7 @@ public class SsoRoleController {
     @GetMapping
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
+        return Result.ok(new PageResult<>(ssoRoleService.getRoleList(reqSsoRole)), "角色信息表-查询成功!");
     }
 
     @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
@@ -56,13 +56,11 @@ public class SsoRoleController {
 
     private LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
         return new LambdaQueryWrapper<SsoRole>()
-                .eq(SsoRole::getDelFlag,0)
+                .eq(SsoRole::getDelFlag, 0)
                 .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
                 .eq(reqSsoRole.getStatus() != null, SsoRole::getStatus, reqSsoRole.getStatus())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
-                .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
-                .gt(reqSsoRole.getStartDate() != null, SsoRole::getCreateTime, reqSsoRole.getStartDate())
-                .lt(reqSsoRole.getEndDate() != null, SsoRole::getCreateTime, reqSsoRole.getEndDate());
+                .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName());
     }
 
     /**
@@ -75,10 +73,7 @@ public class SsoRoleController {
     @ApiOperation(value = "角色信息表-添加", notes = "角色信息表-添加")
     @PostMapping
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
-        if (ssoRoleService.insertRole(ssoRole)) {
-            return Result.ok(ssoRole, "角色信息表-添加成功!");
-        }
-        return Result.fail("错误:角色信息表-添加失败!");
+        return ssoRoleService.insertRole(ssoRole);
     }
 
     /**
@@ -91,17 +86,14 @@ public class SsoRoleController {
     @ApiOperation(value = "角色信息表-编辑", notes = "角色信息表-编辑")
     @PutMapping
     public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
-        if (ssoRoleService.updateRole(ssoRole)) {
-            return Result.ok("角色信息表-编辑成功!");
-        }
-        return Result.fail("错误:角色信息表-编辑失败!");
+        return ssoRoleService.updateRole(ssoRole);
     }
 
     @Log(title = "角色信息表-设置状态", operateType = OperateType.UPDATE)
     @ApiOperation(value = "角色信息表-设置状态", notes = "角色信息表-设置状态")
     @PutMapping("/status")
-    public Result<SsoRole> setStatus(SsoRole ssoRole) {
-        if (ssoRoleService.updateRole(new SsoRole().setId(ssoRole.getId()).setStatus(ssoRole.getStatus()))) {
+    public Result<SsoRole> setStatus(@RequestBody SsoRole ssoRole) {
+        if (ssoRoleService.updateById(new SsoRole().setId(ssoRole.getId()).setStatus(ssoRole.getStatus()))) {
             return Result.ok("角色信息表-设置状态成功!");
         }
         return Result.fail("错误:角色信息表-设置状态失败!");

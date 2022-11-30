@@ -74,11 +74,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     @Transactional
-    public Result<SsoUser> insert(SsoUser user) {
-        Result<SsoUser> result = validateUser(user, "新增");
-        if (!result.isSuccess()) {
-            return result;
-        }
+    public Result<SsoUser> insertUser(SsoUser user) {
+        validateUser(user, "新增");
         user.setId(Utils.uuid32());
         user.setSalt(PasswordHelper.buildSalt());
         user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
@@ -96,10 +93,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
-        Result<SsoUser> result = validateUser(user, "修改");
-        if (!result.isSuccess()) {
-            return result;
-        }
+        validateUser(user, "修改");
         //帐号名称密码不在此处更新
         String account = user.getAccount();
         user.setAccount(null);
@@ -124,17 +118,17 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
      * @param user
      * @return
      */
-    private Result<SsoUser> validateUser(SsoUser user, String operate) {
+    private boolean validateUser(SsoUser user, String operate) {
         if (isAccountExist(user.getAccount(), user.getId())) {
-            return Result.fail("错误:帐号已存在-" + operate + "失败!");
+            throw new MyRuntimeException("错误:帐号已存在-" + operate + "失败!");
         }
         if (isAccountExist(user.getPhone(), user.getId())) {
-            return Result.fail("错误:手机号已存在-" + operate + "失败!");
+            throw new MyRuntimeException("错误:手机号已存在-" + operate + "失败!");
         }
         if (isAccountExist(user.getEmail(), user.getId())) {
-            return Result.fail("错误:email已存在-" + operate + "失败!");
+            throw new MyRuntimeException("错误:email已存在-" + operate + "失败!");
         }
-        return Result.ok(user, "校验成功");
+        return true;
     }
 
     @Override

@@ -16,4 +16,27 @@
             </if>
         </where>
     </select>
+    <resultMap id="roleMap" type="cn.com.mfish.oauth.entity.SsoRole">
+        <result property="menus" column="menus" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+    </resultMap>
+    <select id="getRoleList" resultMap="roleMap">
+        select r.*,GROUP_CONCAT(rm.menu_id) menus from sso_role r
+        left join sso_role_menu rm on r.id = rm.role_id
+        <where>
+            r.del_flag = 0
+            <if test="clientId != null and clientId != ''">
+                and r.client_id = #{clientId}
+            </if>
+            <if test="status != null and status != ''">
+                and r.status = #{status}
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                and r.role_code like CONCAT('%',#{roleCode},'%')
+            </if>
+            <if test="roleName != null and roleName != ''">
+                and r.role_name like CONCAT('%',#{roleName},'%')
+            </if>
+        </where>
+        group by r.id
+    </select>
 </mapper>

@@ -20,7 +20,7 @@ public class AutoUserCredentialsMatcher extends SimpleCredentialsMatcher {
 
     protected void insertNewUser(boolean newUser, SsoUser user) {
         if (newUser) {
-            Result<SsoUser> result = ssoUserService.insert(user);
+            Result<SsoUser> result = ssoUserService.insertUser(user);
             if (!result.isSuccess()) {
                 throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
             }

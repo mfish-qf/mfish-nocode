@@ -1,8 +1,10 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
+import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * @Description: 角色信息表
@@ -23,35 +26,45 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean insertRole(SsoRole ssoRole) {
+    public Result<SsoRole> insertRole(SsoRole ssoRole) {
+        validateRole(ssoRole);
         if (baseMapper.insert(ssoRole) >= 1) {
             if (insertRoleMenus(ssoRole)) {
-                return true;
+                return Result.ok(ssoRole, "角色信息-添加成功");
             }
             throw new MyRuntimeException("错误:插入角色菜单失败");
         }
-        throw new MyRuntimeException("错误:新增角色失败");
+        throw new MyRuntimeException("错误:角色信息-添加失败");
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateRole(SsoRole ssoRole) {
+    public Result<SsoRole> updateRole(SsoRole ssoRole) {
+        validateRole(ssoRole);
         if (baseMapper.updateById(ssoRole) >= 1) {
             log.info(MessageFormat.format("删除角色菜单数量:{0}条",
                     baseMapper.deleteRoleMenus(ssoRole.getId())));
             if (insertRoleMenus(ssoRole)) {
-                return true;
+                return Result.ok(ssoRole, "角色信息-修改成功");
             }
             throw new MyRuntimeException("错误:更新角色菜单失败");
         }
         throw new MyRuntimeException("错误:更新角色失败");
     }
 
+    private boolean validateRole(SsoRole ssoRole) {
+        if (roleCodeExist(ssoRole.getClientId(), ssoRole.getId(), ssoRole.getRoleCode())) {
+            throw new MyRuntimeException("错误:角色编码已存在");
+        }
+        return true;
+    }
+
+
     private boolean insertRoleMenus(SsoRole ssoRole) {
-        if (ssoRole.getMenuIds() == null || ssoRole.getMenuIds().size() == 0) {
+        if (ssoRole.getMenus() == null || ssoRole.getMenus().size() == 0) {
             return true;
         }
-        int count = baseMapper.insertRoleMenus(ssoRole.getId(), ssoRole.getMenuIds());
+        int count = baseMapper.insertRoleMenus(ssoRole.getId(), ssoRole.getMenus());
         log.info(MessageFormat.format("插入角色菜单数量:{0}条", count));
         if (count > 0) {
             return true;
@@ -77,7 +90,11 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
      */
     @Override
     public boolean roleCodeExist(String clientId, String roleId, String roleCode) {
+        return baseMapper.roleCodeExist(clientId, roleId, roleCode) > 0;
+    }
 
-        return false;
+    @Override
+    public List<SsoRole> getRoleList(ReqSsoRole reqSsoRole) {
+        return baseMapper.getRoleList(reqSsoRole);
     }
 }

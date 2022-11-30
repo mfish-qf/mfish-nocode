@@ -45,5 +45,5 @@ public class SsoRole extends BaseEntity<String> {
     private Integer delFlag;
     @TableField(exist = false)
     @ApiModelProperty("菜单ID列表")
-    private List<String> menuIds = new ArrayList<>();
+    private List<String> menus = new ArrayList<>();
 }

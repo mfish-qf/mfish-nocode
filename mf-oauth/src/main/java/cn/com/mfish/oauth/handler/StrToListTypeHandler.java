@@ -17,7 +17,7 @@ import java.util.List;
  * @description：角色处理handler
  * @date ：2022/11/22 14:42
  */
-public class RolesTypeHandler extends BaseTypeHandler<List<String>> {
+public class StrToListTypeHandler extends BaseTypeHandler<List<String>> {
     @Override
     public void setNonNullParameter(PreparedStatement preparedStatement, int i, List<String> strings, JdbcType jdbcType) throws SQLException {
         preparedStatement.setString(i, StringUtils.join(strings, ','));
