@@ -27,7 +27,7 @@
             <if test="clientId != null and clientId != ''">
                 and r.client_id = #{clientId}
             </if>
-            <if test="status != null and status != ''">
+            <if test="status != null">
                 and r.status = #{status}
             </if>
             <if test="roleCode != null and roleCode != ''">
