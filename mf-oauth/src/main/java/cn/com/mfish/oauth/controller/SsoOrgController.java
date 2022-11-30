@@ -83,7 +83,7 @@ public class SsoOrgController {
     @Log(title = "组织结构表-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "组织结构表-编辑", notes = "组织结构表-编辑")
     @PutMapping
-    public Result<?> edit(@RequestBody SsoOrg ssoOrg) {
+    public Result<SsoOrg> edit(@RequestBody SsoOrg ssoOrg) {
         if (ssoOrgService.updateById(ssoOrg)) {
             return Result.ok("组织结构表-编辑成功!");
         }
@@ -99,7 +99,7 @@ public class SsoOrgController {
     @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "组织结构表-通过id删除", notes = "组织结构表-通过id删除")
     @DeleteMapping("/{id}")
-    public Result<?> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (ssoOrgService.removeOrg(id)) {
             return Result.ok("组织结构表-删除成功!");
         }
@@ -115,7 +115,7 @@ public class SsoOrgController {
     @Log(title = "组织结构表-批量删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "组织结构表-批量删除", notes = "组织结构表-批量删除")
     @DeleteMapping("/batch")
-    public Result<?> deleteBatch(@RequestParam(name = "ids") String ids) {
+    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.ssoOrgService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok("组织结构表-批量删除成功!");
         }

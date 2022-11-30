@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 19/11/2022 00:16:18
+ Date: 30/11/2022 12:11:35
 */
 
 SET NAMES utf8mb4;
@@ -54,7 +54,7 @@ CREATE TABLE `sso_client_user`  (
 -- ----------------------------
 -- Records of sso_client_user
 -- ----------------------------
-INSERT INTO `sso_client_user` VALUES ('system', '6870e0fe-fa79-468c-86d9-e963e9b5c43f');
+INSERT INTO `sso_client_user` VALUES ('system', '1');
 
 -- ----------------------------
 -- Table structure for sso_logs
@@ -185,6 +185,7 @@ CREATE TABLE `sso_org_user`  (
 -- ----------------------------
 -- Records of sso_org_user
 -- ----------------------------
+INSERT INTO `sso_org_user` VALUES ('950736539e99c0521531cc127d5b8712', '1');
 
 -- ----------------------------
 -- Table structure for sso_role
@@ -196,6 +197,7 @@ CREATE TABLE `sso_role`  (
   `role_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色名称',
   `role_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色编码',
   `role_sort` int(4) NULL DEFAULT NULL COMMENT '显示顺序',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态 0正常 1停用',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
@@ -208,7 +210,7 @@ CREATE TABLE `sso_role`  (
 -- ----------------------------
 -- Records of sso_role
 -- ----------------------------
-INSERT INTO `sso_role` VALUES ('1', 'system', '超级管理员', 'admin', 1, '超级管理员', 0, 'admin', '2022-09-19 10:21:49', '', NULL);
+INSERT INTO `sso_role` VALUES ('1', 'system', '超级管理员', 'admin', 1, 0, '超级管理员', 0, 'admin', '2022-09-19 10:21:49', 'admin', '2022-11-30 12:08:56');
 
 -- ----------------------------
 -- Table structure for sso_role_menu
@@ -223,6 +225,21 @@ CREATE TABLE `sso_role_menu`  (
 -- ----------------------------
 -- Records of sso_role_menu
 -- ----------------------------
+INSERT INTO `sso_role_menu` VALUES ('1', '1a73215261f568088e9adeef2dbd8e44');
+INSERT INTO `sso_role_menu` VALUES ('1', '234dc900ad6502579a51784f9ddb05d5');
+INSERT INTO `sso_role_menu` VALUES ('1', '268d140daddc00dc77823c7d7c2025fb');
+INSERT INTO `sso_role_menu` VALUES ('1', '2a4e024fdc76063da32926c63ca9ead2');
+INSERT INTO `sso_role_menu` VALUES ('1', '4527c6c05549e3594f135ac056faaece');
+INSERT INTO `sso_role_menu` VALUES ('1', '4bfec85ae3174915cd2a3e8ddd822220');
+INSERT INTO `sso_role_menu` VALUES ('1', '503e3ac379a2e17e99105b77a727e6db');
+INSERT INTO `sso_role_menu` VALUES ('1', '6a38a3847b66cc690c3a2eacedb4e81f');
+INSERT INTO `sso_role_menu` VALUES ('1', '6e491486dc4cb475e4bd037d06ab2801');
+INSERT INTO `sso_role_menu` VALUES ('1', '6fd5cdaf86772d4db0587f3b9281f99b');
+INSERT INTO `sso_role_menu` VALUES ('1', '75882dc140444e061741fbd9f026dd2b');
+INSERT INTO `sso_role_menu` VALUES ('1', '76f68d05f5054818762718ee85d6d0fe');
+INSERT INTO `sso_role_menu` VALUES ('1', '7e87849f80699ad24292fd9908f5aeb8');
+INSERT INTO `sso_role_menu` VALUES ('1', '967795af502129d318899a60716da84f');
+INSERT INTO `sso_role_menu` VALUES ('1', 'a988f38821885f8f8aaffa49d681aaac');
 
 -- ----------------------------
 -- Table structure for sso_user
@@ -231,8 +248,8 @@ DROP TABLE IF EXISTS `sso_user`;
 CREATE TABLE `sso_user`  (
   `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
   `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
-  `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱',
   `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `old_password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '旧密码',
   `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
@@ -257,7 +274,7 @@ CREATE TABLE `sso_user`  (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('6870e0fe-fa79-468c-86d9-e963e9b5c43f', '', 'admin', '18911111111', 'qiufeng9862@qq.com', '643ce6d324f7762cada2df58023cd9c6', '', '管理员', NULL, '02511111111', '1998-06-28', 0, 1, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '', '2017-04-10 15:21:38', '', '2021-12-14 10:26:40');
+INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', NULL, '02512345678', '1998-06-14', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '', '2017-04-10 15:21:38', 'admin', '2022-11-29 18:40:11');
 
 -- ----------------------------
 -- Table structure for sso_user_role
@@ -272,5 +289,6 @@ CREATE TABLE `sso_user_role`  (
 -- ----------------------------
 -- Records of sso_user_role
 -- ----------------------------
+INSERT INTO `sso_user_role` VALUES ('1', '1');
 
 SET FOREIGN_KEY_CHECKS = 1;

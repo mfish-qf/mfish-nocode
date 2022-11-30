@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,9 +39,11 @@ public class SsoRole extends BaseEntity<String> {
     private Integer roleSort;
     @ApiModelProperty(value = "备注")
     private String remark;
+    @ApiModelProperty(value = "状态（0正常 1停用）")
+    private Integer status;
     @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
     private Integer delFlag;
     @TableField(exist = false)
     @ApiModelProperty("菜单ID列表")
-    private List<String> menuIds;
+    private List<String> menus = new ArrayList<>();
 }

@@ -6,8 +6,10 @@ import cn.com.mfish.oauth.mapper.SsoOrgMapper;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Service
+@Slf4j
 public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> implements SsoOrgService {
 
     @Override
@@ -42,6 +45,11 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public boolean removeOrg(String id) {
-        return baseMapper.updateById(new SsoOrg().setId(id).setDelFlag(1)) == 1;
+        if (baseMapper.updateById(new SsoOrg().setId(id).setDelFlag(1)) == 1) {
+            log.info(MessageFormat.format("删除组织成功,组织ID:{0}", id));
+            return true;
+        }
+        log.error(MessageFormat.format("删除组织失败,组织ID:{0}", id));
+        return false;
     }
 }

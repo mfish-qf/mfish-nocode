@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.mapper;
 
 import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.oauth.req.ReqSsoRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -19,5 +20,7 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
     @Delete("delete from sso_role_menu where role_id=#{roleId}")
     int deleteRoleMenus(@Param("roleId") String roleId);
 
-    int roleCodeExist(@Param("roleId") String roleId, @Param("roleCode") String roleCode);
+    int roleCodeExist(@Param("clientId") String clientId, @Param("roleId") String roleId, @Param("roleCode") String roleCode);
+
+    List<SsoRole> getRoleList(ReqSsoRole reqSsoRole);
 }

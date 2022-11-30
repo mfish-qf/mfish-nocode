@@ -110,7 +110,7 @@ public class SsoUserController {
     @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
     @PostMapping
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
-        return ssoUserService.insert(ssoUser);
+        return ssoUserService.insertUser(ssoUser);
     }
 
     /**
