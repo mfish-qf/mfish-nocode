@@ -28,6 +28,27 @@
             <include refid="validUser"/>
         </where>
     </select>
+    <select id="getUserRoleById" resultType="cn.com.mfish.oauth.api.entity.UserRole">
+        select r.id, r.role_name, r.role_code
+        from sso_user u
+        inner join sso_user_role ur on ur.user_id = u.id
+        inner join sso_role r on r.id = ur.role_id
+        <where>
+            r.status = 0 and r.del_flag = 0 and u.id = #{userId}
+        </where>
+    </select>
+    <select id="getUserPermission" resultType="java.lang.String">
+        select distinct m.permissions
+        from sso_user u
+        inner join sso_user_role ur on ur.user_id = u.id
+        inner join sso_role_menu rm on rm.role_id = ur.role_id
+        inner join sso_menu m on rm.menu_id = m.id
+        <where>u.id = '1'
+            and permissions is not null
+            and permissions != ''
+        </where>
+        order by permissions
+    </select>
     <select id="isAccountExist" resultType="java.lang.Integer">
         select count(0) from sso_user
         <where>
@@ -38,7 +59,8 @@
         </where>
     </select>
     <resultMap id="userMap" type="cn.com.mfish.oauth.api.entity.UserInfo">
-        <result property="roleIds" column="roleIds" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+        <result property="roleIds" column="roleIds"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
     </resultMap>
     <select id="getUserList" resultMap="userMap">
         select u.*,o.org_name,ou.org_id,GROUP_CONCAT(ur.role_id) roleIds from sso_user u

@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.api.vo;
+package cn.com.mfish.oauth.api.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Data
 @ApiModel("用户角色属性")
 @Accessors(chain = true)
-public class UserRoleVo {
+public class UserRole {
     @ApiModelProperty(value = "角色ID")
     private String id;
     @ApiModelProperty(value = "角色名称")

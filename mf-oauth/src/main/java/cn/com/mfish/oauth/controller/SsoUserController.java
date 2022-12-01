@@ -9,6 +9,7 @@ import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
+import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
@@ -57,7 +58,7 @@ public class SsoUserController {
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
     @SSOLogAnnotation("getUser")
-    public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfoVo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
         Result<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
@@ -68,7 +69,7 @@ public class SsoUserController {
     @InnerUser
     @ApiOperation("获取当前用户信息")
     @GetMapping("/current")
-    public Result<UserInfo> getCurUserInfo() throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfoVo> getCurUserInfo() throws InvocationTargetException, IllegalAccessException {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
             return null;
