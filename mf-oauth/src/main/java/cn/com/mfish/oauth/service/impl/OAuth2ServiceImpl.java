@@ -104,13 +104,13 @@ public class OAuth2ServiceImpl implements OAuth2Service {
      * @throws IllegalAccessException
      */
     @Override
-    public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest) throws OAuthSystemException, InvocationTargetException, IllegalAccessException {
+    public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest) throws OAuthSystemException {
         AuthorizationCode code = setProperty(oAuthTokenRequest);
         return code2Token(oAuthTokenRequest, code);
     }
 
     @Override
-    public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException, InvocationTargetException, IllegalAccessException {
+    public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException {
         RedisAccessToken accessToken = new RedisAccessToken();
         BeanUtils.copyProperties(code, accessToken);
         OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
@@ -137,7 +137,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException {
+    public UserInfo getUserInfo(String userId) {
         SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);

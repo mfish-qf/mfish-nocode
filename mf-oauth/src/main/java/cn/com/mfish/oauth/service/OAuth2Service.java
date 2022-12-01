@@ -7,8 +7,6 @@ import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * @author qiufeng
  * @date 2020/2/13 12:51
@@ -22,12 +20,12 @@ public interface OAuth2Service {
 
     AuthorizationCode getCode(String code);
 
-    RedisAccessToken buildToken(OAuthTokenRequest request) throws OAuthSystemException, InvocationTargetException, IllegalAccessException;
+    RedisAccessToken buildToken(OAuthTokenRequest request) throws OAuthSystemException;
 
-    RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException, InvocationTargetException, IllegalAccessException;
+    RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException;
 
     RedisAccessToken refresh2Token(RedisAccessToken token) throws OAuthSystemException;
 
-    UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException;
+    UserInfo getUserInfo(String userId);
 
 }

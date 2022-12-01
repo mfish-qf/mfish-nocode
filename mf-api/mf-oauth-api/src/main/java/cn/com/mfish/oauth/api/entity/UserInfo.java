@@ -51,6 +51,6 @@ public class UserInfo extends BaseEntity<String> {
     @ApiModelProperty("组织ID")
     private String orgId;
     @TableField(exist = false)
-    @ApiModelProperty("角色")
-    private List<String> roles;
+    @ApiModelProperty("角色ID列表")
+    private List<String> roleIds;
 }

@@ -38,10 +38,10 @@
         </where>
     </select>
     <resultMap id="userMap" type="cn.com.mfish.oauth.api.entity.UserInfo">
-        <result property="roles" column="roles" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+        <result property="roleIds" column="roleIds" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
     </resultMap>
     <select id="getUserList" resultMap="userMap">
-        select u.*,o.org_name,ou.org_id,GROUP_CONCAT(ur.role_id) roles from sso_user u
+        select u.*,o.org_name,ou.org_id,GROUP_CONCAT(ur.role_id) roleIds from sso_user u
         left join sso_org_user ou on ou.user_id = u.id
         left join sso_org o on o.id = ou.org_id
         left join sso_user_role ur on u.id = ur.user_id

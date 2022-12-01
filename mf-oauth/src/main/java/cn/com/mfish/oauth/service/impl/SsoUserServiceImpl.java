@@ -83,7 +83,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (res > 0) {
             insertUserClient(user.getId(), null);
             insertUserOrg(user.getId(), user.getOrgId());
-            insertUserRole(user.getId(), user.getRoles());
+            insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user.getId(), user);
             return Result.ok(user, "用户信息-新增成功");
         }
@@ -104,7 +104,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             baseMapper.deleteUserOrg(user.getId());
             insertUserOrg(user.getId(), user.getOrgId());
             baseMapper.deleteUserRole(user.getId());
-            insertUserRole(user.getId(), user.getRoles());
+            insertUserRole(user.getId(), user.getRoleIds());
             //移除缓存下次登录时会自动拉取
             userTempCache.removeCacheInfo(user.getId());
             return Result.ok(user, "用户信息-更新成功");
