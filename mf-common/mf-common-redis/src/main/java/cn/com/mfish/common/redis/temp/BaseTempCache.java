@@ -86,7 +86,7 @@ public abstract class BaseTempCache<T> {
      * @param key
      */
     public void removeCacheInfo(String key){
-        redisTemplate.delete(key);
+        redisTemplate.delete(buildKey(key));
     }
 
     /**
