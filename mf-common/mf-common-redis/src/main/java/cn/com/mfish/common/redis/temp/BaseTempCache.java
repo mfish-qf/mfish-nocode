@@ -5,6 +5,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -83,10 +85,15 @@ public abstract class BaseTempCache<T> {
 
     /**
      * 移除缓存
+     *
      * @param key
      */
-    public void removeCacheInfo(String key){
-        redisTemplate.delete(buildKey(key));
+    public void removeCacheInfo(String... key) {
+        List<String> list = new ArrayList<>();
+        for (String k : key) {
+            list.add(buildKey(k));
+        }
+        redisTemplate.delete(list);
     }
 
     /**
