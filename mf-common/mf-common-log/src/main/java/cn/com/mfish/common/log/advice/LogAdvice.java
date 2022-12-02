@@ -1,13 +1,9 @@
 package cn.com.mfish.common.log.advice;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.AsyncSaveLog;
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;
@@ -38,8 +34,6 @@ public class LogAdvice {
     ThreadLocal<SysLog> ssoLogThreadLocal = new ThreadLocal<>();
     @Resource
     AsyncSaveLog asyncSaveLog;
-    @Resource
-    RemoteUserService remoteUserService;
 
     @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
@@ -103,10 +97,7 @@ public class LogAdvice {
 
     private void setReturn(int state, String remark) {
         SysLog sysLog = ssoLogThreadLocal.get();
-        Result<UserInfo> user = remoteUserService.getUserInfo(CredentialConstants.INNER);
-        if (user.isSuccess()) {
-            sysLog.setOperName(user.getData().getAccount());
-        }
+        sysLog.setOperName(AuthUtils.getCurrentAccount());
         sysLog.setOperTime(new Date());
         sysLog.setOperStatus(state);
         sysLog.setRemark(StringUtils.substring(remark, 0, 2000));

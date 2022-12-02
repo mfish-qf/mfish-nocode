@@ -80,6 +80,15 @@ public class AuthUtils {
     }
 
     /**
+     * 获取当前帐号
+     * @return
+     */
+    public static String getCurrentAccount() {
+        String account = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_ACCOUNT);
+        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(account) ? null : account;
+    }
+
+    /**
      * 获取当前客户端ID
      *
      * @return

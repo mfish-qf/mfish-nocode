@@ -1,12 +1,9 @@
 package cn.com.mfish.oauth.service.impl;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthUtils;
-import cn.com.mfish.common.core.utils.ServletUtils;
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
-import cn.com.mfish.oauth.common.RedisPrefix;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -76,6 +73,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         code.setClientId(request.getClientId());
         Subject subject = SecurityUtils.getSubject();
         code.setUserId((String) subject.getPrincipal());
+        SsoUser user = ssoUserService.getUserById(code.getUserId());
+        code.setAccount(user.getAccount());
         code.setCodeSessionId(subject.getSession().getId().toString());
         code.setScope(org.apache.shiro.util.StringUtils.join(request.getScopes().iterator(), ","));
         code.setRedirectUri(request.getRedirectURI());
@@ -148,6 +147,14 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         }
         UserInfoVo userInfo = new UserInfoVo();
         BeanUtils.copyProperties(user, userInfo);
+        return userInfo;
+    }
+
+    @Override
+    public UserInfoVo getUserInfoAndRoles(String userId, String clientId) {
+        UserInfoVo userInfo = getUserInfo(userId);
+        userInfo.setUserRoles(ssoUserService.getUserRoles(userId, clientId));
+        userInfo.setPermissions(ssoUserService.getUserPermissions(userId, clientId));
         return userInfo;
     }
 

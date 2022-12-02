@@ -1,9 +1,9 @@
 package cn.com.mfish.oauth.cache.redis;
 
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
-import cn.com.mfish.oauth.common.RedisPrefix;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class UserTokenCache {
      * @param userId     用户id
      * @param token      token值
      */
-    public void addUserTokenCache(SerConstant.DeviceType deviceType, String deviceId, String userId, String token) {
+    public void addUserTokenCache(DeviceType deviceType, String deviceId, String userId, String token) {
         String oldDeviceId = getUserDevice(deviceType, userId);
         if (StringUtils.isEmpty(oldDeviceId)) {
             setUserDevice(deviceType, userId, deviceId, token);
@@ -57,7 +57,7 @@ public class UserTokenCache {
      * @param deviceId
      * @param token
      */
-    private void setUserDevice(SerConstant.DeviceType deviceType, String userId, String deviceId, String token) {
+    private void setUserDevice(DeviceType deviceType, String userId, String deviceId, String token) {
         setUserDevice(deviceType, userId, deviceId);
         setToken(deviceId, token);
     }
@@ -70,7 +70,7 @@ public class UserTokenCache {
      * @param userId
      * @param deviceId
      */
-    private void setUserDevice(SerConstant.DeviceType deviceType, String userId, String deviceId) {
+    private void setUserDevice(DeviceType deviceType, String userId, String deviceId) {
         redisTemplate.opsForValue().set(RedisPrefix.buildUser2DeviceKey(userId, deviceType), deviceId, expire, TimeUnit.DAYS);
     }
 
@@ -81,7 +81,7 @@ public class UserTokenCache {
      * @param userId
      * @return
      */
-    private String getUserDevice(SerConstant.DeviceType deviceType, String userId) {
+    private String getUserDevice(DeviceType deviceType, String userId) {
         return (String) redisTemplate.opsForValue().get(RedisPrefix.buildUser2DeviceKey(userId, deviceType));
     }
 
@@ -91,12 +91,12 @@ public class UserTokenCache {
      * @param deviceType
      * @param userId
      */
-    public void delUserDevice(SerConstant.DeviceType deviceType, String userId) {
+    public void delUserDevice(DeviceType deviceType, String userId) {
         String deviceId = getUserDevice(deviceType, userId);
         delUserDevice(deviceType, userId, deviceId);
     }
 
-    private void delUserDevice(SerConstant.DeviceType deviceType, String userId, String deviceId) {
+    private void delUserDevice(DeviceType deviceType, String userId, String deviceId) {
         delTokenList(deviceId);
         redisTemplate.delete(RedisPrefix.buildUser2DeviceKey(userId, deviceType));
     }

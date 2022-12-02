@@ -100,26 +100,6 @@ public class SerConstant {
     }
 
     /**
-     * 设备类型
-     */
-    public enum DeviceType {
-        //浏览器
-        Web("0"),
-        //手机端
-        APP("1");
-        private String value;
-
-        DeviceType(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-    }
-
-    /**
      * 扫码状态
      */
     public enum ScanStatus {

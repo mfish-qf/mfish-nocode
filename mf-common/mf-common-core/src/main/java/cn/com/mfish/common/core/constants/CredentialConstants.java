@@ -24,4 +24,9 @@ public class CredentialConstants {
      * 当前请求用户ID
      */
     public static final String REQ_USER_ID = "req-user-id";
+
+    /**
+     * 当前请求帐号名称
+     */
+    public static final String REQ_ACCOUNT = "req-account";
 }

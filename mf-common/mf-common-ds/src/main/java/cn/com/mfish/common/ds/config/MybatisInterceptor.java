@@ -1,11 +1,7 @@
 package cn.com.mfish.common.ds.config;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
-import cn.com.mfish.common.core.constants.HttpStatus;
-import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.core.entity.BaseEntity;
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.api.remote.RemoteUserService;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -17,7 +13,6 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -30,29 +25,26 @@ import java.util.Date;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class MybatisInterceptor implements Interceptor {
 
-    @Resource
-    RemoteUserService remoteUserService;
-
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         BaseEntity parameter = getParameter(invocation);
         if (parameter == null) {
             return invocation.proceed();
         }
-        Result<UserInfo> result = remoteUserService.getUserInfo(CredentialConstants.INNER);
-        if (result == null || HttpStatus.SUCCESS != result.getCode()) {
-            log.warn("保存信息时未取到用户信息!" + result.getMsg());
+        String account = AuthUtils.getCurrentAccount();
+        if (account == null) {
+            log.warn("保存信息时未取到用户信息!");
             return invocation.proceed();
         }
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
         SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
         switch (sqlCommandType) {
             case INSERT:
-                parameter.setCreateBy(result.getData().getAccount());
+                parameter.setCreateBy(account);
                 parameter.setCreateTime(new Date());
                 break;
             case UPDATE:
-                parameter.setUpdateBy(result.getData().getAccount());
+                parameter.setUpdateBy(account);
                 parameter.setUpdateTime(new Date());
                 break;
         }

@@ -39,7 +39,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param userId
      * @return
      */
-    List<UserRole> getUserRoleById(@Param("userId") String userId);
+    List<UserRole> getUserRoles(@Param("userId") String userId, @Param("clientId") String clientId);
 
     /**
      * 通过用户ID获取按钮权限
@@ -48,7 +48,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param clientId
      * @return
      */
-    List<String> getUserPermission(@Param("userId") String userId,@Param("clientId") String clientId);
+    List<String> getUserPermissions(@Param("userId") String userId, @Param("clientId") String clientId);
 
     /**
      * 根据微信openId获取用户id

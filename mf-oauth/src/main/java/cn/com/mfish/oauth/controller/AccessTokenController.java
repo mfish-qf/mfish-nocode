@@ -1,10 +1,10 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.OAuthClient;
@@ -93,7 +93,7 @@ public class AccessTokenController {
             throw new OAuthValidateException("错误:该用户无此客户端权限!");
         }
         //增加用户登录互斥缓存
-        userTokenCache.addUserTokenCache(SerConstant.DeviceType.Web
+        userTokenCache.addUserTokenCache(DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()
                 , token.getUserId(), token.getAccessToken());
         return Result.ok(new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken()));

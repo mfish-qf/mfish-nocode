@@ -1,5 +1,7 @@
-package cn.com.mfish.oauth.common;
+package cn.com.mfish.common.redis.common;
 
+
+import cn.com.mfish.common.core.enums.DeviceType;
 
 /**
  * @author qiufeng
@@ -38,6 +40,11 @@ public class RedisPrefix {
     public static final String QR_CODE = "qrCode:";
     //微信登录获取sessionKey
     public static final String SESSION_KEY = "sessionKey:";
+    //用户角色
+    public static final String USER2ROLES = "user2roles:";
+    //用户权限
+    public static final String USER2PERMISSIONS = "user2permissions:";
+
 
     /**
      * 构建交换code
@@ -136,7 +143,7 @@ public class RedisPrefix {
      * @param deviceType
      * @return
      */
-    public static String buildUser2DeviceKey(String userId, SerConstant.DeviceType deviceType) {
+    public static String buildUser2DeviceKey(String userId, DeviceType deviceType) {
         return USER2DEVICE_ID + deviceType.toString() + userId;
     }
 
@@ -182,6 +189,7 @@ public class RedisPrefix {
 
     /**
      * 构建二维码key
+     *
      * @param code
      * @return
      */
@@ -197,5 +205,25 @@ public class RedisPrefix {
      */
     public static String buildSessionKey(String sessionKey) {
         return SESSION_KEY + sessionKey;
+    }
+
+    /**
+     * 构建用户角色key
+     *
+     * @param userKey
+     * @return
+     */
+    public static String buildUser2RolesKey(String userKey) {
+        return USER2ROLES + userKey;
+    }
+
+    /**
+     * 构建用户权限key
+     *
+     * @param userKey
+     * @return
+     */
+    public static String buildUser2PermissionsKey(String userKey) {
+        return USER2PERMISSIONS + userKey;
     }
 }

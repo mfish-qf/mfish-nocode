@@ -8,6 +8,7 @@ import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.fallback.RemoteUserFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
@@ -27,13 +28,7 @@ public interface RemoteUserService {
     @GetMapping("/user/info")
     Result<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.REQ_ORIGIN) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
 
-    /**
-     * 获取当前用户信息 web浏览器通过oauth2登录可以直接请求
-     *
-     * @param origin
-     * @return
-     */
-    @GetMapping("/user/current")
-    Result<UserInfo> getUserInfo(@RequestHeader(CredentialConstants.REQ_ORIGIN) String origin);
+    @GetMapping("/user/{id}")
+    Result<UserInfo> getUserById(@RequestHeader(CredentialConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
 
 }

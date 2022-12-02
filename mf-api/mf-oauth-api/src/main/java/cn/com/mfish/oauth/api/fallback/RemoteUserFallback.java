@@ -25,8 +25,8 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
             }
 
             @Override
-            public Result<UserInfo> getUserInfo(String origin) {
-                return Result.fail("错误:获取当前用户失败" + cause.getMessage());
+            public Result<UserInfo> getUserById(String origin, String id) {
+                return Result.fail("错误:通过ID获取用户失败" + cause.getMessage());
             }
 
         };

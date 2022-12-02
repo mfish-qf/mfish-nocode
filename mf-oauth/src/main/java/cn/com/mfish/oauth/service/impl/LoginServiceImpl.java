@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -125,12 +124,6 @@ public class LoginServiceImpl implements LoginService {
                     .getParam().put(SerConstant.ERROR_MSG, SerConstant.INVALID_USER_SECRET_DESCRIPTION);
             return result;
         }
-//        SSOUser user = userService.getUserByAccount(username);
-//        if (user == null) {
-//            result.setSuccess(false).setMsg(SerConstant.INVALID_USER_SECRET_DESCRIPTION)
-//                    .getParam().put(SerConstant.ERROR_MSG, SerConstant.INVALID_USER_SECRET_DESCRIPTION);
-//            return result;
-//        }
         MyUsernamePasswordToken token = new MyUsernamePasswordToken(username, password, remember)
                 .setLoginType(loginType);
         try {
@@ -186,10 +179,11 @@ public class LoginServiceImpl implements LoginService {
             removeLoginCount(userId);
             return true;
         }
-        Map<String, String> params = new HashMap<>();
         if (count >= ERROR_COUNT) {
             String error = MessageFormat.format("{0},连续输错5次密码，账号锁定"
                     , SerConstant.INVALID_USER_SECRET_DESCRIPTION);
+            user.setStatus(1);
+            ssoUserService.updateUser(user);
             log.error(userId + error);
             //规定时间内重试ERROR_COUNT次，抛出多次尝试异常
             throw new ExcessiveAttemptsException(error);
@@ -244,6 +238,7 @@ public class LoginServiceImpl implements LoginService {
     public String getOpenIdBySessionKey(String sessionKey) {
         return (String) redisTemplate.opsForValue().get(RedisPrefix.buildSessionKey(sessionKey));
     }
+
     /**
      * 获取30分钟内登录次数
      *

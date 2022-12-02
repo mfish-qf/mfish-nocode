@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
@@ -11,7 +12,6 @@ import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
@@ -50,10 +50,10 @@ public class SsoUserController {
     SsoUserService ssoUserService;
 
     @InnerUser
-    @ApiOperation("获取用户信息")
+    @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer+token组合，例如Bearer39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
+            @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer +token组合，例如Bearer 39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
     @SSOLogAnnotation("getUser")
@@ -62,14 +62,14 @@ public class SsoUserController {
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return Result.ok(oAuth2Service.getUserInfo(result.getData().getUserId()));
+        return Result.ok(oAuth2Service.getUserInfoAndRoles(result.getData().getUserId(), result.getData().getClientId()));
     }
 
     @InnerUser
-    @ApiOperation("获取当前用户信息")
-    @GetMapping("/current")
-    public Result<UserInfoVo> getCurUserInfo() {
-        return Result.ok(oAuth2Service.getUserInfo(oAuth2Service.getCurrentUser()));
+    @ApiOperation("通过用户ID获取用户")
+    @GetMapping("/{id}")
+    public Result<UserInfo> getUserById(@ApiParam(name = "id", value = "用户ID") @PathVariable String id) {
+        return Result.ok(ssoUserService.getUserByIdNoPwd(id));
     }
 
     @ApiOperation("用户登出")
@@ -81,7 +81,7 @@ public class SsoUserController {
             return Result.ok(error);
         }
         String userId = (String) subject.getPrincipal();
-        userTokenCache.delUserDevice(SerConstant.DeviceType.Web, userId);
+        userTokenCache.delUserDevice(DeviceType.Web, userId);
         subject.logout();
         return Result.ok("成功登出");
     }

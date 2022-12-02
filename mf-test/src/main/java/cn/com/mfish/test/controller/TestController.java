@@ -38,7 +38,7 @@ public class TestController {
 
     @GetMapping("/curUser")
     public Result<UserInfo> getCurUserInfo() {
-        return remoteUserService.getUserInfo(CredentialConstants.INNER);
+        return remoteUserService.getUserById(CredentialConstants.INNER, "1");
     }
 
     @Log(title = "测试参数", operateType = OperateType.QUERY, reqSource = ReqSource.MANAGER)

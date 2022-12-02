@@ -28,6 +28,8 @@ public interface OAuth2Service {
 
     UserInfoVo getUserInfo(String userId);
 
+    UserInfoVo getUserInfoAndRoles(String userId, String clientId);
+
     String getCurrentUser();
 
 }

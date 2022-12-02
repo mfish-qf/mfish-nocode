@@ -56,6 +56,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
         addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, redisAccessToken.getClientId());
         addHeader(mutate, CredentialConstants.REQ_USER_ID, redisAccessToken.getUserId());
+        addHeader(mutate, CredentialConstants.REQ_ACCOUNT, redisAccessToken.getAccount());
         return chain.filter(exchange.mutate().request(mutate.build()).build());
     }
 
