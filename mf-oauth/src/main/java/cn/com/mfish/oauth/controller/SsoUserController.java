@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -58,7 +57,7 @@ public class SsoUserController {
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
     @SSOLogAnnotation("getUser")
-    public Result<UserInfoVo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfoVo> getUserInfo(HttpServletRequest request) {
         Result<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
@@ -69,13 +68,8 @@ public class SsoUserController {
     @InnerUser
     @ApiOperation("获取当前用户信息")
     @GetMapping("/current")
-    public Result<UserInfoVo> getCurUserInfo() throws InvocationTargetException, IllegalAccessException {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject == null) {
-            return null;
-        }
-        String userId = (String) subject.getPrincipal();
-        return Result.ok(oAuth2Service.getUserInfo(userId));
+    public Result<UserInfoVo> getCurUserInfo() {
+        return Result.ok(oAuth2Service.getUserInfo(oAuth2Service.getCurrentUser()));
     }
 
     @ApiOperation("用户登出")

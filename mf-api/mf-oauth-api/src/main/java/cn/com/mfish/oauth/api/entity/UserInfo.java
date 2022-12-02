@@ -21,8 +21,6 @@ import java.util.List;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class UserInfo extends BaseEntity<String> {
-    @ApiModelProperty("客户端ID")
-    private String clientId;
     @ApiModelProperty("账号")
     private String account;
     @ApiModelProperty("手机号")

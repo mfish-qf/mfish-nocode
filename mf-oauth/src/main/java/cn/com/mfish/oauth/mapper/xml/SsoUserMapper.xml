@@ -34,16 +34,19 @@
         inner join sso_user_role ur on ur.user_id = u.id
         inner join sso_role r on r.id = ur.role_id
         <where>
-            r.status = 0 and r.del_flag = 0 and u.id = #{userId}
+            r.status = 0 and r.del_flag = 0
+            and r.client_id = #{clientId} and u.id = #{userId}
         </where>
     </select>
     <select id="getUserPermission" resultType="java.lang.String">
         select distinct m.permissions
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
+        inner join sso_role r on r.id = ur.role_id
         inner join sso_role_menu rm on rm.role_id = ur.role_id
         inner join sso_menu m on rm.menu_id = m.id
-        <where>u.id = '1'
+        <where>
+            u.id = #{userId} and r.client_id = #{clientId}
             and permissions is not null
             and permissions != ''
         </where>

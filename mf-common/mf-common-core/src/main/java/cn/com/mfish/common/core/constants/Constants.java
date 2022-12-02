@@ -23,6 +23,11 @@ public class Constants {
     public static final String AUTHENTICATION = "Authorization";
 
     /**
+     * 内容长度
+     */
+    public static final String CONTENT_LENGTH="content-length";
+
+    /**
      * 普通令牌键前缀
      */
     public final static String ACCESS_TOKEN = "access_token";

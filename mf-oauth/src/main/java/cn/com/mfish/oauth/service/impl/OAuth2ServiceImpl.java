@@ -1,6 +1,10 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.ServletUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
@@ -145,5 +149,14 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         UserInfoVo userInfo = new UserInfoVo();
         BeanUtils.copyProperties(user, userInfo);
         return userInfo;
+    }
+
+    @Override
+    public String getCurrentUser() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject == null) {
+            return AuthUtils.getCurrentUserId();
+        }
+        return (String) subject.getPrincipal();
     }
 }

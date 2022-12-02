@@ -7,19 +7,6 @@ package cn.com.mfish.common.core.constants;
  */
 public class CredentialConstants {
     /**
-     * 用户ID字段
-     */
-    public static final String DETAILS_USER_ID = "user_id";
-
-    /**
-     * 用户名字段
-     */
-    public static final String DETAILS_USERNAME = "username";
-    /**
-     * 用户标识
-     */
-    public static final String USER_KEY = "user_key";
-    /**
      * 请求来源
      */
     public static final String REQ_ORIGIN = "req-origin";
@@ -27,4 +14,14 @@ public class CredentialConstants {
      * 内部请求
      */
     public static final String INNER = "inner";
+
+    /**
+     * 当前请求客户端ID
+     */
+    public static final String REQ_CLIENT_ID = "req-client-id";
+
+    /**
+     * 当前请求用户ID
+     */
+    public static final String REQ_USER_ID = "req-user-id";
 }
