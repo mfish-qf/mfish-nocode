@@ -1,9 +1,10 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
@@ -67,7 +68,7 @@ public class AccessTokenController {
             @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query"),
             @ApiImplicitParam(name = OAuth.OAUTH_REFRESH_TOKEN, value = "密码 grant_type=refresh_token时必须", paramType = "query")
     })
-    @SSOLogAnnotation("getToken")
+    @Log(title = "获取token", operateType = OperateType.QUERY)
     public Result<AccessToken> token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
         OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
         Result<OAuthClient> result = code2TokenValidator.validateClient(request, null);

@@ -8,7 +8,6 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
-import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
@@ -56,7 +55,7 @@ public class SsoUserController {
             @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer +token组合，例如Bearer 39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
             @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
     })
-    @SSOLogAnnotation("getUser")
+    @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
     public Result<UserInfoVo> getUserInfo(HttpServletRequest request) {
         Result<RedisAccessToken> result = accessTokenValidator.validate(request, null);
         if (!result.isSuccess()) {

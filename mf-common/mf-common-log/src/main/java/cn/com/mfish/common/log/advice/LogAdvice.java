@@ -74,8 +74,16 @@ public class LogAdvice {
                     params += "," + obj;
                     continue;
                 }
-                params += "," + JSON.toJSONString(obj);
-
+                if (obj instanceof HttpServletRequest) {
+                    HttpServletRequest request = (HttpServletRequest) obj;
+                    obj = request.getParameterMap();
+                }
+                try {
+                    params += "," + JSON.toJSONString(obj);
+                } catch (Exception ex) {
+                    log.error("参数转json出错", ex);
+                    params += obj.toString();
+                }
             }
         }
         if (StringUtils.isEmpty(params)) {
