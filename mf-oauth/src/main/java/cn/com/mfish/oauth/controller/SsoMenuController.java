@@ -8,6 +8,7 @@ import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
+import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoMenuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -35,7 +36,9 @@ import java.util.List;
 @RequestMapping("/menu")
 public class SsoMenuController {
     @Resource
-    private SsoMenuService ssoMenuService;
+    SsoMenuService ssoMenuService;
+    @Resource
+    OAuth2Service oAuth2Service;
 
     /**
      * 分页列表查询
@@ -54,7 +57,7 @@ public class SsoMenuController {
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
-        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu);
+        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
         List<SsoMenu> menuTrees = new ArrayList<>();
         TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
         return Result.ok(menuTrees, "菜单权限表-查询成功!");

@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.oauth.service.TokenService;
-import cn.com.mfish.oauth.common.RedisPrefix;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

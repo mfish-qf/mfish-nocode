@@ -15,5 +15,5 @@ import java.util.List;
 public interface SsoMenuService extends IService<SsoMenu> {
     boolean insertMenu(SsoMenu ssoMenu);
 
-    List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu);
+    List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId);
 }

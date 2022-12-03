@@ -30,14 +30,14 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     @Override
-    public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu) {
-        Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu);
+    public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
+        Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu, userId);
         List<Integer> list = new ArrayList<>();
         if (level != null) {
             for (int i = 1; i < level; i++) {
                 list.add(i);
             }
         }
-        return baseMapper.queryMenu(reqSsoMenu, list);
+        return baseMapper.queryMenu(reqSsoMenu, list, userId);
     }
 }

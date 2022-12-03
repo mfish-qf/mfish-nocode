@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.oauth.cache.temp.OpenIdTempCache;
-import cn.com.mfish.oauth.common.RedisPrefix;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.entity.WeChatToken;

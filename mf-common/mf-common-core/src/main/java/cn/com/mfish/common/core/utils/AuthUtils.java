@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
+import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.utils.html.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,16 +47,55 @@ public class AuthUtils {
      * @return
      */
     public static String getAccessToken(WebRequest request) {
-        String accessToken = request.getParameter(Constants.ACCESS_TOKEN);
+        // 头部的Authorization值以Bearer开头
+        String auth = request.getHeader(Constants.AUTHENTICATION);
+        String accessToken = null;
+        if (auth != null && auth.startsWith(Constants.OAUTH_HEADER_NAME)) {
+            accessToken = auth.replace(Constants.OAUTH_HEADER_NAME, "").trim();
+        }
         // 请求参数中包含access_token参数
         if (StringUtils.isEmpty(accessToken)) {
-            // 头部的Authorization值以Bearer开头
-            String auth = request.getHeader(Constants.AUTHENTICATION);
-            if (auth != null && auth.startsWith(Constants.OAUTH_HEADER_NAME)) {
-                accessToken = auth.replace(Constants.OAUTH_HEADER_NAME, "").trim();
-            }
+            accessToken = request.getParameter(Constants.ACCESS_TOKEN);
         }
         return accessToken;
+    }
+
+    /**
+     * 获取当前accessToken
+     *
+     * @return
+     */
+    public static String getAccessToken() {
+        return getAccessToken(ServletUtils.getRequest());
+    }
+
+    /**
+     * 获取当前用户ID
+     *
+     * @return
+     */
+    public static String getCurrentUserId() {
+        String userId = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_USER_ID);
+        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(userId) ? null : userId;
+    }
+
+    /**
+     * 获取当前帐号
+     * @return
+     */
+    public static String getCurrentAccount() {
+        String account = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_ACCOUNT);
+        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(account) ? null : account;
+    }
+
+    /**
+     * 获取当前客户端ID
+     *
+     * @return
+     */
+    public static String getCurrentClientId() {
+        String clientId = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_CLIENT_ID);
+        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(clientId) ? null : clientId;
     }
 
     /**
@@ -107,5 +147,4 @@ public class AuthUtils {
         }
         return value.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
     }
-
 }

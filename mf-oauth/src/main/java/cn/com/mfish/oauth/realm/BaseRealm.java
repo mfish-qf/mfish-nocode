@@ -71,7 +71,7 @@ public abstract class BaseRealm extends AuthorizingRealm {
         SsoUser userInfo = new SsoUser();
         userInfo.setPhone(phone);
         userInfo.setId(UUID.randomUUID().toString());
-        userInfo.setAccount("用户" + phone.substring(7));
+        userInfo.setAccount("user" + phone);
         userInfo.setNickname(userInfo.getAccount());
         userInfo.setStatus(1);
         return userInfo;

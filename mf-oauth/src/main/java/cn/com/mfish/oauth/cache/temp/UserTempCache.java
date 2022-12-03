@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.cache.temp;
 import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import cn.com.mfish.oauth.entity.SsoUser;
-import cn.com.mfish.oauth.common.RedisPrefix;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

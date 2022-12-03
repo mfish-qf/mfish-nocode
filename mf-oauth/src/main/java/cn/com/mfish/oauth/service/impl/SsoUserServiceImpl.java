@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
+import cn.com.mfish.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.common.PasswordHelper;
@@ -14,6 +15,7 @@ import cn.com.mfish.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,7 +85,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (res > 0) {
             insertUserClient(user.getId(), null);
             insertUserOrg(user.getId(), user.getOrgId());
-            insertUserRole(user.getId(), user.getRoles());
+            insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user.getId(), user);
             return Result.ok(user, "用户信息-新增成功");
         }
@@ -104,7 +106,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             baseMapper.deleteUserOrg(user.getId());
             insertUserOrg(user.getId(), user.getOrgId());
             baseMapper.deleteUserRole(user.getId());
-            insertUserRole(user.getId(), user.getRoles());
+            insertUserRole(user.getId(), user.getRoleIds());
             //移除缓存下次登录时会自动拉取
             userTempCache.removeCacheInfo(user.getId());
             return Result.ok(user, "用户信息-更新成功");
@@ -155,9 +157,26 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         return userTempCache.getCacheInfo(userId);
     }
 
+    public UserInfo getUserByIdNoPwd(String userId) {
+        SsoUser ssoUser = userTempCache.getCacheInfo(userId);
+        UserInfo userInfo = new UserInfo();
+        BeanUtils.copyProperties(ssoUser, userInfo);
+        return userInfo;
+    }
+
     @Override
     public List<UserInfo> getUserList(ReqSsoUser reqSsoUser) {
         return baseMapper.getUserList(reqSsoUser);
+    }
+
+    @Override
+    public List<UserRole> getUserRoles(String userId, String clientId) {
+        return baseMapper.getUserRoles(userId, clientId);
+    }
+
+    @Override
+    public List<String> getUserPermissions(String userId, String clientId) {
+        return baseMapper.getUserPermissions(userId, clientId);
     }
 
     /**

@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.cache.temp;
 
 import cn.com.mfish.common.redis.temp.BaseTempCache;
-import cn.com.mfish.oauth.common.RedisPrefix;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.mapper.ClientMapper;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import org.springframework.stereotype.Component;

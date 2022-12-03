@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.interceptor;
+package cn.com.mfish.common.web.interceptor;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -11,6 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -29,13 +30,17 @@ public class BearerTokenInterceptor implements RequestInterceptor {
         //循环所有添加所有head信息
         HttpServletRequest request = requestAttributes.getRequest();
         Enumeration<String> headerNames = request.getHeaderNames();
+        //是否存在头部token
+        boolean hasHeadAuth = false;
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
                 String name = headerNames.nextElement();
-                //feign.RetryableException: too many bytes written executing POST http://mf-sys/sysLog
                 //过滤content-length防止长度与body长度不一致
-                if (name.equals("content-length")) {
+                if (Constants.CONTENT_LENGTH.equals(name.toLowerCase(Locale.ROOT))) {
                     continue;
+                }
+                if (Constants.AUTHENTICATION.equals(name)) {
+                    hasHeadAuth = true;
                 }
                 Enumeration<String> values = request.getHeaders(name);
                 while (values.hasMoreElements()) {
@@ -44,7 +49,10 @@ public class BearerTokenInterceptor implements RequestInterceptor {
                 }
             }
         }
-        //重新添加token信息,防止token试用非head传入被遗漏问题
+        if (hasHeadAuth) {
+            return;
+        }
+        //重新添加token信息,防止token使用非head传入被遗漏问题
         String token = AuthUtils.getAccessToken(request);
         if (!StringUtils.isEmpty(token)) {
             // 清除token头 避免传染

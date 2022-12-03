@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.web.advice.InnerUserAdvice
+  cn.com.mfish.common.web.advice.InnerUserAdvice,\
+  cn.com.mfish.common.web.interceptor.BearerTokenInterceptor
   

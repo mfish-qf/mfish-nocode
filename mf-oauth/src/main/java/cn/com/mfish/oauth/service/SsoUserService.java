@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
+import cn.com.mfish.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -25,7 +26,20 @@ public interface SsoUserService extends IService<SsoUser> {
 
     SsoUser getUserById(String userId);
 
+    UserInfo getUserByIdNoPwd(String userId);
+
     List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
+
+    List<UserRole> getUserRoles(String userId, String clientId);
+
+    /**
+     * 通过用户ID获取按钮权限
+     *
+     * @param userId
+     * @param clientId
+     * @return
+     */
+    List<String> getUserPermissions(String userId, String clientId);
 
     /**
      * 判断客户端下是否存在该用户
@@ -65,6 +79,7 @@ public interface SsoUserService extends IService<SsoUser> {
 
     /**
      * 插入用户所属客户端
+     *
      * @param userId
      * @param clientId
      * @return

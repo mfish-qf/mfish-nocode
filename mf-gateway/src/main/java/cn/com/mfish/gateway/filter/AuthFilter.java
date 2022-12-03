@@ -38,8 +38,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        ServerHttpRequest.Builder mutate = request.mutate();
-
         String url = request.getURI().getPath();
         // 跳过不需要验证的路径
         if (StringUtils.matches(url, ignoreWhite.getWhites())) {
@@ -53,25 +51,20 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (redisAccessToken == null) {
             return unauthorizedResponse(exchange, "错误:token不存在或已过期");
         }
+        ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
         removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
+        addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, redisAccessToken.getClientId());
+        addHeader(mutate, CredentialConstants.REQ_USER_ID, redisAccessToken.getUserId());
+        addHeader(mutate, CredentialConstants.REQ_ACCOUNT, redisAccessToken.getAccount());
         return chain.filter(exchange.mutate().request(mutate.build()).build());
     }
 
-    private void addHeader(ServerHttpRequest.Builder mutate, String name, Object value) {
-        if (value == null) {
+    private void addHeader(ServerHttpRequest.Builder mutate, String name, String value) {
+        if (StringUtils.isEmpty(value)) {
             return;
         }
-        String valueStr = value.toString();
-        String valueEncode = ServletUtils.urlEncode(valueStr);
-        mutate.header(name, valueEncode);
-    }
-
-    /**
-     * 获取缓存key
-     */
-    private String getTokenKey(String token) {
-        return Constants.ACCESS_TOKEN + ":" + token;
+        mutate.header(name, value);
     }
 
     private void removeHeader(ServerHttpRequest.Builder mutate, String name) {

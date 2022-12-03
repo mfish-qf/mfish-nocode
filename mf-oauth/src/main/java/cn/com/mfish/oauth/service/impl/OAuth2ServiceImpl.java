@@ -1,14 +1,15 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.common.RedisPrefix;
+import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.oauth.api.vo.UserInfoVo;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
-import cn.com.mfish.oauth.service.TokenService;
 import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.oauth.service.TokenService;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -72,6 +73,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         code.setClientId(request.getClientId());
         Subject subject = SecurityUtils.getSubject();
         code.setUserId((String) subject.getPrincipal());
+        SsoUser user = ssoUserService.getUserById(code.getUserId());
+        code.setAccount(user.getAccount());
         code.setCodeSessionId(subject.getSession().getId().toString());
         code.setScope(org.apache.shiro.util.StringUtils.join(request.getScopes().iterator(), ","));
         code.setRedirectUri(request.getRedirectURI());
@@ -104,13 +107,13 @@ public class OAuth2ServiceImpl implements OAuth2Service {
      * @throws IllegalAccessException
      */
     @Override
-    public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest) throws OAuthSystemException, InvocationTargetException, IllegalAccessException {
+    public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest) throws OAuthSystemException {
         AuthorizationCode code = setProperty(oAuthTokenRequest);
         return code2Token(oAuthTokenRequest, code);
     }
 
     @Override
-    public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException, InvocationTargetException, IllegalAccessException {
+    public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException {
         RedisAccessToken accessToken = new RedisAccessToken();
         BeanUtils.copyProperties(code, accessToken);
         OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
@@ -137,13 +140,30 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public UserInfo getUserInfo(String userId) throws InvocationTargetException, IllegalAccessException {
+    public UserInfoVo getUserInfo(String userId) {
         SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);
         }
-        UserInfo userInfo = new UserInfo();
+        UserInfoVo userInfo = new UserInfoVo();
         BeanUtils.copyProperties(user, userInfo);
         return userInfo;
+    }
+
+    @Override
+    public UserInfoVo getUserInfoAndRoles(String userId, String clientId) {
+        UserInfoVo userInfo = getUserInfo(userId);
+        userInfo.setUserRoles(ssoUserService.getUserRoles(userId, clientId));
+        userInfo.setPermissions(ssoUserService.getUserPermissions(userId, clientId));
+        return userInfo;
+    }
+
+    @Override
+    public String getCurrentUser() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject == null) {
+            return AuthUtils.getCurrentUserId();
+        }
+        return (String) subject.getPrincipal();
     }
 }

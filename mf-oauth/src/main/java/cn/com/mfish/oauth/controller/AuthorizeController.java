@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
-import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
+import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -72,7 +73,7 @@ public class AuthorizeController {
             @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码", paramType = "query", required = true)
     })
-    @SSOLogAnnotation("getCode")
+    @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request)
             throws URISyntaxException, OAuthSystemException, OAuthProblemException {
         OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);

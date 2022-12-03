@@ -1,10 +1,11 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.annotation.SSOLogAnnotation;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.OAuthClient;
@@ -67,7 +68,7 @@ public class AccessTokenController {
             @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query"),
             @ApiImplicitParam(name = OAuth.OAUTH_REFRESH_TOKEN, value = "密码 grant_type=refresh_token时必须", paramType = "query")
     })
-    @SSOLogAnnotation("getToken")
+    @Log(title = "获取token", operateType = OperateType.QUERY)
     public Result<AccessToken> token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
         OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
         Result<OAuthClient> result = code2TokenValidator.validateClient(request, null);
@@ -93,7 +94,7 @@ public class AccessTokenController {
             throw new OAuthValidateException("错误:该用户无此客户端权限!");
         }
         //增加用户登录互斥缓存
-        userTokenCache.addUserTokenCache(SerConstant.DeviceType.Web
+        userTokenCache.addUserTokenCache(DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()
                 , token.getUserId(), token.getAccessToken());
         return Result.ok(new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken()));

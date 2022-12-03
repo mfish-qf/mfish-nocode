@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.mapper;
 
 import cn.com.mfish.oauth.api.entity.UserInfo;
+import cn.com.mfish.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -31,6 +32,23 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @return
      */
     SsoUser getUserById(@Param("userId") String userId);
+
+    /**
+     * 通过用户ID获取用户角色
+     *
+     * @param userId
+     * @return
+     */
+    List<UserRole> getUserRoles(@Param("userId") String userId, @Param("clientId") String clientId);
+
+    /**
+     * 通过用户ID获取按钮权限
+     *
+     * @param userId
+     * @param clientId
+     * @return
+     */
+    List<String> getUserPermissions(@Param("userId") String userId, @Param("clientId") String clientId);
 
     /**
      * 根据微信openId获取用户id

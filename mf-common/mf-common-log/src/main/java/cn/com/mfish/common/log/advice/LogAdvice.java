@@ -1,13 +1,9 @@
 package cn.com.mfish.common.log.advice;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.AsyncSaveLog;
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;
@@ -35,11 +31,9 @@ import java.util.Date;
 @Component
 @Slf4j
 public class LogAdvice {
-    ThreadLocal<SysLog> ssoLogThreadLocal = new ThreadLocal<>();
+    ThreadLocal<SysLog> logThreadLocal = new ThreadLocal<>();
     @Resource
     AsyncSaveLog asyncSaveLog;
-    @Resource
-    RemoteUserService remoteUserService;
 
     @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
@@ -65,7 +59,7 @@ public class LogAdvice {
         sysLog.setOperIp(AuthUtils.getRemoteIP(request));
         sysLog.setTitle(title);
         sysLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
-        ssoLogThreadLocal.set(sysLog);
+        logThreadLocal.set(sysLog);
     }
 
 
@@ -80,8 +74,16 @@ public class LogAdvice {
                     params += "," + obj;
                     continue;
                 }
-                params += "," + JSON.toJSONString(obj);
-
+                if (obj instanceof HttpServletRequest) {
+                    HttpServletRequest request = (HttpServletRequest) obj;
+                    obj = request.getParameterMap();
+                }
+                try {
+                    params += "," + JSON.toJSONString(obj);
+                } catch (Exception ex) {
+                    log.error("参数转json出错", ex);
+                    params += obj.toString();
+                }
             }
         }
         if (StringUtils.isEmpty(params)) {
@@ -102,11 +104,8 @@ public class LogAdvice {
     }
 
     private void setReturn(int state, String remark) {
-        SysLog sysLog = ssoLogThreadLocal.get();
-        Result<UserInfo> user = remoteUserService.getUserInfo(CredentialConstants.INNER);
-        if (user.isSuccess()) {
-            sysLog.setOperName(user.getData().getAccount());
-        }
+        SysLog sysLog = logThreadLocal.get();
+        sysLog.setOperName(AuthUtils.getCurrentAccount());
         sysLog.setOperTime(new Date());
         sysLog.setOperStatus(state);
         sysLog.setRemark(StringUtils.substring(remark, 0, 2000));

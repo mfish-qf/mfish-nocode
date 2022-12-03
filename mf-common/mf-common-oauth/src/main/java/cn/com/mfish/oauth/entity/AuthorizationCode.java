@@ -25,6 +25,8 @@ public class AuthorizationCode implements Serializable {
     private String state;
     @ApiModelProperty("用户ID")
     private String userId;
+    @ApiModelProperty("帐号")
+    private String account;
     @ApiModelProperty("回调地址")
     private String redirectUri;
     @ApiModelProperty("父token，当code为其他账号帮忙获取时记录其token")
