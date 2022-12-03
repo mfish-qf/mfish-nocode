@@ -31,7 +31,7 @@ import java.util.Date;
 @Component
 @Slf4j
 public class LogAdvice {
-    ThreadLocal<SysLog> ssoLogThreadLocal = new ThreadLocal<>();
+    ThreadLocal<SysLog> logThreadLocal = new ThreadLocal<>();
     @Resource
     AsyncSaveLog asyncSaveLog;
 
@@ -59,7 +59,7 @@ public class LogAdvice {
         sysLog.setOperIp(AuthUtils.getRemoteIP(request));
         sysLog.setTitle(title);
         sysLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
-        ssoLogThreadLocal.set(sysLog);
+        logThreadLocal.set(sysLog);
     }
 
 
@@ -104,7 +104,7 @@ public class LogAdvice {
     }
 
     private void setReturn(int state, String remark) {
-        SysLog sysLog = ssoLogThreadLocal.get();
+        SysLog sysLog = logThreadLocal.get();
         sysLog.setOperName(AuthUtils.getCurrentAccount());
         sysLog.setOperTime(new Date());
         sysLog.setOperStatus(state);
