@@ -152,7 +152,7 @@ public class LoginServiceImpl implements LoginService {
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
             return result;
         } finally {
-            result.setData(token.getUserInfo().getId());
+            result.setData(token.getUserInfo() != null ? token.getUserInfo().getId() : null);
             result.getParam().put(OAuth.OAUTH_USERNAME, username);
             result.getParam().put(SerConstant.LOGIN_TYPE, loginType.toString());
         }

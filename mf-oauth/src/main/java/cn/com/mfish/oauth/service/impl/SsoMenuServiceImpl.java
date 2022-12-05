@@ -40,4 +40,9 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         }
         return baseMapper.queryMenu(reqSsoMenu, list, userId);
     }
+
+    @Override
+    public List<String> queryMenuUser(String menuId) {
+        return baseMapper.queryMenuUser(menuId);
+    }
 }

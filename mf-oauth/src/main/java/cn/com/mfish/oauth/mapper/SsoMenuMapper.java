@@ -19,4 +19,6 @@ public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
     Integer queryMaxMenuLevel(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("userId") String userId);
 
     List<SsoMenu> queryMenu(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("levels") List<Integer> levels, @Param("userId") String userId);
+
+    List<String> queryMenuUser(@Param("menuId") String menuId);
 }

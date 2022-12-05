@@ -1,9 +1,11 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.oauth.cache.temp.UserPermissionCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -35,6 +37,8 @@ public class SsoMenuController {
     SsoMenuService ssoMenuService;
     @Resource
     OAuth2Service oAuth2Service;
+    @Resource
+    UserPermissionCache userPermissionCache;
 
     /**
      * 分页列表查询
@@ -85,9 +89,23 @@ public class SsoMenuController {
     @PutMapping
     public Result<SsoMenu> edit(@RequestBody SsoMenu ssoMenu) {
         if (ssoMenuService.updateById(ssoMenu)) {
+            removeCache(ssoMenu);
             return Result.ok(ssoMenu, "菜单权限表-编辑成功!");
         }
         return Result.fail("错误:菜单权限表-编辑失败!");
+    }
+
+    /**
+     * 按钮修改移除缓存中按钮权限
+     *
+     * @param ssoMenu
+     */
+    private void removeCache(SsoMenu ssoMenu) {
+        if (2 == ssoMenu.getMenuType()) {
+            List<String> list = ssoMenuService.queryMenuUser(ssoMenu.getId());
+            String clientId = AuthUtils.getCurrentClientId();
+            userPermissionCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
+        }
     }
 
     /**

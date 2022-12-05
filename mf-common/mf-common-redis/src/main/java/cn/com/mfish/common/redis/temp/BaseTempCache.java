@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +26,7 @@ public abstract class BaseTempCache<T> {
      * @param key
      * @return
      */
-    protected abstract String buildKey(String key);
+    protected abstract String buildKey(String... key);
 
     /**
      * 缓存中不存在，从数据库中获取
@@ -35,7 +34,7 @@ public abstract class BaseTempCache<T> {
      * @param key
      * @return
      */
-    protected abstract T getFromDB(String key);
+    protected abstract T getFromDB(String... key);
 
     /**
      * 获取缓存信息
@@ -47,7 +46,7 @@ public abstract class BaseTempCache<T> {
      * @param param
      * @return
      */
-    public T getCacheInfo(String param) {
+    public T getCacheInfo(String... param) {
         String key = buildKey(param);
         T value = (T) redisTemplate.opsForValue().get(key);
         if (value != null) {
@@ -75,25 +74,31 @@ public abstract class BaseTempCache<T> {
     /**
      * 更新缓存
      *
-     * @param key 传入键未拼接前缀
      * @param t
+     * @param params 传入键未拼接前缀参数
      */
-    public void updateCacheInfo(String key, T t) {
-        setCacheInfo(buildKey(key), t);
+    public void updateCacheInfo(T t, String... params) {
+        setCacheInfo(buildKey(params), t);
     }
 
     /**
      * 移除缓存
      *
-     * @param key
+     * @param params 传入键未拼接前缀参数
      */
-    public void removeCacheInfo(String... key) {
-        List<String> list = new ArrayList<>();
-        for (String k : key) {
-            list.add(buildKey(k));
-        }
-        redisTemplate.delete(list);
+    public void removeOneCache(String... params) {
+        redisTemplate.delete(buildKey(params));
     }
+
+    /**
+     * 移除多条缓存
+     *
+     * @param keys 已拼接前缀的参数
+     */
+    public void removeMoreCache(List<String> keys) {
+        redisTemplate.delete(keys);
+    }
+
 
     /**
      * 设置缓存

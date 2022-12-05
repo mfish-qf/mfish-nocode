@@ -81,4 +81,11 @@
         </foreach>
         order by menu_type, menu_sort
     </select>
+    <select id="queryMenuUser" resultType="java.lang.String">
+        select distinct ur.user_id
+        from sso_menu m
+        inner join sso_role_menu rm on m.id = rm.menu_id
+        inner join sso_user_role ur on ur.role_id = rm.role_id
+        <where>m.id = #{menuId}</where>
+    </select>
 </mapper>

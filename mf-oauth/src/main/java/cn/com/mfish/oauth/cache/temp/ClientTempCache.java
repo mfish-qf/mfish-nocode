@@ -18,12 +18,12 @@ public class ClientTempCache extends BaseTempCache<OAuthClient> {
     ClientMapper clientMapper;
 
     @Override
-    protected String buildKey(String key) {
-        return RedisPrefix.buildClientKey(key);
+    protected String buildKey(String... key) {
+        return RedisPrefix.buildClientKey(key[0]);
     }
 
     @Override
-    protected OAuthClient getFromDB(String key) {
-        return clientMapper.getClientById(key);
+    protected OAuthClient getFromDB(String... key) {
+        return clientMapper.getClientById(key[0]);
     }
 }

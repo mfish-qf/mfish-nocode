@@ -53,8 +53,9 @@ public abstract class BaseRealm extends AuthorizingRealm {
         if (user == null) {
             //微信登录 短信登录 允许登录时创建账号,其他方式不允许
             if (myToken.getLoginType() != SerConstant.LoginType.微信登录 && myToken.getLoginType() != SerConstant.LoginType.短信登录) {
-                log.error("账号:" + myToken.getUsername() + ",未获取到用户信息");
-                throw new UnknownAccountException();
+                String error = "账号[" + myToken.getUsername() + "]不存在或已被禁用";
+                log.error(error);
+                throw new UnknownAccountException(error);
             }
             user = buildUser(myToken.getUsername());
             isNew = true;

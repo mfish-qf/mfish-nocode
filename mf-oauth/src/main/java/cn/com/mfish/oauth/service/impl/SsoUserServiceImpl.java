@@ -7,6 +7,8 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
+import cn.com.mfish.oauth.cache.temp.UserPermissionCache;
+import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -37,6 +39,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     UserTempCache userTempCache;
     @Resource
     Account2IdTempCache account2IdTempCache;
+    @Resource
+    UserRoleTempCache userRoleTempCache;
+    @Resource
+    UserPermissionCache userPermissionCache;
 
     /**
      * 修改用户密码
@@ -66,7 +72,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         user.setUpdateTime(new Date());
         if (baseMapper.updateById(user) == 1) {
             //更新用户信息,刷新redis 用户缓存
-            userTempCache.updateCacheInfo(userId, user);
+            userTempCache.updateCacheInfo(user, userId);
             return Result.ok(user, "用户密码-修改密码成功");
         }
         throw new MyRuntimeException("错误:用户密码-修改密码失败");
@@ -81,10 +87,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
         int res = baseMapper.insert(user);
         if (res > 0) {
-            insertUserClient(user.getId(), null);
+            insertUserClient(user.getId(), AuthUtils.getCurrentClientId());
             insertUserOrg(user.getId(), user.getOrgId());
             insertUserRole(user.getId(), user.getRoleIds());
-            userTempCache.updateCacheInfo(user.getId(), user);
+            userTempCache.updateCacheInfo(user, user.getId());
             return Result.ok(user, "用户信息-新增成功");
         }
         throw new MyRuntimeException("错误:用户信息-新增失败!");
@@ -106,7 +112,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             baseMapper.deleteUserRole(user.getId());
             insertUserRole(user.getId(), user.getRoleIds());
             //移除缓存下次登录时会自动拉取
-            userTempCache.removeCacheInfo(user.getId());
+            userTempCache.removeOneCache(user.getId());
+            userRoleTempCache.removeOneCache(user.getId(), AuthUtils.getCurrentClientId());
+            userPermissionCache.removeOneCache(user.getId(), AuthUtils.getCurrentClientId());
             return Result.ok(user, "用户信息-更新成功");
         }
         throw new MyRuntimeException("错误:未找到用户信息更新数据");
@@ -135,7 +143,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     public boolean removeUser(String id) {
         SsoUser ssoUser = new SsoUser();
         ssoUser.setDelFlag(1).setId(id);
-        userTempCache.removeCacheInfo(id);
+        userTempCache.removeOneCache(id);
+        String clientId = AuthUtils.getCurrentClientId();
+        userRoleTempCache.removeOneCache(id, clientId);
+        userPermissionCache.removeOneCache(id, clientId);
         if (baseMapper.updateById(ssoUser) == 1) {
             log.info(MessageFormat.format("删除用户成功,用户ID:{0}", id));
             return true;
@@ -169,20 +180,12 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     public List<UserRole> getUserRoles(String userId, String clientId) {
-        return baseMapper.getUserRoles(userId, clientId);
+        return userRoleTempCache.getCacheInfo(userId, clientId);
     }
 
     @Override
     public Set<String> getUserPermissions(String userId, String clientId) {
-        String permissions = baseMapper.getUserPermissions(userId, clientId);
-        Set<String> perSet = new HashSet<>();
-        for (String per : permissions.split(",")) {
-            if (StringUtils.isEmpty(per)) {
-                continue;
-            }
-            perSet.add(per.trim());
-        }
-        return perSet;
+        return userPermissionCache.getCacheInfo(userId, clientId);
     }
 
     /**
@@ -228,9 +231,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     public int insertUserClient(String userId, String clientId) {
-        //如果传入clientId为空，设置当前登录系统clientId
         if (StringUtils.isEmpty(clientId)) {
-            clientId = AuthUtils.getCurrentClientId();
+            throw new MyRuntimeException("错误:客户端ID不允许为空");
         }
         int count = baseMapper.insertUserClient(userId, Arrays.asList(new String[]{clientId}));
         if (count > 0) {
