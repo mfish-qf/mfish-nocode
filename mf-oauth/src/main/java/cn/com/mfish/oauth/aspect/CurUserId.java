@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.advice;
+package cn.com.mfish.oauth.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
