@@ -1,7 +1,7 @@
-package cn.com.mfish.oauth.aspect;
+package cn.com.mfish.common.oauth.aspect;
 
-import cn.com.mfish.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.oauth.annotation.RequiresRoles;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 @Component
 @Slf4j
 public class AuthorizationAspect {
-    @Before("@annotation(cn.com.mfish.oauth.annotation.RequiresPermissions)||@annotation(cn.com.mfish.oauth.annotation.RequiresRoles)")
+    @Before("@annotation(cn.com.mfish.common.oauth.annotation.RequiresPermissions)||@annotation(cn.com.mfish.common.oauth.annotation.RequiresRoles)")
     public void doBefore(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();

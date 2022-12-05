@@ -11,7 +11,7 @@ import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;

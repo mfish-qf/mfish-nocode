@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.entity.AuthorizationCode;
+import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import io.swagger.annotations.Api;

@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.common;
+package cn.com.mfish.common.oauth.common;
 
 /**
  * @author qiufeng

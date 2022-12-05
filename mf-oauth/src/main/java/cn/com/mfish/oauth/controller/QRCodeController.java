@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.QRCode;
 import cn.com.mfish.oauth.entity.QRCodeImg;
 import cn.com.mfish.oauth.entity.RedisQrCode;

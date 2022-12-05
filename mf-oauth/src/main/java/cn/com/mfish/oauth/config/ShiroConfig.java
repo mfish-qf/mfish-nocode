@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.config;
 
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
