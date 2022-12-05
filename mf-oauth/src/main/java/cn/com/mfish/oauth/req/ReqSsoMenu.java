@@ -23,6 +23,6 @@ public class ReqSsoMenu {
     private Integer menuType;
     @ApiModelProperty(value = "菜单状态（1显示 0隐藏）")
     private Integer isVisible;
-    @ApiModelProperty(value = "权限标识(多个标识逗号隔开)")
-    private String permissions;
+    @ApiModelProperty(value = "权限标识")
+    private String permission;
 }

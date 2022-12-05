@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service;
 
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.RedisAccessToken;
@@ -26,7 +27,7 @@ public interface OAuth2Service {
 
     RedisAccessToken refresh2Token(RedisAccessToken token) throws OAuthSystemException;
 
-    UserInfoVo getUserInfo(String userId);
+    UserInfo getUserInfo(String userId);
 
     UserInfoVo getUserInfoAndRoles(String userId, String clientId);
 

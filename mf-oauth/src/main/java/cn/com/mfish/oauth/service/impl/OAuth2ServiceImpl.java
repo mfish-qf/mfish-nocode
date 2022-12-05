@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.AuthorizationCode;
@@ -140,22 +141,24 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public UserInfoVo getUserInfo(String userId) {
+    public UserInfo getUserInfo(String userId) {
         SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);
         }
-        UserInfoVo userInfo = new UserInfoVo();
+        UserInfo userInfo = new UserInfo();
         BeanUtils.copyProperties(user, userInfo);
         return userInfo;
     }
 
     @Override
     public UserInfoVo getUserInfoAndRoles(String userId, String clientId) {
-        UserInfoVo userInfo = getUserInfo(userId);
-        userInfo.setUserRoles(ssoUserService.getUserRoles(userId, clientId));
-        userInfo.setPermissions(ssoUserService.getUserPermissions(userId, clientId));
-        return userInfo;
+        UserInfo userInfo = getUserInfo(userId);
+        UserInfoVo userInfoVo = new UserInfoVo();
+        BeanUtils.copyProperties(userInfo, userInfoVo);
+        userInfoVo.setUserRoles(ssoUserService.getUserRoles(userId, clientId));
+        userInfoVo.setPermissions(ssoUserService.getUserPermissions(userId, clientId));
+        return userInfoVo;
     }
 
     @Override

@@ -15,6 +15,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("用户信息请求参数")
 public class ReqSsoUser {
+    @ApiModelProperty("客户端ID")
+    private String clientId;
     @ApiModelProperty("组织ID")
     private String orgId;
     @ApiModelProperty("账号")

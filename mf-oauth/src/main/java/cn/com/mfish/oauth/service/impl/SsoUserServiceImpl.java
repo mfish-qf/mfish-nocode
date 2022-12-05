@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
@@ -21,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author qiufeng
@@ -175,8 +173,16 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public List<String> getUserPermissions(String userId, String clientId) {
-        return baseMapper.getUserPermissions(userId, clientId);
+    public Set<String> getUserPermissions(String userId, String clientId) {
+        String permissions = baseMapper.getUserPermissions(userId, clientId);
+        Set<String> perSet = new HashSet<>();
+        for (String per : permissions.split(",")) {
+            if (StringUtils.isEmpty(per)) {
+                continue;
+            }
+            perSet.add(per.trim());
+        }
+        return perSet;
     }
 
     /**
@@ -222,8 +228,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     public int insertUserClient(String userId, String clientId) {
-        //todo 暂时写死system，后面增加客户端后为用户分配客户端
-        clientId = "system";
+        //如果传入clientId为空，设置当前登录系统clientId
+        if (StringUtils.isEmpty(clientId)) {
+            clientId = AuthUtils.getCurrentClientId();
+        }
         int count = baseMapper.insertUserClient(userId, Arrays.asList(new String[]{clientId}));
         if (count > 0) {
             return count;

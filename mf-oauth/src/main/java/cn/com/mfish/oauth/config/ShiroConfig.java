@@ -1,17 +1,16 @@
 package cn.com.mfish.oauth.config;
 
+import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
+import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
 import cn.com.mfish.oauth.common.SerConstant;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
-import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
 import cn.com.mfish.oauth.realm.MultipleRealm;
 import cn.com.mfish.oauth.realm.PhoneSmsRealm;
 import cn.com.mfish.oauth.realm.QRCodeRealm;
 import cn.com.mfish.oauth.realm.UserPasswordRealm;
-import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -31,7 +30,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -140,14 +138,15 @@ public class ShiroConfig {
     }
 
     @Bean
-    public SmsCredentialsMatcher smsCredentialsMatcher(){
+    public SmsCredentialsMatcher smsCredentialsMatcher() {
         return new SmsCredentialsMatcher();
     }
 
     @Bean
-    public QRCodeCredentialsMatcher qrCodeCredentialsMatcher(){
+    public QRCodeCredentialsMatcher qrCodeCredentialsMatcher() {
         return new QRCodeCredentialsMatcher();
     }
+
     /**
      * 用户密码登录方式初始化
      *
@@ -234,8 +233,6 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager(DefaultWebSessionManager sessionManager, RedisCacheManager redisCacheManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        //设置Realm，用于获取认证凭证
-//        securityManager.setRealm(userPasswordRealm());
         //自定义多种认证方式
         securityManager.setAuthenticator(multipleRealm());
         //设置session管理方式
@@ -245,7 +242,7 @@ public class ShiroConfig {
         return securityManager;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         KeyGenerator keygen = null;
         try {
             keygen = KeyGenerator.getInstance("AES");
