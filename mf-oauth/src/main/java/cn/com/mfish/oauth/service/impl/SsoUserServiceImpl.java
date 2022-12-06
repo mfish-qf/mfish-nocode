@@ -7,7 +7,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
-import cn.com.mfish.oauth.cache.temp.UserPermissionCache;
+import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.common.PasswordHelper;
@@ -42,7 +42,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Resource
     UserRoleTempCache userRoleTempCache;
     @Resource
-    UserPermissionCache userPermissionCache;
+    UserPermissionTempCache userPermissionTempCache;
 
     /**
      * 修改用户密码
@@ -57,7 +57,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (!result.isSuccess()) {
             return result;
         }
-        SsoUser user = userTempCache.getCacheInfo(userId);
+        SsoUser user = userTempCache.getFromCacheAndDB(userId);
         if (user == null) {
             String error = MessageFormat.format("错误:用户id{0}未获取到用户信息!", userId);
             log.error(error);
@@ -114,7 +114,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             //移除缓存下次登录时会自动拉取
             userTempCache.removeOneCache(user.getId());
             userRoleTempCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
-            userPermissionCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
+            userPermissionTempCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
             return Result.ok(user, "用户信息-更新成功");
         }
         throw new MyRuntimeException("错误:未找到用户信息更新数据");
@@ -146,7 +146,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         userTempCache.removeOneCache(id);
         String clientId = AuthInfoUtils.getCurrentClientId();
         userRoleTempCache.removeOneCache(id, clientId);
-        userPermissionCache.removeOneCache(id, clientId);
+        userPermissionTempCache.removeOneCache(id, clientId);
         if (baseMapper.updateById(ssoUser) == 1) {
             log.info(MessageFormat.format("删除用户成功,用户ID:{0}", id));
             return true;
@@ -157,17 +157,17 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     public SsoUser getUserByAccount(String account) {
-        String userId = account2IdTempCache.getCacheInfo(account);
+        String userId = account2IdTempCache.getFromCacheAndDB(account);
         return getUserById(userId);
     }
 
     @Override
     public SsoUser getUserById(String userId) {
-        return userTempCache.getCacheInfo(userId);
+        return userTempCache.getFromCacheAndDB(userId);
     }
 
     public UserInfo getUserByIdNoPwd(String userId) {
-        SsoUser ssoUser = userTempCache.getCacheInfo(userId);
+        SsoUser ssoUser = userTempCache.getFromCacheAndDB(userId);
         UserInfo userInfo = new UserInfo();
         BeanUtils.copyProperties(ssoUser, userInfo);
         return userInfo;
@@ -180,12 +180,12 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     public List<UserRole> getUserRoles(String userId, String clientId) {
-        return userRoleTempCache.getCacheInfo(userId, clientId);
+        return userRoleTempCache.getFromCacheAndDB(userId, clientId);
     }
 
     @Override
     public Set<String> getUserPermissions(String userId, String clientId) {
-        return userPermissionCache.getCacheInfo(userId, clientId);
+        return userPermissionTempCache.getFromCacheAndDB(userId, clientId);
     }
 
     /**

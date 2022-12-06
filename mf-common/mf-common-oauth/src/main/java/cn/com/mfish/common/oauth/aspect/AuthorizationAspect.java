@@ -28,12 +28,14 @@ public class AuthorizationAspect {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         if (method.isAnnotationPresent(RequiresPermissions.class)) {
-            if(!OauthUtils.checkPermission(method.getAnnotation(RequiresPermissions.class))){
-                throw new OAuthValidateException("校验异常");
+            if (!OauthUtils.checkPermission(method.getAnnotation(RequiresPermissions.class))) {
+                throw new OAuthValidateException("错误:无按钮权限");
             }
         }
         if (method.isAnnotationPresent(RequiresRoles.class)) {
-            OauthUtils.checkRoles(method.getAnnotation(RequiresRoles.class));
+            if (!OauthUtils.checkRoles(method.getAnnotation(RequiresRoles.class))) {
+                throw new OAuthValidateException("错误:角色无权限访问");
+            }
         }
     }
 

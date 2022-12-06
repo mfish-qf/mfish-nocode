@@ -15,5 +15,9 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-oauth-api</artifactId>
+        </dependency>
     </dependencies>
 </project>

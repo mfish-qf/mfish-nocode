@@ -19,7 +19,8 @@ public class SerConstant {
     public static final String NICKNAME = "nickname";
     public static final String PHONE = "phone";
     public static final String PASSWORD = "password";
-
+    public static final String ALL_PERMISSION = "*:*:*";
+    public static final String SUPER_ADMIN = "superAdmin";
     /**
      * 登录类型
      */
