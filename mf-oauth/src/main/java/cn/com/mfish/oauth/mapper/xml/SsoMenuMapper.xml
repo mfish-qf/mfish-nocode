@@ -45,6 +45,7 @@
         <if test="reqSsoMenu.menuName != null">and m.menu_name like concat('%',#{reqSsoMenu.menuName},'%')</if>
         <if test="reqSsoMenu.menuType!=null">and m.menu_type = #{reqSsoMenu.menuType}</if>
         <if test="reqSsoMenu.isVisible!=null">and m.is_visible = #{reqSsoMenu.isVisible}</if>
+        <if test="reqSsoMenu.permission != null">and m.permissions like concat('%',#{reqSsoMenu.permission},'%')</if>
     </sql>
     <select id="queryMaxMenuLevel" resultType="java.lang.Integer">
         select max(m.menu_level) from sso_menu m
@@ -79,5 +80,12 @@
             )
         </foreach>
         order by menu_type, menu_sort
+    </select>
+    <select id="queryMenuUser" resultType="java.lang.String">
+        select distinct ur.user_id
+        from sso_menu m
+        inner join sso_role_menu rm on m.id = rm.menu_id
+        inner join sso_user_role ur on ur.role_id = rm.role_id
+        <where>m.id = #{menuId}</where>
     </select>
 </mapper>

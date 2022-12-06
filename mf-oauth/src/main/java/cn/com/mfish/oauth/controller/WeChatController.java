@@ -9,7 +9,7 @@ import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.LoginService;

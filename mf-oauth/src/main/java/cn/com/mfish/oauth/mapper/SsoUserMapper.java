@@ -48,7 +48,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param clientId
      * @return
      */
-    List<String> getUserPermissions(@Param("userId") String userId, @Param("clientId") String clientId);
+    String getUserPermissions(@Param("userId") String userId, @Param("clientId") String clientId);
 
     /**
      * 根据微信openId获取用户id

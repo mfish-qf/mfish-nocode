@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.exception;
+package cn.com.mfish.common.oauth.exception;
 
 /**
  * @author ：qiufeng

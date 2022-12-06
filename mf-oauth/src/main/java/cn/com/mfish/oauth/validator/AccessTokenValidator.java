@@ -2,8 +2,8 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.entity.RedisAccessToken;
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

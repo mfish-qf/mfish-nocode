@@ -1,17 +1,15 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.web.page.PageResult;
-import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.oauth.cache.temp.UserPermissionCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoMenuService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,19 +37,20 @@ public class SsoMenuController {
     SsoMenuService ssoMenuService;
     @Resource
     OAuth2Service oAuth2Service;
+    @Resource
+    UserPermissionCache userPermissionCache;
 
     /**
      * 分页列表查询
      *
      * @param reqSsoMenu
-     * @param reqPage
      * @return
      */
     @ApiOperation(value = "菜单权限表-分页列表查询", notes = "菜单权限表-分页列表查询")
     @GetMapping
-    public Result<PageResult<SsoMenu>> queryPageList(ReqSsoMenu reqSsoMenu, ReqPage reqPage) {
-        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(ssoMenuService.list(buildQueryCondition(reqSsoMenu))), "菜单权限表-查询成功!");
+    public Result<List<SsoMenu>> queryList(ReqSsoMenu reqSsoMenu) {
+        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
+        return Result.ok(list, "菜单权限表-查询成功!");
     }
 
     @ApiOperation(value = "获取菜单树")
@@ -61,23 +60,6 @@ public class SsoMenuController {
         List<SsoMenu> menuTrees = new ArrayList<>();
         TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
         return Result.ok(menuTrees, "菜单权限表-查询成功!");
-    }
-
-    /**
-     * 构建菜单查询条件
-     *
-     * @param reqSsoMenu
-     * @return
-     */
-    private LambdaQueryWrapper<SsoMenu> buildQueryCondition(ReqSsoMenu reqSsoMenu) {
-        return new LambdaQueryWrapper<SsoMenu>()
-                .eq(reqSsoMenu.getClientId() != null, SsoMenu::getClientId, reqSsoMenu.getClientId())
-                .like(reqSsoMenu.getMenuName() != null, SsoMenu::getMenuName, reqSsoMenu.getMenuName())
-                .eq(reqSsoMenu.getMenuType() != null, SsoMenu::getMenuType, reqSsoMenu.getMenuType())
-                .eq(reqSsoMenu.getIsVisible() != null, SsoMenu::getIsVisible, reqSsoMenu.getIsVisible())
-                .like(reqSsoMenu.getPermissions() != null, SsoMenu::getPermissions, reqSsoMenu.getPermissions())
-                .orderBy(true, true, SsoMenu::getMenuType)
-                .orderBy(true, true, SsoMenu::getMenuSort);
     }
 
     /**
@@ -107,9 +89,23 @@ public class SsoMenuController {
     @PutMapping
     public Result<SsoMenu> edit(@RequestBody SsoMenu ssoMenu) {
         if (ssoMenuService.updateById(ssoMenu)) {
+            removeCache(ssoMenu);
             return Result.ok(ssoMenu, "菜单权限表-编辑成功!");
         }
         return Result.fail("错误:菜单权限表-编辑失败!");
+    }
+
+    /**
+     * 按钮修改移除缓存中按钮权限
+     *
+     * @param ssoMenu
+     */
+    private void removeCache(SsoMenu ssoMenu) {
+        if (2 == ssoMenu.getMenuType()) {
+            List<String> list = ssoMenuService.queryMenuUser(ssoMenu.getId());
+            String clientId = AuthUtils.getCurrentClientId();
+            userPermissionCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
+        }
     }
 
     /**

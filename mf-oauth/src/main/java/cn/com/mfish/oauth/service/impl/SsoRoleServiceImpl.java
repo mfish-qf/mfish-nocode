@@ -1,7 +1,11 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
@@ -11,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 角色信息表
@@ -23,6 +29,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> implements SsoRoleService {
+
+    @Resource
+    UserRoleTempCache userRoleTempCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -53,6 +62,12 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     }
 
     private boolean validateRole(SsoRole ssoRole) {
+        if (StringUtils.isEmpty(ssoRole.getClientId())) {
+            ssoRole.setClientId(AuthUtils.getCurrentClientId());
+        }
+        if (StringUtils.isEmpty(ssoRole.getClientId())) {
+            throw new MyRuntimeException("错误:客户端ID不存在");
+        }
         if (roleCodeExist(ssoRole.getClientId(), ssoRole.getId(), ssoRole.getRoleCode())) {
             throw new MyRuntimeException("错误:角色编码已存在");
         }
@@ -76,6 +91,10 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     public boolean deleteRole(String id) {
         if (baseMapper.updateById(new SsoRole().setDelFlag(1).setId(id)) == 1) {
             log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
+            //查询角色对应的用户并删除角色权限缓存
+            List<String> list = baseMapper.getRoleUser(id);
+            String clientId = AuthUtils.getCurrentClientId();
+            userRoleTempCache.removeMoreCache(list.stream().map(item -> RedisPrefix.buildUser2RolesKey(item, clientId)).collect(Collectors.toList()));
             return true;
         }
         log.error(MessageFormat.format("错误:删除角色失败,角色ID:{0}", id));

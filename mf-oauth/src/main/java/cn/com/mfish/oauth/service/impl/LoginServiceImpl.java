@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.SsoUserService;
@@ -152,7 +152,7 @@ public class LoginServiceImpl implements LoginService {
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
             return result;
         } finally {
-            result.setData(token.getUserInfo().getId());
+            result.setData(token.getUserInfo() != null ? token.getUserInfo().getId() : null);
             result.getParam().put(OAuth.OAUTH_USERNAME, username);
             result.getParam().put(SerConstant.LOGIN_TYPE, loginType.toString());
         }

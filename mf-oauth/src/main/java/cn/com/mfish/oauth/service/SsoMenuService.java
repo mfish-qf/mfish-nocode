@@ -16,4 +16,12 @@ public interface SsoMenuService extends IService<SsoMenu> {
     boolean insertMenu(SsoMenu ssoMenu);
 
     List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId);
+
+    /**
+     * 获取按钮权限用户
+     *
+     * @param menuId
+     * @return
+     */
+    List<String> queryMenuUser(String menuId);
 }

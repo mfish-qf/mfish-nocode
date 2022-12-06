@@ -2,10 +2,10 @@ package cn.com.mfish.oauth.resolver;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthUtils;
-import cn.com.mfish.oauth.advice.CurUserId;
-import cn.com.mfish.oauth.entity.RedisAccessToken;
-import cn.com.mfish.oauth.exception.UserValidateException;
-import cn.com.mfish.oauth.service.impl.WebTokenServiceImpl;
+import cn.com.mfish.oauth.aspect.CurUserId;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.exception.UserValidateException;
+import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;

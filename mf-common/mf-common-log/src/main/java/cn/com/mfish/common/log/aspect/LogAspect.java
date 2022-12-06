@@ -1,4 +1,4 @@
-package cn.com.mfish.common.log.advice;
+package cn.com.mfish.common.log.aspect;
 
 import cn.com.mfish.common.core.utils.AuthUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -30,7 +30,7 @@ import java.util.Date;
 @Aspect
 @Component
 @Slf4j
-public class LogAdvice {
+public class LogAspect {
     ThreadLocal<SysLog> logThreadLocal = new ThreadLocal<>();
     @Resource
     AsyncSaveLog asyncSaveLog;

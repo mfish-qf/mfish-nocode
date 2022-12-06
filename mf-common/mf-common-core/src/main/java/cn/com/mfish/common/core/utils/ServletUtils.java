@@ -17,10 +17,6 @@ import reactor.core.publisher.Mono;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,20 +39,6 @@ public class ServletUtils {
      */
     public static String getParameter(String name, String defaultValue) {
         return Convert.toStr(getRequest().getParameter(name), defaultValue);
-    }
-
-    /**
-     * 获取Integer参数
-     */
-    public static Integer getParameterToInt(String name) {
-        return Convert.toInt(getRequest().getParameter(name));
-    }
-
-    /**
-     * 获取Integer参数
-     */
-    public static Integer getParameterToInt(String name, Integer defaultValue) {
-        return Convert.toInt(getRequest().getParameter(name), defaultValue);
     }
 
     /**
@@ -108,81 +90,6 @@ public class ServletUtils {
             }
         }
         return map;
-    }
-
-    /**
-     * 将字符串渲染到客户端
-     *
-     * @param response 渲染对象
-     * @param string   待渲染的字符串
-     * @return null
-     */
-    public static String renderString(HttpServletResponse response, String string) {
-        try {
-            response.setStatus(200);
-            response.setContentType(Constants.CONTENT_TYPE_JSON);
-            response.setCharacterEncoding(Constants.UTF8);
-            response.getWriter().print(string);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 是否是Ajax异步请求
-     *
-     * @param request
-     */
-    public static boolean isAjaxRequest(HttpServletRequest request) {
-        String accept = request.getHeader("accept");
-        if (accept != null && accept.indexOf(Constants.CONTENT_TYPE_JSON) != -1) {
-            return true;
-        }
-
-        String xRequestedWith = request.getHeader("X-Requested-With");
-        if (xRequestedWith != null && xRequestedWith.indexOf("XMLHttpRequest") != -1) {
-            return true;
-        }
-
-        String uri = request.getRequestURI();
-        if (StringUtils.inStringIgnoreCase(uri, ".json", ".xml")) {
-            return true;
-        }
-
-        String ajax = request.getParameter("__ajax");
-        if (StringUtils.inStringIgnoreCase(ajax, "json", "xml")) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 内容编码
-     *
-     * @param str 内容
-     * @return 编码后的内容
-     */
-    public static String urlEncode(String str) {
-        try {
-            return URLEncoder.encode(str, Constants.UTF8);
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
-    }
-
-    /**
-     * 内容解码
-     *
-     * @param str 内容
-     * @return 解码后的内容
-     */
-    public static String urlDecode(String str) {
-        try {
-            return URLDecoder.decode(str, Constants.UTF8);
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
     }
 
     /**

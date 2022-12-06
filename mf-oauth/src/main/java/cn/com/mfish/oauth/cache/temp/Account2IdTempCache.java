@@ -21,13 +21,13 @@ public class Account2IdTempCache extends BaseTempCache<String> {
     SsoUserMapper ssoUserMapper;
 
     @Override
-    protected String buildKey(String key) {
-        return RedisPrefix.buildAccount2IdKey(key);
+    protected String buildKey(String... key) {
+        return RedisPrefix.buildAccount2IdKey(key[0]);
     }
 
     @Override
-    protected String getFromDB(String key) {
-        SsoUser user = ssoUserMapper.getUserByAccount(key);
+    protected String getFromDB(String... key) {
+        SsoUser user = ssoUserMapper.getUserByAccount(key[0]);
         if (user == null) {
             log.info(MessageFormat.format("错误:账号{0}未找到对应用户!", key));
             return null;

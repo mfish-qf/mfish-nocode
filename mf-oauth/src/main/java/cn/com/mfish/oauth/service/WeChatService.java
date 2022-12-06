@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service;
 
+import cn.com.mfish.common.oauth.service.TokenService;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.WeChatToken;
 

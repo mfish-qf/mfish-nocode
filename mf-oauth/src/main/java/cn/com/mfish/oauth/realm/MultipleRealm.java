@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.realm;
 
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.shiro.authc.AuthenticationException;

@@ -210,20 +210,22 @@ public class RedisPrefix {
     /**
      * 构建用户角色key
      *
-     * @param userKey
+     * @param userId
+     * @param clientId
      * @return
      */
-    public static String buildUser2RolesKey(String userKey) {
-        return USER2ROLES + userKey;
+    public static String buildUser2RolesKey(String userId, String clientId) {
+        return USER2ROLES + userId + clientId;
     }
 
     /**
      * 构建用户权限key
      *
-     * @param userKey
+     * @param userId
+     * @param clientId
      * @return
      */
-    public static String buildUser2PermissionsKey(String userKey) {
-        return USER2PERMISSIONS + userKey;
+    public static String buildUser2PermissionsKey(String userId, String clientId) {
+        return USER2PERMISSIONS + userId + clientId;
     }
 }

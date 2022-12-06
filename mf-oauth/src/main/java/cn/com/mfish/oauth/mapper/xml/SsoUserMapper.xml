@@ -11,21 +11,21 @@
         </if>
         )
     </sql>
-    <sql id="validUser">
+    <sql id="userState">
         and status = 0 and del_flag = 0
     </sql>
     <select id="getUserByAccount" resultType="cn.com.mfish.oauth.entity.SsoUser">
         select * from sso_user
         <where>
             <include refid="byAccount"/>
-            <include refid="validUser"/>
+            <include refid="userState"/>
         </where>
     </select>
     <select id="getUserById" resultType="cn.com.mfish.oauth.entity.SsoUser">
         select * from sso_user
         <where>
             id = #{userId}
-            <include refid="validUser"/>
+            <include refid="userState"/>
         </where>
     </select>
     <select id="getUserRoles" resultType="cn.com.mfish.oauth.api.entity.UserRole">
@@ -41,7 +41,7 @@
         </where>
     </select>
     <select id="getUserPermissions" resultType="java.lang.String">
-        select distinct m.permissions
+        select GROUP_CONCAT(m.permissions) permissions
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
         inner join sso_role r on r.id = ur.role_id
@@ -72,6 +72,7 @@
     </resultMap>
     <select id="getUserList" resultMap="userMap">
         select u.*,o.org_name,ou.org_id,GROUP_CONCAT(ur.role_id) roleIds from sso_user u
+        inner join sso_client_user cu on cu.user_id = u.id
         left join sso_org_user ou on ou.user_id = u.id
         left join sso_org o on o.id = ou.org_id
         left join sso_user_role ur on u.id = ur.user_id
@@ -91,6 +92,9 @@
             </if>
             <if test="status != null">
                 and u.status = #{status}
+            </if>
+            <if test="clientId != null and clientId !=''">
+                and cu.client_id = #{clientId}
             </if>
         </where>
         group by u.id

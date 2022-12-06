@@ -8,6 +8,7 @@ import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author qiufeng
@@ -39,7 +40,7 @@ public interface SsoUserService extends IService<SsoUser> {
      * @param clientId
      * @return
      */
-    List<String> getUserPermissions(String userId, String clientId);
+    Set<String> getUserPermissions(String userId, String clientId);
 
     /**
      * 判断客户端下是否存在该用户

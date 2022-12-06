@@ -17,12 +17,12 @@ public class OpenIdTempCache extends BaseTempCache<String> {
     SsoUserMapper ssoUserMapper;
 
     @Override
-    protected String buildKey(String key) {
-        return RedisPrefix.buildOpenId2userIdKey(key);
+    protected String buildKey(String... key) {
+        return RedisPrefix.buildOpenId2userIdKey(key[0]);
     }
 
     @Override
-    protected String getFromDB(String key) {
-        return ssoUserMapper.getUserIdByOpenId(key);
+    protected String getFromDB(String... key) {
+        return ssoUserMapper.getUserIdByOpenId(key[0]);
     }
 }

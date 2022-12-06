@@ -1,8 +1,7 @@
 package cn.com.mfish.oauth.realm;
 
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +28,21 @@ public abstract class BaseRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String account = (String) principalCollection.getPrimaryPrincipal();
-        if (StringUtils.isEmpty(account)) {
-            throw new UnknownAccountException();//没找到帐号
-        }
-        SsoUser user = ssoUserService.getUserByAccount(account);
-        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+//        String userId = (String) principalCollection.getPrimaryPrincipal();
+//        if (StringUtils.isEmpty(userId)) {
+//            throw new UnknownAccountException();//没找到帐号
+//        }
+//        String clientId = AuthUtils.getCurrentClientId();
+//        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+//        List<UserRole> list = ssoUserService.getUserRoles(userId, clientId);
+//        authorizationInfo.setRoles(new HashSet<>(list.stream().map(UserRole::getRoleCode).collect(Collectors.toList())));
+//        authorizationInfo.setStringPermissions(ssoUserService.getUserPermissions(userId, clientId));
+//        return authorizationInfo;
 
-        return authorizationInfo;
+        // 此处如果开启需要在shiroConfig中配置securityManager.setAuthorizer()并需要设置realm
+        // 与现有多realm逻辑不太契合
+        // 不基于当前shiro验证权限，基于整个微服务框架验证权限
+        return new SimpleAuthorizationInfo();
     }
 
     @Override
@@ -47,8 +53,9 @@ public abstract class BaseRealm extends AuthorizingRealm {
         if (user == null) {
             //微信登录 短信登录 允许登录时创建账号,其他方式不允许
             if (myToken.getLoginType() != SerConstant.LoginType.微信登录 && myToken.getLoginType() != SerConstant.LoginType.短信登录) {
-                log.error("账号:" + myToken.getUsername() + ",未获取到用户信息");
-                throw new UnknownAccountException();
+                String error = "账号[" + myToken.getUsername() + "]不存在或已被禁用";
+                log.error(error);
+                throw new UnknownAccountException(error);
             }
             user = buildUser(myToken.getUsername());
             isNew = true;
