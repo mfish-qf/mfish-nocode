@@ -5,11 +5,11 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.LoginService;
@@ -156,7 +156,7 @@ public class WeChatController {
         }
         Result<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "false");
         if (StringUtils.isEmpty(nickname)) {
-            nickname = AuthUtils.phoneMasking(phone);
+            nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
             return new AccessToken(weChatService
@@ -201,7 +201,7 @@ public class WeChatController {
         String phone = phoneNoInfo.getPhoneNumber();
         Result<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "false");
         if (StringUtils.isEmpty(nickname)) {
-            nickname = AuthUtils.phoneMasking(phone);
+            nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
             return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));

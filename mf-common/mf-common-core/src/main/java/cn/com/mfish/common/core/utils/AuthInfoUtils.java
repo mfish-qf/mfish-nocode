@@ -8,15 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 /**
  * @author qiufeng
+ * @description: 认证相关信息
  * @date 2020/2/12 13:47
  */
 @Slf4j
-public class AuthUtils {
+public class AuthInfoUtils {
     /**
      * 获取accessToken
      *
@@ -81,6 +80,7 @@ public class AuthUtils {
 
     /**
      * 获取当前帐号
+     *
      * @return
      */
     public static String getCurrentAccount() {
@@ -98,53 +98,4 @@ public class AuthUtils {
         return cn.com.mfish.common.core.utils.StringUtils.isEmpty(clientId) ? null : clientId;
     }
 
-    /**
-     * 获取请求用户IP
-     *
-     * @param request
-     * @return
-     */
-    public static String getRemoteIP(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-        if (ip != null && ip.length() > 15) {
-            log.info(ip);
-            if (ip.indexOf(',') > 0) {
-                ip = ip.substring(0, ip.indexOf(','));
-            }
-        }
-        return ip;
-    }
-
-    /**
-     * 生成6位数验证码
-     *
-     * @return
-     */
-    public static String buildCode() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        return String.valueOf((int) (random.nextDouble() * 900000 + 100000));
-    }
-
-    /**
-     * 手机号脱敏
-     *
-     * @param value
-     * @return
-     */
-    public static String phoneMasking(String value) {
-        if (StringUtils.isEmpty(value) || value.length() != 11) {
-            return value;
-        }
-        return value.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
-    }
 }

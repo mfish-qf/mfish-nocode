@@ -1,7 +1,7 @@
 package cn.com.mfish.common.ds.config;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -31,7 +31,7 @@ public class MybatisInterceptor implements Interceptor {
         if (parameter == null) {
             return invocation.proceed();
         }
-        String account = AuthUtils.getCurrentAccount();
+        String account = AuthInfoUtils.getCurrentAccount();
         if (account == null) {
             log.warn("保存信息时未取到用户信息!");
             return invocation.proceed();

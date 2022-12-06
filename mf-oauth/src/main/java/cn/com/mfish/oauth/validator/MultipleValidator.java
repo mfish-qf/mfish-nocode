@@ -1,10 +1,9 @@
 package cn.com.mfish.oauth.validator;
 
-import cn.com.mfish.common.core.utils.ApplicationContextProvider;
+import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -16,8 +15,6 @@ import java.util.List;
  */
 @Data
 public abstract class MultipleValidator {
-    @Autowired
-    ApplicationContextProvider applicationContextProvider;
 
     List<Class<? extends IBaseValidator<OAuthClient>>> validateClientList = new ArrayList<>();
 
@@ -34,7 +31,7 @@ public abstract class MultipleValidator {
 
     public <T> Result<T> validate(HttpServletRequest request, Result<T> result, List<Class<? extends IBaseValidator<T>>> list) {
         for (Class<? extends IBaseValidator<T>> validator : list) {
-            result = applicationContextProvider.getBean(validator)
+            result = SpringBeanFactory.getBean(validator)
                     .validate(request, result);
             if (!result.isSuccess()) {
                 return result;

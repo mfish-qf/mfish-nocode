@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
@@ -103,7 +103,7 @@ public class SsoMenuController {
     private void removeCache(SsoMenu ssoMenu) {
         if (2 == ssoMenu.getMenuType()) {
             List<String> list = ssoMenuService.queryMenuUser(ssoMenu.getId());
-            String clientId = AuthUtils.getCurrentClientId();
+            String clientId = AuthInfoUtils.getCurrentClientId();
             userPermissionCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
         }
     }

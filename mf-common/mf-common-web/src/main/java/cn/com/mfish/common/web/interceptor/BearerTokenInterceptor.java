@@ -2,7 +2,7 @@ package cn.com.mfish.common.web.interceptor;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.stereotype.Component;
@@ -53,7 +53,7 @@ public class BearerTokenInterceptor implements RequestInterceptor {
             return;
         }
         //重新添加token信息,防止token使用非head传入被遗漏问题
-        String token = AuthUtils.getAccessToken(request);
+        String token = AuthInfoUtils.getAccessToken(request);
         if (!StringUtils.isEmpty(token)) {
             // 清除token头 避免传染
             requestTemplate.removeHeader(Constants.AUTHENTICATION);

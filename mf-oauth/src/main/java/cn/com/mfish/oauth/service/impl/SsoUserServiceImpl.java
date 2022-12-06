@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.api.entity.UserInfo;
@@ -87,7 +87,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
         int res = baseMapper.insert(user);
         if (res > 0) {
-            insertUserClient(user.getId(), AuthUtils.getCurrentClientId());
+            insertUserClient(user.getId(), AuthInfoUtils.getCurrentClientId());
             insertUserOrg(user.getId(), user.getOrgId());
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());
@@ -113,8 +113,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             insertUserRole(user.getId(), user.getRoleIds());
             //移除缓存下次登录时会自动拉取
             userTempCache.removeOneCache(user.getId());
-            userRoleTempCache.removeOneCache(user.getId(), AuthUtils.getCurrentClientId());
-            userPermissionCache.removeOneCache(user.getId(), AuthUtils.getCurrentClientId());
+            userRoleTempCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
+            userPermissionCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
             return Result.ok(user, "用户信息-更新成功");
         }
         throw new MyRuntimeException("错误:未找到用户信息更新数据");
@@ -144,7 +144,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         SsoUser ssoUser = new SsoUser();
         ssoUser.setDelFlag(1).setId(id);
         userTempCache.removeOneCache(id);
-        String clientId = AuthUtils.getCurrentClientId();
+        String clientId = AuthInfoUtils.getCurrentClientId();
         userRoleTempCache.removeOneCache(id, clientId);
         userPermissionCache.removeOneCache(id, clientId);
         if (baseMapper.updateById(ssoUser) == 1) {

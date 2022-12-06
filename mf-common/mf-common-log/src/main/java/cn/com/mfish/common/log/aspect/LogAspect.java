@@ -1,7 +1,8 @@
 package cn.com.mfish.common.log.aspect;
 
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.AsyncSaveLog;
 import cn.com.mfish.sys.api.entity.SysLog;
@@ -56,7 +57,7 @@ public class LogAspect {
         sysLog.setReqParam(getParams(joinPoint.getArgs()));
         sysLog.setReqSource(aLog.reqSource().getValue());
         sysLog.setOperType(aLog.operateType().getValue());
-        sysLog.setOperIp(AuthUtils.getRemoteIP(request));
+        sysLog.setOperIp(Utils.getRemoteIP(request));
         sysLog.setTitle(title);
         sysLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
         logThreadLocal.set(sysLog);
@@ -105,7 +106,7 @@ public class LogAspect {
 
     private void setReturn(int state, String remark) {
         SysLog sysLog = logThreadLocal.get();
-        sysLog.setOperName(AuthUtils.getCurrentAccount());
+        sysLog.setOperName(AuthInfoUtils.getCurrentAccount());
         sysLog.setOperTime(new Date());
         sysLog.setOperStatus(state);
         sysLog.setRemark(StringUtils.substring(remark, 0, 2000));
