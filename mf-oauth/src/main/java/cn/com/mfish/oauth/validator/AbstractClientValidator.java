@@ -30,7 +30,7 @@ public abstract class AbstractClientValidator implements IBaseValidator<OAuthCli
         if (result == null || result.getData() == null) {
             result = new Result<>();
             String clientId = request.getParameter(OAuth.OAUTH_CLIENT_ID);
-            client = clientTempCache.getCacheInfo(clientId);
+            client = clientTempCache.getFromCacheAndDB(clientId);
             if (client == null) {
                 return result.setSuccess(false).setMsg("错误:校验客户端ID失败!");
             }

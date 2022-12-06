@@ -38,6 +38,24 @@ public abstract class BaseTempCache<T> {
 
     /**
      * 获取缓存信息
+     *
+     * @param param
+     * @return
+     */
+    public T getFromCache(String... param) {
+        String key = buildKey(param);
+        T value = (T) redisTemplate.opsForValue().get(key);
+        if (value != null) {
+            //缓存激活 延长更新缓存时间
+            redisTemplate.expire(key, cacheTime, TimeUnit.DAYS);
+            return value;
+        }
+        return null;
+    }
+
+    /**
+     * 获取缓存信息如果不存在获取数据库中信息并存入缓存
+     * <p>
      * redis存在直接返回，redis中不存在访问数据库
      * 5分钟内在请求数据库超过10次，不在访问数据库直接返回null
      * 获取到数据存入到redis缓存中，持久化一周
@@ -46,12 +64,10 @@ public abstract class BaseTempCache<T> {
      * @param param
      * @return
      */
-    public T getCacheInfo(String... param) {
+    public T getFromCacheAndDB(String... param) {
         String key = buildKey(param);
-        T value = (T) redisTemplate.opsForValue().get(key);
+        T value = getFromCache(param);
         if (value != null) {
-            //缓存激活 延长更新缓存时间
-            redisTemplate.expire(key, cacheTime, TimeUnit.DAYS);
             return value;
         }
         RedisAtomicLong ral = new RedisAtomicLong(RedisPrefix.buildAtomicCountKey(key)

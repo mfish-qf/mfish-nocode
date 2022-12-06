@@ -1,11 +1,13 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.oauth.cache.temp.UserPermissionCache;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.annotation.RequiresRoles;
+import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -38,7 +40,7 @@ public class SsoMenuController {
     @Resource
     OAuth2Service oAuth2Service;
     @Resource
-    UserPermissionCache userPermissionCache;
+    UserPermissionTempCache userPermissionTempCache;
 
     /**
      * 分页列表查询
@@ -55,6 +57,8 @@ public class SsoMenuController {
 
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
+    @RequiresPermissions("sys:menu:query")
+    @RequiresRoles("admin")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
         List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
         List<SsoMenu> menuTrees = new ArrayList<>();
@@ -103,8 +107,8 @@ public class SsoMenuController {
     private void removeCache(SsoMenu ssoMenu) {
         if (2 == ssoMenu.getMenuType()) {
             List<String> list = ssoMenuService.queryMenuUser(ssoMenu.getId());
-            String clientId = AuthUtils.getCurrentClientId();
-            userPermissionCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
+            String clientId = AuthInfoUtils.getCurrentClientId();
+            userPermissionTempCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
         }
     }
 

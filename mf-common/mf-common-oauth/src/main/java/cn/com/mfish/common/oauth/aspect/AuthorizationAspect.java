@@ -1,7 +1,9 @@
 package cn.com.mfish.common.oauth.aspect;
 
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.annotation.RequiresRoles;
+import cn.com.mfish.common.oauth.common.OauthUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,16 +22,20 @@ import java.lang.reflect.Method;
 @Component
 @Slf4j
 public class AuthorizationAspect {
-    @Before("@annotation(cn.com.mfish.common.oauth.annotation.RequiresPermissions)||@annotation(cn.com.mfish.common.oauth.annotation.RequiresRoles)")
+    @Before("@annotation(cn.com.mfish.common.oauth.annotation.RequiresPermissions)" +
+            "||@annotation(cn.com.mfish.common.oauth.annotation.RequiresRoles)")
     public void doBefore(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         if (method.isAnnotationPresent(RequiresPermissions.class)) {
-            RequiresPermissions requiresPermissions = method.getAnnotation(RequiresPermissions.class);
-            System.out.println(requiresPermissions.value()+"  RequiresPermissions");
+            if (!OauthUtils.checkPermission(method.getAnnotation(RequiresPermissions.class))) {
+                throw new OAuthValidateException("错误:无按钮权限");
+            }
         }
         if (method.isAnnotationPresent(RequiresRoles.class)) {
-            System.out.println("RequiresRoles");
+            if (!OauthUtils.checkRoles(method.getAnnotation(RequiresRoles.class))) {
+                throw new OAuthValidateException("错误:角色无权限访问");
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package cn.com.mfish.common.web.advice;
+package cn.com.mfish.common.core.advice;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;

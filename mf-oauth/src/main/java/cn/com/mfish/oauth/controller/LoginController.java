@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -54,7 +54,7 @@ public class LoginController {
         String code = loginService.getSmsCode(phone);
         //如果5分钟内不重新生成code
         if (StringUtils.isEmpty(code)) {
-            code = AuthUtils.buildCode();
+            code = OauthUtils.buildCode();
             loginService.saveSmsCode(phone, code);
         }
         loginService.saveSmsCodeTime(phone);

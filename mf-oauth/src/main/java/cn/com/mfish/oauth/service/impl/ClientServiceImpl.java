@@ -24,6 +24,6 @@ public class ClientServiceImpl implements ClientService {
      */
     @Override
     public OAuthClient getClientById(String clientId) {
-        return clientTempCache.getCacheInfo(clientId);
+        return clientTempCache.getFromCacheAndDB(clientId);
     }
 }

@@ -2,9 +2,9 @@ package cn.com.mfish.common.web.aspect;
 
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.web.annotation.GlobalException;
+import cn.com.mfish.common.core.annotation.GlobalException;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
@@ -38,7 +38,7 @@ public class InnerUserAspect {
         if (CredentialConstants.INNER.equals(source) && !innerUser.validateUser()) {
             return point.proceed();
         }
-        String token = AuthUtils.getAccessToken(request);
+        String token = AuthInfoUtils.getAccessToken(request);
         if (StringUtils.isEmpty(token)) {
             throw new OAuthValidateException("错误:token不允许为空");
         }

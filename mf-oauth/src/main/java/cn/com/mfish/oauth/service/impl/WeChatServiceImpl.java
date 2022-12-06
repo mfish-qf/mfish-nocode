@@ -40,7 +40,7 @@ public class WeChatServiceImpl implements WeChatService {
 
     @Override
     public String getUserIdByOpenId(String openId) {
-        return openIdTempCache.getCacheInfo(openId);
+        return openIdTempCache.getFromCacheAndDB(openId);
     }
 
     @Override

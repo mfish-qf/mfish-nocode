@@ -118,7 +118,7 @@ public class EscapeUtil {
     }
 
     public static void main(String[] args) {
-        String html = "<script>alert('aaaa');</script>";
+        String html = "<script>alert('mfish');</script>";
         System.out.println(EscapeUtil.clean(html));
         System.out.println(EscapeUtil.escape(html));
         System.out.println(EscapeUtil.unescape(html));

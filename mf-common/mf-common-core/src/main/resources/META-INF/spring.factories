@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.core.utils.ApplicationContextProvider
+  cn.com.mfish.common.core.utils.SpringBeanFactory

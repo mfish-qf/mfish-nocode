@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.AuthUtils;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.redis.common.RedisPrefix;
@@ -63,7 +63,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
 
     private boolean validateRole(SsoRole ssoRole) {
         if (StringUtils.isEmpty(ssoRole.getClientId())) {
-            ssoRole.setClientId(AuthUtils.getCurrentClientId());
+            ssoRole.setClientId(AuthInfoUtils.getCurrentClientId());
         }
         if (StringUtils.isEmpty(ssoRole.getClientId())) {
             throw new MyRuntimeException("错误:客户端ID不存在");
@@ -93,7 +93,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
             log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
             //查询角色对应的用户并删除角色权限缓存
             List<String> list = baseMapper.getRoleUser(id);
-            String clientId = AuthUtils.getCurrentClientId();
+            String clientId = AuthInfoUtils.getCurrentClientId();
             userRoleTempCache.removeMoreCache(list.stream().map(item -> RedisPrefix.buildUser2RolesKey(item, clientId)).collect(Collectors.toList()));
             return true;
         }

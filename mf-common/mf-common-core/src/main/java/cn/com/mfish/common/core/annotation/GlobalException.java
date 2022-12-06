@@ -1,13 +1,12 @@
-package cn.com.mfish.common.web.annotation;
+package cn.com.mfish.common.core.annotation;
 
-import cn.com.mfish.common.web.advice.ExceptionHandlerAdvice;
+import cn.com.mfish.common.core.advice.ExceptionHandlerAdvice;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 /**
  * @author ：qiufeng
  * @description：全局异常处理注解
