@@ -96,7 +96,6 @@ public class OauthUtils {
                         return true;
                     }
                 }
-                return false;
             default:
                 return false;
         }
