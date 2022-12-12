@@ -5,9 +5,6 @@ import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.utils.html.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.context.request.NativeWebRequest;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author qiufeng
@@ -17,44 +14,23 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class AuthInfoUtils {
     /**
-     * 获取accessToken
-     *
-     * @param request servletRequest
-     * @return
-     */
-    public static String getAccessToken(HttpServletRequest request) {
-        return getAccessToken(new WebRequest(request));
-    }
-
-    /**
-     * 获取accessToken
-     *
-     * @param nativeWebRequest nativeWebRequest
-     * @return
-     */
-    public static String getAccessToken(NativeWebRequest nativeWebRequest) {
-        return getAccessToken(new WebRequest<>(nativeWebRequest));
-
-    }
-
-    /**
      * 从请求中获取token值
      * token通过access_token=****直接赋值
      * 或者token放到head中 以Authorization=Bearer******方式传入
      *
-     * @param request
+     * @param t 请求类型
      * @return
      */
-    public static String getAccessToken(WebRequest request) {
+    public static <T> String getAccessToken(T t) {
         // 头部的Authorization值以Bearer开头
-        String auth = request.getHeader(Constants.AUTHENTICATION);
+        String auth = WebRequest.getHeader(t, Constants.AUTHENTICATION);
         String accessToken = null;
-        if (auth != null && auth.startsWith(Constants.OAUTH_HEADER_NAME)) {
-            accessToken = auth.replace(Constants.OAUTH_HEADER_NAME, "").trim();
+        if (StringUtils.isNotEmpty(auth) && auth.startsWith(Constants.OAUTH_HEADER_NAME)) {
+            accessToken = auth.replace(Constants.OAUTH_HEADER_NAME, StringUtils.EMPTY).trim();
         }
         // 请求参数中包含access_token参数
         if (StringUtils.isEmpty(accessToken)) {
-            accessToken = request.getParameter(Constants.ACCESS_TOKEN);
+            accessToken = WebRequest.getParameter(t, Constants.ACCESS_TOKEN);
         }
         return accessToken;
     }

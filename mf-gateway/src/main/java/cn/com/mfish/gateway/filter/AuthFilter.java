@@ -1,13 +1,13 @@
 package cn.com.mfish.gateway.filter;
 
-import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.HttpStatus;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
+import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -18,7 +18,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author ：qiufeng
@@ -34,7 +33,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     private WebTokenServiceImpl webTokenService;
 
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -43,7 +41,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (StringUtils.matches(url, ignoreWhite.getWhites())) {
             return chain.filter(exchange);
         }
-        String token = getToken(request);
+        String token = AuthInfoUtils.getAccessToken(request);
         if (StringUtils.isEmpty(token)) {
             return unauthorizedResponse(exchange, "令牌不能为空");
         }
@@ -76,22 +74,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
         return ServletUtils.webFluxResponseWriter(exchange.getResponse(), msg, HttpStatus.UNAUTHORIZED);
     }
 
-    /**
-     * 获取请求token
-     */
-    private String getToken(ServerHttpRequest request) {
-        String token = request.getHeaders().getFirst(Constants.AUTHENTICATION);
-        // 如果前端设置了令牌前缀，则裁剪掉前缀
-        if (StringUtils.isNotEmpty(token) && token.startsWith(Constants.OAUTH_HEADER_NAME)) {
-            token = token.replaceFirst(Constants.OAUTH_HEADER_NAME, StringUtils.EMPTY);
-        } else {
-            List<String> list = request.getQueryParams().get(Constants.ACCESS_TOKEN);
-            if (list != null && list.size() > 0) {
-                token = list.get(0);
-            }
-        }
-        return token;
-    }
 
     @Override
     public int getOrder() {

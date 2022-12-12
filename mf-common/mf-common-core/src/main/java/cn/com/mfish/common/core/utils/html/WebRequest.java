@@ -1,45 +1,43 @@
 package cn.com.mfish.common.core.utils.html;
 
-import cn.com.mfish.common.core.exception.MyRuntimeException;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author ：qiufeng
  * @description：统一web请求
  * @date ：2021/12/9 11:46
  */
-public class WebRequest<T> {
-    NativeWebRequest nativeWebRequest = null;
-    HttpServletRequest httpServletRequest = null;
+public class WebRequest {
 
-    public WebRequest(T t) {
+    public static <T> String getParameter(T t, String var1) {
         if (t instanceof NativeWebRequest) {
-            nativeWebRequest = (NativeWebRequest) t;
-        } else if (t instanceof HttpServletRequest) {
-            httpServletRequest = (HttpServletRequest) t;
-        } else {
-            throw new MyRuntimeException("错误:初始化类型不正确");
+            return ((NativeWebRequest) t).getParameter(var1);
         }
-    }
-
-    public String getParameter(String var1) {
-        if (nativeWebRequest != null) {
-            return nativeWebRequest.getParameter(var1);
+        if (t instanceof HttpServletRequest) {
+            return ((HttpServletRequest) t).getParameter(var1);
         }
-        if (httpServletRequest != null) {
-            return httpServletRequest.getParameter(var1);
+        if (t instanceof ServerHttpRequest) {
+            List<String> list = ((ServerHttpRequest) t).getQueryParams().get(var1);
+            if (list != null && list.size() > 0) {
+                return list.get(0);
+            }
         }
         return null;
     }
 
-    public String getHeader(String var1) {
-        if (nativeWebRequest != null) {
-            return nativeWebRequest.getHeader(var1);
+    public static <T> String getHeader(T t, String var1) {
+        if (t instanceof NativeWebRequest) {
+            return ((NativeWebRequest) t).getHeader(var1);
         }
-        if (httpServletRequest != null) {
-            return httpServletRequest.getHeader(var1);
+        if (t instanceof HttpServletRequest) {
+            return ((HttpServletRequest) t).getHeader(var1);
+        }
+        if (t instanceof ServerHttpRequest) {
+            return ((ServerHttpRequest) t).getHeaders().getFirst(var1);
         }
         return null;
     }
