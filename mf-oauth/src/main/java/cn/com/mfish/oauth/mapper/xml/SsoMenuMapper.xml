@@ -64,7 +64,7 @@
     </sql>
     <!-- 找到当前菜单及所有他的父菜单 -->
     <select id="queryMenu" resultType="cn.com.mfish.oauth.entity.SsoMenu">
-        SELECT m.* FROM sso_menu m
+        SELECT distinct m.* FROM sso_menu m
         <include refid="menuJoin"/>
         <where>
             <include refid="reqCondition"/>
