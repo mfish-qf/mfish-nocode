@@ -55,11 +55,9 @@
         </where>
     </select>
     <sql id="menuJoin">
-        inner join sso_role_menu rm on m.id = rm.menu_id
-        inner join sso_user_role ur
-        on ur.role_id = rm.role_id
         <if test="userId != null and  userId != ''">
-            and ur.user_id = #{userId}
+            inner join sso_role_menu rm on m.id = rm.menu_id
+            inner join sso_user_role ur on ur.role_id = rm.role_id and ur.user_id = #{userId}
         </if>
     </sql>
     <!-- 找到当前菜单及所有他的父菜单 -->
