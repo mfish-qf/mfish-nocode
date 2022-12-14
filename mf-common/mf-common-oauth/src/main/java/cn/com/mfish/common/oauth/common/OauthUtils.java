@@ -43,7 +43,7 @@ public class OauthUtils {
         List<UserRole> list = userRoleCache.getFromCache(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
         Set<String> set = list.stream().map(UserRole::getRoleCode).collect(Collectors.toSet());
         //如果用户为超户，直接返回
-        if (set.contains(SerConstant.SUPER_ADMIN)) {
+        if (set.contains(SerConstant.SUPER_ROLE)) {
             return true;
         }
         return checkValue(requiresRoles.logical(), requiresRoles.value(), set);
@@ -96,9 +96,21 @@ public class OauthUtils {
                         return true;
                     }
                 }
-                return false;
             default:
                 return false;
         }
+    }
+
+    /**
+     * 是否超户
+     *
+     * @return
+     */
+    public static boolean isSuper() {
+        return isSuper(AuthInfoUtils.getCurrentUserId());
+    }
+
+    public static boolean isSuper(String userId) {
+        return "1".equals(userId) || SerConstant.SUPER_USER.equals(AuthInfoUtils.getCurrentAccount());
     }
 }

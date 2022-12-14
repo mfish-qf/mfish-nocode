@@ -5,11 +5,11 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.entity.AuthorizationCode;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.AccessToken;
-import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.entity.OAuthClient;
-import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author qiufeng
@@ -93,6 +94,8 @@ public class AccessTokenController {
         if (!ssoUserService.isUserClientExist(token.getUserId(), token.getClientId())) {
             throw new OAuthValidateException("错误:该用户无此客户端权限!");
         }
+        //缓存用户角色信息
+        CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId(), token.getClientId()));
         //增加用户登录互斥缓存
         userTokenCache.addUserTokenCache(DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()

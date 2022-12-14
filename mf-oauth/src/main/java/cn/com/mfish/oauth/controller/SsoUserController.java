@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.annotation.InnerUser;
@@ -11,23 +11,22 @@ import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.api.entity.UserInfo;
 import cn.com.mfish.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
-import cn.com.mfish.oauth.validator.AccessTokenValidator;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author qiufeng
@@ -40,8 +39,6 @@ import java.util.List;
 public class SsoUserController {
 
     @Resource
-    AccessTokenValidator accessTokenValidator;
-    @Resource
     OAuth2Service oAuth2Service;
     @Resource
     UserTokenCache userTokenCache;
@@ -51,17 +48,17 @@ public class SsoUserController {
     @InnerUser
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer +token组合，例如Bearer 39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
-            @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
-    })
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
-    public Result<UserInfoVo> getUserInfo(HttpServletRequest request) {
-        Result<RedisAccessToken> result = accessTokenValidator.validate(request, null);
-        if (!result.isSuccess()) {
-            throw new OAuthValidateException(result.getMsg());
-        }
-        return Result.ok(oAuth2Service.getUserInfoAndRoles(result.getData().getUserId(), result.getData().getClientId()));
+    public Result<UserInfoVo> getUserInfo() {
+        return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
+    }
+
+    @InnerUser
+    @ApiOperation("获取用户权限")
+    @GetMapping("/permissions")
+    @Log(title = "获取用户权限", operateType = OperateType.QUERY)
+    public Result<Set<String>> getPermissions() {
+        return Result.ok(ssoUserService.getUserPermissions(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
     }
 
     @InnerUser

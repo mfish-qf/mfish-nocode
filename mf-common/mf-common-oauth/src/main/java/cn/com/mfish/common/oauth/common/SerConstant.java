@@ -20,7 +20,8 @@ public class SerConstant {
     public static final String PHONE = "phone";
     public static final String PASSWORD = "password";
     public static final String ALL_PERMISSION = "*:*:*";
-    public static final String SUPER_ADMIN = "superAdmin";
+    public static final String SUPER_ROLE = "superAdmin";
+    public static final String SUPER_USER = "admin";
     /**
      * 登录类型
      */

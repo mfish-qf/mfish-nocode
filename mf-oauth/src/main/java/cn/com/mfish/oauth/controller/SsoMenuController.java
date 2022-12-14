@@ -5,8 +5,6 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
@@ -57,8 +55,6 @@ public class SsoMenuController {
 
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
-    @RequiresPermissions("sys:menu:query")
-    @RequiresRoles("admin")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
         List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
         List<SsoMenu> menuTrees = new ArrayList<>();
