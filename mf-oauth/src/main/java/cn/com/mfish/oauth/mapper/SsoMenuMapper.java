@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.mapper;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -21,4 +22,7 @@ public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
     List<SsoMenu> queryMenu(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("levels") List<Integer> levels, @Param("userId") String userId);
 
     List<String> queryMenuUser(@Param("menuId") String menuId);
+
+    @Delete("delete from sso_role_menu where menu_id=#{menuId}")
+    int deleteMenuRoles(@Param("menuId") String menuId);
 }

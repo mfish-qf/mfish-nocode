@@ -77,7 +77,7 @@
             </where>
             )
         </foreach>
-        order by menu_type, menu_sort
+        order by menu_sort,menu_type
     </select>
     <select id="queryMenuUser" resultType="java.lang.String">
         select distinct ur.user_id
