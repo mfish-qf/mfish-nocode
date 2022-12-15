@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -24,4 +25,6 @@ public interface SsoMenuService extends IService<SsoMenu> {
      * @return
      */
     List<String> queryMenuUser(String menuId);
+
+    Result<Boolean> deleteMenu(String menuId);
 }
