@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 02/09/2022 18:04:28
+ Date: 15/12/2022 22:01:38
 */
 
 SET NAMES utf8mb4;
@@ -34,13 +34,9 @@ CREATE TABLE `sys_log`  (
   `oper_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '操作人员',
   `oper_time` datetime NULL DEFAULT NULL COMMENT '操作时间',
   `oper_status` int(1) NULL DEFAULT 0 COMMENT '操作状态（0正常 1异常）',
-  `error_msg` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '错误消息',
+  `remark` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '描述信息',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `oper_time_index`(`oper_time`) USING BTREE COMMENT '操作时间'
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '系统日志' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of sys_log
--- ----------------------------
+) ENGINE = InnoDB AUTO_INCREMENT = 1188 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统日志' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
