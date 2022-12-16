@@ -1,6 +1,6 @@
 swagger:
   title: '摸鱼认证中心'
-  needAuth: false
+  needAuth: true
 # mybatis配置
 mybatis-plus:
   # 搜索指定包别名

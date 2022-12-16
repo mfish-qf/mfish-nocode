@@ -26,7 +26,7 @@ public class AuthInfoUtils {
         String auth = WebRequest.getHeader(t, Constants.AUTHENTICATION);
         String accessToken = null;
         if (StringUtils.isNotEmpty(auth) && auth.startsWith(Constants.OAUTH_HEADER_NAME)) {
-            accessToken = auth.replace(Constants.OAUTH_HEADER_NAME, StringUtils.EMPTY).trim();
+            accessToken = auth.replaceFirst(Constants.OAUTH_HEADER_NAME, StringUtils.EMPTY).trim();
         }
         // 请求参数中包含access_token参数
         if (StringUtils.isEmpty(accessToken)) {

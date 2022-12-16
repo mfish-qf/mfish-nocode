@@ -9,6 +9,7 @@
   * *[认证----gitee地址](https://gitee.com/qiufeng9862/mfish-cloud/tree/mfish_oauth2_1.0.0/)*
   * *[认证----github地址](https://github.com/mfish-qf/mfish-cloud/tree/mfish_oauth2_1.0.0)*
 * 持续进行功能完善
+  * *[demo地址](http://app.mfish.com.cn:11119)*
 
 ### 一期目标:
 1.基础框架搭建  
