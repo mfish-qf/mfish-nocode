@@ -25,4 +25,6 @@ public class ReqSsoMenu {
     private Integer isVisible;
     @ApiModelProperty(value = "权限标识")
     private String permission;
+    @ApiModelProperty("是否返回按钮 true 不返回按钮 false 返回按钮")
+    private Boolean noButton = false;
 }
