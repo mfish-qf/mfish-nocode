@@ -43,7 +43,7 @@ public class OauthUtils {
         List<UserRole> list = userRoleCache.getFromCache(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
         Set<String> set = list.stream().map(UserRole::getRoleCode).collect(Collectors.toSet());
         //如果用户为超户，直接返回
-        if (set.contains(SerConstant.SUPER_ROLE)) {
+        if (null != set && set.contains(SerConstant.SUPER_ROLE)) {
             return true;
         }
         return checkValue(requiresRoles.logical(), requiresRoles.value(), set);
@@ -59,7 +59,7 @@ public class OauthUtils {
         UserPermissionCache userPermissionCache = SpringBeanFactory.getBean("userPermissionCache");
         Set<String> set = userPermissionCache.getFromCache(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
         //如果用户拥有所有权限直接返回true
-        if (set.contains(SerConstant.ALL_PERMISSION)) {
+        if (null != set && set.contains(SerConstant.ALL_PERMISSION)) {
             return true;
         }
         return checkValue(requiresPermissions.logical(), requiresPermissions.value(), set);
@@ -111,6 +111,6 @@ public class OauthUtils {
     }
 
     public static boolean isSuper(String userId) {
-        return "1".equals(userId) || SerConstant.SUPER_USER.equals(AuthInfoUtils.getCurrentAccount());
+        return "1".equals(userId);
     }
 }

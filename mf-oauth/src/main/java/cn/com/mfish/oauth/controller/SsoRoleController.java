@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,6 +43,7 @@ public class SsoRoleController {
      */
     @ApiOperation(value = "角色信息表-分页列表查询", notes = "角色信息表-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:role:query")
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return Result.ok(new PageResult<>(ssoRoleService.getRoleList(reqSsoRole)), "角色信息表-查询成功!");
@@ -72,6 +73,7 @@ public class SsoRoleController {
     @Log(title = "角色信息表-添加", operateType = OperateType.INSERT)
     @ApiOperation(value = "角色信息表-添加", notes = "角色信息表-添加")
     @PostMapping
+    @RequiresPermissions("sys:role:insert")
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
         return ssoRoleService.insertRole(ssoRole);
     }
@@ -85,6 +87,7 @@ public class SsoRoleController {
     @Log(title = "角色信息表-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "角色信息表-编辑", notes = "角色信息表-编辑")
     @PutMapping
+    @RequiresPermissions("sys:role:update")
     public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
         return ssoRoleService.updateRole(ssoRole);
     }
@@ -108,27 +111,12 @@ public class SsoRoleController {
     @Log(title = "角色信息表-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "角色信息表-通过id删除", notes = "角色信息表-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:role:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (ssoRoleService.deleteRole(id)) {
             return Result.ok("角色信息表-删除成功!");
         }
         return Result.fail("错误:角色信息表-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @Log(title = "角色信息表-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "角色信息表-批量删除", notes = "角色信息表-批量删除")
-    @DeleteMapping("/batch")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.ssoRoleService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok("角色信息表-批量删除成功!");
-        }
-        return Result.fail("错误:角色信息表-批量删除失败!");
     }
 
     /**
@@ -139,6 +127,7 @@ public class SsoRoleController {
      */
     @ApiOperation(value = "角色信息表-通过id查询", notes = "角色信息表-通过id查询")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:role:query")
     public Result<SsoRole> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoRole ssoRole = ssoRoleService.getById(id);
         return Result.ok(ssoRole, "角色信息表-查询成功!");

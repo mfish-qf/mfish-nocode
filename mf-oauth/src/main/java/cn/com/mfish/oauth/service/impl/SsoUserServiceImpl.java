@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author qiufeng
@@ -112,9 +113,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             baseMapper.deleteUserRole(user.getId());
             insertUserRole(user.getId(), user.getRoleIds());
             //移除缓存下次登录时会自动拉取
-            userTempCache.removeOneCache(user.getId());
-            userRoleTempCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
-            userPermissionTempCache.removeOneCache(user.getId(), AuthInfoUtils.getCurrentClientId());
+            CompletableFuture.runAsync(() -> removeUserCache(user.getId()));
             return Result.ok(user, "用户信息-更新成功");
         }
         throw new MyRuntimeException("错误:未找到用户信息更新数据");
@@ -143,16 +142,25 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     public boolean removeUser(String id) {
         SsoUser ssoUser = new SsoUser();
         ssoUser.setDelFlag(1).setId(id);
-        userTempCache.removeOneCache(id);
-        String clientId = AuthInfoUtils.getCurrentClientId();
-        userRoleTempCache.removeOneCache(id, clientId);
-        userPermissionTempCache.removeOneCache(id, clientId);
         if (baseMapper.updateById(ssoUser) == 1) {
+            CompletableFuture.runAsync(() -> removeUserCache(id));
             log.info(MessageFormat.format("删除用户成功,用户ID:{0}", id));
             return true;
         }
         log.error(MessageFormat.format("删除用户失败,用户ID:{0}", id));
         return false;
+    }
+
+    /**
+     * 移除用户相关缓存
+     *
+     * @param userId
+     */
+    private void removeUserCache(String userId) {
+        String clientId = AuthInfoUtils.getCurrentClientId();
+        userTempCache.removeOneCache(userId);
+        userRoleTempCache.removeOneCache(userId, clientId);
+        userPermissionTempCache.removeOneCache(userId, clientId);
     }
 
     @Override

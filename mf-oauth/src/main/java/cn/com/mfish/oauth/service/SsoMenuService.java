@@ -18,13 +18,7 @@ public interface SsoMenuService extends IService<SsoMenu> {
 
     List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId);
 
-    /**
-     * 获取按钮权限用户
-     *
-     * @param menuId
-     * @return
-     */
-    List<String> queryMenuUser(String menuId);
+    Result<SsoMenu> updateMenu(SsoMenu ssoMenu);
 
     Result<Boolean> deleteMenu(String menuId);
 }

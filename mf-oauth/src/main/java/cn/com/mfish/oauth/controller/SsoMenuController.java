@@ -1,10 +1,10 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
@@ -46,6 +46,7 @@ public class SsoMenuController {
      */
     @ApiOperation(value = "菜单表-分页列表查询", notes = "菜单表-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:menu:query")
     public Result<List<SsoMenu>> queryList(ReqSsoMenu reqSsoMenu) {
         List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
         return Result.ok(list, "菜单表-查询成功!");
@@ -69,6 +70,7 @@ public class SsoMenuController {
     @Log(title = "菜单表-添加", operateType = OperateType.INSERT)
     @ApiOperation(value = "菜单表-添加", notes = "菜单表-添加")
     @PostMapping
+    @RequiresPermissions("sys:menu:insert")
     public Result<SsoMenu> add(@RequestBody SsoMenu ssoMenu) {
         if (ssoMenuService.insertMenu(ssoMenu)) {
             return Result.ok(ssoMenu, "菜单表-添加成功!");
@@ -85,26 +87,11 @@ public class SsoMenuController {
     @Log(title = "菜单表-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "菜单表-编辑", notes = "菜单表-编辑")
     @PutMapping
+    @RequiresPermissions("sys:menu:edit")
     public Result<SsoMenu> edit(@RequestBody SsoMenu ssoMenu) {
-        if (ssoMenuService.updateById(ssoMenu)) {
-            removeCache(ssoMenu);
-            return Result.ok(ssoMenu, "菜单表-编辑成功!");
-        }
-        return Result.fail("错误:菜单表-编辑失败!");
+        return ssoMenuService.updateMenu(ssoMenu);
     }
 
-    /**
-     * 按钮修改移除缓存中按钮权限
-     *
-     * @param ssoMenu
-     */
-    private void removeCache(SsoMenu ssoMenu) {
-        if (2 == ssoMenu.getMenuType()) {
-            List<String> list = ssoMenuService.queryMenuUser(ssoMenu.getId());
-            String clientId = AuthInfoUtils.getCurrentClientId();
-            userPermissionTempCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
-        }
-    }
 
     /**
      * 通过id删除
@@ -115,6 +102,7 @@ public class SsoMenuController {
     @Log(title = "菜单表-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "菜单表-通过id删除", notes = "菜单表-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:menu:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         return ssoMenuService.deleteMenu(id);
     }
@@ -127,6 +115,7 @@ public class SsoMenuController {
      */
     @ApiOperation(value = "菜单表-通过id查询", notes = "菜单表-通过id查询")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:menu:query")
     public Result<SsoMenu> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoMenu ssoMenu = ssoMenuService.getById(id);
         return Result.ok(ssoMenu, "菜单表-查询成功!");

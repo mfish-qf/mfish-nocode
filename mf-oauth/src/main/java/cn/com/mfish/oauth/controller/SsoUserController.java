@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
@@ -49,6 +50,7 @@ public class SsoUserController {
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
+    @RequiresPermissions("sys:account:query")
     public Result<UserInfoVo> getUserInfo() {
         return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
     }
@@ -100,6 +102,7 @@ public class SsoUserController {
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
     @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
     @PostMapping
+    @RequiresPermissions("sys:account:insert")
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
         return ssoUserService.insertUser(ssoUser);
     }
@@ -113,6 +116,7 @@ public class SsoUserController {
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
     @PutMapping
+    @RequiresPermissions("sys:account:update")
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
         return ssoUserService.updateUser(ssoUser);
     }
@@ -126,6 +130,7 @@ public class SsoUserController {
     @Log(title = "用户信息-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "用户信息-通过id删除", notes = "用户信息-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:account:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if ("1".equals(id)) {
             return Result.fail(false, "错误:admin帐号不允许删除!");
