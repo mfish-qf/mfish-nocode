@@ -21,6 +21,11 @@ public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
 
     List<SsoMenu> queryMenu(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("levels") List<Integer> levels, @Param("userId") String userId);
 
+    /**
+     * 获取按钮权限用户
+     * @param menuId
+     * @return
+     */
     List<String> queryMenuUser(@Param("menuId") String menuId);
 
     @Delete("delete from sso_role_menu where menu_id=#{menuId}")

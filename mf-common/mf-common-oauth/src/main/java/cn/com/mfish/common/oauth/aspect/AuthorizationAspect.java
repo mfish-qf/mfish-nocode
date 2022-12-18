@@ -1,6 +1,6 @@
 package cn.com.mfish.common.oauth.aspect;
 
-import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.common.oauth.common.OauthUtils;
@@ -29,12 +29,12 @@ public class AuthorizationAspect {
         Method method = methodSignature.getMethod();
         if (method.isAnnotationPresent(RequiresPermissions.class)) {
             if (!OauthUtils.checkPermission(method.getAnnotation(RequiresPermissions.class))) {
-                throw new OAuthValidateException("错误:无按钮权限");
+                throw new MyRuntimeException("错误:该用户无此操作权限");
             }
         }
         if (method.isAnnotationPresent(RequiresRoles.class)) {
             if (!OauthUtils.checkRoles(method.getAnnotation(RequiresRoles.class))) {
-                throw new OAuthValidateException("错误:角色无权限访问");
+                throw new MyRuntimeException("错误:该角色无此操作访问");
             }
         }
     }

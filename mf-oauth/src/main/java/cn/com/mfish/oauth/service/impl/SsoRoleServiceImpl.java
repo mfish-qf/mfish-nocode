@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
@@ -17,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @Description: 角色信息表
@@ -32,6 +34,8 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
 
     @Resource
     UserRoleTempCache userRoleTempCache;
+    @Resource
+    UserPermissionTempCache userPermissionTempCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -54,6 +58,8 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
             log.info(MessageFormat.format("删除角色菜单数量:{0}条",
                     baseMapper.deleteRoleMenus(ssoRole.getId())));
             if (insertRoleMenus(ssoRole)) {
+                String clientId = AuthInfoUtils.getCurrentClientId();
+                CompletableFuture.runAsync(() -> removeRoleCache(ssoRole.getId(), clientId));
                 return Result.ok(ssoRole, "角色信息-修改成功");
             }
             throw new MyRuntimeException("错误:更新角色菜单失败");
@@ -90,15 +96,31 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     @Override
     public boolean deleteRole(String id) {
         if (baseMapper.updateById(new SsoRole().setDelFlag(1).setId(id)) == 1) {
-            log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
-            //查询角色对应的用户并删除角色权限缓存
-            List<String> list = baseMapper.getRoleUser(id);
             String clientId = AuthInfoUtils.getCurrentClientId();
-            userRoleTempCache.removeMoreCache(list.stream().map(item -> RedisPrefix.buildUser2RolesKey(item, clientId)).collect(Collectors.toList()));
+            CompletableFuture.runAsync(() -> removeRoleCache(id, clientId));
+            log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
             return true;
         }
         log.error(MessageFormat.format("错误:删除角色失败,角色ID:{0}", id));
         return false;
+    }
+
+    /**
+     * 移除角色相关缓存
+     *
+     * @param roleId
+     */
+    private void removeRoleCache(String roleId, String clientId) {
+        //查询角色对应的用户并删除角色权限缓存
+        List<String> list = baseMapper.getRoleUser(roleId);
+        List<String> roleKeys = new ArrayList<>();
+        List<String> permissionKeys = new ArrayList<>();
+        for (String userId : list) {
+            roleKeys.add(RedisPrefix.buildUser2RolesKey(userId, clientId));
+            permissionKeys.add(RedisPrefix.buildUser2PermissionsKey(userId, clientId));
+        }
+        userRoleTempCache.removeMoreCache(roleKeys);
+        userPermissionTempCache.removeMoreCache(permissionKeys);
     }
 
     /**
