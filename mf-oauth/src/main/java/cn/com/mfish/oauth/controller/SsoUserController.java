@@ -50,7 +50,6 @@ public class SsoUserController {
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
-    @RequiresPermissions("sys:account:query")
     public Result<UserInfoVo> getUserInfo() {
         return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
     }
@@ -93,6 +92,7 @@ public class SsoUserController {
      */
     @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:account:query")
     public Result<PageResult<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
