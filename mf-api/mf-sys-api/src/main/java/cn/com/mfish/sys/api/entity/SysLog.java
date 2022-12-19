@@ -41,7 +41,7 @@ public class SysLog implements Serializable {
     @ApiModelProperty(value = "请求来源（0其它 1管理端 2手机端）")
     private Integer reqSource;
     @ApiModelProperty(value = "操作类型（0其它 1查询 2新增 3修改 4删除 5授权 6导入 7导出...）")
-    private Integer operType;
+    private String operType;
     @ApiModelProperty(value = "操作IP")
     private String operIp;
     @ApiModelProperty(value = "操作人员")
