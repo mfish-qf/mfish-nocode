@@ -6,7 +6,7 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.common.oauth.cache.UserPermissionCache;
 import cn.com.mfish.common.oauth.cache.UserRoleCache;
-import cn.com.mfish.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -40,7 +40,7 @@ public class OauthUtils {
      */
     public static boolean checkRoles(RequiresRoles requiresRoles) {
         UserRoleCache userRoleCache = SpringBeanFactory.getBean("userRoleCache");
-        List<UserRole> list = userRoleCache.getFromCache(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        List<UserRole> list = userRoleCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
         Set<String> set = list.stream().map(UserRole::getRoleCode).collect(Collectors.toSet());
         //如果用户为超户，直接返回
         if (null != set && set.contains(SerConstant.SUPER_ROLE)) {
@@ -57,7 +57,7 @@ public class OauthUtils {
      */
     public static boolean checkPermission(RequiresPermissions requiresPermissions) {
         UserPermissionCache userPermissionCache = SpringBeanFactory.getBean("userPermissionCache");
-        Set<String> set = userPermissionCache.getFromCache(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        Set<String> set = userPermissionCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
         //如果用户拥有所有权限直接返回true
         if (null != set && set.contains(SerConstant.ALL_PERMISSION)) {
             return true;
