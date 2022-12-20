@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.OauthUtils;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.mapper.SsoMenuMapper;
@@ -18,6 +19,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 菜单权限表
@@ -57,8 +59,11 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
 
     @Override
     public Result<SsoMenu> updateMenu(SsoMenu ssoMenu) {
+        if (StringUtils.isEmpty(ssoMenu.getClientId())) {
+            ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
+        }
         if (baseMapper.updateById(ssoMenu) > 0) {
-            CompletableFuture.runAsync(() -> removeCache(ssoMenu.getId()));
+            CompletableFuture.runAsync(() -> removeMenuCache(ssoMenu));
             return Result.ok(ssoMenu, "菜单表-编辑成功!");
         }
         return Result.fail("错误:菜单表-编辑失败!");
@@ -75,7 +80,11 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             return Result.fail(false, "错误:菜单包含子节点，不允许删除");
         }
         if (baseMapper.deleteById(menuId) > 0) {
-            CompletableFuture.runAsync(() -> removeCache(menuId));
+            SsoMenu ssoMenu = baseMapper.selectById(menuId);
+            if (StringUtils.isEmpty(ssoMenu.getClientId())) {
+                ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
+            }
+            CompletableFuture.runAsync(() -> removeMenuCache(ssoMenu));
             baseMapper.deleteMenuRoles(menuId);
             return Result.ok("菜单表-删除成功!");
         }
@@ -85,12 +94,16 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     /**
      * 按钮修改移除缓存中按钮权限
      *
-     * @param menuId 菜单Id
+     * @param ssoMenu 菜单
      */
-    private void removeCache(String menuId) {
-        List<String> list = baseMapper.queryMenuUser(menuId);
-        String clientId = AuthInfoUtils.getCurrentClientId();
-        userPermissionTempCache.removeOneCache(list.stream().map(item -> item + clientId).toArray(String[]::new));
+    private void removeMenuCache(SsoMenu ssoMenu) {
+        //如果菜单类型为按钮，清空相关用户缓存
+        if (2 != ssoMenu.getMenuType()) {
+            return;
+        }
+        List<String> list = baseMapper.queryMenuUser(ssoMenu.getId());
+        userPermissionTempCache.removeMoreCache(list.stream()
+                .map(item -> RedisPrefix.buildUser2PermissionsKey(item, ssoMenu.getClientId())).collect(Collectors.toList()));
     }
 
 }

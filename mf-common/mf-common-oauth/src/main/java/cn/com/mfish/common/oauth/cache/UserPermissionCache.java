@@ -1,9 +1,13 @@
 package cn.com.mfish.common.oauth.cache;
 
+import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.common.redis.temp.BaseTempCache;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Set;
 
 /**
@@ -13,6 +17,9 @@ import java.util.Set;
  */
 @Component("userPermissionCache")
 public class UserPermissionCache extends BaseTempCache<Set<String>> {
+
+    @Resource
+    RemoteUserService remoteUserService;
 
     /**
      * key [0] userId [1] clientId
@@ -33,6 +40,10 @@ public class UserPermissionCache extends BaseTempCache<Set<String>> {
      */
     @Override
     protected Set<String> getFromDB(String... key) {
-        return null;
+        Result<Set<String>> result = remoteUserService.getPermissions(CredentialConstants.INNER, key[0], key[1]);
+        if (result == null || !result.isSuccess()) {
+            return null;
+        }
+        return result.getData();
     }
 }

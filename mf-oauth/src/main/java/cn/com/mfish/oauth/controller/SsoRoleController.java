@@ -113,6 +113,9 @@ public class SsoRoleController {
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:role:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        if ("1".equals(id)) {
+            return Result.fail(false, "错误:超户角色不允许删除!");
+        }
         if (ssoRoleService.deleteRole(id)) {
             return Result.ok("角色信息表-删除成功!");
         }

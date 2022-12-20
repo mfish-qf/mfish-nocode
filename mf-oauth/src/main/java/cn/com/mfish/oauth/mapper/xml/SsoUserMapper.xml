@@ -28,7 +28,7 @@
             <include refid="userState"/>
         </where>
     </select>
-    <select id="getUserRoles" resultType="cn.com.mfish.oauth.api.entity.UserRole">
+    <select id="getUserRoles" resultType="cn.com.mfish.common.oauth.api.entity.UserRole">
         select r.id, r.role_name, r.role_code
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
@@ -66,7 +66,7 @@
             </if>
         </where>
     </select>
-    <resultMap id="userMap" type="cn.com.mfish.oauth.api.entity.UserInfo">
+    <resultMap id="userMap" type="cn.com.mfish.common.oauth.api.entity.UserInfo">
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
     </resultMap>

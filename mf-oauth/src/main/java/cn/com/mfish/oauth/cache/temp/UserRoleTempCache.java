@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.cache.temp;
 
 import cn.com.mfish.common.oauth.cache.UserRoleCache;
-import cn.com.mfish.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import org.springframework.stereotype.Component;
 

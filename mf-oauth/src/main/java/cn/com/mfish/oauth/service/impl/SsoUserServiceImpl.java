@@ -4,8 +4,8 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
@@ -112,8 +112,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             insertUserOrg(user.getId(), user.getOrgId());
             baseMapper.deleteUserRole(user.getId());
             insertUserRole(user.getId(), user.getRoleIds());
+            String clientId = AuthInfoUtils.getCurrentClientId();
             //移除缓存下次登录时会自动拉取
-            CompletableFuture.runAsync(() -> removeUserCache(user.getId()));
+            CompletableFuture.runAsync(() -> removeUserCache(user.getId(), clientId));
             return Result.ok(user, "用户信息-更新成功");
         }
         throw new MyRuntimeException("错误:未找到用户信息更新数据");
@@ -143,7 +144,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         SsoUser ssoUser = new SsoUser();
         ssoUser.setDelFlag(1).setId(id);
         if (baseMapper.updateById(ssoUser) == 1) {
-            CompletableFuture.runAsync(() -> removeUserCache(id));
+            String clientId = AuthInfoUtils.getCurrentClientId();
+            CompletableFuture.runAsync(() -> removeUserCache(id, clientId));
             log.info(MessageFormat.format("删除用户成功,用户ID:{0}", id));
             return true;
         }
@@ -156,8 +158,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
      *
      * @param userId
      */
-    private void removeUserCache(String userId) {
-        String clientId = AuthInfoUtils.getCurrentClientId();
+    private void removeUserCache(String userId, String clientId) {
         userTempCache.removeOneCache(userId);
         userRoleTempCache.removeOneCache(userId, clientId);
         userPermissionTempCache.removeOneCache(userId, clientId);

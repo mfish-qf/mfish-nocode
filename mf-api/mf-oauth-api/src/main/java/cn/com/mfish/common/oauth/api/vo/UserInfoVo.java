@@ -1,7 +1,7 @@
-package cn.com.mfish.oauth.api.vo;
+package cn.com.mfish.common.oauth.api.vo;
 
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

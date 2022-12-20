@@ -6,7 +6,6 @@ import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -36,8 +35,6 @@ public class SsoMenuController {
     SsoMenuService ssoMenuService;
     @Resource
     OAuth2Service oAuth2Service;
-    @Resource
-    UserPermissionTempCache userPermissionTempCache;
 
     /**
      * 分页列表查询

@@ -45,7 +45,7 @@ public class AuthInfoUtils {
     }
 
     /**
-     * 获取当前用户ID
+     * 获取当前用户ID(该方法要在主线程运行)
      *
      * @return
      */
@@ -55,7 +55,7 @@ public class AuthInfoUtils {
     }
 
     /**
-     * 获取当前帐号
+     * 获取当前帐号(该方法要在主线程运行)
      *
      * @return
      */
@@ -65,7 +65,7 @@ public class AuthInfoUtils {
     }
 
     /**
-     * 获取当前客户端ID
+     * 获取当前客户端ID(该方法要在主线程运行)
      *
      * @return
      */

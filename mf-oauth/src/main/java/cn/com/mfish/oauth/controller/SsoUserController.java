@@ -3,23 +3,23 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
-import cn.com.mfish.oauth.api.entity.UserInfo;
-import cn.com.mfish.oauth.api.vo.UserInfoVo;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -58,8 +58,36 @@ public class SsoUserController {
     @ApiOperation("获取用户权限")
     @GetMapping("/permissions")
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
-    public Result<Set<String>> getPermissions() {
-        return Result.ok(ssoUserService.getUserPermissions(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户ID"),
+            @ApiImplicitParam(name = "clientId", value = "客户端ID")
+    })
+    public Result<Set<String>> getPermissions(String userId, String clientId) {
+        if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
+        }
+        if (StringUtils.isEmpty(clientId)) {
+            clientId = AuthInfoUtils.getCurrentClientId();
+        }
+        return Result.ok(ssoUserService.getUserPermissions(userId, clientId));
+    }
+
+    @InnerUser
+    @ApiOperation("获取用户角色")
+    @GetMapping("/roles")
+    @Log(title = "获取用户权限", operateType = OperateType.QUERY)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户ID"),
+            @ApiImplicitParam(name = "clientId", value = "客户端ID")
+    })
+    public Result<List<UserRole>> getRoles(String userId, String clientId) {
+        if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
+        }
+        if (StringUtils.isEmpty(clientId)) {
+            clientId = AuthInfoUtils.getCurrentClientId();
+        }
+        return Result.ok(ssoUserService.getUserRoles(userId, clientId));
     }
 
     @InnerUser
