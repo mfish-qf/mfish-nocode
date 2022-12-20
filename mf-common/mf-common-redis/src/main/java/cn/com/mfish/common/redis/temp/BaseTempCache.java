@@ -55,7 +55,6 @@ public abstract class BaseTempCache<T> {
 
     /**
      * 获取缓存信息如果不存在获取数据库中信息并存入缓存
-     * <p>
      * redis存在直接返回，redis中不存在访问数据库
      * 5分钟内在请求数据库超过10次，不在访问数据库直接返回null
      * 获取到数据存入到redis缓存中，持久化一周
