@@ -7,14 +7,16 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.web.annotation.InnerUser;
-import cn.com.mfish.common.web.page.PageResult;
-import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
+import cn.com.mfish.common.oauth.common.OauthUtils;
+import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.oauth.req.ReqChangePwd;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
@@ -95,6 +97,21 @@ public class SsoUserController {
     @GetMapping("/{id}")
     public Result<UserInfo> getUserById(@ApiParam(name = "id", value = "用户ID") @PathVariable String id) {
         return Result.ok(ssoUserService.getUserByIdNoPwd(id));
+    }
+
+    @ApiOperation("修改密码")
+    @PutMapping("/pwd")
+    @Log(title = "修改密码", operateType = OperateType.UPDATE)
+    public Result<Boolean> changePassword(@RequestBody ReqChangePwd reqChangePwd) {
+        if (StringUtils.isEmpty(reqChangePwd.getUserId())) {
+            Result.fail(false, "错误:用户ID不允许为空");
+        }
+        //除了超户，其他用户修改密码需要传入旧密码
+        //超户修改自己密码需要输入旧密码
+        if (StringUtils.isEmpty(reqChangePwd.getOldPwd()) && (!OauthUtils.isSuper() || OauthUtils.isSuper(reqChangePwd.getUserId()))) {
+            return Result.fail(true, "错误:未输入旧密码");
+        }
+        return ssoUserService.changePassword(reqChangePwd.getUserId(), reqChangePwd.getOldPwd(), reqChangePwd.getNewPwd());
     }
 
     @ApiOperation("用户登出")

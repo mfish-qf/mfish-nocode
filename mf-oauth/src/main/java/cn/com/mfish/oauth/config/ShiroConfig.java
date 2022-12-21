@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.config;
 
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
-import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
@@ -11,6 +11,7 @@ import cn.com.mfish.oauth.realm.PhoneSmsRealm;
 import cn.com.mfish.oauth.realm.QRCodeRealm;
 import cn.com.mfish.oauth.realm.UserPasswordRealm;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -123,18 +124,37 @@ public class ShiroConfig {
     }
 
     /**
+     * 认证使用
+     *
+     * @return
+     */
+    @Bean
+    public HashedCredentialsMatcher myHashedCredentialsMatcher() {
+        return createHashedCredentialsMatcher(new MyHashedCredentialsMatcher());
+    }
+
+    /**
+     * 修改密码使用
+     *
+     * @return
+     */
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        return createHashedCredentialsMatcher(new HashedCredentialsMatcher());
+    }
+
+    /**
      * 凭证匹配器加密规则 采用2次MD5加密
      * 密码校验交给Shiro的SimpleAuthenticationInfo进行处理了
      *
      * @return
      */
-    @Bean
-    public MyHashedCredentialsMatcher myHashedCredentialsMatcher() {
-        MyHashedCredentialsMatcher myHashedCredentialsMatcher = new MyHashedCredentialsMatcher();
-        myHashedCredentialsMatcher.setHashAlgorithmName(algorithmName);
-        myHashedCredentialsMatcher.setHashIterations(hashIterations);
-        myHashedCredentialsMatcher.setStoredCredentialsHexEncoded(hexEncoded);
-        return myHashedCredentialsMatcher;
+    private <T extends HashedCredentialsMatcher> HashedCredentialsMatcher createHashedCredentialsMatcher(T t) {
+        HashedCredentialsMatcher hashedCredentialsMatcher = t;
+        hashedCredentialsMatcher.setHashAlgorithmName(algorithmName);
+        hashedCredentialsMatcher.setHashIterations(hashIterations);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(hexEncoded);
+        return hashedCredentialsMatcher;
     }
 
     @Bean

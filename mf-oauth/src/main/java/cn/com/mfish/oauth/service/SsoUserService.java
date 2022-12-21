@@ -15,7 +15,7 @@ import java.util.Set;
  * @date 2020/2/13 16:50
  */
 public interface SsoUserService extends IService<SsoUser> {
-    Result<SsoUser> changePassword(String userId, String newPassword);
+    Result<Boolean> changePassword(String userId, String oldPwd, String newPwd);
 
     Result<SsoUser> insertUser(SsoUser user);
 
