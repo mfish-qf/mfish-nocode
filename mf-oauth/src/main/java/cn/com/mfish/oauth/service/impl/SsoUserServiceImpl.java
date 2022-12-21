@@ -18,6 +18,10 @@ import cn.com.mfish.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,17 +48,19 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     UserRoleTempCache userRoleTempCache;
     @Resource
     UserPermissionTempCache userPermissionTempCache;
+    @Resource
+    HashedCredentialsMatcher hashedCredentialsMatcher;
 
     /**
      * 修改用户密码
      *
      * @param userId
-     * @param newPassword
+     * @param newPwd
      * @return
      */
     @Override
-    public Result<SsoUser> changePassword(String userId, String newPassword) {
-        Result<SsoUser> result = verifyPassword(newPassword);
+    public Result<Boolean> changePassword(String userId, String oldPwd, String newPwd) {
+        Result<Boolean> result = verifyPassword(newPwd);
         if (!result.isSuccess()) {
             return result;
         }
@@ -62,21 +68,83 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (user == null) {
             String error = MessageFormat.format("错误:用户id{0}未获取到用户信息!", userId);
             log.error(error);
-            return Result.fail(error);
+            return Result.fail(false, error);
         }
-
+        result = verifyOldPwd(user, oldPwd);
+        if (!result.isSuccess()) {
+            return result;
+        }
         user.setOldPassword(setOldPwd(user.getOldPassword(), user.getPassword()));
-        user.setPassword(passwordHelper.encryptPassword(userId, newPassword, user.getSalt()));
+        user.setPassword(passwordHelper.encryptPassword(userId, newPwd, user.getSalt()));
         if (user.getOldPassword().indexOf(user.getPassword()) >= 0) {
-            return Result.fail("错误:密码5次内不得循环使用");
+            return Result.fail(false, "错误:密码5次内不得循环使用");
         }
         user.setUpdateTime(new Date());
         if (baseMapper.updateById(user) == 1) {
             //更新用户信息,刷新redis 用户缓存
             userTempCache.updateCacheInfo(user, userId);
-            return Result.ok(user, "用户密码-修改密码成功");
+            return Result.ok(true, "用户密码-修改密码成功");
         }
         throw new MyRuntimeException("错误:用户密码-修改密码失败");
+    }
+
+    private Result<Boolean> verifyOldPwd(SsoUser ssoUser, String oldPwd) {
+        //老密码为null时不校验老密码
+        if (StringUtils.isEmpty(oldPwd)) {
+            return Result.ok();
+        }
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
+                ssoUser.getId(), //用户名
+                ssoUser.getPassword(), //密码
+                ByteSource.Util.bytes(ssoUser.getId() + ssoUser.getSalt()),
+                ""  //调用基类realm
+        );
+        UsernamePasswordToken token = new UsernamePasswordToken(ssoUser.getAccount(), oldPwd);
+        boolean result = hashedCredentialsMatcher.doCredentialsMatch(token, authenticationInfo);
+        if (result) {
+            return Result.ok(true, "密码校验正确");
+        }
+        return Result.fail(false, "错误:旧密码校验失败");
+    }
+
+    /**
+     * 密码校验 密码长度必须8~16位
+     * 密码必须由数字、字母、特殊字符组合
+     *
+     * @param password
+     * @return
+     */
+    private Result<Boolean> verifyPassword(String password) {
+        if (StringUtils.isEmpty(password)) {
+            return Result.fail(false, "密码不允许为空");
+        }
+        if (password.length() < 8 || password.length() > 16) {
+            return Result.fail(false, "密码长度必须8~16位");
+        }
+        if (!password.matches("(?=.*\\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,16}")) {
+            return Result.fail(false, "密码必须由数字、字母、特殊字符组合");
+        }
+        return Result.ok(true, "校验成功");
+    }
+
+    /**
+     * 设置旧密码 将最后一次密码添加到最近密码列表中，密码逗号隔开
+     * 只存储最近5次密码
+     *
+     * @param oldPwd
+     * @param pwd
+     * @return
+     */
+    private String setOldPwd(String oldPwd, String pwd) {
+        String[] pwds = StringUtils.isEmpty(oldPwd) ? new String[0] : oldPwd.split(",");
+        List<String> list = new ArrayList<>(Arrays.asList(pwds));
+        if (list.size() >= 5) {
+            list.remove(0);
+        }
+        if (!StringUtils.isEmpty(pwd)) {
+            list.add(pwd);
+        }
+        return StringUtils.join(list.iterator(), ",");
     }
 
     @Override
@@ -248,45 +316,5 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             return count;
         }
         throw new MyRuntimeException("错误:插入用户所属客户端失败");
-    }
-
-    /**
-     * 密码校验 密码长度必须8~16位
-     * 密码必须由数字、字母、特殊字符组合
-     *
-     * @param password
-     * @return
-     */
-    public Result<SsoUser> verifyPassword(String password) {
-        if (StringUtils.isEmpty(password)) {
-            return Result.fail("密码不允许为空");
-        }
-        if (password.length() < 8 || password.length() > 16) {
-            return Result.fail("密码长度必须8~16位");
-        }
-        if (!password.matches("(?=.*\\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,16}")) {
-            return Result.fail("密码必须由数字、字母、特殊字符组合");
-        }
-        return Result.ok("校验成功");
-    }
-
-    /**
-     * 设置旧密码 将最后一次密码添加到最近密码列表中，密码逗号隔开
-     * 只存储最近5次密码
-     *
-     * @param oldPwd
-     * @param pwd
-     * @return
-     */
-    private String setOldPwd(String oldPwd, String pwd) {
-        String[] pwds = StringUtils.isEmpty(oldPwd) ? new String[0] : oldPwd.split(",");
-        List<String> list = new ArrayList<>(Arrays.asList(pwds));
-        if (list.size() >= 5) {
-            list.remove(0);
-        }
-        if (!StringUtils.isEmpty(pwd)) {
-            list.add(pwd);
-        }
-        return StringUtils.join(list.iterator(), ",");
     }
 }

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -80,8 +80,9 @@ public class FreemarkerConfig {
     private List<File> getFiles() {
         List<File> list = new ArrayList<>();
         try {
-            getFiles(ResourceUtils.getFile("classpath:" + properties.getPath()), list);
-        } catch (FileNotFoundException e) {
+            ClassPathResource cpr = new ClassPathResource(properties.getPath());
+            getFiles(cpr.getFile(), list);
+        } catch (IOException e) {
             log.error("获取文件模版异常:" + e.getMessage(), e);
             throw new MyRuntimeException(e);
         }
