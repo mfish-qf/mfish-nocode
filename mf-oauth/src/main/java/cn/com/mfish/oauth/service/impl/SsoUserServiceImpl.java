@@ -85,7 +85,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             userTempCache.updateCacheInfo(user, userId);
             return Result.ok(true, "用户密码-修改密码成功");
         }
-        throw new MyRuntimeException("错误:用户密码-修改密码失败");
+        return Result.fail(false, "错误:用户密码-修改密码失败");
     }
 
     private Result<Boolean> verifyOldPwd(SsoUser ssoUser, String oldPwd) {
