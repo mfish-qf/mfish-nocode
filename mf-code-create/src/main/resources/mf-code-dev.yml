@@ -3,13 +3,13 @@ swagger:
 code:
   template:
     keys:
-      - controller
-      - entity
-      - mapper
-      - mapper/xml
-      - req
-      - service
-      - service/impl
+      - controller/${entityName}Controller.java.ftl
+      - entity/${entityName}.java.ftl
+      - mapper/${entityName}Mapper.java.ftl
+      - mapper/xml/${entityName}Mapper.xml.ftl
+      - req/Req${entityName}.java.ftl
+      - service/${entityName}Service.java.ftl
+      - service/impl/${entityName}ServiceImpl.java.ftl
     path: template
   savePath: D:/mfish
 # mybatis配置

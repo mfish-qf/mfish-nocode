@@ -11,8 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ：qiufeng
@@ -37,14 +37,9 @@ public class FreemarkerConfig {
     public freemarker.template.Configuration initConfig() {
         freemarker.template.Configuration config = new freemarker.template.Configuration(properties.getVersion());
         StringTemplateLoader stringTemplateLoader = new StringTemplateLoader();
-        List<File> list = getFiles();
-        for (File file : list) {
-            String parent = file.getParent();
-            int index = parent.lastIndexOf(properties.getPath());
-            //使用模版路径作为模版KEY值
-            String pName = parent.replace("\\", "/").substring(index + properties.getPath().length() + 1);
-            stringTemplateLoader.putTemplate(pName, getTemplate(file));
-            properties.getTemplateName().put(pName, file.getName());
+        Map<String, InputStream> map = getFiles();
+        for (Map.Entry<String, InputStream> entry : map.entrySet()) {
+            stringTemplateLoader.putTemplate(entry.getKey(), getTemplate(entry.getValue()));
         }
         config.setTemplateLoader(stringTemplateLoader);
         return config;
@@ -53,13 +48,12 @@ public class FreemarkerConfig {
     /**
      * 通过模版文件获取模版信息
      *
-     * @param file
+     * @param inputStream
      * @return
      */
-    private String getTemplate(File file) {
+    private String getTemplate(InputStream inputStream) {
         StringBuffer sb = new StringBuffer();
-        try (FileInputStream stream = new FileInputStream(file);
-             BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line).append(System.getProperty("line.separator"));// 保持原有换行格式
@@ -77,37 +71,17 @@ public class FreemarkerConfig {
      * @return
      * @throws FileNotFoundException
      */
-    private List<File> getFiles() {
-        List<File> list = new ArrayList<>();
+    private Map<String, InputStream> getFiles() {
+        Map<String, InputStream> map = new HashMap<>();
         try {
-            ClassPathResource cpr = new ClassPathResource(properties.getPath());
-            getFiles(cpr.getFile(), list);
+            for (String key : properties.getKeys()) {
+                ClassPathResource cpr = new ClassPathResource(properties.getPath() + "/" + key);
+                map.put(key, cpr.getInputStream());
+            }
         } catch (IOException e) {
             log.error("获取文件模版异常:" + e.getMessage(), e);
             throw new MyRuntimeException(e);
         }
-        return list;
-    }
-
-    /**
-     * 递归获取目录下所有文件
-     *
-     * @param file
-     * @param list
-     */
-    private void getFiles(File file, List<File> list) {
-        if (!file.exists()) {
-            return;
-        }
-        if (file.isFile()) {
-            list.add(file);
-            return;
-        }
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (File f : files) {
-                getFiles(f, list);
-            }
-        }
+        return map;
     }
 }

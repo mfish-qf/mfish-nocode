@@ -115,10 +115,14 @@ public class FreemarkerUtils {
         List<CodeVo> list = new ArrayList<>();
         for (String key : freemarkerProperties.getKeys()) {
             CodeVo codeVo = new CodeVo();
-            String tempName = freemarkerProperties.getTemplateName().get(key);
-            tempName = tempName.replace(".ftl", "")
+            int index = key.lastIndexOf("/");
+            if (key.length() <= index) {
+                continue;
+            }
+            String tempName = key.substring(index + 1)
+                    .replace(".ftl", "")
                     .replace("${entityName}", codeInfo.getEntityName());
-            codeVo.setName(tempName).setPath(key);
+            codeVo.setName(tempName).setPath(key.substring(0, index));
 //            if (key.contains("xml")) {
 //                //xml需要转义后返回
 //                codeVo.setCode(StringUtil.XMLEnc(buildCode(key, codeInfo)));

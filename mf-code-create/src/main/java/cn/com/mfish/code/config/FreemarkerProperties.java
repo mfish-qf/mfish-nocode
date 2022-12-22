@@ -7,9 +7,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ：qiufeng
@@ -24,5 +22,4 @@ public class FreemarkerProperties {
     private final List<String> keys = new ArrayList<>();
     private final String path = "template";
     private final Version version = freemarker.template.Configuration.VERSION_2_3_31;
-    private Map<String,String> templateName = new HashMap<>();
 }

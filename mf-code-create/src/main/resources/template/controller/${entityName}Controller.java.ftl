@@ -41,8 +41,8 @@ public class ${entityName}Controller {
 	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
 	public Result<IPage<${entityName}>> queryPageList(Req${entityName} req${entityName},
-                                                           @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-                                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+                                                      @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
+                                                      @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(new Page<>(pageNum, pageSize));
 		return Result.ok(pageList, "${tableInfo.tableComment}-查询成功!");
 	}
@@ -57,7 +57,7 @@ public class ${entityName}Controller {
 	@ApiOperation(value = "${tableInfo.tableComment}-添加", notes = "${tableInfo.tableComment}-添加")
 	@PostMapping
 	public Result<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
-		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})){
+		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})) {
 			return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-添加成功!");
 		}
         return Result.fail("错误:${tableInfo.tableComment}-添加失败!");
@@ -73,7 +73,7 @@ public class ${entityName}Controller {
 	@ApiOperation(value = "${tableInfo.tableComment}-编辑", notes = "${tableInfo.tableComment}-编辑")
 	@PutMapping
 	public Result<${entityName}> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
-		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})){
+		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})) {
 		    return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-编辑成功!");
 		}
 		return Result.fail("错误:${tableInfo.tableComment}-编辑失败!");
@@ -89,7 +89,7 @@ public class ${entityName}Controller {
 	@ApiOperation(value = "${tableInfo.tableComment}-通过id删除", notes = "${tableInfo.tableComment}-通过id删除")
 	@DeleteMapping("/{id}")
 	public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-		if (${entityName?uncap_first}Service.removeById(id)){
+		if (${entityName?uncap_first}Service.removeById(id)) {
 			return Result.ok(true, "${tableInfo.tableComment}-删除成功!");
 		}
 		return Result.fail(false, "错误:${tableInfo.tableComment}-删除失败!");
@@ -105,7 +105,7 @@ public class ${entityName}Controller {
 	@ApiOperation(value = "${tableInfo.tableComment}-批量删除", notes = "${tableInfo.tableComment}-批量删除")
 	@DeleteMapping("/batch")
 	public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))){
+		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))) {
 		    return Result.ok(true, "${tableInfo.tableComment}-批量删除成功!");
 		}
 		return Result.fail(false, "错误:${tableInfo.tableComment}-批量删除失败!");
