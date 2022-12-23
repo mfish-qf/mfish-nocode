@@ -10,6 +10,9 @@ code:
       - req/Req${entityName}.java.ftl
       - service/${entityName}Service.java.ftl
       - service/impl/${entityName}ServiceImpl.java.ftl
+      - vue/${entityName#uncap_first}/${entityName#uncap_first}.data.ts.ftl
+      - vue/${entityName#uncap_first}/${entityName}Modal.vue.ftl
+      - vue/${entityName#uncap_first}/index.vue.ftl
     path: template
   savePath: D:/mfish
 # mybatis配置
