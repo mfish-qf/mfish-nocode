@@ -39,22 +39,16 @@ public class ${entityName} extends BaseEntity<<#if tableInfo.idType==''>String<#
     private ${tableInfo.idType} id;
     </#if>
     <#list tableInfo.columns as fieldInfo>
-	<#if fieldInfo.isPrimary>
-    <#if fieldInfo.type=='String'>
-    @TableId(type = IdType.ASSIGN_UUID)
-    <#else>
-    @TableId(type = IdType.AUTO)
-    </#if>
-	<#else>
-    <#if fieldInfo.type =='Date'>
-    <#if fieldInfo.dbType =='DATE'>
+	<#if !fieldInfo.isPrimary>
+      <#if fieldInfo.type =='Date'>
+        <#if fieldInfo.dbType =='DATE'>
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    <#elseif fieldInfo.dbType =='DATETIME'>
+          <#elseif fieldInfo.dbType =='DATETIME'>
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    </#if>
-    </#if>
+        </#if>
+      </#if>
     </#if>
     @ApiModelProperty(value = "${fieldInfo.comment}")
 	private <#if fieldInfo.type=='java.sql.Blob'>byte[]<#else>${fieldInfo.type}</#if> ${fieldInfo.fieldName};

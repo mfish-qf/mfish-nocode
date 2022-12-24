@@ -10,8 +10,7 @@
         </where>
     </sql>
     <select id="getColumns" resultType="cn.com.mfish.code.entity.FieldInfo">
-        select column_name field_name
-        , data_type db_type
+        select column_name field_name, data_type db_type
         , if(column_key = 'PRI', true, false) is_primary
         , if(is_nullable = 'NO', false, true) null_able
         , column_comment comment

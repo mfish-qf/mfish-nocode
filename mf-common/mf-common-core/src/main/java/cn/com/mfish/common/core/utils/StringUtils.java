@@ -5,7 +5,9 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * 字符串工具类
@@ -168,13 +170,10 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             } else {
                 preCharIsUpperCase = false;
             }
-
             curCharIsUpperCase = Character.isUpperCase(c);
-
             if (i < (str.length() - 1)) {
                 nextCharIsUpperCase = Character.isUpperCase(str.charAt(i + 1));
             }
-
             if (preCharIsUpperCase && curCharIsUpperCase && !nextCharIsUpperCase) {
                 sb.append(SEPARATOR);
             } else if ((i != 0 && !preCharIsUpperCase) && curCharIsUpperCase) {
@@ -182,7 +181,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             }
             sb.append(Character.toLowerCase(c));
         }
-
         return sb.toString();
     }
 
@@ -212,7 +210,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      */
     public static String toCamelCase(String s) {
         if (s == null) {
-            return null;
+            return "";
         }
         s = s.toLowerCase();
         StringBuilder sb = new StringBuilder(s.length());
@@ -239,8 +237,55 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 首字母大写
      */
     public static String toCamelBigCase(String str) {
-        String s = toCamelCase(str);
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
+        return firstUpperCase(toCamelCase(str));
+    }
+
+    /**
+     * 首字母小写
+     *
+     * @param str
+     * @return
+     */
+    public static String firstUpperCase(String str) {
+        return firstCase(str, (val) -> val.toUpperCase(Locale.ROOT));
+    }
+
+    /**
+     * 首字母小写
+     *
+     * @param str
+     * @return
+     */
+    public static String firstLowerCase(String str) {
+        return firstCase(str, (val) -> val.toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * 首字母转换
+     *
+     * @param str      字符串
+     * @param function 转换函数
+     * @return
+     */
+    public static String firstCase(String str, Function<String, String> function) {
+        if (StringUtils.isEmpty(str)) {
+            return "";
+        }
+        char[] strArray = str.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < strArray.length; i++) {
+            if (i == 0) {
+                sb.append(function.apply(new String(new char[]{strArray[i]})));
+                continue;
+            }
+            sb.append(strArray[i]);
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        String aa = toCamelBigCase("abcd_bbcc");
+        System.out.println(aa);
     }
 
     /**

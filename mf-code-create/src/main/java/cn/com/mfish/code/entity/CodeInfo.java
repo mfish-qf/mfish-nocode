@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class CodeInfo implements Serializable {
     @ApiModelProperty("包名")
     private String packageName;
-    @ApiModelProperty("实体名称")
+    @ApiModelProperty("实体名称(会自动转化为首字母大写驼峰)")
     private String entityName;
     @ApiModelProperty("表相关信息")
     private TableInfo tableInfo;
