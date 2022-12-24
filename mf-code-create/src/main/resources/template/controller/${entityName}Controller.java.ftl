@@ -6,8 +6,9 @@ import cn.com.mfish.common.core.web.Result;
 import ${packageName}.entity.${entityName};
 import ${packageName}.req.Req${entityName};
 import ${packageName}.service.${entityName}Service;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.web.page.ReqPage;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,17 +35,13 @@ public class ${entityName}Controller {
 	 * 分页列表查询
 	 *
 	 * @param req${entityName}
-	 * @param pageNum
-	 * @param pageSize
 	 * @return
 	 */
 	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
-	public Result<IPage<${entityName}>> queryPageList(Req${entityName} req${entityName},
-                                                      @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-                                                      @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(new Page<>(pageNum, pageSize));
-		return Result.ok(pageList, "${tableInfo.tableComment}-查询成功!");
+	public Result<PageResult<${entityName}>> queryPageList(Req${entityName} req${entityName}, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+	    return Result.ok(new PageResult<>(${entityName?uncap_first}Service.list()), "${tableInfo.tableComment}-查询成功!");
 	}
 
 	/**
