@@ -13,6 +13,8 @@ code:
       - vue/${entityName#uncap_first}/${entityName#uncap_first}.data.ts.ftl
       - vue/${entityName#uncap_first}/${entityName}Modal.vue.ftl
       - vue/${entityName#uncap_first}/index.vue.ftl
+      - vue/api/web/model/${entityName}Model.ts.ftl
+      - vue/api/web/${entityName}.ts.ftl
     path: template
   savePath: D:/mfish
 # mybatis配置
@@ -66,7 +68,7 @@ spring:
           # 主库数据源
           master:
             driver-class-name: com.mysql.cj.jdbc.Driver
-            url: jdbc:mysql://localhost:3306/mf_oauth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+            url: jdbc:mysql://localhost:3306/mf_system?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
             username: root
             password: 123456
           # 从库数据源

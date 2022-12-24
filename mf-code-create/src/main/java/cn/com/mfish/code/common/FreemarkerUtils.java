@@ -57,9 +57,12 @@ public class FreemarkerUtils {
         if (StringUtils.isEmpty(reqCode.getPackageName())) {
             reqCode.setPackageName("cn.com.mfish.code");
         }
-        TableInfo tableInfo = mysqlTableService.getTableInfo(reqCode.getSchema(), reqCode.getTableName());
-        if (tableInfo != null) {
-            reqCode.setTableComment(StringUtils.isEmpty(tableInfo.getTableComment()) ? "" : tableInfo.getTableComment());
+        if (StringUtils.isEmpty(reqCode.getTableComment())) {
+            reqCode.setTableComment("");
+            TableInfo tableInfo = mysqlTableService.getTableInfo(reqCode.getSchema(), reqCode.getTableName());
+            if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
+                reqCode.setTableComment(tableInfo.getTableComment());
+            }
         }
         if (StringUtils.isEmpty(reqCode.getEntityName())) {
             reqCode.setEntityName(reqCode.getTableName());
