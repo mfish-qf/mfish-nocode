@@ -21,7 +21,7 @@ import java.util.Date;
  * @Description: ${tableInfo.tableComment}
  * @Author: mfish
  * @Date: ${.now?string["yyyy-MM-dd"]}
- * @Version: V1.0
+ * @Version: V1.0.0
  */
 @Data
 @TableName("${tableInfo.tableName}")
