@@ -1,6 +1,6 @@
 package cn.com.mfish.test;
 
-import cn.com.mfish.common.web.annotation.AutoFeignClients;
+import cn.com.mfish.common.core.annotation.AutoFeignClients;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
