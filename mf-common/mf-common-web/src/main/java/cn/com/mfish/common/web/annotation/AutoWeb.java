@@ -1,5 +1,6 @@
 package cn.com.mfish.common.web.annotation;
 
+import cn.com.mfish.common.core.annotation.AutoFeignClients;
 import cn.com.mfish.common.swagger.annotation.AutoSwagger;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
