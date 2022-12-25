@@ -55,18 +55,27 @@ public class FreemarkerUtils {
             throw new MyRuntimeException("错误:表名不允许为空");
         }
         if (StringUtils.isEmpty(reqCode.getPackageName())) {
-            reqCode.setPackageName("cn.com.mfish.code");
+            reqCode.setPackageName("cn.com.mfish.web");
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
-            reqCode.setTableComment("");
+            reqCode.setTableComment(reqCode.getTableName());
             TableInfo tableInfo = mysqlTableService.getTableInfo(reqCode.getSchema(), reqCode.getTableName());
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }
         }
+        if (StringUtils.isEmpty(reqCode.getApiPrefix())) {
+            int index = reqCode.getPackageName().lastIndexOf(".");
+            if (index >= 0) {
+                reqCode.setApiPrefix(reqCode.getPackageName().substring(index + 1));
+            } else {
+                reqCode.setApiPrefix(reqCode.getPackageName());
+            }
+        }
         if (StringUtils.isEmpty(reqCode.getEntityName())) {
             reqCode.setEntityName(reqCode.getTableName());
         }
+        reqCode.setEntityName(StringUtils.toCamelBigCase(reqCode.getEntityName()));
         return reqCode;
     }
 
@@ -80,7 +89,8 @@ public class FreemarkerUtils {
         initReqCode(reqCode);
         CodeInfo codeInfo = new CodeInfo();
         codeInfo.setPackageName(reqCode.getPackageName());
-        codeInfo.setEntityName(StringUtils.toCamelBigCase(reqCode.getEntityName()));
+        codeInfo.setEntityName(reqCode.getEntityName());
+        codeInfo.setApiPrefix(reqCode.getApiPrefix());
         List<FieldInfo> list = mysqlTableService.getColumns(reqCode.getSchema(), reqCode.getTableName());
         String idType = "";
         //缺省字段字段不需要生成,获取列时过滤掉
@@ -109,9 +119,10 @@ public class FreemarkerUtils {
      */
     public List<CodeVo> getCode(CodeInfo codeInfo) {
         List<CodeVo> list = new ArrayList<>();
+        Map<String, String> regexMap = buildRegexMap(codeInfo);
         for (String key : freemarkerProperties.getKeys()) {
             CodeVo codeVo = new CodeVo();
-            String path = replaceVariable(key, codeInfo.getEntityName());
+            String path = replaceVariable(key, regexMap);
             int index = path.lastIndexOf("/");
             if (path.length() <= index) {
                 continue;
@@ -130,46 +141,47 @@ public class FreemarkerUtils {
     }
 
     /**
-     * 替换参数
+     * 构建正则替换Map
      *
-     * @param key
-     * @param value
+     * @param codeInfo
      * @return
      */
-    private String replaceVariable(String key, String value) {
-        Map<String, MatchType> matches = variableMatches(key);
-        if (matches == null || matches.size() == 0) {
-            return key;
+    private Map<String, String> buildRegexMap(CodeInfo codeInfo) {
+        Map<String, String> map = new HashMap<>();
+        map.put("\\$\\{entityName\\#?(?<param>.*?)}", codeInfo.getEntityName());
+        map.put("\\$\\{apiPrefix\\#?(?<param>.*?)}", codeInfo.getApiPrefix());
+        String path = codeInfo.getPackageName().replace(".", "/");
+        if (!path.endsWith("/")) {
+            path += "/";
         }
-        for (Map.Entry<String, MatchType> match : matches.entrySet()) {
-            key = key.replace(match.getKey(), match.getValue().dealVariable(value));
-        }
-        return key;
+        map.put("\\$\\{packageName\\#?(?<param>.*?)}", path);
+        return map;
     }
 
     /**
-     * 参数匹配
+     * 参数替换
      *
      * @param key
      * @return
      */
-    private Map<String, MatchType> variableMatches(String key) {
-        Pattern pattern = Pattern.compile("\\$\\{entityName\\#?(?<param>.*?)}");
-        Matcher matcher = pattern.matcher(key);
-        Map<String, MatchType> map = new HashMap<>();
-        while (matcher.find()) {
-            String value = matcher.group();
-            if (StringUtils.isEmpty(value) || map.containsKey(value)) {
-                continue;
+    private String replaceVariable(String key, Map<String, String> mapValue) {
+        for (Map.Entry<String, String> kv : mapValue.entrySet()) {
+            Pattern pattern = Pattern.compile(kv.getKey());
+            Matcher matcher = pattern.matcher(key);
+            while (matcher.find()) {
+                String value = matcher.group();
+                if (StringUtils.isEmpty(value)) {
+                    continue;
+                }
+                int index = value.indexOf("#");
+                if (index <= 0) {
+                    key = key.replace(value, MatchType.不处理.dealVariable(kv.getValue()));
+                    continue;
+                }
+                key = key.replace(value, MatchType.getMatchType(value.substring(index + 1).replace("}", "")).dealVariable(kv.getValue()));
             }
-            int index = value.indexOf("#");
-            if (index <= 0) {
-                map.put(value, MatchType.不处理);
-                continue;
-            }
-            map.put(value, MatchType.getMatchType(value.substring(index + 1).replace("}", "")));
         }
-        return map;
+        return key;
     }
 
     /**

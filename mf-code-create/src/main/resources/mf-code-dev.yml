@@ -3,18 +3,18 @@ swagger:
 code:
   template:
     keys:
-      - controller/${entityName}Controller.java.ftl
-      - entity/${entityName}.java.ftl
-      - mapper/${entityName}Mapper.java.ftl
-      - mapper/xml/${entityName}Mapper.xml.ftl
-      - req/Req${entityName}.java.ftl
-      - service/${entityName}Service.java.ftl
-      - service/impl/${entityName}ServiceImpl.java.ftl
-      - vue/${entityName#uncap_first}/${entityName#uncap_first}.data.ts.ftl
-      - vue/${entityName#uncap_first}/${entityName}Modal.vue.ftl
-      - vue/${entityName#uncap_first}/index.vue.ftl
-      - vue/api/web/model/${entityName}Model.ts.ftl
-      - vue/api/web/${entityName}.ts.ftl
+      - ${packageName}/controller/${entityName}Controller.java.ftl
+      - ${packageName}/entity/${entityName}.java.ftl
+      - ${packageName}/mapper/${entityName}Mapper.java.ftl
+      - ${packageName}/mapper/xml/${entityName}Mapper.xml.ftl
+      - ${packageName}/req/Req${entityName}.java.ftl
+      - ${packageName}/service/${entityName}Service.java.ftl
+      - ${packageName}/service/impl/${entityName}ServiceImpl.java.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#uncap_first}/${entityName#uncap_first}.data.ts.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#uncap_first}/${entityName}Modal.vue.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#uncap_first}/index.vue.ftl
+      - mfish-nocode-view/src/api/${apiPrefix}/model/${entityName}Model.ts.ftl
+      - mfish-nocode-view/src/api/${apiPrefix}/${entityName}.ts.ftl
     path: template
   savePath: D:/mfish
 # mybatis配置
