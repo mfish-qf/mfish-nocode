@@ -2,7 +2,7 @@
  * @Description: ${tableInfo.tableComment}
  * @Author: mfish
  * @Date: ${.now?string["yyyy-MM-dd"]}
- * @Version: V1.0
+ * @Version: V1.0.0
  */
 import { defHttp } from "/@/utils/http/axios";
 import { ${entityName}, Req${entityName}, ${entityName}PageModel } from "/@/api/${apiPrefix}/model/${entityName}Model";

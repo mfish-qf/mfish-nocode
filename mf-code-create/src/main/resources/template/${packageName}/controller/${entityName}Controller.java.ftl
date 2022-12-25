@@ -21,7 +21,7 @@ import java.util.Arrays;
  * @Description: ${tableInfo.tableComment}
  * @Author: mfish
  * @Date: ${.now?string["yyyy-MM-dd"]}
- * @Version: V1.0
+ * @Version: V1.0.0
  */
 @Slf4j
 @Api(tags = "${tableInfo.tableComment}")

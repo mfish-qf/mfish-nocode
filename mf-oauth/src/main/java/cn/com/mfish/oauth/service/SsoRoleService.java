@@ -11,7 +11,7 @@ import java.util.List;
  * @Description: 角色信息表
  * @Author: mfish
  * @Date: 2022-09-20
- * @Version: V1.0
+ * @Version: V1.0.0
  */
 public interface SsoRoleService extends IService<SsoRole> {
     Result<SsoRole> insertRole(SsoRole ssoRole);

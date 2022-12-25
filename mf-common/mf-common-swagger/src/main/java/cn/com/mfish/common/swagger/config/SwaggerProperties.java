@@ -24,7 +24,7 @@ public class SwaggerProperties {
     private String termsOfServiceUrl = "";
     private String license = "";
     private String licenseUrl = "";
-    private String version = "版本号:V1.0";
+    private String version = "版本号:V1.0.0";
     private MyContact contact;
     //是否需要头部验证 默认：true(需要)
     private Boolean needAuth = true;
