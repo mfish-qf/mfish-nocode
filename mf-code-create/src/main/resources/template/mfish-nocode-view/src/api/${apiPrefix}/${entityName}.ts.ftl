@@ -5,10 +5,10 @@
  * @Version: V1.0
  */
 import { defHttp } from "/@/utils/http/axios";
-import { ${entityName}, Req${entityName} } from "/@/api/web/model/${entityName}Model";
+import { ${entityName}, Req${entityName}, ${entityName}PageModel } from "/@/api/${apiPrefix}/model/${entityName}Model";
 
 enum Api {
-  ${entityName} = "/web/${entityName?uncap_first}"
+  ${entityName} = "/${apiPrefix}/${entityName?uncap_first}"
 }
 
 /**
@@ -18,7 +18,7 @@ enum Api {
  * @return
  */
 export const get${entityName}List = (req${entityName}?: Req${entityName}) => {
-  return defHttp.get<${entityName}PageModel>({ url: Api.${entityName}, req${entityName} });
+  return defHttp.get<${entityName}PageModel>({ url: Api.${entityName}, params: req${entityName} });
 };
 
 /**
@@ -28,7 +28,7 @@ export const get${entityName}List = (req${entityName}?: Req${entityName}) => {
  * @return
  */
 export function insert${entityName}(${entityName?uncap_first}: ${entityName}) {
-  return defHttp.post<${entityName}>({ url: Api.${entityName}, ${entityName?uncap_first} }, { successMessageMode: "message" });
+  return defHttp.post<${entityName}>({ url: Api.${entityName}, params: ${entityName?uncap_first} }, { successMessageMode: "message" });
 };
 
 /**
@@ -38,7 +38,7 @@ export function insert${entityName}(${entityName?uncap_first}: ${entityName}) {
  * @return
  */
 export function update${entityName}(${entityName?uncap_first}: ${entityName}) {
-  return defHttp.put<${entityName}>({ url: Api.${entityName}, ${entityName?uncap_first} }, { successMessageMode: "message" });
+  return defHttp.put<${entityName}>({ url: Api.${entityName}, params: ${entityName?uncap_first} }, { successMessageMode: "message" });
 };
 
 /**

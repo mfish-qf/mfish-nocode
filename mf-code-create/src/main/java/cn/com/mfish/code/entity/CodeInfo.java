@@ -22,4 +22,6 @@ public class CodeInfo implements Serializable {
     private String entityName;
     @ApiModelProperty("表相关信息")
     private TableInfo tableInfo;
+    @ApiModelProperty("接口前缀")
+    private String apiPrefix;
 }
