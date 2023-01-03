@@ -29,10 +29,12 @@ public class SsoMenu extends BaseTreeEntity<String> {
     private String clientId;
     @ApiModelProperty(value = "菜单名称")
     private String menuName;
-    @ApiModelProperty(value = "菜单类型（0目录 1菜单 2按钮）")
+    @ApiModelProperty(value = "菜单类型(0目录 1菜单 2按钮)")
     private Integer menuType;
-    @ApiModelProperty(value = "菜单状态（1显示 0隐藏）")
+    @ApiModelProperty(value = "菜单状态(1显示 0隐藏)")
     private Integer isVisible;
+    @ApiModelProperty(value = "当前激活菜单(当菜单隐藏时，设置当前激活的菜单项)")
+    private String activeMenu;
     @ApiModelProperty(value = "菜单图标")
     private String menuIcon;
     @ApiModelProperty(value = "菜单编码")
@@ -47,7 +49,7 @@ public class SsoMenu extends BaseTreeEntity<String> {
     private String component;
     @ApiModelProperty(value = "是否缓存(1是 0否)")
     private Integer isKeepalive;
-    @ApiModelProperty(value = "是否为外部链接（1是 0否）")
+    @ApiModelProperty(value = "是否为外部链接(1是 0否)")
     private Integer isExternal;
     @ApiModelProperty(value = "描述")
     private String remark;
