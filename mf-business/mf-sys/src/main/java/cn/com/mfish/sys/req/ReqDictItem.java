@@ -1,0 +1,24 @@
+package cn.com.mfish.sys.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+/**
+ * @Description: 字典项
+ * @Author: mfish
+ * @Date: 2023-01-03
+ * @Version: V1.0.0
+ */
+@Data
+@Accessors(chain = true)
+@ApiModel("字典项请求参数")
+public class ReqDictItem {
+    @ApiModelProperty(value = "字典编码")
+    private String dictCode;
+    @ApiModelProperty(value = "字典标签")
+    private String dictLabel;
+    @ApiModelProperty(value = "字典键值")
+    private String dictValue;
+}
