@@ -2,7 +2,7 @@ package cn.com.mfish.common.core.enums;
 
 /**
  * @author: mfish
- * @description：请求来源
+ * @description: 请求来源
  * @date: 2022/9/6 17:33
  */
 public enum ReqSource {

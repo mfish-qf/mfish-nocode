@@ -2,7 +2,7 @@ package cn.com.mfish.common.core.constants;
 
 /**
  * @author: mfish
- * @description：RPC服务常量
+ * @description: RPC服务常量
  * @date: 2021/12/1 17:14
  */
 public class ServiceConstants {

@@ -11,7 +11,7 @@ import java.util.Locale;
 
 /**
  * @author: mfish
- * @description：字段信息
+ * @description: 字段信息
  * @date: 2022/8/29 16:47
  */
 @Data

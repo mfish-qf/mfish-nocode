@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * @author: mfish
- * @description：freemark配置类
+ * @description: freemark配置类
  * @date: 2022/8/24 15:22
  */
 @Configuration

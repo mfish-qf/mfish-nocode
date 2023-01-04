@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 
 /**
  * @author: mfish
- * @description：系统管理启动类
+ * @description: 系统管理启动类
  * @date: 2022/9/2 16:03
  */
 

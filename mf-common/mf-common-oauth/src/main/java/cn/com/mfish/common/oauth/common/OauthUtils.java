@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author: mfish
- * @description：OAUTH工具方法
+ * @description: OAUTH工具方法
  * @date: 2022/12/6 17:23
  */
 public class OauthUtils {

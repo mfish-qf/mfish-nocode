@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * @author: mfish
- * @description：小程序请求接口
+ * @description: 小程序请求接口
  * @date: 2021/12/14 9:35
  */
 @Api(tags = "小程序接口")

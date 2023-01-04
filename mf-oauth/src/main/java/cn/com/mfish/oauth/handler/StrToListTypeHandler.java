@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：角色处理handler
+ * @description: 角色处理handler
  * @date: 2022/11/22 14:42
  */
 public class StrToListTypeHandler extends BaseTypeHandler<List<String>> {

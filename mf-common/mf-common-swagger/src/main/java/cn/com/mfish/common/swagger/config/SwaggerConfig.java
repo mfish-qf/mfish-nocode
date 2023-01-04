@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author: mfish
- * @description：swagger配置类
+ * @description: swagger配置类
  * @date: 2021/11/15 12:59
  */
 @Configuration

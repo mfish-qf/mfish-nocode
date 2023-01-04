@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author: mfish
- * @description：验证码服务
+ * @description: 验证码服务
  * @date: 2021/8/12 11:41
  */
 @Service

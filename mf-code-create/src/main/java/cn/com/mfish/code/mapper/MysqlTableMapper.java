@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：mysql数据库表
+ * @description: mysql数据库表
  * @date: 2022/8/31 22:27
  */
 public interface MysqlTableMapper {

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：忽略地址白名单配置
+ * @description: 忽略地址白名单配置
  * @date: 2021/11/18 18:00
  */
 @Configuration

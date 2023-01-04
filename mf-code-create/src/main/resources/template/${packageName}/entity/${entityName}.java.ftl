@@ -18,10 +18,10 @@ import java.util.Date;
 </#list>
 
 /**
- * @Description: ${tableInfo.tableComment}
- * @Author: mfish
- * @Date: ${.now?string["yyyy-MM-dd"]}
- * @Version: V1.0.0
+ * @description: ${tableInfo.tableComment}
+ * @author: mfish
+ * @date: ${.now?string["yyyy-MM-dd"]}
+ * @version: V1.0.0
  */
 @Data
 @TableName("${tableInfo.tableName}")

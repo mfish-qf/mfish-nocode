@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author: mfish
- * @description：swagger基本属性
+ * @description: swagger基本属性
  * @date: 2021/11/22 17:22
  */
 @Configuration

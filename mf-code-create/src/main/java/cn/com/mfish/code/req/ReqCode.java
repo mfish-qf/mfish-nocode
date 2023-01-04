@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * @author: mfish
- * @description：代码生成参数
+ * @description: 代码生成参数
  * @date: 2022/12/23 19:39
  */
 @Data

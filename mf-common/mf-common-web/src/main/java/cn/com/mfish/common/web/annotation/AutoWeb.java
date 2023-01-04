@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author: mfish
- * @description：web自动注解
+ * @description: web自动注解
  * @date: 2022/9/20 10:57
  */
 @Target(ElementType.TYPE)

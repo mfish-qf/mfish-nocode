@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * @author: mfish
- * @description：Feign用户接口降级
+ * @description: Feign用户接口降级
  * @date: 2021/12/4 0:27
  */
 @Component

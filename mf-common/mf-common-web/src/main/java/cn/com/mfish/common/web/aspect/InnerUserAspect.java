@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish
- * @description：内部用户校验切面
+ * @description: 内部用户校验切面
  * @date: 2021/12/3 11:28
  */
 @Aspect

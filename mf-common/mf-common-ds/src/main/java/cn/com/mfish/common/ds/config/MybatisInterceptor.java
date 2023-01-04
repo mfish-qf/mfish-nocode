@@ -17,7 +17,7 @@ import java.util.Date;
 
 /**
  * @author: mfish
- * @description：mybatis拦截设置默认值
+ * @description: mybatis拦截设置默认值
  * @date: 2022/11/4 15:17
  */
 @Slf4j

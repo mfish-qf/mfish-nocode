@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 
 /**
  * @author: mfish
- * @description：算数验证码创建
+ * @description: 算数验证码创建
  * @date: 2021/12/21 17:04
  */
 public class MathCaptchaCreate extends DefaultTextCreator {

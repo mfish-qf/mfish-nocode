@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * @author: mfish
- * @description：用户权限缓存
+ * @description: 用户权限缓存
  * @date: 2022/12/6 22:44
  */
 @Component("userPermissionCache")

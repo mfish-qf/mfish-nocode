@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author: mfish
- * @description：摸鱼测试中心启动
+ * @description: 摸鱼测试中心启动
  * @date: 2021/12/3 17:22
  */
 @SpringBootApplication

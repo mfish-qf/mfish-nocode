@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author: mfish
- * @description：统一异常处理
+ * @description: 统一异常处理
  * @date: 2021/12/20 10:49
  */
 @Order(-1)

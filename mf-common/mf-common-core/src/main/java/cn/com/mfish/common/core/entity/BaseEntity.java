@@ -11,7 +11,7 @@ import java.util.Date;
 
 /**
  * @author: mfish
- * @description：基础对象类
+ * @description: 基础对象类
  * @date: 2022/11/11 17:31
  */
 @Data

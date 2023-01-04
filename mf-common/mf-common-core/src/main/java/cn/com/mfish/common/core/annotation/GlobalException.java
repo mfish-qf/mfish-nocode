@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 /**
  * @author: mfish
- * @description：全局异常处理注解
+ * @description: 全局异常处理注解
  * @date: 2021/12/13 18:32
  */
 @Target({ElementType.TYPE})

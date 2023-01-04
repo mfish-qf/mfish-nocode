@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：代码生成控制器
+ * @description: 代码生成控制器
  * @date: 2022/8/18 16:45
  */
 @Api(tags = "代码生成")

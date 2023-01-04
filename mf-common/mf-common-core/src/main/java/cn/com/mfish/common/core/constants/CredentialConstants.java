@@ -2,7 +2,7 @@ package cn.com.mfish.common.core.constants;
 
 /**
  * @author: mfish
- * @description：凭证常量
+ * @description: 凭证常量
  * @date: 2021/11/18 18:16
  */
 public class CredentialConstants {

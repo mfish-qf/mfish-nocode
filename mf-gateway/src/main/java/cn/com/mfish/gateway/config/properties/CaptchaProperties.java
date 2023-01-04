@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author: mfish
- * @description：验证码属性
+ * @description: 验证码属性
  * @date: 2021/8/12 15:40
  */
 @Configuration

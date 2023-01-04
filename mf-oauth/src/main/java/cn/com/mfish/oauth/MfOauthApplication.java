@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 
 /**
  * @author: mfish
- * @description：统一认证中心
+ * @description: 统一认证中心
  * @date: 2021/11/15 15:05
  */
 @Slf4j

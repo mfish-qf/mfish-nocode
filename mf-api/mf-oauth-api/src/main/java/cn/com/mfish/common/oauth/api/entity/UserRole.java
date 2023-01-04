@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 /**
  * @author: mfish
- * @description：用户角色
+ * @description: 用户角色
  * @date: 2022/12/1 20:55
  */
 @Data

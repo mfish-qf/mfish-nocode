@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：swagger接口集合
+ * @description: swagger接口集合
  * @date: 2021/11/11 10:37
  */
 @Component

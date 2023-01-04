@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author: mfish
- * @description：日志记录注解
+ * @description: 日志记录注解
  * @date: 2022/9/1 16:51
  */
 @Target({ElementType.METHOD})

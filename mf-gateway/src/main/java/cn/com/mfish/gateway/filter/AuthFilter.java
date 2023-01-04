@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 
 /**
  * @author: mfish
- * @description：认证过滤器
+ * @description: 认证过滤器
  * @date: 2021/11/18 17:59
  */
 @Component

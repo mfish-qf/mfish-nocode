@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * @author: mfish
- * @description：角色校验注解
+ * @description: 角色校验注解
  * @date: 2022/12/5 17:51
  */
 @Target({ElementType.TYPE, ElementType.METHOD})

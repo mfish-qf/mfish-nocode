@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author: mfish
- * @description：代码生成工具类
+ * @description: 代码生成工具类
  * @date: 2022/8/24 15:30
  */
 @Component

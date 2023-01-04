@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * @author: mfish
- * @description：代码相关属性
+ * @description: 代码相关属性
  * @date: 2022/8/25 16:39
  */
 @Data

@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 
 /**
  * @author: mfish
- * @description：匹配枚举
+ * @description: 匹配枚举
  * @date: 2022/12/23 16:59
  */
 public enum MatchType {

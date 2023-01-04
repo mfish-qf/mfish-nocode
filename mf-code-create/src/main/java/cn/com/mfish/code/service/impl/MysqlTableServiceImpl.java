@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：表信息
+ * @description: 表信息
  * @date: 2022/8/31 23:05
  */
 @Service

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish
- * @description：微信请求token校验
+ * @description: 微信请求token校验
  * @date: 2021/12/14 9:33
  */
 @Component

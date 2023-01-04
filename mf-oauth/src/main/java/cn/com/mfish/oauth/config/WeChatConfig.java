@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author: mfish
- * @description：微信配置
+ * @description: 微信配置
  * @date: 2021/12/14 9:20
  */
 @Configuration

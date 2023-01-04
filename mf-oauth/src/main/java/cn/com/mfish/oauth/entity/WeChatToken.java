@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * @author: mfish
- * @description：微信登录redis中token信息
+ * @description: 微信登录redis中token信息
  * @date: 2021/12/14 9:41
  */
 @Data

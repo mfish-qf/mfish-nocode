@@ -11,7 +11,7 @@ import java.util.UUID;
 
 /**
  * @author: mfish
- * @description：通用方法
+ * @description: 通用方法
  * @date: 2022/11/4 15:38
  */
 public class Utils {

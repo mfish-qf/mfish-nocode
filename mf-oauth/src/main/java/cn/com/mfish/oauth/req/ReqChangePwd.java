@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * @author: mfish
- * @description：修改密码入参
+ * @description: 修改密码入参
  * @date: 2022/12/21 22:17
  */
 @ApiModel("修改密码入参")

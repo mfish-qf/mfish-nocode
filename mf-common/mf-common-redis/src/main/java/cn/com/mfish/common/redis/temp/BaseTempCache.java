@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author: mfish
- * @description：临时缓存基类
+ * @description: 临时缓存基类
  * @date: 2020/2/14 17:20
  */
 @Data

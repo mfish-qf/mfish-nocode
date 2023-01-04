@@ -16,7 +16,7 @@ import java.util.Objects;
 
 /**
  * @author: mfish
- * @description：Feign请求令牌中继，防止令牌丢失
+ * @description: Feign请求令牌中继，防止令牌丢失
  * @date: 2021/12/13 10:19
  */
 @Component

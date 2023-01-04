@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author: mfish
- * @description：限流配置
+ * @description: 限流配置
  * @date: 2021/12/30 17:41
  */
 @Configuration

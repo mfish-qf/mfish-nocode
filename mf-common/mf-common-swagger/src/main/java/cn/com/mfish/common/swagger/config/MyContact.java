@@ -5,7 +5,7 @@ import springfox.documentation.service.Contact;
 
 /**
  * @author: mfish
- * @description：联系方式
+ * @description: 联系方式
  * @date: 2022/8/18 23:22
  */
 @Data

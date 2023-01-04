@@ -18,7 +18,7 @@ import java.nio.file.AccessDeniedException;
 
 /**
  * @author: mfish
- * @description：全局异常处理
+ * @description: 全局异常处理
  * @date: 2021/12/13 18:06
  */
 @RestControllerAdvice

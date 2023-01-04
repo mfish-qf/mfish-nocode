@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 
 /**
  * @author: mfish
- * @description：其他web业务服务参考类
+ * @description: 其他web业务服务参考类
  * @date: 2022/12/16 10:01
  */
 @Slf4j

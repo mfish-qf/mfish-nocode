@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：代码生成测试
+ * @description: 代码生成测试
  * @date: 2022/8/24 16:02
  */
 @Slf4j

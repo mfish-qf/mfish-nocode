@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 
 /**
  * @author: mfish
- * @description：路由配置信息
+ * @description: 路由配置信息
  * @date: 2021/12/21 16:33
  */
 @Configuration

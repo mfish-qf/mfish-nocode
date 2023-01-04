@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author: mfish
- * @description：分页请求
+ * @description: 分页请求
  * @date: 2022/11/16 23:14
  */
 @ApiModel("分页请求")

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author: mfish
- * @description：内部服务相互调用
+ * @description: 内部服务相互调用
  * @date: 2021/12/3 11:16
  */
 @Target(ElementType.METHOD)

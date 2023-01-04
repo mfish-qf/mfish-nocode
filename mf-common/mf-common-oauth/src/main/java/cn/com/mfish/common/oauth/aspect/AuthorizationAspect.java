@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author: mfish
- * @description：权限切面处理
+ * @description: 权限切面处理
  * @date: 2022/12/5 18:04
  */
 @Aspect

@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description：freemarker模版keys配置
+ * @description: freemarker模版keys配置
  * @date: 2022/8/30 16:15
  */
 @Configuration

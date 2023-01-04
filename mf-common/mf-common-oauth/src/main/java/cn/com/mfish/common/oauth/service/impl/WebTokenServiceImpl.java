@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author: mfish
- * @description：token操作服务
+ * @description: token操作服务
  * @date: 2021/12/9 16:03
  */
 @Service("webTokenService")

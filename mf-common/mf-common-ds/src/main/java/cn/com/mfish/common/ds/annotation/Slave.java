@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author: mfish
- * @description：从库数据源配置注解
+ * @description: 从库数据源配置注解
  * @date: 2021/11/30 11:54
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
