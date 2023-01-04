@@ -7,8 +7,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author qiufeng
- * @date 2020/3/5 14:38
+ * @author: mfish
+ * @date: 2020/3/5 14:38
  */
 @ApiModel("二维码属性")
 @Data

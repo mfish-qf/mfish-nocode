@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author ：qiufeng
- * @description：微信配置
- * @date ：2021/12/14 9:20
+ * @author: mfish
+ * @description: 微信配置
+ * @date: 2021/12/14 9:20
  */
 @Configuration
 @EnableConfigurationProperties(WeChatProperties.class)

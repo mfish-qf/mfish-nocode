@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 10:08
+ * @author: mfish
+ * @date: 2021/8/12 10:08
  */
 @Configuration
 @ConfigurationProperties(prefix = "security.xss")

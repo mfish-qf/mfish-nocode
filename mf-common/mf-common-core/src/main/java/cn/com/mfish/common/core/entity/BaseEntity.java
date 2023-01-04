@@ -10,9 +10,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
- * @author ：qiufeng
- * @description：基础对象类
- * @date ：2022/11/11 17:31
+ * @author: mfish
+ * @description: 基础对象类
+ * @date: 2022/11/11 17:31
  */
 @Data
 @Accessors(chain = true)

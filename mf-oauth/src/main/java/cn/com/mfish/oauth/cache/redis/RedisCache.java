@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 19:18
+ * @author: mfish
+ * @date: 2020/2/11 19:18
  */
 @Component
 public class RedisCache implements Cache<String, Object> {

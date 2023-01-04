@@ -9,9 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author ：qiufeng
- * @description：日志记录注解
- * @date ：2022/9/1 16:51
+ * @author: mfish
+ * @description: 日志记录注解
+ * @date: 2022/9/1 16:51
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

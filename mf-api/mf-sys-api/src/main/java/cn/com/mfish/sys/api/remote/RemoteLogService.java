@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
- * @author ：qiufeng
- * @description：日志对外服务
- * @date ：2022/9/4 11:45
+ * @author: mfish
+ * @description: 日志对外服务
+ * @date: 2022/9/4 11:45
  */
 @FeignClient(contextId = "remoteLogService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteLogFallback.class)
 public interface RemoteLogService {

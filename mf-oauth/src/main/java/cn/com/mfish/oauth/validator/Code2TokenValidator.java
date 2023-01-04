@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 14:43
+ * @author: mfish
+ * @date: 2020/2/17 14:43
  */
 @Component
 public class Code2TokenValidator extends MultipleValidator {

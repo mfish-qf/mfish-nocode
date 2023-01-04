@@ -1,8 +1,8 @@
 /**
- * @Description: ${tableInfo.tableComment}
- * @Author: mfish
- * @Date: ${.now?string["yyyy-MM-dd"]}
- * @Version: V1.0.0
+ * @description: ${tableInfo.tableComment}
+ * @author: mfish
+ * @date: ${.now?string["yyyy-MM-dd"]}
+ * @version: V1.0.0
  */
 import { defHttp } from "/@/utils/http/axios";
 import { ${entityName}, Req${entityName}, ${entityName}PageModel } from "/@/api/${apiPrefix}/model/${entityName}Model";

@@ -1,8 +1,8 @@
 package cn.com.mfish.common.core.exception;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 11:45
+ * @author: mfish
+ * @date: 2021/8/12 11:45
  */
 public class UtilException extends RuntimeException {
     public UtilException(Throwable e) {

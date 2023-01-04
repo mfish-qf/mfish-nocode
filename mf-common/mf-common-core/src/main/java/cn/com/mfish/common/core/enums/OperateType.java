@@ -1,9 +1,9 @@
 package cn.com.mfish.common.core.enums;
 
 /**
- * @author ：qiufeng
- * @description：操作类型
- * @date ：2022/9/1 17:05
+ * @author: mfish
+ * @description: 操作类型
+ * @date: 2022/9/1 17:05
  */
 public enum OperateType {
     //其他操作

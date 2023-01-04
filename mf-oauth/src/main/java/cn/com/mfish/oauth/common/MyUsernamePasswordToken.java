@@ -5,8 +5,8 @@ import cn.com.mfish.oauth.entity.SsoUser;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
- * @author qiufeng
- * @date 2020/2/10 19:28
+ * @author: mfish
+ * @date: 2020/2/10 19:28
  */
 public class MyUsernamePasswordToken extends UsernamePasswordToken {
 

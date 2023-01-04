@@ -11,9 +11,9 @@ import javax.annotation.Resource;
 import java.util.Set;
 
 /**
- * @author ：qiufeng
- * @description：用户权限缓存
- * @date ：2022/12/6 22:44
+ * @author: mfish
+ * @description: 用户权限缓存
+ * @date: 2022/12/6 22:44
  */
 @Component("userPermissionCache")
 public class UserPermissionCache extends BaseTempCache<Set<String>> {

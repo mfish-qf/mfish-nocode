@@ -10,8 +10,8 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author qiufeng
- * @date 2020/3/5 14:59
+ * @author: mfish
+ * @date: 2020/3/5 14:59
  */
 @Service
 public class QRCodeServiceImpl implements QRCodeService {

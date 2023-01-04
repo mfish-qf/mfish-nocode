@@ -1,8 +1,8 @@
 package cn.com.mfish.common.oauth.service;
 
 /**
- * @author qiufeng
- * @date 2020/2/29 16:33
+ * @author: mfish
+ * @date: 2020/2/29 16:33
  */
 public interface TokenService<T> {
 

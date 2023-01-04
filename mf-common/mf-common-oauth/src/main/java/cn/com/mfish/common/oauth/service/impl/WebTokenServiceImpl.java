@@ -10,9 +10,9 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author ：qiufeng
- * @description：token操作服务
- * @date ：2021/12/9 16:03
+ * @author: mfish
+ * @description: token操作服务
+ * @date: 2021/12/9 16:03
  */
 @Service("webTokenService")
 public class WebTokenServiceImpl implements TokenService<RedisAccessToken> {

@@ -3,8 +3,8 @@ package cn.com.mfish.oauth.service;
 import cn.com.mfish.oauth.entity.OAuthClient;
 
 /**
- * @author qiufeng
- * @date 2020/2/16 16:10
+ * @author: mfish
+ * @date: 2020/2/16 16:10
  */
 public interface ClientService {
     /**

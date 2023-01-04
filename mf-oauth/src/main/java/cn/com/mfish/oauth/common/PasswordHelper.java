@@ -8,8 +8,8 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 /**
- * @author qiufeng
- * @date 2020/2/13 16:32
+ * @author: mfish
+ * @date: 2020/2/13 16:32
  */
 @ApiModel("密码助手，用于新增用户时密码加密")
 @Component

@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author qiufeng
+ * @author: mfish
  * 用户token缓存信息
- * @date 2020/2/22 13:13
+ * @date: 2020/2/22 13:13
  */
 @Component
 public class UserTokenCache {

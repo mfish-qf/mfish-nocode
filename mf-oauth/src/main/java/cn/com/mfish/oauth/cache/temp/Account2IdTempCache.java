@@ -11,8 +11,8 @@ import javax.annotation.Resource;
 import java.text.MessageFormat;
 
 /**
- * @author qiufeng
- * @date 2020/2/14 18:56
+ * @author: mfish
+ * @date: 2020/2/14 18:56
  */
 @Component
 @Slf4j

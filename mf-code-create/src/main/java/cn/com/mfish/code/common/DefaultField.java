@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author ：qiufeng
- * @description：缺省字段
- * @date ：2022/11/12 21:38
+ * @author: mfish
+ * @description: 缺省字段
+ * @date: 2022/11/12 21:38
  */
 public class DefaultField {
     public static Set<String> values = new HashSet<>();

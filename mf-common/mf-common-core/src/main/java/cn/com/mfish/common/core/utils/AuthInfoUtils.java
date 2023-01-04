@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author qiufeng
+ * @author: mfish
  * @description: 认证相关信息
- * @date 2020/2/12 13:47
+ * @date: 2020/2/12 13:47
  */
 @Slf4j
 public class AuthInfoUtils {

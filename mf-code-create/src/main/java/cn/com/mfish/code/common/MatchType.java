@@ -3,9 +3,9 @@ package cn.com.mfish.code.common;
 import cn.com.mfish.common.core.utils.StringUtils;
 
 /**
- * @author ：qiufeng
- * @description：匹配枚举
- * @date ：2022/12/23 16:59
+ * @author: mfish
+ * @description: 匹配枚举
+ * @date: 2022/12/23 16:59
  */
 public enum MatchType {
     不处理("none"),

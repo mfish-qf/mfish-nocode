@@ -4,8 +4,8 @@ package cn.com.mfish.common.redis.common;
 import cn.com.mfish.common.core.enums.DeviceType;
 
 /**
- * @author qiufeng
- * @date 2020/2/14 15:46
+ * @author: mfish
+ * @date: 2020/2/14 15:46
  */
 public class RedisPrefix {
     //交换code 存储登录信息供交换token时判断使用

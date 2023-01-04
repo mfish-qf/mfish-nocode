@@ -11,8 +11,8 @@ import org.apache.shiro.authc.*;
 import javax.annotation.Resource;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 9:42
+ * @author: mfish
+ * @date: 2020/2/11 9:42
  */
 public class QRCodeRealm extends BaseRealm {
     @Resource

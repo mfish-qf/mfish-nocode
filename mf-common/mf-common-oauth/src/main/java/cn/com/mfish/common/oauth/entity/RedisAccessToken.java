@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 15:04
+ * @author: mfish
+ * @date: 2020/2/17 15:04
  */
 @ApiModel("存储的accessToken信息")
 @EqualsAndHashCode(callSuper = true)

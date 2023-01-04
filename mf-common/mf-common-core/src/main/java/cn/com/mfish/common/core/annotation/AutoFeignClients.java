@@ -8,9 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author ：qiufeng
- * @description：Feign注解设置扫描包
- * @date ：2021/12/3 15:40
+ * @author: mfish
+ * @description: Feign注解设置扫描包
+ * @date: 2021/12/3 15:40
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

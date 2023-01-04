@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * @author ：qiufeng
- * @description：权限切面处理
- * @date ：2022/12/5 18:04
+ * @author: mfish
+ * @description: 权限切面处理
+ * @date: 2022/12/5 18:04
  */
 @Aspect
 @Component

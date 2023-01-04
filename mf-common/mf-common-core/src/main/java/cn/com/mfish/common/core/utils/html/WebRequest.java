@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * @author ：qiufeng
- * @description：统一web请求
- * @date ：2021/12/9 11:46
+ * @author: mfish
+ * @description: 统一web请求
+ * @date: 2021/12/9 11:46
  */
 public class WebRequest {
 

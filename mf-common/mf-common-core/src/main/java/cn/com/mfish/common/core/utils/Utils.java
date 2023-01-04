@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author ：qiufeng
- * @description：通用方法
- * @date ：2022/11/4 15:38
+ * @author: mfish
+ * @description: 通用方法
+ * @date: 2022/11/4 15:38
  */
 public class Utils {
     /**

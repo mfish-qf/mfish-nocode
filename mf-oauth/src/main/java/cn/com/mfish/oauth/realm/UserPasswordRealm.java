@@ -5,8 +5,8 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.util.ByteSource;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 9:33
+ * @author: mfish
+ * @date: 2020/2/11 9:33
  */
 public class UserPasswordRealm extends BaseRealm {
 

@@ -35,8 +35,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 14:17
+ * @author: mfish
+ * @date: 2020/2/17 14:17
  */
 @Api(tags = "token获取")
 @RestController

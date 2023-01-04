@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 17:29
+ * @author: mfish
+ * @date: 2020/2/13 17:29
  */
 @ApiModel("用户全部信息")
 @Data

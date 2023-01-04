@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author ：qiufeng
- * @description：freemarker模版keys配置
- * @date ：2022/8/30 16:15
+ * @author: mfish
+ * @description: freemarker模版keys配置
+ * @date: 2022/8/30 16:15
  */
 @Configuration
 @RefreshScope

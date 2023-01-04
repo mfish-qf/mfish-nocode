@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 17:53
+ * @author: mfish
+ * @date: 2020/2/11 17:53
  */
 @Component
 public class RedisCacheManager implements CacheManager {

@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.nio.file.AccessDeniedException;
 
 /**
- * @author ：qiufeng
- * @description：全局异常处理
- * @date ：2021/12/13 18:06
+ * @author: mfish
+ * @description: 全局异常处理
+ * @date: 2021/12/13 18:06
  */
 @RestControllerAdvice
 @Slf4j

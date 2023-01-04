@@ -33,8 +33,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 11:42
+ * @author: mfish
+ * @date: 2020/2/11 11:42
  */
 @Api(tags = "认证code获取")
 @Controller

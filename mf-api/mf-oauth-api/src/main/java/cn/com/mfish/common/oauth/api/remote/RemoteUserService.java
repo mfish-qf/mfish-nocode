@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author ：qiufeng
- * @description：RPC用户服务
- * @date ：2021/12/1 17:10
+ * @author: mfish
+ * @description: RPC用户服务
+ * @date: 2021/12/1 17:10
  */
 @FeignClient(contextId = "remoteUserService", value = ServiceConstants.OAUTH_SERVICE, fallbackFactory = RemoteUserFallback.class)
 public interface RemoteUserService {

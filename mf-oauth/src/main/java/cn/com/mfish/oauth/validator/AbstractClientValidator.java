@@ -9,8 +9,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/16 18:10
+ * @author: mfish
+ * @date: 2020/2/16 18:10
  */
 public abstract class AbstractClientValidator implements IBaseValidator<OAuthClient> {
 

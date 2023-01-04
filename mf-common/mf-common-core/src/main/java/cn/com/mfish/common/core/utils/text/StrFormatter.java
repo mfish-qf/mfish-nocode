@@ -5,8 +5,8 @@ import cn.com.mfish.common.core.utils.StringUtils;
 /**
  * 字符串格式化
  *
- * @author qiufeng
- * @date 2021/8/12 10:36
+ * @author: mfish
+ * @date: 2021/8/12 10:36
  */
 public class StrFormatter {
     public static final String EMPTY_JSON = "{}";

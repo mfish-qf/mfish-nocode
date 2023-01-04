@@ -3,8 +3,8 @@ package cn.com.mfish.common.core.constants;
 /**
  * 请求状态码
  *
- * @author qiufeng
- * @date 2021/8/12 11:37
+ * @author: mfish
+ * @date: 2021/8/12 11:37
  */
 public class HttpStatus {
     /**

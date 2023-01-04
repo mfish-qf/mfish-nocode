@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 14:44
+ * @author: mfish
+ * @date: 2020/2/17 14:44
  */
 @Component
 public class GrantTypeExistValidator extends AbstractClientValidator {

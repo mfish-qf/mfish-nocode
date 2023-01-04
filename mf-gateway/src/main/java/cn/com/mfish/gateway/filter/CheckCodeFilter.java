@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 9:59
+ * @author: mfish
+ * @date: 2021/8/12 9:59
  */
 @Component
 public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {

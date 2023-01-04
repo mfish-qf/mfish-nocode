@@ -16,9 +16,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * @author ：qiufeng
- * @description：获取请求参数，解决参数不能重复读取问题
- * @date ：2021/12/23 15:30
+ * @author: mfish
+ * @description: 获取请求参数，解决参数不能重复读取问题
+ * @date: 2021/12/23 15:30
  */
 @Component
 public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config> {

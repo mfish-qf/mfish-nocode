@@ -6,9 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
- * @author ：qiufeng
- * @description：分页请求
- * @date ：2022/11/16 23:14
+ * @author: mfish
+ * @description: 分页请求
+ * @date: 2022/11/16 23:14
  */
 @ApiModel("分页请求")
 public class ReqPage implements Serializable {

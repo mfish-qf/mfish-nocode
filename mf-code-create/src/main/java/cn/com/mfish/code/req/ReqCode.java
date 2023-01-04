@@ -5,9 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * @author ：qiufeng
- * @description：代码生成参数
- * @date ：2022/12/23 19:39
+ * @author: mfish
+ * @description: 代码生成参数
+ * @date: 2022/12/23 19:39
  */
 @Data
 @ApiModel("代码生成参数")

@@ -13,9 +13,9 @@ import springfox.documentation.swagger.web.*;
 import java.util.List;
 
 /**
- * @author ：qiufeng
- * @description：swagger处理器
- * @date ：2021/11/15 11:44
+ * @author: mfish
+ * @description: swagger处理器
+ * @date: 2021/11/15 11:44
  */
 @RestController
 @RequestMapping("/swagger-resources")

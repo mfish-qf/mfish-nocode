@@ -18,9 +18,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author ：qiufeng
- * @description：代码生成控制器
- * @date ：2022/8/18 16:45
+ * @author: mfish
+ * @description: 代码生成控制器
+ * @date: 2022/8/18 16:45
  */
 @Api(tags = "代码生成")
 @RestController

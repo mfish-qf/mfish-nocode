@@ -3,8 +3,8 @@ package cn.com.mfish.common.core.constants;
 /**
  * 通用常量信息
  *
- * @author qiufeng
- * @date 2021/8/12 11:27
+ * @author: mfish
+ * @date: 2021/8/12 11:27
  */
 public class Constants {
     /**

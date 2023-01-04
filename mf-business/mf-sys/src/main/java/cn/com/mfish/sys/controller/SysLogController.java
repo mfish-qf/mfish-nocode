@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * @Description: 系统日志
  * @Author: mfish
- * @Date: 2022-09-02
+ * @date: 2022-09-02
  * @Version: V1.0.0
  */
 @Slf4j

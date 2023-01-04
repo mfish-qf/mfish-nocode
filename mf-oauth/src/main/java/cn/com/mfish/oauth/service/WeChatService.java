@@ -5,9 +5,9 @@ import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.WeChatToken;
 
 /**
- * @author ：qiufeng
- * @description：微信接口服务
- * @date ：2021/12/14 9:37
+ * @author: mfish
+ * @description: 微信接口服务
+ * @date: 2021/12/14 9:37
  */
 public interface WeChatService extends TokenService<WeChatToken> {
 

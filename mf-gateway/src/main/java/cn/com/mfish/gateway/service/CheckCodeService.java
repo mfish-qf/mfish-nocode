@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 11:06
+ * @author: mfish
+ * @date: 2021/8/12 11:06
  */
 public interface CheckCodeService {
 

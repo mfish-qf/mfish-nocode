@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author ：qiufeng
- * @description：用户信息Vo
- * @date ：2022/12/1 21:07
+ * @author: mfish
+ * @description: 用户信息Vo
+ * @date: 2022/12/1 21:07
  */
 @ApiModel("用户基础信息带权限")
 @Data

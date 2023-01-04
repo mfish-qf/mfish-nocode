@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 15:26
+ * @author: mfish
+ * @date: 2020/2/17 15:26
  */
 @Component
 public class ClientSecretExistValidator extends AbstractClientValidator {

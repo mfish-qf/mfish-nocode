@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author ：qiufeng
- * @description：用户权限缓存
- * @date ：2022/12/5 22:06
+ * @author: mfish
+ * @description: 用户权限缓存
+ * @date: 2022/12/5 22:06
  */
 @Component("userPermissionTempCache")
 public class UserPermissionTempCache extends UserPermissionCache {

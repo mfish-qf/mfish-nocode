@@ -1,8 +1,8 @@
 package cn.com.mfish.common.oauth.common;
 
 /**
- * @author qiufeng
- * @date 2020/2/10 19:32
+ * @author: mfish
+ * @date: 2020/2/10 19:32
  */
 public class SerConstant {
     public static final String ACCOUNT_DELETE_DESCRIPTION = "登录失败:该账号已删除，请联系管理员";

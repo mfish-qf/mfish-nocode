@@ -15,9 +15,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author ：qiufeng
- * @description：OAUTH工具方法
- * @date ：2022/12/6 17:23
+ * @author: mfish
+ * @description: OAUTH工具方法
+ * @date: 2022/12/6 17:23
  */
 public class OauthUtils {
 

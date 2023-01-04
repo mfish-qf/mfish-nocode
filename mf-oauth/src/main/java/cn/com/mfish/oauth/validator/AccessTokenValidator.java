@@ -11,8 +11,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 19:06
+ * @author: mfish
+ * @date: 2020/2/17 19:06
  */
 @Component
 public class AccessTokenValidator implements IBaseValidator<RedisAccessToken> {

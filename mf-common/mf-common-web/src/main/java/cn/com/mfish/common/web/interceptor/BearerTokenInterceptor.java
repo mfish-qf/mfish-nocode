@@ -15,9 +15,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * @author ：qiufeng
- * @description：Feign请求令牌中继，防止令牌丢失
- * @date ：2021/12/13 10:19
+ * @author: mfish
+ * @description: Feign请求令牌中继，防止令牌丢失
+ * @date: 2021/12/13 10:19
  */
 @Component
 public class BearerTokenInterceptor implements RequestInterceptor {

@@ -1,8 +1,8 @@
 package cn.com.mfish.common.core.exception;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 11:32
+ * @author: mfish
+ * @date: 2021/8/12 11:32
  */
 public class CaptchaException extends RuntimeException {
     public CaptchaException(String msg) {

@@ -4,10 +4,10 @@ import ${packageName}.entity.${entityName};
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @Description: ${tableInfo.tableComment}
- * @Author: mfish
- * @Date: ${.now?string["yyyy-MM-dd"]}
- * @Version: V1.0.0
+ * @description: ${tableInfo.tableComment}
+ * @author: mfish
+ * @date: ${.now?string["yyyy-MM-dd"]}
+ * @version: V1.0.0
  */
 public interface ${entityName}Mapper extends BaseMapper<${entityName}> {
 

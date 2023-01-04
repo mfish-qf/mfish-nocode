@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 14:41
+ * @author: mfish
+ * @date: 2020/2/13 14:41
  */
 @Data
 public abstract class MultipleValidator {

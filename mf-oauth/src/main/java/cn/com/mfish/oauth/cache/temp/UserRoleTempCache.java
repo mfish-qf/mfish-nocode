@@ -9,9 +9,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author ：qiufeng
- * @description：用户角色临时缓存
- * @date ：2022/12/5 22:00
+ * @author: mfish
+ * @description: 用户角色临时缓存
+ * @date: 2022/12/5 22:00
  */
 @Component("userRoleTempCache")
 public class UserRoleTempCache extends UserRoleCache {

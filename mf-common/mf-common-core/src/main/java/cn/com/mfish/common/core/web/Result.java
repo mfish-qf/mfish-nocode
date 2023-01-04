@@ -13,8 +13,8 @@ import java.util.Map;
 /**
  * 请求返回泛型结果
  *
- * @author qiufeng
- * @date 2021/3/16 14:34
+ * @author: mfish
+ * @date: 2021/3/16 14:34
  */
 @ApiModel("通用泛型结果返回")
 @Accessors(chain = true)

@@ -8,9 +8,9 @@ import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * @author ：qiufeng
- * @description：日志远程调用异常回调
- * @date ：2022/9/4 11:47
+ * @author: mfish
+ * @description: 日志远程调用异常回调
+ * @date: 2022/9/4 11:47
  */
 @Slf4j
 @Component

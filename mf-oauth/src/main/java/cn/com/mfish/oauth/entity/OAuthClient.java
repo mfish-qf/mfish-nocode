@@ -7,8 +7,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author qiufeng
- * @date 2020/2/16 15:57
+ * @author: mfish
+ * @date: 2020/2/16 15:57
  */
 @ApiModel("接入客户端信息")
 @Data

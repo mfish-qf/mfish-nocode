@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 /**
- * @author qiufeng
- * @date 2020/2/26 17:23
+ * @author: mfish
+ * @date: 2020/2/26 17:23
  */
 @Slf4j
 public abstract class BaseRealm extends AuthorizingRealm {

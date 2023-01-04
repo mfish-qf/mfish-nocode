@@ -25,8 +25,8 @@ import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 10:12
+ * @author: mfish
+ * @date: 2021/8/12 10:12
  */
 @Component
 @ConditionalOnProperty(value = "security.xss.enabled", havingValue = "true")
