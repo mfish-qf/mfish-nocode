@@ -1,4 +1,4 @@
-import { PageResult } from "/@/api/model/BaseModel";
+import { BaseEntity, PageResult } from "/@/api/model/BaseModel";
 
 /**
  * @Description: ${tableInfo.tableComment}
@@ -6,9 +6,9 @@ import { PageResult } from "/@/api/model/BaseModel";
  * @Date: ${.now?string["yyyy-MM-dd"]}
  * @Version: V1.0.0
  */
-export interface ${entityName} {
+export interface ${entityName} extends BaseEntity<<#if tableInfo.idType==''||tableInfo.idType=='String'>string<#else>number</#if>> {
 <#list tableInfo.columns as fieldInfo>
-    ${fieldInfo.fieldName}: <#if fieldInfo.type=='String'||fieldInfo.type='Date'>string<#elseif fieldInfo.type =='Boolean'>boolean<#else>number</#if>
+  ${fieldInfo.fieldName}: <#if fieldInfo.type=='String'||fieldInfo.type='Date'>string<#elseif fieldInfo.type =='Boolean'>boolean<#else>number</#if>
 </#list>
 }
 

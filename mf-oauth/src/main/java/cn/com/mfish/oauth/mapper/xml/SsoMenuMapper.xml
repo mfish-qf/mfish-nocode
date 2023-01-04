@@ -14,6 +14,7 @@
             <if test="permissions != null">permissions,</if>
             <if test="isExternal != null">is_external,</if>
             <if test="isVisible != null">is_visible,</if>
+            <if test="activeMenu != null">active_menu,</if>
             <if test="isKeepalive != null">is_keepalive,</if>
             <if test="remark != null">remark,</if>
             create_by, create_time
@@ -33,6 +34,7 @@
             <if test="permissions != null">#{permissions},</if>
             <if test="isExternal != null">#{isExternal},</if>
             <if test="isVisible != null">#{isVisible},</if>
+            <if test="activeMenu != null">#{activeMenu},</if>
             <if test="isKeepalive != null">#{isKeepalive},</if>
             <if test="remark != null">#{remark},</if>
             #{createBy}, now()

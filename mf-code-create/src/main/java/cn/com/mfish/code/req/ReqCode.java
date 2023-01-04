@@ -12,9 +12,9 @@ import lombok.Data;
 @Data
 @ApiModel("代码生成参数")
 public class ReqCode {
-    @ApiModelProperty("库名 必传")
+    @ApiModelProperty("库名(必传)")
     private String schema;
-    @ApiModelProperty("表名 必传")
+    @ApiModelProperty("表名(必传)")
     private String tableName;
     @ApiModelProperty("表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")
     private String tableComment;

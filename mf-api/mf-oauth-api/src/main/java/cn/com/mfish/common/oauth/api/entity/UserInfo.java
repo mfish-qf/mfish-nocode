@@ -42,6 +42,8 @@ public class UserInfo extends BaseEntity<String> {
     private Integer status;
     @ApiModelProperty(value = "删除标志（0正常 1删除）")
     private Integer delFlag;
+    @ApiModelProperty("备注")
+    private String remark;
     @TableField(exist = false)
     @ApiModelProperty("组织名称")
     private String orgName;

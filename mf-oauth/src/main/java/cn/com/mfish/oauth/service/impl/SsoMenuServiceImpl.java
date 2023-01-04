@@ -79,8 +79,8 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         if (count > 0) {
             return Result.fail(false, "错误:菜单包含子节点，不允许删除");
         }
+        SsoMenu ssoMenu = baseMapper.selectById(menuId);
         if (baseMapper.deleteById(menuId) > 0) {
-            SsoMenu ssoMenu = baseMapper.selectById(menuId);
             if (StringUtils.isEmpty(ssoMenu.getClientId())) {
                 ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
             }
