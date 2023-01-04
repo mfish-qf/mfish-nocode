@@ -57,7 +57,7 @@ public class ${entityName}Controller {
 		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})) {
 			return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-添加成功!");
 		}
-        return Result.fail("错误:${tableInfo.tableComment}-添加失败!");
+        return Result.fail(${entityName?uncap_first}, "错误:${tableInfo.tableComment}-添加失败!");
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class ${entityName}Controller {
 		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})) {
 		    return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-编辑成功!");
 		}
-		return Result.fail("错误:${tableInfo.tableComment}-编辑失败!");
+		return Result.fail(${entityName?uncap_first}, "错误:${tableInfo.tableComment}-编辑失败!");
 	}
 
 	/**

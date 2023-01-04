@@ -22,7 +22,7 @@ public class TreeUtils {
      * @param items 源列表
      * @param trees 目标树
      * @param cls   源类型
-     * @param <T>   树了行
+     * @param <T>   树类型
      * @param <P>   id类型
      */
     public static <T extends BaseTreeEntity<P>, P> void buildTree(P pId, List<T> items, List<T> trees, Class<T> cls) {

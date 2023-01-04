@@ -1,6 +1,7 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.page.PageResult;
@@ -60,10 +61,14 @@ public class DictController {
     @ApiOperation(value = "字典-添加", notes = "字典-添加")
     @PostMapping
     public Result<Dict> add(@RequestBody Dict dict) {
+        Result result = verifyDict(dict);
+        if (!result.isSuccess()) {
+            return result;
+        }
         if (dictService.save(dict)) {
             return Result.ok(dict, "字典-添加成功!");
         }
-        return Result.fail("错误:字典-添加失败!");
+        return Result.fail(dict, "错误:字典-添加失败!");
     }
 
     /**
@@ -76,10 +81,30 @@ public class DictController {
     @ApiOperation(value = "字典-编辑", notes = "字典-编辑")
     @PutMapping
     public Result<Dict> edit(@RequestBody Dict dict) {
+        Result result = verifyDict(dict);
+        if (!result.isSuccess()) {
+            return result;
+        }
         if (dictService.updateById(dict)) {
             return Result.ok(dict, "字典-编辑成功!");
         }
-        return Result.fail("错误:字典-编辑失败!");
+        return Result.fail(dict, "错误:字典-编辑失败!");
+    }
+
+    /**
+     * 字典入参校验
+     *
+     * @param dict
+     * @return
+     */
+    private Result<Dict> verifyDict(Dict dict) {
+        if (StringUtils.isEmpty(dict.getDictCode())) {
+            return Result.fail("错误:字典编码不允许为空!");
+        }
+        if (StringUtils.isEmpty(dict.getDictName())) {
+            return Result.fail("错误:字典名称不允许为空!");
+        }
+        return Result.ok(dict, "校验成功");
     }
 
     /**

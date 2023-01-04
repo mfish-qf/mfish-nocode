@@ -1,6 +1,7 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.page.PageResult;
@@ -61,10 +62,33 @@ public class DictItemController {
     @ApiOperation(value = "字典项-添加", notes = "字典项-添加")
     @PostMapping
     public Result<DictItem> add(@RequestBody DictItem dictItem) {
+        Result result = verifyDict(dictItem);
+        if (!result.isSuccess()) {
+            return result;
+        }
         if (dictItemService.save(dictItem)) {
             return Result.ok(dictItem, "字典项-添加成功!");
         }
-        return Result.fail("错误:字典项-添加失败!");
+        return Result.fail(dictItem, "错误:字典项-添加失败!");
+    }
+
+    /**
+     * 字典入参校验
+     *
+     * @param dictItem
+     * @return
+     */
+    private Result<DictItem> verifyDict(DictItem dictItem) {
+        if (StringUtils.isEmpty(dictItem.getDictCode())) {
+            return Result.fail("错误:字典编码不允许为空!");
+        }
+        if (StringUtils.isEmpty(dictItem.getDictLabel())) {
+            return Result.fail("错误:字典标签不允许为空!");
+        }
+        if (StringUtils.isEmpty(dictItem.getDictValue())) {
+            return Result.fail("错误:字典键值不允许为空!");
+        }
+        return Result.ok(dictItem, "校验成功");
     }
 
     /**
@@ -77,10 +101,14 @@ public class DictItemController {
     @ApiOperation(value = "字典项-编辑", notes = "字典项-编辑")
     @PutMapping
     public Result<DictItem> edit(@RequestBody DictItem dictItem) {
+        Result result = verifyDict(dictItem);
+        if (!result.isSuccess()) {
+            return result;
+        }
         if (dictItemService.updateById(dictItem)) {
             return Result.ok(dictItem, "字典项-编辑成功!");
         }
-        return Result.fail("错误:字典项-编辑失败!");
+        return Result.fail(dictItem, "错误:字典项-编辑失败!");
     }
 
     /**
