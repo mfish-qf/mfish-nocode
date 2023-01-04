@@ -176,10 +176,14 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         int res = baseMapper.updateById(user);
         if (res > 0) {
             user.setAccount(account);
-            baseMapper.deleteUserOrg(user.getId());
-            insertUserOrg(user.getId(), user.getOrgId());
-            baseMapper.deleteUserRole(user.getId());
-            insertUserRole(user.getId(), user.getRoleIds());
+            if (null != user.getOrgId()) {
+                baseMapper.deleteUserOrg(user.getId());
+                insertUserOrg(user.getId(), user.getOrgId());
+            }
+            if (null != user.getRoleIds()) {
+                baseMapper.deleteUserRole(user.getId());
+                insertUserRole(user.getId(), user.getRoleIds());
+            }
             String clientId = AuthInfoUtils.getCurrentClientId();
             //移除缓存下次登录时会自动拉取
             CompletableFuture.runAsync(() -> removeUserCache(user.getId(), clientId));
