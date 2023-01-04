@@ -12,8 +12,8 @@ import java.util.Set;
 /**
  * 类型转换工具类
  *
- * @author qiufeng
- * @date 2021/8/12 10:36
+ * @author: mfish
+ * @date: 2021/8/12 10:36
  */
 public class Convert {
     /**

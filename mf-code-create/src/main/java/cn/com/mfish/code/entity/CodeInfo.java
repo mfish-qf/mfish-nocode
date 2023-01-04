@@ -8,9 +8,9 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：代码相关属性
- * @date ：2022/8/25 16:39
+ * @date: 2022/8/25 16:39
  */
 @Data
 @ApiModel("代码相关属性")

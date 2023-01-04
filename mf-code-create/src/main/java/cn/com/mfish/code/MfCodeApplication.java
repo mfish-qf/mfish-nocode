@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：代码生成入口类
- * @date ：2022/8/18 16:42
+ * @date: 2022/8/18 16:42
  */
 @Slf4j
 @AutoWeb

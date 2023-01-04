@@ -5,8 +5,8 @@ import cn.com.mfish.common.core.web.Result;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 13:43
+ * @author: mfish
+ * @date: 2020/2/13 13:43
  */
 public interface IBaseValidator<T> {
     Result<T> validate(HttpServletRequest request, Result<T> result);

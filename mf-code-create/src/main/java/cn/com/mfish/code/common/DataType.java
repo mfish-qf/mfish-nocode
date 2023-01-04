@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author qiufeng
- * @date 2022/08/25 10:58
+ * @author: mfish
+ * @date: 2022/08/25 10:58
  */
 public enum DataType {
     UNKNOWN("unknown"),//未知类型

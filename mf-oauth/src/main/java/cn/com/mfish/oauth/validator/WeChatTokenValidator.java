@@ -12,9 +12,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：微信请求token校验
- * @date ：2021/12/14 9:33
+ * @date: 2021/12/14 9:33
  */
 @Component
 public class WeChatTokenValidator implements IBaseValidator<WeChatToken> {

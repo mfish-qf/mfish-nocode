@@ -10,9 +10,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：表信息
- * @date ：2022/8/31 23:05
+ * @date: 2022/8/31 23:05
  */
 @Service
 public class MysqlTableServiceImpl implements MysqlTableService {

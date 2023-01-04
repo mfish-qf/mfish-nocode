@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：swagger配置类
- * @date ：2021/11/15 12:59
+ * @date: 2021/11/15 12:59
  */
 @Configuration
 @EnableOpenApi

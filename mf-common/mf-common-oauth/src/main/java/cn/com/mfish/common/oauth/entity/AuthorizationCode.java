@@ -7,8 +7,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 12:56
+ * @author: mfish
+ * @date: 2020/2/13 12:56
  */
 @ApiModel("认证Code属性")
 @Data

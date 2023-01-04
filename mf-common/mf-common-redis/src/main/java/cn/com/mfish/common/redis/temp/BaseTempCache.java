@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author qiufeng
+ * @author: mfish
  * @description：临时缓存基类
- * @date 2020/2/14 17:20
+ * @date: 2020/2/14 17:20
  */
 @Data
 public abstract class BaseTempCache<T> {

@@ -5,8 +5,8 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * @author qiufeng
- * @date 2021/10/26 17:00
+ * @author: mfish
+ * @date: 2021/10/26 17:00
  */
 public class WxCredentialsMatcher extends AutoUserCredentialsMatcher {
     @Override

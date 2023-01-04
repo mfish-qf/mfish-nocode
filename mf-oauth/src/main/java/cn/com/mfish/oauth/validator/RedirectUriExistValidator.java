@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/16 17:57
+ * @author: mfish
+ * @date: 2020/2/16 17:57
  */
 @Component
 public class RedirectUriExistValidator extends AbstractClientValidator {

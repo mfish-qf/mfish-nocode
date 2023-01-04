@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：代码相关信息
- * @date ：2022/9/1 15:46
+ * @date: 2022/9/1 15:46
  */
 @Data
 @Accessors(chain = true)

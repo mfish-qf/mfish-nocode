@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 /**
  * HTML过滤器，用于去除XSS漏洞隐患
  *
- * @author qiufeng
- * @date 2021/8/12 10:50
+ * @author: mfish
+ * @date: 2021/8/12 10:50
  */
 public class HTMLFilter {
     /**

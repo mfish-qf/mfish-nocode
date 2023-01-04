@@ -10,8 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author qiufeng
- * @date 2020/2/18 18:53
+ * @author: mfish
+ * @date: 2020/2/18 18:53
  */
 public abstract class AbstractRefreshTokenValidator implements IBaseValidator<RedisAccessToken> {
     @Resource

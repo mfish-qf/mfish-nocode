@@ -12,8 +12,8 @@ import java.util.function.Function;
 /**
  * 字符串工具类
  *
- * @author qiufeng
- * @date 2021/8/12 10:34
+ * @author: mfish
+ * @date: 2021/8/12 10:34
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 

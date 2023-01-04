@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author qiufeng
- * @date 2020/2/18 19:02
+ * @author: mfish
+ * @date: 2020/2/18 19:02
  */
 @Component
 public class Refresh2TokenValidator extends MultipleValidator {

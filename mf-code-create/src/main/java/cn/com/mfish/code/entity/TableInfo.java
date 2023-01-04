@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：表信息
- * @date ：2022/8/29 16:46
+ * @date: 2022/8/29 16:46
  */
 @Data
 @ApiModel("表信息")

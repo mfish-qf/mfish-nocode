@@ -9,8 +9,8 @@ import javax.annotation.Resource;
 
 
 /**
- * @author qiufeng
- * @date 2020/2/25 16:51
+ * @author: mfish
+ * @date: 2020/2/25 16:51
  */
 public class SmsCredentialsMatcher extends AutoUserCredentialsMatcher {
     @Resource

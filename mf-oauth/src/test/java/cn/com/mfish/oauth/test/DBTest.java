@@ -12,9 +12,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：测试数据库请求
- * @date ：2022/11/24 23:10
+ * @date: 2022/11/24 23:10
  */
 @Slf4j
 @SpringBootTest

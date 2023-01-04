@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 16:50
+ * @author: mfish
+ * @date: 2020/2/13 16:50
  */
 public interface SsoUserService extends IService<SsoUser> {
     Result<Boolean> changePassword(String userId, String oldPwd, String newPwd);

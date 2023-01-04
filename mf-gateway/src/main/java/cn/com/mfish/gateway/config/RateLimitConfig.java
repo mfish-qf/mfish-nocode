@@ -10,9 +10,9 @@ import org.springframework.core.annotation.Order;
 import reactor.core.publisher.Mono;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：限流配置
- * @date ：2021/12/30 17:41
+ * @date: 2021/12/30 17:41
  */
 @Configuration
 public class RateLimitConfig {

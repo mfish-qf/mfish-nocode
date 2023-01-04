@@ -4,9 +4,9 @@ import lombok.Data;
 import springfox.documentation.service.Contact;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：联系方式
- * @date ：2022/8/18 23:22
+ * @date: 2022/8/18 23:22
  */
 @Data
 public class MyContact {

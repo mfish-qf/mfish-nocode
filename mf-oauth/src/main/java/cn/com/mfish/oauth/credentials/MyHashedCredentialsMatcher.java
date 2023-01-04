@@ -9,8 +9,8 @@ import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import javax.annotation.Resource;
 
 /**
- * @author qiufeng
- * @date 2020/2/10 19:48
+ * @author: mfish
+ * @date: 2020/2/10 19:48
  */
 public class MyHashedCredentialsMatcher extends HashedCredentialsMatcher {
     @Resource

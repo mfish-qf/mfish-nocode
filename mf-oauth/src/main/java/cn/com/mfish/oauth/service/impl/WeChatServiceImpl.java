@@ -17,9 +17,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：微信接口服务实现
- * @date ：2021/12/14 9:40
+ * @date: 2021/12/14 9:40
  */
 @Service
 @Slf4j

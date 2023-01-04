@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：忽略地址白名单配置
- * @date ：2021/11/18 18:00
+ * @date: 2021/11/18 18:00
  */
 @Configuration
 @RefreshScope

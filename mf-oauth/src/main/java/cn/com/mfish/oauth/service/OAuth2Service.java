@@ -9,8 +9,8 @@ import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 12:51
+ * @author: mfish
+ * @date: 2020/2/13 12:51
  */
 public interface OAuth2Service {
     AuthorizationCode buildCode(OAuthAuthzRequest request) throws OAuthSystemException;

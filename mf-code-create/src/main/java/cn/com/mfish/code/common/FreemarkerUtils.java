@@ -25,9 +25,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：代码生成工具类
- * @date ：2022/8/24 15:30
+ * @date: 2022/8/24 15:30
  */
 @Component
 @Slf4j

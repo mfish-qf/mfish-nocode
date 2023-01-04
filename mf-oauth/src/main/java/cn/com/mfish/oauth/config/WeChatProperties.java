@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：微信基本属性
- * @date ：2021/12/14 9:15
+ * @date: 2021/12/14 9:15
  */
 @Data
 @Configuration

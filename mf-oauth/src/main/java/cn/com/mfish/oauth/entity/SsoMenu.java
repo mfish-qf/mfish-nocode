@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 菜单权限表
  * @Author: mfish
- * @Date: 2022-09-21
+ * @date: 2022-09-21
  * @Version: V1.0.0
  */
 @Data

@@ -24,9 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：日志记录切面
- * @date ：2022/9/4 12:05
+ * @date: 2022/9/4 12:05
  */
 @Aspect
 @Component

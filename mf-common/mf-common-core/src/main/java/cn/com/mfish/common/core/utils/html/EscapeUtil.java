@@ -3,8 +3,8 @@ package cn.com.mfish.common.core.utils.html;
 import cn.com.mfish.common.core.utils.StringUtils;
 
 /**
- * @author qiufeng
- * @date 2021/8/12 10:48
+ * @author: mfish
+ * @date: 2021/8/12 10:48
  */
 public class EscapeUtil {
     public static final String RE_HTML_MARK = "(<[^<]*?>)|(<[\\s]*?/[^<]*?>)|(<[^<]*?/[\\s]*?>)";

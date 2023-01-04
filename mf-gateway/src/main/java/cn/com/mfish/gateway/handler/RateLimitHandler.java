@@ -8,9 +8,9 @@ import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：限流回调处理
- * @date ：2022/1/1 12:00
+ * @date: 2022/1/1 12:00
  */
 public class RateLimitHandler implements WebExceptionHandler {
     @Override

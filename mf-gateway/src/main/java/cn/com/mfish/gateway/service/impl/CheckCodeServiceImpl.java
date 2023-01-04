@@ -22,9 +22,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author qiufeng
+ * @author: mfish
  * @description：验证码服务
- * @date 2021/8/12 11:41
+ * @date: 2021/8/12 11:41
  */
 @Service
 public class CheckCodeServiceImpl implements CheckCodeService {

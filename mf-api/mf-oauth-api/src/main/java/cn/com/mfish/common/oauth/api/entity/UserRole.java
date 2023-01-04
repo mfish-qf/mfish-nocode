@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：用户角色
- * @date ：2022/12/1 20:55
+ * @date: 2022/12/1 20:55
  */
 @Data
 @ApiModel("用户角色属性")

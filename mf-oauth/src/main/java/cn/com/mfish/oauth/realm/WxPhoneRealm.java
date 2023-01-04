@@ -14,8 +14,8 @@ import javax.annotation.Resource;
 
 /**
  * 微信手机号登陆验证
- * @author qiufeng
- * @date 2021/10/26 15:41
+ * @author: mfish
+ * @date: 2021/10/26 15:41
  */
 public class WxPhoneRealm extends BaseRealm {
     @Resource

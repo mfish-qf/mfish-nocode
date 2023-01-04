@@ -12,9 +12,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：用户角色缓存
- * @date ：2022/12/6 22:38
+ * @date: 2022/12/6 22:38
  */
 @Component("userRoleCache")
 public class UserRoleCache extends BaseTempCache<List<UserRole>> {

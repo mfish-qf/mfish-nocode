@@ -13,8 +13,8 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
 /**
  * redis配置
- * @author qiufeng
- * @date 2021/8/12 15:11
+ * @author: mfish
+ * @date: 2021/8/12 15:11
  */
 @Configuration
 @EnableCaching

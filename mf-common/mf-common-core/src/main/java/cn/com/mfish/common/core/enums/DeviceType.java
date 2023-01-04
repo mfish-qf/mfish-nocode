@@ -1,9 +1,9 @@
 package cn.com.mfish.common.core.enums;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：设备类型
- * @date ：2022/12/2 18:19
+ * @date: 2022/12/2 18:19
  */
 public enum DeviceType {
     //浏览器

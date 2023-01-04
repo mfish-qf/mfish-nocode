@@ -10,9 +10,9 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：基础树
- * @date ：2022/11/11 17:07
+ * @date: 2022/11/11 17:07
  */
 @Data
 @Accessors(chain = true)

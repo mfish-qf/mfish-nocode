@@ -13,8 +13,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import java.util.Map;
 
 /**
- * @author qiufeng
- * @date 2020/2/10 19:21
+ * @author: mfish
+ * @date: 2020/2/10 19:21
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

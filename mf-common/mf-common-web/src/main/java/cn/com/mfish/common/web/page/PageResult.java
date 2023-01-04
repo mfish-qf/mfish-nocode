@@ -8,9 +8,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：分页结果
- * @date ：2022/11/17 9:35
+ * @date: 2022/11/17 9:35
  */
 @Data
 @Accessors(chain = true)

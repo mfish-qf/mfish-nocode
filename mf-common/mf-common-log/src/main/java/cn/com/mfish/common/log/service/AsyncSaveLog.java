@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：异步保存日志
- * @date ：2022/9/7 15:24
+ * @date: 2022/9/7 15:24
  */
 @Service
 @EnableAsync

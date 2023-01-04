@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
- * @author qiufeng
- * @date 2020/2/17 15:09
+ * @author: mfish
+ * @date: 2020/2/17 15:09
  */
 @ApiModel("返回accessToken信息")
 public class AccessToken implements Serializable {

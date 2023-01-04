@@ -12,8 +12,8 @@ import static com.google.code.kaptcha.Constants.*;
 /**
  * 验证码配置
  *
- * @author qiufeng
- * @date 2021/8/12 15:41
+ * @author: mfish
+ * @date: 2021/8/12 15:41
  */
 @Configuration
 public class CaptchaConfig {

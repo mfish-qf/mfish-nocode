@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：swagger接口集合
- * @date ：2021/11/11 10:37
+ * @date: 2021/11/11 10:37
  */
 @Component
 public class SwaggerProvider implements WebFluxConfigurer,SwaggerResourcesProvider {

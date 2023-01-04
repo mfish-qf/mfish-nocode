@@ -12,8 +12,8 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * @author qiufeng
- * @date 2020/2/13 17:13
+ * @author: mfish
+ * @date: 2020/2/13 17:13
  */
 public interface SsoUserMapper extends BaseMapper<SsoUser> {
 

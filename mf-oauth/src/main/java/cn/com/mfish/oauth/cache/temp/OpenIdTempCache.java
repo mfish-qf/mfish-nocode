@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * @author qiufeng
- * @date 2020/2/29 15:07
+ * @author: mfish
+ * @date: 2020/2/29 15:07
  */
 @Component
 public class OpenIdTempCache extends BaseTempCache<String> {

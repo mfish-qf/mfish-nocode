@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 组织结构表
  * @Author: mfish
- * @Date: 2022-09-20
+ * @date: 2022-09-20
  * @Version: V1.0.0
  */
 @Data

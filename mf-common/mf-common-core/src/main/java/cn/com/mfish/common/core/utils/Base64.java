@@ -3,8 +3,8 @@ package cn.com.mfish.common.core.utils;
 /**
  * Base64工具类
  *
- * @author qiufeng
- * @date 2021/8/12 15:38
+ * @author: mfish
+ * @date: 2021/8/12 15:38
  */
 public class Base64 {
     static private final int BASELENGTH = 128;

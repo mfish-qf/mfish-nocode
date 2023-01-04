@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author qiufeng
- * @date 2020/3/5 18:23
+ * @author: mfish
+ * @date: 2020/3/5 18:23
  */
 @Data
 @ApiModel("二维码返回结果带图片")

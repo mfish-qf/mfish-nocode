@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：Feign用户接口降级
- * @date ：2021/12/4 0:27
+ * @date: 2021/12/4 0:27
  */
 @Component
 @Slf4j

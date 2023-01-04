@@ -5,13 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 18:05
+ * @author: mfish
+ * @date: 2020/2/11 18:05
  */
 @Configuration
 public class RedisConfig {

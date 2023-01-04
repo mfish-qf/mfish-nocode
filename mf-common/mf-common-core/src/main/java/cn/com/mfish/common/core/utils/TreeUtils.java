@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：树操作通用类
- * @date ：2022/11/11 18:10
+ * @date: 2022/11/11 18:10
  */
 @Slf4j
 public class TreeUtils {

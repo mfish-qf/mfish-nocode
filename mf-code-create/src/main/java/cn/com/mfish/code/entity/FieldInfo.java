@@ -10,9 +10,9 @@ import java.io.Serializable;
 import java.util.Locale;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：字段信息
- * @date ：2022/8/29 16:47
+ * @date: 2022/8/29 16:47
  */
 @Data
 @ApiModel("字段信息")

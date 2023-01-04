@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * @author qiufeng
- * @date 2020/2/14 17:46
+ * @author: mfish
+ * @date: 2020/2/14 17:46
  */
 @Component
 public class UserTempCache extends BaseTempCache<SsoUser> {

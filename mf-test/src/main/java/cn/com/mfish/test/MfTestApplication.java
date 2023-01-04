@@ -6,9 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：摸鱼测试中心启动
- * @date ：2021/12/3 17:22
+ * @date: 2021/12/3 17:22
  */
 @SpringBootApplication
 @Slf4j

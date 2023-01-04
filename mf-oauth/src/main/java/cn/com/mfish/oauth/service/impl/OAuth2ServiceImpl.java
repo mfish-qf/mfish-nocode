@@ -31,8 +31,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author qiufeng
- * @date 2020/2/15 16:07
+ * @author: mfish
+ * @date: 2020/2/15 16:07
  */
 @Service
 public class OAuth2ServiceImpl implements OAuth2Service {

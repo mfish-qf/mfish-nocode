@@ -14,9 +14,9 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 
 /**
- * @author ：qiufeng
+ * @author: mfish
  * @description：路由配置信息
- * @date ：2021/12/21 16:33
+ * @date: 2021/12/21 16:33
  */
 @Configuration
 public class RouteFunctionConfig {

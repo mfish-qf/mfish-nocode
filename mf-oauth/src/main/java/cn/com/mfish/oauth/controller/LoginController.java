@@ -17,8 +17,8 @@ import javax.annotation.Resource;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * @author qiufeng
- * @date 2020/2/11 11:13
+ * @author: mfish
+ * @date: 2020/2/11 11:13
  */
 @Api(tags = "登录")
 @Controller
