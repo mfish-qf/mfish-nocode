@@ -17,3 +17,5 @@
 /mf-common/mf-common-web/target/
 /mf-api/mf-oauth-api/target/
 /mf-oauth/logs/
+/storage/
+/mf-storage/target/
