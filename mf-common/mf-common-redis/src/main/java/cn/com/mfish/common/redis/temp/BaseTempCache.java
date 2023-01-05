@@ -82,6 +82,7 @@ public abstract class BaseTempCache<T> {
         if (value == null) {
             return null;
         }
+        redisTemplate.delete(RedisPrefix.buildAtomicCountKey(key));
         setCacheInfo(key, value);
         return value;
     }
