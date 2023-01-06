@@ -2,6 +2,7 @@ package cn.com.mfish.common.redis.temp;
 
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
@@ -18,7 +19,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseTempCache<T> {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
-    private static final long cacheTime = 7;
+    @Value("${cache.temp.time}")
+    private long cacheTime = 7;
 
     /**
      * 构建key
@@ -82,6 +84,7 @@ public abstract class BaseTempCache<T> {
         if (value == null) {
             return null;
         }
+        redisTemplate.delete(RedisPrefix.buildAtomicCountKey(key));
         setCacheInfo(key, value);
         return value;
     }

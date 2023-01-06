@@ -42,16 +42,12 @@ export default {
     const getTitle = computed(() => (!unref(isUpdate) ? "新增${tableInfo.tableComment}" : "编辑${tableInfo.tableComment}"));
 
     async function handleSubmit() {
-      try {
-        let values = await validate();
-        setModalProps({ confirmLoading: true });
-        if (unref(isUpdate)) {
-          save${entityName}(update${entityName}, values);
-        } else {
-          save${entityName}(insert${entityName}, values);
-        }
-      } finally {
-        setModalProps({ confirmLoading: false });
+      let values = await validate();
+      setModalProps({ confirmLoading: true });
+      if (unref(isUpdate)) {
+        save${entityName}(update${entityName}, values);
+      } else {
+        save${entityName}(insert${entityName}, values);
       }
     }
 
@@ -59,7 +55,9 @@ export default {
       save(values).then(() => {
         emit("success");
         closeModal();
-      });
+      }).finally(() => {
+        setModalProps({ confirmLoading: false });
+      });;
     }
 
     return {
