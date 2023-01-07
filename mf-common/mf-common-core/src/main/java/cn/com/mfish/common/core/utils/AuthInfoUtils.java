@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author: mfish
- * @description: 认证相关信息
+ * @description: 认证相关信息，此类中方法不支持异步调用获取
  * @date: 2020/2/12 13:47
  */
 @Slf4j
@@ -51,7 +51,7 @@ public class AuthInfoUtils {
      */
     public static String getCurrentUserId() {
         String userId = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_USER_ID);
-        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(userId) ? null : userId;
+        return StringUtils.isEmpty(userId) ? null : userId;
     }
 
     /**
@@ -61,7 +61,7 @@ public class AuthInfoUtils {
      */
     public static String getCurrentAccount() {
         String account = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_ACCOUNT);
-        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(account) ? null : account;
+        return StringUtils.isEmpty(account) ? null : account;
     }
 
     /**
@@ -71,7 +71,7 @@ public class AuthInfoUtils {
      */
     public static String getCurrentClientId() {
         String clientId = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_CLIENT_ID);
-        return cn.com.mfish.common.core.utils.StringUtils.isEmpty(clientId) ? null : clientId;
+        return StringUtils.isEmpty(clientId) ? null : clientId;
     }
 
 }
