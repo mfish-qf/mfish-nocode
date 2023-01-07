@@ -2,11 +2,11 @@ package cn.com.mfish.gateway.filter;
 
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.HttpStatus;
-import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
+import cn.com.mfish.common.oauth.validator.AccessTokenValidator;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -31,7 +31,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     private IgnoreWhiteProperties ignoreWhite;
     @Resource
-    private WebTokenServiceImpl webTokenService;
+    private AccessTokenValidator accessTokenValidator;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -41,20 +41,16 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (StringUtils.matches(url, ignoreWhite.getWhites())) {
             return chain.filter(exchange);
         }
-        String token = AuthInfoUtils.getAccessToken(request);
-        if (StringUtils.isEmpty(token)) {
-            return unauthorizedResponse(exchange, "令牌不能为空");
-        }
-        RedisAccessToken redisAccessToken = webTokenService.getToken(token);
-        if (redisAccessToken == null) {
-            return unauthorizedResponse(exchange, "错误:token不存在或已过期");
+        Result<RedisAccessToken> result = accessTokenValidator.validate(request);
+        if (!result.isSuccess()) {
+            return unauthorizedResponse(exchange, result.getMsg());
         }
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
         removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
-        addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, redisAccessToken.getClientId());
-        addHeader(mutate, CredentialConstants.REQ_USER_ID, redisAccessToken.getUserId());
-        addHeader(mutate, CredentialConstants.REQ_ACCOUNT, redisAccessToken.getAccount());
+        addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, result.getData().getClientId());
+        addHeader(mutate, CredentialConstants.REQ_USER_ID, result.getData().getUserId());
+        addHeader(mutate, CredentialConstants.REQ_ACCOUNT, result.getData().getAccount());
         return chain.filter(exchange.mutate().request(mutate.build()).build());
     }
 

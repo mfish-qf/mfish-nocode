@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.validator.IBaseValidator;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import lombok.Data;
 
