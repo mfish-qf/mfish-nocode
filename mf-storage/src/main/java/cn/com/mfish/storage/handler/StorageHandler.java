@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.storage.common.StorageUtils;
 import cn.com.mfish.storage.entity.StorageInfo;
+import cn.com.mfish.storage.enums.SuffixType;
 import cn.com.mfish.storage.service.StorageService;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class StorageHandler {
      */
     public StorageInfo store(InputStream inputStream, long contentLength, String contentType, String fileName, String path, Integer isPrivate) {
         String id = Utils.uuid32();
-        String key = generateKey(fileName, id);
+        String key = generateKey(fileName, id, contentType);
         String url = storage.generateUrl(key);
         StorageInfo storageInfo = new StorageInfo();
         storageInfo.setId(id);
@@ -58,10 +59,13 @@ public class StorageHandler {
         return storageInfo;
     }
 
-    private String generateKey(String originalFilename, String id) {
+    private String generateKey(String originalFilename, String id, String contentType) {
         int index = originalFilename.lastIndexOf('.');
-        String suffix = originalFilename.substring(index);
-        return id + suffix;
+        if (index >= 0) {
+            String suffix = originalFilename.substring(index);
+            return id + suffix;
+        }
+        return id + SuffixType.getSuffixType(contentType).toString();
     }
 
 
