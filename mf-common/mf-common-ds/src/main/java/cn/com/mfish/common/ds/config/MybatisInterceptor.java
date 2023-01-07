@@ -31,6 +31,7 @@ public class MybatisInterceptor implements Interceptor {
         if (parameter == null) {
             return invocation.proceed();
         }
+        //不支持异步调用获取当前帐号
         String account = AuthInfoUtils.getCurrentAccount();
         if (account == null) {
             log.warn("保存信息时未取到用户信息!");

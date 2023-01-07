@@ -25,7 +25,7 @@ public class AsyncSaveLog {
 
     @Async
     public void saveLog(SysLog sysLog) {
-        Result result = remoteLogService.add(CredentialConstants.INNER, sysLog);
+        Result result = remoteLogService.addLog(CredentialConstants.INNER, sysLog);
         if (result.isSuccess()) {
             return;
         }

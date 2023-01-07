@@ -106,8 +106,8 @@ public class LogAspect {
 
     private void setReturn(int state, String remark) {
         SysLog sysLog = logThreadLocal.get();
-        sysLog.setOperName(AuthInfoUtils.getCurrentAccount());
-        sysLog.setOperTime(new Date());
+        sysLog.setCreateBy(AuthInfoUtils.getCurrentAccount());
+        sysLog.setCreateTime(new Date());
         sysLog.setOperStatus(state);
         sysLog.setRemark(StringUtils.substring(remark, 0, 2000));
         asyncSaveLog.saveLog(sysLog);

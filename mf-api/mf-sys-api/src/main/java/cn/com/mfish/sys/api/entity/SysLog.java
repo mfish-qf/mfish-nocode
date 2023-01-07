@@ -1,17 +1,13 @@
 package cn.com.mfish.sys.api.entity;
 
+import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @Description: 系统日志
@@ -23,8 +19,7 @@ import java.util.Date;
 @TableName("sys_log")
 @Accessors(chain = true)
 @ApiModel(value = "sys_log对象", description = "系统日志")
-public class SysLog implements Serializable {
-
+public class SysLog extends BaseEntity<Integer> {
     @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "日志ID")
     private Integer id;
@@ -44,12 +39,6 @@ public class SysLog implements Serializable {
     private String operType;
     @ApiModelProperty(value = "操作IP")
     private String operIp;
-    @ApiModelProperty(value = "操作人员")
-    private String operName;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @ApiModelProperty(value = "操作时间")
-    private Date operTime;
     @ApiModelProperty(value = "操作状态（0正常 1异常）")
     private Integer operStatus;
     @ApiModelProperty(value = "描述信息")
