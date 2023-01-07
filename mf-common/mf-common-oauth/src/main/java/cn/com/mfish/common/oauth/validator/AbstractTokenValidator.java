@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @description: 抽象token校验
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/1/7 15:25
  */
 public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
