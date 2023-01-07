@@ -25,6 +25,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +55,9 @@ public class AccessTokenController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
+    //登录是否互斥
+    @Value("${oauth2.login.mutex}")
+    private boolean loginMutex = true;
 
     @ApiOperation("token获取")
     @PostMapping(value = "/accessToken")
@@ -96,10 +100,12 @@ public class AccessTokenController {
         }
         //缓存用户角色信息
         CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId(), token.getClientId()));
-        //增加用户登录互斥缓存
-        userTokenCache.addUserTokenCache(DeviceType.Web
-                , SecurityUtils.getSubject().getSession().getId().toString()
-                , token.getUserId(), token.getAccessToken());
+        if (loginMutex) {
+            //增加用户登录互斥缓存
+            userTokenCache.addUserTokenCache(DeviceType.Web
+                    , SecurityUtils.getSubject().getSession().getId().toString()
+                    , token.getUserId(), token.getAccessToken());
+        }
         return Result.ok(new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken()));
     }
 

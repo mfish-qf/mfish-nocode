@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : home_mysql
+ Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50730
- Source Host           : app.mfish.com.cn:18119
+ Source Server Version : 50734
+ Source Host           : localhost:3306
  Source Schema         : mf_oauth
 
  Target Server Type    : MySQL
- Target Server Version : 50730
+ Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 07/01/2023 16:35:15
+ Date: 07/01/2023 19:41:19
 */
 
 SET NAMES utf8mb4;
@@ -88,7 +88,7 @@ CREATE TABLE `sso_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `index_menu_code`(`menu_code`) USING BTREE COMMENT '菜单编码索引'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_menu
@@ -104,7 +104,7 @@ INSERT INTO `sso_menu` VALUES ('2a4e024fdc76063da32926c63ca9ead2', '', 'system',
 INSERT INTO `sso_menu` VALUES ('4527c6c05549e3594f135ac056faaece', '', 'system', '00004', 1, '引导页', 'whh:paintroll', 5, 1, '/setup', '/demo/setup/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:11:09', 'admin', '2022-12-15 21:04:42');
 INSERT INTO `sso_menu` VALUES ('4bfec85ae3174915cd2a3e8ddd822220', '', 'system', '00005', 1, '关于', 'simple-icons:about-dot-me', 6, 1, '/about', '/sys/about/index.vue', '', 0, 1, NULL, 0, '', 'admin', '2022-11-08 17:13:12', 'admin', '2022-12-21 21:55:08');
 INSERT INTO `sso_menu` VALUES ('4ef7029abe93c11601678ba16dac406f', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200002', 2, '帐号管理', 'ion:people-sharp', 4, 1, '/account', '/sys/account/index.vue', '', 0, 1, NULL, 1, '', 'admin', '2022-11-30 16:40:28', 'admin', '2023-01-04 21:03:33');
-INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', 'system', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:53:57', 'admin', '2022-12-19 21:54:18');
+INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', 'system', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:53:57', 'admin', '2023-01-05 14:46:43');
 INSERT INTO `sso_menu` VALUES ('58efbcc5f46b95aeab069076031959e7', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300003', 3, '修改', '#', 3, 2, '', NULL, 'sys:org:update,sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:28:45', 'admin', '2022-12-20 11:45:25');
 INSERT INTO `sso_menu` VALUES ('5b543a83371c766788047a1a1907cffd', '9c6f4eff70d7b2048f63adf229c5d30d', 'system', '0000600001', 2, '目录1', 'ion:folder-open-outline', 1, 0, '/menu1', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:03:39', 'admin', '2022-12-15 20:35:07');
 INSERT INTO `sso_menu` VALUES ('5c723efc132b50c0284d79eaafed5a0f', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300003', 2, 'AntDesign文档', 'ion:social-angular-outline', 3, 1, '/ant', 'https://2x.antdv.com/docs/vue/introduce-cn/', NULL, 0, 1, NULL, 1, '', 'admin', '2022-12-14 15:38:22', 'admin', '2022-12-15 14:40:11');
@@ -159,15 +159,15 @@ CREATE TABLE `sso_org`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `org_code_index`(`org_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织结构表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织结构表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_org
 -- ----------------------------
-INSERT INTO `sso_org` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '950736539e99c0521531cc127d5b8712', 'system', '0000100002', 2, '摸鱼二部', 2, 'mfish2', '18922222222', '22@qq.com', '摸鱼二部', 0, 0, 'admin', '2022-11-12 11:09:47', 'admin', '2022-11-30 16:30:44');
-INSERT INTO `sso_org` VALUES ('49b4cfe17e0cf4b5472aadea0f63bc57', '950736539e99c0521531cc127d5b8712', 'system', '0000100003', 2, '摸鱼测试部', 3, 'test', '18933333333', NULL, '摸鱼测试部', 0, 0, 'admin', '2022-12-02 22:20:58', 'admin', '2022-12-02 22:21:06');
-INSERT INTO `sso_org` VALUES ('950736539e99c0521531cc127d5b8712', '', 'system', '00001', 1, '摸鱼事业部', 1, 'mfish', '18911111111', '11@qq.com', '摸鱼事业部', 0, 0, 'admin', '2022-11-12 10:57:36', 'admin', '2023-01-04 17:53:35');
-INSERT INTO `sso_org` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', '950736539e99c0521531cc127d5b8712', 'system', '0000100001', 2, '摸鱼一部', 1, 'mfish1', '18922222222', '22@qq.com', '摸鱼一部', 0, 0, 'admin', '2022-11-12 11:07:12', 'admin', '2023-01-04 17:53:30');
+INSERT INTO `sso_org` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '950736539e99c0521531cc127d5b8712', 'system', '0000100002', 2, '摸鱼二部', 2, 'mfish2', '18922222222', '22@qq.com', '摸鱼二部', 0, 0, 'admin', '2022-11-12 11:09:47', 'admin', '2023-01-05 14:33:45');
+INSERT INTO `sso_org` VALUES ('49b4cfe17e0cf4b5472aadea0f63bc57', '950736539e99c0521531cc127d5b8712', 'system', '0000100003', 2, '摸鱼测试部', 3, 'test', '18933333333', 'test@qq.com', '摸鱼测试部', 0, 0, 'admin', '2022-12-02 22:20:58', 'admin', '2023-01-05 14:51:14');
+INSERT INTO `sso_org` VALUES ('950736539e99c0521531cc127d5b8712', '', 'system', '00001', 1, '摸鱼事业部', 1, 'mfish', '18911111111', 'manage@qq.com', '摸鱼事业部', 0, 0, 'admin', '2022-11-12 10:57:36', 'admin', '2023-01-05 14:51:55');
+INSERT INTO `sso_org` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', '950736539e99c0521531cc127d5b8712', 'system', '0000100001', 2, '摸鱼一部', 1, 'mfish1', '18922222222', '11@qq.com', '摸鱼一部', 0, 0, 'admin', '2022-11-12 11:07:12', 'admin', '2023-01-05 14:51:24');
 
 -- ----------------------------
 -- Table structure for sso_org_role
@@ -177,7 +177,7 @@ CREATE TABLE `sso_org_role`  (
   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
   PRIMARY KEY (`role_id`, `org_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色组织关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色组织关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_org_role
@@ -191,7 +191,7 @@ CREATE TABLE `sso_org_user`  (
   `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
   PRIMARY KEY (`org_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_org_user
@@ -220,16 +220,16 @@ CREATE TABLE `sso_role`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_role
 -- ----------------------------
-INSERT INTO `sso_role` VALUES ('1', 'system', '超级管理员', 'superAdmin', 1, 0, '超级管理员', 0, 'admin', '2022-09-19 10:21:49', 'admin', '2023-01-04 17:52:45');
+INSERT INTO `sso_role` VALUES ('1', 'system', '超级管理员', 'superAdmin', 1, 0, '超级管理员', 0, 'admin', '2022-09-19 10:21:49', 'admin', '2023-01-05 14:46:27');
 INSERT INTO `sso_role` VALUES ('210297727b74ecb505c1b4d97f76daee', 'system', '测试', 'test', 2, 0, '测试角色', 0, 'admin', '2022-11-29 18:37:32', 'admin', '2023-01-04 21:11:29');
 INSERT INTO `sso_role` VALUES ('4a470c08a4014485d190b5f4141ae571', 'system', 'ss', 'sss', 2, 0, 'ss', 1, 'admin', '2022-12-21 22:08:02', 'admin', '2022-12-21 22:08:25');
 INSERT INTO `sso_role` VALUES ('57ad11f7d8d94e2664f4d772a6dd9d7d', 'system', '测试1', 'test1', 3, 0, '测试角色1', 0, 'admin', '2022-11-30 12:09:59', 'admin', '2022-12-19 21:25:12');
-INSERT INTO `sso_role` VALUES ('67e95f5e81b8da9a8f70db7540b7409d', 'system', '运维', 'operate', 4, 0, '运维角色', 0, 'admin', '2022-11-30 16:18:51', 'admin', '2022-12-02 21:34:04');
+INSERT INTO `sso_role` VALUES ('67e95f5e81b8da9a8f70db7540b7409d', 'system', '运维', 'operate', 4, 0, '运维角色', 0, 'admin', '2022-11-30 16:18:51', 'admin', '2023-01-05 14:33:55');
 
 -- ----------------------------
 -- Table structure for sso_role_menu
@@ -239,7 +239,7 @@ CREATE TABLE `sso_role_menu`  (
   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   `menu_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单ID',
   PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_role_menu
@@ -345,7 +345,7 @@ CREATE TABLE `sso_user`  (
 -- Records of sso_user
 -- ----------------------------
 INSERT INTO `sso_user` VALUES ('0b13f982db33481e8e1e5e84f6df7c3e', 'test2', '18922222222', 'test2@qq.com', '68513a46ed069540e2665eaf3cad4475', NULL, '测试2', NULL, '02522212341', '2021-12-08', 1, 0, 1, '9706bf5fef1652afa3c89520f0f74aed', NULL, NULL, 'admin', '2022-12-01 17:34:02', 'admin', '2022-12-05 23:32:15');
-INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', 'aebae0b309f648a086f1d2528e5e554e.png', '02512345678', '1998-06-14', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '管理员', '', '2017-04-10 15:21:38', 'admin', '2023-01-07 14:53:06');
+INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', '4711045c2b114813b5ccde4f3a6dce3b.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2023-01-07 16:29:55');
 INSERT INTO `sso_user` VALUES ('40062f1156ef42b9b3a341462c927fb6', 'test', '18922222220', 'test@qq.com', 'e7bf117daf1732f94ba3590f7df80ba2', '', '测试', NULL, '02522222222', '2022-11-24', 1, 0, 0, '272cb4e5912be9cf6f371c13a28ea030', NULL, NULL, 'admin', '2022-11-24 22:51:54', 'admin', '2023-01-04 17:56:14');
 INSERT INTO `sso_user` VALUES ('4ef9999a1cd0492db32c87d97659b963', 'test1', '18922222221', 'test1@qq.com', 'ee508c5ee37a4b27e41ab9cc80af453b', NULL, '测试1', NULL, '02587654321', '2022-11-20', 1, 0, 0, '3952171ab8cb094c4abe55cc831d1c76', NULL, NULL, 'admin', '2022-11-26 22:06:09', 'admin', '2022-12-20 12:09:30');
 INSERT INTO `sso_user` VALUES ('f4056d9589a64146a7538f04c6bcc10f', 'operate', '18933333333', 'operate@qq.com', 'b48905c015cfa5ec95dd2e7c8f9e810f', NULL, '运营', NULL, '0251233111', '2022-11-23', 1, 0, 0, '0662ab48ae6102c7caaa37700200ed7f', NULL, NULL, 'admin', '2022-11-24 23:33:10', 'admin', '2022-12-19 21:24:39');
@@ -358,7 +358,7 @@ CREATE TABLE `sso_user_role`  (
   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_id`, `role_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户角色关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户角色关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_user_role

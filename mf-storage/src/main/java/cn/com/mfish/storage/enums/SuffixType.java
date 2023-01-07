@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * @description: 常用文件后缀类型
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/1/7 14:22
  */
 public enum SuffixType {
