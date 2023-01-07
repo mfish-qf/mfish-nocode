@@ -1,15 +1,15 @@
 package cn.com.mfish.storage.controller;
 
+import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.validator.AccessTokenValidator;
 import cn.com.mfish.storage.entity.StorageInfo;
 import cn.com.mfish.storage.handler.StorageHandler;
 import cn.com.mfish.storage.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,15 +31,17 @@ public class StorageController {
     StorageHandler storageHandler;
     @Resource
     StorageService storageService;
+    @Resource
+    AccessTokenValidator accessTokenValidator;
 
     @ApiOperation("文件新增")
     @PostMapping
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = true),
             @ApiImplicitParam(name = "path", value = "定义特殊文件路径 默认为空字符串"),
-            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件 1是 0否 默认否"),
+            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是"),
     })
-    public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file, @RequestParam(name = "path", defaultValue = "") String path, @RequestParam(name = "isPrivate", defaultValue = "0") Integer isPrivate) throws IOException {
+    public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file, @RequestParam(name = "path", defaultValue = "") String path, @RequestParam(name = "isPrivate", defaultValue = "1") Integer isPrivate) throws IOException {
         String originalFilename = file.getOriginalFilename();
         StorageInfo info = storageHandler.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename, path, isPrivate);
         return Result.ok(info, "文件新增成功");
@@ -47,7 +49,7 @@ public class StorageController {
 
     @ApiOperation("文件删除")
     @DeleteMapping("/{key}")
-    public Result<String> delete(@PathVariable String key) {
+    public Result<String> delete(@ApiParam(name = "key", value = "文件key") @PathVariable String key) {
         if (StringUtils.isEmpty(key)) {
             return Result.fail("错误:键不允许为空");
         }
@@ -60,7 +62,7 @@ public class StorageController {
 
     @ApiOperation("文件获取")
     @GetMapping("/{key:.+}")
-    public ResponseEntity<org.springframework.core.io.Resource> fetch(@PathVariable String key) {
+    public ResponseEntity<org.springframework.core.io.Resource> fetch(@ApiParam(name = "key", value = "文件key") @PathVariable String key) {
         if (key == null) {
             return ResponseEntity.notFound().build();
         }
@@ -71,9 +73,12 @@ public class StorageController {
         if (storageInfo == null) {
             return ResponseEntity.notFound().build();
         }
-        //前端不允许查看私密文件
+        //如果文件是私有文件需要校验token后访问
         if (storageInfo.getIsPrivate() != null && storageInfo.getIsPrivate().equals(1)) {
-            return ResponseEntity.notFound().build();
+            Result result = accessTokenValidator.validate(ServletUtils.getRequest());
+            if (!result.isSuccess()) {
+                throw new OAuthValidateException(result.getMsg());
+            }
         }
         String type = storageInfo.getFileType();
         MediaType mediaType = MediaType.parseMediaType(type);

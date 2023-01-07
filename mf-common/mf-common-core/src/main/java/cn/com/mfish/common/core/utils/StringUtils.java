@@ -283,11 +283,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-        String aa = toCamelBigCase("abcd_bbcc");
-        System.out.println(aa);
-    }
-
     /**
      * 查找指定字符串是否匹配指定字符串列表中的任意一个字符串
      *

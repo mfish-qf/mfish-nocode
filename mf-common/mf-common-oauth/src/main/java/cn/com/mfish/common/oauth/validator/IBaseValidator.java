@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.validator;
+package cn.com.mfish.common.oauth.validator;
 
 import cn.com.mfish.common.core.web.Result;
 
