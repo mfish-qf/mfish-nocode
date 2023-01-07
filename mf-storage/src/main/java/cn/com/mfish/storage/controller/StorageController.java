@@ -39,9 +39,9 @@ public class StorageController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = true),
             @ApiImplicitParam(name = "path", value = "定义特殊文件路径 默认为空字符串"),
-            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件 1是 0否 默认是"),
+            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是"),
     })
-    public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file, @RequestParam(name = "path", defaultValue = "") String path, @RequestParam(name = "isPrivate", defaultValue = "0") Integer isPrivate) throws IOException {
+    public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file, @RequestParam(name = "path", defaultValue = "") String path, @RequestParam(name = "isPrivate", defaultValue = "1") Integer isPrivate) throws IOException {
         String originalFilename = file.getOriginalFilename();
         StorageInfo info = storageHandler.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename, path, isPrivate);
         return Result.ok(info, "文件新增成功");
