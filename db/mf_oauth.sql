@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : home_mysql
  Source Server Type    : MySQL
- Source Server Version : 50734
- Source Host           : localhost:3306
+ Source Server Version : 50730
+ Source Host           : app.mfish.com.cn:18119
  Source Schema         : mf_oauth
 
  Target Server Type    : MySQL
- Target Server Version : 50734
+ Target Server Version : 50730
  File Encoding         : 65001
 
- Date: 04/01/2023 21:14:06
+ Date: 07/01/2023 16:35:15
 */
 
 SET NAMES utf8mb4;
@@ -88,7 +88,7 @@ CREATE TABLE `sso_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `index_menu_code`(`menu_code`) USING BTREE COMMENT '菜单编码索引'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_menu
@@ -159,7 +159,7 @@ CREATE TABLE `sso_org`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `org_code_index`(`org_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织结构表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织结构表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_org
@@ -177,7 +177,7 @@ CREATE TABLE `sso_org_role`  (
   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
   PRIMARY KEY (`role_id`, `org_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色组织关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色组织关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_org_role
@@ -191,7 +191,7 @@ CREATE TABLE `sso_org_user`  (
   `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
   PRIMARY KEY (`org_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_org_user
@@ -220,7 +220,7 @@ CREATE TABLE `sso_role`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_role
@@ -239,7 +239,7 @@ CREATE TABLE `sso_role_menu`  (
   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   `menu_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单ID',
   PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_role_menu
@@ -345,7 +345,7 @@ CREATE TABLE `sso_user`  (
 -- Records of sso_user
 -- ----------------------------
 INSERT INTO `sso_user` VALUES ('0b13f982db33481e8e1e5e84f6df7c3e', 'test2', '18922222222', 'test2@qq.com', '68513a46ed069540e2665eaf3cad4475', NULL, '测试2', NULL, '02522212341', '2021-12-08', 1, 0, 1, '9706bf5fef1652afa3c89520f0f74aed', NULL, NULL, 'admin', '2022-12-01 17:34:02', 'admin', '2022-12-05 23:32:15');
-INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', NULL, '02512345678', '1998-06-14', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '管理员1', '', '2017-04-10 15:21:38', 'admin', '2023-01-04 20:50:10');
+INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', 'aebae0b309f648a086f1d2528e5e554e.png', '02512345678', '1998-06-14', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '管理员', '', '2017-04-10 15:21:38', 'admin', '2023-01-07 14:53:06');
 INSERT INTO `sso_user` VALUES ('40062f1156ef42b9b3a341462c927fb6', 'test', '18922222220', 'test@qq.com', 'e7bf117daf1732f94ba3590f7df80ba2', '', '测试', NULL, '02522222222', '2022-11-24', 1, 0, 0, '272cb4e5912be9cf6f371c13a28ea030', NULL, NULL, 'admin', '2022-11-24 22:51:54', 'admin', '2023-01-04 17:56:14');
 INSERT INTO `sso_user` VALUES ('4ef9999a1cd0492db32c87d97659b963', 'test1', '18922222221', 'test1@qq.com', 'ee508c5ee37a4b27e41ab9cc80af453b', NULL, '测试1', NULL, '02587654321', '2022-11-20', 1, 0, 0, '3952171ab8cb094c4abe55cc831d1c76', NULL, NULL, 'admin', '2022-11-26 22:06:09', 'admin', '2022-12-20 12:09:30');
 INSERT INTO `sso_user` VALUES ('f4056d9589a64146a7538f04c6bcc10f', 'operate', '18933333333', 'operate@qq.com', 'b48905c015cfa5ec95dd2e7c8f9e810f', NULL, '运营', NULL, '0251233111', '2022-11-23', 1, 0, 0, '0662ab48ae6102c7caaa37700200ed7f', NULL, NULL, 'admin', '2022-11-24 23:33:10', 'admin', '2022-12-19 21:24:39');
@@ -358,7 +358,7 @@ CREATE TABLE `sso_user_role`  (
   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_id`, `role_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户角色关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户角色关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sso_user_role
