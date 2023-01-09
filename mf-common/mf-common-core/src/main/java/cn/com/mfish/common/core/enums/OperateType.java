@@ -21,7 +21,11 @@ public enum OperateType {
     //导入
     IMPORT("导入"),
     //导出
-    EXPORT("导出");
+    EXPORT("导出"),
+    //登录
+    LOGIN("登录"),
+    //登出
+    LOGOUT("登出");
     private String value;
 
     OperateType(String value) {

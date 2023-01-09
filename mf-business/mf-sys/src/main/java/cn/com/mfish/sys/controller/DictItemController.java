@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: 字典项
@@ -44,12 +45,24 @@ public class DictItemController {
     @GetMapping
     public Result<PageResult<DictItem>> queryPageList(ReqDictItem reqDictItem, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<DictItem>()
+
+        return Result.ok(new PageResult<>(dictItemService.list(buildCondition(reqDictItem))), "字典项-查询成功!");
+    }
+
+    @ApiOperation("根据字典编码获取字典项")
+    @GetMapping("/{dictCode}")
+    public Result<List<DictItem>> queryList(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
+        return Result.ok(dictItemService.list(buildCondition(
+                new ReqDictItem().setDictCode(dictCode).setStatus(0))), "字典项-查询成功!");
+    }
+
+    private LambdaQueryWrapper buildCondition(ReqDictItem reqDictItem) {
+        return new LambdaQueryWrapper<DictItem>()
                 .eq(reqDictItem.getDictCode() != null, DictItem::getDictCode, reqDictItem.getDictCode())
                 .like(reqDictItem.getDictLabel() != null, DictItem::getDictLabel, reqDictItem.getDictLabel())
                 .like(reqDictItem.getDictValue() != null, DictItem::getDictValue, reqDictItem.getDictValue())
+                .eq(reqDictItem.getStatus() != null, DictItem::getStatus, reqDictItem.getStatus())
                 .orderBy(true, true, DictItem::getDictSort);
-        return Result.ok(new PageResult<>(dictItemService.list(queryWrapper)), "字典项-查询成功!");
     }
 
     /**
@@ -141,18 +154,5 @@ public class DictItemController {
             return Result.ok(true, "字典项-批量删除成功!");
         }
         return Result.fail(false, "错误:字典项-批量删除失败!");
-    }
-
-    /**
-     * 通过id查询
-     *
-     * @param id
-     * @return
-     */
-    @ApiOperation(value = "字典项-通过id查询", notes = "字典项-通过id查询")
-    @GetMapping("/{id}")
-    public Result<DictItem> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        DictItem dictItem = dictItemService.getById(id);
-        return Result.ok(dictItem, "字典项-查询成功!");
     }
 }

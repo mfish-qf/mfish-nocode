@@ -21,4 +21,6 @@ public class ReqDictItem {
     private String dictLabel;
     @ApiModelProperty(value = "字典键值")
     private String dictValue;
+    @ApiModelProperty(value = "状态(0正常 1停用)")
+    private Integer status;
 }

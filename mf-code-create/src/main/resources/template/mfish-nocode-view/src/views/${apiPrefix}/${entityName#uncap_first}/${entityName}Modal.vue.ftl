@@ -57,7 +57,7 @@ export default {
         closeModal();
       }).finally(() => {
         setModalProps({ confirmLoading: false });
-      });;
+      });
     }
 
     return {
