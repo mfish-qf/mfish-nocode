@@ -47,7 +47,8 @@ public class DictController {
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Dict>()
                 .like(reqDict.getDictCode() != null, Dict::getDictCode, reqDict.getDictCode())
                 .like(reqDict.getDictName() != null, Dict::getDictName, reqDict.getDictName())
-                .eq(reqDict.getStatus() != null, Dict::getStatus, reqDict.getStatus());
+                .eq(reqDict.getStatus() != null, Dict::getStatus, reqDict.getStatus())
+                .orderByDesc(true, Dict::getCreateTime);
         return Result.ok(new PageResult<>(dictService.list(queryWrapper)), "字典-查询成功!");
     }
 

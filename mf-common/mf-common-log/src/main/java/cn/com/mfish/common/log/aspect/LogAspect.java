@@ -93,7 +93,6 @@ public class LogAspect {
         return params.substring(1);
     }
 
-
     @AfterReturning(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", returning = "returnValue")
     public void doAfterReturning(Object returnValue) {
         setReturn(0, JSON.toJSONString(returnValue));
@@ -109,7 +108,7 @@ public class LogAspect {
         sysLog.setCreateBy(AuthInfoUtils.getCurrentAccount());
         sysLog.setCreateTime(new Date());
         sysLog.setOperStatus(state);
-        sysLog.setRemark(StringUtils.substring(remark, 0, 2000));
+        sysLog.setRemark(remark);
         asyncSaveLog.saveLog(sysLog);
     }
 }

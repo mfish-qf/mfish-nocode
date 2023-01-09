@@ -51,7 +51,7 @@ public class ${entityName}Controller {
 	 * @return
 	 */
 	@Log(title = "${tableInfo.tableComment}-添加", operateType = OperateType.INSERT)
-	@ApiOperation(value = "${tableInfo.tableComment}-添加", notes = "${tableInfo.tableComment}-添加")
+	@ApiOperation("${tableInfo.tableComment}-添加")
 	@PostMapping
 	public Result<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})) {
@@ -67,7 +67,7 @@ public class ${entityName}Controller {
 	 * @return
 	 */
 	@Log(title = "${tableInfo.tableComment}-编辑", operateType = OperateType.UPDATE)
-	@ApiOperation(value = "${tableInfo.tableComment}-编辑", notes = "${tableInfo.tableComment}-编辑")
+	@ApiOperation("${tableInfo.tableComment}-编辑")
 	@PutMapping
 	public Result<${entityName}> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})) {
@@ -83,7 +83,7 @@ public class ${entityName}Controller {
 	 * @return
 	 */
 	@Log(title = "${tableInfo.tableComment}-通过id删除", operateType = OperateType.DELETE)
-	@ApiOperation(value = "${tableInfo.tableComment}-通过id删除", notes = "${tableInfo.tableComment}-通过id删除")
+	@ApiOperation("${tableInfo.tableComment}-通过id删除")
 	@DeleteMapping("/{id}")
 	public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		if (${entityName?uncap_first}Service.removeById(id)) {
@@ -99,7 +99,7 @@ public class ${entityName}Controller {
 	 * @return
 	 */
 	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
-	@ApiOperation(value = "${tableInfo.tableComment}-批量删除", notes = "${tableInfo.tableComment}-批量删除")
+	@ApiOperation("${tableInfo.tableComment}-批量删除")
 	@DeleteMapping("/batch")
 	public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))) {
@@ -114,7 +114,7 @@ public class ${entityName}Controller {
 	 * @param id
 	 * @return
 	 */
-	@ApiOperation(value = "${tableInfo.tableComment}-通过id查询", notes = "${tableInfo.tableComment}-通过id查询")
+	@ApiOperation("${tableInfo.tableComment}-通过id查询")
 	@GetMapping("/{id}")
 	public Result<${entityName}> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);

@@ -7,10 +7,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
- * @Description: 系统日志
- * @Author: mfish
- * @date: 2022-09-02
- * @Version: V1.0.0
+ * @description: 系统日志
+ * @author: mfish
+ * @date: 2023-01-08
+ * @version: V1.0.0
  */
 @Service
 public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements SysLogService {

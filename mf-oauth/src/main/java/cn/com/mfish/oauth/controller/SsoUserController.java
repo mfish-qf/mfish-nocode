@@ -116,6 +116,7 @@ public class SsoUserController {
 
     @ApiOperation("用户登出")
     @GetMapping("/revoke")
+    @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<String> revoke() {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {

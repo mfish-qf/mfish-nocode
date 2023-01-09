@@ -26,15 +26,17 @@ public class DictItem extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     @ApiModelProperty(value = "字典编码")
-	private String dictCode;
+    private String dictCode;
     @ApiModelProperty(value = "字典标签")
-	private String dictLabel;
+    private String dictLabel;
     @ApiModelProperty(value = "字典键值")
-	private String dictValue;
+    private String dictValue;
     @ApiModelProperty(value = "字典排序")
-	private Integer dictSort;
+    private Integer dictSort;
+    @ApiModelProperty(value = "字典显示颜色")
+    private String color;
     @ApiModelProperty(value = "状态(0正常 1停用)")
-	private Integer status;
+    private Integer status;
     @ApiModelProperty(value = "备注")
-	private String remark;
+    private String remark;
 }

@@ -73,7 +73,7 @@ public class AccessTokenController {
             @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query"),
             @ApiImplicitParam(name = OAuth.OAUTH_REFRESH_TOKEN, value = "密码 grant_type=refresh_token时必须", paramType = "query")
     })
-    @Log(title = "获取token", operateType = OperateType.QUERY)
+    @Log(title = "获取token", operateType = OperateType.LOGIN)
     public Result<AccessToken> token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
         OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
         Result<OAuthClient> result = code2TokenValidator.validateClient(request, null);
