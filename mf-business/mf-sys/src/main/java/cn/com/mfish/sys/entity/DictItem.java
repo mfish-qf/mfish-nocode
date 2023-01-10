@@ -25,6 +25,8 @@ public class DictItem extends BaseEntity<String> {
     @ApiModelProperty(value = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
+    @ApiModelProperty(value = "字典ID")
+    private String dictId;
     @ApiModelProperty(value = "字典编码")
     private String dictCode;
     @ApiModelProperty(value = "字典标签")

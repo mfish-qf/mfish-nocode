@@ -86,10 +86,7 @@ public class DictController {
         if (!result.isSuccess()) {
             return result;
         }
-        if (dictService.updateById(dict)) {
-            return Result.ok(dict, "字典-编辑成功!");
-        }
-        return Result.fail(dict, "错误:字典-编辑失败!");
+        return dictService.updateDict(dict);
     }
 
     /**
@@ -104,6 +101,9 @@ public class DictController {
         }
         if (StringUtils.isEmpty(dict.getDictName())) {
             return Result.fail("错误:字典名称不允许为空!");
+        }
+        if (dictService.isDictCodeExist(dict.getId(), dict.getDictCode())) {
+            return Result.fail("错误:字典编码已存在!");
         }
         return Result.ok(dict, "校验成功");
     }

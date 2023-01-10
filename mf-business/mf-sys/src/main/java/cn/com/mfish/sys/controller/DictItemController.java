@@ -6,7 +6,9 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.entity.DictItem;
+import cn.com.mfish.sys.mapper.DictMapper;
 import cn.com.mfish.sys.req.ReqDictItem;
 import cn.com.mfish.sys.service.DictItemService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -34,6 +36,8 @@ import java.util.List;
 public class DictItemController {
     @Resource
     private DictItemService dictItemService;
+    @Resource
+    DictMapper dictMapper;
 
     /**
      * 分页列表查询
@@ -45,25 +49,15 @@ public class DictItemController {
     @GetMapping
     public Result<PageResult<DictItem>> queryPageList(ReqDictItem reqDictItem, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-
-        return Result.ok(new PageResult<>(dictItemService.list(buildCondition(reqDictItem))), "字典项-查询成功!");
+        return Result.ok(new PageResult<>(dictItemService.getDictItems(reqDictItem)), "字典项-查询成功!");
     }
 
     @ApiOperation("根据字典编码获取字典项")
     @GetMapping("/{dictCode}")
     public Result<List<DictItem>> queryList(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
-        return Result.ok(dictItemService.list(buildCondition(
-                new ReqDictItem().setDictCode(dictCode).setStatus(0))), "字典项-查询成功!");
+        return Result.ok(dictItemService.getDictItems(new ReqDictItem().setDictCode(dictCode).setStatus(0)), "字典项-查询成功!");
     }
 
-    private LambdaQueryWrapper buildCondition(ReqDictItem reqDictItem) {
-        return new LambdaQueryWrapper<DictItem>()
-                .eq(reqDictItem.getDictCode() != null, DictItem::getDictCode, reqDictItem.getDictCode())
-                .like(reqDictItem.getDictLabel() != null, DictItem::getDictLabel, reqDictItem.getDictLabel())
-                .like(reqDictItem.getDictValue() != null, DictItem::getDictValue, reqDictItem.getDictValue())
-                .eq(reqDictItem.getStatus() != null, DictItem::getStatus, reqDictItem.getStatus())
-                .orderBy(true, true, DictItem::getDictSort);
-    }
 
     /**
      * 添加
@@ -79,8 +73,12 @@ public class DictItemController {
         if (!result.isSuccess()) {
             return result;
         }
-        if (dictItemService.save(dictItem)) {
-            return Result.ok(dictItem, "字典项-添加成功!");
+        Dict dict = dictMapper.selectOne(new LambdaQueryWrapper<Dict>().eq(Dict::getDictCode, dictItem.getDictCode()));
+        if (dict != null) {
+            dictItem.setDictId(dict.getId());
+            if (dictItemService.save(dictItem)) {
+                return Result.ok(dictItem, "字典项-添加成功!");
+            }
         }
         return Result.fail(dictItem, "错误:字典项-添加失败!");
     }
