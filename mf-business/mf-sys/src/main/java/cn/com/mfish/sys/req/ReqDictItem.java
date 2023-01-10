@@ -15,6 +15,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("字典项请求参数")
 public class ReqDictItem {
+    @ApiModelProperty(value = "字典ID")
+    private String dictId;
     @ApiModelProperty(value = "字典编码")
     private String dictCode;
     @ApiModelProperty(value = "字典标签")
