@@ -28,7 +28,7 @@
         <spring-boot.version>2.7.3</spring-boot.version>
         <spring-cloud.version>2021.0.4</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
-        <alibaba.nacos.version>2.0.4</alibaba.nacos.version>
+        <alibaba.nacos.version>2.2.0</alibaba.nacos.version>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>

@@ -37,14 +37,14 @@ public class SysLogController {
     /**
      * 分页列表查询
      *
-     * @param reqSysLog
-     * @return
+     * @param reqSysLog 系统日志请求参数
+     * @return 返回系统日志
      */
     @ApiOperation(value = "系统日志-分页列表查询", notes = "系统日志-分页列表查询")
     @GetMapping
     public Result<PageResult<SysLog>> queryPageList(ReqSysLog reqSysLog, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<SysLog>()
+        LambdaQueryWrapper<SysLog> queryWrapper = new LambdaQueryWrapper<SysLog>()
                 .like(reqSysLog.getTitle() != null, SysLog::getTitle, reqSysLog.getTitle())
                 .like(reqSysLog.getMethod() != null, SysLog::getMethod, reqSysLog.getMethod())
                 .eq(reqSysLog.getReqType() != null, SysLog::getReqType, reqSysLog.getReqType())
@@ -54,7 +54,8 @@ public class SysLogController {
                 .like(reqSysLog.getOperIp() != null, SysLog::getOperIp, reqSysLog.getOperIp())
                 .eq(reqSysLog.getOperStatus() != null, SysLog::getOperStatus, reqSysLog.getOperStatus())
                 .ge(reqSysLog.getStartTime() != null, SysLog::getCreateTime, reqSysLog.getStartTime())
-                .le(reqSysLog.getEndTime() != null, SysLog::getCreateTime, reqSysLog.getEndTime());
+                .le(reqSysLog.getEndTime() != null, SysLog::getCreateTime, reqSysLog.getEndTime())
+                .orderByDesc(SysLog::getCreateTime);
         return Result.ok(new PageResult<>(sysLogService.list(queryWrapper)), "系统日志-查询成功!");
     }
 

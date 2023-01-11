@@ -34,8 +34,8 @@ public class ${entityName}Controller {
 	/**
 	 * 分页列表查询
 	 *
-	 * @param req${entityName}
-	 * @return
+	 * @param req${entityName} ${tableInfo.tableComment}请求参数
+	 * @return 返回${tableInfo.tableComment}-分页列表
 	 */
 	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
@@ -47,8 +47,8 @@ public class ${entityName}Controller {
 	/**
 	 * 添加
 	 *
-	 * @param ${entityName?uncap_first}
-	 * @return
+	 * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
+	 * @return 返回${tableInfo.tableComment}-添加结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-添加", operateType = OperateType.INSERT)
 	@ApiOperation("${tableInfo.tableComment}-添加")
@@ -63,8 +63,8 @@ public class ${entityName}Controller {
 	/**
 	 * 编辑
 	 *
-	 * @param ${entityName?uncap_first}
-	 * @return
+	 * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
+	 * @return 返回${tableInfo.tableComment}-编辑结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-编辑", operateType = OperateType.UPDATE)
 	@ApiOperation("${tableInfo.tableComment}-编辑")
@@ -79,8 +79,8 @@ public class ${entityName}Controller {
 	/**
 	 * 通过id删除
 	 *
-	 * @param id
-	 * @return
+	 * @param id 唯一ID
+	 * @return 返回${tableInfo.tableComment}-删除结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-通过id删除", operateType = OperateType.DELETE)
 	@ApiOperation("${tableInfo.tableComment}-通过id删除")
@@ -95,8 +95,8 @@ public class ${entityName}Controller {
 	/**
 	 * 批量删除
 	 *
-	 * @param ids
-	 * @return
+	 * @param ids 批量ID
+	 * @return 返回${tableInfo.tableComment}-删除结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
 	@ApiOperation("${tableInfo.tableComment}-批量删除")
@@ -111,8 +111,8 @@ public class ${entityName}Controller {
 	/**
 	 * 通过id查询
 	 *
-	 * @param id
-	 * @return
+	 * @param id 唯一ID
+	 * @return 返回${tableInfo.tableComment}对象
 	 */
 	@ApiOperation("${tableInfo.tableComment}-通过id查询")
 	@GetMapping("/{id}")
