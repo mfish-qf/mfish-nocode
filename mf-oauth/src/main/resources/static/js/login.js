@@ -5,11 +5,11 @@ let vm = new Vue({
         phoneSmsCodeVisible: false,
         qrCodeVisible: false,
         captchaValue: '',
-        captchaKey:'',
+        captchaKey: '',
         captchaUrl: '',
         phone: '',
-        username: '',
-        password: '',
+        username: 'admin',
+        password: '!QAZ2wsx',
         loginType: '',
         errorVisible: false,
         errorMsg: '',
@@ -23,6 +23,11 @@ let vm = new Vue({
         qrCodeName: '',
         qrCodeSecret: '',
         allowScan: true
+    },
+    mounted: function () {
+        this.initLoginData();
+        this.getCaptcha();
+        this.showError();
     },
     methods: {
         login() {
@@ -192,13 +197,6 @@ let vm = new Vue({
                 }
             }, 1000);
         }
-    },
-    created: function () {
-    },
-    mounted: function () {
-        this.initLoginData();
-        this.getCaptcha();
-        this.showError();
     }
 });
 vm.$watch('qrCodeSecret', function () {
