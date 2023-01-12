@@ -62,7 +62,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
         }
         String uuid = UUID.randomUUID().toString();
         String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;
-        stringRedisTemplate.opsForValue().set(verifyKey,value,Constants.CAPTCHA_EXPIRE,TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(verifyKey, value, Constants.CAPTCHA_EXPIRE, TimeUnit.MINUTES);
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try {
             ImageIO.write(img, "jpg", os);
@@ -77,15 +77,15 @@ public class CheckCodeServiceImpl implements CheckCodeService {
     @Override
     public void checkCaptcha(String code, String uuid) {
         if (StringUtils.isEmpty(code)) {
-            throw new CaptchaException("错误:验证码不能为空");
+            throw new CaptchaException(CaptchaException.Info.NULL.getName());
         }
         if (StringUtils.isEmpty(uuid)) {
-            throw new CaptchaException("错误:验证码已失效");
+            throw new CaptchaException(CaptchaException.Info.TIMEOUT.getName());
         }
         String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;
         String captcha = stringRedisTemplate.opsForValue().get(verifyKey);
         if (!code.equalsIgnoreCase(captcha)) {
-            throw new CaptchaException("错误:验证码不正确");
+            throw new CaptchaException(CaptchaException.Info.ERROR.getName());
         }
         stringRedisTemplate.delete(verifyKey);
     }

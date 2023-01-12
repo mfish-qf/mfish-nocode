@@ -5,7 +5,7 @@
     <title>摸鱼低代码</title>
     <script type="text/javascript" src="js/vue.min.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap3.min.css" rel="stylesheet">
     <link href="css/login.css" rel="stylesheet">
     <link rel="shortcut icon" href="img/favicon.ico">
 </head>
@@ -45,8 +45,8 @@
                         <input type="text" name="captchaValue" v-model="captchaValue" class="form-control" placeholder="验证码">
                         <input type="hidden" name="captchaKey" v-model="captchaKey">
                         <span class="input-group-btn">
-                        <img :src="captchaUrl" @click="getCaptcha" class="captcha"/>
-                    </span>
+                            <img :src="captchaUrl" @click="getCaptcha" class="captcha"/>
+                        </span>
                     </div>
                 </div>
                 <div class="form-group">

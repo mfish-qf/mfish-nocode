@@ -1,0 +1,100 @@
+html, body {
+    height: 100%;
+}
+
+.login {
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: -webkit-linear-gradient(to left, #0083fe, #00fff0);
+    background: linear-gradient(to left, #0083fe, #00fff0);
+    height: 100%;
+    font-size: 14px;
+}
+
+.login .brand {
+    width: 90px;
+    height: 90px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 40px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
+    position: relative;
+    z-index: 1;
+}
+
+.login .brand img {
+    width: 100%;
+}
+
+.login .card-wrapper {
+    width: 450px;
+}
+
+.login .card {
+    border-color: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
+}
+
+.login .card.fat {
+    padding: 10px;
+}
+
+.login .card .card-title {
+    margin-bottom: 30px;
+}
+
+.login .form-control {
+    border-width: 1px;
+    border-radius: 0px;
+}
+
+.login .form-group label {
+    width: 100%;
+}
+
+.login .captcha {
+    position: absolute;
+    top: 1px;
+    right: 0px;
+    width: 149px;
+    z-index: 10;
+}
+
+.login .form-check-input {
+    border-radius: 0px;
+}
+.login .btn.btn-block {
+    padding: 12px 10px;
+    border-radius: 0px;
+
+}
+
+.login .btn.btn-tab {
+    border-radius: 0px;
+    font-size: 14px;
+}
+
+.login .footer {
+    margin: 40px 0;
+    color: #888;
+    text-align: center;
+}
+
+@media screen and (max-width: 425px) {
+    .login .card-wrapper {
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .login .card.fat {
+        padding: 0;
+    }
+
+    .login .card.fat .card-body {
+        padding: 15px;
+    }
+}

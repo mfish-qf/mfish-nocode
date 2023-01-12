@@ -26,9 +26,13 @@ public class CaptchaProperties {
     private CaptchaType type;
 
     /**
-     * 需要校验的url
+     * 网关校验后直接返回处理结果
      */
-    private String[] checkUrls;
+    private String[] gatewayCheckCaptcha;
+    /**
+     * 网关校验后将结果存入参数中由自己服务处理
+     */
+    private String[] selfCheckCaptcha;
 
     public void setType(String type) {
         this.type = CaptchaType.getCaptchaType(type);

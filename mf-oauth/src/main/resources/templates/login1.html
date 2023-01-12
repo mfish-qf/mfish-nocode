@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>摸鱼低代码平台</title>
+    <script type="text/javascript" src="js/vue.global.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/my-login.css">
+    <link rel="stylesheet" type="text/css" href="css/animation.css">
+</head>
+<body>
+<input type="hidden" th:value="${errorMsg}" id="errorMsg"/>
+<input type="hidden" th:value="${loginType}" id="loginType"/>
+<input type="hidden" th:value="${username}" id="username"/>
+<section id="newLogin" class="login">
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="card-wrapper">
+                <div class="brand">
+                    <img src="img/logo.png" alt="logo">
+                </div>
+                <div class="card fat">
+                    <div class="card-body">
+                        <h4 class="card-title">摸鱼低代码平台</h4>
+                        <div v-show="userPasswordVisible">
+                            <form id="login" method="POST" class="-enter-x">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="inputUsername" :value="username"
+                                           name="username" placeholder="用户名">
+                                    <label for="inputUsername">用户名</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control" id="inputPassword" :value="password"
+                                           name="password" placeholder="密码">
+                                    <label for="inputPassword">密码</label>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="inputCaptcha"
+                                               :value="captchaValue"
+                                               name="captchaValue" placeholder="验证码">
+                                        <input type="hidden" name="captchaKey" :value="captchaKey">
+                                        <label for="inputCaptcha">验证码</label>
+                                    </div>
+                                    <span>
+                                        <img :src="captchaUrl" @click="getCaptcha" class="captcha"/>
+                                    </span>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" id="rememberMe" type="checkbox"
+                                           name="rememberMe" :value="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        记住我
+                                    </label>
+                                </div>
+                                <input type="hidden" v-model="loginType" name="loginType"/>
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="button" class="btn btn-primary btn-block" @click="login">登录
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="text-center ">
+                            <button type="button" class="btn btn-tab">手机登录</button>
+                            <button type="button" class="btn btn-tab">扫码登录</button>
+                            <button type="button" class="btn btn-tab">用户注册</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    Copyright &copy; 2023 &mdash; 摸鱼低代码平台
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="js/login1.js"></script>
+</body>
+</html>
