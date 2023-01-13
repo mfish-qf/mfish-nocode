@@ -1,37 +1,49 @@
-const {createApp} = Vue;
-const app = createApp({
-    data() {
-        return {
-            userPasswordVisible: false,
-            phoneSmsCodeVisible: false,
-            qrCodeVisible: false,
-            captchaValue: '',
-            captchaKey: '',
-            captchaUrl: '',
-            phone: '',
-            username: 'admin',
-            password: '!QAZ2wsx',
-            loginType: '',
-            errorVisible: false,
-            errorMsg: '',
-            rememberMe: false,
-            codeValue: '',
-            codeButton: '验证码',
-            codeDisabled: false,
-            qrCode: '',
-            timer: '',
-            qrCodeDesc: '打开小程序扫码',
-            qrCodeName: '',
-            qrCodeSecret: '',
-            allowScan: true
-        }
+let app = new Vue({
+    el: '#newLogin',
+    data: {
+        userPasswordVisible: false,
+        phoneSmsCodeVisible: false,
+        qrCodeVisible: false,
+        captchaValue: '',
+        captchaKey: '',
+        captchaUrl: '',
+        phone: '',
+        username: 'admin',
+        password: '!QAZ2wsx',
+        loginType: '',
+        errorVisible: false,
+        errorMsg: '',
+        rememberMe: false,
+        codeValue: '',
+        codeButton: '验证码',
+        codeDisabled: false,
+        qrCode: '',
+        timer: '',
+        qrCodeDesc: '打开小程序扫码',
+        qrCodeName: '',
+        qrCodeSecret: '',
+        allowScan: true,
+        showLeft: true
     },
     mounted() {
         this.initLoginData();
         this.getCaptcha();
         this.showError();
+        this.screenChange();
+        window.onresize = () => {
+            return this.screenChange()
+        }
     },
     methods: {
+        screenChange() {
+            const screenWidth = document.body.clientWidth
+            if (screenWidth < 425) {
+                this.showLeft = false
+            } else if (screenWidth > 800) {
+                this.showLeft = true
+            }
+            return screenWidth;
+        },
         login() {
             $('#login').submit();
         },
@@ -198,54 +210,9 @@ const app = createApp({
                     app.codeDisabled = false;
                 }
             }, 1000);
-        },
-        createEnterPlugin(maxOutput) {
-            const createCss = (index, d) => {
-                const upd = d.toUpperCase();
-                return {
-                    [`*> .enter-${d}:nth-child(${index})`]: {
-                        transform: `translate${upd}(50px)`
-                    },
-                    [`*> .-enter-${d}:nth-child(${index})`]: {
-                        transform: `translate${upd}(-50px)`
-                    },
-                    [`* > .enter-${d}:nth-child(${index}),* > .-enter-${d}:nth-child(${index})`]: {
-                        "z-index": `${10 - index}`,
-                        opacity: "0",
-                        animation: `enter-${d}-animation 0.4s ease-in-out 0.3s`,
-                        "animation-fill-mode": "forwards",
-                        "animation-delay": `${(index * 1) / 10}s`
-                    }
-                };
-            };
-            const handler = () => {
-                const addRawCss = {};
-                for (let index = 1; index < maxOutput; index++) {
-                    Object.assign(addRawCss, {
-                        ...createCss(index, "x"),
-                        ...createCss(index, "y")
-                    });
-                }
-                return {
-                    ...addRawCss,
-                    [`@keyframes enter-x-animation`]: {
-                        to: {
-                            opacity: "1",
-                            transform: "translateX(0)"
-                        }
-                    },
-                    [`@keyframes enter-y-animation`]: {
-                        to: {
-                            opacity: "1",
-                            transform: "translateY(0)"
-                        }
-                    }
-                };
-            };
-            return {handler};
         }
     },
-}).mount('#newLogin')
+});
 app.$watch('qrCodeSecret', function () {
     $('#qrCodeLogin').submit();
 });
