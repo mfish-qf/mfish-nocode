@@ -36,13 +36,14 @@ let app = new Vue({
     },
     methods: {
         screenChange() {
-            const screenWidth = document.body.clientWidth
-            if (screenWidth < 425) {
-                this.showLeft = false
-            } else if (screenWidth > 800) {
-                this.showLeft = true
+            const clientWidth = document.body.clientWidth
+            const clientHeight = document.body.clientHeight
+            if (clientWidth > clientHeight) {
+                this.showLeft = true;
+            } else {
+                this.showLeft = false;
             }
-            return screenWidth;
+            return clientWidth;
         },
         login() {
             $('#login').submit();

@@ -3,10 +3,10 @@ html, body {
 }
 
 .login {
-    /*display: -webkit-flex;*/
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
+    display: -webkit-flex;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
     background: #fbfbfb;
     background: url(../img/login-bg.png), -webkit-linear-gradient(to left, #0083fe, #00fff0);
     background: url(../img/login-bg.png), linear-gradient(to left, #0083fe, #00fff0);
@@ -15,10 +15,13 @@ html, body {
     height: 100vh;
     font-size: 14px;
 }
-.login .logo{
-    top: 10px;
-    left: 10px;
+
+.login .logo {
+    display: flex;
+    align-items: center;
+    margin: 20px 0 0 200px;
 }
+
 .login .brand {
     width: 60px;
     height: 60px;
@@ -32,11 +35,12 @@ html, body {
     align-items: center;
 }
 
-.login .logo div {
+.login .logo .title {
     font-size: 24px;
     color: #fff;
     font-weight: 700;
-    line-height: normal;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
+    margin-left: 20px;
 }
 
 .login .brand img {
@@ -156,9 +160,17 @@ html, body {
 }
 
 @media screen and (max-width: 425px) {
-    .login .card-wrapper {
-        width: 90%;
-        margin: 0 auto;
+    /*.login .card-wrapper {*/
+    /*    width: 90%;*/
+    /*    margin: 0 auto;*/
+    /*}*/
+    .login .logo {
+        margin: 20px 0 0 20px;
+    }
+
+    .login .btn.btn-tab.btn-default {
+        width: 100px;
+        /*margin: 0 auto;*/
     }
 }
 
