@@ -8,8 +8,8 @@ html, body {
     justify-content: space-between;
     flex-direction: column;
     background: #fbfbfb;
-    background: url(../img/login-bg.png), -webkit-linear-gradient(to left, #0083fe, #00fff0);
-    background: url(../img/login-bg.png), linear-gradient(to left, #0083fe, #00fff0);
+    background: url(../img/login-bg.png), -webkit-linear-gradient(to left, #00fff0, #0083fe);
+    background: url(../img/login-bg.png), linear-gradient(to left, #00fff0, #0083fe);
     /*background:linear-gradient(136deg,#1fa4f3,#4c72ff);*/
     background-size: cover;
     height: 100vh;
@@ -19,7 +19,7 @@ html, body {
 .login .logo {
     display: flex;
     align-items: center;
-    margin: 20px 0 0 200px;
+    margin: 20px 0 0 400px;
 }
 
 .login .brand {
@@ -47,6 +47,18 @@ html, body {
     width: 100%;
 }
 
+.login .card-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.login .card-left .title {
+    font-size: 24px;
+    color: #fff;
+    font-weight: 700;
+}
+
 .login .card-wrapper {
     width: 450px;
 }
@@ -62,6 +74,7 @@ html, body {
 
 .login .card .card-title {
     margin-bottom: 30px;
+    font-weight: 700;
 }
 
 .login .form-control {
@@ -159,27 +172,42 @@ html, body {
     text-align: center;
 }
 
+@media screen and (max-width: 540px) {
+    .login .logo {
+        margin: 20px 0 0 20px;
+    }
+    .login .card-left .title {
+        font-size: 14px;
+        font-weight: 700;
+    }
+}
+
 @media screen and (max-width: 425px) {
-    /*.login .card-wrapper {*/
-    /*    width: 90%;*/
-    /*    margin: 0 auto;*/
-    /*}*/
+    .login .card-left .title {
+        font-size: 14px;
+        font-weight: 700;
+    }
+
     .login .logo {
         margin: 20px 0 0 20px;
     }
 
     .login .btn.btn-tab.btn-default {
         width: 100px;
-        /*margin: 0 auto;*/
     }
 }
 
 @media screen and (max-width: 320px) {
+    .login .btn.btn-tab.btn-default {
+        width: 80px;
+        font-size: 12px;
+    }
+
     .login .card.fat {
         padding: 0;
     }
 
     .login .card.fat .card-body {
-        padding: 15px;
+        padding: 10px;
     }
 }

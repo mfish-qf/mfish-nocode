@@ -38,7 +38,7 @@ let app = new Vue({
         screenChange() {
             const clientWidth = document.body.clientWidth
             const clientHeight = document.body.clientHeight
-            if (clientWidth > clientHeight) {
+            if (clientWidth > 425) {
                 this.showLeft = true;
             } else {
                 this.showLeft = false;

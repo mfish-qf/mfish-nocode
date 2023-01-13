@@ -16,19 +16,23 @@
 <input type="hidden" th:value="${loginType}" id="loginType"/>
 <input type="hidden" th:value="${username}" id="username"/>
 <section id="newLogin" class="login">
-    <div class="logo">
+    <div class="logo -enter-x">
         <div class="brand">
             <img src="img/logo.png" alt="logo">
         </div>
-        <div class="title">摸鱼低代码平台</div>
+        <div class="title">
+            <div>MFish NoCode</div>
+            <div>摸鱼低代码平台</div>
+        </div>
     </div>
     <div class="container">
         <div class="row">
-            <div class="col" v-if="showLeft"></div>
-            <div class="col card-wrapper">
+            <div class="card-left" v-if="showLeft">
+            </div>
+            <div class="card-wrapper">
                 <div class="card fat">
                     <div class="card-body">
-                        <h4 class="card-title">摸鱼低代码平台</h4>
+                        <h4 class="card-title">登录</h4>
                         <div v-show="userPasswordVisible">
                             <form id="login" method="POST" class="enter-x">
                                 <div class="form-floating mb-3">
@@ -130,7 +134,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="footer">
         Copyright &copy; 2023 &mdash; 摸鱼低代码平台
