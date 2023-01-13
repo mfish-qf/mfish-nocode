@@ -60,6 +60,6 @@ public class LoginController {
         loginService.saveSmsCodeTime(phone);
         loginService.sendMsg(phone, code);
         //测试环境返回生成验证码值,生产环境需要隐藏短信码返回值
-        return Result.ok(code);
+        return Result.ok(code, "生成成功");
     }
 }

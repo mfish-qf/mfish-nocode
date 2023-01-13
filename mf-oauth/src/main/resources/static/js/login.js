@@ -15,7 +15,7 @@ let vm = new Vue({
         errorMsg: '',
         rememberMe: false,
         codeValue: '',
-        codeButton: '验证码',
+        codeButton: '短信',
         codeDisabled: false,
         qrCode: '',
         timer: '',
@@ -48,7 +48,7 @@ let vm = new Vue({
                         vm.codeValue = result.data;
                         vm.resetCode();
                     } else {
-                        vm.showError(result.data.msg);
+                        vm.showError(result.msg);
                     }
                 }
             });
@@ -62,7 +62,7 @@ let vm = new Vue({
                         vm.captchaUrl = "data:image/gif;base64," + result.data.img;
                         vm.captchaKey = result.data.captchaKey;
                     } else {
-                        vm.showError(result.data.msg);
+                        vm.showError(result.msg);
                     }
                 }
             });
@@ -192,7 +192,7 @@ let vm = new Vue({
                     vm.codeDisabled = true;
                 } else {
                     clearInterval(codeTime);
-                    vm.codeButton = "验证码";
+                    vm.codeButton = "短信";
                     vm.codeDisabled = false;
                 }
             }, 1000);

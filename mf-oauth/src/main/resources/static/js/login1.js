@@ -15,7 +15,7 @@ let app = new Vue({
         errorMsg: '',
         rememberMe: false,
         codeValue: '',
-        codeButton: '验证码',
+        codeButton: '',
         codeDisabled: false,
         qrCode: '',
         timer: '',
@@ -23,7 +23,8 @@ let app = new Vue({
         qrCodeName: '',
         qrCodeSecret: '',
         allowScan: true,
-        showLeft: true
+        showLeft: true,
+        phoneError: false
     },
     mounted() {
         this.initLoginData();
@@ -63,7 +64,8 @@ let app = new Vue({
                         app.codeValue = result.data;
                         app.resetCode();
                     } else {
-                        app.showError(result.data.msg);
+                        app.phoneError = true
+                        app.showError(result.msg);
                     }
                 }
             });
@@ -77,7 +79,7 @@ let app = new Vue({
                         app.captchaUrl = "data:image/gif;base64," + result.data.img;
                         app.captchaKey = result.data.captchaKey;
                     } else {
-                        app.showError(result.data.msg);
+                        app.showError(result.msg);
                     }
                 }
             });
@@ -207,7 +209,7 @@ let app = new Vue({
                     app.codeDisabled = true;
                 } else {
                     clearInterval(codeTime);
-                    app.codeButton = "验证码";
+                    app.codeButton = "";
                     app.codeDisabled = false;
                 }
             }, 1000);

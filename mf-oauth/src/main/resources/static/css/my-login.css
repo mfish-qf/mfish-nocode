@@ -103,6 +103,13 @@ html, body {
     border-radius: 0px;
 }
 
+.login .btn.btn-block.code {
+    width: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .login .btn-tabs.d-flex {
     justify-content: space-between;
 }

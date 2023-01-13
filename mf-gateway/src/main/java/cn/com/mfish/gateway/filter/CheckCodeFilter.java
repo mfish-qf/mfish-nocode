@@ -43,8 +43,6 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            Map<String, String> queryParams = exchange.getRequest().getQueryParams().toSingleValueMap();
-            System.out.println(queryParams);
             boolean gatewayCheck = StringUtils.containsAnyIgnoreCase(request.getURI().getPath(), captchaProperties.getGatewayCheckCaptcha());
             boolean selfCheck = StringUtils.containsAnyIgnoreCase(request.getURI().getPath(), captchaProperties.getSelfCheckCaptcha());
             // 不需要校验验证码的地址、验证码关闭、get请求，不处理校验
