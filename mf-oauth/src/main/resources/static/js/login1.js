@@ -11,6 +11,7 @@ let app = new Vue({
         username: 'admin',
         password: '!QAZ2wsx',
         loginType: '',
+        loginTypeName: '帐号',
         errorVisible: false,
         errorMsg: '',
         rememberMe: false,
@@ -24,7 +25,28 @@ let app = new Vue({
         qrCodeSecret: '',
         allowScan: true,
         showLeft: true,
-        phoneError: false
+        error: {
+            username: {
+                show: false,
+                msg: ''
+            },
+            password: {
+                show: false,
+                msg: ''
+            },
+            captcha: {
+                show: false,
+                msg: ''
+            },
+            phone: {
+                show: false,
+                msg: ''
+            },
+            code: {
+                show: false,
+                msg: ''
+            }
+        }
     },
     mounted() {
         this.initLoginData();
@@ -47,29 +69,82 @@ let app = new Vue({
             return clientWidth;
         },
         login() {
-            $('#login').submit();
+            if (this.validateUserLogin()) {
+                $('#login').submit();
+            }
+        },
+        validateUserLogin() {
+            if (!this.username) {
+                this.showInputError('username', '请输入用户名')
+                return false
+            }
+            if (!this.password) {
+                this.showInputError('password', '请输入密码')
+                return false
+            }
+            if (!this.captchaValue) {
+                this.showInputError('captcha', '请输入验证码')
+                return false
+            }
+            return true
+        },
+        showInputError(key, error) {
+            this.setError(key, true, error);
+        },
+        hideInputError(key) {
+            this.setError(key, false, '')
+        },
+        setError(key, show, error) {
+            this.error[key].show = show;
+            this.error[key].msg = error;
         },
         smsLogin() {
-            $('#smsLogin').submit();
+            if (this.validateSmsLogin()) {
+                $('#smsLogin').submit();
+            }
         },
+        validateSmsLogin() {
+            if (!this.validatePhone()) {
+                return false
+            }
+            if (!this.codeValue) {
+                this.showInputError('code', '请输入验证码')
+                return false
+            }
+            return true;
+        },
+        validatePhone() {
+            if (!this.phone) {
+                this.showInputError('phone', '请输入手机号')
+                return false
+            }
+            if (!new RegExp(/^1[3-9][0-9]\d{8}$/).test(this.phone)) {
+                this.showInputError('phone', '手机号格式不正确')
+                return false
+            }
+            return true
+        },
+
         sendMsg() {
-            $.ajax({
-                url: "sendMsg",
-                type: "POST",
-                data: "phone=" + this.phone,
-                dataType: "json",
-                success: function (result) {
-                    if (200 == result.code) {
-                        //测试环境将验证码返回，生成环境删除此方法
-                        app.codeValue = result.data;
-                        app.resetCode();
-                    } else {
-                        app.phoneError = true
-                        app.showError(result.msg);
+            if (this.validatePhone()) {
+                $.ajax({
+                    url: "sendMsg",
+                    type: "POST",
+                    data: "phone=" + this.phone,
+                    dataType: "json",
+                    success: function (result) {
+                        if (200 == result.code) {
+                            //测试环境将验证码返回，生成环境删除此方法
+                            app.codeValue = result.data;
+                            app.resetCode();
+                        } else {
+                            app.showError(result.msg);
+                        }
                     }
-                }
-            });
+                });
+            }
         },
+
         getCaptcha() {
             $.ajax({
                 url: "/captcha",
@@ -148,6 +223,7 @@ let app = new Vue({
             this.phoneSmsCodeVisible = false;
             this.qrCodeVisible = false;
             this.loginType = "user_password";
+            this.loginTypeName = "帐号";
             clearInterval(this.timer)
             this.clearError();
         },
@@ -156,6 +232,7 @@ let app = new Vue({
             this.userPasswordVisible = false;
             this.qrCodeVisible = false;
             this.loginType = "phone_smsCode";
+            this.loginTypeName = "手机";
             clearInterval(this.timer)
             this.clearError();
         },
@@ -164,6 +241,7 @@ let app = new Vue({
             this.phoneSmsCodeVisible = false;
             this.userPasswordVisible = false;
             this.loginType = "qr_code";
+            this.loginTypeName = "扫码";
             this.buildQRCode();
             this.clearError();
         },

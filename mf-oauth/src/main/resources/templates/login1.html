@@ -32,22 +32,31 @@
             <div class="card-wrapper">
                 <div class="card fat">
                     <div class="card-body">
-                        <h4 class="card-title">登录</h4>
+                        <h4 class="card-title">{{loginTypeName}}登录</h4>
                         <div v-show="userPasswordVisible">
                             <form id="login" method="POST" class="enter-x">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="inputUsername" v-model="username" name="username" placeholder="用户名">
+                                    <input type="text" class="form-control" :class="{'is-invalid':error.username.show}" id="inputUsername" v-model="username" name="username" placeholder="用户名">
                                     <label for="inputUsername">用户名</label>
+                                    <div class="invalid-feedback" v-if="error.username.show">
+                                        {{error.username.msg}}
+                                    </div>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="password" class="form-control" id="inputPassword" v-model="password" name="password" placeholder="密码">
+                                    <input type="password" class="form-control" :class="{'is-invalid':error.password.show}" id="inputPassword" v-model="password" name="password" placeholder="密码">
                                     <label for="inputPassword">密码</label>
+                                    <div class="invalid-feedback" v-if="error.password.show">
+                                        {{error.password.msg}}
+                                    </div>
                                 </div>
                                 <div class="input-group mb-1">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="inputCaptcha" v-model="captchaValue" name="captchaValue" placeholder="验证码">
+                                        <input type="text" class="form-control" :class="{'is-invalid':error.captcha.show}" id="inputCaptcha" v-model="captchaValue" name="captchaValue" placeholder="验证码">
                                         <input type="hidden" name="captchaKey" v-model="captchaKey">
                                         <label for="inputCaptcha">验证码</label>
+                                        <div class="invalid-feedback" v-if="error.captcha.show">
+                                            {{error.captcha.msg}}
+                                        </div>
                                     </div>
                                     <span><img :src="captchaUrl" @click="getCaptcha" class="captcha"/></span>
                                 </div>
@@ -71,15 +80,15 @@
                         <div v-show="phoneSmsCodeVisible">
                             <form id="smsLogin" method="post" class="enter-x">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" :class="{'is-invalid':phoneError}" id="inputPhone" v-model="phone" name="username" placeholder="手机号">
+                                    <input type="text" class="form-control" :class="{'is-invalid':error.phone.show}" id="inputPhone" v-model="phone" name="username" placeholder="手机号">
                                     <label for="inputPhone">手机号</label>
-                                    <div class="invalid-feedback" v-if="phoneError">
-                                        请输入手机号
+                                    <div class="invalid-feedback" v-if="error.phone.show">
+                                        {{error.phone.msg}}
                                     </div>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="inputCode" v-model="codeValue" name="password" placeholder="验证码">
+                                    <div class="form-floating" :class="{'is-invalid':error.code.show}">
+                                        <input type="text" class="form-control" :class="{'is-invalid':error.code.show}" id="inputCode" v-model="codeValue" name="password" placeholder="验证码">
                                         <label for="inputCode">验证码</label>
                                     </div>
                                     <span class="btn btn-tab btn-block code" @click="sendMsg" :disabled="codeDisabled">
@@ -88,6 +97,9 @@
                                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
                                         </svg>
                                     </span>
+                                    <div class="invalid-feedback" v-if="error.code.show">
+                                        {{error.code.msg}}
+                                    </div>
                                 </div>
                                 <input type="hidden" v-model="loginType" name="loginType"/>
                                 <div class="d-grid gap-2 mb-3">

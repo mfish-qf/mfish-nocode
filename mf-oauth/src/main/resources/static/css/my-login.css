@@ -190,6 +190,11 @@ html, body {
 }
 
 @media screen and (max-width: 425px) {
+    .login .card-wrapper {
+        width: 100%;
+        margin: 0 auto;
+    }
+
     .login .card-left .title {
         font-size: 14px;
         font-weight: 700;
