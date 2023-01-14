@@ -1,7 +1,8 @@
 package cn.com.mfish.oauth.realm;
 
-import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,6 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 /**
  * @author: mfish
@@ -75,12 +74,15 @@ public abstract class BaseRealm extends AuthorizingRealm {
      * @return
      */
     private SsoUser buildUser(String phone) {
+        if (phone.length() != 11) {
+            throw new UnknownAccountException("手机号不正确");
+        }
         SsoUser userInfo = new SsoUser();
         userInfo.setPhone(phone);
-        userInfo.setId(UUID.randomUUID().toString());
-        userInfo.setAccount("user" + phone);
-        userInfo.setNickname(userInfo.getAccount());
-        userInfo.setStatus(1);
+        userInfo.setId(Utils.uuid32());
+        userInfo.setAccount(phone);
+        userInfo.setNickname("user" + phone.substring(7, 11));
+        userInfo.setSex(1);
         return userInfo;
     }
 

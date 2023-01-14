@@ -7,11 +7,13 @@ package cn.com.mfish.common.oauth.common;
 public class SerConstant {
     public static final String ACCOUNT_DELETE_DESCRIPTION = "登录失败:该账号已删除，请联系管理员";
     public static final String ACCOUNT_DISABLE_DESCRIPTION = "登录失败:该帐号已禁用，请联系管理员";
+    public static final String ACCOUNT_LOCK_DESCRIPTION = "登录失败:该帐号已锁定，请联系管理员";
     public static final String INVALID_USER_SECRET_DESCRIPTION = "登录失败:错误的帐号或密码";
     public static final String INVALID_USER_ID_DESCRIPTION = "登录失败:错误的用户ID";
     public static final String INVALID_WX_ID_DESCRIPTION = "登录失败:错误的微信ID";
     public static final String INVALID_NEW_USER_DESCRIPTION = "登录失败:插入新用户失败";
     public static final String REMEMBER_ME = "rememberMe";
+    public static final String CLIENT_ID = "client_id";
     public static final String LOGIN_TYPE = "loginType";
     public static final String ERROR_MSG = "errorMsg";
     public static final String QR_CODE = "code";
@@ -22,6 +24,7 @@ public class SerConstant {
     public static final String ALL_PERMISSION = "*:*:*";
     public static final String SUPER_ROLE = "superAdmin";
     public static final String SUPER_USER = "admin";
+
     /**
      * 登录类型
      */
@@ -80,10 +83,9 @@ public class SerConstant {
      * 账号状态
      */
     public enum AccountState {
-        删除(0),
-        正常(1),
-        禁用(2),
-        锁定(3);
+        正常(0),
+        禁用(1),
+        锁定(2);
 
         private int value;
 

@@ -18,6 +18,9 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
     //登录类型
     private SerConstant.LoginType loginType = SerConstant.LoginType.密码登录;
 
+    //客户端ID
+    private String clientId;
+
     public MyUsernamePasswordToken(String username, String password) {
         super(username, password);
     }
@@ -49,8 +52,18 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
         return isNew;
     }
 
-    public void setNew(boolean aNew) {
+    public MyUsernamePasswordToken setNew(boolean aNew) {
         isNew = aNew;
+        return this;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public MyUsernamePasswordToken setClientId(String clientId) {
+        this.clientId = clientId;
+        return this;
     }
 
 }

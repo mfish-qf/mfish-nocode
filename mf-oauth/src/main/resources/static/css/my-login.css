@@ -12,14 +12,14 @@ html, body {
     background: url(../img/login-bg.png), linear-gradient(to left, #00fff0, #0083fe);
     /*background:linear-gradient(136deg,#1fa4f3,#4c72ff);*/
     background-size: cover;
-    height: 100vh;
+    height: 100%;
     font-size: 14px;
 }
 
 .login .logo {
     display: flex;
     align-items: center;
-    margin: 20px 0 0 400px;
+    margin: 20px 0 0 100px;
 }
 
 .login .brand {
@@ -36,11 +36,15 @@ html, body {
 }
 
 .login .logo .title {
-    font-size: 24px;
-    color: #fff;
-    font-weight: 700;
+    color: #fbfbfb;
     box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
     margin-left: 20px;
+}
+.login .logo .title > h4{
+    font-weight: 700;
+}
+.login .logo .title > h6{
+    font-weight: 500;
 }
 
 .login .brand img {
@@ -206,6 +210,12 @@ html, body {
 
     .login .btn.btn-tab.btn-default {
         width: 100px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .login .btn.btn-tab.btn-default {
+        width: 90px;
     }
 }
 

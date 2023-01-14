@@ -149,14 +149,39 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     @Transactional
+    public Result<SsoUser> insertUser(SsoUser user, String clientId) {
+        return insertUserInfo(user, clientId);
+    }
+
+    @Override
+    @Transactional
     public Result<SsoUser> insertUser(SsoUser user) {
+        return insertUserInfo(user, AuthInfoUtils.getCurrentClientId());
+    }
+
+    public Result<SsoUser> insertUserInfo(SsoUser user, String clientId) {
         validateUser(user, "新增");
-        user.setId(Utils.uuid32());
-        user.setSalt(PasswordHelper.buildSalt());
-        user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
+        //如果外部已经赋值过id就不重新赋值了
+        if (StringUtils.isEmpty(user.getId())) {
+            user.setId(Utils.uuid32());
+        }
+        //如果外部已经设置过盐，此处不设置
+        if (StringUtils.isEmpty(user.getSalt())) {
+            user.setSalt(PasswordHelper.buildSalt());
+        }
+        //短信直接创建用户可以初始不设置密码此处密码允许为空
+        if (!StringUtils.isEmpty(user.getPassword())) {
+            user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
+        }
+        if (null == user.getStatus()) {
+            user.setStatus(0);
+        }
+        if (null == user.getDelFlag()) {
+            user.setDelFlag(0);
+        }
         int res = baseMapper.insert(user);
         if (res > 0) {
-            insertUserClient(user.getId(), AuthInfoUtils.getCurrentClientId());
+            insertUserClient(user.getId(), clientId);
             insertUserOrg(user.getId(), user.getOrgId());
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());

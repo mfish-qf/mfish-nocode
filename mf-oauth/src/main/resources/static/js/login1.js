@@ -12,7 +12,6 @@ let app = new Vue({
         password: '!QAZ2wsx',
         loginType: '',
         loginTypeName: '帐号',
-        errorVisible: false,
         errorMsg: '',
         rememberMe: false,
         codeValue: '',
@@ -60,7 +59,6 @@ let app = new Vue({
     methods: {
         screenChange() {
             const clientWidth = document.body.clientWidth
-            const clientHeight = document.body.clientHeight
             if (clientWidth > 425) {
                 this.showLeft = true;
             } else {
@@ -74,18 +72,33 @@ let app = new Vue({
             }
         },
         validateUserLogin() {
+            if (!this.validateUserName() || !this.validatePassword() || !this.validateCaptcha()) {
+                return false;
+            }
+            return true
+        },
+        validateUserName() {
             if (!this.username) {
                 this.showInputError('username', '请输入用户名')
                 return false
             }
+            this.hideInputError('username')
+            return true
+        },
+        validatePassword() {
             if (!this.password) {
                 this.showInputError('password', '请输入密码')
                 return false
             }
+            this.hideInputError('password')
+            return true;
+        },
+        validateCaptcha() {
             if (!this.captchaValue) {
                 this.showInputError('captcha', '请输入验证码')
                 return false
             }
+            this.hideInputError('captcha')
             return true
         },
         showInputError(key, error) {
@@ -104,11 +117,7 @@ let app = new Vue({
             }
         },
         validateSmsLogin() {
-            if (!this.validatePhone()) {
-                return false
-            }
-            if (!this.codeValue) {
-                this.showInputError('code', '请输入验证码')
+            if (!this.validatePhone() || !this.validateCode()) {
                 return false
             }
             return true;
@@ -122,9 +131,17 @@ let app = new Vue({
                 this.showInputError('phone', '手机号格式不正确')
                 return false
             }
+            this.hideInputError('phone')
             return true
         },
-
+        validateCode() {
+            if (!this.codeValue) {
+                this.showInputError('code', '请输入验证码')
+                return false
+            }
+            this.hideInputError('code')
+            return true
+        },
         sendMsg() {
             if (this.validatePhone()) {
                 $.ajax({
@@ -259,7 +276,13 @@ let app = new Vue({
                 this.errorMsg = $('#errorMsg').val();
             }
             if (this.errorMsg !== '' && this.errorMsg !== undefined) {
-                this.errorVisible = true;
+                $('#errorShow').click()
+                //两秒后关闭
+                setTimeout(() => {
+                    if ($('#errorModal').attr('aria-modal')) {
+                        $('#errorShow').click()
+                    }
+                }, 1500)
             }
         },
         initLoginData() {
