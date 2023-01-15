@@ -38,14 +38,14 @@
         <div class="row">
             <div class="card-left" v-if="showLeft">
             </div>
-            <div class="card-wrapper">
-                <div class="card fat">
+            <div class="card-wrapper enter-x">
+                <div class="card fat" v-if="cardRefresh">
                     <div class="card-body">
                         <h4 class="card-title mb-2">{{loginTypeName}}登录</h4>
                         <div v-show="userPasswordVisible">
                             <form id="login" method="POST" class="enter-x">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" :class="{'is-invalid':error.username.show}"
+                                    <input type="text" class="form-control" :class="{'is-invalid':error.username.show,'is-valid':isValid}"
                                            id="inputUsername" v-model="username" name="username" placeholder="用户名" @blur="validateUserName">
                                     <label for="inputUsername">用户名</label>
                                     <div class="invalid-feedback" v-if="error.username.show">
@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="password" class="form-control"
-                                           :class="{'is-invalid':error.password.show}" id="inputPassword"
+                                           :class="{'is-invalid':error.password.show,'is-valid':isValid}" id="inputPassword"
                                            v-model="password" name="password" placeholder="密码" @blur="validatePassword">
                                     <label for="inputPassword">密码</label>
                                     <div class="invalid-feedback" v-if="error.password.show">
@@ -63,9 +63,8 @@
                                 </div>
                                 <div class="input-group mb-1">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control"
-                                               :class="{'is-invalid':error.captcha.show}" id="inputCaptcha"
-                                               v-model="captchaValue" name="captchaValue" placeholder="验证码">
+                                        <input type="text" class="form-control" :class="{'is-invalid':error.captcha.show,'is-valid':isValid}" id="inputCaptcha"
+                                               v-model="captchaValue" name="captchaValue" placeholder="验证码" @blur="validateCaptcha">
                                         <input type="hidden" name="captchaKey" v-model="captchaKey">
                                         <label for="inputCaptcha">验证码</label>
                                         <div class="invalid-feedback" v-if="error.captcha.show">
@@ -98,7 +97,7 @@
                         <div v-show="phoneSmsCodeVisible">
                             <form id="smsLogin" method="post" class="enter-x">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" :class="{'is-invalid':error.phone.show}"
+                                    <input type="text" class="form-control" :class="{'is-invalid':error.phone.show,'is-valid':isValid}"
                                            id="inputPhone" v-model="phone" name="username" placeholder="手机号" @blur="validatePhone">
                                     <label for="inputPhone">手机号</label>
                                     <div class="invalid-feedback" v-if="error.phone.show">
@@ -106,7 +105,7 @@
                                     </div>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <div class="form-floating" :class="{'is-invalid':error.code.show}">
+                                    <div class="form-floating" :class="{'is-invalid':error.code.show,'is-valid':isValid}">
                                         <input type="text" class="form-control" :class="{'is-invalid':error.code.show}"
                                                id="inputCode" v-model="codeValue" name="password" placeholder="验证码" @blur="validateCode">
                                         <label for="inputCode">验证码</label>

@@ -161,7 +161,7 @@ html, body {
     align-items: center;
 }
 .login .qrcode-img .qrcode-status > p:nth-child(2){
-    color: #52C41A;
+    color: #52c41a;
 }
 
 .login .qrcode-img .qrcode-status > p:last-child{

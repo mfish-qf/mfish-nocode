@@ -50,7 +50,7 @@ public class CaptchaConfig {
         // 边框颜色 默认为Color.BLACK
         properties.setProperty(KAPTCHA_BORDER_COLOR, "204,204,204");
         // 验证码文本字符颜色 默认为Color.BLACK
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_COLOR, "black");
+        properties.setProperty(KAPTCHA_TEXTPRODUCER_FONT_COLOR, "blue");
         // 验证码图片宽度 默认为200
         properties.setProperty(KAPTCHA_IMAGE_WIDTH, "160");
         // 验证码图片高度 默认为50
@@ -66,7 +66,7 @@ public class CaptchaConfig {
         //图文样式
         properties.setProperty(KAPTCHA_OBSCURIFICATOR_IMPL, "com.google.code.kaptcha.impl.ShadowGimpy");
         //渐变色
-        properties.setProperty(KAPTCHA_BACKGROUND_CLR_FROM,"204,204,204");
+        properties.setProperty(KAPTCHA_BACKGROUND_CLR_FROM,"white");
         properties.setProperty(KAPTCHA_BACKGROUND_CLR_TO,"white");
         return properties;
     }

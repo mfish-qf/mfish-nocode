@@ -30,6 +30,8 @@ let app = new Vue({
         qrCodeSecret: '',
         scanStatus: scanStatus,
         showLeft: true,
+        cardRefresh: true,
+        isValid: false,
         error: {
             username: {
                 show: false,
@@ -74,7 +76,11 @@ let app = new Vue({
         },
         login() {
             if (this.validateUserLogin()) {
-                $('#login').submit();
+                this.isValid = true
+                //增加一个停顿校验效果
+                setTimeout(() => {
+                    $('#login').submit();
+                }, 100)
             }
         },
         validateUserLogin() {
@@ -119,7 +125,11 @@ let app = new Vue({
         },
         smsLogin() {
             if (this.validateSmsLogin()) {
-                $('#smsLogin').submit();
+                this.isValid = true
+                //增加一个停顿校验效果
+                setTimeout(() => {
+                    $('#smsLogin').submit();
+                }, 100)
             }
         },
         validateSmsLogin() {
@@ -243,6 +253,10 @@ let app = new Vue({
             clearInterval(timer);
         },
         showUserPassword() {
+            this.cardRefresh = false;
+            this.$nextTick(() => {
+                this.cardRefresh = true;
+            })
             this.userPasswordVisible = true;
             this.phoneSmsCodeVisible = false;
             this.qrCodeVisible = false;
@@ -252,6 +266,10 @@ let app = new Vue({
             this.clearError();
         },
         showPhoneSmsCode() {
+            this.cardRefresh = false;
+            this.$nextTick(() => {
+                this.cardRefresh = true;
+            })
             this.phoneSmsCodeVisible = true;
             this.userPasswordVisible = false;
             this.qrCodeVisible = false;
@@ -261,6 +279,10 @@ let app = new Vue({
             this.clearError();
         },
         showQrCode() {
+            this.cardRefresh = false;
+            this.$nextTick(() => {
+                this.cardRefresh = true;
+            })
             this.qrCodeVisible = true;
             this.phoneSmsCodeVisible = false;
             this.userPasswordVisible = false;
@@ -289,7 +311,7 @@ let app = new Vue({
                     if ($('#errorModal').attr('aria-modal')) {
                         $('#errorShow').click()
                     }
-                }, 1500)
+                }, 2000)
             }
         },
         initLoginData() {
