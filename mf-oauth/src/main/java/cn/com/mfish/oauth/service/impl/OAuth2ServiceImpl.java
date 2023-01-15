@@ -23,6 +23,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @date: 2020/2/15 16:07
  */
 @Service
+@RefreshScope
 public class OAuth2ServiceImpl implements OAuth2Service {
 
     @Resource

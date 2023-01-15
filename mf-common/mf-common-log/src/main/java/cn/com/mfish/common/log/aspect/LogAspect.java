@@ -56,7 +56,7 @@ public class LogAspect {
         sysLog.setReqType(request.getMethod());
         sysLog.setReqParam(getParams(joinPoint.getArgs()));
         sysLog.setReqSource(aLog.reqSource().getValue());
-        sysLog.setOperType(aLog.operateType().getValue());
+        sysLog.setOperType(aLog.operateType().toString());
         sysLog.setOperIp(Utils.getRemoteIP(request));
         sysLog.setTitle(title);
         sysLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());

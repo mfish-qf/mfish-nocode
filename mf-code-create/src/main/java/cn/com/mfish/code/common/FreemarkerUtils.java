@@ -15,6 +15,7 @@ import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -31,6 +32,7 @@ import java.util.regex.Pattern;
  */
 @Component
 @Slf4j
+@RefreshScope
 public class FreemarkerUtils {
     @Resource
     Configuration fmConfig;

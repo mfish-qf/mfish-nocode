@@ -23,7 +23,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,12 +39,6 @@ import java.util.Map;
 @Slf4j
 @Configuration
 public class ShiroConfig {
-    @Value("${shiro.security.algorithmName}")
-    private String algorithmName = "md5";
-    @Value("${shiro.security.hashIterations}")
-    private int hashIterations = 2;
-    @Value("${shiro.security.hexEncoded}")
-    private boolean hexEncoded = true;
 
     /**
      * 设置shiro拦截器
@@ -151,9 +144,9 @@ public class ShiroConfig {
      */
     private <T extends HashedCredentialsMatcher> HashedCredentialsMatcher createHashedCredentialsMatcher(T t) {
         HashedCredentialsMatcher hashedCredentialsMatcher = t;
-        hashedCredentialsMatcher.setHashAlgorithmName(algorithmName);
-        hashedCredentialsMatcher.setHashIterations(hashIterations);
-        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(hexEncoded);
+        hashedCredentialsMatcher.setHashAlgorithmName(ShiroProperties.algorithmName);
+        hashedCredentialsMatcher.setHashIterations(ShiroProperties.hashIterations);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(ShiroProperties.hexEncoded);
         return hashedCredentialsMatcher;
     }
 

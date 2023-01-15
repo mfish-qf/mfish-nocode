@@ -3,11 +3,14 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.service.LoginService;
+import cn.com.mfish.oauth.service.SsoUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,9 +26,14 @@ import java.security.NoSuchAlgorithmException;
 @Api(tags = "登录")
 @Controller
 @Slf4j
+@RefreshScope
 public class LoginController {
     @Resource
     LoginService loginService;
+    @Resource
+    SsoUserService ssoUserService;
+    @Value("${oauth2.user.autoCreate}")
+    boolean autoCreateUser = false;
 
     @ApiOperation("跳转登录页面")
     @GetMapping("/login")
@@ -46,6 +54,10 @@ public class LoginController {
         if (StringUtils.isEmpty(phone)) {
             return Result.fail("错误:手机号不允许为空");
         }
+        //不允许自动创建用户情况下，需要判断手机号是否存在，如果不存在不发短信
+        if (!autoCreateUser && !ssoUserService.isAccountExist(phone, null)) {
+            return Result.fail("错误:手机号不存在");
+        }
         Long codeTime = loginService.getSmsCodeTime(phone);
         //一分钟内返回code倒计时剩余时间
         if (codeTime > 0) {
@@ -60,6 +72,6 @@ public class LoginController {
         loginService.saveSmsCodeTime(phone);
         loginService.sendMsg(phone, code);
         //测试环境返回生成验证码值,生产环境需要隐藏短信码返回值
-        return Result.ok(code);
+        return Result.ok(code, "生成成功");
     }
 }

@@ -58,7 +58,7 @@ public class AuthorizeController {
         OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
         if (!SecurityUtils.getSubject().isAuthenticated()) {
             loginService.getLogin(model, request);
-            return "login";
+            return "login1";
         }
         return buildCodeResponse(request, oauthRequest);
     }
@@ -80,7 +80,7 @@ public class AuthorizeController {
         if (!SecurityUtils.getSubject().isAuthenticated()) {
             if (!loginService.postLogin(model, request)) {
                 //登录失败时跳转到登陆页面
-                return "login";
+                return "login1";
             }
         }
         return buildCodeResponse(request, oauthRequest);

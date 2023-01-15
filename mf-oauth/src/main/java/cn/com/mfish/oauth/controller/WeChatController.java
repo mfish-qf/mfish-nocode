@@ -154,7 +154,8 @@ public class WeChatController {
             return new AccessToken(weChatService
                     .buildWeChatToken(openid, session.getSessionKey(), userId));
         }
-        Result<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "false");
+        //TODO 此处clientId暂时写死后期可能需要修改
+        Result<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "system", "false");
         if (StringUtils.isEmpty(nickname)) {
             nickname = Utils.phoneMasking(phone);
         }
@@ -199,7 +200,8 @@ public class WeChatController {
         }
         WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNoInfo(sessionKey, encryptedData, iv);
         String phone = phoneNoInfo.getPhoneNumber();
-        Result<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "false");
+        //TODO 此处clientId暂时写死后期可能需要修改
+        Result<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "system", "false");
         if (StringUtils.isEmpty(nickname)) {
             nickname = Utils.phoneMasking(phone);
         }

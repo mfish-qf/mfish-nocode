@@ -29,4 +29,9 @@ public class CredentialConstants {
      * 当前请求帐号名称
      */
     public static final String REQ_ACCOUNT = "req-account";
+
+    /**
+     * 验证码校验异常
+     */
+    public static final String REQ_CHECK_CAPTCHA_EXCEPTION="req-check-captcha-exception";
 }

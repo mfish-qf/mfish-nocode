@@ -1,0 +1,205 @@
+.enter-x > div:nth-child(1) {
+    transform: translateX(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.1s;
+}
+
+.enter-x > div:nth-child(2) {
+    transform: translateX(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.2s;
+}
+
+.enter-x > div:nth-child(3) {
+    transform: translateX(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.3s;
+}
+
+.enter-x > div:nth-child(4) {
+    transform: translateX(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.4s;
+}
+
+.enter-x > div:nth-child(5) {
+    transform: translateX(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.5s;
+}
+
+.enter-x > div:nth-child(6) {
+    transform: translateX(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.6s;
+}
+
+.-enter-x > div:nth-child(1) {
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.1s;
+}
+
+.-enter-x > div:nth-child(2) {
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.2s;
+}
+
+.-enter-x > div:nth-child(3) {
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.3s;
+}
+
+.-enter-x > div:nth-child(4) {
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.4s;
+}
+
+.-enter-x > div:nth-child(5) {
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.5s;
+}
+
+.-enter-x > div:nth-child(6) {
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.6s;
+}
+
+.-enter-y > div:nth-child(1) {
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.1s;
+}
+
+.-enter-y > div:nth-child(2) {
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.2s;
+}
+
+.-enter-y > div:nth-child(3) {
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.3s;
+}
+
+.-enter-y > div:nth-child(4) {
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.4s;
+}
+
+.-enter-y > div:nth-child(5) {
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.5s;
+}
+
+.-enter-y > div:nth-child(6) {
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.6s;
+}
+
+.enter-y > div:nth-child(1) {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.1s;
+}
+
+.enter-y > div:nth-child(2) {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.2s;
+}
+
+.enter-y > div:nth-child(3) {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.3s;
+}
+
+.enter-y > div:nth-child(4) {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.4s;
+}
+
+.enter-y > div:nth-child(5) {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.5s;
+}
+
+.enter-y > div:nth-child(6) {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.6s;
+}
+
+@keyframes enter-x-animation {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes enter-y-animation {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

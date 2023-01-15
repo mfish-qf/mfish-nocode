@@ -46,7 +46,7 @@ public interface LoginService {
      * @param loginType
      * @return
      */
-    Result<String> login(String username, String password, SerConstant.LoginType loginType, String rememberMe);
+    Result<String> login(String username, String password, SerConstant.LoginType loginType,String clientId ,String rememberMe);
 
     /**
      * 登录重试计数

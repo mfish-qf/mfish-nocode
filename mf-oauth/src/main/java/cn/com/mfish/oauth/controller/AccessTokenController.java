@@ -26,6 +26,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +43,7 @@ import java.util.concurrent.CompletableFuture;
 @Api(tags = "token获取")
 @RestController
 @RequestMapping
+@RefreshScope
 public class AccessTokenController {
     @Resource
     Code2TokenValidator code2TokenValidator;
@@ -55,9 +57,9 @@ public class AccessTokenController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
-    //登录是否互斥
+    //登录是否互斥 默认不互斥
     @Value("${oauth2.login.mutex}")
-    private boolean loginMutex = true;
+    private boolean loginMutex = false;
 
     @ApiOperation("token获取")
     @PostMapping(value = "/accessToken")

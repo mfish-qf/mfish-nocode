@@ -7,6 +7,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.validator.AccessTokenValidator;
+import cn.com.mfish.gateway.common.GatewayUtils;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -47,22 +48,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
         }
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
-        removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
-        addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, result.getData().getClientId());
-        addHeader(mutate, CredentialConstants.REQ_USER_ID, result.getData().getUserId());
-        addHeader(mutate, CredentialConstants.REQ_ACCOUNT, result.getData().getAccount());
+        GatewayUtils.removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, result.getData().getClientId());
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_USER_ID, result.getData().getUserId());
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_ACCOUNT, result.getData().getAccount());
         return chain.filter(exchange.mutate().request(mutate.build()).build());
-    }
-
-    private void addHeader(ServerHttpRequest.Builder mutate, String name, String value) {
-        if (StringUtils.isEmpty(value)) {
-            return;
-        }
-        mutate.header(name, value);
-    }
-
-    private void removeHeader(ServerHttpRequest.Builder mutate, String name) {
-        mutate.headers(httpHeaders -> httpHeaders.remove(name)).build();
     }
 
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange, String msg) {

@@ -2,21 +2,17 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.oauth.common.QRCodeUtils;
 import cn.com.mfish.oauth.entity.QRCode;
 import cn.com.mfish.oauth.entity.QRCodeImg;
 import cn.com.mfish.oauth.entity.RedisQrCode;
 import cn.com.mfish.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.QRCodeService;
 import cn.com.mfish.oauth.validator.WeChatTokenValidator;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Base64;
-import java.util.Hashtable;
 import java.util.UUID;
 
 /**
@@ -58,18 +53,21 @@ public class QRCodeController {
     public Result<QRCodeImg> buildQRCode() {
         String error = "错误:生成二维码异常!";
         try {
-            Hashtable<EncodeHintType, Comparable> hints = new Hashtable<>();
-            //指定二维码字符集编码
-            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-            //设置二维码纠错等级
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-            //设置图片边距
-            hints.put(EncodeHintType.MARGIN, 2);
-            String code = UUID.randomUUID().toString();
-            BitMatrix matrix = new MultiFormatWriter().encode(code,
-                    BarcodeFormat.QR_CODE, 250, 250, hints);
+//            Hashtable<EncodeHintType, Comparable> hints = new Hashtable<>();
+//            //指定二维码字符集编码
+//            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+//            //设置二维码纠错等级
+//            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+//            //设置图片边距
+//            hints.put(EncodeHintType.MARGIN, 2);
+//            String code = UUID.randomUUID().toString();
+//            BitMatrix matrix = new MultiFormatWriter().encode(code,
+//                    BarcodeFormat.QR_CODE, 250, 250, hints);
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
+            String code = Utils.uuid32();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
+            BufferedImage bufferedImage = QRCodeUtils.createQRCode(code, "/static/img/logo.png");
             if (ImageIO.write(bufferedImage, "png", byteArrayOutputStream)) {
                 RedisQrCode qrCode = saveQRCode(code);
                 return Result.ok(buildResponseCode(qrCode, byteArrayOutputStream));

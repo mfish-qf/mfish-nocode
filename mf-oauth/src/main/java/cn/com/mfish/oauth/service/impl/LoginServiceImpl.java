@@ -1,5 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
@@ -51,6 +53,11 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean postLogin(Model model, HttpServletRequest request) {
+        String captchaEx = request.getHeader(CredentialConstants.REQ_CHECK_CAPTCHA_EXCEPTION);
+        if (!StringUtils.isEmpty(captchaEx)) {
+            model.addAttribute(SerConstant.ERROR_MSG, CaptchaException.Info.getExceptionInfo(captchaEx).toString());
+            return false;
+        }
         if (!validateCode(model, request)) {
             return false;
         }
@@ -100,7 +107,8 @@ public class LoginServiceImpl implements LoginService {
         String password = request.getParameter(OAuth.OAUTH_PASSWORD);
         SerConstant.LoginType loginType = SerConstant.LoginType.getLoginType(request.getParameter(SerConstant.LOGIN_TYPE));
         String rememberMe = request.getParameter(SerConstant.REMEMBER_ME);
-        return login(username, password, loginType, rememberMe);
+        String clientId = request.getParameter(SerConstant.CLIENT_ID);
+        return login(username, password, loginType, clientId, rememberMe);
 
     }
 
@@ -113,7 +121,7 @@ public class LoginServiceImpl implements LoginService {
      * @param loginType
      * @return
      */
-    public Result<String> login(String username, String password, SerConstant.LoginType loginType, String rememberMe) {
+    public Result<String> login(String username, String password, SerConstant.LoginType loginType, String clientId, String rememberMe) {
         boolean remember = false;
         if (!StringUtils.isEmpty(rememberMe)) {
             remember = Boolean.parseBoolean(rememberMe);
@@ -125,20 +133,13 @@ public class LoginServiceImpl implements LoginService {
             return result;
         }
         MyUsernamePasswordToken token = new MyUsernamePasswordToken(username, password, remember)
-                .setLoginType(loginType);
+                .setLoginType(loginType).setClientId(clientId);
         try {
             SecurityUtils.getSubject().login(token);
             return result;
-        } catch (ExcessiveAttemptsException ex) {
-            //多次重试错误信息
-            result.setSuccess(false).setMsg(ex.getMessage())
-                    .getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
-            log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
-            return result;
         } catch (IncorrectCredentialsException ex) {
             //错误凭证错误信息
-            result.setSuccess(false).setMsg(ex.getMessage())
-                    .getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
+            result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
             //登录成功清空短信验证码
             if (loginType == SerConstant.LoginType.短信登录) {
@@ -147,8 +148,7 @@ public class LoginServiceImpl implements LoginService {
             return result;
         } catch (Exception ex) {
             //其他异常错误信息
-            result.setSuccess(false).setMsg(ex.getMessage())
-                    .getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
+            result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
             return result;
         } finally {
@@ -169,7 +169,11 @@ public class LoginServiceImpl implements LoginService {
             log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
             throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
         }
-        if (SerConstant.AccountState.删除.equals(user.getStatus())) {
+        if (SerConstant.AccountState.锁定.equals(user.getStatus())) {
+            log.error(userId + SerConstant.ACCOUNT_LOCK_DESCRIPTION);
+            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_LOCK_DESCRIPTION);
+        }
+        if (user.getDelFlag().equals(1)) {
             log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
             throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
         }

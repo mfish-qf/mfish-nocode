@@ -1,7 +1,8 @@
 package cn.com.mfish.oauth.realm;
 
-import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author: mfish
@@ -25,6 +25,9 @@ import java.util.UUID;
 public abstract class BaseRealm extends AuthorizingRealm {
     @Autowired
     SsoUserService ssoUserService;
+
+    @Value("${oauth2.user.autoCreate}")
+    boolean autoCreateUser = false;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -51,8 +54,8 @@ public abstract class BaseRealm extends AuthorizingRealm {
         SsoUser user = ssoUserService.getUserByAccount(myToken.getUsername());
         boolean isNew = false;
         if (user == null) {
-            //微信登录 短信登录 允许登录时创建账号,其他方式不允许
-            if (myToken.getLoginType() != SerConstant.LoginType.微信登录 && myToken.getLoginType() != SerConstant.LoginType.短信登录) {
+            //是否设置允许自动创建用户，设置允许以后(微信登录 短信登录 允许登录时创建账号),其他方式不允许
+            if (!autoCreateUser || (myToken.getLoginType() != SerConstant.LoginType.微信登录 && myToken.getLoginType() != SerConstant.LoginType.短信登录)) {
                 String error = "账号[" + myToken.getUsername() + "]不存在或已被禁用";
                 log.error(error);
                 throw new UnknownAccountException(error);
@@ -75,12 +78,15 @@ public abstract class BaseRealm extends AuthorizingRealm {
      * @return
      */
     private SsoUser buildUser(String phone) {
+        if (phone.length() != 11) {
+            throw new UnknownAccountException("手机号不正确");
+        }
         SsoUser userInfo = new SsoUser();
         userInfo.setPhone(phone);
-        userInfo.setId(UUID.randomUUID().toString());
-        userInfo.setAccount("user" + phone);
-        userInfo.setNickname(userInfo.getAccount());
-        userInfo.setStatus(1);
+        userInfo.setId(Utils.uuid32());
+        userInfo.setAccount(phone);
+        userInfo.setNickname("user" + phone.substring(7, 11));
+        userInfo.setSex(1);
         return userInfo;
     }
 

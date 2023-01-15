@@ -8,6 +8,7 @@ import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
+@RefreshScope
 public class RedisSessionDAO extends AbstractSessionDAO {
     @Resource
     private RedisTemplate<String, Object> sessionRedisTemplate;

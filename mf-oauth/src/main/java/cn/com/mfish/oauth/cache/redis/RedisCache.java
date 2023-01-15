@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.cache.redis;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @date: 2020/2/11 19:18
  */
 @Component
+@RefreshScope
 public class RedisCache implements Cache<String, Object> {
     @Resource
     RedisTemplate<String, Object> redisTemplate;

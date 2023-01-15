@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author: mfish
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "wechat.miniapp")
-@PropertySource(value = "classpath:wechat.properties")
 @RefreshScope
 public class WeChatProperties {
     /**

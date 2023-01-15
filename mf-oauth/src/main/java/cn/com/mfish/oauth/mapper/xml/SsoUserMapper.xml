@@ -11,21 +11,10 @@
         </if>
         )
     </sql>
-    <sql id="userState">
-        and status = 0 and del_flag = 0
-    </sql>
     <select id="getUserByAccount" resultType="cn.com.mfish.oauth.entity.SsoUser">
         select * from sso_user
         <where>
             <include refid="byAccount"/>
-            <include refid="userState"/>
-        </where>
-    </select>
-    <select id="getUserById" resultType="cn.com.mfish.oauth.entity.SsoUser">
-        select * from sso_user
-        <where>
-            id = #{userId}
-            <include refid="userState"/>
         </where>
     </select>
     <select id="getUserRoles" resultType="cn.com.mfish.common.oauth.api.entity.UserRole">
