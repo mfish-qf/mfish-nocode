@@ -1,8 +1,8 @@
 package cn.com.mfish.common.redis.temp;
 
 import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.common.redis.config.CacheProperties;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseTempCache<T> {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
-    @Value("${cache.temp.time}")
-    private long cacheTime = 7;
+    @Resource
+    CacheProperties cacheProperties;
 
     /**
      * 构建key
@@ -49,7 +49,7 @@ public abstract class BaseTempCache<T> {
         T value = (T) redisTemplate.opsForValue().get(key);
         if (value != null) {
             //缓存激活 延长更新缓存时间
-            redisTemplate.expire(key, cacheTime, TimeUnit.DAYS);
+            redisTemplate.expire(key, cacheProperties.getTime(), TimeUnit.DAYS);
             return value;
         }
         return null;
@@ -125,7 +125,7 @@ public abstract class BaseTempCache<T> {
      * @param value
      */
     private void setCacheInfo(String key, T value) {
-        redisTemplate.opsForValue().set(key, value, cacheTime, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(key, value, cacheProperties.getTime(), TimeUnit.DAYS);
     }
 
 }

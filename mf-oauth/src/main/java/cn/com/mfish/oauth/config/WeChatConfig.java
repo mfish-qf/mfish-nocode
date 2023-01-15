@@ -3,10 +3,10 @@ package cn.com.mfish.oauth.config;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.config.impl.WxMaDefaultConfigImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * @author: mfish
@@ -14,14 +14,9 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2021/12/14 9:20
  */
 @Configuration
-@EnableConfigurationProperties(WeChatProperties.class)
 public class WeChatConfig {
+    @Resource
     private WeChatProperties weChatProperties;
-
-    @Autowired
-    public WeChatConfig(WeChatProperties weChatProperties) {
-        this.weChatProperties = weChatProperties;
-    }
 
     @Bean
     public WxMaService wxMaService() {

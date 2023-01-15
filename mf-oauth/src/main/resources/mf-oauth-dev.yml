@@ -75,7 +75,7 @@ redisSession:
 shiro:
   security:
     algorithmName: md5
-    hashIterations: 2
+    hashIterations: 4
     hexEncoded: true
 oauth2:
   expire:

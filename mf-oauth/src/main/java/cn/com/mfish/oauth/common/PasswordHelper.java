@@ -1,12 +1,13 @@
 package cn.com.mfish.oauth.common;
 
+import cn.com.mfish.oauth.config.ShiroProperties;
 import io.swagger.annotations.ApiModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 /**
  * @author: mfish
  * @date: 2020/2/13 16:32
@@ -14,11 +15,6 @@ import org.springframework.stereotype.Component;
 @ApiModel("密码助手，用于新增用户时密码加密")
 @Component
 public class PasswordHelper {
-    @Value("${shiro.security.algorithmName}")
-    private String algorithmName = "md5";
-    @Value("${shiro.security.hashIterations}")
-    private int hashIterations = 2;
-
     /**
      * 生成hash盐
      *
@@ -40,11 +36,16 @@ public class PasswordHelper {
         if (StringUtils.isEmpty(password)) {
             return null;
         }
-        return new SimpleHash(
-                algorithmName,
+        SimpleHash simpleHash = new SimpleHash(
+                ShiroProperties.algorithmName,
                 password,
                 ByteSource.Util.bytes(userId + salt),
-                hashIterations).toHex();
+                ShiroProperties.hashIterations);
+        if (ShiroProperties.hexEncoded) {
+            return simpleHash.toHex();
+        }
+        return simpleHash.toBase64();
+
     }
 
 //    public static void main(String[] args){

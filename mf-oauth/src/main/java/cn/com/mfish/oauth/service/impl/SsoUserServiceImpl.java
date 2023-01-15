@@ -159,7 +159,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         return insertUserInfo(user, AuthInfoUtils.getCurrentClientId());
     }
 
-    public Result<SsoUser> insertUserInfo(SsoUser user, String clientId) {
+    private Result<SsoUser> insertUserInfo(SsoUser user, String clientId) {
         validateUser(user, "新增");
         //如果外部已经赋值过id就不重新赋值了
         if (StringUtils.isEmpty(user.getId())) {

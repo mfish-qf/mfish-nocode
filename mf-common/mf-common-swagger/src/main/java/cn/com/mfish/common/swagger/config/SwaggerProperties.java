@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2021/11/22 17:22
  */
 @Configuration
-@ConfigurationProperties("swagger")
+@ConfigurationProperties(prefix = "swagger")
 @Data
 @RefreshScope
 public class SwaggerProperties {
