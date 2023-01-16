@@ -30,7 +30,6 @@ let app = new Vue({
         qrCodeSecret: '',
         scanStatus: scanStatus,
         showLeft: true,
-        cardRefresh: true,
         isValid: false,
         sendMsgColor: 'black',
         passwordShow: false,
@@ -166,21 +165,29 @@ let app = new Vue({
                 return;
             }
             if (this.validatePhone()) {
+                this.codeDisabled = true;
                 $.ajax({
                     url: "sendMsg",
                     type: "POST",
                     data: "phone=" + this.phone,
                     dataType: "json",
                     success: function (result) {
+                        let time = 60;
                         if (200 == result.code) {
                             //测试环境将验证码返回，生成环境删除此方法
                             app.codeValue = result.data;
-                            app.resetCode();
                         } else {
+                            time = result.data
                             app.showError(result.msg);
                         }
+                        app.codeButton = time;
+                        app.resetCode(time);
+                    },
+                    error: () => {
+                        this.codeDisabled = false
                     }
                 });
+
             }
         },
 
@@ -259,10 +266,6 @@ let app = new Vue({
             clearInterval(timer);
         },
         showUserPassword() {
-            this.cardRefresh = false;
-            this.$nextTick(() => {
-                this.cardRefresh = true;
-            })
             this.userPasswordVisible = true;
             this.phoneSmsCodeVisible = false;
             this.qrCodeVisible = false;
@@ -272,10 +275,6 @@ let app = new Vue({
             this.clearError();
         },
         showPhoneSmsCode() {
-            this.cardRefresh = false;
-            this.$nextTick(() => {
-                this.cardRefresh = true;
-            })
             this.phoneSmsCodeVisible = true;
             this.userPasswordVisible = false;
             this.qrCodeVisible = false;
@@ -285,10 +284,6 @@ let app = new Vue({
             this.clearError();
         },
         showQrCode() {
-            this.cardRefresh = false;
-            this.$nextTick(() => {
-                this.cardRefresh = true;
-            })
             this.qrCodeVisible = true;
             this.phoneSmsCodeVisible = false;
             this.userPasswordVisible = false;
@@ -336,12 +331,11 @@ let app = new Vue({
                     break;
             }
         },
-        resetCode() {
-            let second = 60;
-            let codeTime = setInterval(function () {
-                second -= 1;
-                if (second > 0) {
-                    app.codeButton = second;
+        resetCode(time) {
+            let codeTime = setInterval(() => {
+                time -= 1;
+                if (time > 0) {
+                    app.codeButton = time;
                     app.codeDisabled = true;
                 } else {
                     clearInterval(codeTime);
@@ -358,9 +352,9 @@ let app = new Vue({
         },
         pwdShowChange() {
             this.passwordShow = !this.passwordShow;
-            if(this.passwordShow){
+            if (this.passwordShow) {
                 this.passwordType = 'text'
-            }else {
+            } else {
                 this.passwordType = 'password'
             }
         }
