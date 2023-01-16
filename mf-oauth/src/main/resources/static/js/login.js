@@ -32,6 +32,9 @@ let app = new Vue({
         showLeft: true,
         cardRefresh: true,
         isValid: false,
+        sendMsgColor: 'black',
+        passwordShow: false,
+        passwordType: 'password',
         error: {
             username: {
                 show: false,
@@ -159,6 +162,9 @@ let app = new Vue({
             return true
         },
         sendMsg() {
+            if (this.codeDisabled) {
+                return;
+            }
             if (this.validatePhone()) {
                 $.ajax({
                     url: "sendMsg",
@@ -343,6 +349,20 @@ let app = new Vue({
                     app.codeDisabled = false;
                 }
             }, 1000);
+        },
+        msgOver() {
+            this.sendMsgColor = '#0d6efd';
+        },
+        msgLeave() {
+            this.sendMsgColor = 'black';
+        },
+        pwdShowChange() {
+            this.passwordShow = !this.passwordShow;
+            if(this.passwordShow){
+                this.passwordType = 'text'
+            }else {
+                this.passwordType = 'password'
+            }
         }
     },
 });

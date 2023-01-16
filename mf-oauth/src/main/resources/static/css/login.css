@@ -40,10 +40,12 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
     margin-left: 20px;
 }
-.login .logo .title > h4{
+
+.login .logo .title > h4 {
     font-weight: 700;
 }
-.login .logo .title > h6{
+
+.login .logo .title > h6 {
     font-weight: 500;
 }
 
@@ -84,10 +86,17 @@ html, body {
 .login .form-control {
     border-width: 1px;
     border-radius: 0px;
+    background-image: none;
 }
 
 .login .form-group label {
     width: 100%;
+}
+
+.login .send-msg {
+    position: absolute;
+    top: 18px;
+    right: 10px;
 }
 
 .login .captcha {
@@ -96,6 +105,10 @@ html, body {
     right: 0px;
     width: 149px;
     z-index: 10;
+}
+
+.login .captcha:hover {
+    cursor: pointer;
 }
 
 .login .form-check-input {
@@ -107,11 +120,12 @@ html, body {
     border-radius: 0px;
 }
 
-.login .btn.btn-block.code {
-    width: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.login .btn.send-msg {
+    position: absolute;
+    top: 8px;
+    right: 0px;
+    border: none;
+    z-index: 10;
 }
 
 .login .btn-tabs.d-flex {
@@ -160,11 +174,12 @@ html, body {
     justify-content: center;
     align-items: center;
 }
-.login .qrcode-img .qrcode-status > p:nth-child(2){
+
+.login .qrcode-img .qrcode-status > p:nth-child(2) {
     color: #52c41a;
 }
 
-.login .qrcode-img .qrcode-status > p:last-child{
+.login .qrcode-img .qrcode-status > p:last-child {
     font-weight: 700;
 }
 
@@ -194,6 +209,7 @@ html, body {
     .login .logo {
         margin: 20px 0 0 20px;
     }
+
     .login .card-left .title {
         font-size: 14px;
         font-weight: 700;
