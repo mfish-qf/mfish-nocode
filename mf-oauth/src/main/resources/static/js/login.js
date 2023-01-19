@@ -190,7 +190,6 @@ let app = new Vue({
 
             }
         },
-
         getCaptcha() {
             $.ajax({
                 url: "/captcha",
@@ -326,7 +325,10 @@ let app = new Vue({
                     this.showQrCode();
                     break;
                 default:
-                    this.username = $('#username').val();
+                    const name = $('#username').val();
+                    if(name){
+                        this.username = name
+                    }
                     this.showUserPassword();
                     break;
             }
