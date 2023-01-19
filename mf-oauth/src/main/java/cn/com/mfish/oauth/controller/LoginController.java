@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -34,12 +33,6 @@ public class LoginController {
     SsoUserService ssoUserService;
     @Value("${oauth2.user.autoCreate}")
     boolean autoCreateUser = false;
-
-    @ApiOperation("跳转登录页面")
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
 
     /**
      * 短信发送接口（没有短信网关，短信代码需自己实现）
