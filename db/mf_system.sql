@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 10/01/2023 20:32:03
+ Date: 23/01/2023 20:38:36
 */
 
 SET NAMES utf8mb4;
@@ -142,5 +142,7 @@ CREATE TABLE `sys_storage`  (
 -- Records of sys_storage
 -- ----------------------------
 INSERT INTO `sys_storage` VALUES ('4711045c2b114813b5ccde4f3a6dce3b', '4711045c2b114813b5ccde4f3a6dce3b.png', '资源 1@3x.png', 'image/png', 37202, 'http://localhost:8888/storage/file/4711045c2b114813b5ccde4f3a6dce3b.png', '2023/01/07', 1, 0, 'admin', '2023-01-07 16:29:55', '', NULL);
+INSERT INTO `sys_storage` VALUES ('950e8e4a20d54f7b82a2bf4846ea2c66', '950e8e4a20d54f7b82a2bf4846ea2c66.png', 'blob', 'image/png', 37061, 'http://localhost:8888/storage/file/950e8e4a20d54f7b82a2bf4846ea2c66.png', '2023/01/11', 1, 0, 'admin', '2023-01-11 20:56:40', '', NULL);
+INSERT INTO `sys_storage` VALUES ('9fbe3f618cd14019903dd5cecd1a57ed', '9fbe3f618cd14019903dd5cecd1a57ed.png', '资源 2@3x.png', 'image/png', 35625, 'http://localhost:8888/storage/file/9fbe3f618cd14019903dd5cecd1a57ed.png', '2023/01/15', 1, 0, 'admin', '2023-01-15 11:50:41', '', NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 07/01/2023 19:41:19
+ Date: 23/01/2023 20:37:54
 */
 
 SET NAMES utf8mb4;
@@ -39,7 +39,7 @@ CREATE TABLE `sso_client_details`  (
 -- ----------------------------
 -- Records of sso_client_details
 -- ----------------------------
-INSERT INTO `sso_client_details` VALUES ('system', NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://baidu.com', NULL, 28800, NULL, NULL, 'true');
+INSERT INTO `sso_client_details` VALUES ('system', NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://localhost:5281/oauth2.*', NULL, 28800, NULL, NULL, 'true');
 
 -- ----------------------------
 -- Table structure for sso_client_user
@@ -57,7 +57,18 @@ CREATE TABLE `sso_client_user`  (
 INSERT INTO `sso_client_user` VALUES ('system', '0b13f982db33481e8e1e5e84f6df7c3e');
 INSERT INTO `sso_client_user` VALUES ('system', '1');
 INSERT INTO `sso_client_user` VALUES ('system', '40062f1156ef42b9b3a341462c927fb6');
+INSERT INTO `sso_client_user` VALUES ('system', '42a48152d8fe49c596b31ad026dd0a17');
+INSERT INTO `sso_client_user` VALUES ('system', '454e4d4d9eb14b7eb9d2fc7cfb8ec66b');
+INSERT INTO `sso_client_user` VALUES ('system', '4c6cf5de40814185b4f6ae588dcf1060');
 INSERT INTO `sso_client_user` VALUES ('system', '4ef9999a1cd0492db32c87d97659b963');
+INSERT INTO `sso_client_user` VALUES ('system', '507b4fb3894742b2906e9a4b65c42d8a');
+INSERT INTO `sso_client_user` VALUES ('system', '71404af66f9d4a3785aca8c700bf5ebb');
+INSERT INTO `sso_client_user` VALUES ('system', '837e43e73fcc4dfbb907d798a0eb38ba');
+INSERT INTO `sso_client_user` VALUES ('system', '87458c0f4f94474cb9d3f06b4fe69700');
+INSERT INTO `sso_client_user` VALUES ('system', '9ce922740afb471882655b6c2a693a65');
+INSERT INTO `sso_client_user` VALUES ('system', 'a8d8ca84b743471dae66e14cbb82cb89');
+INSERT INTO `sso_client_user` VALUES ('system', 'c56998aa756f43f39fe27ce7eb8936a1');
+INSERT INTO `sso_client_user` VALUES ('system', 'dc690aa2404842c3ab206ebb00cf674e');
 INSERT INTO `sso_client_user` VALUES ('system', 'f4056d9589a64146a7538f04c6bcc10f');
 
 -- ----------------------------
@@ -101,13 +112,13 @@ INSERT INTO `sso_menu` VALUES ('1ce2ac44228e37c063e9cd55ed8f0a49', '6e491486dc4c
 INSERT INTO `sso_menu` VALUES ('234dc900ad6502579a51784f9ddb05d5', '76f68d05f5054818762718ee85d6d0fe', 'system', '000010000100002', 3, '新增', '#', 2, 2, '', NULL, 'sys:workbench:insert', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:57:09', 'admin', '2022-11-30 16:59:05');
 INSERT INTO `sso_menu` VALUES ('268d140daddc00dc77823c7d7c2025fb', '76f68d05f5054818762718ee85d6d0fe', 'system', '000010000100001', 3, '查询', '#', 1, 2, '', NULL, 'sys:workbench:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:56:30', 'admin', '2022-11-30 16:58:57');
 INSERT INTO `sso_menu` VALUES ('2a4e024fdc76063da32926c63ca9ead2', '', 'system', '00002', 1, '系统管理', 'ant-design:setting-outlined', 2, 0, '/system', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:59:57', '', NULL);
-INSERT INTO `sso_menu` VALUES ('4527c6c05549e3594f135ac056faaece', '', 'system', '00004', 1, '引导页', 'whh:paintroll', 5, 1, '/setup', '/demo/setup/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:11:09', 'admin', '2022-12-15 21:04:42');
-INSERT INTO `sso_menu` VALUES ('4bfec85ae3174915cd2a3e8ddd822220', '', 'system', '00005', 1, '关于', 'simple-icons:about-dot-me', 6, 1, '/about', '/sys/about/index.vue', '', 0, 1, NULL, 0, '', 'admin', '2022-11-08 17:13:12', 'admin', '2022-12-21 21:55:08');
+INSERT INTO `sso_menu` VALUES ('4527c6c05549e3594f135ac056faaece', '', 'system', '00004', 1, '引导页', 'whh:paintroll', 19, 1, '/setup', '/demo/setup/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:11:09', 'admin', '2023-01-10 12:02:57');
+INSERT INTO `sso_menu` VALUES ('4bfec85ae3174915cd2a3e8ddd822220', '', 'system', '00005', 1, '关于', 'simple-icons:about-dot-me', 20, 1, '/about', '/sys/about/index.vue', '', 0, 1, NULL, 0, '', 'admin', '2022-11-08 17:13:12', 'admin', '2023-01-10 12:02:52');
 INSERT INTO `sso_menu` VALUES ('4ef7029abe93c11601678ba16dac406f', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200002', 2, '帐号管理', 'ion:people-sharp', 4, 1, '/account', '/sys/account/index.vue', '', 0, 1, NULL, 1, '', 'admin', '2022-11-30 16:40:28', 'admin', '2023-01-04 21:03:33');
 INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', 'system', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:53:57', 'admin', '2023-01-05 14:46:43');
 INSERT INTO `sso_menu` VALUES ('58efbcc5f46b95aeab069076031959e7', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300003', 3, '修改', '#', 3, 2, '', NULL, 'sys:org:update,sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:28:45', 'admin', '2022-12-20 11:45:25');
 INSERT INTO `sso_menu` VALUES ('5b543a83371c766788047a1a1907cffd', '9c6f4eff70d7b2048f63adf229c5d30d', 'system', '0000600001', 2, '目录1', 'ion:folder-open-outline', 1, 0, '/menu1', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:03:39', 'admin', '2022-12-15 20:35:07');
-INSERT INTO `sso_menu` VALUES ('5c723efc132b50c0284d79eaafed5a0f', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300003', 2, 'AntDesign文档', 'ion:social-angular-outline', 3, 1, '/ant', 'https://2x.antdv.com/docs/vue/introduce-cn/', NULL, 0, 1, NULL, 1, '', 'admin', '2022-12-14 15:38:22', 'admin', '2022-12-15 14:40:11');
+INSERT INTO `sso_menu` VALUES ('5c723efc132b50c0284d79eaafed5a0f', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300003', 2, 'AntDesign文档', 'ion:social-angular-outline', 3, 1, '/ant', 'https://2x.antdv.com/docs/vue/introduce-cn/', NULL, 1, 1, NULL, 1, '', 'admin', '2022-12-14 15:38:22', 'admin', '2023-01-09 15:21:43');
 INSERT INTO `sso_menu` VALUES ('67dfbce31013ada62800425f72997962', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200006', 2, '字典项', 'ion:ios-menu', 6, 1, '/dict/:dictCode', '/sys/dictItem/index.vue', NULL, 0, 0, '0000200005', 0, '', 'admin', '2023-01-03 17:07:39', 'admin', '2023-01-04 14:51:30');
 INSERT INTO `sso_menu` VALUES ('6a38a3847b66cc690c3a2eacedb4e81f', '76f68d05f5054818762718ee85d6d0fe', 'system', '000010000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:workbench:update', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:57:42', 'admin', '2022-11-30 16:59:13');
 INSERT INTO `sso_menu` VALUES ('6ac6bc8054107436e24356e3466f00db', '4ef7029abe93c11601678ba16dac406f', 'system', '000020000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:account:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 16:54:15', 'admin', '2022-12-20 11:46:51');
@@ -130,6 +141,7 @@ INSERT INTO `sso_menu` VALUES ('bcd18784374699438a215a9ab1e9b351', '8ad60664c706
 INSERT INTO `sso_menu` VALUES ('c46042d6e6d16ea95df6461648833675', '4ef7029abe93c11601678ba16dac406f', 'system', '000020000200003', 3, '修改', '#', 3, 2, '', NULL, 'sys:account:update,sys:account:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:03:23', 'admin', '2022-12-17 22:26:35');
 INSERT INTO `sso_menu` VALUES ('c487023e85c9aaf5510a03e8017b768c', '0f5a85a6fd5bdc9df26b826eec3c17f1', 'system', '000020000400004', 3, '删除', '#', 4, 2, '', NULL, 'sys:role:delete,sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 18:02:10', 'admin', '2022-12-20 11:46:13');
 INSERT INTO `sso_menu` VALUES ('c9eb585420911ee18335d935d3872934', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200005', 2, '字典管理', 'ion:ios-list', 5, 1, '/dict', '/sys/dict/index.vue', NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-30 18:08:11', 'admin', '2022-12-14 14:26:05');
+INSERT INTO `sso_menu` VALUES ('cfbdf3ce5297cebf806ac116fc239558', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200008', 2, '日志管理', 'ion:ios-compose-outline', 8, 1, '/log', '/sys/sysLog/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-01-08 22:17:26', 'admin', '2023-01-09 11:35:52');
 INSERT INTO `sso_menu` VALUES ('ee3ae3a2161e8d58e2c62f340c3d7b55', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300004', 3, '删除', '#', 4, 2, '', NULL, 'sys:org:delete,sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:29:49', 'admin', '2022-12-20 11:45:40');
 INSERT INTO `sso_menu` VALUES ('f4a0ed4ca7a609aa8268399bdffcecfb', '0f5a85a6fd5bdc9df26b826eec3c17f1', 'system', '000020000400001', 3, '查询', '#', 1, 2, '', NULL, 'sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:53:00', '', NULL);
 INSERT INTO `sso_menu` VALUES ('f87d8b297eb3650834048dba7c8d2d89', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300002', 3, '新增', '#', 2, 2, '', NULL, 'sys:org:insert,sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:27:41', 'admin', '2022-12-20 11:34:47');
@@ -200,6 +212,7 @@ INSERT INTO `sso_org_user` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '0b13f982
 INSERT INTO `sso_org_user` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '40062f1156ef42b9b3a341462c927fb6');
 INSERT INTO `sso_org_user` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '4ef9999a1cd0492db32c87d97659b963');
 INSERT INTO `sso_org_user` VALUES ('950736539e99c0521531cc127d5b8712', '1');
+INSERT INTO `sso_org_user` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', '71404af66f9d4a3785aca8c700bf5ebb');
 INSERT INTO `sso_org_user` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', 'f4056d9589a64146a7538f04c6bcc10f');
 
 -- ----------------------------
@@ -319,13 +332,13 @@ CREATE TABLE `sso_user`  (
   `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '账号',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
-  `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
   `old_password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '旧密码',
   `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
   `head_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图片',
   `telephone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '电话',
   `birthday` date NULL DEFAULT NULL COMMENT '生日',
-  `sex` tinyint(1) NULL DEFAULT NULL COMMENT '性别(1男0女)',
+  `sex` tinyint(1) NULL DEFAULT 1 COMMENT '性别(1男0女)',
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态 0正常 1停用',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记(0未删除1删除)',
   `salt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '盐',
@@ -344,10 +357,9 @@ CREATE TABLE `sso_user`  (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('0b13f982db33481e8e1e5e84f6df7c3e', 'test2', '18922222222', 'test2@qq.com', '68513a46ed069540e2665eaf3cad4475', NULL, '测试2', NULL, '02522212341', '2021-12-08', 1, 0, 1, '9706bf5fef1652afa3c89520f0f74aed', NULL, NULL, 'admin', '2022-12-01 17:34:02', 'admin', '2022-12-05 23:32:15');
-INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', '4711045c2b114813b5ccde4f3a6dce3b.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2023-01-07 16:29:55');
-INSERT INTO `sso_user` VALUES ('40062f1156ef42b9b3a341462c927fb6', 'test', '18922222220', 'test@qq.com', 'e7bf117daf1732f94ba3590f7df80ba2', '', '测试', NULL, '02522222222', '2022-11-24', 1, 0, 0, '272cb4e5912be9cf6f371c13a28ea030', NULL, NULL, 'admin', '2022-11-24 22:51:54', 'admin', '2023-01-04 17:56:14');
-INSERT INTO `sso_user` VALUES ('4ef9999a1cd0492db32c87d97659b963', 'test1', '18922222221', 'test1@qq.com', 'ee508c5ee37a4b27e41ab9cc80af453b', NULL, '测试1', NULL, '02587654321', '2022-11-20', 1, 0, 0, '3952171ab8cb094c4abe55cc831d1c76', NULL, NULL, 'admin', '2022-11-26 22:06:09', 'admin', '2022-12-20 12:09:30');
+INSERT INTO `sso_user` VALUES ('1', 'admin', '18911111111', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', '9fbe3f618cd14019903dd5cecd1a57ed.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', '', '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2023-01-15 11:50:42');
+INSERT INTO `sso_user` VALUES ('40062f1156ef42b9b3a341462c927fb6', 'test', '18922222220', 'test@qq.com', 'e7bf117daf1732f94ba3590f7df80ba2', '', '测试', NULL, '02522222222', '2022-11-24', 1, 0, 0, '272cb4e5912be9cf6f371c13a28ea030', NULL, NULL, 'admin', '2022-11-24 22:51:54', 'admin', '2023-01-09 16:09:29');
+INSERT INTO `sso_user` VALUES ('4ef9999a1cd0492db32c87d97659b963', 'test1', '18922222221', 'test1@qq.com', '32a2927f98077a06f335d085a18e7ba1', 'ee508c5ee37a4b27e41ab9cc80af453b', '测试1', NULL, '02587654321', '2022-11-20', 1, 0, 0, '3952171ab8cb094c4abe55cc831d1c76', NULL, NULL, 'admin', '2022-11-26 22:06:09', 'admin', '2023-01-15 15:28:08');
 INSERT INTO `sso_user` VALUES ('f4056d9589a64146a7538f04c6bcc10f', 'operate', '18933333333', 'operate@qq.com', 'b48905c015cfa5ec95dd2e7c8f9e810f', NULL, '运营', NULL, '0251233111', '2022-11-23', 1, 0, 0, '0662ab48ae6102c7caaa37700200ed7f', NULL, NULL, 'admin', '2022-11-24 23:33:10', 'admin', '2022-12-19 21:24:39');
 
 -- ----------------------------
@@ -367,6 +379,7 @@ INSERT INTO `sso_user_role` VALUES ('0b13f982db33481e8e1e5e84f6df7c3e', '57ad11f
 INSERT INTO `sso_user_role` VALUES ('1', '1');
 INSERT INTO `sso_user_role` VALUES ('40062f1156ef42b9b3a341462c927fb6', '210297727b74ecb505c1b4d97f76daee');
 INSERT INTO `sso_user_role` VALUES ('4ef9999a1cd0492db32c87d97659b963', '57ad11f7d8d94e2664f4d772a6dd9d7d');
+INSERT INTO `sso_user_role` VALUES ('71404af66f9d4a3785aca8c700bf5ebb', '57ad11f7d8d94e2664f4d772a6dd9d7d');
 INSERT INTO `sso_user_role` VALUES ('f4056d9589a64146a7538f04c6bcc10f', '67e95f5e81b8da9a8f70db7540b7409d');
 
 SET FOREIGN_KEY_CHECKS = 1;
