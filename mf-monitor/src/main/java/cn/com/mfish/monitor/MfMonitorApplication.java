@@ -1,16 +1,16 @@
 package cn.com.mfish.monitor;
 
-import cn.com.mfish.common.web.annotation.AutoWeb;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @description: 摸鱼监控中心启动类
  * @author: mfish
  * @date: 2023/1/26 23:11
  */
-@AutoWeb
+@SpringBootApplication
 @EnableAdminServer
 @Slf4j
 public class MfMonitorApplication {
