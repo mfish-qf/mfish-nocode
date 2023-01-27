@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 23/01/2023 20:37:54
+ Date: 27/01/2023 15:19:43
 */
 
 SET NAMES utf8mb4;
@@ -105,8 +105,9 @@ CREATE TABLE `sso_menu`  (
 -- Records of sso_menu
 -- ----------------------------
 INSERT INTO `sso_menu` VALUES ('0526179a70fca38a69dd709dec2f1a81', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300004', 2, 'Vben文档', 'ion:social-vimeo-outline', 4, 1, '/vben', 'https://doc.vvbin.cn/guide/introduction.html', NULL, 0, 1, NULL, 1, '', 'admin', '2022-12-15 09:14:09', '', NULL);
+INSERT INTO `sso_menu` VALUES ('0aa9f017545ec947a075f76e34c075c0', '', 'system', '00007', 1, '系统监控', 'ion:fitness-outline', 3, 0, '/monitor', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-01-27 13:55:58', '', NULL);
 INSERT INTO `sso_menu` VALUES ('0f5a85a6fd5bdc9df26b826eec3c17f1', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200004', 2, '角色管理', 'ion:ios-key', 3, 1, '/role', '/sys/role/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-11-30 17:32:14', 'admin', '2022-12-14 14:25:37');
-INSERT INTO `sso_menu` VALUES ('1a0aee8380c525e7c4802b1c4d587fa8', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300001', 2, '接口地址', 'ion:book-sharp', 1, 1, '/swagger', 'http://localhost:8888/swagger-ui/index.html', NULL, 0, 1, NULL, 0, '', 'admin', '2022-12-14 10:25:31', 'admin', '2022-12-14 22:52:39');
+INSERT INTO `sso_menu` VALUES ('1a0aee8380c525e7c4802b1c4d587fa8', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300001', 2, '接口地址', 'ion:book-sharp', 1, 1, '/swagger', 'http://localhost:8888/swagger-ui/index.html', NULL, 0, 1, NULL, 0, '', 'admin', '2022-12-14 10:25:31', 'admin', '2023-01-27 15:13:26');
 INSERT INTO `sso_menu` VALUES ('1a73215261f568088e9adeef2dbd8e44', 'a988f38821885f8f8aaffa49d681aaac', 'system', '000020000100004', 3, '删除', '#', 4, 2, '', NULL, 'sys:menu:delete,sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:05:36', 'admin', '2022-12-20 11:34:00');
 INSERT INTO `sso_menu` VALUES ('1ce2ac44228e37c063e9cd55ed8f0a49', '6e491486dc4cb475e4bd037d06ab2801', 'system', '0000300002', 2, 'Git地址', 'ion:logo-github', 2, 1, '/git', 'https://github.com/mfish-qf/mfish-nocode', NULL, 1, 1, NULL, 1, '', 'admin', '2022-12-14 15:27:03', 'admin', '2022-12-14 22:52:51');
 INSERT INTO `sso_menu` VALUES ('234dc900ad6502579a51784f9ddb05d5', '76f68d05f5054818762718ee85d6d0fe', 'system', '000010000100002', 3, '新增', '#', 2, 2, '', NULL, 'sys:workbench:insert', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:57:09', 'admin', '2022-11-30 16:59:05');
@@ -122,7 +123,7 @@ INSERT INTO `sso_menu` VALUES ('5c723efc132b50c0284d79eaafed5a0f', '6e491486dc4c
 INSERT INTO `sso_menu` VALUES ('67dfbce31013ada62800425f72997962', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200006', 2, '字典项', 'ion:ios-menu', 6, 1, '/dict/:dictCode', '/sys/dictItem/index.vue', NULL, 0, 0, '0000200005', 0, '', 'admin', '2023-01-03 17:07:39', 'admin', '2023-01-04 14:51:30');
 INSERT INTO `sso_menu` VALUES ('6a38a3847b66cc690c3a2eacedb4e81f', '76f68d05f5054818762718ee85d6d0fe', 'system', '000010000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:workbench:update', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:57:42', 'admin', '2022-11-30 16:59:13');
 INSERT INTO `sso_menu` VALUES ('6ac6bc8054107436e24356e3466f00db', '4ef7029abe93c11601678ba16dac406f', 'system', '000020000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:account:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 16:54:15', 'admin', '2022-12-20 11:46:51');
-INSERT INTO `sso_menu` VALUES ('6e491486dc4cb475e4bd037d06ab2801', '', 'system', '00003', 1, '项目文档', 'ion:book-outline', 3, 0, '/doc', NULL, NULL, 1, 1, NULL, NULL, '', 'admin', '2022-11-08 17:08:24', 'admin', '2022-12-13 18:32:31');
+INSERT INTO `sso_menu` VALUES ('6e491486dc4cb475e4bd037d06ab2801', '', 'system', '00003', 1, '项目文档', 'ion:book-outline', 4, 0, '/doc', NULL, NULL, 1, 1, NULL, NULL, '', 'admin', '2022-11-08 17:08:24', 'admin', '2023-01-27 14:07:55');
 INSERT INTO `sso_menu` VALUES ('6fd5cdaf86772d4db0587f3b9281f99b', 'a988f38821885f8f8aaffa49d681aaac', 'system', '000020000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:menu:update,sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:05:12', 'admin', '2022-12-20 11:33:37');
 INSERT INTO `sso_menu` VALUES ('75882dc140444e061741fbd9f026dd2b', 'a988f38821885f8f8aaffa49d681aaac', 'system', '000020000100001', 3, '查询', '#', 1, 2, '', NULL, 'sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:04:16', 'admin', '2022-11-30 16:59:33');
 INSERT INTO `sso_menu` VALUES ('76f149981f1c86fce81f2f4cdb9674b9', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300001', 3, '查询', '#', 1, 2, '', NULL, 'sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:26:51', '', NULL);
@@ -132,7 +133,7 @@ INSERT INTO `sso_menu` VALUES ('7e87849f80699ad24292fd9908f5aeb8', '76f68d05f505
 INSERT INTO `sso_menu` VALUES ('8ad60664c7060f811559bde09a79dae5', '5b543a83371c766788047a1a1907cffd', 'system', '000060000100001', 3, '目录2', 'ion:folder-open-outline', 1, 0, '/menu2', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:04:20', 'admin', '2023-01-03 20:27:11');
 INSERT INTO `sso_menu` VALUES ('967795af502129d318899a60716da84f', 'a988f38821885f8f8aaffa49d681aaac', 'system', '000020000100002', 3, '新增', '#', 2, 2, '', NULL, 'sys:menu:insert,sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:04:45', 'admin', '2022-12-20 11:30:37');
 INSERT INTO `sso_menu` VALUES ('9b9139c09668bb22888201b7e8a812c4', '0f5a85a6fd5bdc9df26b826eec3c17f1', 'system', '000020000400003', 3, '修改', '#', 3, 2, '', NULL, 'sys:role:update,sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:58:08', 'admin', '2022-12-20 11:46:23');
-INSERT INTO `sso_menu` VALUES ('9c6f4eff70d7b2048f63adf229c5d30d', '', 'system', '00006', 1, '多级目录', 'ion:folder-open-outline', 4, 0, '/level', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:03:01', 'admin', '2022-12-15 21:04:32');
+INSERT INTO `sso_menu` VALUES ('9c6f4eff70d7b2048f63adf229c5d30d', '', 'system', '00006', 1, '多级目录', 'ion:folder-open-outline', 5, 0, '/level', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:03:01', 'admin', '2023-01-27 14:07:58');
 INSERT INTO `sso_menu` VALUES ('9f46c219e3fc35b1c2ef3a95438b16bf', '4ef7029abe93c11601678ba16dac406f', 'system', '000020000200002', 3, '新增', '#', 2, 2, '', NULL, 'sys:account:insert,sys:account:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:03:02', 'admin', '2022-12-20 11:47:06');
 INSERT INTO `sso_menu` VALUES ('a27822a74728632e0e0ed10d8285bf54', '4ef7029abe93c11601678ba16dac406f', 'system', '000020000200004', 3, '删除', '#', 4, 2, '', NULL, 'sys:account:delete,  sys:account:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:03:48', 'admin', '2022-12-20 11:47:15');
 INSERT INTO `sso_menu` VALUES ('a988f38821885f8f8aaffa49d681aaac', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200001', 2, '菜单管理', 'ion:ios-menu', 1, 1, '/menu', '/sys/menu/index.vue', '', 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:02:02', 'admin', '2022-12-14 14:25:17');
@@ -142,6 +143,7 @@ INSERT INTO `sso_menu` VALUES ('c46042d6e6d16ea95df6461648833675', '4ef7029abe93
 INSERT INTO `sso_menu` VALUES ('c487023e85c9aaf5510a03e8017b768c', '0f5a85a6fd5bdc9df26b826eec3c17f1', 'system', '000020000400004', 3, '删除', '#', 4, 2, '', NULL, 'sys:role:delete,sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 18:02:10', 'admin', '2022-12-20 11:46:13');
 INSERT INTO `sso_menu` VALUES ('c9eb585420911ee18335d935d3872934', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200005', 2, '字典管理', 'ion:ios-list', 5, 1, '/dict', '/sys/dict/index.vue', NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-30 18:08:11', 'admin', '2022-12-14 14:26:05');
 INSERT INTO `sso_menu` VALUES ('cfbdf3ce5297cebf806ac116fc239558', '2a4e024fdc76063da32926c63ca9ead2', 'system', '0000200008', 2, '日志管理', 'ion:ios-compose-outline', 8, 1, '/log', '/sys/sysLog/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-01-08 22:17:26', 'admin', '2023-01-09 11:35:52');
+INSERT INTO `sso_menu` VALUES ('e159379c94b8fcc58ebc38cf8b322772', '0aa9f017545ec947a075f76e34c075c0', 'system', '0000700001', 2, '监控中心', 'ion:fitness-sharp', 1, 1, '/center', 'http://localhost:9223', NULL, 0, 1, NULL, 0, '', 'admin', '2023-01-27 13:56:32', 'admin', '2023-01-27 15:13:12');
 INSERT INTO `sso_menu` VALUES ('ee3ae3a2161e8d58e2c62f340c3d7b55', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300004', 3, '删除', '#', 4, 2, '', NULL, 'sys:org:delete,sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:29:49', 'admin', '2022-12-20 11:45:40');
 INSERT INTO `sso_menu` VALUES ('f4a0ed4ca7a609aa8268399bdffcecfb', '0f5a85a6fd5bdc9df26b826eec3c17f1', 'system', '000020000400001', 3, '查询', '#', 1, 2, '', NULL, 'sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:53:00', '', NULL);
 INSERT INTO `sso_menu` VALUES ('f87d8b297eb3650834048dba7c8d2d89', 'addeaf01bc278e216de75ad26a8f27b6', 'system', '000020000300002', 3, '新增', '#', 2, 2, '', NULL, 'sys:org:insert,sys:org:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:27:41', 'admin', '2022-12-20 11:34:47');
