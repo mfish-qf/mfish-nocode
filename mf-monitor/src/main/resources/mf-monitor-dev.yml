@@ -1,0 +1,11 @@
+swagger:
+  title: '摸鱼监控中心'
+spring:
+  security:
+    user:
+      name: mfish
+      password: 123456
+  boot:
+    admin:
+      ui:
+        title: 摸鱼监控中心
