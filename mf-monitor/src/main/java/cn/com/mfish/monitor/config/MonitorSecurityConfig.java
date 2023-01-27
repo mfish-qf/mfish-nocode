@@ -39,6 +39,8 @@ public class MonitorSecurityConfig {
                 .logout().logoutUrl(adminContextPath + "/logout").and()
                 //开启http basic支持，admin-client注册时需要使用
                 .httpBasic().and()
+                // 允许嵌入到iframe中
+                .headers().frameOptions().disable().and()
                 .csrf()
                 //开启基于cookie的csrf保护
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringAntMatchers(
