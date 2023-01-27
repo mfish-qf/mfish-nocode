@@ -31,7 +31,7 @@ public class MonitorSecurityConfig {
                 //无需登录即可访问
                 .antMatchers(adminContextPath + "/assets/**",
                         adminContextPath + "/login",
-                        adminContextPath+"/actuator/health").permitAll()
+                        adminContextPath + "/actuator/health").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 //登录和登出路径
