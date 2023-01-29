@@ -361,6 +361,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>ico</nonFilteredFileExtension>
                         <nonFilteredFileExtension>ftl</nonFilteredFileExtension>
                         <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
                         <nonFilteredFileExtension>woff</nonFilteredFileExtension>
