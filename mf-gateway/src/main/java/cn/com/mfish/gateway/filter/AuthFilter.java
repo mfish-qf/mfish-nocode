@@ -2,11 +2,13 @@ package cn.com.mfish.gateway.filter;
 
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.constants.HttpStatus;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.oauth.validator.AccessTokenValidator;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.gateway.common.GatewayUtils;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     private IgnoreWhiteProperties ignoreWhite;
     @Resource
-    private AccessTokenValidator accessTokenValidator;
+    private TokenValidator tokenValidator;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -42,17 +44,50 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (StringUtils.matches(url, ignoreWhite.getWhites())) {
             return chain.filter(exchange);
         }
-        Result<RedisAccessToken> result = accessTokenValidator.validate(request);
-        if (!result.isSuccess()) {
-            return unauthorizedResponse(exchange, result.getMsg());
+        String accessToken = AuthInfoUtils.getAccessToken(request);
+        if (StringUtils.isEmpty(accessToken)) {
+            return unauthorizedResponse(exchange, "错误:令牌token不允许为空");
         }
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
         GatewayUtils.removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, result.getData().getClientId());
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_USER_ID, result.getData().getUserId());
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_ACCOUNT, result.getData().getAccount());
+        Result result = tokenValidator.validator(request);
+        if (!result.isSuccess()) {
+            return unauthorizedResponse(exchange, result.getMsg());
+        }
+        if (result.getData() instanceof WeChatToken) {
+            weChatTokenDeal((WeChatToken) result.getData(), mutate);
+        } else {
+            defaultTokenDeal((RedisAccessToken) result.getData(), mutate);
+        }
         return chain.filter(exchange.mutate().request(mutate.build()).build());
+    }
+
+    /**
+     * 默认token处理
+     *
+     * @param accessToken
+     * @param mutate
+     * @return
+     */
+    private void defaultTokenDeal(RedisAccessToken accessToken, ServerHttpRequest.Builder mutate) {
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, accessToken.getClientId());
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_USER_ID, accessToken.getUserId());
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_ACCOUNT, accessToken.getAccount());
+    }
+
+    /**
+     * 微信token处理
+     *
+     * @param weChatToken
+     * @param mutate
+     * @return
+     */
+    private void weChatTokenDeal(WeChatToken weChatToken, ServerHttpRequest.Builder mutate) {
+        //todo 微信客户端暂时写死system，默认认为是系统客户端
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, "system");
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_USER_ID, weChatToken.getUserId());
+        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_ACCOUNT, weChatToken.getAccount());
     }
 
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange, String msg) {

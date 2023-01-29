@@ -1,20 +1,19 @@
 package cn.com.mfish.oauth.service.impl;
 
-import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.common.core.utils.Utils;
+import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.entity.AccessToken;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl;
 import cn.com.mfish.oauth.cache.temp.OpenIdTempCache;
-import cn.com.mfish.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.SsoUser;
-import cn.com.mfish.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.service.WeChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author: mfish
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class WeChatServiceImpl implements WeChatService {
-
     @Value("${oauth2.expire.token}")
     private long tokenExpire = 21600;
     @Value("${oauth2.expire.refreshToken}")
@@ -35,7 +33,7 @@ public class WeChatServiceImpl implements WeChatService {
     @Resource
     SsoUserService ssoUserService;
     @Resource
-    RedisTemplate<String, Object> redisTemplate;
+    WeChatTokenServiceImpl weChatTokenService;
 
 
     @Override
@@ -61,14 +59,15 @@ public class WeChatServiceImpl implements WeChatService {
         WeChatToken weChatToken = new WeChatToken();
         weChatToken.setOpenid(openId);
         weChatToken.setSession_key(sessionKey);
-        weChatToken.setAccess_token(UUID.randomUUID().toString());
-        weChatToken.setRefresh_token(UUID.randomUUID().toString());
+        weChatToken.setAccess_token(SerConstant.WX_PREFIX + Utils.uuid32());
+        weChatToken.setRefresh_token(SerConstant.WX_PREFIX + Utils.uuid32());
         weChatToken.setUserId(userId);
         SsoUser user = ssoUserService.getUserById(userId);
         weChatToken.setAccount(user.getAccount());
         weChatToken.setExpires_in(tokenExpire);
-        setToken(weChatToken);
-        setRefreshToken(weChatToken);
+        weChatToken.setReTokenExpire(reTokenExpire);
+        weChatTokenService.setToken(weChatToken);
+        weChatTokenService.setRefreshToken(weChatToken);
         return weChatToken;
     }
 
@@ -78,42 +77,5 @@ public class WeChatServiceImpl implements WeChatService {
         return new AccessToken().setAccess_token(weChatToken.getAccess_token())
                 .setRefresh_token(weChatToken.getRefresh_token())
                 .setExpires_in(weChatToken.getExpires_in());
-    }
-
-    @Override
-    public void setToken(WeChatToken token) {
-        redisTemplate.opsForValue().set(RedisPrefix.buildAccessTokenKey(token.getAccess_token()), token, token.getExpires_in(), TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void delToken(String token) {
-        redisTemplate.delete(RedisPrefix.buildAccessTokenKey(token));
-    }
-
-    @Override
-    public WeChatToken getToken(String token) {
-        return (WeChatToken) redisTemplate.opsForValue().get(RedisPrefix.buildAccessTokenKey(token));
-    }
-
-    @Override
-    public void setRefreshToken(WeChatToken token) {
-        redisTemplate.opsForValue().set(RedisPrefix.buildRefreshTokenKey(token.getRefresh_token()), token, reTokenExpire, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void updateRefreshToken(WeChatToken token) {
-        String key = RedisPrefix.buildRefreshTokenKey(token.getRefresh_token());
-        Long expire = redisTemplate.getExpire(key);
-        redisTemplate.opsForValue().set(key, token, expire, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public WeChatToken getRefreshToken(String token) {
-        return (WeChatToken) redisTemplate.opsForValue().get(RedisPrefix.buildRefreshTokenKey(token));
-    }
-
-    @Override
-    public void delRefreshToken(String token) {
-        redisTemplate.delete(RedisPrefix.buildRefreshTokenKey(token));
     }
 }

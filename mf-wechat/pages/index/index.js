@@ -120,7 +120,7 @@ Page({
   getUser() {
     let _this = this;
     wx.request({
-      url: app.globalData.domain + '/wx/userInfo',
+      url: app.globalData.domain + '/user/info',
       data: {
         access_token: wx.getStorageSync("access_token").access_token,
       },

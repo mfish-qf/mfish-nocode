@@ -1,15 +1,14 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.common.oauth.service.TokenService;
-import cn.com.mfish.oauth.entity.AccessToken;
-import cn.com.mfish.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.entity.AccessToken;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
 
 /**
  * @author: mfish
  * @description: 微信接口服务
  * @date: 2021/12/14 9:37
  */
-public interface WeChatService extends TokenService<WeChatToken> {
+public interface WeChatService {
 
     /**
      * 通过openid获取用户id,检查微信绑定状态

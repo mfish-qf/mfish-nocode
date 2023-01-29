@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.entity;
+package cn.com.mfish.common.oauth.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
