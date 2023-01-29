@@ -86,7 +86,7 @@ public class AuthorizeController {
         return buildCodeResponse(request, oauthRequest);
     }
 
-    private ResponseEntity<Object> buildCodeResponse(HttpServletRequest request, OAuthAuthzRequest oauthRequest) throws OAuthSystemException, URISyntaxException {
+    private ResponseEntity<Object> buildCodeResponse(HttpServletRequest request, OAuthAuthzRequest oauthRequest) throws URISyntaxException, OAuthSystemException {
         AuthorizationCode code = oAuth2Service.buildCode(oauthRequest);
         // 进行OAuth响应构建
         OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_MOVED_TEMPORARILY);

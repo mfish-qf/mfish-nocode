@@ -2,23 +2,20 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
-import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.service.TokenService;
+import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoUserService;
-import cn.com.mfish.common.oauth.service.TokenService;
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +25,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,11 +50,10 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     private long reTokenExpire = 604800;
 
     @Override
-    public AuthorizationCode buildCode(OAuthAuthzRequest request) throws OAuthSystemException {
+    public AuthorizationCode buildCode(OAuthAuthzRequest request) {
         AuthorizationCode code = setProperty(request);
-        OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         // 生成授权码
-        String authorizationCode = oauthIssuerImpl.authorizationCode();
+        String authorizationCode = Utils.uuid32();
         code.setCode(authorizationCode);
         code.setState(request.getState());
         setCode(code);
@@ -105,23 +100,19 @@ public class OAuth2ServiceImpl implements OAuth2Service {
      *
      * @param oAuthTokenRequest
      * @return
-     * @throws OAuthSystemException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Override
-    public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest) throws OAuthSystemException {
+    public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest){
         AuthorizationCode code = setProperty(oAuthTokenRequest);
         return code2Token(oAuthTokenRequest, code);
     }
 
     @Override
-    public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) throws OAuthSystemException {
+    public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) {
         RedisAccessToken accessToken = new RedisAccessToken();
         BeanUtils.copyProperties(code, accessToken);
-        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-        accessToken.setAccessToken(oauthIssuerImpl.accessToken());
-        accessToken.setRefreshToken(oauthIssuerImpl.refreshToken());
+        accessToken.setAccessToken(Utils.uuid32());
+        accessToken.setRefreshToken(Utils.uuid32());
         accessToken.setTokenSessionId(SecurityUtils.getSubject().getSession().getId().toString());
         accessToken.setGrantType(request.getGrantType());
         accessToken.setClientSecret(request.getClientSecret());
@@ -134,9 +125,9 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public RedisAccessToken refresh2Token(RedisAccessToken token) throws OAuthSystemException {
+    public RedisAccessToken refresh2Token(RedisAccessToken token){
         webTokenService.delToken(token.getAccessToken());
-        token.setAccessToken(new OAuthIssuerImpl(new MD5Generator()).accessToken());
+        token.setAccessToken(Utils.uuid32());
         webTokenService.setToken(token);
         webTokenService.updateRefreshToken(token);
         return token;

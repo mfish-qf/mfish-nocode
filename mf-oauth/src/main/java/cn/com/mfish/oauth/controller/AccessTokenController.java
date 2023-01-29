@@ -8,7 +8,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.entity.AccessToken;
+import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -76,7 +76,7 @@ public class AccessTokenController {
             @ApiImplicitParam(name = OAuth.OAUTH_REFRESH_TOKEN, value = "密码 grant_type=refresh_token时必须", paramType = "query")
     })
     @Log(title = "获取token", operateType = OperateType.LOGIN)
-    public Result<AccessToken> token(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException, InvocationTargetException, IllegalAccessException {
+    public Result<AccessToken> token(HttpServletRequest request) throws OAuthProblemException, InvocationTargetException, IllegalAccessException, OAuthSystemException {
         OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
         Result<OAuthClient> result = code2TokenValidator.validateClient(request, null);
         if (!result.isSuccess()) {
@@ -117,11 +117,8 @@ public class AccessTokenController {
      * @param request
      * @param tokenRequest
      * @return
-     * @throws OAuthSystemException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
      */
-    private RedisAccessToken code2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) throws OAuthSystemException, IllegalAccessException, InvocationTargetException {
+    private RedisAccessToken code2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) {
         Result<AuthorizationCode> result = code2TokenValidator.validateCode(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
@@ -134,9 +131,8 @@ public class AccessTokenController {
      *
      * @param request
      * @return
-     * @throws OAuthSystemException
      */
-    private RedisAccessToken refresh2Token(HttpServletRequest request) throws OAuthSystemException {
+    private RedisAccessToken refresh2Token(HttpServletRequest request) {
         Result<RedisAccessToken> result = refresh2TokenValidator.validateToken(request, null);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
@@ -150,11 +146,8 @@ public class AccessTokenController {
      * @param request
      * @param tokenRequest
      * @return
-     * @throws OAuthSystemException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
      */
-    private RedisAccessToken pwd2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) throws OAuthSystemException, IllegalAccessException, InvocationTargetException {
+    private RedisAccessToken pwd2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) {
         Result<String> result = loginService.login(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());

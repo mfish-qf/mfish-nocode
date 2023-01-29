@@ -1,10 +1,9 @@
-package cn.com.mfish.oauth.validator;
+package cn.com.mfish.common.oauth.validator;
 
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.oauth.validator.AbstractTokenValidator;
-import cn.com.mfish.oauth.entity.WeChatToken;
-import cn.com.mfish.oauth.service.WeChatService;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class WeChatTokenValidator extends AbstractTokenValidator<WeChatToken> {
 
-    public WeChatTokenValidator(@Autowired WeChatService weChatService) {
-        super(weChatService);
+    public WeChatTokenValidator(@Autowired WeChatTokenServiceImpl weChatTokenService) {
+        super(weChatTokenService);
     }
 
     public Result<WeChatToken> validate(HttpServletRequest request) {

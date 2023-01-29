@@ -1,14 +1,12 @@
 package cn.com.mfish.common.web.aspect;
 
+import cn.com.mfish.common.core.annotation.GlobalException;
 import cn.com.mfish.common.core.constants.CredentialConstants;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
-import cn.com.mfish.common.core.utils.AuthInfoUtils;
-import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.annotation.GlobalException;
-import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.core.utils.ServletUtils;
-import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.validator.TokenValidator;
+import cn.com.mfish.common.web.annotation.InnerUser;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 @GlobalException
 public class InnerUserAspect {
     @Resource
-    WebTokenServiceImpl webTokenService;
+    TokenValidator tokenValidator;
 
     @Around("@annotation(innerUser)")
     public Object innerAround(ProceedingJoinPoint point, InnerUser innerUser) throws Throwable {
@@ -38,13 +36,9 @@ public class InnerUserAspect {
         if (CredentialConstants.INNER.equals(source) && !innerUser.validateUser()) {
             return point.proceed();
         }
-        String token = AuthInfoUtils.getAccessToken(request);
-        if (StringUtils.isEmpty(token)) {
-            throw new OAuthValidateException("错误:token不允许为空");
-        }
-        RedisAccessToken redisAccessToken = webTokenService.getToken(token);
-        if (redisAccessToken == null) {
-            throw new OAuthValidateException("错误:token不存在或已过期");
+        Result result = tokenValidator.validator(request);
+        if (!result.isSuccess()) {
+            throw new OAuthValidateException(result.getMsg());
         }
         return point.proceed();
     }
