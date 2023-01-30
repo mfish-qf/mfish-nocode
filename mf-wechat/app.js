@@ -28,7 +28,7 @@ App({
   },
   globalData: {
     userInfo: null,
-    // domain: 'http://localhost:8888/oauth2'
-    domain: 'http://app.mfish.com.cn:11116/oauth2'
+    domain: 'http://localhost:8888/oauth2'
+    // domain: 'http://app.mfish.com.cn:11116/oauth2'
   }
 })
