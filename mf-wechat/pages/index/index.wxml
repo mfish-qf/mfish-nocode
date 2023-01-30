@@ -34,8 +34,8 @@
   </view>
   <view wx:if="{{ !isBind }}" class="page">
     <view class="page__hd">
-      <view class="page__title">统一登录</view>
-      <view class="page__desc">采用OAuth2实现统一登录</view>
+      <view class="page__title">摸鱼低代码—扫码登录</view>
+      <view class="page__desc">绑定帐号后扫描web页面二维码可登录web页面</view>
     </view>
     <view class="page__bd page__bd_spacing">
       <view class="weui-cells weui-cells_after-title">
