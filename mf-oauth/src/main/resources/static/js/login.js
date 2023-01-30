@@ -243,11 +243,11 @@ let app = new Vue({
                         case '1':
                             app.scanStatus = scanStatus.已扫描
                             app.qrCodeDesc = "手机确认登录";
-                            app.qrCodeName = result.data.account;
                             break;
                         case '2':
                             clearInterval(timer);
                             app.scanStatus = scanStatus.已确认
+                            app.qrCodeName = result.data.account;
                             app.qrCodeSecret = code + "," + result.data.secret;
                             break;
                         case '3':

@@ -43,9 +43,9 @@
         "ignoreUploadUnusedFiles": true
     },
     "compileType": "miniprogram",
-    "libVersion": "2.21.1",
+    "libVersion": "2.30.0",
     "appid": "wxf7ae0f4abbee34a3",
-    "projectname": "OAuth2-SSO",
+    "projectname": "Mfish-WeChat",
     "simulatorType": "wechat",
     "simulatorPluginLibVersion": {},
     "condition": {},
