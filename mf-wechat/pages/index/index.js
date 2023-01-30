@@ -109,7 +109,7 @@ Page({
                     success(res) {
                         if (res.statusCode == 200) {
                             wx.setStorageSync("access_token", res.data);
-                            _this.isBind = true;
+                            _this.setData({isBind:true});
                             _this.getUser();
                         }
 
