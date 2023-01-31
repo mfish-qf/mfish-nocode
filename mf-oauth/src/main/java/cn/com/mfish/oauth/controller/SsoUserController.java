@@ -11,7 +11,6 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
@@ -48,7 +47,6 @@ public class SsoUserController {
     @Resource
     SsoUserService ssoUserService;
 
-    @InnerUser
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
@@ -56,7 +54,6 @@ public class SsoUserController {
         return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
     }
 
-    @InnerUser
     @ApiOperation("获取用户权限")
     @GetMapping("/permissions")
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
@@ -74,7 +71,6 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserPermissions(userId, clientId));
     }
 
-    @InnerUser
     @ApiOperation("获取用户角色")
     @GetMapping("/roles")
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
@@ -92,7 +88,6 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserRoles(userId, clientId));
     }
 
-    @InnerUser
     @ApiOperation("通过用户ID获取用户")
     @GetMapping("/{id}")
     public Result<UserInfo> getUserById(@ApiParam(name = "id", value = "用户ID") @PathVariable String id) {
