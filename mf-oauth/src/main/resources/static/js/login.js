@@ -196,7 +196,7 @@ let app = new Vue({
                 type: "get",
                 success: function (result) {
                     if (200 == result.code) {
-                        app.captchaUrl = "data:image/gif;base64," + result.data.img;
+                        app.captchaUrl = "data:image/jpeg;base64," + result.data.img;
                         app.captchaKey = result.data.captchaKey;
                     } else {
                         app.showError(result.msg);

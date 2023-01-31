@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>摸鱼低代码平台</title>
-    <script type="text/javascript" src="js/vue.min.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/login.css">
-    <link rel="stylesheet" type="text/css" href="css/animation.css">
-    <link rel="shortcut icon" href="img/logo.png">
+    <script type="text/javascript" src="static/js/vue.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/login.css">
+    <link rel="stylesheet" type="text/css" href="static/css/animation.css">
+    <link rel="icon" href="static/img/favicon.ico">
 </head>
 <body>
 <input type="hidden" th:value="${errorMsg}" id="errorMsg"/>
@@ -19,7 +19,7 @@
 <section id="newLogin" class="login">
     <div class="logo -enter-x">
         <div class="brand">
-            <img src="img/logo.png" alt="logo">
+            <img src="static/img/logo.png" alt="logo">
         </div>
         <div class="title">
             <h4>摸鱼低代码平台</h4>
@@ -42,7 +42,7 @@
             <div class="card-wrapper enter-x">
                 <div class="card fat">
                     <div class="card-body">
-                        <h4 class="card-title mb-2">{{loginTypeName}}登录</h4>
+                        <h4 class="card-title mb-3">{{loginTypeName}}登录</h4>
                         <div v-show="userPasswordVisible">
                             <form id="login" method="POST" class="enter-x">
                                 <div class="form-floating mb-3">
@@ -161,7 +161,7 @@
                                         </button>
                                     </div>
                                     <div class="qrcode-status"  v-if="scanStatus==1" >
-                                        <img src="img/success.png" />
+                                        <img src="static/img/success.png" />
                                         <p>扫描成功</p>
                                         <p>请在手机上确认登录</p>
                                     </div>
@@ -184,6 +184,6 @@
         Copyright &copy; 2023 &mdash; 摸鱼低代码平台
     </div>
 </section>
-<script src="js/login.js"></script>
+<script src="static/js/login.js"></script>
 </body>
 </html>
