@@ -3,7 +3,6 @@ package cn.com.mfish.sys.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.sys.api.entity.SysLog;
@@ -67,7 +66,6 @@ public class SysLogController {
      */
     @ApiOperation(value = "系统日志-添加", notes = "系统日志-添加")
     @PostMapping
-    @InnerUser
     public Result<SysLog> add(@RequestBody SysLog sysLog) {
         if (sysLogService.save(sysLog)) {
             return Result.ok(sysLog, "系统日志-添加成功!");
