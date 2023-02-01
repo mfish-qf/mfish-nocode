@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.oauth.validator.AccessTokenValidator;
+import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.storage.entity.StorageInfo;
 import cn.com.mfish.storage.handler.StorageHandler;
 import cn.com.mfish.storage.service.StorageService;
@@ -32,7 +32,7 @@ public class StorageController {
     @Resource
     StorageService storageService;
     @Resource
-    AccessTokenValidator accessTokenValidator;
+    TokenValidator tokenValidator;
 
     @ApiOperation("文件新增")
     @PostMapping
@@ -75,7 +75,7 @@ public class StorageController {
         }
         //如果文件是私有文件需要校验token后访问
         if (storageInfo.getIsPrivate() != null && storageInfo.getIsPrivate().equals(1)) {
-            Result result = accessTokenValidator.validate(ServletUtils.getRequest());
+            Result result = tokenValidator.validator(ServletUtils.getRequest());
             if (!result.isSuccess()) {
                 throw new OAuthValidateException(result.getMsg());
             }
