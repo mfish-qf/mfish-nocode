@@ -2,7 +2,7 @@
 =====================================
 当前最新版本： 1.0.0
 
-[![AUR](https://img.shields.io/badge/license-MIT%20License%20-blue.svg)](https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE)
+[![AUR](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE)
 [![](https://img.shields.io/badge/Author-mfish-orange.svg)](http://www.mfish.com.cn)
 [![](https://img.shields.io/badge/Blog-个人博客-yellow.svg)](http://www.mfish.com.cn)
 [![](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/mfish-qf/mfish-nocode/releases/tag/v1.0.0)
