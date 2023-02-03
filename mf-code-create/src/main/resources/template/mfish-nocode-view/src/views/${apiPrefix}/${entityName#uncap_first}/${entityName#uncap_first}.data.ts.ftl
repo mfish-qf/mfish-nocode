@@ -1,5 +1,5 @@
-import { BasicColumn } from "/@/components/Table";
-import { FormSchema } from "/@/components/Table";
+import { BasicColumn } from "/@/components/general/Table";
+import { FormSchema } from "/@/components/general/Table";
 
 /**
  * @description: ${tableInfo.tableComment}

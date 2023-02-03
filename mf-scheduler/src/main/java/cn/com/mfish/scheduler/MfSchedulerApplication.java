@@ -1,18 +1,20 @@
+package cn.com.mfish.scheduler;
+
 import cn.com.mfish.common.web.annotation.AutoWeb;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
 /**
+ * @description: 调度中心启动类
  * @author: mfish
- * @description: 其他web业务服务参考类
- * @date: 2022/12/16 10:01
+ * @date: 2023/2/3 15:15
  */
-@Slf4j
 @AutoWeb
-public class MfWebApplication {
+@Slf4j
+public class MfSchedulerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MfWebApplication.class, args);
+        SpringApplication.run(MfSchedulerApplication.class, args);
         log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼web业务服务启动成功-----------------------\n\t");
+                "\n\t--------------------摸鱼调度中心启动成功-----------------------\n\t");
     }
 }

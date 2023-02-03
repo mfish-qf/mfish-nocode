@@ -1,9 +1,9 @@
 swagger:
   title: '摸鱼监控中心'
-spring:
+spring: 
   security:
     user:
-      name: mfish
+      name: admin
       password: 123456
   boot:
     admin:

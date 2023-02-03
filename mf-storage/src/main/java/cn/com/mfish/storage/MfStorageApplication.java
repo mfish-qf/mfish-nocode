@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
 /**
- * @description: 摸鱼文件存储服务
+ * @description: 摸鱼文件中心启动类
  * @author: mfish
  * @date: 2023/1/5 16:34
  */
@@ -15,6 +15,6 @@ public class MfStorageApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfStorageApplication.class, args);
         log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼文件存储服务启动成功-----------------------\n\t");
+                "\n\t--------------------摸鱼文件中心启动成功-----------------------\n\t");
     }
 }

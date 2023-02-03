@@ -1,5 +1,5 @@
 swagger:
-  title: '摸鱼系统管理'
+  title: '摸鱼系统业务中心'
 # mybatis配置
 mybatis-plus:
   # 配置mapper的扫描，找到所有的mapper.xml映射文件

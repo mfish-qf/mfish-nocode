@@ -17,6 +17,7 @@
         <module>mf-api</module>
         <module>mf-storage</module>
         <module>mf-monitor</module>
+        <module>mf-scheduler</module>
     </modules>
 
     <properties>

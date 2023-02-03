@@ -1,9 +1,9 @@
 swagger:
-  title: '摸鱼文件管理'
+  title: '摸鱼调度中心'
 # mybatis配置
 mybatis-plus:
   # 配置mapper的扫描，找到所有的mapper.xml映射文件
-  mapper-locations: classpath*:cn/com/mfish/storage/mapper/**/*Mapper.xml
+  mapper-locations: classpath*:cn/com/mfish/scheduler/mapper/**/*Mapper.xml
   global-config:
     # 关闭MP3.0自带的banner
     banner: false
@@ -24,7 +24,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
     jdbc-type-for-null:
-spring: 
+spring:
   datasource:
     druid:
       stat-view-servlet:
@@ -48,26 +48,26 @@ spring:
         filters: stat,slf4j
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
-          # 主库数据源
-          master:
-            driver-class-name: com.mysql.cj.jdbc.Driver
-            url: jdbc:mysql://localhost:3306/mf_system?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-            username: root
-            password: 123456
+        # 主库数据源
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/mf_scheduler?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: 123456
           # 从库数据源
           # slave:
-            # username: 
-            # password: 
-            # url: 
-            # driver-class-name: 
+          # username:
+          # password:
+          # url:
+          # driver-class-name:
       # seata: true    # 开启seata代理，开启后默认每个数据源都代理，如果某个不需要代理可单独关闭
-storage:
-  active: local
-  local:
-    storagePath: storage
-    address: http://localhost:8888/storage/file/
-  aliyun:
-    endpoint: oss-cn-shenzhen.aliyuncs.com
-    accessKeyId: aaa
-    accessKeySecret: aaa
-    bucketName: aaa
+org:
+  quartz:
+    scheduler:
+      instanceId: AUTO
+    jobStore:
+      class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      isClustered: true
+      clusterCheckinInterval: 20000
+      misfireThreshold: 60000

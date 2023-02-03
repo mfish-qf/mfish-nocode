@@ -5,7 +5,7 @@ swagger:
 mybatis-plus:
   # 搜索指定包别名
   type-aliases-package: cn.com.mfish.oauth.mapper
-  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
   mapper-locations: classpath*:cn/com/mfish/**/mapper/**/*Mapper.xml
   global-config:
     # 关闭MP3.0自带的banner
@@ -27,7 +27,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
     jdbc-type-for-null:
-spring:
+spring: 
   thymeleaf:
     cache: false
   datasource:
@@ -53,18 +53,18 @@ spring:
         filters: stat,slf4j
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
-        # 主库数据源
-        master:
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://localhost:3306/mf_oauth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-          username: root
-          password: 123456
+          # 主库数据源
+          master:
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            url: jdbc:mysql://localhost:3306/mf_oauth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+            username: root
+            password: 123456
           # 从库数据源
           # slave:
-          # username:
-          # password:
-          # url:
-          # driver-class-name:
+            # username: 
+            # password: 
+            # url: 
+            # driver-class-name: 
       # seata: true    # 开启seata代理，开启后默认每个数据源都代理，如果某个不需要代理可单独关闭
 redisCache:
   expire: 50400
@@ -75,7 +75,7 @@ redisSession:
 shiro:
   security:
     algorithmName: md5
-    hashIterations: 4
+    hashIterations: 2
     hexEncoded: true
 oauth2:
   expire:
@@ -84,6 +84,8 @@ oauth2:
     refreshToken: 604800
   login:
     mutex: false
+  user:
+    autoCreate: false
 wechat:
   miniapp:
     appId: wxf7ae0f4abbee34a3
