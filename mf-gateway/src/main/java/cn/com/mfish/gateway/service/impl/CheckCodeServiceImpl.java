@@ -2,7 +2,6 @@ package cn.com.mfish.gateway.service.impl;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.exception.CaptchaException;
-import cn.com.mfish.common.core.utils.Base64;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.gateway.config.properties.CaptchaProperties;
@@ -16,6 +15,7 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -70,7 +70,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
             return Result.fail(e.getMessage());
         }
         ajax.getData().put("captchaKey", uuid);
-        ajax.getData().put("img", Base64.encode(os.toByteArray()));
+        ajax.getData().put("img", Base64.getEncoder().encodeToString(os.toByteArray()));
         return ajax;
     }
 

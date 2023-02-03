@@ -20,7 +20,7 @@ import java.util.List;
  * @date: 2021/11/11 10:37
  */
 @Component
-public class SwaggerProvider implements WebFluxConfigurer,SwaggerResourcesProvider {
+public class SwaggerProvider implements WebFluxConfigurer, SwaggerResourcesProvider {
     /**
      * swagger2默认的url后缀
      */
@@ -43,7 +43,7 @@ public class SwaggerProvider implements WebFluxConfigurer,SwaggerResourcesProvid
                 .forEach(routeDefinition -> routeDefinition.getPredicates().stream()
                         .forEach(predicateDefinition ->
                                 resources.add(swaggerResource(routeDefinition.getId()
-                                        , predicateDefinition.getArgs().get(NameUtils.GENERATED_NAME_PREFIX+"0")
+                                        , predicateDefinition.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0")
                                                 .replace("/**", SWAGGER2URL)))));
         return resources;
     }
@@ -58,6 +58,7 @@ public class SwaggerProvider implements WebFluxConfigurer,SwaggerResourcesProvid
 
     /**
      * swagger-ui 地址
+     *
      * @param registry
      */
     @Override

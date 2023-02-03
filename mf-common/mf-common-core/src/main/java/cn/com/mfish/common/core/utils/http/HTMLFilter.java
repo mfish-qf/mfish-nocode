@@ -1,4 +1,4 @@
-package cn.com.mfish.common.core.utils.html;
+package cn.com.mfish.common.core.utils.http;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

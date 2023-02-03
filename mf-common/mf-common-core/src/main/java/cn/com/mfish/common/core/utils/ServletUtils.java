@@ -1,7 +1,6 @@
 package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
-import cn.com.mfish.common.core.utils.text.Convert;
 import cn.com.mfish.common.core.web.Result;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -32,13 +31,6 @@ public class ServletUtils {
      */
     public static String getParameter(String name) {
         return getRequest().getParameter(name);
-    }
-
-    /**
-     * 获取String参数
-     */
-    public static String getParameter(String name, String defaultValue) {
-        return Convert.toStr(getRequest().getParameter(name), defaultValue);
     }
 
     /**

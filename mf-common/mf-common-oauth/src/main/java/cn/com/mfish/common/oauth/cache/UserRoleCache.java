@@ -1,6 +1,6 @@
 package cn.com.mfish.common.oauth.cache;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
@@ -41,7 +41,7 @@ public class UserRoleCache extends BaseTempCache<List<UserRole>> {
      */
     @Override
     protected List<UserRole> getFromDB(String... key) {
-        Result<List<UserRole>> result = remoteUserService.getRoles(CredentialConstants.INNER, key[0], key[1]);
+        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, key[0], key[1]);
         if (result == null || !result.isSuccess()) {
             return null;
         }

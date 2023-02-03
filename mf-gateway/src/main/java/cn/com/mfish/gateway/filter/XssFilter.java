@@ -1,7 +1,7 @@
 package cn.com.mfish.gateway.filter;
 
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.html.EscapeUtil;
+import cn.com.mfish.common.core.utils.http.EscapeUtil;
 import cn.com.mfish.gateway.config.properties.XssProperties;
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
