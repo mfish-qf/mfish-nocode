@@ -68,7 +68,7 @@ public class LogAspect {
         String params = "";
         if (paramsArray != null && paramsArray.length > 0) {
             for (Object obj : paramsArray) {
-                if (StringUtils.isNull(obj)) {
+                if (null == obj) {
                     continue;
                 }
                 if (obj instanceof String) {

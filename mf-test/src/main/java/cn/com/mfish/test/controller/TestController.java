@@ -1,7 +1,7 @@
 package cn.com.mfish.test.controller;
 
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.enums.ReqSource;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
@@ -33,12 +33,12 @@ public class TestController {
     @GetMapping("/user")
     public Result<UserInfo> getUserInfo(HttpServletRequest request) {
         String token = AuthInfoUtils.getAccessToken(request);
-        return remoteUserService.getUserInfo(CredentialConstants.INNER, token);
+        return remoteUserService.getUserInfo(RPCConstants.INNER, token);
     }
 
     @GetMapping("/curUser")
     public Result<UserInfo> getCurUserInfo() {
-        return remoteUserService.getUserById(CredentialConstants.INNER, "1");
+        return remoteUserService.getUserById(RPCConstants.INNER, "1");
     }
 
     @Log(title = "测试参数", operateType = OperateType.QUERY, reqSource = ReqSource.MANAGER)

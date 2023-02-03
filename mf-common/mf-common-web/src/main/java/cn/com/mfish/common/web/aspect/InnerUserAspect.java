@@ -1,7 +1,7 @@
 package cn.com.mfish.common.web.aspect;
 
 import cn.com.mfish.common.core.annotation.GlobalException;
-import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.web.Result;
@@ -31,9 +31,9 @@ public class InnerUserAspect {
     @Around("@annotation(innerUser)")
     public Object innerAround(ProceedingJoinPoint point, InnerUser innerUser) throws Throwable {
         HttpServletRequest request = ServletUtils.getRequest();
-        String source = request.getHeader(CredentialConstants.REQ_ORIGIN);
+        String source = request.getHeader(RPCConstants.REQ_ORIGIN);
         // 内部请求验证
-        if (CredentialConstants.INNER.equals(source) && !innerUser.validateUser()) {
+        if (RPCConstants.INNER.equals(source) && !innerUser.validateUser()) {
             return point.proceed();
         }
         Result result = tokenValidator.validator(request);

@@ -37,18 +37,7 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
      * @return
      */
     public static <T> T getBean(Class<T> clz) {
-        T result = (T) beanFactory.getBean(clz);
-        return result;
-    }
-
-    /**
-     * 判断是否包含某个名称的bean
-     *
-     * @param name
-     * @return
-     */
-    public static boolean containsBean(String name) {
-        return beanFactory.containsBean(name);
+        return beanFactory.getBean(clz);
     }
 
     /**

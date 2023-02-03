@@ -1,4 +1,4 @@
-package cn.com.mfish.common.core.utils.html;
+package cn.com.mfish.common.core.utils.http;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;

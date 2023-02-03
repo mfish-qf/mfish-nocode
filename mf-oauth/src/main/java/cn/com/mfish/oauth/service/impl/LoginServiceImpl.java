@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.service.impl;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.redis.common.RedisPrefix;
@@ -53,7 +53,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean postLogin(Model model, HttpServletRequest request) {
-        String captchaEx = request.getHeader(CredentialConstants.REQ_CHECK_CAPTCHA_EXCEPTION);
+        String captchaEx = request.getHeader(RPCConstants.REQ_CHECK_CAPTCHA_EXCEPTION);
         if (!StringUtils.isEmpty(captchaEx)) {
             model.addAttribute(SerConstant.ERROR_MSG, CaptchaException.Info.getExceptionInfo(captchaEx).toString());
             return false;

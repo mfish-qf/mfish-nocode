@@ -1,7 +1,6 @@
 package cn.com.mfish.gateway.filter;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
-import cn.com.mfish.common.core.constants.HttpStatus;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -15,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -32,7 +32,7 @@ import javax.annotation.Resource;
 public class AuthFilter implements GlobalFilter, Ordered {
 
     @Resource
-    private IgnoreWhiteProperties ignoreWhite;
+    private IgnoreWhiteProperties ignoreWhiteProperties;
     @Resource
     private TokenValidator tokenValidator;
 
@@ -41,7 +41,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String url = request.getURI().getPath();
         // 跳过不需要验证的路径
-        if (StringUtils.matches(url, ignoreWhite.getWhites())) {
+        if (StringUtils.matches(url, ignoreWhiteProperties.getWhites())) {
             return chain.filter(exchange);
         }
         String accessToken = AuthInfoUtils.getAccessToken(request);
@@ -50,7 +50,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         }
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
-        GatewayUtils.removeHeader(mutate, CredentialConstants.REQ_ORIGIN);
+        GatewayUtils.removeHeader(mutate, RPCConstants.REQ_ORIGIN);
         Result result = tokenValidator.validator(request);
         if (!result.isSuccess()) {
             return unauthorizedResponse(exchange, result.getMsg());
@@ -71,9 +71,9 @@ public class AuthFilter implements GlobalFilter, Ordered {
      * @return
      */
     private void defaultTokenDeal(RedisAccessToken accessToken, ServerHttpRequest.Builder mutate) {
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, accessToken.getClientId());
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_USER_ID, accessToken.getUserId());
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_ACCOUNT, accessToken.getAccount());
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_CLIENT_ID, accessToken.getClientId());
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_USER_ID, accessToken.getUserId());
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_ACCOUNT, accessToken.getAccount());
     }
 
     /**
@@ -85,14 +85,14 @@ public class AuthFilter implements GlobalFilter, Ordered {
      */
     private void weChatTokenDeal(WeChatToken weChatToken, ServerHttpRequest.Builder mutate) {
         //todo 微信客户端暂时写死system，默认认为是系统客户端
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CLIENT_ID, "system");
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_USER_ID, weChatToken.getUserId());
-        GatewayUtils.addHeader(mutate, CredentialConstants.REQ_ACCOUNT, weChatToken.getAccount());
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_CLIENT_ID, "system");
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_USER_ID, weChatToken.getUserId());
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_ACCOUNT, weChatToken.getAccount());
     }
 
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange, String msg) {
         log.error("[鉴权异常处理]请求路径:{}", exchange.getRequest().getPath());
-        return ServletUtils.webFluxResponseWriter(exchange.getResponse(), msg, HttpStatus.UNAUTHORIZED);
+        return ServletUtils.webFluxResponseWriter(exchange.getResponse(), msg, HttpStatus.UNAUTHORIZED.value());
     }
 
 

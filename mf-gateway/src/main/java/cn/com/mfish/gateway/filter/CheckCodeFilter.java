@@ -1,6 +1,6 @@
 package cn.com.mfish.gateway.filter;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.gateway.common.GatewayUtils;
@@ -57,7 +57,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
                 return chain.filter(exchange);
             }
             ServerHttpRequest.Builder mutate = request.mutate();
-            GatewayUtils.removeHeader(mutate, CredentialConstants.REQ_CHECK_CAPTCHA_EXCEPTION);
+            GatewayUtils.removeHeader(mutate, RPCConstants.REQ_CHECK_CAPTCHA_EXCEPTION);
             try {
                 String rspStr = resolveBodyFromRequest(request);
                 Map<String, String> map = getParamMap(rspStr);
@@ -72,7 +72,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
             } catch (CaptchaException e) {
                 //如果需要自身校验，不直接返回校验结果，由网关转发到自身服务处理
                 if (selfCheck != CheckStatus.无需校验) {
-                    GatewayUtils.addHeader(mutate, CredentialConstants.REQ_CHECK_CAPTCHA_EXCEPTION, e.getMessage());
+                    GatewayUtils.addHeader(mutate, RPCConstants.REQ_CHECK_CAPTCHA_EXCEPTION, e.getMessage());
                 } else {
                     return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
                 }

@@ -1,4 +1,4 @@
-package cn.com.mfish.common.core.utils.html;
+package cn.com.mfish.common.core.utils.http;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 
@@ -7,8 +7,6 @@ import cn.com.mfish.common.core.utils.StringUtils;
  * @date: 2021/8/12 10:48
  */
 public class EscapeUtil {
-    public static final String RE_HTML_MARK = "(<[^<]*?>)|(<[\\s]*?/[^<]*?>)|(<[^<]*?/[\\s]*?>)";
-
     private static final char[][] TEXT = new char[64][];
 
     static {

@@ -1,8 +1,8 @@
 package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
-import cn.com.mfish.common.core.constants.CredentialConstants;
-import cn.com.mfish.common.core.utils.html.WebRequest;
+import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.utils.http.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,7 +50,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentUserId() {
-        String userId = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_USER_ID);
+        String userId = ServletUtils.getRequest().getHeader(RPCConstants.REQ_USER_ID);
         return StringUtils.isEmpty(userId) ? null : userId;
     }
 
@@ -60,7 +60,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentAccount() {
-        String account = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_ACCOUNT);
+        String account = ServletUtils.getRequest().getHeader(RPCConstants.REQ_ACCOUNT);
         return StringUtils.isEmpty(account) ? null : account;
     }
 
@@ -70,7 +70,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentClientId() {
-        String clientId = ServletUtils.getRequest().getHeader(CredentialConstants.REQ_CLIENT_ID);
+        String clientId = ServletUtils.getRequest().getHeader(RPCConstants.REQ_CLIENT_ID);
         return StringUtils.isEmpty(clientId) ? null : clientId;
     }
 

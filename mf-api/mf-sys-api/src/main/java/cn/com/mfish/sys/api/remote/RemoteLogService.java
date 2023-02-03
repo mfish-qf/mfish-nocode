@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.api.remote;
 
-import cn.com.mfish.common.core.constants.CredentialConstants;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.SysLog;
@@ -18,5 +18,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(contextId = "remoteLogService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteLogFallback.class)
 public interface RemoteLogService {
     @PostMapping("/sysLog")
-    Result<SysLog> addLog(@RequestHeader(CredentialConstants.REQ_ORIGIN) String origin, @RequestBody SysLog sysLog);
+    Result<SysLog> addLog(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody SysLog sysLog);
 }

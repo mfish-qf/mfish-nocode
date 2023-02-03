@@ -2,33 +2,29 @@
 =====================================
 当前最新版本： 1.0.0
 
-[![AUR](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE)
-[![](https://img.shields.io/badge/Author-mfish-orange.svg)](http://www.mfish.com.cn)
-[![](https://img.shields.io/badge/Blog-个人博客-yellow.svg)](http://www.mfish.com.cn)
-[![](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/mfish-qf/mfish-nocode/releases/tag/v1.0.0)
+[![Author](https://img.shields.io/badge/Author-mfish-orange.svg)](http://www.mfish.com.cn)
+[![Blog](https://img.shields.io/badge/Blog-个人博客-yellow.svg)](http://www.mfish.com.cn)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/mfish-qf/mfish-nocode/releases/tag/v1.0.0)
+[![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE)
 
+[![GitHub watches](https://img.shields.io/github/watchers/mfish-qf/mfish-nocode.svg?style=social&label=Watch)](https://github.com/mfish-qf/mfish-nocode)
+[![GitHub stars](https://img.shields.io/github/stars/mfish-qf/mfish-nocode.svg?style=social&label=Stars)](https://github.com/mfish-qf/mfish-nocode)
+[![GitHub forks](https://img.shields.io/github/forks/mfish-qf/mfish-nocode.svg?style=social&label=Fork)](https://github.com/mfish-qf/mfish-nocode)
 ## 项目介绍
-
 摸鱼低代码平台希望打造一个基于低代码的无代码平台。即能给程序员使用，也能满足非专业人士的需求。
-
 * 后端基于Spring Cloud Alibaba
 * 注册中心、配置中心采用nacos
 * 当前版本完成oauth2统一认证接入
 * 持续进行功能完善
 
 ## 前端源码地址
-
-* *[前端----github地址](https://github.com/mfish-qf/mfish-nocode-view)*
-* *[前端----gitee地址](https://gitee.com/qiufeng9862/mfish-nocode-view)*
+[![github](https://img.shields.io/badge/前端地址-github-red.svg)](https://github.com/mfish-qf/mfish-nocode-view)
+[![gitee](https://img.shields.io/badge/前端地址-gitee-lightgrey.svg)](https://gitee.com/qiufeng9862/mfish-nocode-view)
 
 ## 演示环境
-
 * *[demo地址](http://app.mfish.com.cn:11119)*
 
-## 功能模块（开发中...）
-
-> vue3版本已经实现了系统管理、系统监控、各种组件、权限、GUI代码生成、完全可以用于生产环境。
-
+## 功能模块
 ```
 ├─驾驶舱
 │  ├─工作台

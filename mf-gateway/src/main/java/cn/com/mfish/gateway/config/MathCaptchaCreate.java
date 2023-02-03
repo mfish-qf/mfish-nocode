@@ -19,29 +19,34 @@ public class MathCaptchaCreate extends DefaultTextCreator {
         int y = random.nextInt(10);
         StringBuilder sb;
         int seed = (int) Math.round(Math.random() * 2);
-        Integer result = 0;
-        if (seed == 0) {
-            sb = createFormula(NUMBERS[x], "*", NUMBERS[y]);
-            result = x * y;
-        } else if (seed == 1) {
-            if (!(x == 0) && y % x == 0) {
-                sb = createFormula(NUMBERS[y], "/", NUMBERS[x]);
-                result = y / x;
-            } else {
+        Integer result;
+        switch (seed) {
+            case 0:
+                sb = createFormula(NUMBERS[x], "*", NUMBERS[y]);
+                result = x * y;
+                break;
+            case 1:
+                if (!(x == 0) && y % x == 0) {
+                    sb = createFormula(NUMBERS[y], "/", NUMBERS[x]);
+                    result = y / x;
+                } else {
+                    sb = createFormula(NUMBERS[x], "+", NUMBERS[y]);
+                    result = x + y;
+                }
+                break;
+            case 2:
+                if (x >= y) {
+                    sb = createFormula(NUMBERS[x], "-", NUMBERS[y]);
+                    result = x - y;
+                } else {
+                    sb = createFormula(NUMBERS[y], "-", NUMBERS[x]);
+                    result = y - x;
+                }
+                break;
+            default:
                 sb = createFormula(NUMBERS[x], "+", NUMBERS[y]);
                 result = x + y;
-            }
-        } else if (seed == 2) {
-            if (x >= y) {
-                sb = createFormula(NUMBERS[x], "-", NUMBERS[y]);
-                result = x - y;
-            } else {
-                sb = createFormula(NUMBERS[y], "-", NUMBERS[x]);
-                result = y - x;
-            }
-        } else {
-            sb = createFormula(NUMBERS[x], "+", NUMBERS[y]);
-            result = x + y;
+                break;
         }
         sb.append("=?#" + result);
         return sb.toString();

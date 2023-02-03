@@ -1,5 +1,7 @@
 package cn.com.mfish.common.core.constants;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * 通用常量信息
  *
@@ -7,16 +9,6 @@ package cn.com.mfish.common.core.constants;
  * @date: 2021/8/12 11:27
  */
 public class Constants {
-    /**
-     * UTF-8 字符集
-     */
-    public static final String UTF8 = "UTF-8";
-
-    /**
-     * contentType类型
-     */
-    public static final String CONTENT_TYPE_JSON = "application/json";
-
     /**
      * head令牌自定义标识
      */
@@ -43,21 +35,6 @@ public class Constants {
     public static final String OAUTH_HEADER_NAME = "Bearer ";
 
     /**
-     * 令牌密钥
-     */
-    public final static String SECRET = "abcdefghijklmnopqrstuvwxyz";
-
-    /**
-     * 令牌缓存有效期，默认720（分钟）
-     */
-    public final static long EXPIRES_IN = 720;
-
-    /**
-     * 令牌缓存刷新时间，默认120（分钟）
-     */
-    public final static long REFRESH_TIME = 120;
-
-    /**
      * http请求
      */
     public static final String HTTP = "http://";
@@ -70,12 +47,12 @@ public class Constants {
     /**
      * 成功标记
      */
-    public static final Integer SUCCESS = HttpStatus.SUCCESS;
+    public static final Integer SUCCESS = HttpStatus.OK.value();
 
     /**
      * 失败标记
      */
-    public static final Integer FAIL = HttpStatus.ERROR;
+    public static final Integer FAIL = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
     /**
      * 验证码redisKey标签

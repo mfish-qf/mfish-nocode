@@ -5,7 +5,7 @@ package cn.com.mfish.common.core.constants;
  * @description: 凭证常量
  * @date: 2021/11/18 18:16
  */
-public class CredentialConstants {
+public class RPCConstants {
     /**
      * 请求来源
      */
