@@ -1,21 +1,8 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : localhost
- Source Server Type    : MySQL
- Source Server Version : 50734
- Source Host           : localhost:3306
- Source Schema         : mf_oauth
-
- Target Server Type    : MySQL
- Target Server Version : 50734
- File Encoding         : 65001
-
- Date: 27/01/2023 15:19:43
-*/
-
+DROP DATABASE IF EXISTS `mf_oauth`;
+CREATE DATABASE  `mf_oauth` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+USE `mf_oauth`;
 
 -- ----------------------------
 -- Table structure for sso_client_details
