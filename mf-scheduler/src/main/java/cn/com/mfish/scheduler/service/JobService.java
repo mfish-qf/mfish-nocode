@@ -1,5 +1,6 @@
 package cn.com.mfish.scheduler.service;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.scheduler.entity.Job;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,5 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version: V1.0.0
  */
 public interface JobService extends IService<Job> {
-
+    Result<Job> insertJob(Job job);
 }

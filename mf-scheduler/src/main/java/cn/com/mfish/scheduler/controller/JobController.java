@@ -62,10 +62,7 @@ public class JobController {
     @ApiOperation("定时调度任务-添加")
     @PostMapping
     public Result<Job> add(@RequestBody Job job) {
-        if (jobService.save(job)) {
-            return Result.ok(job, "定时调度任务-添加成功!");
-        }
-        return Result.fail(job, "错误:定时调度任务-添加失败!");
+        return jobService.insertJob(job);
     }
 
     /**

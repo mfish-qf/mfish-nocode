@@ -4,11 +4,15 @@ import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 /**
  * @description: 定时调度任务
@@ -26,21 +30,29 @@ public class Job extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     @ApiModelProperty(value = "任务名称")
-	private String jobName;
+    private String jobName;
     @ApiModelProperty(value = "任务组")
-	private String jobGroup;
+    private String jobGroup;
     @ApiModelProperty(value = "cron表达式")
-	private String cron;
+    private String cron;
     @ApiModelProperty(value = "调用方法")
-	private String invokeMethod;
+    private String invokeMethod;
     @ApiModelProperty(value = "调用参数")
-	private String invokeParam;
+    private String invokeParam;
     @ApiModelProperty(value = "允许并发执行（1允许 0不允许）")
-	private Integer allowConcurrent;
+    private Integer allowConcurrent;
     @ApiModelProperty(value = "任务执行出错后处理方式（1立即执行 2执行一次 3放弃执行）")
-	private String misfireHandler;
+    private Integer misfireHandler;
     @ApiModelProperty(value = "状态（0正常 1暂停）")
-	private Integer status;
+    private Integer status;
     @ApiModelProperty(value = "备注信息")
-	private String remark;
+    private String remark;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "更新时间")
+    private Date startTime;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "更新时间")
+    private Date endTime;
 }
