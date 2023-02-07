@@ -1,6 +1,6 @@
 package cn.com.mfish.code.common;
 
-import cn.com.mfish.code.config.FreemarkerProperties;
+import cn.com.mfish.code.config.properties.FreemarkerProperties;
 import cn.com.mfish.code.entity.CodeInfo;
 import cn.com.mfish.code.entity.FieldInfo;
 import cn.com.mfish.code.entity.TableInfo;

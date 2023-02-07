@@ -1,4 +1,4 @@
-package cn.com.mfish.code.config;
+package cn.com.mfish.code.config.properties;
 
 import freemarker.template.Version;
 import lombok.Data;

@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 
 /**
  * @author: mfish
- * @description: 代码生成入口类
+ * @description: 代码生成中心启动类
  * @date: 2022/8/18 16:42
  */
 @Slf4j

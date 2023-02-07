@@ -65,7 +65,7 @@ storage:
   active: local
   local:
     storagePath: storage
-    address: http://localhost:8888/storage/file
+    address: http://localhost:8888/storage/file/
   aliyun:
     endpoint: oss-cn-shenzhen.aliyuncs.com
     accessKeyId: aaa

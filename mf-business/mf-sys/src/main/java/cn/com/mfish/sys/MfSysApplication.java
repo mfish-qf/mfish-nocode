@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 
 /**
  * @author: mfish
- * @description: 系统管理启动类
+ * @description: 系统业务中心启动类
  * @date: 2022/9/2 16:03
  */
 
@@ -16,6 +16,6 @@ public class MfSysApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfSysApplication.class, args);
         log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼系统业务服务启动成功-----------------------\n\t");
+                "\n\t--------------------摸鱼系统业务中心启动成功-----------------------\n\t");
     }
 }

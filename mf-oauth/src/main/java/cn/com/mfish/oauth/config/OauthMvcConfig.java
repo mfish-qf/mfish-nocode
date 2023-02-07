@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @description: 资源配置
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/1/31 11:42
  */
 @Configuration

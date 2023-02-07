@@ -22,25 +22,37 @@ spring:
           predicates:
             - Path=/test/**
           filters:
-            # 验证码处理
-            # - CheckCodeFilter
-            - StripPrefix=1    
+            - StripPrefix=1
         - id: mf-code
           uri: lb://mf-code
           predicates:
             - Path=/code/**
           filters:
-            # 验证码处理
-            # - CheckCodeFilter
-            - StripPrefix=1       
+            - StripPrefix=1
+        - id: mf-sys
+          uri: lb://mf-sys
+          predicates:
+            - Path=/sys/**
+          filters:
+            - StripPrefix=1
+        - id: mf-storage
+          uri: lb://mf-storage
+          predicates:
+            - Path=/storage/**
+          filters:
+            - StripPrefix=1
 # 安全配置
 security:
   # 验证码
   captcha:
     enabled: true
     type: math
-    checkUrls:
-      - /oauth2/authorize
+    # 网关校验直接返回
+    gatewayCheckCaptcha:
+      # - /oauth2/authorize
+      # 网关校验，自己服务返回
+    selfCheckCaptcha:
+      - /oauth2/authorize?loginType=user_password
   # 防止XSS攻击
   xss:
     enabled: true
@@ -48,6 +60,13 @@ security:
   # 不校验白名单
   ignore:
     whites:
-      - /oauth2/**
+      - /oauth2/accessToken
+      - /oauth2/authorize
+      - /oauth2/sendMsg
+      - /oauth2/qrCodeLogin/*
+      - /oauth2/wx/bind/**
+      - /oauth2/static/**
+      - /storage/file/*.*
       - /code/**
+      - /test/**
       - /*/v2/api-docs

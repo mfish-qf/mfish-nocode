@@ -11,10 +11,10 @@
 </template>
 <script lang="ts">
 import { ref, computed, unref } from "vue";
-import { BasicForm, useForm } from "/@/components/Form/index";
+import { BasicForm, useForm } from "/@/components/general/Form/index";
 import { ${entityName?uncap_first}FormSchema } from "./${entityName?uncap_first}.data";
-import { BasicModal, useModalInner } from "/@/components/Modal";
-import { insert${entityName}, update${entityName} } from "/@/api/sys/${entityName}";
+import { BasicModal, useModalInner } from "/@/components/general/Modal";
+import { insert${entityName}, update${entityName} } from "/@/api/${apiPrefix}/${entityName}";
 
 export default {
   name: "${entityName}Modal",

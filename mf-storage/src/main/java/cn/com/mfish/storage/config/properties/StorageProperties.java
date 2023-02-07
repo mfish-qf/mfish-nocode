@@ -1,4 +1,4 @@
-package cn.com.mfish.storage.config;
+package cn.com.mfish.storage.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

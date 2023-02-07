@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.config;
+package cn.com.mfish.oauth.config.properties;
 
 /**
  * @description: shiro配置属性
