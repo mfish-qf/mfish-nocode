@@ -39,12 +39,12 @@ public class Job extends BaseEntity<String> {
     private String invokeMethod;
     @ApiModelProperty(value = "调用参数")
     private String invokeParam;
-    @ApiModelProperty(value = "允许并发执行（1允许 0不允许）")
-    private Integer allowConcurrent;
+    @ApiModelProperty(value = "允许并发执行（0不允许 1允许 ）")
+    private Integer allowConcurrent = 0;
     @ApiModelProperty(value = "任务执行出错后处理方式（1立即执行 2执行一次 3放弃执行）")
     private Integer misfireHandler;
     @ApiModelProperty(value = "状态（0正常 1暂停）")
-    private Integer status;
+    private Integer status = 0;
     @ApiModelProperty(value = "备注信息")
     private String remark;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -55,4 +55,8 @@ public class Job extends BaseEntity<String> {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "更新时间")
     private Date endTime;
+    @ApiModelProperty("优先级")
+    private Integer priority = 0;
+    @ApiModelProperty("时区")
+    private String timeZone = "Asia/Shanghai";
 }

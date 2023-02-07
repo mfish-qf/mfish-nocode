@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * @description: 触发器基础信息
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/2/6 17:07
  */
 @Data
@@ -57,10 +57,6 @@ public class TriggerMeta {
      */
     private Integer misfireInstruction = Trigger.MISFIRE_INSTRUCTION_SMART_POLICY;
 
-    /**
-     * 是否自动实例化
-     */
-    private Boolean autoInit = false;
     /**
      * cron表达式
      */

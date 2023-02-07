@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * @description: 任务基础信息
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/2/6 17:09
  */
 @Data
@@ -22,9 +22,9 @@ public class JobMeta {
     private String group = "default";
 
     /**
-     * 类型
+     * 是否允许同步
      */
-    private String className;
+    private boolean allowConcurrent = false;
 
     /**
      * 描述
@@ -32,12 +32,13 @@ public class JobMeta {
     private String description = "暂无描述";
 
     /**
-     * 是否可恢复
+     * 是否可恢复(执行中应用发生故障，需要重新执行)
+     * 此处暂时设置为false又trigger确定处理
      */
     private Boolean recovery = false;
 
     /**
-     * 是否持久化
+     * 是否持久化(即使没有Trigger关联时，也不需要删除该JobDetail)
      */
     private Boolean durability = true;
 

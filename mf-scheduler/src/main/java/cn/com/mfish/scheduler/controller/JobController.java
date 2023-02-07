@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -61,7 +62,7 @@ public class JobController {
     @Log(title = "定时调度任务-添加", operateType = OperateType.INSERT)
     @ApiOperation("定时调度任务-添加")
     @PostMapping
-    public Result<Job> add(@RequestBody Job job) {
+    public Result<Job> add(@RequestBody Job job) throws SchedulerException, ClassNotFoundException {
         return jobService.insertJob(job);
     }
 

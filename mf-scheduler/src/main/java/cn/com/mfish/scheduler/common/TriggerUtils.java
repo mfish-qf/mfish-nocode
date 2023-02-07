@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 /**
  * @description: 触发器通用方法
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/2/6 16:58
  */
 @Slf4j
@@ -43,7 +43,7 @@ public class TriggerUtils {
         TriggerKey triggerKey = new TriggerKey(triggerMeta.getName(), triggerMeta.getGroup());
         //判断触发器是否存在
         if (scheduler.checkExists(triggerKey) && !cover) {
-            throw new SchedulerException("trigger key : " + triggerKey + " 已存在!");
+            throw new SchedulerException("trigger key: " + triggerKey + " 已存在!");
         }
         // 获得triggerBuilder
         TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
@@ -84,8 +84,7 @@ public class TriggerUtils {
             return SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0);
         }
         // cron表达式
-        CronScheduleBuilder cronTriggerBuilder =
-                CronScheduleBuilder.cronSchedule(triggerMeta.getCron());
+        CronScheduleBuilder cronTriggerBuilder = CronScheduleBuilder.cronSchedule(triggerMeta.getCron());
         // 时区
         cronTriggerBuilder.inTimeZone(TimeZone.getTimeZone(triggerMeta.getTimeZone()));
         // 设置触发机制 默认 SimpleTrigger.MISFIRE_INSTRUCTION_SMART_POLICY
@@ -120,8 +119,7 @@ public class TriggerUtils {
             // 获得当前触发器
             Trigger t = scheduler.getTrigger(triggerKey);
             // 判断触发器关联
-            if (jobKey.getName().equals(t.getJobKey().getName())
-                    && jobKey.getGroup().equals(t.getJobKey().getGroup())) {
+            if (jobKey.getName().equals(t.getJobKey().getName()) && jobKey.getGroup().equals(t.getJobKey().getGroup())) {
                 // 更新触发器
                 scheduler.rescheduleJob(triggerKey, trigger);
             } else {
@@ -207,7 +205,12 @@ public class TriggerUtils {
         return false;
     }
 
-
+    /**
+     * 构建触发器元数据
+     *
+     * @param info
+     * @return
+     */
     public static TriggerMeta buildTriggerMeta(Job info) {
         TriggerMeta triggerMeta = new TriggerMeta();
         triggerMeta.setJobCode(info.getJobName());
@@ -216,6 +219,10 @@ public class TriggerUtils {
         triggerMeta.setCron(info.getCron());
         triggerMeta.setStartTime(info.getStartTime());
         triggerMeta.setEndTime(info.getEndTime());
+        Integer priority = info.getPriority();
+        triggerMeta.setPriority(priority == null ? 0 : priority);
+        String timeZone = info.getTimeZone();
+        triggerMeta.setTimeZone(StringUtils.isEmpty(timeZone) ? "Asia/Shanghai" : timeZone);
         return triggerMeta;
     }
 }

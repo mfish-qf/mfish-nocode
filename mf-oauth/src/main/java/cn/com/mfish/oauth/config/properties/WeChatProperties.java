@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.config;
+package cn.com.mfish.oauth.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

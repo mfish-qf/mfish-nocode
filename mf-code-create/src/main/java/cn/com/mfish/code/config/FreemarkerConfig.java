@@ -1,5 +1,6 @@
 package cn.com.mfish.code.config;
 
+import cn.com.mfish.code.config.properties.FreemarkerProperties;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import freemarker.cache.StringTemplateLoader;
 import lombok.Data;

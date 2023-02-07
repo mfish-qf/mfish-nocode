@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.common;
 
-import cn.com.mfish.oauth.config.ShiroProperties;
+import cn.com.mfish.oauth.config.properties.ShiroProperties;
 import io.swagger.annotations.ApiModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;

@@ -1,5 +1,6 @@
 package cn.com.mfish.storage.config;
 
+import cn.com.mfish.storage.config.properties.StorageProperties;
 import cn.com.mfish.storage.enums.StorageType;
 import cn.com.mfish.storage.handler.AliYunStorage;
 import cn.com.mfish.storage.handler.LocalStorage;

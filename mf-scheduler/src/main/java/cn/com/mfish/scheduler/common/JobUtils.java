@@ -1,16 +1,20 @@
 package cn.com.mfish.scheduler.common;
 
 
+import cn.com.mfish.scheduler.job.DisallowConcurrentJobExecute;
+import cn.com.mfish.scheduler.job.GeneralJobExecute;
 import cn.com.mfish.scheduler.entity.Job;
 import cn.com.mfish.scheduler.entity.JobMeta;
+import com.alibaba.fastjson2.JSON;
 import org.quartz.*;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @description: 任务公共类
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/2/6 15:43
  */
 public class JobUtils {
@@ -46,7 +50,7 @@ public class JobUtils {
         // 获得jobDataMap
         JobDataMap jobDataMap = buildJobDataMap(jobMeta);
         //实例化作业
-        JobDetail jobDetail = JobBuilder.newJob((Class<org.quartz.Job>) Class.forName(jobMeta.getClassName()))
+        JobDetail jobDetail = JobBuilder.newJob(JobUtils.getJobClass(jobMeta.isAllowConcurrent()))
                 .withIdentity(jobKey).withDescription(jobMeta.getDescription())
                 .requestRecovery(jobMeta.getRecovery())
                 .storeDurably(jobMeta.getDurability()).setJobData(jobDataMap).build();
@@ -64,6 +68,16 @@ public class JobUtils {
     }
 
     /**
+     * 获取任务执行类
+     *
+     * @param allowConcurrent
+     * @return
+     */
+    public static Class<? extends QuartzJobBean> getJobClass(boolean allowConcurrent) {
+        return allowConcurrent ? GeneralJobExecute.class : DisallowConcurrentJobExecute.class;
+    }
+
+    /**
      * 构建任务元数据
      *
      * @param job
@@ -74,9 +88,9 @@ public class JobUtils {
         jobDetailMeta.setName(job.getJobName());
         jobDetailMeta.setGroup(job.getJobGroup());
         jobDetailMeta.setDescription(job.getRemark());
-        jobDetailMeta.setClassName(job.getInvokeMethod());
+        jobDetailMeta.setAllowConcurrent(1 == job.getAllowConcurrent());
         Map<String, Object> map = new HashMap<>();
-        map.put(JOB_DATA_MAP, job);
+        map.put(JOB_DATA_MAP, JSON.toJSONString(job));
         jobDetailMeta.setDataMap(map);
         return jobDetailMeta;
     }
