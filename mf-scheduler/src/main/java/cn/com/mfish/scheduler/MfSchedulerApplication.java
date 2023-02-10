@@ -3,6 +3,7 @@ package cn.com.mfish.scheduler;
 import cn.com.mfish.common.web.annotation.AutoWeb;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @description: 调度中心启动类
@@ -11,6 +12,7 @@ import org.springframework.boot.SpringApplication;
  */
 @AutoWeb
 @Slf4j
+@EnableScheduling
 public class MfSchedulerApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfSchedulerApplication.class, args);

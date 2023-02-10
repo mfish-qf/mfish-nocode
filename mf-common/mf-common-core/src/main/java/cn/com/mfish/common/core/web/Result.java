@@ -33,44 +33,44 @@ public class Result<T> implements Serializable {
     @ApiModelProperty("补充参数 用于多次检查时携带上一次参数提供下次使用")
     private Map<String, String> param = new HashMap<>();
 
-    private static <T> Result<T> restResult(T data, int code, String msg) {
+    public static <T> Result<T> buildResult(T data, int code, String msg) {
         return new Result<T>().setCode(code).setData(data).setMsg(msg).setSuccess(code == Constants.SUCCESS ? true : false);
     }
 
     public static <T> Result<T> ok() {
-        return restResult(null, Constants.SUCCESS, null);
+        return buildResult(null, Constants.SUCCESS, null);
     }
 
     public static <T> Result<T> ok(String msg) {
-        return restResult(null, Constants.SUCCESS, msg);
+        return buildResult(null, Constants.SUCCESS, msg);
     }
 
     public static <T> Result<T> ok(T data) {
-        return restResult(data, Constants.SUCCESS, null);
+        return buildResult(data, Constants.SUCCESS, null);
     }
 
     public static <T> Result<T> ok(T data, String msg) {
-        return restResult(data, Constants.SUCCESS, msg);
+        return buildResult(data, Constants.SUCCESS, msg);
     }
 
     public static <T> Result<T> fail() {
-        return restResult(null, Constants.FAIL, null);
+        return buildResult(null, Constants.FAIL, null);
     }
 
     public static <T> Result<T> fail(String msg) {
-        return restResult(null, Constants.FAIL, msg);
+        return buildResult(null, Constants.FAIL, msg);
     }
 
     public static <T> Result<T> fail(T data) {
-        return restResult(data, Constants.FAIL, null);
+        return buildResult(data, Constants.FAIL, null);
     }
 
     public static <T> Result<T> fail(T data, String msg) {
-        return restResult(data, Constants.FAIL, msg);
+        return buildResult(data, Constants.FAIL, msg);
     }
 
     public static <T> Result<T> fail(int code, String msg) {
-        return restResult(null, code, msg);
+        return buildResult(null, code, msg);
     }
 
 }
