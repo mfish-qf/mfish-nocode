@@ -30,6 +30,8 @@ public class OkHttpUtils {
     public static final MediaType Form_TYPE = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
     public static final MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
     public static final MediaType File_TYPE = MediaType.parse("multipart/form-data; charset=utf-8");
+    public static final MediaType Png_TYPE = MediaType.parse("image/png");
+    public static final MediaType Jpg_TYPE = MediaType.parse("image/jpeg");
 
     @Data
     @Accessors(chain = true)
@@ -144,22 +146,30 @@ public class OkHttpUtils {
     }
 
     public static Result<String> upload(String url, String filePath) throws IOException {
-        return upload(url, filePath, null);
+        return upload(url, filePath, null, File_TYPE);
     }
 
-    public static Result<String> upload(String url, String filePath, Map<String, String> headers) throws IOException {
-        return upload(url, new File(filePath), headers, null);
+    public static Result<String> upload(String url, String filePath, MediaType mediaType) throws IOException {
+        return upload(url, filePath, null, mediaType);
     }
 
-    public static Result<String> upload(String url, String filePath, Map<String, String> headers, TimeOut timeOut) throws IOException {
-        return upload(url, new File(filePath), headers, timeOut);
+    public static Result<String> upload(String url, String filePath, Map<String, String> headers, MediaType mediaType) throws IOException {
+        return upload(url, new File(filePath), headers, null, mediaType);
+    }
+
+    public static Result<String> upload(String url, String filePath, Map<String, String> headers, TimeOut timeOut, MediaType mediaType) throws IOException {
+        return upload(url, new File(filePath), headers, timeOut, mediaType);
     }
 
     public static Result<String> upload(String url, File file) throws IOException {
-        return upload(url, file, null);
+        return upload(url, file, null, File_TYPE);
     }
 
-    public static Result<String> upload(String url, File file, Map<String, String> headers) throws IOException {
+    public static Result<String> upload(String url, File file, MediaType mediaType) throws IOException {
+        return upload(url, file, null, mediaType);
+    }
+
+    public static Result<String> upload(String url, File file, Map<String, String> headers, MediaType mediaType) throws IOException {
         return upload(url, file, headers, null);
     }
 
@@ -173,11 +183,11 @@ public class OkHttpUtils {
      * @return
      * @throws IOException
      */
-    public static Result<String> upload(String url, File file, Map<String, String> headers, TimeOut timeOut) throws IOException {
+    public static Result<String> upload(String url, File file, Map<String, String> headers, TimeOut timeOut, MediaType mediaType) throws IOException {
         OkHttpClient client = buildOkHttpClient(url, timeOut);
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.getName(), RequestBody.create(file, File_TYPE))
+                .addFormDataPart("file", file.getName(), RequestBody.create(file, mediaType))
                 .build();
         Request request = buildRequest(url, headers, requestBody, RequestMethod.POST);
         return buildResult(client, request);
