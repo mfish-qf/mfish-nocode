@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * @description: 聊天机器人
@@ -28,8 +29,9 @@ public class OpenAiController {
     OpenAiConfig openAiConfig;
 
     @PostMapping("/answer")
-    public Result<CompletionResult> answer(@RequestBody Question question) {
-        return Result.ok(new CompletionResult().setId(question.getId())
-                .setResult(AiOperator.answerMyQuestion(openAiConfig.getUrl(), openAiConfig.getToken(), question.getData())), "请求成功");
+    public Result<CompletionResult> answer(@RequestBody Question question) throws IOException {
+        Result<String> result = AiOperator.answerMyQuestion(openAiConfig.getUrl(), openAiConfig.getToken(), question.getData());
+        return Result.buildResult(new CompletionResult().setId(question.getId())
+                .setResult(result.getData()), result.getCode(), result.getMsg());
     }
 }
