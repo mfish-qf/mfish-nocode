@@ -84,3 +84,7 @@
 #### swagger访问地址
 
 http://localhost:8888/swagger-ui/index.html
+
+#### 平台交流
+微信:  
+![](https://oscimg.oschina.net/oscnet/up-aaf63a91b96c092ad240b2e9755d926ba62.png)
