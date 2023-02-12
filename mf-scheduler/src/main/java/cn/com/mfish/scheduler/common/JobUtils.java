@@ -1,8 +1,8 @@
 package cn.com.mfish.scheduler.common;
 
 
-import cn.com.mfish.scheduler.job.DisallowConcurrentJobExecute;
-import cn.com.mfish.scheduler.job.GeneralJobExecute;
+import cn.com.mfish.scheduler.execute.DisallowConcurrentJobExecute;
+import cn.com.mfish.scheduler.execute.GeneralJobExecute;
 import cn.com.mfish.scheduler.entity.Job;
 import cn.com.mfish.scheduler.entity.JobMeta;
 import com.alibaba.fastjson2.JSON;
@@ -41,7 +41,7 @@ public class JobUtils {
      * @throws ClassNotFoundException
      */
     public static void createJob(Scheduler scheduler, JobMeta jobMeta, boolean cover) throws SchedulerException, ClassNotFoundException {
-        // 设置jobkey
+        // 设置jobKey
         JobKey jobKey = new JobKey(jobMeta.getName(), jobMeta.getGroup());
         //判断job是否存在
         if (scheduler.checkExists(jobKey) && !cover) {

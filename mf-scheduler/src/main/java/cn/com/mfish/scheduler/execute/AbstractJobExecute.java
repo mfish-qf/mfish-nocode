@@ -1,4 +1,4 @@
-package cn.com.mfish.scheduler.job;
+package cn.com.mfish.scheduler.execute;
 
 import cn.com.mfish.scheduler.common.JobUtils;
 import cn.com.mfish.scheduler.entity.Job;
