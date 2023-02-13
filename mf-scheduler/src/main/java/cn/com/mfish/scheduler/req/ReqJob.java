@@ -21,6 +21,6 @@ public class ReqJob {
     private String jobGroup;
     @ApiModelProperty(value = "cron表达式")
     private String cron;
-    @ApiModelProperty(value = "调用方法")
-    private String invokeMethod;
+    @ApiModelProperty(value = "方法名称")
+    private String methodName;
 }

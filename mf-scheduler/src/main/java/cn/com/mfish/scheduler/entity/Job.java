@@ -33,12 +33,16 @@ public class Job extends BaseEntity<String> {
     private String jobName;
     @ApiModelProperty(value = "任务组")
     private String jobGroup;
+    @ApiModelProperty(value = "任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)")
+    private Integer jobType;
     @ApiModelProperty(value = "cron表达式")
     private String cron;
-    @ApiModelProperty(value = "调用方法")
-    private String invokeMethod;
+    @ApiModelProperty(value = "类名称")
+    private String className;
+    @ApiModelProperty(value = "方法名称")
+    private String methodName;
     @ApiModelProperty(value = "调用参数")
-    private String invokeParam;
+    private String params;
     @ApiModelProperty(value = "允许并发执行（0不允许 1允许 ）")
     private Integer allowConcurrent = 0;
     @ApiModelProperty(value = "任务执行出错后处理方式（1立即执行 2执行一次 3放弃执行）")
