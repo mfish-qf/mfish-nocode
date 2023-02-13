@@ -137,7 +137,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @param function 转换函数
      * @return
      */
-    public static String firstCase(String str, Function<String, String> function) {
+    private static String firstCase(String str, Function<String, String> function) {
         if (StringUtils.isEmpty(str)) {
             return "";
         }

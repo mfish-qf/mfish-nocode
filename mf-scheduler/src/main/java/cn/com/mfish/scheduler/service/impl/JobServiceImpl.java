@@ -18,6 +18,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
      * @throws ClassNotFoundException
      */
 //    @Scheduled(cron = "0 0 1 * * ? *")
+    @PostConstruct
     public void initJob() throws SchedulerException, ClassNotFoundException {
         Scheduler scheduler = mfSchedulerFactoryBean.getScheduler();
         scheduler.clear();

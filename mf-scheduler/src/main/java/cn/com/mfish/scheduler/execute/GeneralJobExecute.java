@@ -1,7 +1,9 @@
 package cn.com.mfish.scheduler.execute;
 
-import cn.com.mfish.scheduler.entity.Job;
+import cn.com.mfish.scheduler.invoke.BaseInvoke;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @description: 通用job执行
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GeneralJobExecute extends AbstractJobExecute {
     @Override
-    protected void execute(Job job) {
-        System.out.println(job.toString());
+    protected void execute(BaseInvoke baseJob, String className, String methodName, List<Object> params) {
+        baseJob.run(className, methodName, params);
     }
 }

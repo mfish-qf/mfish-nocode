@@ -48,7 +48,7 @@ public class JobController {
                 .like(reqJob.getJobName() != null, Job::getJobName, reqJob.getJobName())
                 .like(reqJob.getJobGroup() != null, Job::getJobGroup, reqJob.getJobGroup())
                 .like(reqJob.getCron() != null, Job::getCron, reqJob.getCron())
-                .like(reqJob.getInvokeMethod() != null, Job::getInvokeMethod, reqJob.getInvokeMethod())
+                .like(reqJob.getMethodName() != null, Job::getMethodName, reqJob.getMethodName())
                 .orderByDesc(true, Job::getCreateTime);
         return Result.ok(new PageResult<>(jobService.list(queryWrapper)), "定时调度任务-查询成功!");
     }
