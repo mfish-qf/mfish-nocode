@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class GeneralJobExecute extends AbstractJobExecute {
     @Override
-    protected void execute(BaseInvoke baseJob, String className, String methodName, List<Object> params) {
+    protected <T> void execute(BaseInvoke baseJob, String className, String methodName, List<T> params) {
         baseJob.run(className, methodName, params);
     }
 }

@@ -42,6 +42,19 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
     }
 
     /**
+     * 通过名称和类型获取bean
+     *
+     * @param name
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public <T> T getBean(String name, Class<T> clazz) {
+        return beanFactory.getBean(name, clazz);
+    }
+
+
+    /**
      * 通过名称获取bean类型
      *
      * @param name
@@ -51,6 +64,14 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
         return beanFactory.getType(name);
     }
 
+    /**
+     * 获取FeignClient的bean
+     *
+     * @param name
+     * @param tClass
+     * @param <T>
+     * @return
+     */
     public static <T> T getFeignBean(String name, Class<T> tClass) {
         FeignContext feignContext = beanFactory.getBean(FeignContext.class);
         return feignContext.getInstance(name, tClass);

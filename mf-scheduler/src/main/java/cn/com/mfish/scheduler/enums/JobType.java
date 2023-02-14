@@ -1,6 +1,5 @@
 package cn.com.mfish.scheduler.enums;
 
-import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.scheduler.invoke.BaseInvoke;
 import cn.com.mfish.scheduler.invoke.LocalInvoke;
 import cn.com.mfish.scheduler.invoke.MQInvoke;
@@ -26,9 +25,9 @@ public enum JobType {
     }
 
     static {
-        map.put(JobType.LocalJob.value, SpringBeanFactory.getBean(LocalInvoke.class));
-        map.put(JobType.RpcJob.value, SpringBeanFactory.getBean(RPCInvoke.class));
-        map.put(JobType.MqJob.value, SpringBeanFactory.getBean(MQInvoke.class));
+        map.put(JobType.LocalJob.value, new LocalInvoke());
+        map.put(JobType.RpcJob.value, new RPCInvoke());
+        map.put(JobType.MqJob.value, new MQInvoke());
     }
 
     /**

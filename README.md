@@ -80,6 +80,7 @@
 |`mf_config.sql`| nacos数据库 |
 |`mf_oauth.sql`| 认证数据库 |
 |`mf_system.sql`| 系统管理数据库 |
+|`mf_scheduler.sql`| 调度中心数据库 |
 
 #### swagger访问地址
 
