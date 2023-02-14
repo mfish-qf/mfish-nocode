@@ -10,7 +10,6 @@ import java.util.List;
  * @author: mfish
  * @date: 2023/2/13 16:47
  */
-@Component
 @Slf4j
 public class MQInvoke implements BaseInvoke {
     /**
@@ -22,8 +21,8 @@ public class MQInvoke implements BaseInvoke {
      * @return
      */
     @Override
-    public Object run(String className, String methodName, List<Object> params) {
+    public <T> Object run(String className, String methodName, List<T> params) {
         //todo 待实现
-        return true;
+        return null;
     }
 }

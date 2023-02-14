@@ -2,6 +2,7 @@ package cn.com.mfish.common.ds.config;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -33,19 +34,19 @@ public class MybatisInterceptor implements Interceptor {
         }
         //不支持异步调用获取当前帐号
         String account = AuthInfoUtils.getCurrentAccount();
-        if (account == null) {
-            log.warn("保存信息时未取到用户信息!");
-            return invocation.proceed();
-        }
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
         SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
         switch (sqlCommandType) {
             case INSERT:
-                parameter.setCreateBy(account);
+                if (!StringUtils.isEmpty(account)) {
+                    parameter.setCreateBy(account);
+                }
                 parameter.setCreateTime(new Date());
                 break;
             case UPDATE:
-                parameter.setUpdateBy(account);
+                if (!StringUtils.isEmpty(account)) {
+                    parameter.setUpdateBy(account);
+                }
                 parameter.setUpdateTime(new Date());
                 break;
         }

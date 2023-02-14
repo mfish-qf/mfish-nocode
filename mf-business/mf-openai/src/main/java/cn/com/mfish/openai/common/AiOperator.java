@@ -3,7 +3,7 @@ package cn.com.mfish.openai.common;
 import cn.com.mfish.common.core.utils.http.OkHttpUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.openai.entity.Completion;
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

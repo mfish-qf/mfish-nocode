@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -15,62 +13,6 @@ import java.util.*;
  * @date: 2022/11/4 15:38
  */
 public class Utils {
-    /**
-     * 反射调用方法
-     *
-     * @param className
-     * @param methodName
-     * @param params
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     */
-    public static Object invokeMethod(String className, String methodName, List<Object> params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-        //本地方法直接通过类名无法获取到需要class.forName转换
-        Object bean = SpringBeanFactory.getBean(Class.forName(className));
-        return invokeMethod(bean, methodName, params);
-    }
-
-    /**
-     * 调用 Feign方法
-     *
-     * @param className
-     * @param methodName
-     * @param params
-     * @return
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     */
-    public static Object invokeFeignMethod(String className, String methodName, List<Object> params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
-        //Feign方法直接通过类名能够获取到
-        Object bean = SpringBeanFactory.getBean(className);
-        return invokeMethod(bean, methodName, params);
-    }
-
-    private static Object invokeMethod(Object bean, String methodName, List<Object> params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        if (params != null && !params.isEmpty()) {
-            Method method = bean.getClass().getMethod(methodName, getParamsType(params));
-            return method.invoke(bean, params.toArray(new Object[params.size()]));
-        }
-        Method method = bean.getClass().getMethod(methodName);
-        return method.invoke(bean);
-    }
-
-    /**
-     * 反射获取参数类型
-     *
-     * @param params
-     * @return
-     */
-    public static Class<?>[] getParamsType(List<Object> params) {
-        List<Class<?>> classes = new ArrayList<>();
-        for (Object param : params) {
-            classes.add(param.getClass());
-        }
-        return classes.toArray(new Class<?>[params.size()]);
-    }
 
     /**
      * 反射获取类的所有字段

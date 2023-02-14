@@ -8,5 +8,5 @@ import java.util.List;
  * @date: 2023/2/13 17:41
  */
 public interface BaseInvoke {
-    Object run(String className, String methodName, List<Object> params);
+    <T> Object run(String className, String methodName, List<T> params);
 }
