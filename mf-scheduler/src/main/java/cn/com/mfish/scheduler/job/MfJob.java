@@ -5,10 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 /**
- * @description: 任务逻辑
+ * @description: 任务逻辑(样例)
  * @author: mfish
  * @date: 2023/2/13 20:07
  */
@@ -32,7 +31,7 @@ public class MfJob {
         log.info(MessageFormat.format("任务执行!参数1:{0},参数:{1}", param1, param2));
     }
 
-    public void test(List<String> params1, List<SysLog> params2) {
+    public void test(String params1, SysLog params2) {
         log.info(MessageFormat.format("任务执行!参数1:{0},参数:{1}", params1, params2));
     }
 }
