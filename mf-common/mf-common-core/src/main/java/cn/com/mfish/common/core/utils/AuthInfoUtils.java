@@ -50,7 +50,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentUserId() {
-        String userId = ServletUtils.getRequest().getHeader(RPCConstants.REQ_USER_ID);
+        String userId = ServletUtils.getHeader(RPCConstants.REQ_USER_ID);
         return StringUtils.isEmpty(userId) ? null : userId;
     }
 
@@ -60,7 +60,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentAccount() {
-        String account = ServletUtils.getRequest().getHeader(RPCConstants.REQ_ACCOUNT);
+        String account = ServletUtils.getHeader(RPCConstants.REQ_ACCOUNT);
         return StringUtils.isEmpty(account) ? null : account;
     }
 
@@ -70,7 +70,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentClientId() {
-        String clientId = ServletUtils.getRequest().getHeader(RPCConstants.REQ_CLIENT_ID);
+        String clientId = ServletUtils.getHeader(RPCConstants.REQ_CLIENT_ID);
         return StringUtils.isEmpty(clientId) ? null : clientId;
     }
 

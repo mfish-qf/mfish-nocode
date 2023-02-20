@@ -26,21 +26,23 @@ public class JobLog extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     @ApiModelProperty(value = "任务ID")
-	private String jobId;
+    private String jobId;
     @ApiModelProperty(value = "任务名称")
-	private String jobName;
+    private String jobName;
     @ApiModelProperty(value = "任务组")
-	private String jobGroup;
+    private String jobGroup;
     @ApiModelProperty(value = "任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)")
-	private Integer jobType;
+    private Integer jobType;
     @ApiModelProperty(value = "类名称")
-	private String className;
+    private String className;
     @ApiModelProperty(value = "方法名称")
-	private String methodName;
+    private String methodName;
     @ApiModelProperty(value = "调用参数")
-	private String params;
+    private String params;
+    @ApiModelProperty(value = "耗时")
+    private Long costTime;
     @ApiModelProperty(value = "执行状态（0开始 1正在执行 2执行成功 3执行失败）")
-	private Integer status;
+    private Integer status;
     @ApiModelProperty(value = "备注信息")
-	private String remark;
+    private String remark;
 }

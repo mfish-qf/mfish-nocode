@@ -1,8 +1,10 @@
 package cn.com.mfish.scheduler.invoke;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.scheduler.common.InvokeUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -19,9 +21,12 @@ public class LocalInvoke implements BaseInvoke {
             Object obj = InvokeUtils.invokeMethod(className, methodName, params);
             log.info("返回结果:" + obj);
             return obj;
+        } catch (InvocationTargetException e) {
+            log.error("错误:任务执行异常", e);
+            throw new MyRuntimeException(e.getTargetException());
         } catch (Exception e) {
-            log.error("任务执行出错", e);
-            return null;
+            log.error("错误:任务执行异常", e);
+            throw new MyRuntimeException(e.getMessage());
         }
     }
 }

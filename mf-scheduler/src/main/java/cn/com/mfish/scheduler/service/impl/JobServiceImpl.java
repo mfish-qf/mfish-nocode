@@ -18,7 +18,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -39,13 +38,13 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     SchedulerProperties schedulerProperties;
 
     /**
-     * 定时同步调度策略
+     * 定时同步调度策略(测试时放开使用)
      *
      * @throws SchedulerException
      * @throws ClassNotFoundException
      */
 //    @Scheduled(cron = "0 0 1 * * ? *")
-    @PostConstruct
+//    @PostConstruct
     public void initJob() throws SchedulerException, ClassNotFoundException {
         Scheduler scheduler = mfSchedulerFactoryBean.getScheduler();
         scheduler.clear();
