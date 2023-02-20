@@ -1,12 +1,14 @@
 package cn.com.mfish.scheduler.common;
 
 import cn.com.mfish.scheduler.entity.Job;
+import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.entity.TriggerMeta;
 import cn.com.mfish.scheduler.entity.JobMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 
+import java.text.MessageFormat;
 import java.util.TimeZone;
 import java.util.function.Function;
 
@@ -208,20 +210,20 @@ public class TriggerUtils {
     /**
      * 构建触发器元数据
      *
-     * @param info
+     * @param job
      * @return
      */
-    public static TriggerMeta buildTriggerMeta(Job info) {
+    public static TriggerMeta buildTriggerMeta(Job job, JobSubscribe jobSubscribe) {
         TriggerMeta triggerMeta = new TriggerMeta();
-        triggerMeta.setJobCode(info.getJobName());
-        triggerMeta.setName(info.getId());
-        triggerMeta.setGroup(info.getJobGroup());
-        triggerMeta.setCron(info.getCron());
-        triggerMeta.setStartTime(info.getStartTime());
-        triggerMeta.setEndTime(info.getEndTime());
-        Integer priority = info.getPriority();
+        triggerMeta.setName(MessageFormat.format("{0}:[{1}]", job.getJobName(), jobSubscribe.getId()));
+        triggerMeta.setGroup(job.getJobGroup());
+
+        triggerMeta.setCron(jobSubscribe.getCron());
+        triggerMeta.setStartTime(jobSubscribe.getStartTime());
+        triggerMeta.setEndTime(jobSubscribe.getEndTime());
+        Integer priority = jobSubscribe.getPriority();
         triggerMeta.setPriority(priority == null ? 0 : priority);
-        String timeZone = info.getTimeZone();
+        String timeZone = jobSubscribe.getTimeZone();
         triggerMeta.setTimeZone(StringUtils.isEmpty(timeZone) ? "Asia/Shanghai" : timeZone);
         return triggerMeta;
     }

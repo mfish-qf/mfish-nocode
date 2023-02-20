@@ -12,10 +12,6 @@ import java.util.Date;
  */
 @Data
 public class TriggerMeta {
-    /**
-     * 作业代码
-     */
-    private String jobCode;
 
     /**
      * 名称
