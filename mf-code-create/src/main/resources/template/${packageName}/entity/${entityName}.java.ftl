@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 <#list tableInfo.columns as fieldInfo>
 <#if fieldInfo.type=='Date'>
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 <#break>
