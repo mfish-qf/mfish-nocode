@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
- * @description: 本地任务(实现类写在scheduler中)
+ * @description: 本地任务(实现方法写在调度中心的任务)
  * @author: mfish
  * @date: 2023/2/13 16:46
  */

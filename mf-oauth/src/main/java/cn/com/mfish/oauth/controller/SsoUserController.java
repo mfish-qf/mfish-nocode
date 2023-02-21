@@ -2,7 +2,6 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
@@ -92,8 +91,7 @@ public class SsoUserController {
     @ApiOperation("通过用户ID获取用户")
     @GetMapping("/{id}")
     public Result<UserInfo> getUserById(@ApiParam(name = "id", value = "用户ID") @PathVariable String id) {
-        throw new MyRuntimeException("aaaa");
-//        return Result.ok(ssoUserService.getUserByIdNoPwd(id));
+        return Result.ok(ssoUserService.getUserByIdNoPwd(id));
     }
 
     @ApiOperation("修改密码")

@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @ApiModel(value = "sys_dict_item对象", description = "字典项")
-public class DictItem extends BaseEntity<String> {
+public class DictItem<T> extends BaseEntity<String> {
     @ApiModelProperty(value = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
@@ -32,7 +32,9 @@ public class DictItem extends BaseEntity<String> {
     @ApiModelProperty(value = "字典标签")
     private String dictLabel;
     @ApiModelProperty(value = "字典键值")
-    private String dictValue;
+    private T dictValue;
+    @ApiModelProperty(value = "值类型(0 字符 1数字)")
+    private Integer valueType;
     @ApiModelProperty(value = "字典排序")
     private Integer dictSort;
     @ApiModelProperty(value = "字典显示颜色")

@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,10 +53,23 @@ public class DictItemController {
         return Result.ok(new PageResult<>(dictItemService.getDictItems(reqDictItem)), "字典项-查询成功!");
     }
 
-    @ApiOperation("根据字典编码获取字典项")
+    @ApiOperation("根据字典编码获取字典项(值根据类型设置进行转换)")
     @GetMapping("/{dictCode}")
     public Result<List<DictItem>> queryList(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
-        return Result.ok(dictItemService.getDictItems(new ReqDictItem().setDictCode(dictCode).setStatus(0)), "字典项-查询成功!");
+        List<DictItem> list = dictItemService.getDictItems(new ReqDictItem().setDictCode(dictCode).setStatus(0));
+        if (list == null || list.isEmpty()) {
+            return Result.fail("错误:未获取到字典信息");
+        }
+        for (DictItem item : list) {
+            if (item.getValueType() != null && item.getValueType().equals(1)) {
+                try {
+                    item.setDictValue(Integer.parseInt(item.getDictValue().toString()));
+                } catch (Exception ex) {
+                    log.error(MessageFormat.format("错误:字典[{0}]类型转换异常", item.getDictCode()));
+                }
+            }
+        }
+        return Result.ok(list, "字典项-查询成功!");
     }
 
 
@@ -96,7 +110,7 @@ public class DictItemController {
         if (StringUtils.isEmpty(dictItem.getDictLabel())) {
             return Result.fail("错误:字典标签不允许为空!");
         }
-        if (StringUtils.isEmpty(dictItem.getDictValue())) {
+        if (dictItem.getDictValue() == null || StringUtils.isEmpty(dictItem.getDictValue().toString())) {
             return Result.fail("错误:字典键值不允许为空!");
         }
         return Result.ok(dictItem, "校验成功");

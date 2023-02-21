@@ -42,10 +42,14 @@ public class Job extends BaseEntity<String> {
     private String params;
     @ApiModelProperty(value = "允许并发执行（0不允许 1允许）")
     private Integer allowConcurrent;
-    @ApiModelProperty(value = "任务执行出错后处理方式（1立即执行 2执行一次 3放弃执行）")
+    @ApiModelProperty(value = "过期策略（1立即执行一次 2放弃执行 ）")
     private Integer misfireHandler;
-    @ApiModelProperty(value = "状态（0正常 1暂停）")
+    @ApiModelProperty(value = "状态（0正常 1停用）")
     private Integer status;
+    @ApiModelProperty(value = "优先级")
+    private Integer priority;
+    @ApiModelProperty(value = "时区")
+    private String timeZone;
     @ApiModelProperty(value = "备注信息")
     private String remark;
     @ApiModelProperty(value = "订阅列表")

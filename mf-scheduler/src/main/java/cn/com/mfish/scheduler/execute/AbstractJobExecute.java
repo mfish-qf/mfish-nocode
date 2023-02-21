@@ -42,33 +42,43 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext context) {
         JobDataMap jobMap = context.getMergedJobDataMap();
         Job job = JSON.parseObject(jobMap.get(JobUtils.JOB_DATA_MAP).toString(), Job.class);
-        String strParams = job.getParams();
-        List<?> list = null;
-        if (!StringUtils.isEmpty(strParams)) {
-            //默认转化为invokeParams类型，如果转换失败，直接转换为普通数组
-            try {
-                list = JSON.parseArray(strParams, InvokeUtils.InvokeParams.class);
-            } catch (Exception e) {
-                list = JSON.parseArray(strParams);
-            }
-        }
+        List<?> list = changeParams(job.getParams());
         beginExecute(job);
         boolean success = false;
         String error = null;
         try {
-            execute(JobType.getJob(job.getJobType()), job.getClassName(), job.getMethodName(), list);
-            success = true;
+            if (0 == job.getStatus()) {
+                execute(JobType.getJob(job.getJobType()), job.getClassName(), job.getMethodName(), list);
+                success = true;
+            } else {
+                error = "错误:任务已停用";
+            }
         } catch (Exception ex) {
-            log.error("任务执行异常:", ex);
+            log.error(MessageFormat.format("任务ID:{0}执行异常,任务ID:{1}:", job.getJobName(), job.getId()), ex);
             success = false;
             error = ex.getMessage();
-            //数据库设置长度1000，截取999位
-            if (error.length() >= 1000) {
-                error = error.substring(0, 999);
-            }
         } finally {
             executeCallBack(success, error);
         }
+    }
+
+    /**
+     * 转换参数
+     *
+     * @param params
+     * @return
+     */
+    private List<?> changeParams(String params) {
+        List<?> list = null;
+        if (!StringUtils.isEmpty(params)) {
+            //默认转化为invokeParams类型，如果转换失败，直接转换为普通数组
+            try {
+                list = JSON.parseArray(params, InvokeUtils.InvokeParams.class);
+            } catch (Exception e) {
+                list = JSON.parseArray(params);
+            }
+        }
+        return list;
     }
 
     /**
@@ -113,6 +123,10 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
         JobLogService jobLogService = SpringBeanFactory.getBean(JobLogService.class);
         JobStatus jobStatus = success ? JobStatus.成功 : JobStatus.失败;
         log.info(MessageFormat.format("任务{0}执行{1},任务ID:{2}", jobLog.getJobName(), jobStatus, jobLog.getId()));
+        //数据库设置长度1000，截取999位
+        if (remark.length() >= 1000) {
+            remark = remark.substring(0, 999);
+        }
         jobLog.setStatus(jobStatus.getValue()).setCostTime(new Date().getTime() - jobLog.getCreateTime().getTime()).setRemark(remark);
         jobLog.setUpdateBy(OPERATOR);
         jobLogService.updateById(jobLog);

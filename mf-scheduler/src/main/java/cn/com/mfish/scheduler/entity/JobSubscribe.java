@@ -30,10 +30,6 @@ public class JobSubscribe {
     private String jobId;
     @ApiModelProperty(value = "cron表达式")
     private String cron;
-    @ApiModelProperty(value = "时区")
-    private String timeZone;
-    @ApiModelProperty(value = "优先级")
-    private Integer priority;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "开始时间")
@@ -42,4 +38,6 @@ public class JobSubscribe {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "结束时间")
     private Date endTime;
+    @ApiModelProperty(value = "状态（0正常 1暂停）")
+    private Integer status;
 }
