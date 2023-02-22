@@ -23,6 +23,10 @@ public class SmsCredentialsMatcher extends AutoUserCredentialsMatcher {
         if (matches) {
             insertNewUser(myToken.isNew(), myToken.getUserInfo(), myToken.getClientId());
         }
-        return loginService.retryLimit(myToken.getUserInfo().getId(), matches);
+        boolean success = loginService.retryLimit(myToken.getUserInfo().getId(), matches);
+        if (success) {
+            loginService.delSmsCode(myToken.getUsername());
+        }
+        return success;
     }
 }

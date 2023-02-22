@@ -43,7 +43,7 @@ public class LoginServiceImpl implements LoginService {
     GetCodeValidator getCodeValidator;
     //允许连续出错时间间隔的最大错误数
     final static int ERROR_COUNT = 5;
-    //允许连续出错的时间间隔 单位:分钟
+    //允许连续出错的时间间隔 单位:分钟  30分钟内不允许连续出错5次
     final static long ERROR_TIME_INTERVAL = 30;
 
     @Override
@@ -142,10 +142,6 @@ public class LoginServiceImpl implements LoginService {
             //错误凭证错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
-            //登录成功清空短信验证码
-            if (loginType == SerConstant.LoginType.短信登录) {
-                delSmsCode(username);
-            }
             return result;
         } catch (Exception ex) {
             //其他异常错误信息
