@@ -1,7 +1,6 @@
 package cn.com.mfish.oauth.mapper;
 
 import cn.com.mfish.oauth.entity.SsoRole;
-import cn.com.mfish.oauth.req.ReqSsoRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -23,8 +22,6 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
 
     int roleCodeExist(@Param("clientId") String clientId, @Param("roleId") String roleId, @Param("roleCode") String roleCode);
 
-    List<SsoRole> getRoleList(ReqSsoRole reqSsoRole);
-
     /**
      * 获取角色下所有的用户
      *
@@ -33,4 +30,7 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
      */
     @Select("select user_id from sso_user_role where role_id=#{roleId}")
     List<String> getRoleUser(String roleId);
+
+    @Select("select menu_id from sso_role_menu where role_id=#{roleId}")
+    List<String> getRoleMenus(String roleId);
 }

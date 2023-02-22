@@ -31,6 +31,6 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> i
                 .like(reqDictItem.getDictValue() != null, DictItem::getDictValue, reqDictItem.getDictValue())
                 .eq(reqDictItem.getStatus() != null, DictItem::getStatus, reqDictItem.getStatus())
                 .eq(reqDictItem.getDictId() != null, DictItem::getDictId, reqDictItem.getDictId())
-                .orderByAsc(true, DictItem::getDictSort);
+                .orderByAsc(DictItem::getDictSort);
     }
 }

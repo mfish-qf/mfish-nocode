@@ -85,11 +85,11 @@ public class JobController {
     @Log(title = "定时调度任务-设置状态", operateType = OperateType.UPDATE)
     @ApiOperation(value = "定时调度任务-设置状态", notes = "定时调度任务-设置状态")
     @PutMapping("/status")
-    public Result<Job> setStatus(@RequestBody Job job) {
+    public Result<Boolean> setStatus(@RequestBody Job job) {
         if (jobService.updateById(new Job().setId(job.getId()).setStatus(job.getStatus()))) {
-            return Result.ok("定时调度任务-设置状态成功!");
+            return Result.ok(true, "定时调度任务-设置状态成功!");
         }
-        return Result.fail("错误:定时调度任务-设置状态失败!");
+        return Result.fail(false, "错误:定时调度任务-设置状态失败!");
     }
 
     /**

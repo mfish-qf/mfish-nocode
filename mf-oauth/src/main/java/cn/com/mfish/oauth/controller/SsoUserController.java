@@ -109,6 +109,19 @@ public class SsoUserController {
         return ssoUserService.changePassword(reqChangePwd.getUserId(), reqChangePwd.getOldPwd(), reqChangePwd.getNewPwd());
     }
 
+    @Log(title = "用户-设置状态", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "用户-设置状态", notes = "用户-设置状态")
+    @PutMapping("/status")
+    public Result<Boolean> setStatus(@RequestBody SsoUser ssoUser) {
+        SsoUser newUser = new SsoUser();
+        newUser.setStatus(ssoUser.getStatus()).setId(ssoUser.getId());
+        Result<SsoUser> result = ssoUserService.updateUser(newUser);
+        if (result.isSuccess()) {
+            return Result.ok(true, "用户-设置状态成功!");
+        }
+        return Result.fail(false, "错误:用户-设置状态失败!");
+    }
+
     @ApiOperation("用户登出")
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)

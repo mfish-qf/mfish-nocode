@@ -9,7 +9,6 @@ import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
-import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -135,7 +134,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     }
 
     @Override
-    public List<SsoRole> getRoleList(ReqSsoRole reqSsoRole) {
-        return baseMapper.getRoleList(reqSsoRole);
+    public List<String> getRoleMenus(String roleId) {
+        return baseMapper.getRoleMenus(roleId);
     }
 }

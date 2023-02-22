@@ -3,9 +3,10 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.common.OauthUtils;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.SsoUserService;
@@ -165,17 +166,20 @@ public class LoginServiceImpl implements LoginService {
             log.error(userId + SerConstant.INVALID_USER_ID_DESCRIPTION);
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
         }
-        if (SerConstant.AccountState.禁用.equals(user.getStatus())) {
-            log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
-            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
-        }
-        if (SerConstant.AccountState.锁定.equals(user.getStatus())) {
-            log.error(userId + SerConstant.ACCOUNT_LOCK_DESCRIPTION);
-            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_LOCK_DESCRIPTION);
-        }
-        if (user.getDelFlag().equals(1)) {
-            log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
-            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+        //超户不允许禁用、锁定、删除
+        if (!OauthUtils.isSuper(userId)) {
+            if (SerConstant.AccountState.禁用.getValue() == user.getStatus()) {
+                log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
+                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
+            }
+            if (SerConstant.AccountState.锁定.getValue() == user.getStatus()) {
+                log.error(userId + SerConstant.ACCOUNT_LOCK_DESCRIPTION);
+                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_LOCK_DESCRIPTION);
+            }
+            if (user.getDelFlag().equals(1)) {
+                log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+            }
         }
         int count = getLoginCount(userId);
         if (matches) {

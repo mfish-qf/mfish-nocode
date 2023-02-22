@@ -46,11 +46,19 @@ public class SsoRoleController {
     @RequiresPermissions("sys:role:query")
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(ssoRoleService.getRoleList(reqSsoRole)), "角色信息表-查询成功!");
+        return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
+    }
+
+    @ApiOperation("获取角色下的菜单ID")
+    @GetMapping("/menus/{roleId}")
+    @RequiresPermissions("sys:role:query")
+    public Result<List<String>> getRoleMenuIds(@ApiParam(name = "roleId", value = "角色ID") @PathVariable String roleId) {
+        return Result.ok(ssoRoleService.getRoleMenus(roleId), "查询角色下菜单成功");
     }
 
     @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
     @GetMapping("/all")
+    @RequiresPermissions("sys:role:query")
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }
@@ -61,7 +69,8 @@ public class SsoRoleController {
                 .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
                 .eq(reqSsoRole.getStatus() != null, SsoRole::getStatus, reqSsoRole.getStatus())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
-                .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName());
+                .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
+                .orderByAsc(SsoRole::getRoleSort);
     }
 
     /**
@@ -95,11 +104,11 @@ public class SsoRoleController {
     @Log(title = "角色信息表-设置状态", operateType = OperateType.UPDATE)
     @ApiOperation(value = "角色信息表-设置状态", notes = "角色信息表-设置状态")
     @PutMapping("/status")
-    public Result<SsoRole> setStatus(@RequestBody SsoRole ssoRole) {
+    public Result<Boolean> setStatus(@RequestBody SsoRole ssoRole) {
         if (ssoRoleService.updateById(new SsoRole().setId(ssoRole.getId()).setStatus(ssoRole.getStatus()))) {
-            return Result.ok("角色信息表-设置状态成功!");
+            return Result.ok(true, "角色信息表-设置状态成功!");
         }
-        return Result.fail("错误:角色信息表-设置状态失败!");
+        return Result.fail(false, "错误:角色信息表-设置状态失败!");
     }
 
     /**
