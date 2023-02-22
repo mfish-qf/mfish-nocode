@@ -1,12 +1,14 @@
 package cn.com.mfish.scheduler.common;
 
 import cn.com.mfish.scheduler.entity.Job;
+import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.entity.TriggerMeta;
 import cn.com.mfish.scheduler.entity.JobMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 
+import java.text.MessageFormat;
 import java.util.TimeZone;
 import java.util.function.Function;
 
@@ -87,16 +89,16 @@ public class TriggerUtils {
         CronScheduleBuilder cronTriggerBuilder = CronScheduleBuilder.cronSchedule(triggerMeta.getCron());
         // 时区
         cronTriggerBuilder.inTimeZone(TimeZone.getTimeZone(triggerMeta.getTimeZone()));
-        // 设置触发机制 默认 SimpleTrigger.MISFIRE_INSTRUCTION_SMART_POLICY
+        // 设置过期触发策略 默认采用智能策略 SimpleTrigger.MISFIRE_INSTRUCTION_SMART_POLICY
+        // Trigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY 表明对于过期的定时任务将不执行任何过期策略
         switch (triggerMeta.getMisfireInstruction()) {
-            case CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING:
-                cronTriggerBuilder.withMisfireHandlingInstructionDoNothing();
-                break;
             case CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW:
+                //立即触发一次
                 cronTriggerBuilder.withMisfireHandlingInstructionFireAndProceed();
                 break;
-            case CronTrigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY:
-                cronTriggerBuilder.withMisfireHandlingInstructionIgnoreMisfires();
+            case CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING:
+                // 忽略掉不管
+                cronTriggerBuilder.withMisfireHandlingInstructionDoNothing();
                 break;
             default:
                 break;
@@ -208,21 +210,22 @@ public class TriggerUtils {
     /**
      * 构建触发器元数据
      *
-     * @param info
+     * @param job
      * @return
      */
-    public static TriggerMeta buildTriggerMeta(Job info) {
+    public static TriggerMeta buildTriggerMeta(Job job, JobSubscribe jobSubscribe) {
         TriggerMeta triggerMeta = new TriggerMeta();
-        triggerMeta.setJobCode(info.getJobName());
-        triggerMeta.setName(info.getId());
-        triggerMeta.setGroup(info.getJobGroup());
-        triggerMeta.setCron(info.getCron());
-        triggerMeta.setStartTime(info.getStartTime());
-        triggerMeta.setEndTime(info.getEndTime());
-        Integer priority = info.getPriority();
+        triggerMeta.setName(MessageFormat.format("{0}:[{1}]", job.getJobName(), jobSubscribe.getId()));
+        triggerMeta.setGroup(job.getJobGroup());
+        Integer priority = job.getPriority();
         triggerMeta.setPriority(priority == null ? 0 : priority);
-        String timeZone = info.getTimeZone();
+        String timeZone = job.getTimeZone();
         triggerMeta.setTimeZone(StringUtils.isEmpty(timeZone) ? "Asia/Shanghai" : timeZone);
+        triggerMeta.setMisfireInstruction(job.getMisfireHandler());
+
+        triggerMeta.setCron(jobSubscribe.getCron());
+        triggerMeta.setStartTime(jobSubscribe.getStartTime());
+        triggerMeta.setEndTime(jobSubscribe.getEndTime());
         return triggerMeta;
     }
 }

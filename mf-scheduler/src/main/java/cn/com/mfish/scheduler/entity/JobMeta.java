@@ -33,7 +33,7 @@ public class JobMeta {
 
     /**
      * 是否可恢复(执行中应用发生故障，需要重新执行)
-     * 此处暂时设置为false又trigger确定处理
+     * 此处暂时设置为false由trigger确定处理
      */
     private Boolean recovery = false;
 

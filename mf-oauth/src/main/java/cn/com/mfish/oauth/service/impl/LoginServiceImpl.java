@@ -3,9 +3,10 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.common.OauthUtils;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.SsoUserService;
@@ -42,7 +43,7 @@ public class LoginServiceImpl implements LoginService {
     GetCodeValidator getCodeValidator;
     //允许连续出错时间间隔的最大错误数
     final static int ERROR_COUNT = 5;
-    //允许连续出错的时间间隔 单位:分钟
+    //允许连续出错的时间间隔 单位:分钟  30分钟内不允许连续出错5次
     final static long ERROR_TIME_INTERVAL = 30;
 
     @Override
@@ -141,10 +142,6 @@ public class LoginServiceImpl implements LoginService {
             //错误凭证错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
             log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
-            //登录成功清空短信验证码
-            if (loginType == SerConstant.LoginType.短信登录) {
-                delSmsCode(username);
-            }
             return result;
         } catch (Exception ex) {
             //其他异常错误信息
@@ -165,17 +162,20 @@ public class LoginServiceImpl implements LoginService {
             log.error(userId + SerConstant.INVALID_USER_ID_DESCRIPTION);
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
         }
-        if (SerConstant.AccountState.禁用.equals(user.getStatus())) {
-            log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
-            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
-        }
-        if (SerConstant.AccountState.锁定.equals(user.getStatus())) {
-            log.error(userId + SerConstant.ACCOUNT_LOCK_DESCRIPTION);
-            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_LOCK_DESCRIPTION);
-        }
-        if (user.getDelFlag().equals(1)) {
-            log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
-            throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+        //超户不允许禁用、锁定、删除
+        if (!OauthUtils.isSuper(userId)) {
+            if (SerConstant.AccountState.禁用.getValue() == user.getStatus()) {
+                log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
+                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
+            }
+            if (SerConstant.AccountState.锁定.getValue() == user.getStatus()) {
+                log.error(userId + SerConstant.ACCOUNT_LOCK_DESCRIPTION);
+                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_LOCK_DESCRIPTION);
+            }
+            if (user.getDelFlag().equals(1)) {
+                log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+            }
         }
         int count = getLoginCount(userId);
         if (matches) {

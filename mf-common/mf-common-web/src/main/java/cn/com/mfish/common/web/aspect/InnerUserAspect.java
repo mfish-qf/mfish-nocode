@@ -31,6 +31,9 @@ public class InnerUserAspect {
     @Around("@annotation(innerUser)")
     public Object innerAround(ProceedingJoinPoint point, InnerUser innerUser) throws Throwable {
         HttpServletRequest request = ServletUtils.getRequest();
+        if (request == null) {
+            throw new OAuthValidateException("错误:未获取到请求信息");
+        }
         String source = request.getHeader(RPCConstants.REQ_ORIGIN);
         // 内部请求验证
         if (RPCConstants.INNER.equals(source) && !innerUser.validateUser()) {

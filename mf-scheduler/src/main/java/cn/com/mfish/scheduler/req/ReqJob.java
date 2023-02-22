@@ -19,8 +19,8 @@ public class ReqJob {
     private String jobName;
     @ApiModelProperty(value = "任务组")
     private String jobGroup;
-    @ApiModelProperty(value = "cron表达式")
-    private String cron;
+    @ApiModelProperty(value = "任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)")
+    private Integer jobType;
     @ApiModelProperty(value = "方法名称")
     private String methodName;
 }

@@ -40,7 +40,7 @@
         <druid.version>1.2.15</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
-        <commons.fileupload.version>1.4</commons.fileupload.version>
+        <commons.fileupload.version>1.5</commons.fileupload.version>
         <freemarker.version>2.3.31</freemarker.version>
         <fastjson.version>2.0.22</fastjson.version>
         <minio.version>8.2.2</minio.version>

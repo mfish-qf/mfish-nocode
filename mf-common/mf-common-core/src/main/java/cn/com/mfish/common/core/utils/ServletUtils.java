@@ -45,6 +45,20 @@ public class ServletUtils {
     }
 
     /**
+     * 获取header信息
+     *
+     * @param header
+     * @return
+     */
+    public static String getHeader(String header) {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getHeader(header);
+    }
+
+    /**
      * 获取response
      */
     public static HttpServletResponse getResponse() {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.mfish.scheduler.mapper.JobSubscribeMapper">
+    <insert id="insertJobSubscribes">
+        insert into qrtz_job_subscribe(id,job_id,cron,start_time,end_time) values
+        <foreach collection="jobSubscribeList" item="subscribe" separator=",">
+            (#{id},#{jobId},#{cron},#{startTime},#{endTime})
+        </foreach>
+    </insert>
+</mapper>

@@ -47,7 +47,7 @@ public class JobController {
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Job>()
                 .like(reqJob.getJobName() != null, Job::getJobName, reqJob.getJobName())
                 .like(reqJob.getJobGroup() != null, Job::getJobGroup, reqJob.getJobGroup())
-                .like(reqJob.getCron() != null, Job::getCron, reqJob.getCron())
+                .eq(reqJob.getJobType() != null, Job::getJobType, reqJob.getJobType())
                 .like(reqJob.getMethodName() != null, Job::getMethodName, reqJob.getMethodName())
                 .orderByDesc(true, Job::getCreateTime);
         return Result.ok(new PageResult<>(jobService.list(queryWrapper)), "定时调度任务-查询成功!");
@@ -80,6 +80,16 @@ public class JobController {
             return Result.ok(job, "定时调度任务-编辑成功!");
         }
         return Result.fail(job, "错误:定时调度任务-编辑失败!");
+    }
+
+    @Log(title = "定时调度任务-设置状态", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "定时调度任务-设置状态", notes = "定时调度任务-设置状态")
+    @PutMapping("/status")
+    public Result<Boolean> setStatus(@RequestBody Job job) {
+        if (jobService.updateById(new Job().setId(job.getId()).setStatus(job.getStatus()))) {
+            return Result.ok(true, "定时调度任务-设置状态成功!");
+        }
+        return Result.fail(false, "错误:定时调度任务-设置状态失败!");
     }
 
     /**

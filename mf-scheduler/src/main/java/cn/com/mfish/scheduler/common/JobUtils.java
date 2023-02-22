@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import org.quartz.*;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class JobUtils {
      */
     public static JobMeta buildJobDetailMeta(Job job) {
         JobMeta jobDetailMeta = new JobMeta();
-        jobDetailMeta.setName(job.getJobName());
+        jobDetailMeta.setName(MessageFormat.format("{0}:[{1}]", job.getJobName(), job.getId()));
         jobDetailMeta.setGroup(job.getJobGroup());
         jobDetailMeta.setDescription(job.getRemark());
         jobDetailMeta.setAllowConcurrent(1 == job.getAllowConcurrent());
