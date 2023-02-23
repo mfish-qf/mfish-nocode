@@ -69,12 +69,15 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
                     jobSubscribe.setJobId(job.getId());
                 }
             }
-            Result<List<JobSubscribe>> result = jobSubscribeService.insertJobSubscribes(list);
-            if (result.isSuccess()) {
-                SchedulerUtils.createScheduler(mfSchedulerFactoryBean.getScheduler(), job, list, schedulerProperties.isCover());
-                return Result.ok(job, "定时调度任务-添加成功!");
+            if (jobSubscribeService.remove(new LambdaQueryWrapper<JobSubscribe>().eq(JobSubscribe::getJobId, job.getId()))) {
+                Result<List<JobSubscribe>> result = jobSubscribeService.insertJobSubscribes(list);
+                if (result.isSuccess()) {
+                    SchedulerUtils.createScheduler(mfSchedulerFactoryBean.getScheduler(), job, list, schedulerProperties.isCover());
+                    return Result.ok(job, "定时调度任务-添加成功!");
+                }
+                return Result.fail(job, result.getMsg());
             }
-            return Result.fail(job, result.getMsg());
+            return Result.fail(job, "错误:新增策略失败");
         }
         return Result.fail(job, "错误:定时调度任务-添加失败!");
     }
