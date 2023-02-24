@@ -17,7 +17,8 @@
               {
                 icon: 'ant-design:edit-outlined',
                 onClick: handleEdit.bind(null, record),
-                auth: 'sys:${entityName?uncap_first}:update'
+                auth: 'sys:${entityName?uncap_first}:update',
+                tooltip: '修改',
               },
               {
                 icon: 'ant-design:delete-outlined',
@@ -27,7 +28,8 @@
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
-                auth: 'sys:${entityName?uncap_first}:delete'
+                auth: 'sys:${entityName?uncap_first}:delete',
+                tooltip: '删除',
               },
             ]"
           />

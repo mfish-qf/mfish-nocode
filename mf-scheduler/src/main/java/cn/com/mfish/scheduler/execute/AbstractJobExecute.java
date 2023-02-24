@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
+import org.quartz.TriggerKey;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.text.MessageFormat;
@@ -41,18 +42,26 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext context) {
         JobDataMap jobMap = context.getMergedJobDataMap();
+        TriggerKey key = context.getTrigger().getKey();
         Job job = JSON.parseObject(jobMap.get(JobUtils.JOB_DATA_MAP).toString(), Job.class);
+        //triggerName是订阅ID
+        execute(job, key.getName());
+    }
+
+    /**
+     * 执行任务
+     *
+     * @param job         任务
+     * @param subscribeId 手动执行订阅ID传空字符串
+     */
+    public void execute(Job job, String subscribeId) {
         List<?> list = changeParams(job.getParams());
-        beginExecute(job);
+        beginExecute(job, subscribeId);
         boolean success = false;
         String error = null;
         try {
-            if (0 == job.getStatus()) {
-                execute(JobType.getJob(job.getJobType()), job.getClassName(), job.getMethodName(), list);
-                success = true;
-            } else {
-                error = "错误:任务已停用";
-            }
+            execute(JobType.getJob(job.getJobType()), job.getClassName(), job.getMethodName(), list);
+            success = true;
         } catch (Exception ex) {
             log.error(MessageFormat.format("任务ID:{0}执行异常,任务ID:{1}:", job.getJobName(), job.getId()), ex);
             success = false;
@@ -68,7 +77,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
      * @param params
      * @return
      */
-    private List<?> changeParams(String params) {
+    private static List<?> changeParams(String params) {
         List<?> list = null;
         if (!StringUtils.isEmpty(params)) {
             //默认转化为invokeParams类型，如果转换失败，直接转换为普通数组
@@ -87,9 +96,10 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
      * @param job
      * @return
      */
-    private void beginExecute(Job job) {
+    private static void beginExecute(Job job, String subscribeId) {
         JobLog jobLog = new JobLog().setId(Utils.uuid32())
                 .setJobId(job.getId())
+                .setSubscribeId(subscribeId)
                 .setJobGroup(job.getJobGroup())
                 .setJobName(job.getJobName())
                 .setJobType(job.getJobType())
@@ -124,7 +134,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
         JobStatus jobStatus = success ? JobStatus.成功 : JobStatus.失败;
         log.info(MessageFormat.format("任务{0}执行{1},任务ID:{2}", jobLog.getJobName(), jobStatus, jobLog.getId()));
         //数据库设置长度1000，截取999位
-        if (remark.length() >= 1000) {
+        if (remark != null && remark.length() >= 1000) {
             remark = remark.substring(0, 999);
         }
         jobLog.setStatus(jobStatus.getValue()).setCostTime(new Date().getTime() - jobLog.getCreateTime().getTime()).setRemark(remark);

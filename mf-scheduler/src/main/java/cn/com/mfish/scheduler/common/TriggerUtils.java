@@ -1,14 +1,13 @@
 package cn.com.mfish.scheduler.common;
 
 import cn.com.mfish.scheduler.entity.Job;
+import cn.com.mfish.scheduler.entity.JobMeta;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.entity.TriggerMeta;
-import cn.com.mfish.scheduler.entity.JobMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 
-import java.text.MessageFormat;
 import java.util.TimeZone;
 import java.util.function.Function;
 
@@ -191,7 +190,7 @@ public class TriggerUtils {
     }
 
     /**
-     * 移除触发器
+     * 操作触发器
      *
      * @param scheduler
      * @param triggerMeta
@@ -215,7 +214,7 @@ public class TriggerUtils {
      */
     public static TriggerMeta buildTriggerMeta(Job job, JobSubscribe jobSubscribe) {
         TriggerMeta triggerMeta = new TriggerMeta();
-        triggerMeta.setName(MessageFormat.format("{0}:[{1}]", job.getJobName(), jobSubscribe.getId()));
+        triggerMeta.setName(jobSubscribe.getId());
         triggerMeta.setGroup(job.getJobGroup());
         Integer priority = job.getPriority();
         triggerMeta.setPriority(priority == null ? 0 : priority);
