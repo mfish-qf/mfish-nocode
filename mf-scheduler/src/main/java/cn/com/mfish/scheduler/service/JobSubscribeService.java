@@ -13,6 +13,11 @@ import java.util.List;
  * @version: V1.0.0
  */
 public interface JobSubscribeService extends IService<JobSubscribe> {
+
+    List<JobSubscribe> getSubscribesByJobId(String jobId);
+
+    int removeSubscribesByJobId(String jobId);
+
     Result<JobSubscribe> insertJobSubscribe(JobSubscribe jobSubscribe);
 
     Result<List<JobSubscribe>> insertJobSubscribes(List<JobSubscribe> jobSubscribeList);

@@ -1,13 +1,14 @@
 package cn.com.mfish.scheduler.controller;
 
-import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.scheduler.entity.Job;
 import cn.com.mfish.scheduler.req.ReqJob;
 import cn.com.mfish.scheduler.service.JobService;
-import cn.com.mfish.common.web.page.PageResult;
-import cn.com.mfish.common.web.page.ReqPage;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -18,7 +19,6 @@ import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 
 /**
  * @description: 定时调度任务
@@ -42,6 +42,7 @@ public class JobController {
      */
     @ApiOperation(value = "定时调度任务-分页列表查询", notes = "定时调度任务-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:job:query")
     public Result<PageResult<Job>> queryPageList(ReqJob reqJob, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Job>()
@@ -62,6 +63,7 @@ public class JobController {
     @Log(title = "定时调度任务-添加", operateType = OperateType.INSERT)
     @ApiOperation("定时调度任务-添加")
     @PostMapping
+    @RequiresPermissions("sys:job:insert")
     public Result<Job> add(@RequestBody Job job) throws SchedulerException, ClassNotFoundException {
         return jobService.insertJob(job);
     }
@@ -75,21 +77,25 @@ public class JobController {
     @Log(title = "定时调度任务-编辑", operateType = OperateType.UPDATE)
     @ApiOperation("定时调度任务-编辑")
     @PutMapping
-    public Result<Job> edit(@RequestBody Job job) {
-        if (jobService.updateById(job)) {
-            return Result.ok(job, "定时调度任务-编辑成功!");
-        }
-        return Result.fail(job, "错误:定时调度任务-编辑失败!");
+    @RequiresPermissions("sys:job:update")
+    public Result<Job> edit(@RequestBody Job job) throws SchedulerException, ClassNotFoundException {
+        return jobService.updateJob(job);
     }
 
     @Log(title = "定时调度任务-设置状态", operateType = OperateType.UPDATE)
     @ApiOperation(value = "定时调度任务-设置状态", notes = "定时调度任务-设置状态")
     @PutMapping("/status")
-    public Result<Boolean> setStatus(@RequestBody Job job) {
-        if (jobService.updateById(new Job().setId(job.getId()).setStatus(job.getStatus()))) {
-            return Result.ok(true, "定时调度任务-设置状态成功!");
-        }
-        return Result.fail(false, "错误:定时调度任务-设置状态失败!");
+    @RequiresPermissions("sys:job:update")
+    public Result<Boolean> setStatus(@RequestBody Job job) throws SchedulerException, ClassNotFoundException {
+        return jobService.setStatus(job);
+    }
+
+    @Log(title = "立即执行", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "立即执行", notes = "定时调度任务-设置状态")
+    @PutMapping("/execute")
+    @RequiresPermissions("sys:job:execute")
+    public Result<Boolean> execute(@RequestBody Job job) {
+        return jobService.executeJob(job);
     }
 
     /**
@@ -101,27 +107,9 @@ public class JobController {
     @Log(title = "定时调度任务-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation("定时调度任务-通过id删除")
     @DeleteMapping("/{id}")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (jobService.removeById(id)) {
-            return Result.ok(true, "定时调度任务-删除成功!");
-        }
-        return Result.fail(false, "错误:定时调度任务-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids 批量ID
-     * @return 返回定时调度任务-删除结果
-     */
-    @Log(title = "定时调度任务-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation("定时调度任务-批量删除")
-    @DeleteMapping("/batch")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.jobService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "定时调度任务-批量删除成功!");
-        }
-        return Result.fail(false, "错误:定时调度任务-批量删除失败!");
+    @RequiresPermissions("sys:job:delete")
+    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) throws SchedulerException {
+        return jobService.deleteJob(id);
     }
 
     /**
@@ -132,6 +120,7 @@ public class JobController {
      */
     @ApiOperation("定时调度任务-通过id查询")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:job:query")
     public Result<Job> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         Job job = jobService.getById(id);
         return Result.ok(job, "定时调度任务-查询成功!");

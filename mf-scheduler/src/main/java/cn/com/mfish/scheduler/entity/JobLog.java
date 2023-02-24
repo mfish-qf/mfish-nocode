@@ -27,6 +27,8 @@ public class JobLog extends BaseEntity<String> {
     private String id;
     @ApiModelProperty(value = "任务ID")
     private String jobId;
+    @ApiModelProperty(value = "订阅ID")
+    private String subscribeId;
     @ApiModelProperty(value = "任务名称")
     private String jobName;
     @ApiModelProperty(value = "任务组")

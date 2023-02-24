@@ -6,6 +6,7 @@ import cn.com.mfish.scheduler.common.TriggerUtils;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.mapper.JobSubscribeMapper;
 import cn.com.mfish.scheduler.service.JobSubscribeService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.quartz.CronExpression;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,18 @@ import java.util.List;
  */
 @Service
 public class JobSubscribeServiceImpl extends ServiceImpl<JobSubscribeMapper, JobSubscribe> implements JobSubscribeService {
+    @Override
+    public List<JobSubscribe> getSubscribesByJobId(String jobId) {
+        return baseMapper.selectList(new LambdaQueryWrapper<JobSubscribe>()
+                .eq(JobSubscribe::getJobId, jobId));
+    }
+
+    @Override
+    public int removeSubscribesByJobId(String jobId) {
+        return baseMapper.delete(new LambdaQueryWrapper<JobSubscribe>()
+                .eq(JobSubscribe::getJobId, jobId));
+    }
+
     @Override
     public Result<JobSubscribe> insertJobSubscribe(JobSubscribe jobSubscribe) {
         Result<JobSubscribe> result = validateJobSubscribe(jobSubscribe);
