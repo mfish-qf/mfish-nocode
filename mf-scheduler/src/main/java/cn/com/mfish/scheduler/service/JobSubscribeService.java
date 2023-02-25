@@ -16,6 +16,8 @@ public interface JobSubscribeService extends IService<JobSubscribe> {
 
     List<JobSubscribe> getSubscribesByJobId(String jobId);
 
+    List<JobSubscribe> getSubscribesByJobIds(List<String> jobIds);
+
     int removeSubscribesByJobId(String jobId);
 
     Result<JobSubscribe> insertJobSubscribe(JobSubscribe jobSubscribe);

@@ -29,6 +29,11 @@ public class JobSubscribeServiceImpl extends ServiceImpl<JobSubscribeMapper, Job
     }
 
     @Override
+    public List<JobSubscribe> getSubscribesByJobIds(List<String> jobIds) {
+        return baseMapper.getSubscribesByJobIds(jobIds);
+    }
+
+    @Override
     public int removeSubscribesByJobId(String jobId) {
         return baseMapper.delete(new LambdaQueryWrapper<JobSubscribe>()
                 .eq(JobSubscribe::getJobId, jobId));

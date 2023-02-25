@@ -7,4 +7,12 @@
             (#{subscribe.id},#{subscribe.jobId},#{subscribe.cron},#{subscribe.startTime},#{subscribe.endTime},#{subscribe.status})
         </foreach>
     </insert>
+    <select id="getSubscribesByJobIds" resultType="cn.com.mfish.scheduler.entity.JobSubscribe">
+        select * from qrtz_job_subscribe
+        where job_id in (
+        <foreach collection="jobIds" item="jobId" separator=",">
+            #{jobId}
+        </foreach>
+        )
+    </select>
 </mapper>

@@ -14,4 +14,6 @@ import java.util.List;
  */
 public interface JobSubscribeMapper extends BaseMapper<JobSubscribe> {
     int insertJobSubscribes(@Param("jobSubscribeList") List<JobSubscribe> jobSubscribeList);
+
+    List<JobSubscribe> getSubscribesByJobIds(@Param("jobIds") List<String> jobIds);
 }
