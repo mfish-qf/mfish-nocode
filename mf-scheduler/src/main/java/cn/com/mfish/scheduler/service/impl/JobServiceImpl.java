@@ -154,6 +154,9 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
         if (baseMapper.updateById(new Job().setId(job.getId()).setStatus(job.getStatus())) == 1) {
             Job newJob = baseMapper.selectById(job.getId());
             List<JobSubscribe> subscribes = jobSubscribeService.getSubscribesByJobId(job.getId());
+            if (newJob == null) {
+                throw new MyRuntimeException("错误:修改状态失败-未获取到任务");
+            }
             if (job.getStatus() == 1) {
                 SchedulerUtils.pause(mfSchedulerFactoryBean.getScheduler(), newJob, subscribes);
             } else {

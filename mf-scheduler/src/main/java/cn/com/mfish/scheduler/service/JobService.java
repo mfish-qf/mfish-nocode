@@ -17,5 +17,4 @@ public interface JobService extends IService<Job> {
     Result<Boolean> deleteJob(String jobId) throws SchedulerException;
     Result<Boolean> executeJob(Job job);
     Result<Boolean> setStatus(Job job) throws SchedulerException, ClassNotFoundException;
-
 }

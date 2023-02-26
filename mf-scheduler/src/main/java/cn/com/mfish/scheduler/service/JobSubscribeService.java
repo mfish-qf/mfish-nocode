@@ -3,6 +3,7 @@ package cn.com.mfish.scheduler.service;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.quartz.SchedulerException;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface JobSubscribeService extends IService<JobSubscribe> {
 
     Result<List<JobSubscribe>> insertJobSubscribes(List<JobSubscribe> jobSubscribeList);
 
+    Result<Boolean> setStatus(JobSubscribe jobSubscribe) throws SchedulerException;
 }
