@@ -7,8 +7,10 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.scheduler.entity.Job;
+import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.req.ReqJob;
 import cn.com.mfish.scheduler.service.JobService;
+import cn.com.mfish.scheduler.service.JobSubscribeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -19,6 +21,8 @@ import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @description: 定时调度任务
@@ -33,6 +37,8 @@ import javax.annotation.Resource;
 public class JobController {
     @Resource
     private JobService jobService;
+    @Resource
+    JobSubscribeService jobSubscribeService;
 
     /**
      * 分页列表查询
@@ -51,7 +57,12 @@ public class JobController {
                 .eq(reqJob.getJobType() != null, Job::getJobType, reqJob.getJobType())
                 .like(reqJob.getMethodName() != null, Job::getMethodName, reqJob.getMethodName())
                 .orderByDesc(true, Job::getCreateTime);
-        return Result.ok(new PageResult<>(jobService.list(queryWrapper)), "定时调度任务-查询成功!");
+        List<Job> list = jobService.list(queryWrapper);
+        List<JobSubscribe> subscribes = jobSubscribeService.getSubscribesByJobIds(list.stream().map(Job::getId).collect(Collectors.toList()));
+        for (Job job : list) {
+            job.setSubscribes(subscribes.stream().filter(jobSubscribe -> jobSubscribe.getJobId().equals(job.getId())).collect(Collectors.toList()));
+        }
+        return Result.ok(new PageResult<>(list), "定时调度任务-查询成功!");
     }
 
     /**
