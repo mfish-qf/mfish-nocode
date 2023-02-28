@@ -7,10 +7,12 @@ import cn.com.mfish.scheduler.common.InvokeUtils;
 import cn.com.mfish.scheduler.common.JobUtils;
 import cn.com.mfish.scheduler.entity.Job;
 import cn.com.mfish.scheduler.entity.JobLog;
+import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.enums.JobStatus;
 import cn.com.mfish.scheduler.enums.JobType;
 import cn.com.mfish.scheduler.invoke.BaseInvoke;
 import cn.com.mfish.scheduler.service.JobLogService;
+import cn.com.mfish.scheduler.service.JobSubscribeService;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
@@ -108,6 +110,13 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
                 .setParams(job.getParams())
                 .setStatus(JobStatus.开始.getValue());
         jobLog.setCreateBy(OPERATOR);
+        JobSubscribeService jobSubscribeService = SpringBeanFactory.getBean(JobSubscribeService.class);
+        JobSubscribe jobSubscribe = jobSubscribeService.getById(subscribeId);
+        if (jobSubscribe != null) {
+            jobLog.setCron(jobSubscribe.getCron());
+            jobLog.setStartTime(jobSubscribe.getStartTime());
+            jobLog.setEndTime(jobSubscribe.getEndTime());
+        }
         threadLocal.set(jobLog);
         JobLogService jobLogService = SpringBeanFactory.getBean(JobLogService.class);
         if (jobLogService.save(jobLog)) {

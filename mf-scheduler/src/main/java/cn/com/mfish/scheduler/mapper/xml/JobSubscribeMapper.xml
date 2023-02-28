@@ -9,10 +9,19 @@
     </insert>
     <select id="getSubscribesByJobIds" resultType="cn.com.mfish.scheduler.entity.JobSubscribe">
         select * from qrtz_job_subscribe
-        where job_id in (
-        <foreach collection="jobIds" item="jobId" separator=",">
-            #{jobId}
-        </foreach>
-        )
+        <where>
+            <choose>
+                <when test="jobIds==null or jobIds.size == 0">
+                    1!=1
+                </when>
+                <otherwise>
+                    job_id in (
+                    <foreach collection="jobIds" item="jobId" separator=",">
+                        #{jobId}
+                    </foreach>
+                    )
+                </otherwise>
+            </choose>
+        </where>
     </select>
 </mapper>

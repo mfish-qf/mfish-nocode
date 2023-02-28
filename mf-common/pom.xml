@@ -21,6 +21,7 @@
         <module>mf-common-ds</module>
         <module>mf-common-log</module>
         <module>mf-common-web</module>
+        <module>mf-common-rocketmq</module>
     </modules>
 
 </project>
