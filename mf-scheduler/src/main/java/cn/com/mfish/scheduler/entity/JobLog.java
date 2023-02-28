@@ -4,11 +4,15 @@ import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 /**
  * @description: 任务日志
@@ -41,7 +45,17 @@ public class JobLog extends BaseEntity<String> {
     private String methodName;
     @ApiModelProperty(value = "调用参数")
     private String params;
-    @ApiModelProperty(value = "耗时")
+    @ApiModelProperty(value = "cron表达式")
+    private String cron;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "开始时间")
+    private Date startTime;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "结束时间")
+    private Date endTime;
+    @ApiModelProperty(value = "耗时(ms)")
     private Long costTime;
     @ApiModelProperty(value = "执行状态（0开始 1正在执行 2执行成功 3执行失败）")
     private Integer status;

@@ -55,8 +55,8 @@ public class JobController {
                 .like(reqJob.getJobName() != null, Job::getJobName, reqJob.getJobName())
                 .like(reqJob.getJobGroup() != null, Job::getJobGroup, reqJob.getJobGroup())
                 .eq(reqJob.getJobType() != null, Job::getJobType, reqJob.getJobType())
-                .like(reqJob.getMethodName() != null, Job::getMethodName, reqJob.getMethodName())
-                .orderByDesc(true, Job::getCreateTime);
+                .like(reqJob.getClassName() != null, Job::getMethodName, reqJob.getClassName())
+                .orderByDesc(Job::getCreateTime);
         List<Job> list = jobService.list(queryWrapper);
         List<JobSubscribe> subscribes = jobSubscribeService.getSubscribesByJobIds(list.stream().map(Job::getId).collect(Collectors.toList()));
         for (Job job : list) {

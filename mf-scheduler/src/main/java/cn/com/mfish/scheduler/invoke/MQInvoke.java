@@ -11,6 +11,8 @@ import java.util.List;
  */
 @Slf4j
 public class MQInvoke implements BaseInvoke {
+
+
     /**
      * 消息推送调度
      *
@@ -21,7 +23,7 @@ public class MQInvoke implements BaseInvoke {
      */
     @Override
     public <T> Object run(String className, String methodName, List<T> params) {
-        //todo 待实现
+
         return null;
     }
 }
