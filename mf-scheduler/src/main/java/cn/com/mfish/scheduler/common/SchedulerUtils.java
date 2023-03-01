@@ -109,6 +109,10 @@ public class SchedulerUtils {
      * @throws SchedulerException
      */
     public static void resume(Scheduler scheduler, Job job, JobSubscribe jobSubscribe) throws SchedulerException {
+        //如果状态为停用不恢复
+        if (jobSubscribe.getStatus() == 1 || job.getStatus() == 1) {
+            return;
+        }
         TriggerUtils.resume(scheduler, TriggerUtils.buildTriggerMeta(job, jobSubscribe));
     }
 
