@@ -1,6 +1,6 @@
 package cn.com.mfish.scheduler.service;
 
-import cn.com.mfish.scheduler.entity.JobLog;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

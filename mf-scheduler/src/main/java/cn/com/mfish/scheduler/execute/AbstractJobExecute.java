@@ -1,14 +1,13 @@
 package cn.com.mfish.scheduler.execute;
 
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
-import cn.com.mfish.scheduler.common.InvokeUtils;
+import cn.com.mfish.common.scheduler.config.utils.InvokeUtils;
 import cn.com.mfish.scheduler.common.JobUtils;
 import cn.com.mfish.scheduler.entity.Job;
-import cn.com.mfish.scheduler.entity.JobLog;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
-import cn.com.mfish.scheduler.enums.JobStatus;
+import cn.com.mfish.common.scheduler.config.enums.JobStatus;
 import cn.com.mfish.scheduler.enums.JobType;
 import cn.com.mfish.scheduler.invoke.BaseInvoke;
 import cn.com.mfish.scheduler.service.JobLogService;
@@ -57,12 +56,12 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
      * @param subscribeId 手动执行订阅ID传空字符串
      */
     public void execute(Job job, String subscribeId) {
-        List<?> list = changeParams(job.getParams());
+        List<?> list = InvokeUtils.strParams2Obj(job.getParams());
         beginExecute(job, subscribeId);
         boolean success = false;
         String error = null;
         try {
-            execute(JobType.getJob(job.getJobType()), job.getClassName(), job.getMethodName(), list);
+            execute(JobType.getJob(job.getJobType()), threadLocal.get(), list);
             success = true;
         } catch (Exception ex) {
             log.error(MessageFormat.format("任务ID:{0}执行异常,任务ID:{1}:", job.getJobName(), job.getId()), ex);
@@ -71,25 +70,6 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
         } finally {
             executeCallBack(success, error);
         }
-    }
-
-    /**
-     * 转换参数
-     *
-     * @param params
-     * @return
-     */
-    private static List<?> changeParams(String params) {
-        List<?> list = null;
-        if (!StringUtils.isEmpty(params)) {
-            //默认转化为invokeParams类型，如果转换失败，直接转换为普通数组
-            try {
-                list = JSON.parseArray(params, InvokeUtils.InvokeParams.class);
-            } catch (Exception e) {
-                list = JSON.parseArray(params);
-            }
-        }
-        return list;
     }
 
     /**
@@ -109,7 +89,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
                 .setMethodName(job.getMethodName())
                 .setParams(job.getParams())
                 .setStatus(JobStatus.开始.getValue());
-        jobLog.setCreateBy(OPERATOR);
+        jobLog.setCreateBy(OPERATOR).setCreateTime(new Date());
         JobSubscribeService jobSubscribeService = SpringBeanFactory.getBean(JobSubscribeService.class);
         JobSubscribe jobSubscribe = jobSubscribeService.getById(subscribeId);
         if (jobSubscribe != null) {
@@ -140,7 +120,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
             return;
         }
         JobLogService jobLogService = SpringBeanFactory.getBean(JobLogService.class);
-        JobStatus jobStatus = success ? JobStatus.成功 : JobStatus.失败;
+        JobStatus jobStatus = success ? JobStatus.调度成功 : JobStatus.调度失败;
         log.info(MessageFormat.format("任务{0}执行{1},任务ID:{2}", jobLog.getJobName(), jobStatus, jobLog.getId()));
         //数据库设置长度1000，截取999位
         if (remark != null && remark.length() >= 1000) {
@@ -151,5 +131,5 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
         jobLogService.updateById(jobLog);
     }
 
-    protected abstract <T> void execute(BaseInvoke baseJob, String className, String methodName, List<T> params);
+    protected abstract <T> void execute(BaseInvoke baseJob, JobLog jobLog, List<T> params);
 }

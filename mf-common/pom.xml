@@ -21,7 +21,8 @@
         <module>mf-common-ds</module>
         <module>mf-common-log</module>
         <module>mf-common-web</module>
-        <module>mf-common-rocketmq</module>
+        <module>mf-common-scheduler</module>
+        <module>mf-common-app</module>
     </modules>
 
 </project>

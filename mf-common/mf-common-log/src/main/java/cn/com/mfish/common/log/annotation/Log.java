@@ -33,7 +33,4 @@ public @interface Log {
       * @return
      */
     ReqSource reqSource() default ReqSource.MANAGER;
-
-
-
 }

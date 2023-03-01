@@ -22,3 +22,7 @@
 /mf-monitor/target/
 /mf-scheduler/target/
 /mf-business/mf-openai/target/
+/mf-common/mf-common-scheduler/target/
+/mf-common/mf-common-app/target/
+/mf-business/mf-consume/target/
+/mf-api/mf-scheduler-api/target/

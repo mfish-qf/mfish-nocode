@@ -1,4 +1,4 @@
-package cn.com.mfish.scheduler.enums;
+package cn.com.mfish.common.scheduler.config.enums;
 
 /**
  * @description: 任务状态
@@ -7,8 +7,10 @@ package cn.com.mfish.scheduler.enums;
  */
 public enum JobStatus {
     开始(0),
-    成功(1),
-    失败(2);
+    调度成功(1),
+    调度失败(2),
+    执行成功(3),
+    执行失败(4);
     private Integer status;
 
     JobStatus(int status) {

@@ -15,6 +15,7 @@
         <module>mf-web</module>
         <module>mf-sys</module>
         <module>mf-openai</module>
+        <module>mf-consume</module>
     </modules>
 
     <properties>

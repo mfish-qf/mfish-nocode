@@ -291,7 +291,17 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-app</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-web</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-scheduler</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>
@@ -302,6 +312,11 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-oauth-api</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-scheduler-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
         </dependencies>

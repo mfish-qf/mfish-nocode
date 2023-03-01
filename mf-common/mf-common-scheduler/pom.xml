@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mf-common-rocketmq</artifactId>
+    <artifactId>mf-common-scheduler</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -20,6 +20,15 @@
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-spring-boot-starter</artifactId>
             <version>${rocketmq.version}</version>
+        </dependency>
+        <!-- SpringBoot Boot Redis -->
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-scheduler-api</artifactId>
         </dependency>
     </dependencies>
 </project>
