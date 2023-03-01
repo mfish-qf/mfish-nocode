@@ -1,11 +1,13 @@
 package cn.com.mfish.scheduler.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
-import cn.com.mfish.scheduler.entity.JobLog;
+import cn.com.mfish.common.scheduler.config.enums.JobStatus;
 import cn.com.mfish.scheduler.req.ReqJobLog;
 import cn.com.mfish.scheduler.service.JobLogService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * @description: 任务日志
@@ -84,6 +87,33 @@ public class JobLogController {
         }
         return Result.fail(jobLog, "错误:任务日志-编辑失败!");
     }
+
+    @Log(title = "回调设置执行状态", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "回调设置执行状态", notes = "回调设置执行状态")
+    @PutMapping("/callBackStatus")
+    public Result<Boolean> callBackStatus(@RequestBody JobLog jobLog) {
+        if (!jobLog.getStatus().equals(JobStatus.执行成功.getValue()) && !jobLog.getStatus().equals(JobStatus.执行失败.getValue())) {
+            return Result.fail(false, "错误:传入状态不正确");
+        }
+        JobLog newLog = new JobLog().setId(jobLog.getId()).setStatus(jobLog.getStatus());
+        Date createTime = jobLog.getCreateTime();
+        if (createTime != null) {
+            newLog.setCostTime(new Date().getTime() - jobLog.getCreateTime().getTime());
+        }
+        String remark = jobLog.getRemark();
+        if (!StringUtils.isEmpty(remark)) {
+            //数据库设置长度1000，截取999位
+            if (remark != null && remark.length() >= 1000) {
+                remark = remark.substring(0, 999);
+            }
+            newLog.setRemark(remark);
+        }
+        if (jobLogService.updateById(newLog)) {
+            return Result.ok(true, "任务回调设置状态成功!");
+        }
+        return Result.fail(false, "错误:任务回调设置状态失败!");
+    }
+
 
     /**
      * 通过id删除

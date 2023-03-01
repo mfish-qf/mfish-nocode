@@ -1,6 +1,6 @@
 package cn.com.mfish.scheduler.service.impl;
 
-import cn.com.mfish.scheduler.entity.JobLog;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import cn.com.mfish.scheduler.mapper.JobLogMapper;
 import cn.com.mfish.scheduler.service.JobLogService;
 import org.springframework.stereotype.Service;

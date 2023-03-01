@@ -2,7 +2,8 @@ package cn.com.mfish.scheduler.invoke;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.scheduler.common.InvokeUtils;
+import cn.com.mfish.common.scheduler.config.utils.InvokeUtils;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -18,15 +19,14 @@ public class RPCInvoke implements BaseInvoke {
     /**
      * RPC调度尽量不要调用时间过长的任务，一般用于服务之间简单通知
      *
-     * @param className
-     * @param methodName
+     * @param jobLog
      * @param params
      * @return
      */
     @Override
-    public <T> Object run(String className, String methodName, List<T> params) {
+    public <T> Object run(JobLog jobLog, List<T> params) {
         try {
-            Object obj = InvokeUtils.invokeFeignMethod(className, methodName, params);
+            Object obj = InvokeUtils.invokeFeignMethod(jobLog.getClassName(), jobLog.getMethodName(), params);
             log.info("返回结果:" + obj);
             //如果返回结果为Result类型，判断结果是否成功。不成功认为任务失败
             if (obj instanceof Result) {

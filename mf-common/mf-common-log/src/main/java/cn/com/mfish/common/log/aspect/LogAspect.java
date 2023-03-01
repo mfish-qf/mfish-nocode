@@ -22,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author: mfish
@@ -63,12 +64,17 @@ public class LogAspect {
         logThreadLocal.set(sysLog);
     }
 
-
+    /**
+     * 获取请求参数
+     *
+     * @param paramsArray 获取请求参数
+     * @return
+     */
     private String getParams(Object[] paramsArray) {
         String params = "";
         if (paramsArray != null && paramsArray.length > 0) {
             for (Object obj : paramsArray) {
-                if (null == obj) {
+                if (null == obj || obj instanceof Map && ((Map) obj).isEmpty()) {
                     continue;
                 }
                 if (obj instanceof String) {

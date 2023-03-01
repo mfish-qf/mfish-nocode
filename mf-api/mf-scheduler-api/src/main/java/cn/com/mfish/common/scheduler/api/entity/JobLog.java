@@ -1,4 +1,4 @@
-package cn.com.mfish.scheduler.entity;
+package cn.com.mfish.common.scheduler.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -57,7 +57,7 @@ public class JobLog extends BaseEntity<String> {
     private Date endTime;
     @ApiModelProperty(value = "耗时(ms)")
     private Long costTime;
-    @ApiModelProperty(value = "执行状态（0开始 1正在执行 2执行成功 3执行失败）")
+    @ApiModelProperty(value = "执行状态（0开始 1调度成功 2调度失败 3执行成功 4执行失败）")
     private Integer status;
     @ApiModelProperty(value = "备注信息")
     private String remark;

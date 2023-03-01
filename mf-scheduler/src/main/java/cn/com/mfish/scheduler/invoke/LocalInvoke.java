@@ -1,7 +1,8 @@
 package cn.com.mfish.scheduler.invoke;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.scheduler.common.InvokeUtils;
+import cn.com.mfish.common.scheduler.config.utils.InvokeUtils;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,9 +17,9 @@ import java.util.List;
 public class LocalInvoke implements BaseInvoke {
 
     @Override
-    public <T> Object run(String className, String methodName, List<T> params) {
+    public <T> Object run(JobLog jobLog, List<T> params) {
         try {
-            Object obj = InvokeUtils.invokeMethod(className, methodName, params);
+            Object obj = InvokeUtils.invokeMethod(jobLog.getClassName(), jobLog.getMethodName(), params);
             log.info("返回结果:" + obj);
             return obj;
         } catch (InvocationTargetException e) {

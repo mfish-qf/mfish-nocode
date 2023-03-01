@@ -14,6 +14,7 @@
     <modules>
         <module>mf-sys-api</module>
         <module>mf-oauth-api</module>
+        <module>mf-scheduler-api</module>
     </modules>
 
     <properties>

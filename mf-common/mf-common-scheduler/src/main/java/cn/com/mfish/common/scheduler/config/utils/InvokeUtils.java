@@ -1,7 +1,8 @@
-package cn.com.mfish.scheduler.common;
+package cn.com.mfish.common.scheduler.config.utils;
 
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -91,7 +92,7 @@ public class InvokeUtils {
                         listTypes.add(Class.forName(iParam.getType()));
                     }
                     if (iParam.getValue() instanceof JSONObject) {
-                        listValues.add(JSONObject.toJavaObject((JSONObject)iParam.getValue(), Class.forName(iParam.getType())));
+                        listValues.add(JSONObject.toJavaObject((JSONObject) iParam.getValue(), Class.forName(iParam.getType())));
                         continue;
                     }
                     listValues.add(iParam.getValue());
@@ -105,5 +106,24 @@ public class InvokeUtils {
         }
         Method method = bean.getClass().getMethod(methodName);
         return method.invoke(bean);
+    }
+
+    /**
+     * 调用参数转换成对象
+     *
+     * @param params
+     * @return
+     */
+    public static List<?> strParams2Obj(String params) {
+        List<?> list = null;
+        if (!StringUtils.isEmpty(params)) {
+            //默认转化为invokeParams类型，如果转换失败，直接转换为普通数组
+            try {
+                list = JSON.parseArray(params, InvokeUtils.InvokeParams.class);
+            } catch (Exception e) {
+                list = JSON.parseArray(params);
+            }
+        }
+        return list;
     }
 }

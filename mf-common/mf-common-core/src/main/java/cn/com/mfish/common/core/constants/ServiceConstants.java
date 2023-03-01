@@ -9,4 +9,5 @@ public class ServiceConstants {
     public static final String OAUTH_SERVICE = "mf-oauth";
     public static final String CODE_SERVICE = "mf-code-create";
     public static final String SYS_SERVICE = "mf-sys";
+    public static final String SCHEDULER_SERVICE = "mf-scheduler";
 }

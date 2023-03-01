@@ -1,6 +1,6 @@
 package cn.com.mfish.scheduler.test;
 
-import cn.com.mfish.scheduler.common.InvokeUtils;
+import cn.com.mfish.common.scheduler.config.utils.InvokeUtils;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
