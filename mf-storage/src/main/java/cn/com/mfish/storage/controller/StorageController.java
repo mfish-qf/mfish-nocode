@@ -70,7 +70,7 @@ public class StorageController {
             return ResponseEntity.badRequest().build();
         }
         StorageInfo storageInfo = storageService.getOne(new LambdaQueryWrapper<StorageInfo>().eq(true, StorageInfo::getFileKey, key));
-        if (storageInfo == null) {
+        if (storageInfo == null || (storageInfo.getDelFlag() != null && storageInfo.getDelFlag().equals(1))) {
             return ResponseEntity.notFound().build();
         }
         //如果文件是私有文件需要校验token后访问
