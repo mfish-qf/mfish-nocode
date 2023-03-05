@@ -12,28 +12,10 @@
     <artifactId>mf-test</artifactId>
 
     <dependencies>
-        <!-- SpringCloud Alibaba Nacos -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
 
-        <!-- SpringCloud Alibaba Nacos Config -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <!-- SpringCloud Alibaba Sentinel -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>
-
-        <!-- SpringBoot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
@@ -41,15 +23,16 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-swagger</artifactId>
+            <artifactId>mf-oauth-api</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-oauth</artifactId>
+            <artifactId>mf-common-app</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-web</artifactId>
+            <artifactId>mf-common-redis</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
