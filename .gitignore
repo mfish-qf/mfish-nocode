@@ -26,3 +26,4 @@
 /mf-common/mf-common-app/target/
 /mf-business/mf-consume/target/
 /mf-api/mf-scheduler-api/target/
+/mf-test/logs/

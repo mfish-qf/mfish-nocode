@@ -1,18 +1,16 @@
 package cn.com.mfish.test;
 
-import cn.com.mfish.common.core.annotation.AutoFeignClients;
+import cn.com.mfish.common.app.annotation.AutoApp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author: mfish
  * @description: 摸鱼测试中心启动
  * @date: 2021/12/3 17:22
  */
-@SpringBootApplication
 @Slf4j
-@AutoFeignClients
+@AutoApp
 public class MfTestApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfTestApplication.class, args);

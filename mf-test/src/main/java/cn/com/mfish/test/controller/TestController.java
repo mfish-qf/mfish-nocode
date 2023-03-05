@@ -2,11 +2,8 @@ package cn.com.mfish.test.controller;
 
 
 import cn.com.mfish.common.core.constants.RPCConstants;
-import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.enums.ReqSource;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.test.entity.TestParam;
@@ -41,7 +38,6 @@ public class TestController {
         return remoteUserService.getUserById(RPCConstants.INNER, "1");
     }
 
-    @Log(title = "测试参数", operateType = OperateType.QUERY, reqSource = ReqSource.MANAGER)
     @PostMapping("/testParam")
     public Result<TestParam> testParam(@RequestBody TestParam param) {
         return Result.ok(param);
