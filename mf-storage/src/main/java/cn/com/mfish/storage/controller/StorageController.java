@@ -95,10 +95,15 @@ public class StorageController {
         if (file == null) {
             return ResponseEntity.notFound().build();
         }
-        MediaType mediaType = MediaType.parseMediaType(storageInfo.getFileType());
+        String disposition = "filename*=utf-8'zh_cn'";
         //将header值变成attachment;filename*=utf-8'zh_cn'可以强制文件转换为下载
+        //图片直接查看，其他文件类型下载
+        if (!storageInfo.getFileType().toLowerCase().startsWith("image")) {
+            disposition = "attachment;" + disposition;
+        }
+        MediaType mediaType = MediaType.parseMediaType(storageInfo.getFileType());
         return ResponseEntity.ok().contentType(mediaType)
-                .header("Content-Disposition", "filename*=utf-8'zh_cn'" + encodeFileName(storageInfo.getFileName()))
+                .header("Content-Disposition", disposition + encodeFileName(storageInfo.getFileName()))
                 .body(file);
     }
 
