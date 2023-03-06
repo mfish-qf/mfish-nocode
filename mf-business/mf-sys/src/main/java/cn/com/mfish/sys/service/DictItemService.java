@@ -21,4 +21,11 @@ public interface DictItemService extends IService<DictItem> {
      */
     List<DictItem> getDictItems(ReqDictItem reqDictItem);
 
+    /**
+     * 通过code删除字典项
+     * @param dictCode
+     * @return
+     */
+    boolean deleteDictItemsByCode(String dictCode);
+
 }

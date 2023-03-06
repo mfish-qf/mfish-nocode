@@ -24,6 +24,11 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> i
         return baseMapper.selectList(buildCondition(reqDictItem));
     }
 
+    @Override
+    public boolean deleteDictItemsByCode(String dictCode) {
+        return baseMapper.delete(new LambdaQueryWrapper<DictItem>().eq(DictItem::getDictCode, dictCode)) > 0;
+    }
+
     private LambdaQueryWrapper buildCondition(ReqDictItem reqDictItem) {
         return new LambdaQueryWrapper<DictItem>()
                 .eq(reqDictItem.getDictCode() != null, DictItem::getDictCode, reqDictItem.getDictCode())

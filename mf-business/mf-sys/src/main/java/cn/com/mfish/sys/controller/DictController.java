@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 
 /**
  * @Description: 字典
@@ -118,26 +117,7 @@ public class DictController {
     @ApiOperation(value = "字典-通过id删除", notes = "字典-通过id删除")
     @DeleteMapping("/{id}")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (dictService.removeById(id)) {
-            return Result.ok(true, "字典-删除成功!");
-        }
-        return Result.fail(false, "错误:字典-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @Log(title = "字典-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "字典-批量删除", notes = "字典-批量删除")
-    @DeleteMapping("/batch")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.dictService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "字典-批量删除成功!");
-        }
-        return Result.fail(false, "错误:字典-批量删除失败!");
+        return dictService.deleteDict(id);
     }
 
     /**

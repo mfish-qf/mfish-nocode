@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.sys.cache.DictCache;
 import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.entity.DictItem;
 import cn.com.mfish.sys.mapper.DictMapper;
@@ -20,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,7 +37,9 @@ public class DictItemController {
     @Resource
     private DictItemService dictItemService;
     @Resource
-    DictMapper dictMapper;
+    private DictMapper dictMapper;
+    @Resource
+    private DictCache dictCache;
 
     /**
      * 分页列表查询
@@ -56,18 +57,9 @@ public class DictItemController {
     @ApiOperation("根据字典编码获取字典项(值根据类型设置进行转换)")
     @GetMapping("/{dictCode}")
     public Result<List<DictItem>> queryList(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
-        List<DictItem> list = dictItemService.getDictItems(new ReqDictItem().setDictCode(dictCode).setStatus(0));
+        List<DictItem> list = dictCache.getFromCacheAndDB(dictCode);
         if (list == null || list.isEmpty()) {
             return Result.fail("错误:未获取到字典信息");
-        }
-        for (DictItem item : list) {
-            if (item.getValueType() != null && item.getValueType().equals(1)) {
-                try {
-                    item.setDictValue(Integer.parseInt(item.getDictValue().toString()));
-                } catch (Exception ex) {
-                    log.error(MessageFormat.format("错误:字典[{0}]类型转换异常", item.getDictCode()));
-                }
-            }
         }
         return Result.ok(list, "字典项-查询成功!");
     }
@@ -91,6 +83,7 @@ public class DictItemController {
         if (dict != null) {
             dictItem.setDictId(dict.getId());
             if (dictItemService.save(dictItem)) {
+                dictCache.removeOneCache(dictItem.getDictCode());
                 return Result.ok(dictItem, "字典项-添加成功!");
             }
         }
@@ -131,6 +124,7 @@ public class DictItemController {
             return result;
         }
         if (dictItemService.updateById(dictItem)) {
+            dictCache.removeOneCache(dictItem.getDictCode());
             return Result.ok(dictItem, "字典项-编辑成功!");
         }
         return Result.fail(dictItem, "错误:字典项-编辑失败!");
@@ -146,25 +140,11 @@ public class DictItemController {
     @ApiOperation(value = "字典项-通过id删除", notes = "字典项-通过id删除")
     @DeleteMapping("/{id}")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (dictItemService.removeById(id)) {
+        DictItem dictItem = dictItemService.getById(id);
+        if (dictItem != null && dictItemService.removeById(id)) {
+            dictCache.removeOneCache(dictItem.getDictCode());
             return Result.ok(true, "字典项-删除成功!");
         }
         return Result.fail(false, "错误:字典项-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @Log(title = "字典项-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "字典项-批量删除", notes = "字典项-批量删除")
-    @DeleteMapping("/batch")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.dictItemService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "字典项-批量删除成功!");
-        }
-        return Result.fail(false, "错误:字典项-批量删除失败!");
     }
 }
