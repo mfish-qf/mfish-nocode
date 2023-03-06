@@ -44,6 +44,8 @@ public class RedisPrefix {
     public static final String USER2ROLES = "user2roles:";
     //用户权限
     public static final String USER2PERMISSIONS = "user2permissions:";
+    //字典编码获取字典项
+    public static final String CODE2DICT_ITEM = "code2dict_item:";
 
 
     /**
@@ -227,5 +229,14 @@ public class RedisPrefix {
      */
     public static String buildUser2PermissionsKey(String userId, String clientId) {
         return USER2PERMISSIONS + userId + clientId;
+    }
+
+    /**
+     * 构建字典项Key
+     * @param dictCode
+     * @return
+     */
+    public static String buildCode2DictItemKey(String dictCode) {
+        return CODE2DICT_ITEM + dictCode;
     }
 }

@@ -21,4 +21,12 @@ public interface DictService extends IService<Dict> {
      * @return
      */
     boolean isDictCodeExist(String id, String dictCode);
+
+    /**
+     * 删除字典
+     *
+     * @param id
+     * @return
+     */
+    Result<Boolean> deleteDict(String id);
 }
