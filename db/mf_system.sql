@@ -147,3 +147,18 @@ CREATE TABLE `sys_storage`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件存储表' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
+-- Table structure for sys_config
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_config`;
+CREATE TABLE `sys_config` (
+                              `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一ID',
+                              `user_id` varchar(36) DEFAULT NULL COMMENT '用户ID',
+                              `config` text COMMENT '配置信息',
+                              `create_by` varchar(50) DEFAULT '' COMMENT '创建用户',
+                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                              `update_by` varchar(50) DEFAULT '' COMMENT '更新用户',
+                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='系统皮肤及配置';
