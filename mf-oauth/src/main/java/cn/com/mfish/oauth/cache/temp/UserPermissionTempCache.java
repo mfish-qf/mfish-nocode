@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.cache.temp;
 
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.oauth.cache.UserPermissionCache;
-import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ public class UserPermissionTempCache extends UserPermissionCache {
     @Override
     protected Set<String> getFromDB(String... key) {
         Set<String> perSet = new HashSet<>();
-        if (OauthUtils.isSuper(key[0])) {
+        if (AuthInfoUtils.isSuper(key[0])) {
             perSet.add(SerConstant.ALL_PERMISSION);
         }
         String permissions = ssoUserMapper.getUserPermissions(key[0], key[1]);

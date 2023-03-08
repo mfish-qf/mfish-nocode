@@ -74,4 +74,22 @@ public class AuthInfoUtils {
         return StringUtils.isEmpty(clientId) ? null : clientId;
     }
 
+    /**
+     * 是否超户
+     *
+     * @return
+     */
+    public static boolean isSuper() {
+        return isSuper(getCurrentUserId());
+    }
+
+    /**
+     * 是否超户
+     *
+     * @param userId
+     * @return
+     */
+    public static boolean isSuper(String userId) {
+        return "1".equals(userId);
+    }
 }

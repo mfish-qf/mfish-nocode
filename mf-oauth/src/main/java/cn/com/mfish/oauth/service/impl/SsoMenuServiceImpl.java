@@ -3,7 +3,6 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
@@ -44,7 +43,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     @Override
     public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
         //如果是超户获取所有菜单
-        if (OauthUtils.isSuper(userId)) {
+        if (AuthInfoUtils.isSuper(userId)) {
             userId = null;
         }
         Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu, userId);

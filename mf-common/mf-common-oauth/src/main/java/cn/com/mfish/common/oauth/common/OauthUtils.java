@@ -7,6 +7,9 @@ import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.common.oauth.cache.UserPermissionCache;
 import cn.com.mfish.common.oauth.cache.UserRoleCache;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.service.TokenService;
+import cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl;
+import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -102,15 +105,18 @@ public class OauthUtils {
     }
 
     /**
-     * 是否超户
+     * 获取token获取token对象
      *
+     * @param token
      * @return
      */
-    public static boolean isSuper() {
-        return isSuper(AuthInfoUtils.getCurrentUserId());
-    }
-
-    public static boolean isSuper(String userId) {
-        return "1".equals(userId);
+    public static Object getToken(String token) {
+        TokenService tokenService;
+        if (token.startsWith(SerConstant.WX_PREFIX)) {
+            tokenService = SpringBeanFactory.getBean(WeChatTokenServiceImpl.class);
+        } else {
+            tokenService = SpringBeanFactory.getBean(WebTokenServiceImpl.class);
+        }
+        return tokenService.getToken(token);
     }
 }

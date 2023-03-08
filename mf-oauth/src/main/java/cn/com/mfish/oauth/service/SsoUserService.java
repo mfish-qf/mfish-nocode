@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.service;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -17,7 +18,7 @@ import java.util.Set;
 public interface SsoUserService extends IService<SsoUser> {
     Result<Boolean> changePassword(String userId, String oldPwd, String newPwd);
 
-    Result<SsoUser> insertUser(SsoUser user,String clientId);
+    Result<SsoUser> insertUser(SsoUser user, String clientId);
 
     Result<SsoUser> insertUser(SsoUser user);
 
@@ -88,4 +89,11 @@ public interface SsoUserService extends IService<SsoUser> {
      * @return
      */
     int insertUserClient(String userId, String clientId);
+
+    /**
+     * 获取在线用户
+     *
+     * @return
+     */
+    List<OnlineUser> getOnlineUser();
 }

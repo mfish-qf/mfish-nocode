@@ -2,8 +2,8 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
@@ -163,7 +163,7 @@ public class LoginServiceImpl implements LoginService {
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
         }
         //超户不允许禁用、锁定、删除
-        if (!OauthUtils.isSuper(userId)) {
+        if (!AuthInfoUtils.isSuper(userId)) {
             if (SerConstant.AccountState.禁用.getValue() == user.getStatus()) {
                 log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
                 throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
