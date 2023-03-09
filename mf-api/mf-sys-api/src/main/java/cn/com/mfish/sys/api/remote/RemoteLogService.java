@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 /**
  * @author: mfish
  * @description: 日志对外服务
- * @date: 2022/9/4 11:45
+ * @date: 2022/9/4
  */
 @FeignClient(contextId = "remoteLogService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteLogFallback.class)
 public interface RemoteLogService {

@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 @Component
 public class TokenValidator {
     @Resource
-    private AccessTokenValidator accessTokenValidator;
+    private WebTokenValidator webTokenValidator;
     @Resource
     private WeChatTokenValidator weChatTokenValidator;
 
@@ -29,7 +29,7 @@ public class TokenValidator {
         if (accessToken.startsWith(SerConstant.WX_PREFIX)) {
             result = weChatTokenValidator.validate(accessToken);
         } else {
-            result = accessTokenValidator.validate(accessToken);
+            result = webTokenValidator.validate(accessToken);
         }
         return result;
     }

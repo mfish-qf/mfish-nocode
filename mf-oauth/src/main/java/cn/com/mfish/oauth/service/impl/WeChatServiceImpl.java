@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AccessToken;
@@ -66,6 +67,7 @@ public class WeChatServiceImpl implements WeChatService {
         weChatToken.setAccount(user.getAccount());
         weChatToken.setExpires_in(tokenExpire);
         weChatToken.setReTokenExpire(reTokenExpire);
+        weChatToken.setIp(Utils.getRemoteIP(ServletUtils.getRequest()));
         weChatTokenService.setToken(weChatToken);
         weChatTokenService.setRefreshToken(weChatToken);
         return weChatToken;

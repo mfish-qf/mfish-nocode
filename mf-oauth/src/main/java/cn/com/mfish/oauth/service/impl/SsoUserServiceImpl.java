@@ -23,6 +23,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +51,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     UserPermissionTempCache userPermissionTempCache;
     @Resource
     HashedCredentialsMatcher hashedCredentialsMatcher;
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 修改用户密码

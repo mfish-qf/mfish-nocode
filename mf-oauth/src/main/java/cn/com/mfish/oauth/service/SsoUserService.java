@@ -17,7 +17,7 @@ import java.util.Set;
 public interface SsoUserService extends IService<SsoUser> {
     Result<Boolean> changePassword(String userId, String oldPwd, String newPwd);
 
-    Result<SsoUser> insertUser(SsoUser user,String clientId);
+    Result<SsoUser> insertUser(SsoUser user, String clientId);
 
     Result<SsoUser> insertUser(SsoUser user);
 
@@ -88,4 +88,6 @@ public interface SsoUserService extends IService<SsoUser> {
      * @return
      */
     int insertUserClient(String userId, String clientId);
+
+
 }

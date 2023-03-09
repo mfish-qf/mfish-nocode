@@ -2,7 +2,7 @@ package cn.com.mfish.common.oauth.service;
 
 /**
  * @author: mfish
- * @date: 2020/2/29 16:33
+ * @date: 2020/2/29
  */
 public interface TokenService<T> {
 

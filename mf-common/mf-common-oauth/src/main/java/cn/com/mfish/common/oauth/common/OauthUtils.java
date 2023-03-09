@@ -7,6 +7,11 @@ import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.common.oauth.cache.UserPermissionCache;
 import cn.com.mfish.common.oauth.cache.UserRoleCache;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.service.TokenService;
+import cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl;
+import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -102,15 +107,82 @@ public class OauthUtils {
     }
 
     /**
-     * 是否超户
+     * 根据token获取tokenService
      *
+     * @param token
      * @return
      */
-    public static boolean isSuper() {
-        return isSuper(AuthInfoUtils.getCurrentUserId());
+    public static TokenService getTokenService(String token) {
+        if (token.startsWith(SerConstant.WX_PREFIX)) {
+            return SpringBeanFactory.getBean(WeChatTokenServiceImpl.class);
+        }
+        return SpringBeanFactory.getBean(WebTokenServiceImpl.class);
+
     }
 
-    public static boolean isSuper(String userId) {
-        return "1".equals(userId);
+    /**
+     * 获取token获取token对象
+     *
+     * @param token
+     * @return
+     */
+    public static Object getToken(String token) {
+        return getToken(getTokenService(token), token);
+    }
+
+    public static Object getToken(TokenService tokenService, String token) {
+        return tokenService.getToken(token);
+    }
+
+    /**
+     * 删除token
+     *
+     * @param token
+     */
+    public static void delToken(String token) {
+        delToken(getTokenService(token), token);
+    }
+
+    public static void delToken(TokenService tokenService, String token) {
+        tokenService.delToken(token);
+    }
+
+    /**
+     * 删除refreshToken
+     *
+     * @param refreshToken
+     */
+    public static void delRefreshToken(String refreshToken) {
+        delRefreshToken(getTokenService(refreshToken), refreshToken);
+    }
+
+    public static void delRefreshToken(TokenService tokenService, String refreshToken) {
+        tokenService.delRefreshToken(refreshToken);
+    }
+
+    /**
+     * 登出指定token
+     *
+     * @param token token
+     * @return 返回 token关联的sessionId
+     */
+    public static String logout(String token) {
+        TokenService tokenService = getTokenService(token);
+        Object accessToken = getToken(tokenService, token);
+        if (accessToken == null) {
+            return null;
+        }
+        delToken(tokenService, token);
+        String sessionId = null;
+        if (accessToken instanceof RedisAccessToken) {
+            RedisAccessToken redisAccessToken = (RedisAccessToken) accessToken;
+            sessionId = redisAccessToken.getTokenSessionId();
+            delRefreshToken(tokenService, redisAccessToken.getRefreshToken());
+        } else if (accessToken instanceof WeChatToken) {
+            WeChatToken weChatToken = (WeChatToken) accessToken;
+            sessionId = weChatToken.getSession_key();
+            delRefreshToken(tokenService, weChatToken.getRefresh_token());
+        }
+        return sessionId;
     }
 }

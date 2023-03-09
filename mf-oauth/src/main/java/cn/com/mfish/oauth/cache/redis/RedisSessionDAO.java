@@ -88,7 +88,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
      * @return
      */
     private String getKey(Object key) {
-        return this.keyPrefix + (key == null ? "*" : key);
+        return this.keyPrefix + ":" + (key == null ? "*" : key);
     }
 
     @Override

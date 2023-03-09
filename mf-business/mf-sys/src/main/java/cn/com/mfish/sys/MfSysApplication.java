@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 /**
  * @author: mfish
  * @description: 系统业务中心启动类
- * @date: 2022/9/2 16:03
+ * @date: 2022/9/2
  */
 
 @Slf4j

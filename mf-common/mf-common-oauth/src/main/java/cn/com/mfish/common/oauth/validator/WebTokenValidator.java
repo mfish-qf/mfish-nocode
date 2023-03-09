@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
  * @date: 2020/2/17 19:06
  */
 @Component
-public class AccessTokenValidator extends AbstractTokenValidator<RedisAccessToken> {
+public class WebTokenValidator extends AbstractTokenValidator<RedisAccessToken> {
 
-    public AccessTokenValidator(@Autowired WebTokenServiceImpl webTokenService) {
+    public WebTokenValidator(@Autowired WebTokenServiceImpl webTokenService) {
         super(webTokenService);
     }
 

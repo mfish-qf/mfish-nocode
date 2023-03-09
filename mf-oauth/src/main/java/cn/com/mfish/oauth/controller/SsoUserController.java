@@ -10,10 +10,12 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.web.page.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
+import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqChangePwd;
 import cn.com.mfish.oauth.req.ReqSsoUser;
@@ -46,6 +48,8 @@ public class SsoUserController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
+    @Resource
+    RedisSessionDAO redisSessionDAO;
 
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
@@ -103,7 +107,7 @@ public class SsoUserController {
         }
         //除了超户，其他用户修改密码需要传入旧密码
         //超户修改自己密码需要输入旧密码
-        if (StringUtils.isEmpty(reqChangePwd.getOldPwd()) && (!OauthUtils.isSuper() || OauthUtils.isSuper(reqChangePwd.getUserId()))) {
+        if (StringUtils.isEmpty(reqChangePwd.getOldPwd()) && (!AuthInfoUtils.isSuper() || AuthInfoUtils.isSuper(reqChangePwd.getUserId()))) {
             return Result.fail(true, "错误:未输入旧密码");
         }
         return ssoUserService.changePassword(reqChangePwd.getUserId(), reqChangePwd.getOldPwd(), reqChangePwd.getNewPwd());
@@ -202,5 +206,25 @@ public class SsoUserController {
             return Result.fail(true, "帐号[" + account + "]存在");
         }
         return Result.ok(false, "帐号[" + account + "]不存在");
+    }
+
+    @ApiOperation("获取在线用户信息")
+    @GetMapping("/online")
+    public Result<PageResult<OnlineUser>> userOnline(ReqPage reqPage) {
+        return Result.ok(oAuth2Service.getOnlineUser(reqPage), "获取在线用户成功");
+    }
+
+    @ApiOperation("踢出指定用户")
+    @GetMapping("/revoke/{token}")
+    @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
+    @RequiresPermissions("sys:online:revoke")
+    public Result<String> revokeUser(@ApiParam(name = "token", value = "指定用户的token") @PathVariable String token) {
+        String sessionId = OauthUtils.logout(oAuth2Service.decryptToken(token));
+        try {
+            redisSessionDAO.delete(redisSessionDAO.readSession(sessionId));
+        } catch (Exception ex) {
+            log.error("删除session异常", ex);
+        }
+        return Result.ok("成功登出");
     }
 }

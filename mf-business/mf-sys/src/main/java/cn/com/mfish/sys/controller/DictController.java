@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.req.ReqDict;

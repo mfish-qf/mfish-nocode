@@ -4,6 +4,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   cn.com.mfish.common.oauth.aspect.AuthorizationAspect,\
   cn.com.mfish.common.oauth.cache.UserRoleCache,\
   cn.com.mfish.common.oauth.cache.UserPermissionCache,\
-  cn.com.mfish.common.oauth.validator.AccessTokenValidator,\
+  cn.com.mfish.common.oauth.validator.WebTokenValidator,\
   cn.com.mfish.common.oauth.validator.WeChatTokenValidator,\
   cn.com.mfish.common.oauth.validator.TokenValidator

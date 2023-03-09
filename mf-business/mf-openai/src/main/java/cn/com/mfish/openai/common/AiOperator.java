@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @description: openai操作类
  * @author: mfish
- * @date: 2023/2/8 11:07
+ * @date: 2023/2/8
  */
 @Slf4j
 public class AiOperator {
