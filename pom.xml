@@ -54,6 +54,7 @@
         <wechat.version>4.3.7.B</wechat.version>
         <aliyun-oss.version>3.16.0</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
+        <bcprov.version>1.70</bcprov.version>
     </properties>
     <dependencies>
         <!-- bootstrap 启动器 -->
@@ -259,6 +260,11 @@
                 <version>${aliyun-oss.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bcprov.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-core</artifactId>
                 <version>${mfish.version}</version>
@@ -317,11 +323,6 @@
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-scheduler-api</artifactId>
                 <version>${mfish.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.70</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
