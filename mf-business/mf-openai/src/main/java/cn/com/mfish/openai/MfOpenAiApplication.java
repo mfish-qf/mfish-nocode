@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 /**
  * @description: 摸鱼聊天机器人
  * @author: mfish
- * @date: 2023/2/8 11:07
+ * @date: 2023/2/8
  */
 @AutoWeb
 @Slf4j

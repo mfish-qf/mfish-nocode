@@ -36,7 +36,7 @@
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <pagehelper.boot.version>1.4.6</pagehelper.boot.version>
+        <pagehelper.version>5.3.2</pagehelper.version>
         <druid.version>1.2.15</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
@@ -160,10 +160,9 @@
             <!-- pagehelper 分页插件 -->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${pagehelper.boot.version}</version>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
-
             <!-- io常用工具类 -->
             <dependency>
                 <groupId>commons-io</groupId>
@@ -318,6 +317,11 @@
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-scheduler-api</artifactId>
                 <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.70</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -107,6 +107,7 @@ public class WeChatController {
             @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email grant_type=password时必须", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query", required = true)
     })
+    @Log(title = "绑定微信", operateType = OperateType.LOGIN)
     public AccessToken bindWeChat(HttpServletRequest request) {
         String code = request.getParameter(OAuth.OAUTH_CODE);
         WxMaJscode2SessionResult session = getSession(code);
@@ -146,6 +147,7 @@ public class WeChatController {
             @ApiImplicitParam(name = SerConstant.PHONE, value = "手机", paramType = "query", required = true),
             @ApiImplicitParam(name = SerConstant.PASSWORD, value = "短信验证码", paramType = "query", required = true)
     })
+    @Log(title = "微信登录", operateType = OperateType.LOGIN)
     public AccessToken pwdLogin(String code, String nickname, String phone, String password) {
         WxMaJscode2SessionResult session = getSession(code);
         String openid = session.getOpenid();

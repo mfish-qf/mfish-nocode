@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class RedisAccessToken extends AuthorizationCode {
-    @ApiModelProperty("获取token时传入sessionid")
+    @ApiModelProperty("获取token时传入sessionId")
     private String tokenSessionId;
     @ApiModelProperty("客户端密钥")
     private String clientSecret;
@@ -27,4 +27,6 @@ public class RedisAccessToken extends AuthorizationCode {
     private Long expire;
     @ApiModelProperty("refreshToken时效")
     private Long reTokenExpire;
+    @ApiModelProperty("ip地址")
+    private String ip;
 }

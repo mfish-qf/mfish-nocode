@@ -17,7 +17,7 @@ public class AuthorizationCode implements Serializable {
     private String code;
     @ApiModelProperty("客户端id")
     private String clientId;
-    @ApiModelProperty("获取code时传入sessionid")
+    @ApiModelProperty("获取code时传入sessionId")
     private String codeSessionId;
     @ApiModelProperty("申请Scope权限")
     private String scope;

@@ -32,7 +32,7 @@ public class RedisCache implements Cache<String, Object> {
      * @return
      */
     private String getKey(String k) {
-        return this.keyPrefix + (k == null ? "*" : k);
+        return this.keyPrefix + ":" + (k == null ? "*" : k);
     }
 
     @Override

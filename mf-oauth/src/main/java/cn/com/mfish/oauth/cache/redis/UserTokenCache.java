@@ -1,9 +1,8 @@
 package cn.com.mfish.oauth.cache.redis;
 
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.redis.common.RedisPrefix;
-import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -21,8 +20,6 @@ import java.util.concurrent.TimeUnit;
 public class UserTokenCache {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
-    @Resource
-    WebTokenServiceImpl webTokenService;
     long expire = 30;
 
 
@@ -93,6 +90,9 @@ public class UserTokenCache {
      */
     public void delUserDevice(DeviceType deviceType, String userId) {
         String deviceId = getUserDevice(deviceType, userId);
+        if (StringUtils.isEmpty(deviceId)) {
+            return;
+        }
         delUserDevice(deviceType, userId, deviceId);
     }
 
@@ -120,13 +120,7 @@ public class UserTokenCache {
     private void delTokenList(String deviceId) {
         List<Object> list = redisTemplate.opsForList().range(RedisPrefix.buildDevice2TokenKey(deviceId), 0, -1);
         for (Object obj : list) {
-            String token = obj.toString();
-            RedisAccessToken redisAccessToken = webTokenService.getToken(token);
-            if (redisAccessToken == null) {
-                continue;
-            }
-            webTokenService.delToken(token);
-            webTokenService.delRefreshToken(redisAccessToken.getRefreshToken());
+            OauthUtils.logout(obj.toString());
         }
         redisTemplate.delete(RedisPrefix.buildDevice2TokenKey(deviceId));
     }

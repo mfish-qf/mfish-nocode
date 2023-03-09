@@ -58,9 +58,5 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-oauth-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-        </dependency>
     </dependencies>
 </project>

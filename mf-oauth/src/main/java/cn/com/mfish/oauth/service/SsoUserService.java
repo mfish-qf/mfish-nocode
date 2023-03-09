@@ -3,7 +3,6 @@ package cn.com.mfish.oauth.service;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -90,10 +89,5 @@ public interface SsoUserService extends IService<SsoUser> {
      */
     int insertUserClient(String userId, String clientId);
 
-    /**
-     * 获取在线用户
-     *
-     * @return
-     */
-    List<OnlineUser> getOnlineUser();
+
 }

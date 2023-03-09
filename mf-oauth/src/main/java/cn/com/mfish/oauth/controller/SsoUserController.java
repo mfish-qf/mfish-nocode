@@ -10,8 +10,10 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
-import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -46,6 +48,8 @@ public class SsoUserController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
+    @Resource
+    RedisSessionDAO redisSessionDAO;
 
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
@@ -206,7 +210,21 @@ public class SsoUserController {
 
     @ApiOperation("获取在线用户信息")
     @GetMapping("/online")
-    public Result<List<OnlineUser>> userOnline() {
-        return Result.ok(ssoUserService.getOnlineUser(), "获取在线用户成功");
+    public Result<PageResult<OnlineUser>> userOnline(ReqPage reqPage) {
+        return Result.ok(oAuth2Service.getOnlineUser(reqPage), "获取在线用户成功");
+    }
+
+    @ApiOperation("踢出指定用户")
+    @GetMapping("/revoke/{token}")
+    @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
+    @RequiresPermissions("sys:online:revoke")
+    public Result<String> revokeUser(@ApiParam(name = "token", value = "指定用户的token") @PathVariable String token) {
+        String sessionId = OauthUtils.logout(oAuth2Service.decryptToken(token));
+        try {
+            redisSessionDAO.delete(redisSessionDAO.readSession(sessionId));
+        } catch (Exception ex) {
+            log.error("删除session异常", ex);
+        }
+        return Result.ok("成功登出");
     }
 }

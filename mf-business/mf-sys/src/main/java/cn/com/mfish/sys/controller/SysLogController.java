@@ -3,7 +3,7 @@ package cn.com.mfish.sys.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.req.ReqSysLog;

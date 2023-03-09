@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;

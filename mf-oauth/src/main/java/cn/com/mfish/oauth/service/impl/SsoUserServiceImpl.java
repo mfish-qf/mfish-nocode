@@ -6,16 +6,11 @@ import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.oauth.entity.WeChatToken;
-import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.common.PasswordHelper;
-import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import cn.com.mfish.oauth.req.ReqSsoUser;
@@ -28,9 +23,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -355,40 +348,5 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             return count;
         }
         throw new MyRuntimeException("错误:插入用户所属客户端失败");
-    }
-
-    /**
-     * 获取在线用户
-     *
-     * @return
-     */
-    @Override
-    public List<OnlineUser> getOnlineUser() {
-        ScanOptions scanOptions = ScanOptions.scanOptions().match(RedisPrefix.ACCESS_TOKEN + "*").count(10000).build();
-        Cursor<String> cursor = redisTemplate.scan(scanOptions);
-        List<OnlineUser> list = new ArrayList<>();
-        long total = 0;
-        while (cursor.hasNext()) {
-            if(cursor.getPosition()<10){
-                Object token = OauthUtils.getToken(cursor.next().replaceFirst(RedisPrefix.ACCESS_TOKEN,""));
-                if (token instanceof RedisAccessToken) {
-                    list.add(buildOnlineUser((RedisAccessToken) token));
-                } else if (token instanceof WeChatToken) {
-                    list.add(buildOnlineUser((WeChatToken) token));
-                }
-            }
-            total = cursor.getPosition();
-        }
-        return list;
-    }
-
-    private OnlineUser buildOnlineUser(RedisAccessToken redisAccessToken) {
-        return new OnlineUser().setAccount(redisAccessToken.getAccount())
-                .setToken(redisAccessToken.getAccessToken())
-                .setClientId(redisAccessToken.getClientId());
-    }
-
-    private OnlineUser buildOnlineUser(WeChatToken weChatToken) {
-        return new OnlineUser().setAccount(weChatToken.getAccount()).setToken(weChatToken.getAccess_token());
     }
 }

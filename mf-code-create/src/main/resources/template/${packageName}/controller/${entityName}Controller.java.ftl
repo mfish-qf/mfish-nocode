@@ -6,7 +6,7 @@ import cn.com.mfish.common.core.web.Result;
 import ${packageName}.entity.${entityName};
 import ${packageName}.req.Req${entityName};
 import ${packageName}.service.${entityName}Service;
-import cn.com.mfish.common.web.page.PageResult;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
