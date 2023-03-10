@@ -6,6 +6,8 @@ import cn.com.mfish.common.core.utils.http.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
  * @author: mfish
  * @description: 认证相关信息，此类中方法不支持异步调用获取
@@ -91,5 +93,25 @@ public class AuthInfoUtils {
      */
     public static boolean isSuper(String userId) {
         return "1".equals(userId);
+    }
+
+    /**
+     * 判断角色是否超户
+     *
+     * @param roleId
+     * @return
+     */
+    public static boolean isSuperAdmin(String roleId) {
+        return "1".equals(roleId);
+    }
+
+    /**
+     * 判断角色组中是否包含超户角色
+     *
+     * @param roleIds
+     * @return
+     */
+    public static boolean isContainSuperAdmin(List<String> roleIds) {
+        return roleIds.stream().anyMatch((roleId) -> isSuperAdmin(roleId));
     }
 }

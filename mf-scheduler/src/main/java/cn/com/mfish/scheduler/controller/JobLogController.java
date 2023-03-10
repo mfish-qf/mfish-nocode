@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.web.page.ReqPage;
@@ -44,6 +45,7 @@ public class JobLogController {
      */
     @ApiOperation(value = "任务日志-分页列表查询", notes = "任务日志-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:jobLog:query")
     public Result<PageResult<JobLog>> queryPageList(ReqJobLog reqJobLog, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<JobLog>()
@@ -124,6 +126,7 @@ public class JobLogController {
     @Log(title = "任务日志-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation("任务日志-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:jobLog:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (jobLogService.removeById(id)) {
             return Result.ok(true, "任务日志-删除成功!");
@@ -140,6 +143,7 @@ public class JobLogController {
     @Log(title = "任务日志-批量删除", operateType = OperateType.DELETE)
     @ApiOperation("任务日志-批量删除")
     @DeleteMapping("/batch")
+    @RequiresPermissions("sys:jobLog:delete")
     public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.jobLogService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok(true, "任务日志-批量删除成功!");
@@ -155,6 +159,7 @@ public class JobLogController {
      */
     @ApiOperation("任务日志-通过id查询")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:jobLog:query")
     public Result<JobLog> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         JobLog jobLog = jobLogService.getById(id);
         return Result.ok(jobLog, "任务日志-查询成功!");

@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.req.ReqDict;
@@ -41,6 +42,7 @@ public class DictController {
      */
     @ApiOperation(value = "字典-分页列表查询", notes = "字典-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:dict:query")
     public Result<PageResult<Dict>> queryPageList(ReqDict reqDict, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Dict>()
@@ -60,6 +62,7 @@ public class DictController {
     @Log(title = "字典-添加", operateType = OperateType.INSERT)
     @ApiOperation(value = "字典-添加", notes = "字典-添加")
     @PostMapping
+    @RequiresPermissions("sys:dict:insert")
     public Result<Dict> add(@RequestBody Dict dict) {
         Result result = verifyDict(dict);
         if (!result.isSuccess()) {
@@ -80,6 +83,7 @@ public class DictController {
     @Log(title = "字典-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "字典-编辑", notes = "字典-编辑")
     @PutMapping
+    @RequiresPermissions("sys:dict:update")
     public Result<Dict> edit(@RequestBody Dict dict) {
         Result result = verifyDict(dict);
         if (!result.isSuccess()) {
@@ -116,6 +120,7 @@ public class DictController {
     @Log(title = "字典-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "字典-通过id删除", notes = "字典-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:dict:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         return dictService.deleteDict(id);
     }
@@ -128,6 +133,7 @@ public class DictController {
      */
     @ApiOperation(value = "字典-通过id查询", notes = "字典-通过id查询")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:dict:query")
     public Result<Dict> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         Dict dict = dictService.getById(id);
         return Result.ok(dict, "字典-查询成功!");

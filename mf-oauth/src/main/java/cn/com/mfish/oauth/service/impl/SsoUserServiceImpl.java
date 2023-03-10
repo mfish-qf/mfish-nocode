@@ -236,6 +236,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (isAccountExist(user.getEmail(), user.getId())) {
             throw new MyRuntimeException("错误:email已存在-" + operate + "失败!");
         }
+        if (!AuthInfoUtils.isSuper(user.getId()) && AuthInfoUtils.isContainSuperAdmin(user.getRoleIds())) {
+            throw new MyRuntimeException("错误:不允许设置为超户!");
+        }
         return true;
     }
 

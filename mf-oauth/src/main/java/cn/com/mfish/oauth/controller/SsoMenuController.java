@@ -46,25 +46,23 @@ public class SsoMenuController {
     @GetMapping
     @RequiresPermissions("sys:menu:query")
     public Result<List<SsoMenu>> queryList(ReqSsoMenu reqSsoMenu) {
-        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
-        return Result.ok(list, "菜单表-查询成功!");
+        return queryMenu(reqSsoMenu, null);
     }
 
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
-    @RequiresPermissions("sys:menu:query")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
-        return queryMenu(reqSsoMenu);
+        return queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
     }
 
     @ApiOperation("获取角色树-左侧菜单")
     @GetMapping("/roleTree")
     public Result<List<SsoMenu>> queryRoleMenuTree() {
-        return queryMenu(new ReqSsoMenu().setClientId(AuthInfoUtils.getCurrentClientId()).setNoButton(true));
+        return queryMenu(new ReqSsoMenu().setClientId(AuthInfoUtils.getCurrentClientId()).setNoButton(true), oAuth2Service.getCurrentUser());
     }
 
-    private Result<List<SsoMenu>> queryMenu(ReqSsoMenu reqSsoMenu) {
-        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
+    private Result<List<SsoMenu>> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
+        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, userId);
         List<SsoMenu> menuTrees = new ArrayList<>();
         TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
         return Result.ok(menuTrees, "菜单表-查询成功!");
@@ -81,10 +79,7 @@ public class SsoMenuController {
     @PostMapping
     @RequiresPermissions("sys:menu:insert")
     public Result<SsoMenu> add(@RequestBody SsoMenu ssoMenu) {
-        if (ssoMenuService.insertMenu(ssoMenu)) {
-            return Result.ok(ssoMenu, "菜单表-添加成功!");
-        }
-        return Result.fail("错误:菜单表-添加失败!");
+        return ssoMenuService.insertMenu(ssoMenu);
     }
 
     /**
@@ -96,7 +91,7 @@ public class SsoMenuController {
     @Log(title = "菜单表-编辑", operateType = OperateType.UPDATE)
     @ApiOperation(value = "菜单表-编辑", notes = "菜单表-编辑")
     @PutMapping
-    @RequiresPermissions("sys:menu:edit")
+    @RequiresPermissions("sys:menu:update")
     public Result<SsoMenu> edit(@RequestBody SsoMenu ssoMenu) {
         return ssoMenuService.updateMenu(ssoMenu);
     }

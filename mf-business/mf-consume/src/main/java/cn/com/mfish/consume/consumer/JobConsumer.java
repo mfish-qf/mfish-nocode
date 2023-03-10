@@ -28,10 +28,10 @@ public class JobConsumer implements RocketMQListener<JobLog> {
 
     @Override
     public void onMessage(JobLog jobLog) {
-        List<?> params = InvokeUtils.strParams2Obj(jobLog.getParams());
         JobStatus jobStatus = JobStatus.执行成功;
         String error = null;
         try {
+            List<?> params = InvokeUtils.strParams2Obj(jobLog.getParams());
             Object obj = InvokeUtils.invokeMethod(jobLog.getClassName(), jobLog.getMethodName(), params);
             log.info("返回结果:" + obj);
         } catch (InvocationTargetException e) {
