@@ -56,8 +56,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             if (list == null || list.isEmpty()) {
                 throw new MyRuntimeException("错误:未查询到组织");
             }
-            list.remove(0);
-            list.add(0, ssoOrg);
+            list.set(0, ssoOrg);
             //父节点发生变化，重新生成序列
             baseMapper.deleteBatchIds(list.stream().map((org) -> org.getId()).collect(Collectors.toList()));
             for (SsoOrg org : list) {

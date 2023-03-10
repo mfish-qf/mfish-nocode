@@ -85,8 +85,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             if (list == null || list.isEmpty()) {
                 throw new MyRuntimeException("错误:未查询到菜单");
             }
-            list.remove(0);
-            list.add(0, ssoMenu);
+            list.set(0, ssoMenu);
             //父节点发生变化，重新生成序列
             baseMapper.deleteBatchIds(list.stream().map((menu) -> menu.getId()).collect(Collectors.toList()));
             for (SsoMenu menu : list) {
