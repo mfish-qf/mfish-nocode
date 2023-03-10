@@ -31,6 +31,8 @@ import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author: mfish
@@ -238,6 +240,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         if (!AuthInfoUtils.isSuper(user.getId()) && AuthInfoUtils.isContainSuperAdmin(user.getRoleIds())) {
             throw new MyRuntimeException("错误:不允许设置为超户!");
+        }
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9]+$");
+        Matcher matcher = pattern.matcher(user.getAccount());
+        if (!matcher.matches()) {
+            throw new MyRuntimeException("错误:帐号必须只允许为数字和字母");
         }
         return true;
     }
