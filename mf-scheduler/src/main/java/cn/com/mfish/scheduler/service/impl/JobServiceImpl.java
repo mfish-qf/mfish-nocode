@@ -2,6 +2,7 @@ package cn.com.mfish.scheduler.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.scheduler.config.utils.InvokeUtils;
 import cn.com.mfish.scheduler.common.SchedulerUtils;
 import cn.com.mfish.scheduler.config.properties.SchedulerProperties;
 import cn.com.mfish.scheduler.entity.Job;
@@ -64,6 +65,10 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     @Override
     @Transactional
     public Result<Job> insertJob(Job job) throws SchedulerException, ClassNotFoundException {
+        Result<Job> result = verifyJob(job);
+        if (!result.isSuccess()) {
+            return result;
+        }
         if (baseMapper.insert(job) == 1) {
             return updateTrigger(job);
         }
@@ -73,10 +78,29 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     @Override
     @Transactional
     public Result<Job> updateJob(Job job) throws SchedulerException, ClassNotFoundException {
+        Result<Job> result = verifyJob(job);
+        if (!result.isSuccess()) {
+            return result;
+        }
         if (baseMapper.updateById(job) == 1) {
             return updateTrigger(job);
         }
         return Result.fail(job, "错误:定时调度任务-更新失败!");
+    }
+
+    /**
+     * 校验任务
+     *
+     * @param job
+     * @return
+     */
+    private Result<Job> verifyJob(Job job) {
+        try {
+            InvokeUtils.strParams2Obj(job.getParams());
+        } catch (Exception ex) {
+            return Result.fail(job, "错误:任务参数不正确");
+        }
+        return Result.ok("任务校验成功");
     }
 
     @Override

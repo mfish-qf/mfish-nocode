@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.oauth.common.Logical;
 import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.req.ReqSsoRole;
@@ -58,7 +59,7 @@ public class SsoRoleController {
 
     @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
     @GetMapping("/all")
-    @RequiresPermissions("sys:role:query")
+    @RequiresPermissions(value = {"sys:role:query", "sys:account:query"}, logical = Logical.OR)
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }

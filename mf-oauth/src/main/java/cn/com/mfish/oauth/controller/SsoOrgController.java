@@ -70,10 +70,7 @@ public class SsoOrgController {
     @PostMapping
     @RequiresPermissions("sys:org:insert")
     public Result<SsoOrg> add(@RequestBody SsoOrg ssoOrg) {
-        if (ssoOrgService.insertOrg(ssoOrg)) {
-            return Result.ok(ssoOrg, "组织结构表-添加成功!");
-        }
-        return Result.fail("错误:添加失败!");
+        return ssoOrgService.insertOrg(ssoOrg);
     }
 
     /**
@@ -87,10 +84,7 @@ public class SsoOrgController {
     @PutMapping
     @RequiresPermissions("sys:org:update")
     public Result<SsoOrg> edit(@RequestBody SsoOrg ssoOrg) {
-        if (ssoOrgService.updateById(ssoOrg)) {
-            return Result.ok("组织结构表-编辑成功!");
-        }
-        return Result.fail("错误:组织结构表-编辑失败!");
+        return ssoOrgService.updateOrg(ssoOrg);
     }
 
     /**

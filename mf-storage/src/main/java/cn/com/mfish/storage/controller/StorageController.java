@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.storage.entity.StorageInfo;
 import cn.com.mfish.storage.handler.StorageHandler;
@@ -46,6 +47,7 @@ public class StorageController {
             @ApiImplicitParam(name = "path", value = "定义特殊文件路径 默认为空字符串"),
             @ApiImplicitParam(name = "isPrivate", value = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是"),
     })
+    @RequiresPermissions("sys:file:upload")
     public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file
             , @RequestParam(name = "fileName", defaultValue = "") String fileName
             , @RequestParam(name = "path", defaultValue = "") String path
@@ -60,6 +62,7 @@ public class StorageController {
 
     @ApiOperation("文件删除")
     @DeleteMapping("/{key}")
+    @RequiresPermissions("sys:file:delete")
     public Result<String> delete(@ApiParam(name = "key", value = "文件key") @PathVariable String key) {
         if (StringUtils.isEmpty(key)) {
             return Result.fail("错误:键不允许为空");

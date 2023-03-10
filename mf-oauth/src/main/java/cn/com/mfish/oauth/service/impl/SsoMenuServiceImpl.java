@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
@@ -33,11 +34,15 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     UserPermissionTempCache userPermissionTempCache;
 
     @Override
-    public boolean insertMenu(SsoMenu ssoMenu) {
-        if (StringUtils.isEmpty(ssoMenu.getParentId())) {
-            ssoMenu.setParentId("");
+    public Result<SsoMenu> insertMenu(SsoMenu ssoMenu) {
+        Result<SsoMenu> result = verifyMenu(ssoMenu);
+        if (!result.isSuccess()) {
+            return result;
         }
-        return baseMapper.insertMenu(ssoMenu) == 1;
+        if (baseMapper.insertMenu(ssoMenu) == 1) {
+            return Result.ok(ssoMenu, "菜单表-添加成功!");
+        }
+        return Result.fail("错误:菜单表-添加失败!");
     }
 
     @Override
@@ -53,20 +58,67 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
                 list.add(i);
             }
         }
-        return baseMapper.queryMenu(reqSsoMenu, list, userId);
+        List<SsoMenu> menus = baseMapper.queryMenu(reqSsoMenu, list, userId);
+        //菜单节点是从底部往上寻找，如果权限只设置了子节点，父节点并未存储
+        //所以根据菜单类型展示时，先全部查出后再过滤不需要的类型
+        if (reqSsoMenu.getMenuType() != null) {
+            return menus.stream().filter((menu) -> menu.getMenuType() <= reqSsoMenu.getMenuType()).collect(Collectors.toList());
+        }
+        return menus;
     }
 
     @Override
+    @Transactional
     public Result<SsoMenu> updateMenu(SsoMenu ssoMenu) {
-        if (StringUtils.isEmpty(ssoMenu.getClientId())) {
-            ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
+        Result<SsoMenu> result = verifyMenu(ssoMenu);
+        if (!result.isSuccess()) {
+            return result;
         }
-        if (baseMapper.updateById(ssoMenu) > 0) {
+        SsoMenu oldMenu = baseMapper.selectById(ssoMenu.getId());
+        boolean success;
+        if ((StringUtils.isEmpty(oldMenu.getParentId()) && StringUtils.isEmpty(ssoMenu.getParentId())) ||
+                (!StringUtils.isEmpty(oldMenu.getParentId()) && oldMenu.getParentId().equals(ssoMenu.getParentId()))) {
+            success = baseMapper.updateById(ssoMenu) > 0;
+        } else {
+            List<SsoMenu> list = baseMapper.selectList(new LambdaQueryWrapper<SsoMenu>()
+                    .likeRight(SsoMenu::getMenuCode, oldMenu.getMenuCode()).orderByAsc(SsoMenu::getMenuCode));
+            if (list == null || list.isEmpty()) {
+                throw new MyRuntimeException("错误:未查询到菜单");
+            }
+            list.set(0, ssoMenu);
+            //父节点发生变化，重新生成序列
+            baseMapper.deleteBatchIds(list.stream().map((menu) -> menu.getId()).collect(Collectors.toList()));
+            for (SsoMenu menu : list) {
+                if (baseMapper.insertMenu(menu) <= 0) {
+                    throw new MyRuntimeException("错误:更新菜单失败");
+                }
+            }
+            success = true;
+        }
+        if (success) {
             CompletableFuture.runAsync(() -> removeMenuCache(ssoMenu));
             return Result.ok(ssoMenu, "菜单表-编辑成功!");
         }
-        return Result.fail("错误:菜单表-编辑失败!");
+        throw new MyRuntimeException("错误:更新菜单失败");
     }
+
+    private Result<SsoMenu> verifyMenu(SsoMenu ssoMenu) {
+        if (StringUtils.isEmpty(ssoMenu.getClientId())) {
+            ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
+        }
+        if (StringUtils.isEmpty(ssoMenu.getParentId())) {
+            ssoMenu.setParentId("");
+        }
+        if (!StringUtils.isEmpty(ssoMenu.getParentId())) {
+            SsoMenu pMenu = baseMapper.selectById(ssoMenu.getParentId());
+            //非目录级别的菜单，父菜单类型必须小于子菜单类型
+            if (pMenu.getMenuType() > 0 && pMenu.getMenuType() >= ssoMenu.getMenuType()) {
+                return Result.fail("错误:上级菜单选择不正确");
+            }
+        }
+        return Result.ok("菜单校验成功");
+    }
+
 
     @Override
     @Transactional

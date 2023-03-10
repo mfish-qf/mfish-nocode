@@ -116,6 +116,7 @@ public class SsoUserController {
     @Log(title = "用户-设置状态", operateType = OperateType.UPDATE)
     @ApiOperation(value = "用户-设置状态", notes = "用户-设置状态")
     @PutMapping("/status")
+    @RequiresPermissions("sys:account:update")
     public Result<Boolean> setStatus(@RequestBody SsoUser ssoUser) {
         SsoUser newUser = new SsoUser();
         newUser.setStatus(ssoUser.getStatus()).setId(ssoUser.getId());
@@ -210,6 +211,7 @@ public class SsoUserController {
 
     @ApiOperation("获取在线用户信息")
     @GetMapping("/online")
+    @RequiresPermissions("sys:online:query")
     public Result<PageResult<OnlineUser>> userOnline(ReqPage reqPage) {
         return Result.ok(oAuth2Service.getOnlineUser(reqPage), "获取在线用户成功");
     }

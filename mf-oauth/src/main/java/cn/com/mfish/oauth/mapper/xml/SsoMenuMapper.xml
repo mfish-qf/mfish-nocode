@@ -45,7 +45,6 @@
     <sql id="reqCondition">
         <if test="reqSsoMenu.clientId!=null">and m.client_id = #{reqSsoMenu.clientId}</if>
         <if test="reqSsoMenu.menuName != null">and m.menu_name like concat('%',#{reqSsoMenu.menuName},'%')</if>
-        <if test="reqSsoMenu.menuType!=null">and m.menu_type = #{reqSsoMenu.menuType}</if>
         <if test="reqSsoMenu.isVisible!=null">and m.is_visible = #{reqSsoMenu.isVisible}</if>
         <if test="reqSsoMenu.permission != null">and m.permissions like concat('%',#{reqSsoMenu.permission},'%')</if>
     </sql>
