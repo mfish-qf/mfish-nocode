@@ -67,9 +67,9 @@ public class AliYunStorage implements Storage {
     public Resource loadAsResource(String filePath) {
         OSS ossClient = getOSSClient();
         try {
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, filePath);
             // 设置URL过期时间为1小时
             Date expiration = new Date(new Date().getTime() + 3600 * 1000);
-            GeneratePresignedUrlRequest generatePresignedUrlRequest= new GeneratePresignedUrlRequest(bucketName, filePath);
             generatePresignedUrlRequest.setExpiration(expiration);
             URL url = ossClient.generatePresignedUrl(generatePresignedUrlRequest);
             Resource resource = new UrlResource(url);
