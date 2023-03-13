@@ -52,7 +52,7 @@
         <oauth2.version>1.0.2</oauth2.version>
         <shiro.version>1.10.0</shiro.version>
         <wechat.version>4.3.7.B</wechat.version>
-        <aliyun-oss.version>3.16.0</aliyun-oss.version>
+        <aliyun-oss.version>3.16.1</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
     </properties>
