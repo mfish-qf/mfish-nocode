@@ -38,8 +38,6 @@ public class StorageHandler {
      */
     public StorageInfo store(InputStream inputStream, long contentLength, String contentType, String fileName, String path, Integer isPrivate) {
         String id = Utils.uuid32();
-        String key = generateKey(fileName, id, contentType);
-        String url = storage.generateUrl(key);
         StorageInfo storageInfo = new StorageInfo();
         storageInfo.setId(id);
         storageInfo.setFileName(fileName);
@@ -51,10 +49,13 @@ public class StorageHandler {
             storageInfo.setFilePath(formatPath + "/" + DateFormatUtils.format(new Date(), "yyyy/MM/dd"));
         }
         storageInfo.setFileType(contentType);
+        String key = generateKey(fileName, id, contentType);
         storageInfo.setFileKey(key);
+        String filePath = storageInfo.getFilePath() + "/" + key;
+        String url = storage.generateUrl(filePath);
         storageInfo.setFileUrl(url);
         storageInfo.setIsPrivate(isPrivate);
-        storage.store(inputStream, contentLength, contentType, storageInfo.getFilePath() + "/" + key);
+        storage.store(inputStream, contentLength, contentType, filePath);
         storageService.save(storageInfo);
         return storageInfo;
     }
@@ -75,9 +76,5 @@ public class StorageHandler {
 
     public void delete(String filePath) {
         storage.delete(filePath);
-    }
-
-    private String generateUrl(String keyName) {
-        return storage.generateUrl(keyName);
     }
 }

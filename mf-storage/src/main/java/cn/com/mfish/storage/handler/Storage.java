@@ -16,5 +16,5 @@ public interface Storage {
 
     void delete(String filePath);
 
-    String generateUrl(String keyName);
+    String generateUrl(String filePath);
 }

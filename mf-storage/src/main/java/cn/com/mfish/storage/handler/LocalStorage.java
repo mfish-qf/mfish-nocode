@@ -71,7 +71,14 @@ public class LocalStorage implements Storage {
     }
 
     @Override
-    public String generateUrl(String keyName) {
+    public String generateUrl(String filePath) {
+        int index = filePath.lastIndexOf("/");
+        String keyName = "";
+        if (index > 0 && index < filePath.length()) {
+            keyName = filePath.substring(index + 1);
+        } else {
+            keyName = filePath;
+        }
         return StorageUtils.formatFilePath(address) + "/" + keyName;
     }
 }
