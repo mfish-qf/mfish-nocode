@@ -75,6 +75,9 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             return result;
         }
         SsoMenu oldMenu = baseMapper.selectById(ssoMenu.getId());
+        if (oldMenu == null) {
+            throw new MyRuntimeException("错误:未找到菜单");
+        }
         boolean success;
         if ((StringUtils.isEmpty(oldMenu.getParentId()) && StringUtils.isEmpty(ssoMenu.getParentId())) ||
                 (!StringUtils.isEmpty(oldMenu.getParentId()) && oldMenu.getParentId().equals(ssoMenu.getParentId()))) {

@@ -49,10 +49,10 @@ public class StorageHandler {
             storageInfo.setFilePath(formatPath + "/" + DateFormatUtils.format(new Date(), "yyyy/MM/dd"));
         }
         storageInfo.setFileType(contentType);
-        String key = generateKey(fileName, id, contentType);
+        String key = buildKey(fileName, id, contentType);
         storageInfo.setFileKey(key);
         String filePath = storageInfo.getFilePath() + "/" + key;
-        String url = storage.generateUrl(filePath);
+        String url = storage.buildUrl(filePath, isPrivate);
         storageInfo.setFileUrl(url);
         storageInfo.setIsPrivate(isPrivate);
         storage.store(inputStream, contentLength, contentType, filePath);
@@ -60,7 +60,15 @@ public class StorageHandler {
         return storageInfo;
     }
 
-    private String generateKey(String originalFilename, String id, String contentType) {
+    /**
+     * 构建文件key
+     *
+     * @param originalFilename
+     * @param id
+     * @param contentType
+     * @return
+     */
+    public String buildKey(String originalFilename, String id, String contentType) {
         int index = originalFilename.lastIndexOf('.');
         if (index >= 0) {
             String suffix = originalFilename.substring(index);
@@ -69,7 +77,6 @@ public class StorageHandler {
         return id + SuffixType.getSuffixType(contentType).toString();
     }
 
-
     public org.springframework.core.io.Resource loadAsResource(String filePath) {
         return storage.loadAsResource(filePath);
     }
@@ -77,4 +84,16 @@ public class StorageHandler {
     public void delete(String filePath) {
         storage.delete(filePath);
     }
+
+    /**
+     * 构建文件访问链接
+     *
+     * @param filePath
+     * @param isPrivate
+     * @return
+     */
+    public String buildFileUrl(String filePath, Integer isPrivate) {
+        return storage.buildUrl(filePath, isPrivate);
+    }
+
 }

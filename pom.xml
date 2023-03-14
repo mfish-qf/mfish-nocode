@@ -36,7 +36,7 @@
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <pagehelper.version>5.3.2</pagehelper.version>
+        <pagehelper.boot.version>1.4.6</pagehelper.boot.version>
         <druid.version>1.2.15</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
@@ -52,7 +52,7 @@
         <oauth2.version>1.0.2</oauth2.version>
         <shiro.version>1.10.0</shiro.version>
         <wechat.version>4.3.7.B</wechat.version>
-        <aliyun-oss.version>3.16.1</aliyun-oss.version>
+        <aliyun-oss.version>3.16.0</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
     </properties>
@@ -161,8 +161,8 @@
             <!-- pagehelper 分页插件 -->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.boot.version}</version>
             </dependency>
             <!-- io常用工具类 -->
             <dependency>

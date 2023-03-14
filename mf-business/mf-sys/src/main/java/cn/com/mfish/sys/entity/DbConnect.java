@@ -25,10 +25,10 @@ public class DbConnect extends BaseEntity<String> {
     @ApiModelProperty(value = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
-    @ApiModelProperty(value = "连接标题")
+    @ApiModelProperty(value = "连接名")
 	private String dbTitle;
     @ApiModelProperty(value = "数据库类型（0 mysql 1 oracle 2 pgsql）")
-	private String dbType;
+	private Integer dbType;
     @ApiModelProperty(value = "连接池类型(Druid,Hikari)")
 	private String poolType;
     @ApiModelProperty(value = "主机")
