@@ -33,7 +33,7 @@ public class DictItem<T> extends BaseEntity<String> {
     private String dictLabel;
     @ApiModelProperty(value = "字典键值")
     private T dictValue;
-    @ApiModelProperty(value = "值类型(0 字符 1数字)")
+    @ApiModelProperty(value = "值类型(0 字符 1数字 2布尔)")
     private Integer valueType;
     @ApiModelProperty(value = "字典排序")
     private Integer dictSort;

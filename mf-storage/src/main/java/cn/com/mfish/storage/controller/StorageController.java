@@ -56,22 +56,11 @@ public class StorageController {
         if (StringUtils.isEmpty(originalFilename)) {
             originalFilename = file.getOriginalFilename();
         }
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
         StorageInfo info = storageHandler.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename, path, isPrivate);
         return Result.ok(info, "文件新增成功");
-    }
-
-    @ApiOperation("文件删除")
-    @DeleteMapping("/{key}")
-    @RequiresPermissions("sys:file:delete")
-    public Result<String> delete(@ApiParam(name = "key", value = "文件key") @PathVariable String key) {
-        if (StringUtils.isEmpty(key)) {
-            return Result.fail("错误:键不允许为空");
-        }
-        if (storageService.remove(new LambdaQueryWrapper<StorageInfo>().eq(true, StorageInfo::getFileKey, key))) {
-            storageHandler.delete(key);
-            return Result.ok(key, "删除文件成功");
-        }
-        return Result.fail(key, "错误:删除文件失败");
     }
 
     @ApiOperation("文件获取")
@@ -105,7 +94,7 @@ public class StorageController {
             disposition = "attachment;" + disposition;
         }
         MediaType mediaType = MediaType.parseMediaType(storageInfo.getFileType());
-        return ResponseEntity.ok().contentType(mediaType)
+        return ResponseEntity.ok().contentType(mediaType).contentLength(storageInfo.getFileSize())
                 .header("Content-Disposition", disposition + encodeFileName(storageInfo.getFileName()))
                 .body(file);
     }

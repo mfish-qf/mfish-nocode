@@ -19,7 +19,7 @@ import java.security.spec.ECGenParameterSpec;
 
 /**
  * @description: 国密SM2加解密通用类
- * @author: qiufeng
+ * @author: mfish
  * @date: 2023/3/9 17:35
  */
 public class SM2Utils {

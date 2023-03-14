@@ -2,7 +2,6 @@ package cn.com.mfish.storage.handler;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.storage.common.StorageUtils;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
@@ -22,27 +21,40 @@ import java.nio.file.Paths;
  * @date: 2023/1/5 15:45
  */
 @Slf4j
-@Data
-public class LocalStorage implements Storage {
-    private String storagePath;
-    private String address;
+public class LocalStorage extends AbstractStorage {
 
-    public void setStoragePath(String storagePath) {
+    public LocalStorage(String address) {
+        super(address);
+    }
+
+    /**
+     * 文件存储路径
+     */
+    private String storagePath;
+
+    public LocalStorage setStoragePath(String storagePath) {
         this.storagePath = StorageUtils.formatFilePath(storagePath);
+        return this;
     }
 
     @Override
-    public void store(InputStream inputStream, long contentLength, String contentType, String keyName) {
-        File file = new File(getFilePath(keyName));
+    public void store(InputStream inputStream, long contentLength, String contentType, String filePath) {
+        File file = new File(getFilePath(filePath));
         try {
             FileUtils.copyInputStreamToFile(inputStream, file);
         } catch (IOException e) {
-            throw new MyRuntimeException("错误:存储文件失败");
+            throw new MyRuntimeException("错误:文件存储异常");
         }
     }
 
-    public String getFilePath(String keyName) {
-        return this.storagePath + "/" + keyName;
+    /**
+     * 获取本地路径，补充本地目录信息
+     *
+     * @param filePath
+     * @return
+     */
+    public String getFilePath(String filePath) {
+        return this.storagePath + "/" + filePath;
     }
 
     @Override
@@ -67,11 +79,7 @@ public class LocalStorage implements Storage {
             Files.delete(file);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            throw new MyRuntimeException("错误:文件删除异常");
         }
-    }
-
-    @Override
-    public String generateUrl(String keyName) {
-        return StorageUtils.formatFilePath(address) + "/" + keyName;
     }
 }

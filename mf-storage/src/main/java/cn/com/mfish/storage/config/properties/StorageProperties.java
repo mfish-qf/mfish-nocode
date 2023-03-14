@@ -18,18 +18,13 @@ public class StorageProperties {
     private String active;
     private Local local;
     private AliYun aliyun;
+    /**
+     * 后端服务文件接口地址
+     */
+    private String address;
 
     public static class Local {
-        private String address;
         private String storagePath;
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
 
         public String getStoragePath() {
             return storagePath;

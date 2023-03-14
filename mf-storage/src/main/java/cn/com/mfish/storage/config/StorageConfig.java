@@ -27,19 +27,16 @@ public class StorageConfig {
     public Storage getStorage() {
         switch (StorageType.getStorageType(storageProperties.getActive())) {
             case 阿里云:
-                AliYunStorage aliyunStorage = new AliYunStorage();
-                StorageProperties.AliYun aliYun = this.storageProperties.getAliyun();
-                aliyunStorage.setAccessKeyId(aliYun.getAccessKeyId());
-                aliyunStorage.setAccessKeySecret(aliYun.getAccessKeySecret());
-                aliyunStorage.setBucketName(aliYun.getBucketName());
-                aliyunStorage.setEndpoint(aliYun.getEndpoint());
-                return aliyunStorage;
+                StorageProperties.AliYun aliYun = storageProperties.getAliyun();
+                return new AliYunStorage(storageProperties.getAddress())
+                        .setAccessKeyId(aliYun.getAccessKeyId())
+                        .setAccessKeySecret(aliYun.getAccessKeySecret())
+                        .setBucketName(aliYun.getBucketName())
+                        .setEndpoint(aliYun.getEndpoint());
             default:
-                LocalStorage localStorage = new LocalStorage();
-                StorageProperties.Local local = this.storageProperties.getLocal();
-                localStorage.setAddress(local.getAddress());
-                localStorage.setStoragePath(local.getStoragePath());
-                return localStorage;
+                StorageProperties.Local local = storageProperties.getLocal();
+                return new LocalStorage(storageProperties.getAddress())
+                        .setStoragePath(local.getStoragePath());
         }
     }
 }

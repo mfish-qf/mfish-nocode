@@ -25,7 +25,7 @@ export const searchFormSchema: FormSchema[] = [
     field: "${fieldInfo.fieldName}",
     label: "${fieldInfo.comment}",
     component: "Input",
-    colProps: { span: 4 }
+    colProps: { lg: 4, md: 5 }
   },
   <#if x == 3><#break></#if>
 </#list>

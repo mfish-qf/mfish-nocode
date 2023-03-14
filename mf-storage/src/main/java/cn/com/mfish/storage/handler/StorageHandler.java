@@ -38,8 +38,6 @@ public class StorageHandler {
      */
     public StorageInfo store(InputStream inputStream, long contentLength, String contentType, String fileName, String path, Integer isPrivate) {
         String id = Utils.uuid32();
-        String key = generateKey(fileName, id, contentType);
-        String url = storage.generateUrl(key);
         StorageInfo storageInfo = new StorageInfo();
         storageInfo.setId(id);
         storageInfo.setFileName(fileName);
@@ -51,15 +49,26 @@ public class StorageHandler {
             storageInfo.setFilePath(formatPath + "/" + DateFormatUtils.format(new Date(), "yyyy/MM/dd"));
         }
         storageInfo.setFileType(contentType);
+        String key = buildKey(fileName, id, contentType);
         storageInfo.setFileKey(key);
+        String filePath = storageInfo.getFilePath() + "/" + key;
+        String url = storage.buildUrl(filePath, isPrivate);
         storageInfo.setFileUrl(url);
         storageInfo.setIsPrivate(isPrivate);
-        storage.store(inputStream, contentLength, contentType, storageInfo.getFilePath() + "/" + key);
+        storage.store(inputStream, contentLength, contentType, filePath);
         storageService.save(storageInfo);
         return storageInfo;
     }
 
-    private String generateKey(String originalFilename, String id, String contentType) {
+    /**
+     * 构建文件key
+     *
+     * @param originalFilename
+     * @param id
+     * @param contentType
+     * @return
+     */
+    public String buildKey(String originalFilename, String id, String contentType) {
         int index = originalFilename.lastIndexOf('.');
         if (index >= 0) {
             String suffix = originalFilename.substring(index);
@@ -67,7 +76,6 @@ public class StorageHandler {
         }
         return id + SuffixType.getSuffixType(contentType).toString();
     }
-
 
     public org.springframework.core.io.Resource loadAsResource(String filePath) {
         return storage.loadAsResource(filePath);
@@ -77,7 +85,15 @@ public class StorageHandler {
         storage.delete(filePath);
     }
 
-    private String generateUrl(String keyName) {
-        return storage.generateUrl(keyName);
+    /**
+     * 构建文件访问链接
+     *
+     * @param filePath
+     * @param isPrivate
+     * @return
+     */
+    public String buildFileUrl(String filePath, Integer isPrivate) {
+        return storage.buildUrl(filePath, isPrivate);
     }
+
 }
