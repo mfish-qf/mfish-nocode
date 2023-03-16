@@ -23,6 +23,7 @@
         <module>mf-common-web</module>
         <module>mf-common-scheduler</module>
         <module>mf-common-app</module>
+        <module>mf-common-dblink</module>
     </modules>
 
 </project>

@@ -55,14 +55,8 @@
         <aliyun-oss.version>3.16.0</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
+        <oracle.version>10.2.0.4.0</oracle.version>
     </properties>
-    <dependencies>
-        <!-- bootstrap 启动器 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-    </dependencies>
     <dependencyManagement>
         <dependencies>
             <!-- SpringCloud 微服务 -->
@@ -225,6 +219,11 @@
                 <version>${druid.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.zxing</groupId>
                 <artifactId>core</artifactId>
                 <version>${zxing.version}</version>
@@ -263,6 +262,12 @@
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>${bcprov.version}</version>
+            </dependency>
+            <!-- oracle驱动 -->
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc14</artifactId>
+                <version>${oracle.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
@@ -307,6 +312,11 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-scheduler</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-dblink</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>
