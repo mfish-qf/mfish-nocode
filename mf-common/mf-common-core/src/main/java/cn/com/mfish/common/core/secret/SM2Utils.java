@@ -2,6 +2,7 @@ package cn.com.mfish.common.core.secret;
 
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
@@ -107,7 +108,8 @@ public class SM2Utils {
         ECPoint pukPoint = sm2ECParameters.getCurve().decodePoint(Hex.decode(pubKeyHexString));
         // 公钥前面的02或者03表示是压缩公钥，04表示未压缩公钥, 04的时候，可以去掉前面的04
         ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, domainParameters);
-        SM2Engine sm2Engine = new SM2Engine();
+        //C1C3C2模式与前端sm-crypto的模式1匹配
+        SM2Engine sm2Engine = new SM2Engine(new SM3Digest(), SM2Engine.Mode.C1C3C2);
         // 设置sm2为加密模式
         sm2Engine.init(true, new ParametersWithRandom(publicKeyParameters, new SecureRandom()));
         byte[] arrayOfBytes = null;
@@ -139,7 +141,8 @@ public class SM2Utils {
         ECDomainParameters domainParameters = new ECDomainParameters(sm2ECParameters.getCurve(), sm2ECParameters.getG(), sm2ECParameters.getN());
         BigInteger privateKeyD = new BigInteger(priKeyHexString, 16);
         ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, domainParameters);
-        SM2Engine sm2Engine = new SM2Engine();
+        //C1C3C2模式与前端sm-crypto的模式1匹配
+        SM2Engine sm2Engine = new SM2Engine(new SM3Digest(), SM2Engine.Mode.C1C3C2);
         // 设置sm2为解密模式
         sm2Engine.init(false, privateKeyParameters);
         String result = "";

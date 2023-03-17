@@ -1,13 +1,13 @@
 package cn.com.mfish.sys.controller;
 
-import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.web.page.ReqPage;
 import cn.com.mfish.sys.entity.DbConnect;
 import cn.com.mfish.sys.req.ReqDbConnect;
 import cn.com.mfish.sys.service.DbConnectService;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.web.page.ReqPage;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @description: 数据库连接
@@ -43,12 +44,17 @@ public class DbConnectController {
     @GetMapping
     public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(dbConnectService.list(new LambdaQueryWrapper<DbConnect>()
+        List<DbConnect> list = dbConnectService.list(new LambdaQueryWrapper<DbConnect>()
                 .like(reqDbConnect.getDbTitle() != null, DbConnect::getDbTitle, reqDbConnect.getDbTitle())
                 .eq(reqDbConnect.getDbType() != null, DbConnect::getDbType, reqDbConnect.getDbType())
                 .like(reqDbConnect.getDbName() != null, DbConnect::getDbName, reqDbConnect.getDbName())
                 .like(reqDbConnect.getHost() != null, DbConnect::getHost, reqDbConnect.getHost())
-                .orderByDesc(DbConnect::getCreateTime))), "数据库连接-查询成功!");
+                .orderByDesc(DbConnect::getCreateTime));
+        //密码不返回查询界面
+        for (DbConnect connect : list) {
+            connect.setPassword(null);
+        }
+        return Result.ok(new PageResult<>(list), "数据库连接-查询成功!");
     }
 
     /**
@@ -61,6 +67,7 @@ public class DbConnectController {
     @ApiOperation("数据库连接-添加")
     @PostMapping
     public Result<DbConnect> add(@RequestBody DbConnect dbConnect) {
+//        dbConnect.setPassword();
         if (dbConnectService.save(dbConnect)) {
             return Result.ok(dbConnect, "数据库连接-添加成功!");
         }
@@ -125,6 +132,14 @@ public class DbConnectController {
     @GetMapping("/{id}")
     public Result<DbConnect> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         DbConnect dbConnect = dbConnectService.getById(id);
+        dbConnect.setPassword(null);
         return Result.ok(dbConnect, "数据库连接-查询成功!");
+    }
+
+    @Log(title = "测试数据库连接", operateType = OperateType.OTHER)
+    @ApiOperation("测试数据库库连接")
+    @PostMapping("/test")
+    public Result<Boolean> testConnect(@RequestBody DbConnect dbConnect) {
+        return dbConnectService.testConnect(dbConnect);
     }
 }

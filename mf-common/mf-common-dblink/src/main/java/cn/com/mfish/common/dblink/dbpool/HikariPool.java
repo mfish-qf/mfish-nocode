@@ -18,7 +18,7 @@ public class HikariPool implements PoolWrapper<HikariOption> {
     @Override
     public PoolWrapper<HikariOption> wrap(DataSourceOptions<HikariOption> options) {
         this.dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(options.getDriverClass());
+        dataSource.setDriverClassName(options.getDbType().getDriver());
         dataSource.setJdbcUrl(options.getJdbcUrl());
         dataSource.setUsername(options.getUser());
         dataSource.setPassword(options.getPassword());

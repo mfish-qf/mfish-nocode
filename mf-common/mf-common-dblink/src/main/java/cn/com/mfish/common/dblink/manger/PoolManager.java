@@ -1,10 +1,10 @@
 package cn.com.mfish.common.dblink.manger;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.secret.DesUtils;
-import cn.com.mfish.common.dblink.dbpool.PoolWrapper;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.enums.PoolType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.DigestUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @description: 连接池管理
@@ -42,7 +43,7 @@ public class PoolManager {
     //获取不到连接的重试次数，超过次数移除该线程池
     private static final long RETRY_COUNT = 2;
     //线程锁
-    private static volatile String poolLock = "poolLock";
+    private static final ReentrantLock poolLock = new ReentrantLock();
 
     /**
      * 连接池连接状态检测
@@ -54,7 +55,7 @@ public class PoolManager {
                 for (Map.Entry<String, PoolContext> entry : poolMap.entrySet()) {
                     String key = entry.getKey();
                     PoolContext poolContext = entry.getValue();
-                    if (poolContext.getExpire() <= 0) {
+                    if (poolContext == null || poolContext.getExpire() <= 0) {
                         clearPool(key);
                         map.remove(key);
                         continue;
@@ -67,8 +68,11 @@ public class PoolManager {
                         continue;
                     }
                     Integer count = map.get(key);
+                    //测试连接是否正常，异常连接情况下druid存在获取连接超时卡死问题此处设置请求尝试时间
                     try (Connection conn = poolContext.getConnection(TIMEOUT)) {
-                        //测试连接是否正常，异常连接情况下druid存在获取连接超时卡死问题此处设置请求尝试时间
+                        if (conn.isClosed()) {
+                            throw new RuntimeException("连接已关闭");
+                        }
                         count = 0;
                         poolContext.setCheckTime(System.currentTimeMillis());
                     } catch (Exception ex) {
@@ -93,21 +97,6 @@ public class PoolManager {
                 }
             }
         }).start();
-    }
-
-    /**
-     * 创建连接池对象
-     *
-     * @param className
-     * @return
-     */
-    private static PoolWrapper create(final String className) {
-        try {
-            return (PoolWrapper) Class.forName(className).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            log.error("创建连接池异常", e);
-            throw new MyRuntimeException("创建连接池异常", e);
-        }
     }
 
     /**
@@ -141,31 +130,34 @@ public class PoolManager {
      * @param timeout
      * @return
      */
-    public static Connection getConnection(final DataSourceOptions options, long timeout) {
-        //用数据源用户名,密码,jdbcUrl做为key
-        final String key = String.format("%s|%s|%s|%s", options.getUser()
-                , DesUtils.getEncryptString(options.getPassword())
-                , options.getPoolClass(), options.getJdbcUrl()).toLowerCase();
+    public static Connection getConnection(final DataSourceOptions options, long timeout) throws SQLException {
+        PoolType poolType = options.getPoolType();
+        //不是用连接池时，不加入到池缓存中
+        if (poolType == PoolType.NoPool) {
+            return poolType.createPool().wrap(options).getConnection();
+        }
+        //用数据源用户名,密码,连接池类型,jdbcUrl做为key
+        final String key = DigestUtils.md5DigestAsHex(String.format("%s|%s|%s|%s", options.getUser()
+                , options.getPassword(), options.getPoolType()
+                , options.getJdbcUrl()).toLowerCase().getBytes());
         if (!poolMap.containsKey(key)) {
             //加锁防止多个线程同时操作时，后初始化的池子覆盖了前面的池子
-            synchronized (poolLock) {
+            poolLock.lock();
+            try {
                 if (!poolMap.containsKey(key)) {
-                    poolMap.put(key, new PoolContext(create(options.getPoolClass()).wrap(options)));
+                    poolMap.put(key, new PoolContext(poolType.createPool().wrap(options)));
                 }
+            } finally {
+                poolLock.unlock();
             }
         }
-        try {
-            PoolContext poolContext = poolMap.get(key);
-            Connection connection = poolContext.getConnection(timeout);
-            //获取连接成功后设置检测计时
-            poolContext.setCheckTime(System.currentTimeMillis());
-            //获取连接后，延长连接池存活时间
-            poolContext.setExpire(EXPIRE);
-            return connection;
-        } catch (SQLException e) {
-            log.error("获取连接异常", e);
-            throw new MyRuntimeException(e);
-        }
+        PoolContext poolContext = poolMap.get(key);
+        Connection connection = poolContext.getConnection(timeout);
+        //获取连接成功后设置检测计时
+        poolContext.setCheckTime(System.currentTimeMillis());
+        //获取连接后，延长连接池存活时间
+        poolContext.setExpire(EXPIRE);
+        return connection;
     }
 
     /**
@@ -185,7 +177,7 @@ public class PoolManager {
      * @param options
      * @return
      */
-    public static Connection getConnection(final DataSourceOptions options) {
+    public static Connection getConnection(final DataSourceOptions options) throws SQLException {
         return getConnection(options, TIMEOUT);
     }
 }

@@ -1,11 +1,13 @@
 package cn.com.mfish.common.dblink;
 
+import cn.com.mfish.common.dblink.dbpool.PoolWrapper;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.enums.DBType;
+import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * @description: 测试连接池
@@ -14,23 +16,29 @@ import java.sql.SQLException;
  */
 public class TestConnect {
     @Test
-    public void poolTest() throws SQLException {
+    public void poolTest() {
         DataSourceOptions options = new DataSourceOptions();
         options.setUser("root");
         options.setPassword("123456");
         options.setJdbcUrl("jdbc:mysql://localhost:3306/mf_oauth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
-        options.setDriverClass("com.mysql.cj.jdbc.Driver");
-        options.setPoolClass("cn.com.mfish.common.dblink.dbpool.HikariPool");
-        for (int i = 0; i < 5; i++) {
-            try{
-                Connection connection = PoolManager.getConnection(options,5);
+        options.setDbType(DBType.mysql);
+
+        for (int i = 0; i < 10; i++) {
+            try {
+                if(i/2==0){
+                    options.setPoolType(PoolType.Hikari);
+                }else{
+                    options.setPoolType(PoolType.Druid);
+                }
+                Connection connection = PoolManager.getConnection(options, 5000);
+                connection.close();
                 System.out.println(connection.isClosed());
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
         }
-        while(true){
+        while (true) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -38,5 +46,13 @@ public class TestConnect {
             }
         }
 
+    }
+
+    @Test
+    public void poolCreate() {
+        for (int i = 0; i < 5; i++) {
+            PoolWrapper wrapper = PoolType.Druid.createPool();
+            System.out.println(wrapper);
+        }
     }
 }
