@@ -43,7 +43,7 @@ public class DesUtils {
      * @param str
      * @return
      */
-    public static String getEncryptString(String str) {
+    public static String encrypt(String str) {
         //基于BASE64编码，接收byte[]并转换成String
         BASE64Encoder encoder = new BASE64Encoder();
         try {
@@ -68,7 +68,7 @@ public class DesUtils {
      * @param str
      * @return
      */
-    public static String getDecryptString(String str) {
+    public static String decrypt(String str) {
         BASE64Decoder decoder = new BASE64Decoder();
         try {
             //将字符串decode成byte[]

@@ -20,7 +20,7 @@ public class DruidPool implements PoolWrapper<DruidOption> {
     @Override
     public PoolWrapper<DruidOption> wrap(DataSourceOptions<DruidOption> linkOption) {
         this.dataSource = new DruidDataSource();
-        dataSource.setDriverClassName(linkOption.getDriverClass());
+        dataSource.setDriverClassName(linkOption.getDbType().getDriver());
         dataSource.setUrl(linkOption.getJdbcUrl());
         dataSource.setUsername(linkOption.getUser());
         dataSource.setPassword(linkOption.getPassword());

@@ -1,5 +1,7 @@
 package cn.com.mfish.common.dblink.entity;
 
+import cn.com.mfish.common.dblink.enums.DBType;
+import cn.com.mfish.common.dblink.enums.PoolType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,10 +13,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class DataSourceOptions<T> {
-    /**
-     * 数据源驱动类
-     */
-    private String driverClass;
     /**
      * 数据库登录用户名
      */
@@ -28,9 +26,13 @@ public class DataSourceOptions<T> {
      */
     private String jdbcUrl;
     /**
-     * 引擎查询器使用的数据源连接池类名
+     * 数据库类型
      */
-    private String poolClass;
+    private DBType dbType;
+    /**
+     * 连接池类型
+     */
+    private PoolType poolType;
     /**
      * 数据源配置选项(JSON格式）
      */
