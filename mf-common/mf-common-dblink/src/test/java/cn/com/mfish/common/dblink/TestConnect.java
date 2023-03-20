@@ -22,21 +22,20 @@ public class TestConnect {
         options.setPassword("123456");
         options.setJdbcUrl("jdbc:mysql://localhost:3306/mf_oauth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
         options.setDbType(DBType.mysql);
-
         for (int i = 0; i < 10; i++) {
             try {
-                if(i/2==0){
+                if (i / 2 == 0) {
                     options.setPoolType(PoolType.Hikari);
-                }else{
+                } else {
                     options.setPoolType(PoolType.Druid);
                 }
                 Connection connection = PoolManager.getConnection(options, 5000);
-                connection.close();
                 System.out.println(connection.isClosed());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
+            } finally {
+                PoolManager.release();
             }
-
         }
         while (true) {
             try {

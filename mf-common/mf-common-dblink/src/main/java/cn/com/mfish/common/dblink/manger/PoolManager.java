@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +42,8 @@ public class PoolManager {
     private static final long RETRY_COUNT = 2;
     //线程锁
     private static final ReentrantLock poolLock = new ReentrantLock();
+    //连接管理
+    private static final ThreadLocal<Connection> CONNECTION_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * 连接池连接状态检测
@@ -100,27 +100,13 @@ public class PoolManager {
     }
 
     /**
-     * 销毁连接
+     * 清理无用连接池
      *
-     * @param conn
-     * @param stmt
-     * @param rs
+     * @param key
      */
-    public static void release(final Connection conn, final Statement stmt, final ResultSet rs) {
-        try {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (rs != null) {
-                rs.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (final SQLException ex) {
-            log.error("数据库资源释放异常", ex);
-            throw new MyRuntimeException("数据库资源释放异常", ex);
-        }
+    private static void clearPool(String key) {
+        poolMap.get(key).close();
+        poolMap.remove(key);
     }
 
     /**
@@ -134,7 +120,9 @@ public class PoolManager {
         PoolType poolType = options.getPoolType();
         //不是用连接池时，不加入到池缓存中
         if (poolType == PoolType.NoPool) {
-            return poolType.createPool().wrap(options).getConnection();
+            Connection connection = poolType.createPool().wrap(options).getConnection();
+            CONNECTION_THREAD_LOCAL.set(connection);
+            return connection;
         }
         //用数据源用户名,密码,连接池类型,jdbcUrl做为key
         final String key = DigestUtils.md5DigestAsHex(String.format("%s|%s|%s|%s", options.getUser()
@@ -157,17 +145,8 @@ public class PoolManager {
         poolContext.setCheckTime(System.currentTimeMillis());
         //获取连接后，延长连接池存活时间
         poolContext.setExpire(EXPIRE);
+        CONNECTION_THREAD_LOCAL.set(connection);
         return connection;
-    }
-
-    /**
-     * 清理无用连接池
-     *
-     * @param key
-     */
-    private static void clearPool(String key) {
-        poolMap.get(key).close();
-        poolMap.remove(key);
     }
 
 
@@ -179,5 +158,22 @@ public class PoolManager {
      */
     public static Connection getConnection(final DataSourceOptions options) throws SQLException {
         return getConnection(options, TIMEOUT);
+    }
+
+    /**
+     * 销毁连接(获取连接使用完成后需要调用该方法)
+     */
+    public static void release() {
+        try {
+            Connection conn = CONNECTION_THREAD_LOCAL.get();
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (final SQLException ex) {
+            log.error("数据库连接释放异常", ex);
+            throw new MyRuntimeException("数据库连接释放异常", ex);
+        } finally {
+            CONNECTION_THREAD_LOCAL.remove();
+        }
     }
 }
