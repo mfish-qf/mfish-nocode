@@ -67,7 +67,6 @@ public class DbConnectController {
     @ApiOperation("数据库连接-添加")
     @PostMapping
     public Result<DbConnect> add(@RequestBody DbConnect dbConnect) {
-//        dbConnect.setPassword();
         if (dbConnectService.save(dbConnect)) {
             return Result.ok(dbConnect, "数据库连接-添加成功!");
         }
