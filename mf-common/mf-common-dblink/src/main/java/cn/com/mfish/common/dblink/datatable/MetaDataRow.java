@@ -56,13 +56,23 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
     }
 
     /**
+     * 判断是否包列
+     *
+     * @param colName 列名
+     * @return
+     */
+    public boolean containsColumn(final String colName) {
+        return this.containsKey(colName);
+    }
+
+    /**
      * 获取单元值
      *
      * @param colName 列名
      * @return
      */
     public Object getCellValue(final String colName) {
-        if (this.containsKey(colName)) {
+        if (containsColumn(colName)) {
             return this.get(colName);
         }
         throw new MyRuntimeException(Constant.NotFoundException);
@@ -224,14 +234,14 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
     public int compareTo(@NotNull MetaDataRow row) {
         int value = 0;
         for (Map.Entry<String, MetaDataHeader> header : headers.entrySet()) {
-            switch (header.getValue().getDataType()) {
-                case NUMERIC:
+            switch (header.getValue().getDataType().getSlimType()) {
+                case 数字:
                     value = DataUtils.numCompare(this.getCellValue(header.getValue().getColName()), row.getCellValue(header.getValue().getColName()));
                     break;
-                case DATE:
+                case 日期:
                     value = DataUtils.dateCompare(this.getCellValue(header.getValue().getColName()), row.getCellValue(header.getValue().getColName()));
                     break;
-                case VARCHAR:
+                case 字符:
                     value = DataUtils.strCompare(this.getCellValue(header.getValue().getColName()), row.getCellValue(header.getValue().getColName()));
                     break;
             }

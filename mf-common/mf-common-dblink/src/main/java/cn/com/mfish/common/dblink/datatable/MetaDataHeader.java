@@ -60,7 +60,6 @@ public class MetaDataHeader implements Serializable {
     private TargetType targetType;
 
     public MetaDataHeader setDataType(String dataType) {
-
         this.dataType = DataType.forType(dataType);
         return this;
     }

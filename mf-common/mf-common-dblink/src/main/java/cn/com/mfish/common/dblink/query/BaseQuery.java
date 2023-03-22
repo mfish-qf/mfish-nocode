@@ -8,12 +8,14 @@ import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.TargetType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
+import cn.com.mfish.common.dblink.page.BoundSql;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @description: 数据库查询基础类
@@ -32,23 +34,47 @@ public class BaseQuery {
     /**
      * 查询数据
      *
-     * @param strSql sql语句
+     * @param boundSql sql包装类
      * @return
      */
-    public MetaDataTable query(String strSql) {
+    public MetaDataTable query(BoundSql boundSql) {
+        return query(boundSql, rs -> {
+            try {
+                return getMetaDataTable(rs, getColHeaders(rs.getMetaData()));
+            } catch (SQLException e) {
+                log.error(String.format("获取metaData异常:%s，Msg:%s", boundSql.getSql(), e));
+                throw new MyRuntimeException(e);
+            }
+        });
+    }
+
+    /**
+     * 基础查询方法
+     *
+     * @param boundSql sql包装类
+     * @param function 结果处理函数
+     * @param <R>      返回结果类型
+     * @return
+     */
+    protected <R> R query(BoundSql boundSql, Function<ResultSet, R> function) {
         ResultSet rs = null;
-        Statement stmt = null;
+        PreparedStatement stmt = null;
         try {
             Connection conn = getConnect();
-            stmt = conn.createStatement();
-            log.info("执行查询:" + strSql);
+            stmt = conn.prepareStatement(boundSql.getSql());
+            if (boundSql.getParams() != null && !boundSql.getParams().isEmpty()) {
+                for (int i = 0; i < boundSql.getParams().size(); i++) {
+                    stmt.setObject(i + 1, boundSql.getParams().get(i));
+                }
+            }
+            log.info("执行查询:" + boundSql.getSql());
             long start = System.currentTimeMillis();
-            rs = stmt.executeQuery(strSql);
+            rs = stmt.executeQuery();
             long end = System.currentTimeMillis();
             log.info("查询SQL耗时:" + (end - start));
-            return this.getMetaDataTable(rs, getMetaHeaders(rs.getMetaData()));
-        } catch (final Exception ex) {
-            log.error(String.format("执行SQL:%s，Msg:%s", strSql, ex));
+            return function.apply(rs);
+        } catch (SQLException ex) {
+            log.error(String.format("执行SQL:%s，Msg:%s", boundSql.getSql(), ex));
             throw new MyRuntimeException(ex);
         } finally {
             PoolManager.release();
@@ -57,12 +83,29 @@ public class BaseQuery {
     }
 
     /**
+     * 获取列头
+     *
+     * @param boundSql
+     * @return
+     */
+    public MetaDataHeaders getColHeaders(final BoundSql boundSql) {
+        return query(boundSql, (rs) -> {
+            try {
+                return getColHeaders(rs.getMetaData());
+            } catch (SQLException e) {
+                log.error(String.format("获取metaData异常:%s，Msg:%s", boundSql.getSql(), e));
+                throw new MyRuntimeException(e);
+            }
+        });
+    }
+
+    /**
      * 获取元数据表头
      *
      * @param rsMataData 数据库元数据
      * @return
      */
-    private MetaDataHeaders getMetaHeaders(final ResultSetMetaData rsMataData) {
+    private MetaDataHeaders getColHeaders(final ResultSetMetaData rsMataData) {
         final int count;
         try {
             count = rsMataData.getColumnCount();
@@ -156,7 +199,6 @@ public class BaseQuery {
     public Connection getConnect() throws SQLException {
         return PoolManager.getConnection(options, TIMEOUT);
     }
-
 
     /**
      * 查询资源释放
