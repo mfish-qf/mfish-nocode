@@ -44,7 +44,7 @@ public class TestQuery {
         MfPageHelper.startPage(1, 10);
         List<Object> params = new ArrayList<>();
         params.add("聊天");
-        PageResult<MetaDataRow> table = new PageResult<>(QueryHandler.query(options, "select * from sso_menu where menu_name=?",params));
+        PageResult<MetaDataRow> table = new PageResult<>(QueryHandler.query(options, "select * from sso_menu where menu_name=?", params));
         System.out.println(JSON.toJSONString(table));
     }
 

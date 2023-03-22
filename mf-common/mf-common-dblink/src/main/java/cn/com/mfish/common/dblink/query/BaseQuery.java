@@ -1,6 +1,8 @@
 package cn.com.mfish.common.dblink.query;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.dblink.datatable.MetaDataHeader;
 import cn.com.mfish.common.dblink.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dblink.datatable.MetaDataRow;
@@ -11,10 +13,12 @@ import cn.com.mfish.common.dblink.manger.PoolManager;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.sql.*;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -46,6 +50,59 @@ public class BaseQuery {
                 throw new MyRuntimeException(e);
             }
         });
+    }
+
+    /**
+     * 查询泛型结果
+     *
+     * @param boundSql
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> query(BoundSql boundSql, Class<T> cls) {
+        return query(boundSql, rs -> {
+            try {
+                return changeT(rs, cls);
+            } catch (Exception e) {
+                log.error(String.format("获取metaData异常:%s，Msg:%s", boundSql.getSql(), e));
+                throw new MyRuntimeException(e);
+            }
+        });
+    }
+
+    /**
+     * 结果转换成对象
+     *
+     * @param rs  结果
+     * @param cls 类型
+     * @param <T> 泛型
+     * @return
+     * @throws SQLException           sql异常
+     * @throws InstantiationException 反射异常
+     * @throws IllegalAccessException 反射异常
+     */
+    private <T> List<T> changeT(final ResultSet rs, Class<T> cls) throws SQLException, InstantiationException, IllegalAccessException {
+        final ResultSetMetaData metaData = rs.getMetaData();
+        List<Field> fields = Utils.getAllFields(cls);
+        List<T> list = new ArrayList<>();
+        while (rs.next()) {
+            T t = cls.newInstance();
+            for (Field field : fields) {
+                for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                    String columnName = StringUtils.toCamelCase(metaData.getColumnName(i));
+                    if (!field.getName().equals(columnName)) {
+                        continue;
+                    }
+                    String type = rs.getMetaData().getColumnTypeName(i);
+                    Object columnValue = formatValue(type, rs.getObject(i));
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                    break;
+                }
+            }
+            list.add(t);
+        }
+        return list;
     }
 
     /**
@@ -88,7 +145,7 @@ public class BaseQuery {
      * @param boundSql
      * @return
      */
-    public MetaDataHeaders getColHeaders(final BoundSql boundSql) {
+    public MetaDataHeaders getColHeaders(BoundSql boundSql) {
         return query(boundSql, (rs) -> {
             try {
                 return getColHeaders(rs.getMetaData());
@@ -106,11 +163,9 @@ public class BaseQuery {
      * @return
      */
     private MetaDataHeaders getColHeaders(final ResultSetMetaData rsMataData) {
-        final int count;
         try {
-            count = rsMataData.getColumnCount();
             MetaDataHeaders headers = new MetaDataHeaders();
-            for (int i = 1; i <= count; i++) {
+            for (int i = 1; i <= rsMataData.getColumnCount(); i++) {
                 final MetaDataHeader header = new MetaDataHeader();
                 //****默认别名与查询名称相同 后期修改别名后别名必须唯一
                 header.setColName(rsMataData.getColumnLabel(i));
@@ -161,33 +216,28 @@ public class BaseQuery {
     }
 
     /**
-     * 格式化查询到的值
+     * 格式化查询到的值(不完善 后面根据使用情况补充)
      *
      * @param columnTypeName 列类型名称
      * @param value          查询值
      * @return
      */
     public Object formatValue(String columnTypeName, Object value) {
-        if (isBytes(columnTypeName)) {
-            if (null != value) {
-                value = new String((byte[]) value);
-            }
-        } else if (columnTypeName.toUpperCase(Locale.ROOT).contains("GEOMETRY")) {
-            if (null != value) {
-                value = value.toString();
-            }
+        if (value == null) {
+            return null;
+        }
+        columnTypeName = columnTypeName.toUpperCase(Locale.ROOT);
+        if (columnTypeName.contains("BINARY") || columnTypeName.contains("BLOB")) {
+            value = new String((byte[]) value);
+        } else if (columnTypeName.contains("GEOMETRY")) {
+            value = value.toString();
+        } else if (columnTypeName.contains("BIT")) {
+            value = value instanceof Boolean && (Boolean) value ? 1 : 0;
+        } else if (columnTypeName.contains("DATETIME")) {
+            //LocalDateTime 转成Date类型
+            value = value instanceof LocalDateTime ? Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant()) : value;
         }
         return value;
-    }
-
-    /**
-     * 是否bytes类型  不太全(后面根据情况补充)
-     *
-     * @param columnTypeName 列类型名称
-     * @return
-     */
-    public boolean isBytes(String columnTypeName) {
-        return columnTypeName.toUpperCase(Locale.ROOT).contains("BINARY") || columnTypeName.toUpperCase(Locale.ROOT).contains("BLOB");
     }
 
     /**

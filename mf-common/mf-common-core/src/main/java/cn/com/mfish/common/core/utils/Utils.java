@@ -22,6 +22,10 @@ public class Utils {
      */
     public static List<Field> getAllFields(Object object) {
         Class<?> clazz = object.getClass();
+        return getAllFields(clazz);
+    }
+
+    public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = new ArrayList<>();
         while (clazz != null) {
             fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
