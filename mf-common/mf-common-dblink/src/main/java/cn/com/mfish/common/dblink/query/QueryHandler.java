@@ -8,6 +8,7 @@ import cn.com.mfish.common.dblink.page.MfPageHelper;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @description: 分页查询
@@ -151,19 +152,33 @@ public class QueryHandler {
     /**
      * 查询某页数据
      *
-     * @param boundSql
+     * @param boundSql 包装SQL
      * @return
      */
     private static MetaDataTable pageQuery(BoundSql boundSql) {
+        return pageQuery(boundSql, boundSql1 -> pageHelper.query(boundSql1));
+    }
+
+    /**
+     * 查询某页数据 返回对象
+     *
+     * @param boundSql 包装SQL
+     * @param cls      类型
+     * @param <T>      反射类型
+     * @return
+     */
+    private static <T> List<T> pageQuery(BoundSql boundSql, Class<T> cls) {
+        return pageQuery(boundSql, boundSql1 -> pageHelper.query(boundSql1, cls));
+    }
+
+    private static <R> R pageQuery(BoundSql boundSql, Function<BoundSql, R> function) {
         //判断是否需要进行分页查询
         if (pageHelper.beforePage()) {
             //调用方言获取分页 sql
             BoundSql pageSql = pageHelper.getPageSql(boundSql);
-
             //执行分页查询
-            return pageHelper.query(pageSql);
+            return function.apply(pageSql);
         }
-        return pageHelper.query(boundSql);
+        return function.apply(boundSql);
     }
-
 }

@@ -9,6 +9,8 @@ import com.github.pagehelper.page.PageMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 
+import java.util.List;
+
 /**
  * @description: 翻页查询
  * @author: mfish
@@ -92,5 +94,21 @@ public class MfPageHelper extends PageMethod implements Dialect {
             return null;
         }
         return delegate.getAbQuery().query(boundSql);
+    }
+
+    /**
+     * 查询数据
+     *
+     * @param boundSql 包装SQL
+     * @param cls      对象类
+     * @param <T>      泛型
+     * @return
+     */
+    public <T> List<T> query(BoundSql boundSql, Class<T> cls) {
+        AbstractDialect delegate = dialectAdapter.getDelegate();
+        if (delegate == null) {
+            return null;
+        }
+        return delegate.getAbQuery().query(boundSql, cls);
     }
 }
