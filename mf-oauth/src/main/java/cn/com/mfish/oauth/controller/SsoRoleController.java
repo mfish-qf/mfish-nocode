@@ -6,7 +6,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.common.Logical;
-import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;

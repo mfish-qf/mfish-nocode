@@ -41,6 +41,10 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-dblink</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-sys-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 @ApiModel("代码生成参数")
 public class ReqCode {
-    @ApiModelProperty("库名(必传)")
-    private String schema;
+    @ApiModelProperty("数据库连接ID(必传 通过数据库列表接口查询)")
+    private String connectId;
     @ApiModelProperty("表名(必传)")
     private String tableName;
     @ApiModelProperty("表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")

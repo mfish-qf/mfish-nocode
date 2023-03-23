@@ -42,6 +42,19 @@ public class TestQuery {
         options.setDbType(DBType.mysql);
         options.setPoolType(PoolType.Hikari);
         MfPageHelper.startPage(1, 10);
+        PageResult<MetaDataRow> table = new PageResult<>(QueryHandler.query(options, "select * from sso_menu"));
+        System.out.println(JSON.toJSONString(table));
+    }
+
+    @Test
+    public void pageQueryParams() {
+        DataSourceOptions options = new DataSourceOptions();
+        options.setUser("root");
+        options.setPassword("123456");
+        options.setJdbcUrl("jdbc:mysql://localhost:3306/mf_oauth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8");
+        options.setDbType(DBType.mysql);
+        options.setPoolType(PoolType.Hikari);
+        MfPageHelper.startPage(1, 10);
         List<Object> params = new ArrayList<>();
         params.add("聊天");
         PageResult<MetaDataRow> table = new PageResult<>(QueryHandler.query(options, "select * from sso_menu where menu_name=?", params));

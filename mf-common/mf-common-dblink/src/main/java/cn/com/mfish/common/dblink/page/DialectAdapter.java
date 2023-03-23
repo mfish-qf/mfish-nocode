@@ -17,7 +17,6 @@ import java.util.Map;
  * @date: 2023/3/21 23:03
  */
 public class DialectAdapter {
-
     private static Map<DBType, Class<? extends Dialect>> dialectAliasMap = new HashMap<>();
 
     public static void registerDialectAlias(DBType dbType, Class<? extends Dialect> property) {

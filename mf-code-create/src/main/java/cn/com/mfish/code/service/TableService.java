@@ -10,22 +10,22 @@ import java.util.List;
  * @description: 表信息
  * @date: 2022/8/31 22:59
  */
-public interface MysqlTableService {
+public interface TableService {
     /**
      * 获取表字段信息
      *
-     * @param schema    库名
+     * @param connectId    数据库连接ID
      * @param tableName 表名
      * @return
      */
-    List<FieldInfo> getColumns(String schema, String tableName);
+    List<FieldInfo> getColumns(String connectId, String tableName);
 
     /**
      * 获取表信息
      *
-     * @param schema    库名
+     * @param connectId    数据库连接ID
      * @param tableName 表名
      * @return
      */
-    TableInfo getTableInfo(String schema, String tableName);
+    TableInfo getTableInfo(String connectId, String tableName);
 }

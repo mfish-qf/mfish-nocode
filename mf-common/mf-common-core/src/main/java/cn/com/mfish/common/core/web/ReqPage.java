@@ -1,4 +1,4 @@
-package cn.com.mfish.common.web.page;
+package cn.com.mfish.common.core.web;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

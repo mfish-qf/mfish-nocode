@@ -18,6 +18,7 @@ import java.util.List;
 @Accessors(chain = true)
 @ApiModel("分页查询结果")
 public class PageResult<T> implements Serializable {
+
     @ApiModelProperty("第几页")
     private int pageNum;
     @ApiModelProperty("每页条数")
@@ -28,6 +29,10 @@ public class PageResult<T> implements Serializable {
     private long total;
     @ApiModelProperty("数据结果")
     private List<T> list;
+
+    public PageResult(){
+
+    }
 
     /**
      * 通过pageHelper中的pageInfo进行包装

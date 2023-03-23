@@ -14,7 +14,7 @@ import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.service.TokenService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
-import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;

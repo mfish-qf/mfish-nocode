@@ -4,9 +4,10 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.web.page.ReqPage;
-import cn.com.mfish.sys.entity.DbConnect;
-import cn.com.mfish.sys.req.ReqDbConnect;
+import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.sys.api.entity.DbConnect;
+import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.service.DbConnectService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -127,12 +128,11 @@ public class DbConnectController {
      * @param id 唯一ID
      * @return 返回数据库连接对象
      */
-    @ApiOperation("数据库连接-通过id查询")
+    @ApiOperation("数据库连接-通过id查询(接口只允许内部访问)")
     @GetMapping("/{id}")
+    @InnerUser
     public Result<DbConnect> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        DbConnect dbConnect = dbConnectService.getById(id);
-        dbConnect.setPassword(null);
-        return Result.ok(dbConnect, "数据库连接-查询成功!");
+        return dbConnectService.queryById(id);
     }
 
     @Log(title = "测试数据库连接", operateType = OperateType.OTHER)

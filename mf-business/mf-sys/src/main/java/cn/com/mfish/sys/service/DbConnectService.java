@@ -1,7 +1,7 @@
 package cn.com.mfish.sys.service;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.sys.entity.DbConnect;
+import cn.com.mfish.sys.api.entity.DbConnect;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -12,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface DbConnectService extends IService<DbConnect> {
     Result<Boolean> testConnect(DbConnect dbConnect);
+    Result<DbConnect> queryById(String id);
 }

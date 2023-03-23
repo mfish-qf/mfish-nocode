@@ -9,7 +9,7 @@ import com.github.pagehelper.page.PageMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @description: 翻页查询
@@ -21,6 +21,10 @@ public class MfPageHelper extends PageMethod implements Dialect {
 
     public void initAdapter(DataSourceOptions<?> dataSourceOptions) {
         dialectAdapter.initDelegateDialect(dataSourceOptions);
+    }
+
+    protected DialectAdapter getDialectAdapter() {
+        return dialectAdapter;
     }
 
     @Override
@@ -64,15 +68,6 @@ public class MfPageHelper extends PageMethod implements Dialect {
     }
 
     @Override
-    public MetaDataTable afterPage(MetaDataTable pageList) {
-        AbstractDialect delegate = dialectAdapter.getDelegate();
-        if (delegate != null) {
-            return delegate.afterPage(pageList);
-        }
-        return pageList;
-    }
-
-    @Override
     public void afterAll() {
         AbstractDialect delegate = dialectAdapter.getDelegate();
         if (delegate != null) {
@@ -80,6 +75,15 @@ public class MfPageHelper extends PageMethod implements Dialect {
             dialectAdapter.clearDelegate();
         }
         clearPage();
+    }
+
+    @Override
+    public <T extends Collection> T afterPage(T pageList) {
+        AbstractDialect delegate = getDialectAdapter().getDelegate();
+        if (delegate != null) {
+            return delegate.afterPage(pageList);
+        }
+        return pageList;
     }
 
     /**
@@ -104,7 +108,7 @@ public class MfPageHelper extends PageMethod implements Dialect {
      * @param <T>      泛型
      * @return
      */
-    public <T> List<T> query(BoundSql boundSql, Class<T> cls) {
+    public <T> Page<T> query(BoundSql boundSql, Class<T> cls) {
         AbstractDialect delegate = dialectAdapter.getDelegate();
         if (delegate == null) {
             return null;

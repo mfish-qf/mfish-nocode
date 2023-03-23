@@ -5,6 +5,7 @@ import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -80,6 +81,126 @@ public class QueryHandler {
     }
 
     /**
+     * 查询数据 通过MfPageHelper.start进行分页
+     *
+     * @param dataSourceOptions 连接属性
+     * @param strSql            无参数sql
+     * @return
+     */
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, Class<T> cls) {
+        return queryT(dataSourceOptions, strSql, null, null, cls);
+    }
+
+    /**
+     * 查询数据 通过MfPageHelper.start进行分页
+     *
+     * @param dataSourceOptions 连接属性
+     * @param strSql            sql
+     * @param params            参数
+     * @return
+     */
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<Object> params, Class<T> cls) {
+        return queryT(dataSourceOptions, new BoundSql(strSql, params), null, cls);
+    }
+
+    /**
+     * 查询数据通过RowBounds进行分页
+     * 如果存在MfPageHelper.start优先使用MfPageHelper.start分页
+     *
+     * @param dataSourceOptions 连接属性
+     * @param strSql            无参sql
+     * @param rowBounds         分页参数
+     * @return
+     */
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, RowBounds rowBounds, Class<T> cls) {
+        return queryT(dataSourceOptions, strSql, null, rowBounds, cls);
+    }
+
+    /**
+     * 查询数据通过RowBounds进行分页
+     * 如果存在MfPageHelper.start优先使用MfPageHelper.start分页
+     *
+     * @param dataSourceOptions 连接属性
+     * @param strSql            sql
+     * @param params            参数列表
+     * @param rowBounds         分页参数
+     * @return
+     */
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<Object> params, RowBounds rowBounds, Class<T> cls) {
+        return queryT(dataSourceOptions, new BoundSql(strSql, params), rowBounds, cls);
+    }
+
+    /**
+     * 查询数据 通过MfPageHelper.start进行分页
+     *
+     * @param dataSourceOptions 连接属性
+     * @param boundSql          sql包装类
+     * @return
+     */
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, Class<T> cls) {
+        return queryT(dataSourceOptions, boundSql, null, cls);
+    }
+
+    /**
+     * 分页处理
+     */
+    interface PageHandler {
+        /**
+         * 计数完成后处理
+         *
+         * @param <R> 类型
+         * @return
+         */
+        <R extends Page> R afterQuery();
+
+        /**
+         * 分页查询实现
+         *
+         * @param boundSql sql包装
+         * @param <R>      类型
+         * @return
+         */
+        <R extends Page> R pQuery(BoundSql boundSql);
+
+        /**
+         * 直接查询实现
+         *
+         * @param boundSql sql包装
+         * @param <R>      类型
+         * @return
+         */
+        <R extends Page> R dQuery(BoundSql boundSql);
+    }
+
+    /**
+     * 查询数据通过RowBounds进行分页
+     * 如果存在MfPageHelper.start优先使用MfPageHelper.start分页
+     *
+     * @param dataSourceOptions
+     * @param boundSql
+     * @param rowBounds
+     * @return
+     */
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, RowBounds rowBounds, Class<T> cls) {
+        return query(dataSourceOptions, boundSql, rowBounds, new PageHandler() {
+            @Override
+            public Page<T> afterQuery() {
+                return new Page<>();
+            }
+
+            @Override
+            public Page<T> pQuery(BoundSql boundSql) {
+                return pageQuery(boundSql, cls);
+            }
+
+            @Override
+            public Page<T> dQuery(BoundSql boundSql) {
+                return pageHelper.query(boundSql, cls);
+            }
+        });
+    }
+
+    /**
      * 查询数据通过RowBounds进行分页
      * 如果存在MfPageHelper.start优先使用MfPageHelper.start分页
      *
@@ -89,8 +210,27 @@ public class QueryHandler {
      * @return
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, RowBounds rowBounds) {
+        return query(dataSourceOptions, boundSql, rowBounds, new PageHandler() {
+            @Override
+            public MetaDataTable pQuery(BoundSql boundSql) {
+                return pageQuery(boundSql);
+            }
+
+            @Override
+            public MetaDataTable dQuery(BoundSql boundSql) {
+                return pageHelper.query(boundSql);
+            }
+
+            @Override
+            public MetaDataTable afterQuery() {
+                return new MetaDataTable();
+            }
+        });
+    }
+
+    private static <R extends Page> R query(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, RowBounds rowBounds, PageHandler pageHandler) {
         try {
-            MetaDataTable resultList = null;
+            R resultList = null;
             //调用方法判断是否需要进行分页，如果不需要，直接返回结果
             if (!pageHelper.skip(dataSourceOptions, rowBounds)) {
                 //判断是否需要进行 count 查询
@@ -100,12 +240,12 @@ public class QueryHandler {
                     //处理查询总数，返回 true 时继续分页查询，false 时直接返回
                     if (!pageHelper.afterCount(count)) {
                         //当查询总数为 0 时，直接返回空的结果
-                        return pageHelper.afterPage(new MetaDataTable());
+                        return pageHandler.afterQuery();
                     }
                 }
-                resultList = pageQuery(boundSql);
+                resultList = pageHandler.pQuery(boundSql);
             } else {
-                resultList = pageHelper.query(boundSql);
+                resultList = pageHandler.dQuery(boundSql);
             }
             return pageHelper.afterPage(resultList);
         } finally {
@@ -167,7 +307,7 @@ public class QueryHandler {
      * @param <T>      反射类型
      * @return
      */
-    private static <T> List<T> pageQuery(BoundSql boundSql, Class<T> cls) {
+    private static <T> Page<T> pageQuery(BoundSql boundSql, Class<T> cls) {
         return pageQuery(boundSql, boundSql1 -> pageHelper.query(boundSql1, cls));
     }
 

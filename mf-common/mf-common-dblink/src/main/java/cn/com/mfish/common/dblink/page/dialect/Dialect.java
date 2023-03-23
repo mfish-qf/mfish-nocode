@@ -1,9 +1,10 @@
 package cn.com.mfish.common.dblink.page.dialect;
 
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import org.apache.ibatis.session.RowBounds;
+
+import java.util.Collection;
 
 /**
  * @description: 分页方言
@@ -63,7 +64,7 @@ public interface Dialect {
      * @param pageList        分页查询结果
      * @return
      */
-    MetaDataTable afterPage(MetaDataTable pageList);
+    <T extends Collection> T afterPage(T pageList);
 
     /**
      * 完成所有任务后

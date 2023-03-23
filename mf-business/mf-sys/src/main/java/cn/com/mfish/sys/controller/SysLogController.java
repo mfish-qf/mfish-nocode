@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.req.ReqSysLog;
 import cn.com.mfish.sys.service.SysLogService;

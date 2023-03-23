@@ -3,6 +3,7 @@ package cn.com.mfish.common.dblink.query;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
+import cn.com.mfish.common.dblink.common.DataUtils;
 import cn.com.mfish.common.dblink.datatable.MetaDataHeader;
 import cn.com.mfish.common.dblink.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dblink.datatable.MetaDataRow;
@@ -11,6 +12,7 @@ import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.TargetType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
 import cn.com.mfish.common.dblink.page.BoundSql;
+import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -59,7 +61,7 @@ public class BaseQuery {
      * @param <T>
      * @return
      */
-    public <T> List<T> query(BoundSql boundSql, Class<T> cls) {
+    public <T> Page<T> query(BoundSql boundSql, Class<T> cls) {
         return query(boundSql, rs -> {
             try {
                 return changeT(rs, cls);
@@ -81,21 +83,25 @@ public class BaseQuery {
      * @throws InstantiationException 反射异常
      * @throws IllegalAccessException 反射异常
      */
-    private <T> List<T> changeT(final ResultSet rs, Class<T> cls) throws SQLException, InstantiationException, IllegalAccessException {
+    private <T> Page<T> changeT(final ResultSet rs, Class<T> cls) throws SQLException, InstantiationException, IllegalAccessException {
         final ResultSetMetaData metaData = rs.getMetaData();
         List<Field> fields = Utils.getAllFields(cls);
-        List<T> list = new ArrayList<>();
+        Page<T> list = new Page<>();
         while (rs.next()) {
             T t = cls.newInstance();
             for (Field field : fields) {
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                    String columnName = StringUtils.toCamelCase(metaData.getColumnName(i));
+                    String columnName = StringUtils.toCamelCase(metaData.getColumnLabel(i));
                     if (!field.getName().equals(columnName)) {
                         continue;
                     }
                     String type = rs.getMetaData().getColumnTypeName(i);
                     Object columnValue = formatValue(type, rs.getObject(i));
                     field.setAccessible(true);
+                    //数据库中是数字类型，字段类型为boolean时强制转换为boolean
+                    if (field.getType().getTypeName().equals("java.lang.Boolean") && columnValue instanceof Number) {
+                        columnValue = DataUtils.numCompare(columnValue, 0) > 0 ? true : false;
+                    }
                     field.set(t, columnValue);
                     break;
                 }

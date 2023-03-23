@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * @author: mfish
- * @description: 内部服务相互调用
- * @date: 2021/12/3 11:16
+ * @description: 标记为内部接口
+ * @date: 2021/12/3 20:16
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

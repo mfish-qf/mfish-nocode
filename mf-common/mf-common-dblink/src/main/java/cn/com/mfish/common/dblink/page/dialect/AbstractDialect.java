@@ -1,6 +1,5 @@
 package cn.com.mfish.common.dblink.page.dialect;
 
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
@@ -8,6 +7,8 @@ import cn.com.mfish.common.dblink.query.BaseQuery;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
+
+import java.util.Collection;
 
 /**
  * @description: 抽象方言
@@ -92,7 +93,7 @@ public abstract class AbstractDialect implements Dialect {
     abstract BoundSql getPageSql(BoundSql boundSql, Page page);
 
     @Override
-    public MetaDataTable afterPage(MetaDataTable dataTable) {
+    public <T extends Collection> T afterPage(T dataTable) {
         Page page = getLocalPage();
         if (page == null) {
             return dataTable;
