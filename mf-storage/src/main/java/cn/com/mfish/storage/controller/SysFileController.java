@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.storage.entity.StorageInfo;
 import cn.com.mfish.storage.handler.StorageHandler;
 import cn.com.mfish.storage.req.ReqSysFile;

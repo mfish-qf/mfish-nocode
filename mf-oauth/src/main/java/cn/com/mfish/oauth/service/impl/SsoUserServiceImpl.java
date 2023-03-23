@@ -29,7 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,7 +87,6 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (user.getOldPassword().indexOf(user.getPassword()) >= 0) {
             return Result.fail(false, "错误:密码5次内不得循环使用");
         }
-        user.setUpdateTime(new Date());
         if (baseMapper.updateById(user) == 1) {
             //更新用户信息,刷新redis 用户缓存
             userTempCache.updateCacheInfo(user, userId);

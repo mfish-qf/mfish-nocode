@@ -1,6 +1,6 @@
 package cn.com.mfish.code.entity;
 
-import cn.com.mfish.code.common.DataType;
+import cn.com.mfish.common.dblink.enums.DataType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

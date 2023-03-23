@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.annotation.GlobalException;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.ServletUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.common.web.annotation.InnerUser;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author: mfish
  * @description: 内部用户校验切面
- * @date: 2021/12/3 11:28
+ * @date: 2021/12/3 20:28
  */
 @Aspect
 @Component
@@ -35,6 +36,9 @@ public class InnerUserAspect {
             throw new OAuthValidateException("错误:未获取到请求信息");
         }
         String source = request.getHeader(RPCConstants.REQ_ORIGIN);
+        if (StringUtils.isEmpty(source)) {
+            throw new OAuthValidateException("错误:内部接口禁止外部直接访问");
+        }
         // 内部请求验证
         if (RPCConstants.INNER.equals(source) && !innerUser.validateUser()) {
             return point.proceed();

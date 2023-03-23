@@ -12,7 +12,7 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.web.page.ReqPage;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;

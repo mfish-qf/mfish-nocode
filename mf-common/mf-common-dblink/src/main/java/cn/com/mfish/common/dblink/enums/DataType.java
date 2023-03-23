@@ -1,27 +1,49 @@
-package cn.com.mfish.code.common;
+package cn.com.mfish.common.dblink.enums;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @description: 数据类型
  * @author: mfish
- * @date: 2022/08/25 10:58
+ * @date: 2023/3/20
  */
 public enum DataType {
-    UNKNOWN("unknown"),//未知类型
-    STRING("String"),//字符类型
-    BOOLEAN("Boolean"),//布尔类型
-    INTEGER("Integer"),//整数类型
-    LONG("Long"),//整数类型
-    FLOAT("Float"),//浮点类型
-    DOUBLE("Double"),//双精度类型
-    BIGDECIMAL("BigDecimal"),//双精度类型
-    DATE("Date");//日期类型
+    UNKNOWN("unknown", SlimType.未知),//未知类型
+    STRING("String", SlimType.字符),//字符类型
+    BOOLEAN("Boolean", SlimType.布尔),//布尔类型
+    INTEGER("Integer", SlimType.数字),//整数类型
+    LONG("Long", SlimType.数字),//整数类型
+    FLOAT("Float", SlimType.数字),//浮点类型
+    DOUBLE("Double", SlimType.数字),//双精度类型
+    BIGDECIMAL("BigDecimal", SlimType.数字),//双精度类型
+    DATE("Date", SlimType.数字);//日期类型
 
+    /**
+     * 精简类型
+     */
+    public enum SlimType {
+        未知("UNKNOWN"),
+        字符("STRING"),
+        数字("NUMBER"),
+        布尔("BOOLEAN"),
+        日期("DATE");
+        private String type;
+
+        SlimType(String type) {
+            this.type = type;
+        }
+    }
+
+    /**
+     * 数据类型
+     */
     private String dataType;
+    private SlimType slimType;
 
-    DataType(String dataType) {
+    DataType(String dataType, SlimType slimType) {
         this.dataType = dataType;
+        this.slimType = slimType;
     }
 
     private static Map<String, DataType> typeMap = new HashMap<>();
@@ -56,7 +78,7 @@ public enum DataType {
         typeMap.put("TINYBLOB", DataType.STRING);
         typeMap.put("MEDIUMBLOB", DataType.STRING);
         typeMap.put("LONGBLOB", DataType.STRING);
-        typeMap.put("GEOMETRY",DataType.STRING);
+        typeMap.put("GEOMETRY", DataType.STRING);
         typeMap.put("UNDEFINED", DataType.STRING);
 
         typeMap.put("BIT", DataType.INTEGER);
@@ -66,7 +88,7 @@ public enum DataType {
         typeMap.put("TINYINT", DataType.INTEGER);
         typeMap.put("SMALLINT", DataType.INTEGER);
         typeMap.put("INTEGER", DataType.INTEGER);
-        typeMap.put("BIGINT", DataType.INTEGER);
+        typeMap.put("BIGINT", DataType.LONG);
         typeMap.put("MEDIUMINT", DataType.INTEGER);
         typeMap.put("FLOAT", DataType.FLOAT);
         typeMap.put("REAL", DataType.FLOAT);
@@ -98,13 +120,32 @@ public enum DataType {
     /**
      * 根据值获取操作条件
      *
-     * @param con
+     * @param type 类型
      * @return
      */
-    public static DataType forType(String con) {
-        if (typeMap.containsKey(con)) {
-            return typeMap.get(con);
+    public static DataType forType(String type) {
+        if (typeMap.containsKey(type)) {
+            return typeMap.get(type);
         }
         return DataType.UNKNOWN;
+    }
+
+    /**
+     * 根据值获取精简数据类型
+     *
+     * @param type 类型
+     * @return
+     */
+    public static SlimType forSlimType(String type) {
+        return forType(type).slimType;
+    }
+
+    /**
+     * 获取精简类型
+     *
+     * @return
+     */
+    public SlimType getSlimType() {
+        return this.slimType;
     }
 }

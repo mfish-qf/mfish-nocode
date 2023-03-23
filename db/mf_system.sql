@@ -162,3 +162,26 @@ CREATE TABLE `sys_config` (
                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                               PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='系统皮肤及配置';
+
+-- ----------------------------
+-- Table structure for sys_db_connect
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_db_connect`;
+CREATE TABLE `sys_db_connect` (
+                                  `id` varchar(36) CHARACTER SET utf8mb4 NOT NULL COMMENT '库信息id',
+                                  `db_title` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '数据库标题',
+                                  `db_name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '数据库名',
+                                  `db_type` tinyint(5) DEFAULT NULL COMMENT '数据库类型（0 mysql 1 oracle 2 pgsql）',
+                                  `pool_type` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '连接池类型(Druid,Hikari)',
+                                  `host` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '主机',
+                                  `port` varchar(10) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '端口号',
+                                  `username` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '数据库登录用户名',
+                                  `password` varchar(300) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '数据库登录密码',
+                                  `options` varchar(1000) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '数据源配置项(JSON格式）',
+                                  `remark` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '备注',
+                                  `create_by` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '创建人',
+                                  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                  `update_by` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '修改人',
+                                  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据库连接信息';

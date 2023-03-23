@@ -37,10 +37,11 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <!-- oracle驱动 -->
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc14</artifactId>
-        </dependency>
+        <!-- 需要引入oracle时，下面引用。自己本地导入ojdbc包 -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.oracle</groupId>-->
+        <!--            <artifactId>ojdbc14</artifactId>-->
+        <!--        </dependency>-->
         <!-- postgresql驱动 -->
         <dependency>
             <groupId>org.postgresql</groupId>

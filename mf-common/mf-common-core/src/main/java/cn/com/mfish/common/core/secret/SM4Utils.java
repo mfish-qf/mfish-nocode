@@ -1,5 +1,6 @@
 package cn.com.mfish.common.core.secret;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.bouncycastle.util.encoders.Hex;
@@ -17,6 +18,7 @@ import java.util.Arrays;
  * @author: mfish
  * @date: 2023/3/9
  */
+@Slf4j
 public class SM4Utils {
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -92,6 +94,7 @@ public class SM4Utils {
             cipherText = ByteUtils.toHexString(cipherArray);
             return cipherText;
         } catch (Exception e) {
+            log.error("ECB加密异常" + e.getMessage(), e);
             return paramStr;
         }
     }
@@ -133,7 +136,7 @@ public class SM4Utils {
             // byte[]-->String
             decryptStr = new String(srcData, ENCODING);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("ECB解密异常" + e.getMessage(), e);
         }
         return decryptStr;
     }

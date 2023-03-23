@@ -5,7 +5,7 @@ import cn.com.mfish.code.entity.CodeInfo;
 import cn.com.mfish.code.entity.FieldInfo;
 import cn.com.mfish.code.entity.TableInfo;
 import cn.com.mfish.code.req.ReqCode;
-import cn.com.mfish.code.service.MysqlTableService;
+import cn.com.mfish.code.service.TableService;
 import cn.com.mfish.code.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -39,7 +39,7 @@ public class FreemarkerUtils {
     @Resource
     FreemarkerProperties freemarkerProperties;
     @Resource
-    MysqlTableService mysqlTableService;
+    TableService tableService;
     @Value("${code.savePath}")
     String savePath;
 
@@ -50,7 +50,7 @@ public class FreemarkerUtils {
      * @return
      */
     private ReqCode initReqCode(ReqCode reqCode) {
-        if (StringUtils.isEmpty(reqCode.getSchema())) {
+        if (StringUtils.isEmpty(reqCode.getConnectId())) {
             throw new MyRuntimeException("错误:库名不允许为空");
         }
         if (StringUtils.isEmpty(reqCode.getTableName())) {
@@ -61,7 +61,7 @@ public class FreemarkerUtils {
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
-            TableInfo tableInfo = mysqlTableService.getTableInfo(reqCode.getSchema(), reqCode.getTableName());
+            TableInfo tableInfo = tableService.getTableInfo(reqCode.getConnectId(), reqCode.getTableName());
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }
@@ -93,12 +93,16 @@ public class FreemarkerUtils {
         codeInfo.setPackageName(reqCode.getPackageName());
         codeInfo.setEntityName(reqCode.getEntityName());
         codeInfo.setApiPrefix(reqCode.getApiPrefix());
-        List<FieldInfo> list = mysqlTableService.getColumns(reqCode.getSchema(), reqCode.getTableName());
+        List<FieldInfo> list = tableService.getColumns(reqCode.getConnectId(), reqCode.getTableName());
         String idType = "";
         //缺省字段字段不需要生成,获取列时过滤掉
         for (int i = 0; i < list.size(); i++) {
             FieldInfo fieldInfo = list.get(i);
-            String fieldName = fieldInfo.getFieldName().toLowerCase(Locale.ROOT);
+            String fieldName = fieldInfo.getFieldName();
+            if (StringUtils.isEmpty(fieldName)) {
+                continue;
+            }
+            fieldName = fieldName.toLowerCase(Locale.ROOT);
             if (DefaultField.values.contains(fieldName)) {
                 //设置唯一ID类型
                 if ("id".equals(fieldName)) {

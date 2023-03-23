@@ -1,5 +1,6 @@
 package cn.com.mfish.common.core.secret;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.digests.SM3Digest;
@@ -23,6 +24,7 @@ import java.security.spec.ECGenParameterSpec;
  * @author: mfish
  * @date: 2023/3/9 17:35
  */
+@Slf4j
 public class SM2Utils {
     /**
      * 生成 SM2 公私钥对
@@ -117,7 +119,7 @@ public class SM2Utils {
             byte[] in = data.getBytes();
             arrayOfBytes = sm2Engine.processBlock(in, 0, in.length);
         } catch (Exception e) {
-            System.out.println("SM2加密时出现异常:" + e.getMessage());
+            log.error("SM2加密时出现异常:" + e.getMessage(), e);
         }
         return Hex.toHexString(arrayOfBytes);
     }
@@ -150,7 +152,7 @@ public class SM2Utils {
             byte[] arrayOfBytes = sm2Engine.processBlock(cipherDataByte, 0, cipherDataByte.length);
             return new String(arrayOfBytes);
         } catch (Exception e) {
-            System.out.println("SM2解密时出现异常:" + e.getMessage());
+            log.error("SM2解密时出现异常:" + e.getMessage(), e);
         }
         return result;
     }
