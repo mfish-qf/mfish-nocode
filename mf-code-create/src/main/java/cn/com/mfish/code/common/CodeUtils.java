@@ -1,5 +1,6 @@
 package cn.com.mfish.code.common;
 
+import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;
@@ -23,7 +24,7 @@ public class CodeUtils {
                 .setPoolType(PoolType.getPoolType(dbConnect.getPoolType()))
                 .setUser(dbConnect.getUsername())
                 .setPassword(dbConnect.getPassword())
-                .setJdbcUrl(dbType.getJdbcUrl(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
+                .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
         return dataSourceOptions;
     }
 }

@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
@@ -43,6 +44,7 @@ public class DbConnectController {
      */
     @ApiOperation(value = "数据库连接-分页列表查询", notes = "数据库连接-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:database:query")
     public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         List<DbConnect> list = dbConnectService.list(new LambdaQueryWrapper<DbConnect>()
@@ -67,6 +69,7 @@ public class DbConnectController {
     @Log(title = "数据库连接-添加", operateType = OperateType.INSERT)
     @ApiOperation("数据库连接-添加")
     @PostMapping
+    @RequiresPermissions("sys:database:insert")
     public Result<DbConnect> add(@RequestBody DbConnect dbConnect) {
         if (dbConnectService.save(dbConnect)) {
             return Result.ok(dbConnect, "数据库连接-添加成功!");
@@ -83,6 +86,7 @@ public class DbConnectController {
     @Log(title = "数据库连接-编辑", operateType = OperateType.UPDATE)
     @ApiOperation("数据库连接-编辑")
     @PutMapping
+    @RequiresPermissions("sys:database:update")
     public Result<DbConnect> edit(@RequestBody DbConnect dbConnect) {
         if (dbConnectService.updateById(dbConnect)) {
             return Result.ok(dbConnect, "数据库连接-编辑成功!");
@@ -99,6 +103,7 @@ public class DbConnectController {
     @Log(title = "数据库连接-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation("数据库连接-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:database:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (dbConnectService.removeById(id)) {
             return Result.ok(true, "数据库连接-删除成功!");
@@ -115,6 +120,7 @@ public class DbConnectController {
     @Log(title = "数据库连接-批量删除", operateType = OperateType.DELETE)
     @ApiOperation("数据库连接-批量删除")
     @DeleteMapping("/batch")
+    @RequiresPermissions("sys:database:delete")
     public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.dbConnectService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok(true, "数据库连接-批量删除成功!");
@@ -138,6 +144,7 @@ public class DbConnectController {
     @Log(title = "测试数据库连接", operateType = OperateType.OTHER)
     @ApiOperation("测试数据库库连接")
     @PostMapping("/test")
+    @RequiresPermissions("sys:database:query")
     public Result<Boolean> testConnect(@RequestBody DbConnect dbConnect) {
         return dbConnectService.testConnect(dbConnect);
     }

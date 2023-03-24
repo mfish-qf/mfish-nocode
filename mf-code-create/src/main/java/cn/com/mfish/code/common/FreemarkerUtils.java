@@ -2,8 +2,8 @@ package cn.com.mfish.code.common;
 
 import cn.com.mfish.code.config.properties.FreemarkerProperties;
 import cn.com.mfish.code.entity.CodeInfo;
-import cn.com.mfish.code.entity.FieldInfo;
-import cn.com.mfish.code.entity.TableInfo;
+import cn.com.mfish.common.dblink.entity.FieldInfo;
+import cn.com.mfish.common.dblink.entity.TableInfo;
 import cn.com.mfish.code.req.ReqCode;
 import cn.com.mfish.code.service.TableService;
 import cn.com.mfish.code.vo.CodeVo;

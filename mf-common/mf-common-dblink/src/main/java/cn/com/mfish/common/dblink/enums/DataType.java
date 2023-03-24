@@ -1,6 +1,7 @@
 package cn.com.mfish.common.dblink.enums;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -24,10 +25,10 @@ public enum DataType {
      */
     public enum SlimType {
         未知("UNKNOWN"),
-        字符("STRING"),
-        数字("NUMBER"),
-        布尔("BOOLEAN"),
-        日期("DATE");
+        字符("string"),
+        数字("number"),
+        布尔("boolean"),
+        日期("date");
         private String type;
 
         SlimType(String type) {
@@ -124,7 +125,8 @@ public enum DataType {
      * @return
      */
     public static DataType forType(String type) {
-        if (typeMap.containsKey(type)) {
+        type = type.toUpperCase(Locale.ROOT);
+        if (typeMap.containsKey(type)){
             return typeMap.get(type);
         }
         return DataType.UNKNOWN;

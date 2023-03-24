@@ -1,7 +1,7 @@
 package cn.com.mfish.code.service;
 
-import cn.com.mfish.code.entity.FieldInfo;
-import cn.com.mfish.code.entity.TableInfo;
+import cn.com.mfish.common.dblink.entity.FieldInfo;
+import cn.com.mfish.common.dblink.entity.TableInfo;
 
 import java.util.List;
 
