@@ -39,7 +39,7 @@ public enum DBType {
     public String getDriver() {
         switch (this) {
             case oracle:
-                return "oracle.jdbc.driver.OracleDriver";
+                return "oracle.jdbc.OracleDriver";
             case postgre:
                 return "org.postgresql.Driver";
             default:

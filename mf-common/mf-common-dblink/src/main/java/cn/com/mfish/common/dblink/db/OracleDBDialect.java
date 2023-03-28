@@ -10,7 +10,7 @@ import cn.com.mfish.common.dblink.page.BoundSql;
 public class OracleDBDialect implements DBDialect {
     @Override
     public String getJdbc(String host, String port, String dbName) {
-        return "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=" + host + ")(PORT=" + port + ")))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME = " + dbName + ")))";
+        return "jdbc:oracle:thin:@//" + host + ":" + port + "/" + dbName;
     }
 
     @Override

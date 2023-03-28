@@ -43,10 +43,14 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
                 .setUser(dbConnect.getUsername())
                 .setPassword(pwd)
                 .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
-        try (Connection conn = PoolManager.getConnection(dataSourceOptions, 3000)) {
+        try {
+            Connection conn = PoolManager.getConnection(dataSourceOptions, 3000);
             return Result.ok(!conn.isClosed(), "连接成功");
         } catch (SQLException e) {
+            log.error("错误:测试连接异常", e);
             return Result.fail(false, "连接失败");
+        }finally {
+            PoolManager.release();
         }
     }
 

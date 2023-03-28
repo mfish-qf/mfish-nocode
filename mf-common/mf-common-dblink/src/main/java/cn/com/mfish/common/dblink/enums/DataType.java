@@ -24,7 +24,7 @@ public enum DataType {
      * 精简类型
      */
     public enum SlimType {
-        未知("UNKNOWN"),
+        未知("unknown"),
         字符("string"),
         数字("number"),
         布尔("boolean"),
