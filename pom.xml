@@ -55,7 +55,7 @@
         <aliyun-oss.version>3.16.0</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
-        <oracle.version>10.2.0.4.0</oracle.version>
+        <oracle.version>12.2.0.1</oracle.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -264,9 +264,10 @@
                 <version>${bcprov.version}</version>
             </dependency>
             <!-- oracle驱动 -->
+            <!--oracle连接驱动-->
             <dependency>
                 <groupId>com.oracle</groupId>
-                <artifactId>ojdbc14</artifactId>
+                <artifactId>ojdbc8</artifactId>
                 <version>${oracle.version}</version>
             </dependency>
             <dependency>

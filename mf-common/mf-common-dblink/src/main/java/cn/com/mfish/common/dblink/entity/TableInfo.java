@@ -1,4 +1,4 @@
-package cn.com.mfish.code.entity;
+package cn.com.mfish.common.dblink.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,6 +23,8 @@ public class TableInfo implements Serializable {
     private String tableName;
     @ApiModelProperty("表描述信息")
     private String tableComment;
+    @ApiModelProperty("库")
+    private String tableSchema;
     @ApiModelProperty("列信息")
     private List<FieldInfo> columns;
 }

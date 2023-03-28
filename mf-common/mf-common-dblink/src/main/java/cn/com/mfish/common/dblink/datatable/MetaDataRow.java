@@ -37,7 +37,7 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      * @return
      */
     public MetaDataRow addColumn(MetaDataHeader header, Object value) {
-        if (!headers.containsKey(DataUtils.getColName(header))) {
+        if (!headers.containsKey(DataUtils.chooseColName(header))) {
             headers.addColumn(header);
         }
         this.put(header.getColName(), value);

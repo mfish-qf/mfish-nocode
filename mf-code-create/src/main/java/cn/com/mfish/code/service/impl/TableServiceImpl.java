@@ -1,10 +1,10 @@
 package cn.com.mfish.code.service.impl;
 
 import cn.com.mfish.code.common.CodeUtils;
-import cn.com.mfish.code.dialect.CodeBuild;
-import cn.com.mfish.code.dialect.CodeBuildAdapter;
-import cn.com.mfish.code.entity.FieldInfo;
-import cn.com.mfish.code.entity.TableInfo;
+import cn.com.mfish.common.dblink.db.DBDialect;
+import cn.com.mfish.common.dblink.db.DBAdapter;
+import cn.com.mfish.common.dblink.entity.FieldInfo;
+import cn.com.mfish.common.dblink.entity.TableInfo;
 import cn.com.mfish.code.service.TableService;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
@@ -46,7 +46,7 @@ public class TableServiceImpl implements TableService {
         return list.get(0);
     }
 
-    private <T> List<T> getDbConnect(String schemaId, Class<T> cls, BiFunction<CodeBuild, String, BoundSql> function) {
+    private <T> List<T> getDbConnect(String schemaId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function) {
         Result<DbConnect> result = remoteDbConnectService.queryById(RPCConstants.INNER, schemaId);
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:获取数据库连接出错");
@@ -55,7 +55,7 @@ public class TableServiceImpl implements TableService {
         DataSourceOptions dataSourceOptions = CodeUtils.buildDataSourceOptions(dbConnect);
         //代码生成不使用连接池，强制设置为无池状态
         dataSourceOptions.setPoolType(PoolType.NoPool);
-        CodeBuild build = CodeBuildAdapter.getCodeBuild(dataSourceOptions.getDbType());
+        DBDialect build = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
         return QueryHandler.queryT(dataSourceOptions, function.apply(build, dbConnect.getDbName()), cls);
     }
 }

@@ -33,7 +33,7 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
      * @param header 列头
      */
     public void addColumn(MetaDataHeader header) {
-        String colName = DataUtils.getColName(0, DataUtils.getColName(header), this.keySet());
+        String colName = DataUtils.calcColName(0, DataUtils.chooseColName(header), this.keySet());
         if (StringUtils.isEmpty(colName)) {
             throw new MyRuntimeException(Constant.EmptyColNameException);
         }

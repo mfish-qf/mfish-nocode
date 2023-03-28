@@ -3,6 +3,7 @@ package cn.com.mfish.sys.service.impl;
 import cn.com.mfish.common.core.secret.SM2Utils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;
@@ -41,11 +42,15 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
                 .setPoolType(PoolType.NoPool)
                 .setUser(dbConnect.getUsername())
                 .setPassword(pwd)
-                .setJdbcUrl(dbType.getJdbcUrl(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
-        try (Connection conn = PoolManager.getConnection(dataSourceOptions, 3000)) {
+                .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
+        try {
+            Connection conn = PoolManager.getConnection(dataSourceOptions, 3000);
             return Result.ok(!conn.isClosed(), "连接成功");
         } catch (SQLException e) {
+            log.error("错误:测试连接异常", e);
             return Result.fail(false, "连接失败");
+        }finally {
+            PoolManager.release();
         }
     }
 

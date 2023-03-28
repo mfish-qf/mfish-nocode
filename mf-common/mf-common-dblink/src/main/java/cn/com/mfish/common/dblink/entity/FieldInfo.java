@@ -1,4 +1,4 @@
-package cn.com.mfish.code.entity;
+package cn.com.mfish.common.dblink.entity;
 
 import cn.com.mfish.common.dblink.enums.DataType;
 import io.swagger.annotations.ApiModel;
@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Locale;
 
 /**
  * @author: mfish
@@ -22,18 +21,18 @@ public class FieldInfo implements Serializable {
     private String fieldName;
     @ApiModelProperty("是否主键 true是 false否")
     private Boolean isPrimary = false;
-    @ApiModelProperty("字段类型")
-    private String type = "String";
+    @ApiModelProperty("JAVA字段类型")
+    private String type;
     @ApiModelProperty("数据库字段类型")
     private String dbType = "VARCHAR";
+    @ApiModelProperty("列类型 格式varchar(20)")
+    private String columnType;
     @ApiModelProperty("是否允许为空 true允许 false不允许")
     private Boolean nullAble = true;
     @ApiModelProperty("字段描述")
     private String comment = "";
 
-    public FieldInfo setDbType(String dbType) {
-        this.dbType = dbType.toUpperCase(Locale.ROOT);
-        this.type = DataType.forType(this.dbType).getValue();
-        return this;
+    public String getType(){
+        return DataType.forType(this.dbType).getValue();
     }
 }

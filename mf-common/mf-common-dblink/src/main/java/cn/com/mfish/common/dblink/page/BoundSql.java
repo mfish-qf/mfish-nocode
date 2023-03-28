@@ -22,6 +22,10 @@ public class BoundSql {
     @ApiModelProperty("查询参数")
     private List<Object> params;
 
+    public BoundSql() {
+        this("");
+    }
+
     /**
      * SQL包装类构造函数
      *
