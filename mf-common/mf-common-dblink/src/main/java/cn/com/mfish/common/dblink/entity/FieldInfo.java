@@ -1,5 +1,6 @@
 package cn.com.mfish.common.dblink.entity;
 
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.dblink.enums.DataType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,15 +25,22 @@ public class FieldInfo implements Serializable {
     @ApiModelProperty("JAVA字段类型")
     private String type;
     @ApiModelProperty("数据库字段类型")
-    private String dbType = "VARCHAR";
+    private String dbType;
     @ApiModelProperty("列类型 格式varchar(20)")
     private String columnType;
     @ApiModelProperty("是否允许为空 true允许 false不允许")
     private Boolean nullAble = true;
     @ApiModelProperty("字段描述")
-    private String comment = "";
+    private String comment;
 
-    public String getType(){
+    public String getType() {
         return DataType.forType(this.dbType).getValue();
+    }
+
+    public String getComment() {
+        if (StringUtils.isEmpty(this.comment)) {
+            return "";
+        }
+        return this.comment;
     }
 }
