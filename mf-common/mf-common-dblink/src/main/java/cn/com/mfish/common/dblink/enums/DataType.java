@@ -29,7 +29,12 @@ public enum DataType {
         数字("number"),
         布尔("boolean"),
         日期("date");
+
         private String type;
+
+        public String getValue() {
+            return type;
+        }
 
         SlimType(String type) {
             this.type = type;
@@ -49,6 +54,9 @@ public enum DataType {
 
     private static Map<String, DataType> typeMap = new HashMap<>();
 
+    /**
+     * 数据库数据类型转换java类型(部分类型不完全准确)
+     */
     static {
         for (DataType con : DataType.values()) {
             typeMap.put(con.dataType, con);
@@ -126,7 +134,7 @@ public enum DataType {
      */
     public static DataType forType(String type) {
         type = type.toUpperCase(Locale.ROOT);
-        if (typeMap.containsKey(type)){
+        if (typeMap.containsKey(type)) {
             return typeMap.get(type);
         }
         return DataType.UNKNOWN;
