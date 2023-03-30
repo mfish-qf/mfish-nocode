@@ -7,6 +7,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.AsyncSaveLog;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -106,7 +107,13 @@ public class LogAspect {
 
     @AfterThrowing(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", throwing = "e")
     public void doAfterThrowing(Throwable e) {
-        setReturn(1, e.getMessage());
+        StackTraceElement[] elements = e.getStackTrace();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("error", e.toString());
+        if (elements.length > 0) {
+            jsonObject.put("stack", elements[0].toString());
+        }
+        setReturn(1, jsonObject.toJSONString());
     }
 
     private void setReturn(int state, String remark) {
