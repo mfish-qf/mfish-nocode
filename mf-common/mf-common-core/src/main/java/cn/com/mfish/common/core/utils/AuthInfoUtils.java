@@ -112,6 +112,9 @@ public class AuthInfoUtils {
      * @return
      */
     public static boolean isContainSuperAdmin(List<String> roleIds) {
+        if(roleIds == null){
+            return false;
+        }
         return roleIds.stream().anyMatch((roleId) -> isSuperAdmin(roleId));
     }
 }
