@@ -3,6 +3,8 @@ package cn.com.mfish.sys.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.sys.api.entity.FieldInfo;
+import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
@@ -10,11 +12,10 @@ import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.service.DbConnectService;
+import cn.com.mfish.sys.service.TableService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,8 @@ import java.util.List;
 public class DbConnectController {
     @Resource
     private DbConnectService dbConnectService;
+    @Resource
+    private TableService tableService;
 
     /**
      * 分页列表查询
@@ -58,6 +61,28 @@ public class DbConnectController {
             connect.setPassword(null);
         }
         return Result.ok(new PageResult<>(list), "数据库连接-查询成功!");
+    }
+
+    @ApiOperation("获取数据库表信息")
+    @GetMapping("/tables")
+    @RequiresPermissions("sys:database:query")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+    })
+    public Result<List<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName) {
+        return Result.ok(tableService.getTableList(connectId, tableName), "获取表列表成功");
+    }
+
+    @ApiOperation("获取表字段信息")
+    @GetMapping("/fields")
+    @RequiresPermissions("sys:database:query")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+    })
+    public Result<List<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName) {
+        return Result.ok(tableService.getFieldList(connectId, tableName), "获取表列表成功");
     }
 
     /**

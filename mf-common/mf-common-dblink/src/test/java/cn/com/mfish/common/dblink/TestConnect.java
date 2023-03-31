@@ -7,7 +7,7 @@ import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.dbpool.PoolWrapper;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.DBType;
-import cn.com.mfish.common.dblink.enums.DataType;
+import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.enums.TargetType;
 import cn.com.mfish.common.dblink.manger.PoolManager;

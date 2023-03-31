@@ -2,8 +2,8 @@ package cn.com.mfish.code.test;
 
 import cn.com.mfish.code.common.FreemarkerUtils;
 import cn.com.mfish.code.entity.CodeInfo;
-import cn.com.mfish.common.dblink.entity.FieldInfo;
-import cn.com.mfish.common.dblink.entity.TableInfo;
+import cn.com.mfish.sys.api.entity.FieldInfo;
+import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

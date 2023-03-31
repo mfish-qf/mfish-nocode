@@ -1,6 +1,6 @@
 package cn.com.mfish.common.dblink.datatable;
 
-import cn.com.mfish.common.dblink.enums.DataType;
+import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.dblink.enums.TargetType;
 import lombok.Data;
 import lombok.experimental.Accessors;
