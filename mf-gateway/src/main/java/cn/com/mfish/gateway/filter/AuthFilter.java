@@ -1,7 +1,6 @@
 package cn.com.mfish.gateway.filter;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
-import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
@@ -40,19 +39,15 @@ public class AuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String url = request.getURI().getPath();
-        // 跳过不需要验证的路径
-        if (StringUtils.matches(url, ignoreWhiteProperties.getWhites())) {
-            return chain.filter(exchange);
-        }
-        String accessToken = AuthInfoUtils.getAccessToken(request);
-        if (StringUtils.isEmpty(accessToken)) {
-            return unauthorizedResponse(exchange, "错误:令牌token不允许为空");
-        }
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
         GatewayUtils.removeHeader(mutate, RPCConstants.REQ_ORIGIN);
         Result result = tokenValidator.validator(request);
         if (!result.isSuccess()) {
+            // 如果校验不成功，但该页面在白名单内则直接跳过
+            if (StringUtils.matches(url, ignoreWhiteProperties.getWhites())) {
+                return chain.filter(exchange);
+            }
             return unauthorizedResponse(exchange, result.getMsg());
         }
         if (result.getData() instanceof WeChatToken) {
