@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
  * @description: 远程数据连接失败处理
  * @author: mfish
@@ -37,12 +35,12 @@ public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectS
             }
 
             @Override
-            public Result<List<TableInfo>> getTableList(String connectId, String tableName) {
+            public Result<PageResult<TableInfo>> getTableList(String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询数据库表列表出错");
             }
 
             @Override
-            public Result<List<FieldInfo>> getFieldList(String connectId, String tableName) {
+            public Result<PageResult<FieldInfo>> getFieldList(String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询表字段列表出错");
             }
         };

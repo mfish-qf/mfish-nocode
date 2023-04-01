@@ -90,7 +90,7 @@ public abstract class AbstractDialect implements Dialect {
         return getPageSql(boundSql, page);
     }
 
-    abstract BoundSql getPageSql(BoundSql boundSql, Page page);
+    protected abstract BoundSql getPageSql(BoundSql boundSql, Page page);
 
     @Override
     public <T extends Collection> T afterPage(T dataTable) {

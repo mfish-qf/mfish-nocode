@@ -6,6 +6,8 @@ import cn.com.mfish.code.req.ReqCode;
 import cn.com.mfish.code.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
@@ -62,14 +64,14 @@ public class FreemarkerUtils {
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
-            Result<List<TableInfo>> result = remoteDbConnectService.getTableList(reqCode.getConnectId(), reqCode.getTableName());
+            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
             if (!result.isSuccess()) {
                 throw new MyRuntimeException(result.getMsg());
             }
-            if (result.getData() == null || result.getData().isEmpty()) {
+            if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
                 throw new MyRuntimeException("错误:未获取到表信息");
             }
-            TableInfo tableInfo = result.getData().get(0);
+            TableInfo tableInfo = result.getData().getList().get(0);
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }
@@ -101,14 +103,14 @@ public class FreemarkerUtils {
         codeInfo.setPackageName(reqCode.getPackageName());
         codeInfo.setEntityName(reqCode.getEntityName());
         codeInfo.setApiPrefix(reqCode.getApiPrefix());
-        Result<List<FieldInfo>> result = remoteDbConnectService.getFieldList(reqCode.getConnectId(), reqCode.getTableName());
+        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
         if (!result.isSuccess()) {
             throw new MyRuntimeException(result.getMsg());
         }
-        if (result.getData() == null || result.getData().isEmpty()) {
+        if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
             throw new MyRuntimeException("错误:未获取到字段信息");
         }
-        List<FieldInfo> list = result.getData();
+        List<FieldInfo> list = result.getData().getList();
         String idType = "";
         //缺省字段字段不需要生成,获取列时过滤掉
         for (int i = 0; i < list.size(); i++) {

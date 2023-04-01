@@ -2,14 +2,15 @@ package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.sys.api.entity.FieldInfo;
-import cn.com.mfish.sys.api.entity.TableInfo;
-import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dblink.page.MfPageHelper;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.DbConnect;
+import cn.com.mfish.sys.api.entity.FieldInfo;
+import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.service.DbConnectService;
 import cn.com.mfish.sys.service.TableService;
@@ -70,8 +71,9 @@ public class DbConnectController {
             @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
     })
-    public Result<List<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName) {
-        return Result.ok(tableService.getTableList(connectId, tableName), "获取表列表成功");
+    public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName)), "获取表列表成功");
     }
 
     @ApiOperation("获取表字段信息")
@@ -81,8 +83,9 @@ public class DbConnectController {
             @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
     })
-    public Result<List<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName) {
-        return Result.ok(tableService.getFieldList(connectId, tableName), "获取表列表成功");
+    public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName)), "获取表列表成功");
     }
 
     /**
