@@ -15,7 +15,7 @@ public class OracleDialect extends AbstractDialect {
     }
 
     @Override
-    BoundSql getPageSql(BoundSql boundSql, Page page) {
+    protected BoundSql getPageSql(BoundSql boundSql, Page page) {
         StringBuilder sqlBuilder = new StringBuilder(boundSql.getSql().length() + 120);
         sqlBuilder.append("SELECT * FROM ( ");
         sqlBuilder.append(" SELECT TMP_PAGE.*, ROWNUM ROWNUM_ FROM (");

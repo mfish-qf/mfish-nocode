@@ -15,7 +15,7 @@ public class MysqlDialect extends AbstractDialect {
     }
 
     @Override
-    BoundSql getPageSql(BoundSql boundSql, Page page) {
+    protected BoundSql getPageSql(BoundSql boundSql, Page page) {
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT * FROM (" + boundSql.getSql());
         if (page.getStartRow() == 0) {

@@ -1,7 +1,7 @@
-package cn.com.mfish.common.dblink.entity;
+package cn.com.mfish.sys.api.entity;
 
+import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.dblink.enums.DataType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

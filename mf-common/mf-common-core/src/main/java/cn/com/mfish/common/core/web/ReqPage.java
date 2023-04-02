@@ -21,21 +21,23 @@ public class ReqPage implements Serializable {
         return pageNum;
     }
 
-    public void setPageNum(Integer pageNum) {
+    public ReqPage setPageNum(Integer pageNum) {
         if (pageNum == null) {
-            return;
+            return this;
         }
         this.pageNum = pageNum;
+        return this;
     }
 
     public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(Integer pageSize) {
+    public ReqPage setPageSize(Integer pageSize) {
         if (pageNum == null) {
-            return;
+            return this;
         }
         this.pageSize = pageSize;
+        return this;
     }
 }

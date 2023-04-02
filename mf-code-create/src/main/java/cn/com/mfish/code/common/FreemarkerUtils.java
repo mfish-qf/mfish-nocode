@@ -2,13 +2,16 @@ package cn.com.mfish.code.common;
 
 import cn.com.mfish.code.config.properties.FreemarkerProperties;
 import cn.com.mfish.code.entity.CodeInfo;
-import cn.com.mfish.common.dblink.entity.FieldInfo;
-import cn.com.mfish.common.dblink.entity.TableInfo;
 import cn.com.mfish.code.req.ReqCode;
-import cn.com.mfish.code.service.TableService;
 import cn.com.mfish.code.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.sys.api.entity.FieldInfo;
+import cn.com.mfish.sys.api.entity.TableInfo;
+import cn.com.mfish.sys.api.remote.RemoteDbConnectService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -39,7 +42,7 @@ public class FreemarkerUtils {
     @Resource
     FreemarkerProperties freemarkerProperties;
     @Resource
-    TableService tableService;
+    RemoteDbConnectService remoteDbConnectService;
     @Value("${code.savePath}")
     String savePath;
 
@@ -61,7 +64,14 @@ public class FreemarkerUtils {
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
-            TableInfo tableInfo = tableService.getTableInfo(reqCode.getConnectId(), reqCode.getTableName());
+            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+            if (!result.isSuccess()) {
+                throw new MyRuntimeException(result.getMsg());
+            }
+            if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
+                throw new MyRuntimeException("错误:未获取到表信息");
+            }
+            TableInfo tableInfo = result.getData().getList().get(0);
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }
@@ -93,7 +103,14 @@ public class FreemarkerUtils {
         codeInfo.setPackageName(reqCode.getPackageName());
         codeInfo.setEntityName(reqCode.getEntityName());
         codeInfo.setApiPrefix(reqCode.getApiPrefix());
-        List<FieldInfo> list = tableService.getColumns(reqCode.getConnectId(), reqCode.getTableName());
+        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+        if (!result.isSuccess()) {
+            throw new MyRuntimeException(result.getMsg());
+        }
+        if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
+            throw new MyRuntimeException("错误:未获取到字段信息");
+        }
+        List<FieldInfo> list = result.getData().getList();
         String idType = "";
         //缺省字段字段不需要生成,获取列时过滤掉
         for (int i = 0; i < list.size(); i++) {

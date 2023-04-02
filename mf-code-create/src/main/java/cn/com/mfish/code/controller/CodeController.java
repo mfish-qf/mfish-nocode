@@ -34,35 +34,25 @@ public class CodeController {
     @ApiOperation("代码生成")
     @GetMapping
     public Result<List<CodeVo>> getCode(ReqCode reqCode) {
-        try {
-            List<CodeVo> list = freemarkerUtils.getCode(reqCode);
-            for (CodeVo code : list) {
-                if (code.getName().contains("xml")) {
-                    //xml需要转义后返回
-                    code.setCode(StringUtil.XMLEnc(code.getCode()));
-                    continue;
-                }
+        List<CodeVo> list = freemarkerUtils.getCode(reqCode);
+        for (CodeVo code : list) {
+            if (code.getName().contains("xml")) {
+                //xml需要转义后返回
+                code.setCode(StringUtil.XMLEnc(code.getCode()));
+                continue;
             }
-            return Result.ok(list, "生成代码成功");
-        } catch (Exception ex) {
-            log.error("错误:生成代码失败", ex);
-            return Result.fail("错误:生成代码失败");
         }
+        return Result.ok(list, "生成代码成功");
     }
 
     @Log(title = "代码生成并保存到本地", operateType = OperateType.QUERY)
     @ApiOperation("代码生成并保存到本地")
     @GetMapping("/save")
     public Result<String> saveCode(ReqCode reqCode) {
-        try {
-            List<CodeVo> list = freemarkerUtils.getCode(reqCode);
-            if (freemarkerUtils.saveCode(list)) {
-                return Result.ok("保存成功");
-            }
-            return Result.fail("保存失败");
-        } catch (Exception ex) {
-            log.error("错误:生成代码失败", ex);
-            return Result.fail("错误:生成代码失败");
+        List<CodeVo> list = freemarkerUtils.getCode(reqCode);
+        if (freemarkerUtils.saveCode(list)) {
+            return Result.ok("生成代码成功");
         }
+        return Result.fail("错误:生成代码失败");
     }
 }

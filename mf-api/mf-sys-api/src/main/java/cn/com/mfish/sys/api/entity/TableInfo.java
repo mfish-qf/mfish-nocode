@@ -1,4 +1,4 @@
-package cn.com.mfish.common.dblink.entity;
+package cn.com.mfish.sys.api.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

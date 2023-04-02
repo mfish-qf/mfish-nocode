@@ -1,4 +1,4 @@
-package cn.com.mfish.common.dblink.enums;
+package cn.com.mfish.common.core.enums;
 
 import java.util.HashMap;
 import java.util.Locale;
