@@ -3,11 +3,10 @@ package cn.com.mfish.sys.service.impl;
 import cn.com.mfish.common.core.secret.SM2Utils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
-import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
+import cn.com.mfish.common.dblink.query.QueryHandler;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.mapper.DbConnectMapper;
 import cn.com.mfish.sys.service.DbConnectService;
@@ -37,19 +36,16 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
         if (StringUtils.isEmpty(pwd)) {
             return Result.fail(false, "错误:密码解密失败");
         }
-        DBType dbType = DBType.getType(dbConnect.getDbType());
-        DataSourceOptions dataSourceOptions = new DataSourceOptions().setDbType(dbType)
-                .setPoolType(PoolType.NoPool)
-                .setUser(dbConnect.getUsername())
-                .setPassword(pwd)
-                .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
+        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect);
+        //测试连接不使用连接池
+        dataSourceOptions.setPoolType(PoolType.NoPool);
         try {
             Connection conn = PoolManager.getConnection(dataSourceOptions, 3000);
             return Result.ok(!conn.isClosed(), "连接成功");
         } catch (SQLException e) {
             log.error("错误:测试连接异常", e);
             return Result.fail(false, "连接失败");
-        }finally {
+        } finally {
             PoolManager.release();
         }
     }
@@ -62,6 +58,9 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
      */
     public Result<DbConnect> queryById(String id) {
         DbConnect dbConnect = baseMapper.selectById(id);
+        if (dbConnect == null) {
+            return Result.fail(null, "错误:未获取到数据连接");
+        }
         String pwd = SM2Utils.decrypt(privateKey, dbConnect.getPassword());
         if (StringUtils.isEmpty(pwd)) {
             return Result.fail(dbConnect, "错误:密码解密失败");

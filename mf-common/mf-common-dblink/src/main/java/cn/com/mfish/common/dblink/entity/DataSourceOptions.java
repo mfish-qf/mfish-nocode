@@ -34,6 +34,10 @@ public class DataSourceOptions<T> {
      */
     private PoolType poolType;
     /**
+     * 数据库名称
+     */
+    private String dbName;
+    /**
      * 数据源配置选项(JSON格式）
      */
     private T options;

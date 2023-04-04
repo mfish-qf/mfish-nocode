@@ -52,5 +52,9 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-sys-api</artifactId>
+        </dependency>
     </dependencies>
 </project>

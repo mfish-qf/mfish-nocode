@@ -1,19 +1,20 @@
 package cn.com.mfish.sys.service.impl;
 
-import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
-import cn.com.mfish.sys.api.entity.FieldInfo;
-import cn.com.mfish.sys.api.entity.TableInfo;
-import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.BoundSql;
+import cn.com.mfish.common.dblink.page.MfPageHelper;
 import cn.com.mfish.common.dblink.query.QueryHandler;
 import cn.com.mfish.sys.api.entity.DbConnect;
-import cn.com.mfish.sys.api.remote.RemoteDbConnectService;
+import cn.com.mfish.sys.api.entity.FieldInfo;
+import cn.com.mfish.sys.api.entity.TableInfo;
+import cn.com.mfish.sys.service.DbConnectService;
 import cn.com.mfish.sys.service.TableService;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +30,16 @@ import java.util.function.BiFunction;
 @Service
 public class TableServiceImpl implements TableService {
     @Resource
-    RemoteDbConnectService remoteDbConnectService;
+    DbConnectService dbConnectService;
 
     @Override
-    public List<FieldInfo> getFieldList(String connectId, String tableName) {
-        return getDbConnect(connectId, FieldInfo.class, (build, dbName) -> build.getColumns(dbName, tableName));
+    public List<FieldInfo> getFieldList(String connectId, String tableName, ReqPage reqPage) {
+        return queryT(connectId, FieldInfo.class, (build, dbName) -> build.getColumns(dbName, tableName), reqPage);
     }
 
     @Override
-    public TableInfo getTableInfo(String connectId, String tableName) {
-        List<TableInfo> list = getTableList(connectId, tableName);
+    public TableInfo getTableInfo(String connectId, String tableName, ReqPage reqPage) {
+        List<TableInfo> list = getTableList(connectId, tableName, reqPage);
         if (list == null || list.isEmpty()) {
             return null;
         }
@@ -46,36 +47,45 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
-    public List<TableInfo> getTableList(String connectId, String tableName) {
-        return getDbConnect(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableName));
+    public List<TableInfo> getTableList(String connectId, String tableName, ReqPage reqPage) {
+        return queryT(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableName), reqPage);
     }
 
-    private <T> List<T> getDbConnect(String schemaId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function) {
-        Result<DbConnect> result = remoteDbConnectService.queryById(RPCConstants.INNER, schemaId);
+    @Override
+    public MetaDataTable getDataTable(String connectId, String tableName, ReqPage reqPage) {
+        return query(connectId, "select * from " + tableName, reqPage);
+    }
+
+    private DataSourceOptions buildDBQuery(String connectId) {
+        Result<DbConnect> result = dbConnectService.queryById(connectId);
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:获取数据库连接出错");
         }
         DbConnect dbConnect = result.getData();
-        DataSourceOptions dataSourceOptions = buildDataSourceOptions(dbConnect);
+        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect);
         //代码生成不使用连接池，强制设置为无池状态
         dataSourceOptions.setPoolType(PoolType.NoPool);
-        DBDialect build = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
-        return QueryHandler.queryT(dataSourceOptions, function.apply(build, dbConnect.getDbName()), cls);
+        return dataSourceOptions;
     }
 
     /**
-     * 数据库连接转配置信息
+     * 查询数据
      *
-     * @param dbConnect 数据库连接信息
+     * @param connectId 连接ID
+     * @param sql       sql语句
      * @return
      */
-    public static DataSourceOptions buildDataSourceOptions(DbConnect dbConnect) {
-        DBType dbType = DBType.getType(dbConnect.getDbType());
-        DataSourceOptions dataSourceOptions = new DataSourceOptions().setDbType(dbType)
-                .setPoolType(PoolType.getPoolType(dbConnect.getPoolType()))
-                .setUser(dbConnect.getUsername())
-                .setPassword(dbConnect.getPassword())
-                .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
-        return dataSourceOptions;
+    private MetaDataTable query(String connectId, String sql, ReqPage reqPage) {
+        DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
+        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return QueryHandler.query(dataSourceOptions, sql);
     }
+
+    private <T> List<T> queryT(String connectId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
+        DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
+        DBDialect dialect = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
+        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        return QueryHandler.queryT(dataSourceOptions, function.apply(dialect, dataSourceOptions.getDbName()), cls);
+    }
+
 }

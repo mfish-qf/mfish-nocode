@@ -22,7 +22,7 @@ public class OracleDialect extends AbstractDialect {
         sqlBuilder.append(boundSql.getSql());
         sqlBuilder.append(") TMP_PAGE)");
         sqlBuilder.append(" WHERE ROWNUM_ <= ? AND ROWNUM_ > ?");
-        boundSql.getParams().add(page.getPageSize());
+        boundSql.getParams().add(page.getEndRow());
         boundSql.getParams().add(page.getStartRow());
         return boundSql.setSql(sqlBuilder.toString());
     }

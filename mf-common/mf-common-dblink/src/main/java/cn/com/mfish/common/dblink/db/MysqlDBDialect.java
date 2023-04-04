@@ -30,6 +30,4 @@ public class MysqlDBDialect extends AbstractDBDialect {
                 "        FROM INFORMATION_SCHEMA.TABLES where 1=1";
         return buildCondition(sql, dbName, tableName);
     }
-
-
 }

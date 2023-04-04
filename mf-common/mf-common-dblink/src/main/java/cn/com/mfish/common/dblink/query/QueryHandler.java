@@ -2,9 +2,13 @@ package cn.com.mfish.common.dblink.query;
 
 import cn.com.mfish.common.dblink.datatable.MetaDataRow;
 import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.enums.DBType;
+import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
+import cn.com.mfish.sys.api.entity.DbConnect;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.session.RowBounds;
 
@@ -320,5 +324,22 @@ public class QueryHandler {
             return function.apply(pageSql);
         }
         return function.apply(boundSql);
+    }
+
+    /**
+     * 数据库连接转配置信息
+     *
+     * @param dbConnect 数据库连接信息
+     * @return
+     */
+    public static DataSourceOptions buildDataSourceOptions(DbConnect dbConnect) {
+        DBType dbType = DBType.getType(dbConnect.getDbType());
+        DataSourceOptions dataSourceOptions = new DataSourceOptions().setDbType(dbType)
+                .setDbName(dbConnect.getDbName())
+                .setPoolType(PoolType.getPoolType(dbConnect.getPoolType()))
+                .setUser(dbConnect.getUsername())
+                .setPassword(dbConnect.getPassword())
+                .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
+        return dataSourceOptions;
     }
 }

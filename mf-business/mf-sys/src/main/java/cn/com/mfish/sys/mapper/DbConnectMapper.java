@@ -10,5 +10,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version: V1.0.0
  */
 public interface DbConnectMapper extends BaseMapper<DbConnect> {
-
 }
