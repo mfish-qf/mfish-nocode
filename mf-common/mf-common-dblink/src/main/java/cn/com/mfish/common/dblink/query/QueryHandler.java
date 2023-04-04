@@ -2,9 +2,13 @@ package cn.com.mfish.common.dblink.query;
 
 import cn.com.mfish.common.dblink.datatable.MetaDataRow;
 import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.enums.DBType;
+import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
+import cn.com.mfish.sys.api.entity.DbConnect;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.session.RowBounds;
 
@@ -221,9 +225,13 @@ public class QueryHandler {
                 return pageHelper.query(boundSql);
             }
 
+            /**
+             * 总数为0，需要返回列头信息，所以也做了一次查询
+             * @return
+             */
             @Override
             public MetaDataTable afterQuery() {
-                return new MetaDataTable();
+                return pageHelper.query(boundSql);
             }
         });
     }
@@ -239,7 +247,7 @@ public class QueryHandler {
                     Long count = countQuery(boundSql);
                     //处理查询总数，返回 true 时继续分页查询，false 时直接返回
                     if (!pageHelper.afterCount(count)) {
-                        //当查询总数为 0 时，直接返回空的结果
+                        //当查询总数为 0 时，处理逻辑
                         return pageHandler.afterQuery();
                     }
                 }
@@ -320,5 +328,22 @@ public class QueryHandler {
             return function.apply(pageSql);
         }
         return function.apply(boundSql);
+    }
+
+    /**
+     * 数据库连接转配置信息
+     *
+     * @param dbConnect 数据库连接信息
+     * @return
+     */
+    public static DataSourceOptions buildDataSourceOptions(DbConnect dbConnect) {
+        DBType dbType = DBType.getType(dbConnect.getDbType());
+        DataSourceOptions dataSourceOptions = new DataSourceOptions().setDbType(dbType)
+                .setDbName(dbConnect.getDbName())
+                .setPoolType(PoolType.getPoolType(dbConnect.getPoolType()))
+                .setUser(dbConnect.getUsername())
+                .setPassword(dbConnect.getPassword())
+                .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
+        return dataSourceOptions;
     }
 }

@@ -4,6 +4,8 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dblink.datatable.MetaHeaderDataTable;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
@@ -73,7 +75,7 @@ public class DbConnectController {
     })
     public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName)), "获取表列表成功");
+        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
     }
 
     @ApiOperation("获取表字段信息")
@@ -85,7 +87,19 @@ public class DbConnectController {
     })
     public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName)), "获取表列表成功");
+        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取表列表成功");
+    }
+
+    @ApiOperation("获取表数据")
+    @GetMapping("/data")
+    @RequiresPermissions("sys:database:query")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+    })
+    public Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        MetaDataTable table = tableService.getDataTable(connectId, tableName, reqPage);
+        return Result.ok(new MetaHeaderDataTable(table), "获取表数据成功");
     }
 
     /**

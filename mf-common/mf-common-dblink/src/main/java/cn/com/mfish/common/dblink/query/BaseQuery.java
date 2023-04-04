@@ -3,6 +3,7 @@ package cn.com.mfish.common.dblink.query;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
+import cn.com.mfish.common.dblink.common.Constant;
 import cn.com.mfish.common.dblink.common.DataUtils;
 import cn.com.mfish.common.dblink.datatable.MetaDataHeader;
 import cn.com.mfish.common.dblink.datatable.MetaDataHeaders;
@@ -172,10 +173,14 @@ public class BaseQuery {
         try {
             MetaDataHeaders headers = new MetaDataHeaders();
             for (int i = 1; i <= rsMataData.getColumnCount(); i++) {
+                String colName = rsMataData.getColumnLabel(i);
+                if (Constant.ORACLE_ROW.equals(colName)) {
+                    continue;
+                }
                 final MetaDataHeader header = new MetaDataHeader();
                 //****默认别名与查询名称相同 后期修改别名后别名必须唯一
-                header.setColName(rsMataData.getColumnLabel(i));
-                header.setFieldName(header.getColName());
+                header.setColName(colName);
+                header.setFieldName(colName);
                 //存在类似INT UNSIGNED类型的结果进行特殊处理
                 String dataType = rsMataData.getColumnTypeName(i).toUpperCase();
                 int index = dataType.indexOf(" ");
