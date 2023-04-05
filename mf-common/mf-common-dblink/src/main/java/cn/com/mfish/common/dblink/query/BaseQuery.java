@@ -18,10 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -214,8 +218,16 @@ public class BaseQuery {
             Iterator<Map.Entry<String, MetaDataHeader>> iterator = headers.entrySet().iterator();
             int i = 1;
             while (iterator.hasNext()) {
-                String type = rs.getMetaData().getColumnTypeName(i);
+                String type = rs.getMetaData().getColumnTypeName(i).toUpperCase(Locale.ROOT);
                 Object value = formatValue(type, rs.getObject(i));
+                if (value instanceof java.util.Date) {
+                    //MetaDataTable返回类型日期强制格式为 yyyy-MM-dd HH:mm:ss
+                    if (type.equals("DATE")) {
+                        value = new SimpleDateFormat("yyyy-MM-dd").format(value);
+                    } else {
+                        value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
+                    }
+                }
                 row.setCellValue(iterator.next().getValue().getColName(), value);
                 i++;
             }
@@ -247,6 +259,15 @@ public class BaseQuery {
         } else if (columnTypeName.contains("DATETIME")) {
             //LocalDateTime 转成Date类型
             value = value instanceof LocalDateTime ? Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant()) : value;
+        } else if (columnTypeName.contains("TIMESTAMP") && value != null) {
+            String time = value.toString();
+            if (!StringUtils.isEmpty(time)) {
+                try {
+                    value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time.substring(0, time.length() - 2));
+                } catch (ParseException e) {
+                    log.error("错误:日期转换异常");
+                }
+            }
         }
         return value;
     }
