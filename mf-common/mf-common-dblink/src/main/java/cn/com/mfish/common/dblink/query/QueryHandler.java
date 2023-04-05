@@ -1,5 +1,8 @@
 package cn.com.mfish.common.dblink.query;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.secret.SM2Utils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.dblink.datatable.MetaDataRow;
 import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.db.DBAdapter;
@@ -336,13 +339,17 @@ public class QueryHandler {
      * @param dbConnect 数据库连接信息
      * @return
      */
-    public static DataSourceOptions buildDataSourceOptions(DbConnect dbConnect) {
+    public static DataSourceOptions buildDataSourceOptions(DbConnect dbConnect, String privateKey) {
+        String pwd = SM2Utils.decrypt(privateKey, dbConnect.getPassword());
+        if (StringUtils.isEmpty(pwd)) {
+            throw new MyRuntimeException("错误:密码解密失败");
+        }
         DBType dbType = DBType.getType(dbConnect.getDbType());
         DataSourceOptions dataSourceOptions = new DataSourceOptions().setDbType(dbType)
                 .setDbName(dbConnect.getDbName())
                 .setPoolType(PoolType.getPoolType(dbConnect.getPoolType()))
                 .setUser(dbConnect.getUsername())
-                .setPassword(dbConnect.getPassword())
+                .setPassword(pwd)
                 .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
         return dataSourceOptions;
     }

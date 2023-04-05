@@ -1,7 +1,5 @@
 package cn.com.mfish.sys.service.impl;
 
-import cn.com.mfish.common.core.secret.SM2Utils;
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.PoolType;
@@ -32,11 +30,7 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
 
     @Override
     public Result<Boolean> testConnect(DbConnect dbConnect) {
-        String pwd = SM2Utils.decrypt(privateKey, dbConnect.getPassword());
-        if (StringUtils.isEmpty(pwd)) {
-            return Result.fail(false, "错误:密码解密失败");
-        }
-        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect);
+        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
         //测试连接不使用连接池
         dataSourceOptions.setPoolType(PoolType.NoPool);
         try {
@@ -61,11 +55,6 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
         if (dbConnect == null) {
             return Result.fail(null, "错误:未获取到数据连接");
         }
-        String pwd = SM2Utils.decrypt(privateKey, dbConnect.getPassword());
-        if (StringUtils.isEmpty(pwd)) {
-            return Result.fail(dbConnect, "错误:密码解密失败");
-        }
-        dbConnect.setPassword(pwd);
         return Result.ok(dbConnect, "数据库连接-查询成功!");
     }
 }

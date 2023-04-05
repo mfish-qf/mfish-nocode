@@ -16,6 +16,8 @@ import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.service.DbConnectService;
 import cn.com.mfish.sys.service.TableService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,9 +30,12 @@ import java.util.function.BiFunction;
  * @date: 2022/8/31 23:05
  */
 @Service
+@RefreshScope
 public class TableServiceImpl implements TableService {
     @Resource
     DbConnectService dbConnectService;
+    @Value("${DBConnect.password.privateKey}")
+    private String privateKey;
 
     @Override
     public List<FieldInfo> getFieldList(String connectId, String tableName, ReqPage reqPage) {
@@ -62,7 +67,7 @@ public class TableServiceImpl implements TableService {
             throw new MyRuntimeException("错误:获取数据库连接出错");
         }
         DbConnect dbConnect = result.getData();
-        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect);
+        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
         //代码生成不使用连接池，强制设置为无池状态
         dataSourceOptions.setPoolType(PoolType.NoPool);
         return dataSourceOptions;
