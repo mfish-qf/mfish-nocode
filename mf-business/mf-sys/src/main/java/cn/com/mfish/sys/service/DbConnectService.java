@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version: V1.0.0
  */
 public interface DbConnectService extends IService<DbConnect> {
+    Result<DbConnect> insertConnect(DbConnect dbConnect);
+    Result<DbConnect> updateConnect(DbConnect dbConnect);
     Result<Boolean> testConnect(DbConnect dbConnect);
     Result<DbConnect> queryById(String id);
 }

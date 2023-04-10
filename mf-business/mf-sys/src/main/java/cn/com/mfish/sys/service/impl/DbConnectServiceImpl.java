@@ -29,6 +29,30 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
     private String privateKey;
 
     @Override
+    public Result<DbConnect> insertConnect(DbConnect dbConnect) {
+        Result result = testConnect(dbConnect);
+        if (!result.isSuccess()) {
+            return Result.fail(dbConnect, "错误:尝试连接失败!");
+        }
+        if (save(dbConnect)) {
+            return Result.ok(dbConnect, "数据库连接-添加成功!");
+        }
+        return Result.fail(dbConnect, "错误:数据库连接-添加失败!");
+    }
+
+    @Override
+    public Result<DbConnect> updateConnect(DbConnect dbConnect) {
+        Result result = testConnect(dbConnect);
+        if (!result.isSuccess()) {
+            return Result.fail(dbConnect, "错误:尝试连接失败!");
+        }
+        if (updateById(dbConnect)) {
+            return Result.ok(dbConnect, "数据库连接-编辑成功!");
+        }
+        return Result.fail(dbConnect, "错误:数据库连接-编辑失败!");
+    }
+
+    @Override
     public Result<Boolean> testConnect(DbConnect dbConnect) {
         DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
         //测试连接不使用连接池
@@ -38,7 +62,7 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
             return Result.ok(!conn.isClosed(), "连接成功");
         } catch (SQLException e) {
             log.error("错误:测试连接异常", e);
-            return Result.fail(false, "连接失败");
+            return Result.fail(false, "错误:连接失败");
         } finally {
             PoolManager.release();
         }
