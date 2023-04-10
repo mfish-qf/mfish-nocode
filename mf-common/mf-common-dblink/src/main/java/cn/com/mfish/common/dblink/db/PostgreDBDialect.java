@@ -29,7 +29,8 @@ public class PostgreDBDialect extends AbstractDBDialect {
                 "LEFT JOIN pg_type T ON A.atttypid = T.oid\n" +
                 "LEFT JOIN pg_description d ON d.objoid = A.attrelid \n" +
                 "AND d.objsubid = A.attnum where 1=1";
-        return buildCondition(strSql, dbName, tableName);
+        //pg数据库table_schema是单独定义的schema不是数据库名称，此处暂时不传。参数预留
+        return buildCondition(strSql, "", tableName);
     }
 
     @Override
@@ -46,6 +47,7 @@ public class PostgreDBDialect extends AbstractDBDialect {
                 "AND c.relname NOT LIKE'sql_%' \n" +
                 "AND c.relkind = 'r' \n" +
                 "AND c.relname = d.TABLE_NAME\n";
-        return buildCondition(strSql, dbName, tableName);
+        //pg数据库table_schema是单独定义的schema不是数据库名称，此处暂时不传。参数预留
+        return buildCondition(strSql, "", tableName);
     }
 }
