@@ -243,7 +243,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (!AuthInfoUtils.isSuper(user.getId()) && AuthInfoUtils.isContainSuperAdmin(user.getRoleIds())) {
             throw new MyRuntimeException("错误:不允许设置为超户!");
         }
-        if (user.getAccount() == null) {
+        if (user.getAccount() != null) {
             if (user.getAccount().length() > 30) {
                 throw new MyRuntimeException("错误:帐号字符不要超过30个字符");
             }
