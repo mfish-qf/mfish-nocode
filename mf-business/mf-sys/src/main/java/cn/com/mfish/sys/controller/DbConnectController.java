@@ -113,10 +113,7 @@ public class DbConnectController {
     @PostMapping
     @RequiresPermissions("sys:database:insert")
     public Result<DbConnect> add(@RequestBody DbConnect dbConnect) {
-        if (dbConnectService.save(dbConnect)) {
-            return Result.ok(dbConnect, "数据库连接-添加成功!");
-        }
-        return Result.fail(dbConnect, "错误:数据库连接-添加失败!");
+        return dbConnectService.insertConnect(dbConnect);
     }
 
     /**
@@ -130,10 +127,7 @@ public class DbConnectController {
     @PutMapping
     @RequiresPermissions("sys:database:update")
     public Result<DbConnect> edit(@RequestBody DbConnect dbConnect) {
-        if (dbConnectService.updateById(dbConnect)) {
-            return Result.ok(dbConnect, "数据库连接-编辑成功!");
-        }
-        return Result.fail(dbConnect, "错误:数据库连接-编辑失败!");
+        return dbConnectService.updateConnect(dbConnect);
     }
 
     /**
