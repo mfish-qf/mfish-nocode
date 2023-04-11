@@ -12,15 +12,12 @@ import cn.com.mfish.storage.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * @description: 文件缓存
@@ -56,9 +53,6 @@ public class StorageController {
         if (StringUtils.isEmpty(originalFilename)) {
             originalFilename = file.getOriginalFilename();
         }
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
         StorageInfo info = storageHandler.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename, path, isPrivate);
         return Result.ok(info, "文件新增成功");
     }
@@ -83,34 +77,7 @@ public class StorageController {
                 throw new OAuthValidateException(result.getMsg());
             }
         }
-        org.springframework.core.io.Resource file = storageHandler.loadAsResource(storageInfo.getFilePath() + "/" + key);
-        if (file == null) {
-            return ResponseEntity.notFound().build();
-        }
-        String disposition = "filename*=utf-8'zh_cn'";
-        //将header值变成attachment;filename*=utf-8'zh_cn'可以强制文件转换为下载
-        //图片直接查看，其他文件类型下载
-        if (!storageInfo.getFileType().toLowerCase().startsWith("image")) {
-            disposition = "attachment;" + disposition;
-        }
-        MediaType mediaType = MediaType.parseMediaType(storageInfo.getFileType());
-        return ResponseEntity.ok().contentType(mediaType).contentLength(storageInfo.getFileSize())
-                .header("Content-Disposition", disposition + encodeFileName(storageInfo.getFileName()))
-                .body(file);
+        return storageHandler.fetch(key, storageInfo.getFileName(), storageInfo.getFilePath(), storageInfo.getFileType(), storageInfo.getFileSize());
     }
 
-    /**
-     * 转换文件名称
-     *
-     * @param fileName
-     * @return
-     */
-    private String encodeFileName(String fileName) {
-        try {
-            return URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            log.error("错误:转换文件名异常!文件名:" + fileName, e);
-        }
-        return fileName;
-    }
 }
