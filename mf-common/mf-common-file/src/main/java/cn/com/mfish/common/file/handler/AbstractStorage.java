@@ -1,6 +1,7 @@
-package cn.com.mfish.storage.handler;
+package cn.com.mfish.common.file.handler;
 
-import cn.com.mfish.storage.common.StorageUtils;
+
+import cn.com.mfish.common.file.common.StorageUtils;
 
 /**
  * @description: 抽象缓存处理类

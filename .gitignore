@@ -28,3 +28,4 @@
 /mf-api/mf-scheduler-api/target/
 /mf-test/logs/
 /mf-common/mf-common-dblink/target/
+/mf-common/mf-common-file/target/

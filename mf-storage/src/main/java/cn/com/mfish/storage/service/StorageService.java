@@ -1,6 +1,6 @@
 package cn.com.mfish.storage.service;
 
-import cn.com.mfish.storage.entity.StorageInfo;
+import cn.com.mfish.common.file.entity.StorageInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

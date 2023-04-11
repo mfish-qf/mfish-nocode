@@ -1,7 +1,7 @@
-package cn.com.mfish.storage.handler;
+package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.storage.common.StorageUtils;
+import cn.com.mfish.common.file.common.StorageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;

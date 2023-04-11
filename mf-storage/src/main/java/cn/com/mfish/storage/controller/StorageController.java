@@ -4,10 +4,10 @@ import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.file.handler.StorageHandler;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
-import cn.com.mfish.storage.entity.StorageInfo;
-import cn.com.mfish.storage.handler.StorageHandler;
+import cn.com.mfish.common.file.entity.StorageInfo;
 import cn.com.mfish.storage.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.*;
@@ -54,7 +54,10 @@ public class StorageController {
             originalFilename = file.getOriginalFilename();
         }
         StorageInfo info = storageHandler.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename, path, isPrivate);
-        return Result.ok(info, "文件新增成功");
+        if (storageService.save(info)) {
+            return Result.ok(info, "文件新增成功");
+        }
+        return Result.fail(info, "错误:文件新增失败");
     }
 
     @ApiOperation("文件获取")

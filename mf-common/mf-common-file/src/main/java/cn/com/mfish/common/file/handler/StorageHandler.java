@@ -1,11 +1,10 @@
-package cn.com.mfish.storage.handler;
+package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
-import cn.com.mfish.storage.common.StorageUtils;
-import cn.com.mfish.storage.entity.StorageInfo;
-import cn.com.mfish.storage.enums.SuffixType;
-import cn.com.mfish.storage.service.StorageService;
+import cn.com.mfish.common.file.common.StorageUtils;
+import cn.com.mfish.common.file.entity.StorageInfo;
+import cn.com.mfish.common.file.enums.SuffixType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.MediaType;
@@ -28,8 +27,6 @@ import java.util.Date;
 public class StorageHandler {
     @Resource
     Storage storage;
-    @Resource
-    StorageService storageService;
 
     /**
      * 文件存储
@@ -65,7 +62,6 @@ public class StorageHandler {
         storageInfo.setFileUrl(url);
         storageInfo.setIsPrivate(isPrivate);
         storage.store(inputStream, contentLength, contentType, filePath);
-        storageService.save(storageInfo);
         return storageInfo;
     }
 

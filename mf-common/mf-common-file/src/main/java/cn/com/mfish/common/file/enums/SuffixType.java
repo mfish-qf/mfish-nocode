@@ -1,4 +1,4 @@
-package cn.com.mfish.storage.enums;
+package cn.com.mfish.common.file.enums;
 
 import java.util.HashMap;
 import java.util.Map;
