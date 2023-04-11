@@ -9,7 +9,9 @@ import cn.com.mfish.common.core.utils.StringUtils;
  */
 public enum MatchType {
     不处理("none"),
-    首字母小写("uncap_first");
+    首字母小写("uncap_first"),
+    串式("kebab-case"),
+    下划线("under-case");
 
     String matchType;
 
@@ -40,6 +42,10 @@ public enum MatchType {
         switch (getMatchType(matchType)) {
             case 首字母小写:
                 return StringUtils.firstLowerCase(value);
+            case 下划线:
+                return StringUtils.toUnderCase(value);
+            case 串式:
+                return StringUtils.toKebabCase(value);
             default:
                 return value;
         }
