@@ -41,6 +41,24 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * 驼峰转下划线命名
      */
     public static String toUnderCase(String str) {
+        return toSeparatorCase(str, SEPARATOR);
+    }
+
+    /**
+     * 驼峰转串式命名
+     */
+    public static String toKebabCase(String str) {
+        return toSeparatorCase(str, '-');
+    }
+
+    /**
+     * 驼峰转符号分割
+     *
+     * @param str       字符串
+     * @param separator 分隔符
+     * @return
+     */
+    public static String toSeparatorCase(String str, char separator) {
         if (str == null) {
             return null;
         }
@@ -63,14 +81,15 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
                 nextCharIsUpperCase = Character.isUpperCase(str.charAt(i + 1));
             }
             if (preCharIsUpperCase && curCharIsUpperCase && !nextCharIsUpperCase) {
-                sb.append(SEPARATOR);
+                sb.append(separator);
             } else if ((i != 0 && !preCharIsUpperCase) && curCharIsUpperCase) {
-                sb.append(SEPARATOR);
+                sb.append(separator);
             }
             sb.append(Character.toLowerCase(c));
         }
         return sb.toString();
     }
+
 
     /**
      * 驼峰式命名法 例如：user_name->userName
@@ -87,7 +106,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         boolean upperCase = false;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-
             if (c == SEPARATOR) {
                 upperCase = true;
             } else if (upperCase) {
