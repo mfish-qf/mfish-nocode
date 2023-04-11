@@ -1,4 +1,4 @@
-package cn.com.mfish.storage.common;
+package cn.com.mfish.common.file.common;
 
 /**
  * @description: 缓存通用处理方法

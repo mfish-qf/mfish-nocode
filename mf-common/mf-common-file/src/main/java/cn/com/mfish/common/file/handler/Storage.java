@@ -1,4 +1,4 @@
-package cn.com.mfish.storage.handler;
+package cn.com.mfish.common.file.handler;
 
 import org.springframework.core.io.Resource;
 

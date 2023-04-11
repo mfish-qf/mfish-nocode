@@ -1,16 +1,20 @@
-package cn.com.mfish.storage.handler;
+package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
-import cn.com.mfish.storage.common.StorageUtils;
-import cn.com.mfish.storage.entity.StorageInfo;
-import cn.com.mfish.storage.enums.SuffixType;
-import cn.com.mfish.storage.service.StorageService;
+import cn.com.mfish.common.file.common.StorageUtils;
+import cn.com.mfish.common.file.entity.StorageInfo;
+import cn.com.mfish.common.file.enums.SuffixType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -19,11 +23,10 @@ import java.util.Date;
  * @date: 2023/1/5 15:56
  */
 @Component
+@Slf4j
 public class StorageHandler {
     @Resource
     Storage storage;
-    @Resource
-    StorageService storageService;
 
     /**
      * 文件存储
@@ -37,6 +40,9 @@ public class StorageHandler {
      * @return
      */
     public StorageInfo store(InputStream inputStream, long contentLength, String contentType, String fileName, String path, Integer isPrivate) {
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
         String id = Utils.uuid32();
         StorageInfo storageInfo = new StorageInfo();
         storageInfo.setId(id);
@@ -56,8 +62,57 @@ public class StorageHandler {
         storageInfo.setFileUrl(url);
         storageInfo.setIsPrivate(isPrivate);
         storage.store(inputStream, contentLength, contentType, filePath);
-        storageService.save(storageInfo);
         return storageInfo;
+    }
+
+    /**
+     * 获取文件
+     *
+     * @param key      文件key
+     * @param fileName 文件名称
+     * @param filePath 文件路径
+     * @param fileType 文件类型
+     * @param size     文件大小
+     * @return
+     */
+    public ResponseEntity<org.springframework.core.io.Resource> fetch(String key, String fileName, String filePath, String fileType, Integer size) {
+        org.springframework.core.io.Resource file = loadAsResource(filePath + "/" + key);
+        if (file == null) {
+            return ResponseEntity.notFound().build();
+        }
+        MediaType mediaType = MediaType.parseMediaType(fileType);
+        String disposition = "filename*=utf-8'zh_cn'";
+        //将header值变成attachment;filename*=utf-8'zh_cn'可以强制文件转换为下载
+        //图片直接查看，其他文件类型下载
+        if (!StringUtils.isEmpty(fileType) && !fileType.toLowerCase().startsWith("image")) {
+            disposition = "attachment;" + disposition;
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok().contentType(mediaType);
+        if (size != null && size > 0) {
+            builder.contentLength(size);
+        }
+        if (StringUtils.isEmpty(fileName)) {
+            disposition = disposition + encodeFileName(key);
+        } else {
+            disposition = disposition + encodeFileName(fileName);
+        }
+        builder.header("Content-Disposition", disposition);
+        return builder.body(file);
+    }
+
+    /**
+     * 转换文件名称
+     *
+     * @param fileName
+     * @return
+     */
+    private String encodeFileName(String fileName) {
+        try {
+            return URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            log.error("错误:转换文件名异常!文件名:" + fileName, e);
+        }
+        return fileName;
     }
 
     /**

@@ -1,4 +1,4 @@
-package cn.com.mfish.storage.handler;
+package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import com.aliyun.oss.OSS;
