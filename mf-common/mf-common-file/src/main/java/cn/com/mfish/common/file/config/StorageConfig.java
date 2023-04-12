@@ -1,10 +1,10 @@
-package cn.com.mfish.storage.config;
+package cn.com.mfish.common.file.config;
 
 import cn.com.mfish.common.file.enums.StorageType;
 import cn.com.mfish.common.file.handler.AliYunStorage;
 import cn.com.mfish.common.file.handler.LocalStorage;
 import cn.com.mfish.common.file.handler.Storage;
-import cn.com.mfish.storage.config.properties.StorageProperties;
+import cn.com.mfish.common.file.config.properties.StorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

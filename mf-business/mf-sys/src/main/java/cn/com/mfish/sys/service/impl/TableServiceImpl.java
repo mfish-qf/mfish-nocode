@@ -82,14 +82,18 @@ public class TableServiceImpl implements TableService {
      */
     private MetaDataTable query(String connectId, String sql, ReqPage reqPage) {
         DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
-        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        if (reqPage != null) {
+            MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        }
         return QueryHandler.query(dataSourceOptions, sql);
     }
 
     private <T> List<T> queryT(String connectId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
         DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
         DBDialect dialect = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
-        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        if (reqPage != null) {
+            MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        }
         return QueryHandler.queryT(dataSourceOptions, function.apply(dialect, dataSourceOptions.getDbName()), cls);
     }
 
