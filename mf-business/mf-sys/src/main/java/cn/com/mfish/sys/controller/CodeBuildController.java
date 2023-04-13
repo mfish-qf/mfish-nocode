@@ -1,14 +1,16 @@
 package cn.com.mfish.sys.controller;
 
-import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.code.api.remote.RemoteCodeService;
+import cn.com.mfish.common.code.api.req.ReqCode;
+import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.sys.entity.CodeBuild;
 import cn.com.mfish.sys.req.ReqCodeBuild;
 import cn.com.mfish.sys.service.CodeBuildService;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.core.web.ReqPage;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @description: 代码构建
@@ -32,6 +35,8 @@ import java.util.Arrays;
 public class CodeBuildController {
     @Resource
     private CodeBuildService codeBuildService;
+    @Resource
+    private RemoteCodeService remoteCodeService;
 
     /**
      * 分页列表查询
@@ -56,22 +61,16 @@ public class CodeBuildController {
     @ApiOperation("代码构建-添加")
     @PostMapping
     public Result<CodeBuild> add(@RequestBody CodeBuild codeBuild) {
-        Result<CodeBuild> result = validateCodeBuild(codeBuild);
-        if (!result.isSuccess()) {
-            return result;
-        }
-        if (codeBuildService.save(codeBuild)) {
-            return Result.ok(codeBuild, "代码构建-添加成功!");
-        }
-        return Result.fail(codeBuild, "错误:代码构建-添加失败!");
+        return codeBuildService.insertCodeBuild(codeBuild);
     }
 
-    private Result<CodeBuild> validateCodeBuild(CodeBuild codeBuild) {
-        if (StringUtils.isEmpty(codeBuild.getConnectId()) || StringUtils.isEmpty(codeBuild.getTableName())) {
-            return Result.fail(codeBuild, "错误:请选择数据库和表");
-        }
-        return Result.ok(codeBuild, "校验成功");
+    @Log(title = "查看代码", operateType = OperateType.QUERY)
+    @ApiOperation("查看代码")
+    @GetMapping("/view")
+    public Result<List<CodeVo>> query(ReqCode reqCode) {
+        return remoteCodeService.getCode(reqCode);
     }
+
 
     /**
      * 通过id删除

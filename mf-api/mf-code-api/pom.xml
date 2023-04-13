@@ -3,24 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>mfish-nocode</artifactId>
+        <artifactId>mf-api</artifactId>
         <groupId>cn.com.mfish</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mf-api</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>mf-sys-api</module>
-        <module>mf-oauth-api</module>
-        <module>mf-scheduler-api</module>
-        <module>mf-code-api</module>
-    </modules>
+    <artifactId>mf-code-api</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-core</artifactId>
+        </dependency>
+    </dependencies>
 </project>
