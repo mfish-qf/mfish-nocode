@@ -114,4 +114,9 @@ http://localhost:8888/swagger-ui/index.html
 #### 平台交流
 
 微信:  
-![](https://oscimg.oschina.net/oscnet/up-aaf63a91b96c092ad240b2e9755d926ba62.png)
+![微信](https://oscimg.oschina.net/oscnet/up-aaf63a91b96c092ad240b2e9755d926ba62.png)
+
+QQ群:
+[![加入QQ群](https://img.shields.io/badge/522792773-blue.svg)](https://jq.qq.com/?_wv=1027&k=0A2bxoZX) 
+
+点击链接加入群聊【摸鱼低代码交流群】
