@@ -1,12 +1,12 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dblink.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.datatable.MetaHeaderDataTable;
-import cn.com.mfish.common.dblink.page.MfPageHelper;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.web.annotation.InnerUser;
@@ -14,6 +14,7 @@ import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
+import cn.com.mfish.sys.entity.DBTreeNode;
 import cn.com.mfish.sys.service.DbConnectService;
 import cn.com.mfish.sys.service.TableService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,8 +76,29 @@ public class DbConnectController {
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
     })
     public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
+    }
+
+    @ApiOperation("获取数据库树形结构信息-只能分层查询")
+    @GetMapping("/tree")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "parentId", value = "父节点ID 为空时查询数据库列表 有值时查询库下面的表列表", paramType = "query")
+    })
+    public Result<List<DBTreeNode>> getDBTree(@RequestParam(name = "parentId", required = false) String parentId) {
+        List<DBTreeNode> treeNodes = new ArrayList<>();
+        if (StringUtils.isEmpty(parentId)) {
+            List<DbConnect> list = dbConnectService.list();
+            for (DbConnect connect : list) {
+                treeNodes.add(new DBTreeNode().setCode(connect.getId()).setType(0).setLabel(connect.getDbTitle()));
+            }
+            return Result.ok(treeNodes, "查询数据库列表成功");
+        }
+        List<TableInfo> list = tableService.getTableList(parentId, null, null);
+        for (TableInfo tableInfo : list) {
+            String comment = StringUtils.isEmpty(tableInfo.getTableComment()) ? tableInfo.getTableName() : tableInfo.getTableName() + "[" + tableInfo.getTableComment() + "]";
+            treeNodes.add(new DBTreeNode().setCode(tableInfo.getTableName()).setType(1).setLabel(comment));
+        }
+        return Result.ok(treeNodes, "查询标列表成功");
     }
 
     @ApiOperation("获取表字段信息")
@@ -86,7 +109,6 @@ public class DbConnectController {
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
     })
     public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取表列表成功");
     }
 

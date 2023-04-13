@@ -1,12 +1,11 @@
 package cn.com.mfish.code.controller;
 
 import cn.com.mfish.code.common.FreemarkerUtils;
-import cn.com.mfish.code.req.ReqCode;
-import cn.com.mfish.code.vo.CodeVo;
+import cn.com.mfish.common.code.api.req.ReqCode;
+import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import freemarker.template.utility.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +34,13 @@ public class CodeController {
     @GetMapping
     public Result<List<CodeVo>> getCode(ReqCode reqCode) {
         List<CodeVo> list = freemarkerUtils.getCode(reqCode);
-        for (CodeVo code : list) {
-            if (code.getName().contains("xml")) {
-                //xml需要转义后返回
-                code.setCode(StringUtil.XMLEnc(code.getCode()));
-                continue;
-            }
-        }
+//        for (CodeVo code : list) {
+//            if (code.getName().endsWith(".xml")) {
+//                //xml需要转义后返回
+//                code.setCode(StringUtil.XMLEnc(code.getCode()));
+//                continue;
+//            }
+//        }
         return Result.ok(list, "生成代码成功");
     }
 
@@ -51,8 +50,8 @@ public class CodeController {
     public Result<String> saveCode(ReqCode reqCode) {
         List<CodeVo> list = freemarkerUtils.getCode(reqCode);
         if (freemarkerUtils.saveCode(list)) {
-            return Result.ok("生成代码成功");
+            return Result.ok("代码生成成功");
         }
-        return Result.fail("错误:生成代码失败");
+        return Result.fail("错误:代码生成失败");
     }
 }

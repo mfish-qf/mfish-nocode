@@ -1,4 +1,4 @@
-package cn.com.mfish.code.vo;
+package cn.com.mfish.common.code.api.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

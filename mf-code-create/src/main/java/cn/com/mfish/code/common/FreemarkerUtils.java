@@ -2,8 +2,8 @@ package cn.com.mfish.code.common;
 
 import cn.com.mfish.code.config.properties.FreemarkerProperties;
 import cn.com.mfish.code.entity.CodeInfo;
-import cn.com.mfish.code.req.ReqCode;
-import cn.com.mfish.code.vo.CodeVo;
+import cn.com.mfish.common.code.api.req.ReqCode;
+import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
@@ -174,8 +174,8 @@ public class FreemarkerUtils {
         map.put("\\$\\{entityName\\#?(?<param>.*?)}", codeInfo.getEntityName());
         map.put("\\$\\{apiPrefix\\#?(?<param>.*?)}", codeInfo.getApiPrefix());
         String path = codeInfo.getPackageName().replace(".", "/");
-        if (!path.endsWith("/")) {
-            path += "/";
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
         }
         map.put("\\$\\{packageName\\#?(?<param>.*?)}", path);
         return map;

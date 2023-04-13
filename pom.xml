@@ -340,6 +340,11 @@
                 <artifactId>mf-scheduler-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-code-api</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <!-- 私有库暂时停用，代码注销-->
