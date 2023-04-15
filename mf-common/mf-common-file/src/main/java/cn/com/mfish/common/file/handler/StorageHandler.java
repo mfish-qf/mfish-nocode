@@ -76,6 +76,9 @@ public class StorageHandler {
      * @return
      */
     public ResponseEntity<org.springframework.core.io.Resource> fetch(String key, String fileName, String filePath, String fileType, Integer size) {
+        if (filePath.endsWith("/")) {
+            filePath = filePath.substring(0, filePath.length() - 1);
+        }
         org.springframework.core.io.Resource file = loadAsResource(filePath + "/" + key);
         if (file == null) {
             return ResponseEntity.notFound().build();

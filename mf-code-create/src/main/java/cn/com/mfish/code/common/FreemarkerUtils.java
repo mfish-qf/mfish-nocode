@@ -17,6 +17,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
@@ -24,9 +25,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author: mfish
@@ -240,14 +244,44 @@ public class FreemarkerUtils {
         } else if (!savePath.endsWith("/")) {
             savePath += "/";
         }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd-HH-mm-ss");
+        String path = savePath + sdf.format(new Date());
         for (CodeVo code : list) {
             try {
-                FileUtils.writeStringToFile(new File(savePath + code.getPath(), code.getName())
-                        , code.getCode(), StandardCharsets.UTF_8);
+                File file = new File(path + "/" + code.getPath(), code.getName());
+                FileUtils.writeStringToFile(file, code.getCode(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 log.error("错误:文件保存异常", e);
             }
         }
+        //压缩样例，暂不压缩
+        //ZipUtils.toZip(path, true);
         return true;
     }
+
+    /**
+     * 下载代码
+     *
+     * @param reqCode 请求参数
+     * @return
+     */
+    public byte[] downloadCode(ReqCode reqCode) {
+        List<CodeVo> list = getCode(reqCode);
+        ZipOutputStream zos;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            zos = new ZipOutputStream(outputStream);
+            for (CodeVo codeVo : list) {
+                zos.putNextEntry(new ZipEntry(codeVo.getPath() + "/" + codeVo.getName()));
+                IOUtils.write(codeVo.getCode(), zos, StandardCharsets.UTF_8);
+                zos.flush();
+                zos.closeEntry();
+            }
+            //需要主动关闭后，再返回outputStream否则返回文件不全
+            IOUtils.closeQuietly(zos);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new MyRuntimeException("错误:下载代码失败");
+        }
+    }
+
 }

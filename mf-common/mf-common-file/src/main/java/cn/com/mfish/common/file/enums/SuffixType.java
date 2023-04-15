@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @description: 常用文件后缀类型
+ * @description: 常用文件后缀类型contentType对应
  * @author: mfish
  * @date: 2023/1/7 14:22
  */
 public enum SuffixType {
-    UNKNOWN("", ""),
+    UNKNOWN("application/octet-stream", ""),
     PNG("image/png", ".png"),
     JPG("image/jpeg", ".jpg"),
     GIF("image/gif", ".gif"),
@@ -17,6 +17,7 @@ public enum SuffixType {
     TEXT("text/plain", ".txt"),
     XML("text/xml", ".xml"),
     PDF("application/pdf", ".pdf"),
+    ZIP("application/x-zip-compressed", ".zip"),
     DOC("application/msword", ".doc"),
     DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx"),
     XLS("application/vnd.ms-excel", ".xls"),
@@ -48,5 +49,9 @@ public enum SuffixType {
             return typeMap.get(key);
         }
         return SuffixType.UNKNOWN;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

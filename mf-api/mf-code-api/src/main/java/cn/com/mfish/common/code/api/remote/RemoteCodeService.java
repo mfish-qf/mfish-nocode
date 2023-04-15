@@ -23,4 +23,7 @@ public interface RemoteCodeService {
 
     @GetMapping("/code/save")
     Result<String> saveCode(@SpringQueryMap ReqCode reqCode);
+
+    @GetMapping("/code/download")
+    Result<byte[]> downloadCode(@SpringQueryMap ReqCode reqCode);
 }
