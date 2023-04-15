@@ -6,7 +6,6 @@ import cn.com.mfish.common.code.api.req.ReqCode;
 import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.ZipUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -255,7 +254,8 @@ public class FreemarkerUtils {
                 log.error("错误:文件保存异常", e);
             }
         }
-        ZipUtils.toZip(path, true);
+        //压缩样例，暂不压缩
+        //ZipUtils.toZip(path, true);
         return true;
     }
 
