@@ -22,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class LogAspect {
         String params = "";
         if (paramsArray != null && paramsArray.length > 0) {
             for (Object obj : paramsArray) {
-                if (null == obj || obj instanceof Map && ((Map) obj).isEmpty()) {
+                if (null == obj || obj instanceof Map && ((Map) obj).isEmpty() || obj instanceof HttpServletResponse) {
                     continue;
                 }
                 if (obj instanceof String) {

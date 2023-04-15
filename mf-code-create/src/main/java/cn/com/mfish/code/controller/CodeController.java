@@ -29,8 +29,8 @@ public class CodeController {
     @Resource
     FreemarkerUtils freemarkerUtils;
 
-    @Log(title = "生成代码", operateType = OperateType.QUERY)
-    @ApiOperation("代码生成")
+    @Log(title = "获取代码", operateType = OperateType.QUERY)
+    @ApiOperation("获取代码")
     @GetMapping
     public Result<List<CodeVo>> getCode(ReqCode reqCode) {
         List<CodeVo> list = freemarkerUtils.getCode(reqCode);
@@ -42,6 +42,13 @@ public class CodeController {
 //            }
 //        }
         return Result.ok(list, "生成代码成功");
+    }
+
+    @Log(title = "下载代码", operateType = OperateType.QUERY)
+    @ApiOperation("下载代码")
+    @GetMapping("/download")
+    public Result<byte[]> downloadCode(ReqCode reqCode)  {
+        return Result.ok(freemarkerUtils.downloadCode(reqCode));
     }
 
     @Log(title = "代码生成并保存到本地", operateType = OperateType.QUERY)

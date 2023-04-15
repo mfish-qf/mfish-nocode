@@ -33,6 +33,10 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-code-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

@@ -4,6 +4,7 @@ import cn.com.mfish.common.code.api.remote.RemoteCodeService;
 import cn.com.mfish.common.code.api.req.ReqCode;
 import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -16,9 +17,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,6 +75,20 @@ public class CodeBuildController {
         return remoteCodeService.getCode(reqCode);
     }
 
+    @Log(title = "下载代码", operateType = OperateType.QUERY)
+    @ApiOperation("下载代码")
+    @GetMapping("/download")
+    public void downloadCode(ReqCode reqCode, HttpServletResponse response) throws IOException {
+        Result<byte[]> result = remoteCodeService.downloadCode(reqCode);
+        if (!result.isSuccess()) {
+            throw new MyRuntimeException(result.getMsg());
+        }
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment;filename=mfish-code.zip");
+        response.addHeader("Content-Length", result.getData().length + "");
+        response.setContentType("application/x-zip-compressed; charset=UTF-8");
+        IOUtils.write(result.getData(), response.getOutputStream());
+    }
 
     /**
      * 通过id删除

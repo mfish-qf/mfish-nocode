@@ -25,12 +25,17 @@ public class RemoteCodeFallback implements FallbackFactory<RemoteCodeService> {
         return new RemoteCodeService() {
             @Override
             public Result<List<CodeVo>> getCode(ReqCode reqCode) {
-                return Result.fail("错误:代码生成出错");
+                return Result.fail("错误:查询代码出错");
             }
 
             @Override
             public Result<String> saveCode(ReqCode reqCode) {
-                return Result.fail("错误:代码生成出错");
+                return Result.fail("错误:生成代码出错");
+            }
+
+            @Override
+            public Result<byte[]> downloadCode(ReqCode reqCode) {
+                return Result.fail("错误:下载代码出错");
             }
         };
     }
