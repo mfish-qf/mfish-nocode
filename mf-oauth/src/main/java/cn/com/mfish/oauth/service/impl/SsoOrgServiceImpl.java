@@ -76,7 +76,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         if (StringUtils.isEmpty(ssoOrg.getParentId())) {
             ssoOrg.setParentId("");
         }
-        if (ssoOrg.getId().equals(ssoOrg.getParentId())) {
+        if (!StringUtils.isEmpty(ssoOrg.getId()) && ssoOrg.getId().equals(ssoOrg.getParentId())) {
             return Result.fail("错误:父节点不允许设置自己");
         }
         return Result.ok("组织校验成功");
