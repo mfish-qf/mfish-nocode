@@ -21,9 +21,9 @@
 [![github](https://img.shields.io/badge/前端地址-github-red.svg)](https://github.com/mfish-qf/mfish-nocode-view)
 [![gitee](https://img.shields.io/badge/前端地址-gitee-lightgrey.svg)](https://gitee.com/qiufeng9862/mfish-nocode-view)
 
-## 演示环境
-* *[demo地址](http://app.mfish.com.cn:11119)*
-
+## 文档地址
++ [文档地址](http://www.mfish.com.cn)
++ [在线预览](http://app.mfish.com.cn:11119)
 ## 功能模块
 ```
 ├─ChatGpt
@@ -40,7 +40,8 @@
 │  ├─日志管理
 │  ├─文件管理
 │  ├─在线用户
-│  └─数据库配置
+│  ├─数据库
+│  └─数据源
 ├─系统监控
 │  ├─监控中心
 ├─任务调度
@@ -53,6 +54,8 @@
 │  ├─AntDesign文档
 │  └─Vben文档
 ├─多级目录
+├─系统工具
+│  ├─代码生成
 ├─图形编辑器
 ├─引导页
 ├─关于
@@ -98,6 +101,9 @@
 
 ![](https://oscimg.oschina.net/oscnet/up-7b2eeb5e679f75d889a841de61f9845c026.png)
 
+![](https://oscimg.oschina.net/oscnet/up-c413a81f353a0175bbbd09cc32a7fb8d5bf.png)
+
+![](https://oscimg.oschina.net/oscnet/up-736398ce5030ce21b6dda45ba9f24af4a72.png)
 #### 数据库信息
 
 |文件|描述|
@@ -113,7 +119,7 @@ http://localhost:8888/swagger-ui/index.html
 
 #### 平台交流
 
-微信:  
+微信:
 ![微信](https://oscimg.oschina.net/oscnet/up-aaf63a91b96c092ad240b2e9755d926ba62.png)
 
 QQ群:
