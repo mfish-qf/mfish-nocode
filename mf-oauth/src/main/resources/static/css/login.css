@@ -41,7 +41,8 @@ html, body {
     margin-left: 20px;
 }
 
-.login .logo .title > h4 {
+.login .logo .title > h1 {
+    font-size: 22px;
     font-weight: 700;
 }
 
