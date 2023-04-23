@@ -54,6 +54,7 @@ public class JobController {
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Job>()
                 .like(reqJob.getJobName() != null, Job::getJobName, reqJob.getJobName())
                 .like(reqJob.getJobGroup() != null, Job::getJobGroup, reqJob.getJobGroup())
+                .eq(reqJob.getStatus() != null, Job::getStatus, reqJob.getStatus())
                 .eq(reqJob.getJobType() != null, Job::getJobType, reqJob.getJobType())
                 .like(reqJob.getClassName() != null, Job::getMethodName, reqJob.getClassName())
                 .orderByDesc(Job::getCreateTime);

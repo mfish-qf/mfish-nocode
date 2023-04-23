@@ -23,4 +23,6 @@ public class ReqJob {
     private Integer jobType;
     @ApiModelProperty(value = "类名称")
     private String className;
+    @ApiModelProperty(value = "状态（0正常 1停用）")
+    private Integer status;
 }

@@ -101,7 +101,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         if (s == null) {
             return "";
         }
-        s = s.toLowerCase();
         StringBuilder sb = new StringBuilder(s.length());
         boolean upperCase = false;
         for (int i = 0; i < s.length(); i++) {
