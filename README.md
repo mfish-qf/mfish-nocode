@@ -1,32 +1,12 @@
-<h1 style="text-align: center;">摸鱼低代码平台后端</h1>
-<div style="text-align: center; display: flex;justify-content: center;">
-<div style="padding-left: 10px">
+# 摸鱼低代码平台后端
 
 [![文档地址](https://img.shields.io/badge/docs-%E6%96%87%E6%A1%A3%E5%9C%B0%E5%9D%80-green)](http://www.mfish.com.cn)
-</div>
-<div style="padding-left: 10px">
-
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE)
-</div>
-<div style="padding-left: 10px">
-
 [![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/mfish-qf/mfish-nocode/releases/tag/v1.0.0)
-</div>
-</div>
-<div style="text-align: center; display: flex;justify-content: center;">
-<div style="padding-left: 10px">
 
 [![GitHub watches](https://img.shields.io/github/watchers/mfish-qf/mfish-nocode.svg?style=social&label=Watch)](https://github.com/mfish-qf/mfish-nocode)
-</div>
-<div style="padding-left: 10px">
-
 [![GitHub stars](https://img.shields.io/github/stars/mfish-qf/mfish-nocode.svg?style=social&label=Stars)](https://github.com/mfish-qf/mfish-nocode)
-</div>
-<div style="padding-left: 10px">
-
 [![GitHub forks](https://img.shields.io/github/forks/mfish-qf/mfish-nocode.svg?style=social&label=Fork)](https://github.com/mfish-qf/mfish-nocode)
-</div>
-</div>
 
 ## 架构图
 ![](https://oscimg.oschina.net/oscnet/up-63e6a3ba5667370d5bf2ef4d9401e007972.png)
