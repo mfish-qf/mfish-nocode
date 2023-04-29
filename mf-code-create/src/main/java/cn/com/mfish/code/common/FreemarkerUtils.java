@@ -91,7 +91,12 @@ public class FreemarkerUtils {
         if (StringUtils.isEmpty(reqCode.getEntityName())) {
             reqCode.setEntityName(reqCode.getTableName());
         }
-        reqCode.setEntityName(StringUtils.toCamelBigCase(reqCode.getEntityName()));
+        //如果entityName带下划线，转为首字母大写驼峰，否则其他不变首字母大写
+        if (reqCode.getEntityName().indexOf("_") > 0) {
+            reqCode.setEntityName(StringUtils.toCamelBigCase(reqCode.getEntityName()));
+        }else{
+            reqCode.setEntityName(StringUtils.firstUpperCase(reqCode.getEntityName()));
+        }
         return reqCode;
     }
 
@@ -132,9 +137,7 @@ public class FreemarkerUtils {
                 list.remove(i--);
                 continue;
             }
-            //如果fieldName包含下划线，强制转驼峰，如果不包含原样返回
-            fieldName = fieldName.indexOf("_") > 0 ? StringUtils.toCamelCase(fieldName) : fieldName;
-            fieldInfo.setFieldName(fieldName);
+            fieldInfo.setFieldName(StringUtils.toCamelCase(fieldName));
         }
         codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(reqCode.getTableName()).setTableComment(reqCode.getTableComment()).setIdType(idType));
         return getCode(codeInfo);
