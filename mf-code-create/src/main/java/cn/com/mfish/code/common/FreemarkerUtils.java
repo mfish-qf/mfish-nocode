@@ -132,7 +132,9 @@ public class FreemarkerUtils {
                 list.remove(i--);
                 continue;
             }
-            fieldInfo.setFieldName(StringUtils.toCamelCase(fieldName));
+            //如果fieldName包含下划线，强制转驼峰，如果不包含原样返回
+            fieldName = fieldName.indexOf("_") > 0 ? StringUtils.toCamelCase(fieldName) : fieldName;
+            fieldInfo.setFieldName(fieldName);
         }
         codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(reqCode.getTableName()).setTableComment(reqCode.getTableComment()).setIdType(idType));
         return getCode(codeInfo);

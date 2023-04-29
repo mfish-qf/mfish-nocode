@@ -12,6 +12,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.sys.entity.CodeBuild;
 import cn.com.mfish.sys.req.ReqCodeBuild;
 import cn.com.mfish.sys.service.CodeBuildService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +53,10 @@ public class CodeBuildController {
     @GetMapping
     public Result<PageResult<CodeBuild>> queryPageList(ReqCodeBuild reqCodeBuild, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(codeBuildService.list()), "代码构建-查询成功!");
+        return Result.ok(new PageResult<>(codeBuildService.list(new LambdaQueryWrapper<CodeBuild>()
+                .like(reqCodeBuild.getTableName() != null, CodeBuild::getTableName, reqCodeBuild.getTableName())
+                .like(reqCodeBuild.getApiPrefix() != null, CodeBuild::getApiPrefix, reqCodeBuild.getApiPrefix())
+                .like(reqCodeBuild.getEntityName() != null, CodeBuild::getEntityName, reqCodeBuild.getEntityName()))), "代码构建-查询成功!");
     }
 
     /**

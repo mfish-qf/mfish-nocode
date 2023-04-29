@@ -59,7 +59,8 @@ export default {
       columns,
       formConfig: {
         labelWidth: 100,
-        schemas: searchFormSchema
+        schemas: searchFormSchema,
+        autoSubmitOnEnter: true
       },
       useSearchForm: true,
       showTableSetting: true,
