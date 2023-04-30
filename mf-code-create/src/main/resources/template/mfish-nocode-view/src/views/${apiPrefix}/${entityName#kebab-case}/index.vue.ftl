@@ -58,6 +58,7 @@ export default {
       api: get${entityName}List,
       columns,
       formConfig: {
+        name: "search_form_item",
         labelWidth: 100,
         schemas: searchFormSchema,
         autoSubmitOnEnter: true

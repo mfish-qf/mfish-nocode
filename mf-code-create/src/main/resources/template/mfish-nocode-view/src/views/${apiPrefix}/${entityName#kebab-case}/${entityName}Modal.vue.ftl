@@ -23,6 +23,7 @@ export default {
   setup(_, { emit }) {
     const isUpdate = ref(true);
     const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+      name: "model_form_item",
       labelWidth: 100,
       baseColProps: { span: 12 },
       schemas: ${entityName?uncap_first}FormSchema,
