@@ -56,7 +56,8 @@ public class CodeBuildController {
         return Result.ok(new PageResult<>(codeBuildService.list(new LambdaQueryWrapper<CodeBuild>()
                 .like(reqCodeBuild.getTableName() != null, CodeBuild::getTableName, reqCodeBuild.getTableName())
                 .like(reqCodeBuild.getApiPrefix() != null, CodeBuild::getApiPrefix, reqCodeBuild.getApiPrefix())
-                .like(reqCodeBuild.getEntityName() != null, CodeBuild::getEntityName, reqCodeBuild.getEntityName()))), "代码构建-查询成功!");
+                .like(reqCodeBuild.getEntityName() != null, CodeBuild::getEntityName, reqCodeBuild.getEntityName())
+                .orderByDesc(CodeBuild::getCreateTime))), "代码构建-查询成功!");
     }
 
     /**
