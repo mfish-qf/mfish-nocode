@@ -91,7 +91,7 @@ public class AuthorizeController {
      */
     private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function) throws OAuthProblemException, OAuthSystemException, URISyntaxException {
         OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
-        log.info(MessageFormat.format("用户:{0}登录状态:{1}方法:{2}", SecurityUtils.getSubject().getPrincipal(), SecurityUtils.getSubject().isAuthenticated(), function));
+        log.info(MessageFormat.format("用户:{0}登录状态:{1}", SecurityUtils.getSubject().getPrincipal(), SecurityUtils.getSubject().isAuthenticated()));
         if (!SecurityUtils.getSubject().isAuthenticated()) {
             if (!function.apply(model, request)) {
                 //登录失败时跳转到登陆页面
