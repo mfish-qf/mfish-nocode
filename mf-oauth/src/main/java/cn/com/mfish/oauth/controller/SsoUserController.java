@@ -130,7 +130,7 @@ public class SsoUserController {
     @ApiOperation("用户登出")
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
-    public Result<String> revoke() {
+    public Result<Boolean> revoke() {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
             String error = "未获取到用户登录状态,无需登出";
@@ -139,7 +139,7 @@ public class SsoUserController {
         String userId = (String) subject.getPrincipal();
         userTokenCache.delUserDevice(DeviceType.Web, userId);
         subject.logout();
-        return Result.ok("成功登出");
+        return Result.ok(!SecurityUtils.getSubject().isAuthenticated(), "成功登出");
     }
 
     /**

@@ -24,11 +24,11 @@ public interface LoginService {
     /**
      * 提交登录数据
      *
-     * @param mode
+     * @param model
      * @param request
      * @return
      */
-    boolean postLogin(Model mode, HttpServletRequest request);
+    boolean postLogin(Model model, HttpServletRequest request);
 
     /**
      * 登录
