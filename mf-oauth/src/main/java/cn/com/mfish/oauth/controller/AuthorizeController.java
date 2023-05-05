@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
@@ -31,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.function.BiFunction;
 
 /**
  * @author: mfish
@@ -39,6 +42,7 @@ import java.net.URISyntaxException;
 @Api(tags = "认证code获取")
 @Controller
 @RequestMapping
+@Slf4j
 public class AuthorizeController {
     @Resource
     LoginService loginService;
@@ -55,12 +59,7 @@ public class AuthorizeController {
     })
     public Object getAuthorize(Model model, HttpServletRequest request)
             throws OAuthProblemException, OAuthSystemException, URISyntaxException {
-        OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
-        if (!SecurityUtils.getSubject().isAuthenticated()) {
-            loginService.getLogin(model, request);
-            return "login";
-        }
-        return buildCodeResponse(request, oauthRequest);
+        return authorize(model, request, (m, r) -> loginService.getLogin(m, r));
     }
 
     @ApiOperation("认证接口")
@@ -76,9 +75,25 @@ public class AuthorizeController {
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request)
             throws URISyntaxException, OAuthSystemException, OAuthProblemException {
+        return authorize(model, request, (m, r) -> loginService.postLogin(m, r));
+    }
+
+    /**
+     * 认证方法
+     *
+     * @param model    model信息
+     * @param request  请求
+     * @param function 处理方法get post
+     * @return
+     * @throws OAuthProblemException oauth异常
+     * @throws OAuthSystemException  oauth异常
+     * @throws URISyntaxException    uri异常
+     */
+    private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function) throws OAuthProblemException, OAuthSystemException, URISyntaxException {
         OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
+        log.info(MessageFormat.format("用户:{0}登录状态:{1}", SecurityUtils.getSubject().getPrincipal(), SecurityUtils.getSubject().isAuthenticated()));
         if (!SecurityUtils.getSubject().isAuthenticated()) {
-            if (!loginService.postLogin(model, request)) {
+            if (!function.apply(model, request)) {
                 //登录失败时跳转到登陆页面
                 return "login";
             }

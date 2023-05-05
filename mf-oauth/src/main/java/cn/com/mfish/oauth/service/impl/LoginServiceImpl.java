@@ -48,7 +48,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean getLogin(Model model, HttpServletRequest request) {
+        //校验当前请求code相关参数是否正确
         validateCode(model, request);
+        //get的登录请求，始终返回登录页
         return false;
     }
 
