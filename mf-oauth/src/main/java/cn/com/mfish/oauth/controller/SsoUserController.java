@@ -137,9 +137,8 @@ public class SsoUserController {
             return Result.ok(error);
         }
         String userId = (String) subject.getPrincipal();
-        userTokenCache.delUserDevice(DeviceType.Web, userId);
-        subject.logout();
-        return Result.ok(!SecurityUtils.getSubject().isAuthenticated(), "成功登出");
+        userTokenCache.delUserDevice(DeviceType.Web, userId, subject.getSession().getId().toString());
+        return Result.ok(true, "成功登出");
     }
 
     /**
@@ -220,13 +219,23 @@ public class SsoUserController {
     @GetMapping("/revoke/{token}")
     @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
     @RequiresPermissions("sys:online:revoke")
-    public Result<String> revokeUser(@ApiParam(name = "token", value = "指定用户的token") @PathVariable String token) {
-        String sessionId = OauthUtils.logout(oAuth2Service.decryptToken(token));
+    public Result<Boolean> revokeUser(@ApiParam(name = "token", value = "指定用户的token") @PathVariable String token) {
+        return revoke(oAuth2Service.decryptToken(token));
+    }
+
+    /**
+     * 登出
+     *
+     * @param token token信息
+     * @return
+     */
+    private Result<Boolean> revoke(String token) {
+        String sessionId = OauthUtils.logout(token);
         try {
             redisSessionDAO.delete(redisSessionDAO.readSession(sessionId));
         } catch (Exception ex) {
             log.error("删除session异常", ex);
         }
-        return Result.ok("成功登出");
+        return Result.ok(true, "成功登出");
     }
 }

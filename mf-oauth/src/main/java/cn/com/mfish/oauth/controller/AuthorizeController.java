@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.service.LoginService;
@@ -55,11 +56,16 @@ public class AuthorizeController {
             @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端ID", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query")
+            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
+            @ApiImplicitParam(name = "force_login", value = "强制登录 值为1时强行返回登录界面", paramType = "query")
     })
-    public Object getAuthorize(Model model, HttpServletRequest request)
-            throws OAuthProblemException, OAuthSystemException, URISyntaxException {
-        return authorize(model, request, (m, r) -> loginService.getLogin(m, r));
+    public Object getAuthorize(Model model, HttpServletRequest request) {
+        String force = request.getParameter("force_login");
+        boolean forceLogin = false;
+        if (!StringUtils.isEmpty(force) && "1".equals(force)) {
+            forceLogin = true;
+        }
+        return authorize(model, request, (m, r) -> loginService.getLogin(m, r), forceLogin);
     }
 
     @ApiOperation("认证接口")
@@ -75,7 +81,7 @@ public class AuthorizeController {
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request)
             throws URISyntaxException, OAuthSystemException, OAuthProblemException {
-        return authorize(model, request, (m, r) -> loginService.postLogin(m, r));
+        return authorize(model, request, (m, r) -> loginService.postLogin(m, r), false);
     }
 
     /**
@@ -85,12 +91,15 @@ public class AuthorizeController {
      * @param request  请求
      * @param function 处理方法get post
      * @return
-     * @throws OAuthProblemException oauth异常
-     * @throws OAuthSystemException  oauth异常
-     * @throws URISyntaxException    uri异常
      */
-    private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function) throws OAuthProblemException, OAuthSystemException, URISyntaxException {
-        OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
+    private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function, boolean forceLogin) {
+        OAuthAuthzRequest oauthRequest;
+        try {
+            oauthRequest = new OAuthAuthzRequest(request);
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            throw new MyRuntimeException("错误:请求参数校验出错");
+        }
         log.info(MessageFormat.format("用户:{0}登录状态:{1}", SecurityUtils.getSubject().getPrincipal(), SecurityUtils.getSubject().isAuthenticated()));
         if (!SecurityUtils.getSubject().isAuthenticated()) {
             if (!function.apply(model, request)) {
@@ -98,10 +107,16 @@ public class AuthorizeController {
                 return "login";
             }
         }
+        //如果是强制登录，当前登录状态登出直接返回登录页面
+        if (forceLogin) {
+            SecurityUtils.getSubject().logout();
+            return "login";
+        }
         return buildCodeResponse(request, oauthRequest);
+
     }
 
-    private ResponseEntity<Object> buildCodeResponse(HttpServletRequest request, OAuthAuthzRequest oauthRequest) throws URISyntaxException, OAuthSystemException {
+    private ResponseEntity<Object> buildCodeResponse(HttpServletRequest request, OAuthAuthzRequest oauthRequest) {
         AuthorizationCode code = oAuth2Service.buildCode(oauthRequest);
         // 进行OAuth响应构建
         OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_MOVED_TEMPORARILY);
@@ -111,10 +126,15 @@ public class AuthorizeController {
         if (!StringUtils.isEmpty(state)) {
             builder.setParam(OAuth.OAUTH_STATE, state);
         }
-        // 构建响应
-        OAuthResponse response = builder.location(code.getRedirectUri()).buildQueryMessage();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(new URI(response.getLocationUri()));
-        return new ResponseEntity<>(headers, HttpStatus.valueOf(response.getResponseStatus()));
+        try {
+            // 构建响应
+            OAuthResponse response = builder.location(code.getRedirectUri()).buildQueryMessage();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(new URI(response.getLocationUri()));
+            return new ResponseEntity<>(headers, HttpStatus.valueOf(response.getResponseStatus()));
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            throw new MyRuntimeException("错误:构建code返回异常");
+        }
     }
 }
