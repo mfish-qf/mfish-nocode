@@ -5,10 +5,10 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -25,8 +25,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +41,6 @@ import java.util.concurrent.CompletableFuture;
 @Api(tags = "token获取")
 @RestController
 @RequestMapping
-@RefreshScope
 public class AccessTokenController {
     @Resource
     Code2TokenValidator code2TokenValidator;
@@ -57,9 +54,6 @@ public class AccessTokenController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
-    //登录是否互斥 默认不互斥
-    @Value("${oauth2.login.mutex}")
-    private boolean loginMutex = false;
 
     @ApiOperation("token获取")
     @PostMapping(value = "/accessToken")
@@ -102,12 +96,9 @@ public class AccessTokenController {
         }
         //缓存用户角色信息
         CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId(), token.getClientId()));
-        if (loginMutex) {
-            //增加用户登录互斥缓存
-            userTokenCache.addUserTokenCache(DeviceType.Web
-                    , SecurityUtils.getSubject().getSession().getId().toString()
-                    , token.getUserId(), token.getAccessToken());
-        }
+        userTokenCache.addUserTokenCache(DeviceType.Web
+                , SecurityUtils.getSubject().getSession().getId().toString()
+                , token.getUserId(), token.getAccessToken());
         return Result.ok(new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken()));
     }
 
