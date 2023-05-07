@@ -3,19 +3,21 @@ package cn.com.mfish.oauth.controller;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
+import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.WeChatService;
-import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -55,6 +57,8 @@ public class WeChatController {
     WeChatTokenValidator weChatTokenValidator;
     @Resource
     WxMaService wxMaService;
+    @Resource
+    UserTokenCache userTokenCache;
 
     @GetMapping("/bind/check")
     @ApiOperation("检查微信是否绑定 如果已绑定返回accessToken")
@@ -66,7 +70,9 @@ public class WeChatController {
         String openid = session.getOpenid();
         String userId = weChatService.getUserIdByOpenId(openid);
         if (!StringUtils.isEmpty(userId)) {
-            return new AccessToken(weChatService.buildWeChatToken(openid, session.getSessionKey(), userId));
+            AccessToken token = new AccessToken(weChatService.buildWeChatToken(openid, session.getSessionKey(), userId));
+            userTokenCache.addUserTokenCache(DeviceType.WX, openid, userId, token.getAccess_token());
+            return token;
         }
         log.error("微信:" + openid + ",未绑定成功");
         throw new OAuthValidateException("错误:微信未绑定");
@@ -117,8 +123,10 @@ public class WeChatController {
         }
         Result<String> loginResult = loginService.login(request);
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData())) {
-            return weChatService.convertToken(weChatService
-                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getData()));
+            WeChatToken weChatToken = weChatService.buildWeChatToken(openid, session.getSessionKey(), loginResult.getData());
+            AccessToken token = weChatService.convertToken(weChatToken);
+            userTokenCache.addUserTokenCache(DeviceType.WX, openid, weChatToken.getUserId(), token.getAccess_token());
+            return token;
         }
         throw new OAuthValidateException("错误:微信账号绑定失败");
     }
@@ -162,8 +170,10 @@ public class WeChatController {
             nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
-            return new AccessToken(weChatService
+            AccessToken token = new AccessToken(weChatService
                     .buildWeChatToken(openid, session.getSessionKey(), loginResult.getData()));
+            userTokenCache.addUserTokenCache(DeviceType.WX, openid, loginResult.getData(), token.getAccess_token());
+            return token;
         }
         throw new OAuthValidateException("错误:绑定微信失败");
     }
@@ -208,7 +218,9 @@ public class WeChatController {
             nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
-            return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));
+            AccessToken token =  new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));
+            userTokenCache.addUserTokenCache(DeviceType.WX, openid, loginResult.getData(), token.getAccess_token());
+            return token;
         }
         throw new OAuthValidateException("错误:绑定微信失败");
     }

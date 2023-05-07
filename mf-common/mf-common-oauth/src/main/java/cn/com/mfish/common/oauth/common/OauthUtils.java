@@ -1,5 +1,6 @@
 package cn.com.mfish.common.oauth.common;
 
+import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
@@ -161,28 +162,27 @@ public class OauthUtils {
     }
 
     /**
-     * 登出指定token
+     * 删除token和对应refreshToken
      *
      * @param token token
      * @return 返回 token关联的sessionId
      */
-    public static String logout(String token) {
+    public static LoginMutexEntity delTokenAndRefreshToken(String token) {
         TokenService tokenService = getTokenService(token);
         Object accessToken = getToken(tokenService, token);
         if (accessToken == null) {
             return null;
         }
         delToken(tokenService, token);
-        String sessionId = null;
         if (accessToken instanceof RedisAccessToken) {
             RedisAccessToken redisAccessToken = (RedisAccessToken) accessToken;
-            sessionId = redisAccessToken.getTokenSessionId();
             delRefreshToken(tokenService, redisAccessToken.getRefreshToken());
+            return new LoginMutexEntity().setDeviceId(redisAccessToken.getTokenSessionId()).setDeviceType(DeviceType.Web).setUserId(redisAccessToken.getUserId());
         } else if (accessToken instanceof WeChatToken) {
             WeChatToken weChatToken = (WeChatToken) accessToken;
-            sessionId = weChatToken.getSession_key();
             delRefreshToken(tokenService, weChatToken.getRefresh_token());
+            return new LoginMutexEntity().setDeviceId(weChatToken.getOpenid()).setDeviceType(DeviceType.WX).setUserId(weChatToken.getUserId());
         }
-        return sessionId;
+        return null;
     }
 }

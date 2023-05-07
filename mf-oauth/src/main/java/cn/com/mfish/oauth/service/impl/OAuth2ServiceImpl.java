@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
@@ -14,7 +15,6 @@ import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.service.TokenService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -186,7 +186,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
      */
     @Override
     public PageResult<OnlineUser> getOnlineUser(ReqPage reqPage) {
-        ScanOptions scanOptions = ScanOptions.scanOptions().match(RedisPrefix.ACCESS_TOKEN + "*").count(10000).build();
+        ScanOptions scanOptions = ScanOptions.scanOptions().match(RedisPrefix.DEVICE2TOKEN + "*").count(10000).build();
         Cursor<String> cursor = redisTemplate.scan(scanOptions);
         List<OnlineUser> list = new ArrayList<>();
         long total = 0;
@@ -195,18 +195,23 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         while (cursor.hasNext()) {
             if (cursor.getPosition() >= start && cursor.getPosition() < end) {
                 String key = cursor.next();
-                Object token = OauthUtils.getToken(key.replaceFirst(RedisPrefix.ACCESS_TOKEN, ""));
-                OnlineUser user = null;
-                if (token instanceof RedisAccessToken) {
-                    user = buildOnlineUser((RedisAccessToken) token);
-                } else if (token instanceof WeChatToken) {
-                    user = buildOnlineUser((WeChatToken) token);
-                }
-                if (user != null) {
-                    long expire = redisTemplate.getExpire(key);
-                    user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
-                    user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));
-                    list.add(user);
+                //获取相同设备下的token列表
+                List<Object> tokens = redisTemplate.opsForList().range(key, 0, -1);
+                //只显示一个token的登录时间
+                if (tokens != null || tokens.size() > 0) {
+                    Object token = OauthUtils.getToken(tokens.get(0).toString());
+                    OnlineUser user = null;
+                    if (token instanceof RedisAccessToken) {
+                        user = buildOnlineUser((RedisAccessToken) token);
+                    } else if (token instanceof WeChatToken) {
+                        user = buildOnlineUser((WeChatToken) token);
+                    }
+                    if (user != null) {
+                        long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.get(0).toString()));
+                        user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
+                        user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));
+                        list.add(user);
+                    }
                 }
             } else {
                 cursor.next();
