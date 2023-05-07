@@ -22,8 +22,8 @@ public class OnlineUser {
     private String account;
     @ApiModelProperty("客户端ID")
     private String clientId;
-    @ApiModelProperty("token信息")
-    private String token;
+    @ApiModelProperty("sessionId信息")
+    private String sid;
     @ApiModelProperty("登录IP")
     private String ip;
     @ApiModelProperty("登录模式 0 浏览器 1微信")

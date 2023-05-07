@@ -202,9 +202,9 @@ public class OAuth2ServiceImpl implements OAuth2Service {
                     Object token = OauthUtils.getToken(tokens.get(0).toString());
                     OnlineUser user = null;
                     if (token instanceof RedisAccessToken) {
-                        user = buildOnlineUser((RedisAccessToken) token);
+                        user = buildOnlineUser((RedisAccessToken) token, key.replace(RedisPrefix.DEVICE2TOKEN,""));
                     } else if (token instanceof WeChatToken) {
-                        user = buildOnlineUser((WeChatToken) token);
+                        user = buildOnlineUser((WeChatToken) token, key.replace(RedisPrefix.DEVICE2TOKEN,""));
                     }
                     if (user != null) {
                         long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.get(0).toString()));
@@ -222,20 +222,20 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public String decryptToken(String token) {
-        return SM4Utils.decryptEcb(sm4key, token);
+    public String decryptSid(String sid) {
+        return SM4Utils.decryptEcb(sm4key, sid);
     }
 
-    private OnlineUser buildOnlineUser(RedisAccessToken redisAccessToken) {
+    private OnlineUser buildOnlineUser(RedisAccessToken redisAccessToken, String sessionId) {
         return new OnlineUser().setAccount(redisAccessToken.getAccount())
-                .setToken(SM4Utils.encryptEcb(sm4key, redisAccessToken.getAccessToken()))
+                .setSid(SM4Utils.encryptEcb(sm4key, sessionId))
                 .setClientId(redisAccessToken.getClientId())
                 .setLoginMode(0).setIp(redisAccessToken.getIp());
     }
 
-    private OnlineUser buildOnlineUser(WeChatToken weChatToken) {
+    private OnlineUser buildOnlineUser(WeChatToken weChatToken, String sessionId) {
         return new OnlineUser().setAccount(weChatToken.getAccount())
-                .setToken(SM4Utils.encryptEcb(sm4key, weChatToken.getAccess_token()))
+                .setSid(SM4Utils.encryptEcb(sm4key, sessionId))
                 .setLoginMode(1).setIp(weChatToken.getIp());
     }
 }

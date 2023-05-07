@@ -76,17 +76,21 @@ public class UserTokenCache {
         if (!loginMutex) {
             userId = "";
         }
+        delDeviceTokenCache(deviceId);
+        //如果当前用户为空不删除用户设备对应关系，因为并未存储
+        if (StringUtils.isEmpty(userId)) {
+            return;
+        }
+        redisTemplate.delete(RedisPrefix.buildUser2DeviceKey(userId, deviceType));
+    }
+
+    public void delDeviceTokenCache(String deviceId) {
         delTokenList(deviceId);
         try {
             redisSessionDAO.delete(redisSessionDAO.readSession(deviceId));
         } catch (Exception ex) {
             log.error("删除session异常", ex);
         }
-        //如果当前用户为空不删除用户设备对应关系，因为并未存储
-        if (StringUtils.isEmpty(userId)) {
-            return;
-        }
-        redisTemplate.delete(RedisPrefix.buildUser2DeviceKey(userId, deviceType));
     }
 
     /**

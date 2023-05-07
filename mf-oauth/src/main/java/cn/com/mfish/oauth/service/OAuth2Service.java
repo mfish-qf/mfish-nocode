@@ -45,9 +45,9 @@ public interface OAuth2Service {
     /**
      * 解密token
      *
-     * @param token
+     * @param sid
      * @return
      */
-    String decryptToken(String token);
+    String decryptSid(String sid);
 
 }
