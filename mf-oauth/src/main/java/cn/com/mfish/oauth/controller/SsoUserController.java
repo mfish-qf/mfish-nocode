@@ -4,16 +4,14 @@ import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.oauth.common.LoginMutexEntity;
-import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -214,22 +212,12 @@ public class SsoUserController {
     }
 
     @ApiOperation("踢出指定用户")
-    @GetMapping("/revoke/{token}")
+    @GetMapping("/revoke/{sid}")
     @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
     @RequiresPermissions("sys:online:revoke")
-    public Result<Boolean> revokeUser(@ApiParam(name = "token", value = "指定用户的token") @PathVariable String token) {
-        return revoke(oAuth2Service.decryptToken(token));
-    }
-
-    /**
-     * 登出
-     *
-     * @param token token信息
-     * @return
-     */
-    private Result<Boolean> revoke(String token) {
-        LoginMutexEntity entity = OauthUtils.delTokenAndRefreshToken(token);
-        userTokenCache.delUserTokenCache(entity.getDeviceType(), entity.getDeviceId(), entity.getUserId());
+    public Result<Boolean> revokeUser(@ApiParam(name = "sid", value = "指定用户的sessionId") @PathVariable String sid) {
+        userTokenCache.delDeviceTokenCache(oAuth2Service.decryptSid(sid));
         return Result.ok(true, "成功登出");
     }
+
 }
