@@ -30,7 +30,8 @@ public class UserTokenCache {
     //登录是否互斥 默认不互斥
     @Value("${oauth2.login.mutex}")
     private boolean loginMutex = false;
-    long expire = 30;
+    @Value("${redisSession.expire}")
+    private long expire = 0l;
 
 
     /**
@@ -50,7 +51,7 @@ public class UserTokenCache {
         //互斥场景下oldDeviceId始终为空，因为并未设置userId与设备的对应关系
         String oldDeviceId = getUserDevice(deviceType, userId);
         if (StringUtils.isEmpty(oldDeviceId)) {
-            setUserDevice(deviceType, userId, deviceId, token);
+            setUserDevice(deviceType, deviceId, userId, token);
             return;
         }
         //如果是为同一设备，设置token关系
@@ -59,18 +60,18 @@ public class UserTokenCache {
             return;
         }
         //如果互斥删除老设备用户信息
-        delUserDevice(deviceType, userId, oldDeviceId);
-        setUserDevice(deviceType, userId, deviceId, token);
+        delUserTokenCache(deviceType, oldDeviceId, userId);
+        setUserDevice(deviceType, deviceId, userId, token);
     }
 
     /**
      * 删除用户设备id 同时删除设备下token信息
      *
      * @param deviceType 设备类型
-     * @param userId     用户id
      * @param deviceId   设备id
+     * @param userId     用户id
      */
-    public void delUserDevice(DeviceType deviceType, String userId, String deviceId) {
+    public void delUserTokenCache(DeviceType deviceType, String deviceId, String userId) {
         //如果不互斥，忽略用户id，直接通过设备id进行token关系缓存
         if (!loginMutex) {
             userId = "";
@@ -96,26 +97,25 @@ public class UserTokenCache {
      * @param deviceId
      * @param token
      */
-    private void setUserDevice(DeviceType deviceType, String userId, String deviceId, String token) {
-        setUserDevice(deviceType, userId, deviceId);
+    private void setUserDevice(DeviceType deviceType, String deviceId, String userId, String token) {
+        setUserDevice(deviceType, deviceId, userId);
         setToken(deviceId, token);
     }
 
     /**
      * 设置当前用户设备
-     * 缓存保存30天 时间可以适当缩短
      * 当用户关闭浏览器重新登录会重新设置该信息
      *
      * @param deviceType
      * @param userId
      * @param deviceId
      */
-    private void setUserDevice(DeviceType deviceType, String userId, String deviceId) {
+    private void setUserDevice(DeviceType deviceType, String deviceId, String userId) {
         //如果当前用户为空则不设置该属性
         if (StringUtils.isEmpty(userId)) {
             return;
         }
-        redisTemplate.opsForValue().set(RedisPrefix.buildUser2DeviceKey(userId, deviceType), deviceId, expire, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(RedisPrefix.buildUser2DeviceKey(userId, deviceType), deviceId, expire, TimeUnit.SECONDS);
     }
 
     /**
@@ -140,7 +140,7 @@ public class UserTokenCache {
      */
     private void setToken(String deviceId, String token) {
         redisTemplate.opsForList().leftPush(RedisPrefix.buildDevice2TokenKey(deviceId), token);
-        redisTemplate.expire(RedisPrefix.buildDevice2TokenKey(deviceId), expire, TimeUnit.DAYS);
+        redisTemplate.expire(RedisPrefix.buildDevice2TokenKey(deviceId), expire, TimeUnit.SECONDS);
     }
 
     /**
@@ -151,7 +151,7 @@ public class UserTokenCache {
     private void delTokenList(String deviceId) {
         List<Object> list = redisTemplate.opsForList().range(RedisPrefix.buildDevice2TokenKey(deviceId), 0, -1);
         for (Object obj : list) {
-            OauthUtils.logout(obj.toString());
+            OauthUtils.delTokenAndRefreshToken(obj.toString());
         }
         redisTemplate.delete(RedisPrefix.buildDevice2TokenKey(deviceId));
     }

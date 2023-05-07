@@ -11,9 +11,9 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.oauth.common.LoginMutexEntity;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.core.web.ReqPage;
-import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -48,8 +48,6 @@ public class SsoUserController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
-    @Resource
-    RedisSessionDAO redisSessionDAO;
 
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
@@ -137,7 +135,7 @@ public class SsoUserController {
             return Result.ok(error);
         }
         String userId = (String) subject.getPrincipal();
-        userTokenCache.delUserDevice(DeviceType.Web, userId, subject.getSession().getId().toString());
+        userTokenCache.delUserTokenCache(DeviceType.Web, subject.getSession().getId().toString(), userId);
         return Result.ok(true, "成功登出");
     }
 
@@ -230,12 +228,8 @@ public class SsoUserController {
      * @return
      */
     private Result<Boolean> revoke(String token) {
-        String sessionId = OauthUtils.logout(token);
-        try {
-            redisSessionDAO.delete(redisSessionDAO.readSession(sessionId));
-        } catch (Exception ex) {
-            log.error("删除session异常", ex);
-        }
+        LoginMutexEntity entity = OauthUtils.delTokenAndRefreshToken(token);
+        userTokenCache.delUserTokenCache(entity.getDeviceType(), entity.getDeviceId(), entity.getUserId());
         return Result.ok(true, "成功登出");
     }
 }

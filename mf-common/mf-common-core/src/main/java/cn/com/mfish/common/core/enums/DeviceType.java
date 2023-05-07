@@ -9,7 +9,9 @@ public enum DeviceType {
     //浏览器
     Web("0"),
     //手机端
-    APP("1");
+    APP("1"),
+    //微信
+    WX("2");
     private String value;
 
     DeviceType(String value) {

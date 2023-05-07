@@ -78,7 +78,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
         String key = getKey(session.getId());
         log.debug("保存session");
         session.setTimeout(this.expire * 1000);
-        sessionRedisTemplate.opsForValue().set(key, session, this.expire * 1000, TimeUnit.MILLISECONDS);
+        sessionRedisTemplate.opsForValue().set(key, session, this.expire, TimeUnit.SECONDS);
     }
 
     /**
