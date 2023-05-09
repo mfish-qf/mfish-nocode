@@ -37,8 +37,9 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         if (save(codeBuild)) {
             ReqCode reqCode = new ReqCode();
             BeanUtils.copyProperties(codeBuild, reqCode);
-            if (!remoteCodeService.saveCode(reqCode).isSuccess()) {
-                throw new MyRuntimeException("错误:代码生成失败");
+            Result<String> saveCode = remoteCodeService.saveCode(reqCode);
+            if (!saveCode.isSuccess()) {
+                throw new MyRuntimeException(saveCode.getMsg());
             }
             return Result.ok(codeBuild, "代码构建-添加成功!");
         }

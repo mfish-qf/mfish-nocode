@@ -1,7 +1,7 @@
-package cn.com.mfish.common.dblink.datatable;
+package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.dblink.common.Constant;
+import cn.com.mfish.common.dataset.common.Constant;
 import com.github.pagehelper.Page;
 
 import java.util.Collection;

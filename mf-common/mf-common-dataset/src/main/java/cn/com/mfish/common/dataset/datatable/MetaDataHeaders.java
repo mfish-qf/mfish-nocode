@@ -1,8 +1,8 @@
-package cn.com.mfish.common.dblink.datatable;
+package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.dblink.common.Constant;
-import cn.com.mfish.common.dblink.common.DataUtils;
+import cn.com.mfish.common.dataset.common.Constant;
+import cn.com.mfish.common.dataset.common.DataSetUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
@@ -33,7 +33,7 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
      * @param header 列头
      */
     public void addColumn(MetaDataHeader header) {
-        String colName = DataUtils.calcColName(0, DataUtils.chooseColName(header), this.keySet());
+        String colName = DataSetUtils.calcColName(0, DataSetUtils.chooseColName(header), this.keySet());
         if (StringUtils.isEmpty(colName)) {
             throw new MyRuntimeException(Constant.EmptyColNameException);
         }

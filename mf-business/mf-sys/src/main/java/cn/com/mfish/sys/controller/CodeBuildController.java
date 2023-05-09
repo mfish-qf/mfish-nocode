@@ -2,9 +2,11 @@ package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.code.api.remote.RemoteCodeService;
 import cn.com.mfish.common.code.api.req.ReqCode;
+import cn.com.mfish.common.code.api.req.ReqSearch;
 import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -12,6 +14,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.sys.entity.CodeBuild;
 import cn.com.mfish.sys.req.ReqCodeBuild;
 import cn.com.mfish.sys.service.CodeBuildService;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -19,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -75,24 +79,41 @@ public class CodeBuildController {
 
     @Log(title = "查看代码", operateType = OperateType.QUERY)
     @ApiOperation("查看代码")
-    @GetMapping("/view")
-    public Result<List<CodeVo>> query(ReqCode reqCode) {
-        return remoteCodeService.getCode(reqCode);
+    @GetMapping("/view/{id}")
+    public Result<List<CodeVo>> query(@PathVariable String id) {
+        return remoteCodeService.getCode(buildReqCode(id));
     }
 
-    @Log(title = "下载代码", operateType = OperateType.QUERY)
+    @Log(title = "下载代码", operateType = OperateType.EXPORT)
     @ApiOperation("下载代码")
-    @GetMapping("/download")
-    public void downloadCode(ReqCode reqCode, HttpServletResponse response) throws IOException {
+    @GetMapping("/download/{id}")
+    public void downloadCode(@PathVariable String id, HttpServletResponse response) throws IOException {
+        ReqCode reqCode = buildReqCode(id);
         Result<byte[]> result = remoteCodeService.downloadCode(reqCode);
         if (!result.isSuccess()) {
             throw new MyRuntimeException(result.getMsg());
         }
         response.reset();
-        response.setHeader("Content-Disposition", "attachment;filename=mfish-code.zip");
+        response.setHeader("Content-Disposition", "attachment;filename=" + reqCode.getTableName() + ".zip");
         response.addHeader("Content-Length", result.getData().length + "");
         response.setContentType("application/x-zip-compressed; charset=UTF-8");
         IOUtils.write(result.getData(), response.getOutputStream());
+    }
+
+    /**
+     * 构建请求参数
+     *
+     * @param id 代码唯一id
+     * @return 请求参数
+     */
+    private ReqCode buildReqCode(String id) {
+        CodeBuild codeBuild = codeBuildService.getById(id);
+        ReqCode reqCode = new ReqCode();
+        BeanUtils.copyProperties(codeBuild, reqCode);
+        if (!StringUtils.isEmpty(codeBuild.getQueryParams())) {
+            reqCode.setSearches(JSON.parseArray(codeBuild.getQueryParams(), ReqSearch.class));
+        }
+        return reqCode;
     }
 
     /**

@@ -63,8 +63,33 @@ public class FreemarkerUtils {
         if (StringUtils.isEmpty(reqCode.getTableName())) {
             throw new MyRuntimeException("错误:表名不允许为空");
         }
+        if (StringUtils.isEmpty(reqCode.getApiPrefix())) {
+            int index = reqCode.getPackageName().lastIndexOf(".");
+            if (index >= 0) {
+                reqCode.setApiPrefix(reqCode.getPackageName().substring(index + 1));
+            } else {
+                reqCode.setApiPrefix(reqCode.getPackageName());
+            }
+        } else if (!StringUtils.isMatch("^[A-Za-z]+[A-Za-z\\d_]*$", reqCode.getApiPrefix())) {
+            throw new MyRuntimeException("错误:接口前缀格式不规范");
+        } else {
+            reqCode.setApiPrefix(reqCode.getApiPrefix().toLowerCase());
+        }
         if (StringUtils.isEmpty(reqCode.getPackageName())) {
             reqCode.setPackageName("cn.com.mfish.web");
+        } else if (!StringUtils.isMatch("^([A-Za-z]{1}[A-Za-z\\d_]*\\.)+[A-Za-z][A-Za-z\\d_]*$", reqCode.getPackageName())) {
+            throw new MyRuntimeException("错误:包名格式不规范");
+        }
+        if (StringUtils.isEmpty(reqCode.getEntityName())) {
+            reqCode.setEntityName(reqCode.getTableName());
+        } else if (!StringUtils.isMatch("^[A-Za-z]+[A-Za-z\\d_]*$", reqCode.getEntityName())) {
+            throw new MyRuntimeException("错误:实体类名格式不规范");
+        }
+        //如果entityName带下划线，转为首字母大写驼峰，否则其他不变首字母大写
+        if (reqCode.getEntityName().indexOf("_") > 0) {
+            reqCode.setEntityName(StringUtils.toCamelBigCase(reqCode.getEntityName()));
+        } else {
+            reqCode.setEntityName(StringUtils.firstUpperCase(reqCode.getEntityName()));
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
@@ -79,23 +104,6 @@ public class FreemarkerUtils {
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }
-        }
-        if (StringUtils.isEmpty(reqCode.getApiPrefix())) {
-            int index = reqCode.getPackageName().lastIndexOf(".");
-            if (index >= 0) {
-                reqCode.setApiPrefix(reqCode.getPackageName().substring(index + 1));
-            } else {
-                reqCode.setApiPrefix(reqCode.getPackageName());
-            }
-        }
-        if (StringUtils.isEmpty(reqCode.getEntityName())) {
-            reqCode.setEntityName(reqCode.getTableName());
-        }
-        //如果entityName带下划线，转为首字母大写驼峰，否则其他不变首字母大写
-        if (reqCode.getEntityName().indexOf("_") > 0) {
-            reqCode.setEntityName(StringUtils.toCamelBigCase(reqCode.getEntityName()));
-        }else{
-            reqCode.setEntityName(StringUtils.firstUpperCase(reqCode.getEntityName()));
         }
         return reqCode;
     }

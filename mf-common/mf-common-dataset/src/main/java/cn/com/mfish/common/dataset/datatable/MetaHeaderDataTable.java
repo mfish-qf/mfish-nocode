@@ -1,4 +1,4 @@
-package cn.com.mfish.common.dblink.datatable;
+package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.web.PageResult;
 import lombok.Data;

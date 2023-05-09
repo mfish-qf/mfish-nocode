@@ -3,7 +3,7 @@ package cn.com.mfish.sys.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;

@@ -1,7 +1,7 @@
-package cn.com.mfish.common.dblink.datatable;
+package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.enums.DataType;
-import cn.com.mfish.common.dblink.enums.TargetType;
+import cn.com.mfish.common.dataset.enums.TargetType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;

@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author: mfish
  * @description: 代码生成参数
@@ -24,4 +26,6 @@ public class ReqCode {
     private String entityName;
     @ApiModelProperty("接口路径前缀 例如:/oauth2/user接口前缀为oauth2(不传会使用packageName，最底层包名 例如:cn.com.mfish.sys包会使用sys)")
     private String apiPrefix;
+    @ApiModelProperty("查询条件列表 所有条件为and关系")
+    private List<ReqSearch> searches;
 }

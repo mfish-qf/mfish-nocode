@@ -40,12 +40,8 @@
         <druid.version>1.2.15</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
-        <commons.fileupload.version>1.5</commons.fileupload.version>
         <freemarker.version>2.3.31</freemarker.version>
         <fastjson.version>2.0.22</fastjson.version>
-        <minio.version>8.2.2</minio.version>
-        <poi.version>4.1.2</poi.version>
-        <jwt.version>0.9.1</jwt.version>
         <zxing.version>3.4.1</zxing.version>
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -164,21 +160,6 @@
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
             </dependency>
-
-            <!-- excel工具 -->
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-
-            <!-- 文件上传工具类 -->
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>${commons.fileupload.version}</version>
-            </dependency>
-
             <!-- 代码生成使用模板 -->
             <dependency>
                 <groupId>org.freemarker</groupId>
@@ -198,19 +179,6 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
-            </dependency>
-
-            <!-- 公共资源池 -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-pool2</artifactId>
-                <version>${common-pool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt</artifactId>
-                <version>${jwt.version}</version>
             </dependency>
 
             <dependency>
@@ -318,6 +286,11 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-dblink</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-dataset</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>

@@ -6,6 +6,8 @@ import org.springframework.util.AntPathMatcher;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具类
@@ -183,7 +185,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             return false;
         }
         for (String pattern : strs) {
-            if (isMatch(pattern, str)) {
+            if (isPathMatch(pattern, str)) {
                 return true;
             }
         }
@@ -200,8 +202,27 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @param url     需要匹配的url
      * @return
      */
-    public static boolean isMatch(String pattern, String url) {
+    public static boolean isPathMatch(String pattern, String url) {
         AntPathMatcher matcher = new AntPathMatcher();
         return matcher.match(pattern, url);
+    }
+
+    /**
+     * 判断字符串是否符合正则规则
+     * @param pattern 规则
+     * @param str 字符串
+     * @return
+     */
+    public static boolean isMatch(String pattern, String str) {
+        Pattern compile = Pattern.compile(pattern);
+        Matcher matcher = compile.matcher(str);
+        return matcher.matches();
+    }
+
+
+    public static void main(String[] args) {
+
+        System.out.println(isMatch("^[A-Za-z]+[A-Za-z0-9]*$", "22aaaaa"));
+        System.out.println(isMatch("^[A-Za-z]+[A-Za-z0-9]*$", "aa2323aaa"));
     }
 }

@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
@@ -17,7 +18,6 @@ import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -34,8 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author: mfish
@@ -247,16 +245,12 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             if (user.getAccount().length() > 30) {
                 throw new MyRuntimeException("错误:帐号字符不要超过30个字符");
             }
-            Pattern pattern = Pattern.compile("^[a-zA-Z0-9]+$");
-            Matcher matcher = pattern.matcher(user.getAccount());
-            if (!matcher.matches()) {
+            if (!StringUtils.isMatch("^[a-zA-Z0-9]+$", user.getAccount())) {
                 throw new MyRuntimeException("错误:帐号必须只允许为数字和字母");
             }
         }
         if (!StringUtils.isEmpty(user.getPhone())) {
-            Pattern pattern = Pattern.compile("^1[3-9][0-9]\\d{8}$");
-            Matcher matcher = pattern.matcher(user.getPhone());
-            if (!matcher.matches()) {
+            if (!StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", user.getPhone())) {
                 throw new MyRuntimeException("错误:手机号不正确");
             }
         }
