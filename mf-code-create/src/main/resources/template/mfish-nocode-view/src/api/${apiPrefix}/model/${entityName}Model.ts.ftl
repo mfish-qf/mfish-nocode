@@ -13,7 +13,9 @@ export interface ${entityName} extends BaseEntity<<#if tableInfo.idType==''||tab
 }
 
 export interface Req${entityName} {
-
+<#list searchList as search>
+ ${search.fieldInfo.fieldName}: <#if search.fieldInfo.type=='String'||search.fieldInfo.type='Date'>string<#elseif search.fieldInfo.type =='Boolean'>boolean<#else>number</#if>;
+</#list>
 }
 
 export type ${entityName}PageModel = PageResult<${entityName}>;

@@ -41,6 +41,12 @@ public class ${entityName}Controller {
 	@GetMapping
 	public Result<PageResult<${entityName}>> queryPageList(Req${entityName} req${entityName}, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+<#if searchList?size!=0>
+		List<${entityName}> list = ${entityName?uncap_first}Service.list(new LambdaQueryWrapper<${entityName}>()
+		<#list searchList as search>
+				.${search.condition}(req${entityName}.get${search.field}() != null, ${entityName}::get${search.field}, req${entityName}.get${search.field}())
+		</#list>;
+</#if>
 	    return Result.ok(new PageResult<>(${entityName?uncap_first}Service.list()), "${tableInfo.tableComment}-查询成功!");
 	}
 

@@ -18,16 +18,13 @@ export const columns: BasicColumn[] = [
 ];
 //todo 查询条件暂时用来装样子，后面增加配置条件后修改模版
 export const searchFormSchema: FormSchema[] = [
-<#assign x=0 />
-<#list tableInfo.columns as fieldInfo>
-  <#assign x=x+1 />
+<#list searchList as search>
   {
-    field: "${fieldInfo.fieldName}",
-    label: "${fieldInfo.comment}",
+    field: "${search.fieldInfo.fieldName}",
+    label: "${search.fieldInfo.comment}",
     component: "Input",
     colProps: { lg: 4, md: 5 }
   },
-  <#if x == 3><#break></#if>
 </#list>
 ];
 export const ${entityName?uncap_first}FormSchema: FormSchema[] = [
