@@ -1,8 +1,8 @@
 package cn.com.mfish.common.dblink;
 
 import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.dblink.datatable.MetaDataRow;
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.datatable.MetaDataRow;
+import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;

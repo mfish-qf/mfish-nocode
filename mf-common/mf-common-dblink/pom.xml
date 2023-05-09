@@ -54,6 +54,10 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-dataset</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-sys-api</artifactId>
         </dependency>
     </dependencies>

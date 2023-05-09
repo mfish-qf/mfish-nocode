@@ -35,11 +35,14 @@ public class UserTokenCache {
 
 
     /**
-     * web页面和APP端同一个用户 只允许在一个设备登录
-     * web页面和APP端登录状态允许同时存在
+     * 打开互斥：
+     * 同一个用户 允许同时登录手机,微信,浏览器
+     * 一个用户只允许在一个手机，一个微信，一个浏览器上登录
+     * 关闭互斥后：
+     * 用户允许多地登录
      *
      * @param deviceType 设备类型
-     * @param deviceId   设备ID web端为sessionid app端为认证app的token
+     * @param deviceId   设备ID web端为sessionId app端为mac地址 微信 openid
      * @param userId     用户id
      * @param token      token值
      */

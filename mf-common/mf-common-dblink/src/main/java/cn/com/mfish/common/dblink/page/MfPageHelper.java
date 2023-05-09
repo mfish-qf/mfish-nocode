@@ -1,6 +1,6 @@
 package cn.com.mfish.common.dblink.page;
 
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.page.dialect.AbstractDialect;
 import cn.com.mfish.common.dblink.page.dialect.Dialect;

@@ -6,8 +6,8 @@ import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -18,12 +18,12 @@ import java.util.List;
  */
 @FeignClient(contextId = "remoteCodeService", value = ServiceConstants.CODE_SERVICE, fallbackFactory = RemoteCodeFallback.class)
 public interface RemoteCodeService {
-    @GetMapping("/code")
-    Result<List<CodeVo>> getCode(@SpringQueryMap ReqCode reqCode);
+    @PostMapping("/code")
+    Result<List<CodeVo>> getCode(@RequestBody ReqCode reqCode);
 
-    @GetMapping("/code/save")
-    Result<String> saveCode(@SpringQueryMap ReqCode reqCode);
+    @PostMapping("/code/save")
+    Result<String> saveCode(@RequestBody ReqCode reqCode);
 
-    @GetMapping("/code/download")
-    Result<byte[]> downloadCode(@SpringQueryMap ReqCode reqCode);
+    @PostMapping("/code/download")
+    Result<byte[]> downloadCode(@RequestBody ReqCode reqCode);
 }

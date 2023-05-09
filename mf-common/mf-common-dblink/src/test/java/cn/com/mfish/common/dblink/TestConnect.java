@@ -1,15 +1,15 @@
 package cn.com.mfish.common.dblink;
 
-import cn.com.mfish.common.dblink.datatable.MetaDataHeader;
-import cn.com.mfish.common.dblink.datatable.MetaDataHeaders;
-import cn.com.mfish.common.dblink.datatable.MetaDataRow;
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.core.enums.DataType;
+import cn.com.mfish.common.dataset.enums.TargetType;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
+import cn.com.mfish.common.dataset.datatable.MetaDataRow;
+import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.dbpool.PoolWrapper;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.DBType;
-import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.dblink.enums.PoolType;
-import cn.com.mfish.common.dblink.enums.TargetType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;

@@ -25,6 +25,7 @@
         <module>mf-common-app</module>
         <module>mf-common-dblink</module>
         <module>mf-common-file</module>
+        <module>mf-common-dataset</module>
     </modules>
 
 </project>

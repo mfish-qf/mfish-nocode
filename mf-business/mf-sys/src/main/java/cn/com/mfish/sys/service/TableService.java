@@ -1,7 +1,7 @@
 package cn.com.mfish.sys.service;
 
 import cn.com.mfish.common.core.web.ReqPage;
-import cn.com.mfish.common.dblink.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 

@@ -1,4 +1,4 @@
-package cn.com.mfish.common.dblink.enums;
+package cn.com.mfish.common.dataset.enums;
 
 /**
  * @description: 指标类型

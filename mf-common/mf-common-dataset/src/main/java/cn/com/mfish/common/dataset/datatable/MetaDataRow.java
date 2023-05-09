@@ -1,8 +1,9 @@
-package cn.com.mfish.common.dblink.datatable;
+package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.dblink.common.Constant;
-import cn.com.mfish.common.dblink.common.DataUtils;
+import cn.com.mfish.common.dataset.common.Constant;
+import cn.com.mfish.common.core.utils.DataUtils;
+import cn.com.mfish.common.dataset.common.DataSetUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -37,7 +38,7 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      * @return
      */
     public MetaDataRow addColumn(MetaDataHeader header, Object value) {
-        if (!headers.containsKey(DataUtils.chooseColName(header))) {
+        if (!headers.containsKey(DataSetUtils.chooseColName(header))) {
             headers.addColumn(header);
         }
         this.put(header.getColName(), value);
