@@ -29,7 +29,7 @@ CREATE TABLE `sso_client_details`  (
 -- ----------------------------
 -- Records of sso_client_details
 -- ----------------------------
-INSERT INTO `sso_client_details` VALUES ('', 'system', NULL, NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://localhost:5281/oauth2.*', NULL, 'true', NULL, NULL, NULL, NULL);
+INSERT INTO `sso_client_details` VALUES ('1', 'system', NULL, NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://localhost:5281/oauth2.*', NULL, 'true', NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for sso_client_user
