@@ -1,6 +1,9 @@
 package ${packageName}.req;
 
 import io.swagger.annotations.ApiModel;
+<#if searchList?size!=0>
+import io.swagger.annotations.ApiModelProperty;
+</#if>
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -36,10 +36,10 @@ public class RedirectUriExistValidator extends AbstractClientValidator {
      */
     private boolean checkUri(String call_back_url, OAuthClient client) {
         if (StringUtils.isEmpty(call_back_url) || client == null
-                || StringUtils.isEmpty(client.getWebServerRedirectUri())) {
+                || StringUtils.isEmpty(client.getRedirectUrl())) {
             return false;
         }
-        String[] urls = client.getWebServerRedirectUri().split(",");
+        String[] urls = client.getRedirectUrl().split(",");
         for (String url : urls) {
             url = url.replace("?", "\\?");
             String s = call_back_url.trim().replaceAll(url, "");
