@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author: mfish
@@ -25,4 +26,6 @@ public class CodeInfo implements Serializable {
     private TableInfo tableInfo;
     @ApiModelProperty("接口前缀")
     private String apiPrefix;
+    @ApiModelProperty("查询列表")
+    private List<SearchInfo> searchList;
 }

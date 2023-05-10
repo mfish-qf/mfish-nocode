@@ -6,6 +6,10 @@ import cn.com.mfish.common.core.web.Result;
 import ${packageName}.entity.${entityName};
 import ${packageName}.req.Req${entityName};
 import ${packageName}.service.${entityName}Service;
+<#if searchList?size!=0>
+import cn.com.mfish.common.core.utils.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+</#if>
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import com.github.pagehelper.PageHelper;
@@ -41,7 +45,15 @@ public class ${entityName}Controller {
 	@GetMapping
 	public Result<PageResult<${entityName}>> queryPageList(Req${entityName} req${entityName}, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+<#if searchList?size!=0>
+		LambdaQueryWrapper<${entityName}> lambdaQueryWrapper = new LambdaQueryWrapper<${entityName}>()
+		<#list searchList as search>
+				.${search.condition}(!StringUtils.isEmpty(req${entityName}.get${search.field}()), ${entityName}::get${search.field}, req${entityName}.get${search.field}())
+		</#list>;
+	    return Result.ok(new PageResult<>(${entityName?uncap_first}Service.list(lambdaQueryWrapper)), "${tableInfo.tableComment}-查询成功!");
+<#else>
 	    return Result.ok(new PageResult<>(${entityName?uncap_first}Service.list()), "${tableInfo.tableComment}-查询成功!");
+</#if>
 	}
 
 	/**

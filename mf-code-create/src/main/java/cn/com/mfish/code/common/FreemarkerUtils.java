@@ -2,7 +2,9 @@ package cn.com.mfish.code.common;
 
 import cn.com.mfish.code.config.properties.FreemarkerProperties;
 import cn.com.mfish.code.entity.CodeInfo;
+import cn.com.mfish.code.entity.SearchInfo;
 import cn.com.mfish.common.code.api.req.ReqCode;
+import cn.com.mfish.common.code.api.req.ReqSearch;
 import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -63,6 +65,11 @@ public class FreemarkerUtils {
         if (StringUtils.isEmpty(reqCode.getTableName())) {
             throw new MyRuntimeException("错误:表名不允许为空");
         }
+        if (StringUtils.isEmpty(reqCode.getPackageName())) {
+            reqCode.setPackageName("cn.com.mfish.web");
+        } else if (!StringUtils.isMatch("^([A-Za-z]{1}[A-Za-z\\d_]*\\.)+[A-Za-z][A-Za-z\\d_]*$", reqCode.getPackageName())) {
+            throw new MyRuntimeException("错误:包名格式不规范");
+        }
         if (StringUtils.isEmpty(reqCode.getApiPrefix())) {
             int index = reqCode.getPackageName().lastIndexOf(".");
             if (index >= 0) {
@@ -74,11 +81,6 @@ public class FreemarkerUtils {
             throw new MyRuntimeException("错误:接口前缀格式不规范");
         } else {
             reqCode.setApiPrefix(reqCode.getApiPrefix().toLowerCase());
-        }
-        if (StringUtils.isEmpty(reqCode.getPackageName())) {
-            reqCode.setPackageName("cn.com.mfish.web");
-        } else if (!StringUtils.isMatch("^([A-Za-z]{1}[A-Za-z\\d_]*\\.)+[A-Za-z][A-Za-z\\d_]*$", reqCode.getPackageName())) {
-            throw new MyRuntimeException("错误:包名格式不规范");
         }
         if (StringUtils.isEmpty(reqCode.getEntityName())) {
             reqCode.setEntityName(reqCode.getTableName());
@@ -128,6 +130,7 @@ public class FreemarkerUtils {
             throw new MyRuntimeException("错误:未获取到字段信息");
         }
         List<FieldInfo> list = result.getData().getList();
+        codeInfo.setSearchList(buildSearch(reqCode.getSearches(), list));
         String idType = "";
         //缺省字段字段不需要生成,获取列时过滤掉
         for (int i = 0; i < list.size(); i++) {
@@ -149,6 +152,23 @@ public class FreemarkerUtils {
         }
         codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(reqCode.getTableName()).setTableComment(reqCode.getTableComment()).setIdType(idType));
         return getCode(codeInfo);
+    }
+
+    private List<SearchInfo> buildSearch(List<ReqSearch> list, List<FieldInfo> fields) {
+        List<SearchInfo> searchInfos = new ArrayList<>();
+        if (list == null || list.isEmpty()) {
+            return searchInfos;
+        }
+        for (ReqSearch reqSearch : list) {
+            Optional<FieldInfo> optional = fields.stream().filter((field) -> field.getFieldName().equals(reqSearch.getField())).findFirst();
+            if (Optional.empty().equals(optional)) {
+                continue;
+            }
+            SearchInfo searchInfo = new SearchInfo();
+            searchInfo.setFieldInfo(optional.get()).setField(StringUtils.toCamelBigCase(reqSearch.getField())).setCondition(reqSearch.getCondition());
+            searchInfos.add(searchInfo);
+        }
+        return searchInfos;
     }
 
     /**
