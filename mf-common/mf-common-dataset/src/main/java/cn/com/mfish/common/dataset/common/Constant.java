@@ -1,9 +1,9 @@
 package cn.com.mfish.common.dataset.common;
 
 /**
- * @description: TODO
- * @author: qiufeng
- * @date: 2023/5/9 17:37
+ * @description: 常量
+ * @author: mfish
+ * @date: 2023/5/9 20:37
  */
 public class Constant {
     public static final String NotFoundException = "错误:未找到对应的列";

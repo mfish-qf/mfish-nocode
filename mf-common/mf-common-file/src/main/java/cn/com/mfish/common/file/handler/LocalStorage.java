@@ -1,9 +1,8 @@
 package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.file.common.StorageUtils;
+import cn.com.mfish.common.core.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
@@ -33,7 +32,7 @@ public class LocalStorage extends AbstractStorage {
     private String storagePath;
 
     public LocalStorage setStoragePath(String storagePath) {
-        this.storagePath = StorageUtils.formatFilePath(storagePath);
+        this.storagePath = FileUtils.formatFilePath(storagePath);
         return this;
     }
 
@@ -41,7 +40,7 @@ public class LocalStorage extends AbstractStorage {
     public void store(InputStream inputStream, long contentLength, String contentType, String filePath) {
         File file = new File(getFilePath(filePath));
         try {
-            FileUtils.copyInputStreamToFile(inputStream, file);
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(inputStream, file);
         } catch (IOException e) {
             throw new MyRuntimeException("错误:文件存储异常");
         }
