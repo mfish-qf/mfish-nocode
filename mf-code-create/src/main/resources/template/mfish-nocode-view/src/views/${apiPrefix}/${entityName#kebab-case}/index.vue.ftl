@@ -8,7 +8,8 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate" v-if="hasPermission('sys:${entityName?uncap_first}:insert')">新增${tableInfo.tableComment}</a-button>
+        <a-button type="primary" @click="handleCreate" v-if="hasPermission('sys:${entityName?uncap_first}:insert')">新增</a-button>
+        <a-button type="error" @click="handleExport" v-if="hasPermission('sys:${entityName?uncap_first}:export')">导出</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -40,12 +41,13 @@
   </div>
 </template>
 <script lang="ts">
-import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
-import { delete${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
+import { BasicTable, useTable, TableAction, PaginationProps } from "/@/components/general/Table";
+import { delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
 import { useModal } from "/@/components/general/Modal";
 import ${entityName}Modal from "./${entityName}Modal.vue";
 import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
 import { usePermission } from "/@/hooks/web/UsePermission";
+import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}";
 
 export default {
   name: "${entityName}Management",
@@ -53,7 +55,7 @@ export default {
   setup() {
     const { hasPermission } = usePermission();
     const [registerModal, { openModal }] = useModal();
-    const [registerTable, { reload }] = useTable({
+    const [registerTable, { reload, getForm }] = useTable({
       title: "${tableInfo.tableComment}列表",
       api: get${entityName}List,
       columns,
@@ -74,25 +76,46 @@ export default {
       }
     });
 
+    /**
+     * 新建
+     */
     function handleCreate() {
       openModal(true, {
         isUpdate: false
       });
     }
 
-    function handleEdit(record: Recordable) {
+    /**
+     *  导出自动生成支持导出1000条可自行修改
+     */
+    function handleExport() {
+      export${entityName}({ ...getForm().getFieldsValue(), pageNum: 1, pageSize: 1000 });
+    }
+
+    /**
+     * 修改
+     * @param
+     */
+    function handleEdit(${entityName?uncap_first}: ${entityName}) {
       openModal(true, {
-        record,
+        ${entityName?uncap_first},
         isUpdate: true
       });
     }
 
-    function handleDelete(record: Recordable) {
-      delete${entityName}(record.id).then(() => {
+    /**
+     * 删除
+     * @param
+     */
+    function handleDelete(${entityName?uncap_first}: ${entityName}) {
+      delete${entityName}(${entityName?uncap_first}.id).then(() => {
         handleSuccess();
       });
     }
 
+    /**
+     * 处理完成
+     */
     function handleSuccess() {
       reload();
     }
@@ -103,6 +126,7 @@ export default {
       handleCreate,
       handleEdit,
       handleDelete,
+      handleExport,
       handleSuccess,
       hasPermission
     };

@@ -1,5 +1,6 @@
 package ${packageName}.controller;
 
+import cn.com.mfish.common.core.utils.excel.ExcelUtils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @description: ${tableInfo.tableComment}
@@ -39,21 +42,33 @@ public class ${entityName}Controller {
 	 * 分页列表查询
 	 *
 	 * @param req${entityName} ${tableInfo.tableComment}请求参数
+	 * @param reqPage 分页参数
 	 * @return 返回${tableInfo.tableComment}-分页列表
 	 */
 	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
 	public Result<PageResult<${entityName}>> queryPageList(Req${entityName} req${entityName}, ReqPage reqPage) {
-        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-<#if searchList?size!=0>
+		return Result.ok(new PageResult<>(queryList(req${entityName}, reqPage)), "${tableInfo.tableComment}-查询成功!");
+	}
+
+	/**
+	* 获取列表
+	*
+	* @param req${entityName} ${tableInfo.tableComment}请求参数
+	* @param reqPage 分页参数
+	* @return 返回${tableInfo.tableComment}-分页列表
+	*/
+	private List<${entityName}> queryList(Req${entityName} req${entityName}, ReqPage reqPage) {
+		PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+	<#if searchList?size!=0>
 		LambdaQueryWrapper<${entityName}> lambdaQueryWrapper = new LambdaQueryWrapper<${entityName}>()
 		<#list searchList as search>
-				.${search.condition}(!StringUtils.isEmpty(req${entityName}.get${search.field}()), ${entityName}::get${search.field}, req${entityName}.get${search.field}())
+			.${search.condition}(!StringUtils.isEmpty(req${entityName}.get${search.field}()), ${entityName}::get${search.field}, req${entityName}.get${search.field}())
 		</#list>;
-	    return Result.ok(new PageResult<>(${entityName?uncap_first}Service.list(lambdaQueryWrapper)), "${tableInfo.tableComment}-查询成功!");
-<#else>
-	    return Result.ok(new PageResult<>(${entityName?uncap_first}Service.list()), "${tableInfo.tableComment}-查询成功!");
-</#if>
+		return ${entityName?uncap_first}Service.list(lambdaQueryWrapper);
+	<#else>
+		return ${entityName?uncap_first}Service.list();
+	</#if>
 	}
 
 	/**
@@ -131,5 +146,23 @@ public class ${entityName}Controller {
 	public Result<${entityName}> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
 		return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-查询成功!");
+	}
+
+	/**
+	* 导出
+	*
+	* @param req${entityName} ${tableInfo.tableComment}请求参数
+	* @param reqPage 分页参数
+	* @return 返回${tableInfo.tableComment}-分页列表
+	*/
+	@ApiOperation(value = "导出${tableInfo.tableComment}", notes = "导出${tableInfo.tableComment}")
+	@GetMapping("/export")
+	public void export(Req${entityName} req${entityName}, ReqPage reqPage) throws IOException {
+		//swagger调用会用问题，使用postman测试
+		<#if tableInfo.tableComment??>
+		ExcelUtils.write("${entityName}", queryList(req${entityName}, reqPage));
+			<#else>
+		ExcelUtils.write("${tableInfo.tableComment}", queryList(req${entityName}, reqPage));
+		</#if>
 	}
 }
