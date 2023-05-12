@@ -1,7 +1,7 @@
 package cn.com.mfish.common.file.handler;
 
 
-import cn.com.mfish.common.file.common.StorageUtils;
+import cn.com.mfish.common.core.utils.FileUtils;
 
 /**
  * @description: 抽象缓存处理类
@@ -34,6 +34,6 @@ public abstract class AbstractStorage implements Storage {
         } else {
             keyName = filePath;
         }
-        return StorageUtils.formatFilePath(address) + "/" + keyName;
+        return FileUtils.formatFilePath(address) + "/" + keyName;
     }
 }

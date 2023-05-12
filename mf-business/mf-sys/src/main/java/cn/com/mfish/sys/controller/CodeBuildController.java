@@ -5,7 +5,6 @@ import cn.com.mfish.common.code.api.req.ReqCode;
 import cn.com.mfish.common.code.api.req.ReqSearch;
 import cn.com.mfish.common.code.api.vo.CodeVo;
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
@@ -90,10 +89,13 @@ public class CodeBuildController {
     public void downloadCode(@PathVariable String id, HttpServletResponse response) throws IOException {
         ReqCode reqCode = buildReqCode(id);
         Result<byte[]> result = remoteCodeService.downloadCode(reqCode);
-        if (!result.isSuccess()) {
-            throw new MyRuntimeException(result.getMsg());
-        }
         response.reset();
+        if (!result.isSuccess()) {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println(JSON.toJSONString(result));
+            return;
+        }
         response.setHeader("Content-Disposition", "attachment;filename=" + reqCode.getTableName() + ".zip");
         response.addHeader("Content-Length", result.getData().length + "");
         response.setContentType("application/x-zip-compressed; charset=UTF-8");

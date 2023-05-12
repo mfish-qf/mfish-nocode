@@ -52,6 +52,7 @@
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
         <oracle.version>12.2.0.1</oracle.version>
+        <easyexcel.version>3.3.1</easyexcel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -237,6 +238,11 @@
                 <groupId>com.oracle</groupId>
                 <artifactId>ojdbc8</artifactId>
                 <version>${oracle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel-core</artifactId>
+                <version>${easyexcel.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>

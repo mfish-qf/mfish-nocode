@@ -2,11 +2,12 @@ package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.utils.excel.ExcelUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.req.ReqDict;
 import cn.com.mfish.sys.service.DictService;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @Description: 字典
@@ -44,13 +47,24 @@ public class DictController {
     @GetMapping
     @RequiresPermissions("sys:dict:query")
     public Result<PageResult<Dict>> queryPageList(ReqDict reqDict, ReqPage reqPage) {
+        return Result.ok(new PageResult<>(queryList(reqDict, reqPage)), "字典-查询成功!");
+    }
+
+    /**
+     * 获取列表
+     *
+     * @param reqDict
+     * @param reqPage
+     * @return
+     */
+    private List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Dict>()
                 .like(reqDict.getDictCode() != null, Dict::getDictCode, reqDict.getDictCode())
                 .like(reqDict.getDictName() != null, Dict::getDictName, reqDict.getDictName())
                 .eq(reqDict.getStatus() != null, Dict::getStatus, reqDict.getStatus())
                 .orderByDesc(true, Dict::getCreateTime);
-        return Result.ok(new PageResult<>(dictService.list(queryWrapper)), "字典-查询成功!");
+        return dictService.list(queryWrapper);
     }
 
     /**
@@ -137,5 +151,19 @@ public class DictController {
     public Result<Dict> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         Dict dict = dictService.getById(id);
         return Result.ok(dict, "字典-查询成功!");
+    }
+
+    /**
+     * 导出
+     * @param reqDict
+     * @param reqPage
+     * @throws IOException
+     */
+    @ApiOperation(value = "导出字典", notes = "导出字典")
+    @GetMapping("/export")
+    @RequiresPermissions("sys:dict:query")
+    public void export(ReqDict reqDict, ReqPage reqPage) throws IOException {
+        //swagger调用会用问题，使用postman测试
+        ExcelUtils.write("字典", queryList(reqDict, reqPage));
     }
 }

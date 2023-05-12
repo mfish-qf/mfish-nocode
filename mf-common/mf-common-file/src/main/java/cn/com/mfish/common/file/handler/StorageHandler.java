@@ -2,7 +2,7 @@ package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
-import cn.com.mfish.common.file.common.StorageUtils;
+import cn.com.mfish.common.core.utils.FileUtils;
 import cn.com.mfish.common.file.entity.StorageInfo;
 import cn.com.mfish.common.file.enums.SuffixType;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -48,7 +46,7 @@ public class StorageHandler {
         storageInfo.setId(id);
         storageInfo.setFileName(fileName);
         storageInfo.setFileSize((int) contentLength);
-        String formatPath = StorageUtils.formatFilePath(path);
+        String formatPath = FileUtils.formatFilePath(path);
         if (StringUtils.isEmpty(formatPath)) {
             storageInfo.setFilePath(DateFormatUtils.format(new Date(), "yyyy/MM/dd"));
         } else {
@@ -95,27 +93,12 @@ public class StorageHandler {
             builder.contentLength(size);
         }
         if (StringUtils.isEmpty(fileName)) {
-            disposition = disposition + encodeFileName(key);
+            disposition = disposition + FileUtils.encodeFileName(key);
         } else {
-            disposition = disposition + encodeFileName(fileName);
+            disposition = disposition + FileUtils.encodeFileName(fileName);
         }
         builder.header("Content-Disposition", disposition);
         return builder.body(file);
-    }
-
-    /**
-     * 转换文件名称
-     *
-     * @param fileName
-     * @return
-     */
-    private String encodeFileName(String fileName) {
-        try {
-            return URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            log.error("错误:转换文件名异常!文件名:" + fileName, e);
-        }
-        return fileName;
     }
 
     /**

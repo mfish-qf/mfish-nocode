@@ -16,7 +16,6 @@ export const columns: BasicColumn[] = [
   },
 </#list>
 ];
-//todo 查询条件暂时用来装样子，后面增加配置条件后修改模版
 export const searchFormSchema: FormSchema[] = [
 <#list searchList as search>
   {
