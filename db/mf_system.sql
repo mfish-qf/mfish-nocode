@@ -111,6 +111,7 @@ INSERT INTO `sys_dict` VALUES ('ad7336dda270e6430565b313a741ffb7', '用户性别
 INSERT INTO `sys_dict` VALUES ('c694f0f6feba27026044839b77d24caa', '日志操作', 'sys_log_type', 0, '日志操作类型', 'admin', '2023-01-09 11:27:05', 'admin', '2023-03-13 11:06:13');
 INSERT INTO `sys_dict` VALUES ('d42d4e365a7b3d43f8c5cf37a523dbd5', 'Druid连接池配置', 'db_pool_druid', 0, 'Druid连接池相关配置项', 'admin', '2023-03-13 11:24:35', '', NULL);
 INSERT INTO `sys_dict` VALUES ('dce08f2d436e6582ec58301a76fe11fa', '任务过期策略', 'sys_job_misfire', 0, '任务过期处理策略 1立即处理一次 2放弃处理', 'admin', '2023-02-21 11:22:32', 'admin', '2023-02-21 18:07:12');
+INSERT INTO `sys_dict` VALUES ('e8e6e4c3f8e2fb775d6d083883e41839', '代码生成查询条件', 'sys_code_condition', 0, '代码生成的查询条件', 'admin', '2023-05-10 16:11:44', '', NULL);
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -141,6 +142,7 @@ CREATE TABLE `sys_dict_item`  (
 INSERT INTO `sys_dict_item` VALUES ('027eb9340eafdcf78cc9b96cc211b6b3', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'maxEvictableIdleTimeMillis', '900000', 1, 7, NULL, 0, '配置一个连接在池中最大生存的时间，单位是毫秒', 'admin', '2023-03-13 11:27:11', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('0625b88c24a5cd98e045a58679370249', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '新增', '新增', 0, 3, 'blue', 0, NULL, 'admin', '2023-01-09 11:27:52', 'admin', '2023-01-09 16:11:41');
 INSERT INTO `sys_dict_item` VALUES ('0737910a2d8f6eb55fe12e2a9be5032b', '0bb92966ec419ed35b9cb46979867e69', 'sys_time_zone', '日本/东京', 'Asia/Tokyo', 0, 3, '', 0, '', 'admin', '2023-02-21 18:09:59', 'admin', '2023-02-21 18:16:33');
+INSERT INTO `sys_dict_item` VALUES ('07fb6036ee052bc745db8b58234159e9', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '以开始', 'likeLeft', 0, 3, NULL, 0, NULL, 'admin', '2023-05-10 16:13:25', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('0cc6971a3031faf34525bafae3609f0d', '0bb92966ec419ed35b9cb46979867e69', 'sys_time_zone', '中国/香港', 'Asia/Hong_Kong', 0, 2, '', 0, '', 'admin', '2023-02-21 18:13:04', 'admin', '2023-02-21 18:16:33');
 INSERT INTO `sys_dict_item` VALUES ('0f11bb06b93b05e27f8a45d78765a243', '193585c2417cfb3e4865501c2e608602', 'sys_db_type', 'mysql', '0', 1, 1, 'blue', 0, 'mysql数据库', 'admin', '2023-01-03 16:40:55', 'admin', '2023-03-13 11:16:59');
 INSERT INTO `sys_dict_item` VALUES ('2065051b945805f8915ea68431c097ff', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '查询', '查询', 0, 2, 'green', 0, NULL, 'admin', '2023-01-09 11:27:46', 'admin', '2023-01-09 15:21:07');
@@ -162,6 +164,7 @@ INSERT INTO `sys_dict_item` VALUES ('429ef23795434df72a0800b93399dd58', '9bb402e
 INSERT INTO `sys_dict_item` VALUES ('42c2db7dc772a5d4026a9d5b59348417', '193585c2417cfb3e4865501c2e608602', 'sys_db_type', 'postgresql', '1', 1, 2, 'cyan', 0, 'pg数据库', 'admin', '2023-03-13 11:03:25', 'admin', '2023-03-24 23:02:04');
 INSERT INTO `sys_dict_item` VALUES ('4447b34d5b8ac40fb762fdcd71dfe0b2', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'testOnBorrow', 'false', 2, 9, '', 0, '当应用向连接池申请连接时，连接池会判断这条连接是否是可用的', 'admin', '2023-03-13 11:28:13', 'admin', '2023-03-14 19:41:21');
 INSERT INTO `sys_dict_item` VALUES ('449f7f3ff1bf55ddb8159f5d122e29c4', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '其他操作', '其他操作', 0, 1, 'default', 0, NULL, 'admin', '2023-01-09 11:27:39', 'admin', '2023-02-21 18:03:01');
+INSERT INTO `sys_dict_item` VALUES ('4795a7072f4213eeeee4d8bca2531dc8', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '以结束', 'likeRight', 0, 4, NULL, 0, NULL, 'admin', '2023-05-10 16:13:39', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('4a84be1783171797e3cf1712f014b461', '0bb92966ec419ed35b9cb46979867e69', 'sys_time_zone', '中国/上海', 'Asia/Shanghai', 0, 1, NULL, 0, NULL, 'admin', '2023-02-21 18:05:55', 'admin', '2023-02-21 18:16:33');
 INSERT INTO `sys_dict_item` VALUES ('4f9003f0afecb5a68b22f05d1e1ea0e7', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'testOnReturn', 'false', 2, 10, '', 0, '归还连接时是否会进行检查，检查不通过，销毁', 'admin', '2023-03-13 11:28:34', 'admin', '2023-03-14 19:44:29');
 INSERT INTO `sys_dict_item` VALUES ('515e0a34aec2beea8733d83083c53ea5', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '开始', '0', 1, 1, 'blue', 0, NULL, 'admin', '2023-02-28 16:58:12', 'admin', '2023-02-28 17:04:30');
@@ -179,6 +182,7 @@ INSERT INTO `sys_dict_item` VALUES ('750f4ff9eb1bdce42b04690d0abd929d', '81e4b91
 INSERT INTO `sys_dict_item` VALUES ('75d8887dbeb5a0ca4d20ea445139e97a', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '导入', '导入', 0, 7, '#2db7f5', 0, NULL, 'admin', '2023-01-09 11:28:23', 'admin', '2023-01-09 15:25:53');
 INSERT INTO `sys_dict_item` VALUES ('83bb1fc1addafe499342df7033c957ce', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'minIdle', '1', 1, 2, NULL, 0, '最小连接池数', 'admin', '2023-03-13 11:25:31', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('86353dd3e85438e846b704c3af0e7726', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'minimumIdle', '2', 1, 1, NULL, 0, '连接池中允许的最小连接数最小连接数', 'admin', '2023-03-13 11:19:29', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('8caa80cc0c116e6407caa1efc5c567d5', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '等于', 'eq', 0, 1, NULL, 0, NULL, 'admin', '2023-05-10 16:12:10', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('8d0e789e6e63e994b31750ad9cb637b4', '193585c2417cfb3e4865501c2e608602', 'sys_db_type', 'oracle', '2', 1, 3, 'green', 0, 'oracle数据库', 'admin', '2023-01-04 17:32:59', 'admin', '2023-03-24 23:02:09');
 INSERT INTO `sys_dict_item` VALUES ('90bb0f58b82df5d13c66169fd748faf8', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '调度失败', '2', 1, 3, 'red', 0, NULL, 'admin', '2023-02-28 16:58:45', 'admin', '2023-03-01 17:59:08');
 INSERT INTO `sys_dict_item` VALUES ('93a1cdf50fe9f17e399cf663193a7a1f', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'GET', 'GET', 0, 1, 'green', 0, '查询', 'admin', '2023-01-09 16:10:49', 'admin', '2023-02-21 18:01:56');
@@ -202,6 +206,7 @@ INSERT INTO `sys_dict_item` VALUES ('e27a2f5ecad5a50a7d788756da095245', 'd42d4e3
 INSERT INTO `sys_dict_item` VALUES ('eadbf511b6dfe30b72c4fcad6f10680c', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '执行失败', '4', 0, 5, 'red', 0, '异步执行失败', 'admin', '2023-03-01 18:00:03', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('ec9cfc538a91de2f61829e61064d636b', 'ad7336dda270e6430565b313a741ffb7', 'sys_user_sex', '女', '1', 1, 2, 'red', 0, '女性', 'admin', '2023-01-04 17:31:53', 'admin', '2023-01-09 16:09:52');
 INSERT INTO `sys_dict_item` VALUES ('f12c3e6c95f16dfd35e80c8c7101504e', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'idleTimeout', '60000', 1, 4, '', 0, '一个连接idle状态的最大时长（毫秒），超时则被释放（retired）', 'admin', '2023-03-13 11:21:46', 'admin', '2023-03-13 11:22:47');
+INSERT INTO `sys_dict_item` VALUES ('f442a8f38c5ce32b6b05c640cc3ecc2b', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '包含', 'like', 0, 2, NULL, 0, NULL, 'admin', '2023-05-10 16:12:34', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('f88a8a4a391e3ae455ba6d8157f22260', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'POST', 'POST', 0, 2, 'blue', 0, '新增', 'admin', '2023-01-09 16:12:41', 'admin', '2023-02-21 18:02:00');
 
 -- ----------------------------
