@@ -29,29 +29,31 @@ public class SsoClientDetails extends BaseEntity<String> {
     private String id;
     @ExcelProperty("客户端ID")
     @ApiModelProperty(value = "客户端ID")
-	private String clientId;
+    private String clientId;
     @ExcelProperty("客户端名称")
     @ApiModelProperty(value = "客户端名称")
-	private String clientName;
+    private String clientName;
     @ExcelProperty("客户端能访问的资源集合")
     @ApiModelProperty(value = "客户端能访问的资源集合")
-	private String resourceIds;
+    private String resourceIds;
     @ExcelProperty("客户端密钥")
     @ApiModelProperty(value = "客户端密钥")
-	private String clientSecret;
+    private String clientSecret;
     @ExcelProperty("指定客户端权限范围")
     @ApiModelProperty(value = "指定客户端权限范围")
-	private String scope;
+    private String scope;
     @ExcelProperty("认证方式 授权码模式:authorization_code,密码模式:password,刷新token: refresh_token")
     @ApiModelProperty(value = "认证方式 授权码模式:authorization_code,密码模式:password,刷新token: refresh_token")
-	private String grantTypes;
+    private String grantTypes;
     @ExcelProperty("客户端重定向url，authorization_code认证回调地址")
     @ApiModelProperty(value = "客户端重定向url，authorization_code认证回调地址")
-	private String redirectUrl;
+    private String redirectUrl;
     @ExcelProperty("指定用户的权限范围")
     @ApiModelProperty(value = "指定用户的权限范围")
-	private String authorities;
-    @ExcelProperty("跳过授权页,默认true,适用于authorization_code模式")
+    private String authorities;
+    @ExcelProperty("跳过授权页,默认true,适用于authorization_code模式，该属性暂未使用")
     @ApiModelProperty(value = "跳过授权页,默认true,适用于authorization_code模式")
-	private String autoApprove;
+    private Boolean autoApprove;
+    @ApiModelProperty("删除标记")
+    private Boolean delFlag = false;
 }

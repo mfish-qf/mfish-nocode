@@ -28,5 +28,5 @@ public class OAuthClient implements Serializable {
     @ApiModelProperty("指定用户的权限范围")
     private String authorities;
     @ApiModelProperty("跳过授权页,默认true,适用于authorization_code模式")
-    private boolean autoApprove;
+    private Boolean autoApprove;
 }
