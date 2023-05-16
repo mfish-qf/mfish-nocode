@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Select;
  * @date: 2020/2/16 16:05
  */
 public interface ClientMapper {
-    @Select("select * from sso_client_details where client_id = #{clientId}")
+    @Select("select * from sso_client_details where client_id = #{clientId} and del_flag = 0")
     OAuthClient getClientById(String clientId);
 }

@@ -19,4 +19,6 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
     Integer queryMaxOrgLevel(@Param("reqSsoOrg") ReqSsoOrg reqSsoOrg);
 
     List<SsoOrg> queryOrg(@Param("reqSsoOrg") ReqSsoOrg reqSsoOrg, @Param("levels") List<Integer> levels);
+
+    int orgFixCodeExist(@Param("clientId") String clientId, @Param("orgId") String orgId, @Param("orgFixCode") String orgFixCode);
 }

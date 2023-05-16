@@ -26,7 +26,8 @@ import java.util.stream.Collectors;
  * @date: 2022/12/6 17:23
  */
 public class OauthUtils {
-
+    private static final String ROLE_CACHE = "userRoleCache";
+    private static final String PERMISSION_CACHE = "userPermissionCache";
 
     /**
      * 生成6位数验证码
@@ -39,14 +40,26 @@ public class OauthUtils {
     }
 
     /**
+     * 获取当前用户角色
+     *
+     * @return
+     */
+    public static List<UserRole> getRoles() {
+        UserRoleCache userRoleCache = SpringBeanFactory.getBean(ROLE_CACHE);
+        return userRoleCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+    }
+
+    /**
      * 校验角色
      *
      * @param requiresRoles 角色限制
      * @return
      */
     public static boolean checkRoles(RequiresRoles requiresRoles) {
-        UserRoleCache userRoleCache = SpringBeanFactory.getBean("userRoleCache");
-        List<UserRole> list = userRoleCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        List<UserRole> list = getRoles();
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
         Set<String> set = list.stream().map(UserRole::getRoleCode).collect(Collectors.toSet());
         //如果用户为超户，直接返回
         if (null != set && set.contains(SerConstant.SUPER_ROLE)) {
@@ -56,14 +69,22 @@ public class OauthUtils {
     }
 
     /**
+     * 获取当前用户按钮权限
+     * @return
+     */
+    public static Set<String> getPermission() {
+        UserPermissionCache userPermissionCache = SpringBeanFactory.getBean(PERMISSION_CACHE);
+        return userPermissionCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+    }
+
+    /**
      * 校验权限
      *
      * @param requiresPermissions 权限限制
      * @return
      */
     public static boolean checkPermission(RequiresPermissions requiresPermissions) {
-        UserPermissionCache userPermissionCache = SpringBeanFactory.getBean("userPermissionCache");
-        Set<String> set = userPermissionCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        Set<String> set = getPermission();
         //如果用户拥有所有权限直接返回true
         if (null != set && set.contains(SerConstant.ALL_PERMISSION)) {
             return true;

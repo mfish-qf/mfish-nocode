@@ -98,7 +98,7 @@ export default {
      */
     function handleEdit(${entityName?uncap_first}: ${entityName}) {
       openModal(true, {
-        ${entityName?uncap_first},
+        record: ${entityName?uncap_first},
         isUpdate: true
       });
     }

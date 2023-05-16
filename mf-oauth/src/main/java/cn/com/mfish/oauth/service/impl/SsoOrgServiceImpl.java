@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoOrg;
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -29,10 +31,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public Result<SsoOrg> insertOrg(SsoOrg ssoOrg) {
-        Result<SsoOrg> result = verifyOrg(ssoOrg);
-        if (!result.isSuccess()) {
-            return result;
-        }
+        verifyOrg(ssoOrg);
         if (baseMapper.insertOrg(ssoOrg) == 1) {
             return Result.ok(ssoOrg, "组织结构表-添加成功!");
         }
@@ -40,11 +39,9 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     }
 
     @Override
+    @Transactional
     public Result<SsoOrg> updateOrg(SsoOrg ssoOrg) {
-        Result<SsoOrg> result = verifyOrg(ssoOrg);
-        if (!result.isSuccess()) {
-            return result;
-        }
+        verifyOrg(ssoOrg);
         SsoOrg oldOrg = baseMapper.selectById(ssoOrg.getId());
         boolean success;
         if ((StringUtils.isEmpty(oldOrg.getParentId()) && StringUtils.isEmpty(ssoOrg.getParentId())) ||
@@ -72,12 +69,28 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         throw new MyRuntimeException("错误:更新组织失败");
     }
 
+    /**
+     * 校验组织参数
+     *
+     * @param ssoOrg 组织对象
+     * @return
+     */
     private Result<SsoOrg> verifyOrg(SsoOrg ssoOrg) {
         if (StringUtils.isEmpty(ssoOrg.getParentId())) {
             ssoOrg.setParentId("");
         }
         if (!StringUtils.isEmpty(ssoOrg.getId()) && ssoOrg.getId().equals(ssoOrg.getParentId())) {
-            return Result.fail("错误:父节点不允许设置自己");
+            throw new MyRuntimeException("错误:父节点不允许设置自己");
+        }
+        if (StringUtils.isEmpty(ssoOrg.getClientId())) {
+            ssoOrg.setClientId(AuthInfoUtils.getCurrentClientId());
+        }
+        if (StringUtils.isEmpty(ssoOrg.getClientId())) {
+            throw new MyRuntimeException("错误:客户端ID不存在");
+        }
+        if (!StringUtils.isEmpty(ssoOrg.getOrgFixCode()) &&
+                baseMapper.orgFixCodeExist(ssoOrg.getClientId(), ssoOrg.getId(), ssoOrg.getOrgFixCode()) > 0) {
+            throw new MyRuntimeException("错误:组织固定编码已存在");
         }
         return Result.ok("组织校验成功");
     }

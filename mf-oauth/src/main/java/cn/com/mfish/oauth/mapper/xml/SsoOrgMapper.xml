@@ -6,6 +6,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id, parent_id, client_id,org_code, org_level,
             <if test="orgName != null">org_name,</if>
+            <if test="orgFixCode != null">org_fix_code,</if>
             <if test="orgSort != null">org_sort,</if>
             <if test="leader != null">leader,</if>
             <if test="phone != null">phone,</if>
@@ -21,6 +22,7 @@
             0),(lvl-1)*5+1)+ 1, 5, 0 )),
             lvl,
             <if test="orgName != null">#{orgName},</if>
+            <if test="orgFixCode != null">#{orgFixCode},</if>
             <if test="orgSort != null">#{orgSort},</if>
             <if test="leader != null">#{leader},</if>
             <if test="phone != null">#{phone},</if>
@@ -62,5 +64,14 @@
             )
         </foreach>
         order by org_sort
+    </select>
+    <select id="orgFixCodeExist" resultType="int">
+        select count(0) from sso_org
+        <where>
+            client_id = #{clientId} and org_fix_code = #{orgFixCode}
+            <if test="orgId!=null and orgId!=''">
+                and id != #{orgId}
+            </if>
+        </where>
     </select>
 </mapper>
