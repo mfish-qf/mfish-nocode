@@ -128,6 +128,7 @@ public class SsoClientDetailsController {
     @ApiOperation("重置密钥")
     @PutMapping("/secret/{id}")
     public Result<String> resetSecret(@PathVariable String id) {
+        //todo 暂时不放开系统密钥重置功能
         if ("1".equals(id)) {
             throw new MyRuntimeException("错误:系统密钥不允许重置");
         }
