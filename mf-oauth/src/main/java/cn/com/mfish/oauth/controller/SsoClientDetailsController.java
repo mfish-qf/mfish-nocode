@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,6 +102,19 @@ public class SsoClientDetailsController {
         return Result.fail(ssoClientDetails, "错误:客户端信息-编辑失败!");
     }
 
+    @Log(title = "重置密钥", operateType = OperateType.UPDATE)
+    @ApiOperation("重置密钥")
+    @PutMapping("/secret")
+    public Result<String> resetSecret(@RequestBody String id) {
+        SsoClientDetails ssoClientDetails = new SsoClientDetails();
+        String secret = Utils.uuid32();
+        ssoClientDetails.setId(id).setClientSecret(secret);
+        if (ssoClientDetailsService.updateById(ssoClientDetails)) {
+            return Result.ok(secret, "客户端信息-编辑成功!");
+        }
+        return Result.fail("", "错误:客户端信息-编辑失败!");
+    }
+
     /**
      * 通过id删除
      *
@@ -114,28 +126,12 @@ public class SsoClientDetailsController {
     @DeleteMapping("/{id}")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoClientDetails ssoClientDetails = new SsoClientDetails();
-        ssoClientDetails.setDelFlag(false).setId(id);
+        ssoClientDetails.setDelFlag(true).setId(id);
         if (ssoClientDetailsService.updateById(ssoClientDetails)) {
-            //todo 缓存删除
+            ssoClientDetailsService.removeClientCache(id);
             return Result.ok(true, "客户端信息-删除成功!");
         }
         return Result.fail(false, "错误:客户端信息-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids 批量ID
-     * @return 返回客户端信息-删除结果
-     */
-    @Log(title = "客户端信息-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation("客户端信息-批量删除")
-    @DeleteMapping("/batch")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.ssoClientDetailsService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "客户端信息-批量删除成功!");
-        }
-        return Result.fail(false, "错误:客户端信息-批量删除失败!");
     }
 
     /**

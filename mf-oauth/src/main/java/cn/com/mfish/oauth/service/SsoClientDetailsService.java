@@ -11,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface SsoClientDetailsService extends IService<SsoClientDetails> {
 
+    void removeClientCache(String clientId);
 }
