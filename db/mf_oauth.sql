@@ -171,38 +171,39 @@ INSERT INTO `sso_menu` VALUES ('fb5dac5b0b9b610ed1e996108d6445b0', '0f5a85a6fd5b
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_org`;
 CREATE TABLE `sso_org`  (
-  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
-  `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '父组织ID',
-  `client_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端ID',
-  `org_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '组织编码',
-  `org_level` tinyint(4) NULL DEFAULT NULL COMMENT '组织级别',
-  `org_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '组织名称',
-  `org_sort` int(4) NULL DEFAULT 0 COMMENT '排序',
-  `leader` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '负责人',
-  `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '联系电话',
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `status` tinyint(1) NULL DEFAULT 0 COMMENT '状态（0正常 1停用）',
-  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0正常 1删除）',
-  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `org_code_index`(`org_code`) USING BTREE
+    `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
+    `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '父组织ID',
+    `client_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '客户端ID',
+    `org_fix_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组织固定编码',
+    `org_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '组织编码(自动生成父子关系编码)',
+    `org_level` tinyint(4) NULL DEFAULT NULL COMMENT '组织级别',
+    `org_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '组织名称',
+    `org_sort` int(4) NULL DEFAULT 0 COMMENT '排序',
+    `leader` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '负责人',
+    `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '联系电话',
+    `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
+    `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+    `status` tinyint(1) NULL DEFAULT 0 COMMENT '状态（0正常 1停用）',
+    `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0正常 1删除）',
+    `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `org_code_index`(`org_code`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织结构表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sso_org
 -- ----------------------------
-INSERT INTO `sso_org` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '950736539e99c0521531cc127d5b8712', 'system', '0000100004', 2, '摸鱼二部', 2, 'mfish2', '18922222222', '22@qq.com', '摸鱼二部', 0, 0, 'admin', '2023-03-10 17:54:44', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('49b4cfe17e0cf4b5472aadea0f63bc57', '', 'system', '00002', 1, '摸鱼测试部', 3, 'test', '18933333333', 'test@qq.com', '摸鱼测试部', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('950736539e99c0521531cc127d5b8712', '', 'system', '00001', 1, '摸鱼事业部', 1, 'mfish', '18911111111', 'manage@qq.com', '摸鱼事业部', 0, 0, 'admin', '2023-03-10 17:49:37', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('a453767fa3907e320f458f254a4549ae', '49b4cfe17e0cf4b5472aadea0f63bc57', 'system', '0000200001', 2, '摸鱼测试二部', 2, 'test2', '', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', '950736539e99c0521531cc127d5b8712', 'system', '0000100002', 2, '摸鱼一部', 1, 'mfish1', '18922222222', '11@qq.com', '摸鱼一部', 0, 0, 'admin', '2023-03-10 17:49:37', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('c48834a9114db0fa65164f9cb01bd509', 'e085fa0f1c15f46b5d0a9ff77658f93a', 'system', '000020000200001', 3, '测试岗1', 1, 'testgang1', '18922222222', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('ce04ee45b0bad23d0492d58df92bcf0c', 'e085fa0f1c15f46b5d0a9ff77658f93a', 'system', '000020000200002', 3, '测试岗2', 2, 'testgang2', '', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
-INSERT INTO `sso_org` VALUES ('e085fa0f1c15f46b5d0a9ff77658f93a', '49b4cfe17e0cf4b5472aadea0f63bc57', 'system', '0000200002', 2, '摸鱼测试一部', 1, 'test1', '', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('3c8c6bc136bec3ea74f1e48237e83702', '950736539e99c0521531cc127d5b8712', 'system', NULL, '0000100004', 2, '摸鱼二部', 2, 'mfish2', '18922222222', '22@qq.com', '摸鱼二部', 0, 0, 'admin', '2023-03-10 17:54:44', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('49b4cfe17e0cf4b5472aadea0f63bc57', '', 'system', NULL, '00002', 1, '摸鱼测试部', 3, 'test', '18933333333', 'test@qq.com', '摸鱼测试部', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('950736539e99c0521531cc127d5b8712', '', 'system', NULL, '00001', 1, '摸鱼事业部', 1, 'mfish', '18911111111', 'manage@qq.com', '摸鱼事业部', 0, 0, 'admin', '2023-03-10 17:49:37', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('a453767fa3907e320f458f254a4549ae', '49b4cfe17e0cf4b5472aadea0f63bc57', 'system', NULL, '0000200001', 2, '摸鱼测试二部', 2, 'test2', '', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('bb94731770f981fae7eec5cbb1b32bb3', '950736539e99c0521531cc127d5b8712', 'system', NULL, '0000100002', 2, '摸鱼一部', 1, 'mfish1', '18922222222', '11@qq.com', '摸鱼一部', 0, 0, 'admin', '2023-03-10 17:49:37', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('c48834a9114db0fa65164f9cb01bd509', 'e085fa0f1c15f46b5d0a9ff77658f93a', 'system', NULL, '000020000200001', 3, '测试岗1', 1, 'testgang1', '18922222222', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('ce04ee45b0bad23d0492d58df92bcf0c', 'e085fa0f1c15f46b5d0a9ff77658f93a', 'system', NULL, '000020000200002', 3, '测试岗2', 2, 'testgang2', '', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
+INSERT INTO `sso_org` VALUES ('e085fa0f1c15f46b5d0a9ff77658f93a', '49b4cfe17e0cf4b5472aadea0f63bc57', 'system', NULL, '0000200002', 2, '摸鱼测试一部', 1, 'test1', '', '', '', 0, 0, 'admin', '2023-03-10 21:32:30', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for sso_org_role
