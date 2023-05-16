@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoClientDetails;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,6 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version: V1.0.0
  */
 public interface SsoClientDetailsService extends IService<SsoClientDetails> {
+
+    Result<SsoClientDetails> updateClient(SsoClientDetails ssoClientDetails);
 
     void removeClientCache(String clientId);
 }

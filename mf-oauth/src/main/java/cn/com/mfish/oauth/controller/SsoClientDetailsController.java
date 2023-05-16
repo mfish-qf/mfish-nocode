@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.utils.excel.ExcelUtils;
@@ -60,9 +61,14 @@ public class SsoClientDetailsController {
     private List<SsoClientDetails> queryList(ReqSsoClientDetails reqSsoClientDetails, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<SsoClientDetails> lambdaQueryWrapper = new LambdaQueryWrapper<SsoClientDetails>()
+                .eq(SsoClientDetails::getDelFlag, 0)
                 .like(!StringUtils.isEmpty(reqSsoClientDetails.getClientName()), SsoClientDetails::getClientName, reqSsoClientDetails.getClientName())
                 .eq(!StringUtils.isEmpty(reqSsoClientDetails.getClientId()), SsoClientDetails::getClientId, reqSsoClientDetails.getClientId());
-        return ssoClientDetailsService.list(lambdaQueryWrapper);
+        List<SsoClientDetails> list = ssoClientDetailsService.list(lambdaQueryWrapper);
+        for (SsoClientDetails details : list) {
+            details.setClientSecret("******************");
+        }
+        return list;
     }
 
     /**
@@ -75,13 +81,31 @@ public class SsoClientDetailsController {
     @ApiOperation("客户端信息-添加")
     @PostMapping
     public Result<SsoClientDetails> add(@RequestBody SsoClientDetails ssoClientDetails) {
+        verifyDetails(ssoClientDetails);
         //内部项目oauth2，资源默认都给权限，跳过授权页。授权页面暂未开发
         //生成客户端ID及密钥
-        ssoClientDetails.setClientId(Utils.uuid32()).setClientSecret(Utils.uuid32()).setAutoApprove(true);
+        ssoClientDetails.setClientId(Utils.uuid32()).setClientSecret(Utils.uuid32()).setScope("all").setAutoApprove(true);
         if (ssoClientDetailsService.save(ssoClientDetails)) {
             return Result.ok(ssoClientDetails, "客户端信息-添加成功!");
         }
         return Result.fail(ssoClientDetails, "错误:客户端信息-添加失败!");
+    }
+
+    /**
+     * 校验客户端信息
+     *
+     * @param ssoClientDetails 客户端信息
+     */
+    private void verifyDetails(SsoClientDetails ssoClientDetails) {
+        if (StringUtils.isEmpty(ssoClientDetails.getClientName())) {
+            throw new MyRuntimeException("错误:客户端名称不允许为空");
+        }
+        if (StringUtils.isEmpty(ssoClientDetails.getGrantTypes())) {
+            throw new MyRuntimeException("错误:认证方式不允许为空");
+        }
+        if (StringUtils.isEmpty(ssoClientDetails.getRedirectUrl())) {
+            throw new MyRuntimeException("错误:回调地址不允许为空");
+        }
     }
 
     /**
@@ -94,25 +118,28 @@ public class SsoClientDetailsController {
     @ApiOperation("客户端信息-编辑")
     @PutMapping
     public Result<SsoClientDetails> edit(@RequestBody SsoClientDetails ssoClientDetails) {
+        verifyDetails(ssoClientDetails);
         //客户端ID不允许修改
         ssoClientDetails.setClientId(null).setClientSecret(null);
-        if (ssoClientDetailsService.updateById(ssoClientDetails)) {
-            return Result.ok(ssoClientDetails, "客户端信息-编辑成功!");
-        }
-        return Result.fail(ssoClientDetails, "错误:客户端信息-编辑失败!");
+        return ssoClientDetailsService.updateClient(ssoClientDetails);
     }
 
     @Log(title = "重置密钥", operateType = OperateType.UPDATE)
     @ApiOperation("重置密钥")
-    @PutMapping("/secret")
-    public Result<String> resetSecret(@RequestBody String id) {
+    @PutMapping("/secret/{id}")
+    public Result<String> resetSecret(@PathVariable String id) {
+        //todo 暂时不放开系统密钥重置功能
+        if ("1".equals(id)) {
+            throw new MyRuntimeException("错误:系统密钥不允许重置");
+        }
         SsoClientDetails ssoClientDetails = new SsoClientDetails();
         String secret = Utils.uuid32();
         ssoClientDetails.setId(id).setClientSecret(secret);
-        if (ssoClientDetailsService.updateById(ssoClientDetails)) {
-            return Result.ok(secret, "客户端信息-编辑成功!");
+        Result result = ssoClientDetailsService.updateClient(ssoClientDetails);
+        if (result.isSuccess()) {
+            return Result.ok(secret, "客户端信息-重置密钥成功!");
         }
-        return Result.fail("", "错误:客户端信息-编辑失败!");
+        return Result.fail("", "错误:客户端信息-重置密钥失败!");
     }
 
     /**
@@ -127,8 +154,8 @@ public class SsoClientDetailsController {
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoClientDetails ssoClientDetails = new SsoClientDetails();
         ssoClientDetails.setDelFlag(true).setId(id);
-        if (ssoClientDetailsService.updateById(ssoClientDetails)) {
-            ssoClientDetailsService.removeClientCache(id);
+        Result result = ssoClientDetailsService.updateClient(ssoClientDetails);
+        if (result.isSuccess()) {
             return Result.ok(true, "客户端信息-删除成功!");
         }
         return Result.fail(false, "错误:客户端信息-删除失败!");
