@@ -1,19 +1,18 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.utils.TreeUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,5 +115,17 @@ public class SsoOrgController {
     public Result<SsoOrg> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoOrg ssoOrg = ssoOrgService.getById(id);
         return Result.ok(ssoOrg, "组织结构表-查询成功!");
+    }
+
+    @ApiOperation(value = "组织结构表-通过固定编码查询", notes = "组织结构表-通过固定编码查询")
+    @GetMapping("/fixCode")
+    @RequiresPermissions("sys:org:query")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "固定编码", paramType = "query", required = true),
+            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true),
+    })
+    public Result<List<SsoOrg>> queryByFixCode(@RequestParam String code, @RequestParam String direction) {
+        List<SsoOrg> list = ssoOrgService.queryOrgByCode(code, TreeDirection.getDirection(direction));
+        return Result.ok(list, "组织结构表-查询成功!");
     }
 }

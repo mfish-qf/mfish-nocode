@@ -1,8 +1,10 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoOrg;
 import cn.com.mfish.oauth.mapper.SsoOrgMapper;
@@ -115,5 +117,61 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         log.error(MessageFormat.format("删除组织失败,组织ID:{0}", id));
         return false;
+    }
+
+    @Override
+    public List<SsoOrg> queryOrgByCode(String fixCode, TreeDirection direction) {
+        if (StringUtils.isEmpty(fixCode)) {
+            throw new MyRuntimeException("错误:固定编码不允许为空");
+        }
+        SsoOrg org = baseMapper.selectOne(new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getOrgFixCode, fixCode));
+        if (org == null) {
+            return new ArrayList<>();
+        }
+        List<SsoOrg> orgList;
+        switch (direction) {
+            case 向下:
+                orgList = downOrg(org.getOrgCode());
+                List<SsoOrg> orgTree = new ArrayList<>();
+                TreeUtils.buildTree(org.getParentId(), orgList, orgTree, SsoOrg.class);
+                return orgTree;
+            case 向上:
+                orgList = upOrg(org.getOrgCode(), org.getOrgLevel());
+                break;
+            default:
+                orgList = downOrg(org.getOrgCode());
+                //向下已经查了自己，向上查询不查
+                List<SsoOrg> ups = upOrg(org.getOrgCode(), org.getOrgLevel() - 1);
+                orgList.addAll(ups);
+                break;
+        }
+        List<SsoOrg> orgTree = new ArrayList<>();
+        TreeUtils.buildTree("", orgList, orgTree, SsoOrg.class);
+        return orgTree;
+    }
+
+    /**
+     * 向下查询组织
+     *
+     * @param code 固定编码
+     * @return
+     */
+    private List<SsoOrg> downOrg(String code) {
+        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().likeRight(SsoOrg::getOrgCode, code));
+    }
+
+    /**
+     * 向上查询组织
+     *
+     * @param code  固定编码
+     * @param level 等级
+     * @return
+     */
+    private List<SsoOrg> upOrg(String code, int level) {
+        List<String> orgList = new ArrayList<>();
+        for (int i = 1; i <= level; i++) {
+            orgList.add(code.substring(0, i * 5));
+        }
+        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgCode, orgList));
     }
 }

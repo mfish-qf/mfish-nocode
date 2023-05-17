@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.service;
 
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
@@ -21,4 +22,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     List<SsoOrg> queryOrg(ReqSsoOrg reqSsoOrg);
 
     boolean removeOrg(String id);
+
+    List<SsoOrg> queryOrgByCode(String fixCode, TreeDirection direction);
 }

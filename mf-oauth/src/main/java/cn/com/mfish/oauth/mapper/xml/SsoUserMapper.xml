@@ -59,12 +59,26 @@
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
     </resultMap>
+    <resultMap id="ssoUserMap" type="cn.com.mfish.oauth.entity.SsoUser">
+        <result property="roleIds" column="roleIds"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+    </resultMap>
+    <sql id="selectUser">
+        select u.*, o.org_name, ou.org_id, GROUP_CONCAT(ur.role_id) roleIds
+        from sso_user u
+                 inner join sso_client_user cu on cu.user_id = u.id
+                 left join sso_org_user ou on ou.user_id = u.id
+                 left join sso_org o on o.id = ou.org_id
+                 left join sso_user_role ur on u.id = ur.user_id
+    </sql>
+    <select id="getUserById" resultMap="ssoUserMap">
+        <include refid="selectUser"/>
+        <where>
+            u.id = #{userId}
+        </where>
+    </select>
     <select id="getUserList" resultMap="userMap">
-        select u.*,o.org_name,ou.org_id,GROUP_CONCAT(ur.role_id) roleIds from sso_user u
-        inner join sso_client_user cu on cu.user_id = u.id
-        left join sso_org_user ou on ou.user_id = u.id
-        left join sso_org o on o.id = ou.org_id
-        left join sso_user_role ur on u.id = ur.user_id
+        <include refid="selectUser"/>
         <where>
             u.del_flag = 0
             <if test="orgId != null and orgId != ''">
