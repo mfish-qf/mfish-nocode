@@ -124,6 +124,17 @@ public class SsoClientDetailsController {
         return ssoClientDetailsService.updateClient(ssoClientDetails);
     }
 
+    @Log(title = "显示密钥", operateType = OperateType.UPDATE)
+    @ApiOperation("显示密钥")
+    @GetMapping("/secret/{id}")
+    public Result<String> showSecret(@PathVariable String id) {
+        SsoClientDetails ssoClientDetails = ssoClientDetailsService.getById(id);
+        if (ssoClientDetails != null) {
+            return Result.ok(ssoClientDetails.getClientSecret(), "显示密钥成功!");
+        }
+        return Result.fail("", "错误:获取密钥失败!");
+    }
+
     @Log(title = "重置密钥", operateType = OperateType.UPDATE)
     @ApiOperation("重置密钥")
     @PutMapping("/secret/{id}")
