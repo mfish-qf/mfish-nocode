@@ -31,7 +31,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param userId
      * @return
      */
-    @Select("select * from sso_user where id = #{userId}")
     SsoUser getUserById(@Param("userId") String userId);
 
     /**
