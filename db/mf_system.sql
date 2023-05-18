@@ -112,6 +112,7 @@ INSERT INTO `sys_dict` VALUES ('c694f0f6feba27026044839b77d24caa', '日志操作
 INSERT INTO `sys_dict` VALUES ('d42d4e365a7b3d43f8c5cf37a523dbd5', 'Druid连接池配置', 'db_pool_druid', 0, 'Druid连接池相关配置项', 'admin', '2023-03-13 11:24:35', '', NULL);
 INSERT INTO `sys_dict` VALUES ('dce08f2d436e6582ec58301a76fe11fa', '任务过期策略', 'sys_job_misfire', 0, '任务过期处理策略 1立即处理一次 2放弃处理', 'admin', '2023-02-21 11:22:32', 'admin', '2023-02-21 18:07:12');
 INSERT INTO `sys_dict` VALUES ('e8e6e4c3f8e2fb775d6d083883e41839', '代码生成查询条件', 'sys_code_condition', 0, '代码生成的查询条件', 'admin', '2023-05-10 16:11:44', '', NULL);
+INSERT INTO `sys_dict` VALUES ('75ce8aab0fca2be5183770260d145c17', '认证方式', 'sso_grant_type', 0, '统一认证grant_type', 'admin', '2023-05-16 21:49:41', '', NULL);
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -208,6 +209,9 @@ INSERT INTO `sys_dict_item` VALUES ('ec9cfc538a91de2f61829e61064d636b', 'ad7336d
 INSERT INTO `sys_dict_item` VALUES ('f12c3e6c95f16dfd35e80c8c7101504e', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'idleTimeout', '60000', 1, 4, '', 0, '一个连接idle状态的最大时长（毫秒），超时则被释放（retired）', 'admin', '2023-03-13 11:21:46', 'admin', '2023-03-13 11:22:47');
 INSERT INTO `sys_dict_item` VALUES ('f442a8f38c5ce32b6b05c640cc3ecc2b', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '包含', 'like', 0, 2, NULL, 0, NULL, 'admin', '2023-05-10 16:12:34', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('f88a8a4a391e3ae455ba6d8157f22260', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'POST', 'POST', 0, 2, 'blue', 0, '新增', 'admin', '2023-01-09 16:12:41', 'admin', '2023-02-21 18:02:00');
+INSERT INTO `sys_dict_item` VALUES ('645349eb7dc061b452b1229c111eef20', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'authorization_code', 'authorization_code', 0, 1, 'green', 0, 'authorization_code回调认证方式', 'admin', '2023-05-16 21:50:21', 'admin', '2023-05-18 10:20:06');
+INSERT INTO `sys_dict_item` VALUES ('acbac95a5e0990f96ae6308ff68d693c', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'refresh_token', 'refresh_token', 0, 3, 'cyan', 0, 'refresh_token刷新token方式', 'admin', '2023-05-16 21:51:01', 'admin', '2023-05-18 10:20:18');
+INSERT INTO `sys_dict_item` VALUES ('f84c6e754d183f40a4b1d7a5b72371c7', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'password', 'password', 0, 2, 'blue', 0, '帐号密码认证方式', 'admin', '2023-05-16 21:50:40', 'admin', '2023-05-18 10:20:12');
 
 -- ----------------------------
 -- Table structure for sys_log
