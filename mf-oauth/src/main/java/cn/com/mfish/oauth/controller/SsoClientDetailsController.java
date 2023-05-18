@@ -127,7 +127,7 @@ public class SsoClientDetailsController {
         return ssoClientDetailsService.updateClient(ssoClientDetails);
     }
 
-    @Log(title = "显示密钥", operateType = OperateType.UPDATE)
+    @Log(title = "显示密钥", operateType = OperateType.QUERY)
     @ApiOperation("显示密钥")
     @GetMapping("/secret/{id}")
     public Result<String> showSecret(@PathVariable String id) {
