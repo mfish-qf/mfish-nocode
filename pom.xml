@@ -181,7 +181,11 @@
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel-core</artifactId>
+                <version>${easyexcel.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
@@ -238,11 +242,6 @@
                 <groupId>com.oracle</groupId>
                 <artifactId>ojdbc8</artifactId>
                 <version>${oracle.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>easyexcel-core</artifactId>
-                <version>${easyexcel.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
