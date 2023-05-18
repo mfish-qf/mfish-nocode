@@ -106,6 +106,9 @@ public class SsoClientDetailsController {
         if (StringUtils.isEmpty(ssoClientDetails.getRedirectUrl())) {
             throw new MyRuntimeException("错误:回调地址不允许为空");
         }
+        if (!StringUtils.isMatch("^(https?://[^,]+?)(,https?://[^,]+?)*$", ssoClientDetails.getRedirectUrl())) {
+            throw new MyRuntimeException("错误:回调地址不规范");
+        }
     }
 
     /**
