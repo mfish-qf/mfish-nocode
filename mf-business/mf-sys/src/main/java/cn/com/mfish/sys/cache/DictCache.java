@@ -2,7 +2,7 @@ package cn.com.mfish.sys.cache;
 
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.common.redis.temp.BaseTempCache;
-import cn.com.mfish.sys.entity.DictItem;
+import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.mapper.DictItemMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;

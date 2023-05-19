@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.mapper;
 
-import cn.com.mfish.sys.entity.DictItem;
+import cn.com.mfish.sys.api.entity.DictItem;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

@@ -5,14 +5,16 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.redis.common.IDBuild;
 import cn.com.mfish.sys.api.entity.DbConnect;
+import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.api.remote.RemoteDbConnectService;
+import cn.com.mfish.sys.api.remote.RemoteDictService;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -22,10 +24,11 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @SpringBootTest
-@ComponentScan(basePackages = "cn.com.mfish.test")
 public class Sample1 {
     @Resource
     RemoteDbConnectService remoteDbConnectService;
+    @Resource
+    RemoteDictService remoteDictService;
 
     @Test
     public void testIDBuild() {
@@ -43,5 +46,11 @@ public class Sample1 {
     public void testController() {
         Result<PageResult<DbConnect>> result = remoteDbConnectService.queryPageList(new ReqDbConnect().setDbName("aaa"), new ReqPage());
         System.out.println(result);
+    }
+
+    @Test
+    public void testDict() {
+        Result<List<DictItem>> result = remoteDictService.queryList("sso_grant_type");
+        System.out.println(result.getData());
     }
 }

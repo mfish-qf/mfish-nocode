@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.service;
 
-import cn.com.mfish.sys.entity.DictItem;
+import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.req.ReqDictItem;
 import com.baomidou.mybatisplus.extension.service.IService;
 

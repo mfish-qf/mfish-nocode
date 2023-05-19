@@ -1,8 +1,9 @@
 package cn.com.mfish.oauth.cache.temp;
 
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
-import cn.com.mfish.common.oauth.cache.UserPermissionCache;
 import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -17,9 +18,20 @@ import java.util.Set;
  * @date: 2022/12/5 22:06
  */
 @Component("userPermissionTempCache")
-public class UserPermissionTempCache extends UserPermissionCache {
+public class UserPermissionTempCache extends BaseTempCache<Set<String>> {
     @Resource
     SsoUserMapper ssoUserMapper;
+
+    /**
+     * key [0] userId [1] clientId
+     *
+     * @param key
+     * @return
+     */
+    @Override
+    protected String buildKey(String... key) {
+        return RedisPrefix.buildUser2PermissionsKey(key[0], key[1]);
+    }
 
     /**
      * key [0] userId [1] clientId

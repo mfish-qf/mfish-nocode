@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class AllowCodeValidator extends AbstractClientValidator {
         if (!result1.isSuccess()) {
             return result1;
         }
-        if(result1.getData().getGrantTypes().indexOf("authorization_code")<0){
+        if(result1.getData().getGrantTypes().indexOf(GrantType.AUTHORIZATION_CODE.toString())<0){
             return result1.setSuccess(false).setMsg("错误:该客户端不支持code请求方式！");
         }
         return result1;
