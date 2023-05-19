@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.service.impl;
 
-import cn.com.mfish.sys.entity.DictItem;
+import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.mapper.DictItemMapper;
 import cn.com.mfish.sys.req.ReqDictItem;
 import cn.com.mfish.sys.service.DictItemService;

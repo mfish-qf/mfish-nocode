@@ -1,13 +1,16 @@
 package cn.com.mfish.common.oauth.common;
 
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.annotation.RequiresRoles;
-import cn.com.mfish.common.oauth.cache.UserPermissionCache;
-import cn.com.mfish.common.oauth.cache.UserRoleCache;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.service.TokenService;
@@ -26,8 +29,37 @@ import java.util.stream.Collectors;
  * @date: 2022/12/6 17:23
  */
 public class OauthUtils {
-    private static final String ROLE_CACHE = "userRoleCache";
-    private static final String PERMISSION_CACHE = "userPermissionCache";
+
+    private OauthUtils() {
+
+    }
+
+    /**
+     * 获取用户服务
+     *
+     * @return
+     */
+    private static RemoteUserService getUserService() {
+        RemoteUserService remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
+        if (remoteUserService == null) {
+            throw new MyRuntimeException("错误：获取用户服务异常");
+        }
+        return remoteUserService;
+    }
+
+    /**
+     * 获取用户信息
+     *
+     * @return
+     */
+    public static UserInfo getUser() {
+        RemoteUserService remoteUserService = getUserService();
+        Result<UserInfo> result = remoteUserService.getUserById(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
+        if (result == null || !result.isSuccess()) {
+            return null;
+        }
+        return result.getData();
+    }
 
     /**
      * 生成6位数验证码
@@ -45,8 +77,12 @@ public class OauthUtils {
      * @return
      */
     public static List<UserRole> getRoles() {
-        UserRoleCache userRoleCache = SpringBeanFactory.getBean(ROLE_CACHE);
-        return userRoleCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        RemoteUserService remoteUserService = getUserService();
+        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        if (result == null || !result.isSuccess()) {
+            return null;
+        }
+        return result.getData();
     }
 
     /**
@@ -70,11 +106,16 @@ public class OauthUtils {
 
     /**
      * 获取当前用户按钮权限
+     *
      * @return
      */
     public static Set<String> getPermission() {
-        UserPermissionCache userPermissionCache = SpringBeanFactory.getBean(PERMISSION_CACHE);
-        return userPermissionCache.getFromCacheAndDB(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        RemoteUserService remoteUserService = getUserService();
+        Result<Set<String>> result = remoteUserService.getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        if (result == null || !result.isSuccess()) {
+            return null;
+        }
+        return result.getData();
     }
 
     /**

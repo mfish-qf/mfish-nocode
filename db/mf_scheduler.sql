@@ -170,7 +170,8 @@ CREATE TABLE `qrtz_job_log`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`, `job_name`, `job_group`) USING BTREE
+  PRIMARY KEY (`id`, `job_name`, `job_group`) USING BTREE,
+  INDEX `create_time_index`(`create_time`) USING BTREE COMMENT '创建时间索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '定时任务调度日志' ROW_FORMAT = Dynamic;
 
 
