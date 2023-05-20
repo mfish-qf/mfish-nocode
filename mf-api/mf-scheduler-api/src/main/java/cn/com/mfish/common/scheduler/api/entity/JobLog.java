@@ -55,6 +55,8 @@ public class JobLog extends BaseEntity<String> {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "结束时间")
     private Date endTime;
+    @ApiModelProperty(value = "日志类型(0入库日志 1文件日志)")
+    private Integer logType;
     @ApiModelProperty(value = "耗时(ms)")
     private Long costTime;
     @ApiModelProperty(value = "执行状态（0开始 1调度成功 2调度失败 3执行成功 4执行失败）")

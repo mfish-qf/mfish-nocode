@@ -52,6 +52,8 @@ public class Job extends BaseEntity<String> {
     private String timeZone;
     @ApiModelProperty(value = "备注信息")
     private String remark;
+    @ApiModelProperty(value = "日志类型(0入库日志 1文件日志)")
+    private Integer logType;
     @ApiModelProperty(value = "订阅列表")
     @TableField(exist = false)
     private List<JobSubscribe> subscribes;
