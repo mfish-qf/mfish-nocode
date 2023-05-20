@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -96,6 +97,10 @@ public class JobLogController {
     public Result<Boolean> callBackStatus(@RequestBody JobLog jobLog) {
         if (!jobLog.getStatus().equals(JobStatus.执行成功.getValue()) && !jobLog.getStatus().equals(JobStatus.执行失败.getValue())) {
             return Result.fail(false, "错误:传入状态不正确");
+        }
+        log.info(MessageFormat.format("任务:{0}-执行状态:{1}-任务ID:{2}-订阅ID:{3}", jobLog.getJobName(), jobLog.getStatus(), jobLog.getId(), jobLog.getSubscribeId()));
+        if (1 == jobLog.getLogType()) {
+            return Result.ok(true, "任务回调设置状态成功");
         }
         JobLog newLog = new JobLog().setId(jobLog.getId()).setStatus(jobLog.getStatus());
         Date createTime = jobLog.getCreateTime();

@@ -2,12 +2,12 @@ package cn.com.mfish.scheduler.execute;
 
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.Utils;
+import cn.com.mfish.common.scheduler.api.entity.JobLog;
+import cn.com.mfish.common.scheduler.config.enums.JobStatus;
 import cn.com.mfish.common.scheduler.config.utils.InvokeUtils;
 import cn.com.mfish.scheduler.common.JobUtils;
 import cn.com.mfish.scheduler.entity.Job;
-import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
-import cn.com.mfish.common.scheduler.config.enums.JobStatus;
 import cn.com.mfish.scheduler.enums.JobType;
 import cn.com.mfish.scheduler.invoke.BaseInvoke;
 import cn.com.mfish.scheduler.service.JobLogService;
@@ -64,7 +64,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
             execute(JobType.getJob(job.getJobType()), threadLocal.get(), list);
             success = true;
         } catch (Exception ex) {
-            log.error(MessageFormat.format("任务ID:{0}执行异常,任务ID:{1}:", job.getJobName(), job.getId()), ex);
+            log.error(MessageFormat.format("任务:{0}-执行状态:异常-任务ID:{1}-订阅ID:{2}", job.getJobName(), job.getId(), subscribeId), ex);
             success = false;
             error = ex.getMessage();
         } finally {
@@ -88,8 +88,14 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
                 .setClassName(job.getClassName())
                 .setMethodName(job.getMethodName())
                 .setParams(job.getParams())
-                .setStatus(JobStatus.开始.getValue());
+                .setStatus(JobStatus.开始.getValue())
+                .setLogType(job.getLogType());
         jobLog.setCreateBy(OPERATOR).setCreateTime(new Date());
+        log.info(MessageFormat.format("任务:{0}-执行状态:{1}-任务ID:{2}-订阅ID:{3}", jobLog.getJobName(), jobLog.getStatus(), jobLog.getId(), jobLog.getSubscribeId()));
+        threadLocal.set(jobLog);
+        if (1 == jobLog.getLogType()) {
+            return;
+        }
         JobSubscribeService jobSubscribeService = SpringBeanFactory.getBean(JobSubscribeService.class);
         JobSubscribe jobSubscribe = jobSubscribeService.getById(subscribeId);
         if (jobSubscribe != null) {
@@ -97,7 +103,6 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
             jobLog.setStartTime(jobSubscribe.getStartTime());
             jobLog.setEndTime(jobSubscribe.getEndTime());
         }
-        threadLocal.set(jobLog);
         JobLogService jobLogService = SpringBeanFactory.getBean(JobLogService.class);
         if (jobLogService.save(jobLog)) {
             log.info(MessageFormat.format("任务:{0}调度成功,任务ID:{1}", job.getJobName(), job.getId()));
@@ -112,16 +117,19 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
      * @param success 任务是否成功
      * @param remark  错误信息
      */
-    public static void executeCallBack(boolean success, String remark) {
+    private static void executeCallBack(boolean success, String remark) {
         JobLog jobLog = threadLocal.get();
         threadLocal.remove();
         if (jobLog == null) {
             log.error("错误:未获取到任务日志");
             return;
         }
-        JobLogService jobLogService = SpringBeanFactory.getBean(JobLogService.class);
         JobStatus jobStatus = success ? JobStatus.调度成功 : JobStatus.调度失败;
-        log.info(MessageFormat.format("任务{0}执行{1},任务ID:{2}", jobLog.getJobName(), jobStatus, jobLog.getId()));
+        log.info(MessageFormat.format("任务:{0}-执行状态:{1}-任务ID:{2}-订阅ID:{3}", jobLog.getJobName(), jobStatus, jobLog.getId(), jobLog.getSubscribeId()));
+        if (1 == jobLog.getLogType()) {
+            return;
+        }
+        JobLogService jobLogService = SpringBeanFactory.getBean(JobLogService.class);
         //数据库设置长度1000，截取999位
         if (remark != null && remark.length() >= 1000) {
             remark = remark.substring(0, 999);

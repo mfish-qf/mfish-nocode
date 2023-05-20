@@ -87,26 +87,27 @@ CREATE TABLE `qrtz_fired_triggers`  (
 -- Table structure for qrtz_job
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_job`;
-CREATE TABLE `qrtz_job`  (
-  `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务ID',
-  `job_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '任务名称',
-  `job_group` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组',
-  `job_type` tinyint(1) NULL DEFAULT NULL COMMENT '任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)',
-  `class_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '类名称',
-  `method_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '方法名称',
-  `params` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '调用参数',
-  `allow_concurrent` tinyint(1) NULL DEFAULT 0 COMMENT '允许并发执行（0不允许 1允许）',
-  `misfire_handler` tinyint(1) NULL DEFAULT 3 COMMENT '过期策略（1立即执行一次 2放弃执行 ）',
-  `status` tinyint(1) NULL DEFAULT 0 COMMENT '状态（0正常 1停用）',
-  `time_zone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时区',
-  `priority` int(11) NULL DEFAULT NULL COMMENT '优先级',
-  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注信息',
-  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`, `job_name`, `job_group`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '定时调度任务' ROW_FORMAT = Dynamic;
+CREATE TABLE `qrtz_job` (
+    `id` varchar(32) NOT NULL COMMENT '任务ID',
+    `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT '任务名称',
+    `job_group` varchar(100) NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组',
+    `job_type` tinyint(1) DEFAULT NULL COMMENT '任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)',
+    `class_name` varchar(100) NOT NULL COMMENT '类名称',
+    `method_name` varchar(100) DEFAULT NULL COMMENT '方法名称',
+    `params` varchar(500) DEFAULT NULL COMMENT '调用参数',
+    `allow_concurrent` tinyint(1) DEFAULT '0' COMMENT '允许并发执行（0不允许 1允许）',
+    `misfire_handler` tinyint(1) DEFAULT '1' COMMENT '过期策略（1立即执行一次 2放弃执行 ）',
+    `status` tinyint(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
+    `time_zone` varchar(50) DEFAULT NULL COMMENT '时区',
+    `priority` int(11) DEFAULT NULL COMMENT '优先级',
+    `remark` varchar(1000) DEFAULT '' COMMENT '备注信息',
+    `log_type` tinyint(1) DEFAULT '0' COMMENT '日志类型(0入库日志 1文件日志)',
+    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`,`job_name`,`job_group`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时调度任务';
 
 -- ----------------------------
 -- Records of qrtz_job
@@ -150,29 +151,30 @@ INSERT INTO `qrtz_job_details` VALUES ('MfishClusteredScheduler', '远程调用�
 -- Table structure for qrtz_job_log
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_job_log`;
-CREATE TABLE `qrtz_job_log`  (
-  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
-  `job_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务ID',
-  `subscribe_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '订阅ID',
-  `job_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '任务名称',
-  `job_group` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组',
-  `job_type` tinyint(1) NULL DEFAULT NULL COMMENT '任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)',
-  `class_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '类名称',
-  `method_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '方法名称',
-  `params` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '调用参数',
-  `cron` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'cron表达式',
-  `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
-  `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
-  `cost_time` int(11) NULL DEFAULT NULL COMMENT '耗时(单位:ms)',
-  `status` tinyint(1) NULL DEFAULT 0 COMMENT '执行状态（0开始 1调度成功 2调度失败 3执行成功 4执行失败）',
-  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注信息',
-  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`, `job_name`, `job_group`) USING BTREE,
-  INDEX `create_time_index`(`create_time`) USING BTREE COMMENT '创建时间索引'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '定时任务调度日志' ROW_FORMAT = Dynamic;
+CREATE TABLE `qrtz_job_log` (
+    `id` varchar(36) NOT NULL COMMENT '唯一ID',
+    `job_id` varchar(36) NOT NULL COMMENT '任务ID',
+    `subscribe_id` varchar(36) DEFAULT NULL COMMENT '订阅ID',
+    `job_name` varchar(100) NOT NULL DEFAULT '' COMMENT '任务名称',
+    `job_group` varchar(100) NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组',
+    `job_type` tinyint(1) DEFAULT NULL COMMENT '任务类型(0 本地任务 1 RPC远程调用任务 2 MQ消息任务)',
+    `class_name` varchar(100) NOT NULL COMMENT '类名称',
+    `method_name` varchar(100) DEFAULT NULL COMMENT '方法名称',
+    `params` varchar(500) DEFAULT NULL COMMENT '调用参数',
+    `cron` varchar(50) DEFAULT NULL COMMENT 'cron表达式',
+    `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+    `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+    `log_type` tinyint(1) DEFAULT '0' COMMENT '日志类型(0入库日志 1文件日志)',
+    `cost_time` int(11) DEFAULT NULL COMMENT '耗时(单位:ms)',
+    `status` tinyint(1) DEFAULT '0' COMMENT '执行状态（0开始 1调度成功 2调度失败 3执行成功 4执行失败）',
+    `remark` varchar(1000) DEFAULT NULL COMMENT '备注信息',
+    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`,`job_name`,`job_group`) USING BTREE,
+    KEY `create_time_index` (`create_time`) USING BTREE COMMENT '创建时间索引'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='定时任务调度日志';
 
 
 -- ----------------------------
