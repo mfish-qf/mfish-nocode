@@ -6,7 +6,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.oauth.mapper.SsoOrgMapper;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
@@ -157,7 +157,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
      * @return
      */
     private List<SsoOrg> downOrg(String code) {
-        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().likeRight(SsoOrg::getOrgCode, code));
+        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().likeRight(SsoOrg::getOrgCode, code).eq(SsoOrg::getDelFlag, 0));
     }
 
     /**
@@ -169,6 +169,9 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
      */
     private List<SsoOrg> upOrg(String code, int level) {
         List<String> orgList = new ArrayList<>();
+        if (level < 1) {
+            return new ArrayList<>();
+        }
         for (int i = 1; i <= level; i++) {
             orgList.add(code.substring(0, i * 5));
         }

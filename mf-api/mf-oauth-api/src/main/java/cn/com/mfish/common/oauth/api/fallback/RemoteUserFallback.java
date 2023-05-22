@@ -21,7 +21,7 @@ import java.util.Set;
 public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
     @Override
     public RemoteUserService create(Throwable cause) {
-        log.error("token服务调用失败:" + cause.getMessage());
+        log.error("用户服务调用失败:" + cause.getMessage());
         return new RemoteUserService() {
             @Override
             public Result<UserInfo> getUserInfo(String origin, String token) {
