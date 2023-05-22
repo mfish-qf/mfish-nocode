@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.extension.service.IService;
 

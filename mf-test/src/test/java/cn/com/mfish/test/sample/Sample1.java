@@ -3,6 +3,8 @@ package cn.com.mfish.test.sample;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.remote.RemoteOrgService;
 import cn.com.mfish.common.redis.common.IDBuild;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.entity.DictItem;
@@ -29,6 +31,8 @@ public class Sample1 {
     RemoteDbConnectService remoteDbConnectService;
     @Resource
     RemoteDictService remoteDictService;
+    @Resource
+    RemoteOrgService remoteOrgService;
 
     @Test
     public void testIDBuild() {
@@ -52,5 +56,13 @@ public class Sample1 {
     public void testDict() {
         Result<List<DictItem>> result = remoteDictService.queryList("sso_grant_type");
         System.out.println(result.getData());
+    }
+
+    @Test
+    public void testOrg() {
+        Result<List<SsoOrg>> result = remoteOrgService.queryByFixCode("mysyb", "all");
+        Result<List<SsoOrg>> result1 = remoteOrgService.queryById("a453767fa3907e320f458f254a4549ae,bb94731770f981fae7eec5cbb1b32bb3");
+        System.out.println(result.getData());
+        System.out.println(result1.getData());
     }
 }

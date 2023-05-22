@@ -2,15 +2,17 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.enums.TreeDirection;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.oauth.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -106,15 +108,18 @@ public class SsoOrgController {
     /**
      * 通过id查询
      *
-     * @param id
+     * @param ids 多个ID逗号分隔
      * @return
      */
     @ApiOperation(value = "组织结构表-通过id查询", notes = "组织结构表-通过id查询")
-    @GetMapping("/{id}")
+    @GetMapping("/{ids}")
     @RequiresPermissions("sys:org:query")
-    public Result<SsoOrg> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        SsoOrg ssoOrg = ssoOrgService.getById(id);
-        return Result.ok(ssoOrg, "组织结构表-查询成功!");
+    public Result<List<SsoOrg>> queryById(@ApiParam(name = "ids", value = "唯一性ID") @PathVariable("ids") String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            return Result.fail(null, "错误:id不允许为空");
+        }
+        String[] idList = ids.split(",");
+        return Result.ok(ssoOrgService.list(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, idList)), "组织结构表-查询成功!");
     }
 
     @ApiOperation(value = "组织结构表-通过固定编码查询", notes = "组织结构表-通过固定编码查询")
