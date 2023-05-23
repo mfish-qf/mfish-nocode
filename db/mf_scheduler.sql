@@ -112,9 +112,9 @@ CREATE TABLE `qrtz_job` (
 -- ----------------------------
 -- Records of qrtz_job
 -- ----------------------------
-INSERT INTO `qrtz_job` VALUES ('357b8d7dac67eaf0a1a0ce369ec25462', '远程调用测试', 'DEFAULT', 1, 'cn.com.mfish.common.oauth.api.remote.RemoteUserService', 'getUserById', '[\n  \"inner\",\n  \"1\"\n]', 0, 1, 1, 'Asia/Shanghai', 1, '远程调用用户接口测试', 'admin', '2023-02-24 23:09:49', 'admin', '2023-03-01 23:08:55');
-INSERT INTO `qrtz_job` VALUES ('895baafe9caa9afd089f54d7c3932a25', '任务调度测试', 'DEFAULT', 2, 'cn.com.mfish.consume.job.ConsumerJob', 'test', '', 0, 1, 1, 'Asia/Shanghai', 1, '', 'admin', '2023-02-26 19:58:23', '????', '2023-03-10 15:55:13');
-INSERT INTO `qrtz_job` VALUES ('908c3637e3c9914eb97f4576f187d668', '本地调用测试', 'DFAULT', 0, 'cn.com.mfish.scheduler.job.MfJob', 'test', '[\n  \"本地测试\"\n]', 0, 1, 1, 'Asia/Shanghai', 1, '本地单个参数测试', 'admin', '2023-02-24 23:02:42', 'admin', '2023-03-01 23:08:35');
+INSERT INTO `qrtz_job` VALUES ('357b8d7dac67eaf0a1a0ce369ec25462', '远程调用测试', 'DEFAULT', 1, 'cn.com.mfish.common.oauth.api.remote.RemoteUserService', 'getUserById', '[\n  \"inner\",\n  \"1\"\n]', 0, 1, 0, 'Asia/Shanghai', 1, '远程调用用户接口测试', 1, 'admin', '2023-02-24 23:09:49', 'admin', '2023-05-20 12:05:59');
+INSERT INTO `qrtz_job` VALUES ('895baafe9caa9afd089f54d7c3932a25', '任务调度测试', 'DEFAULT', 2, 'cn.com.mfish.consume.job.ConsumerJob', 'test', '', 0, 1, 1, 'Asia/Shanghai', 1, '', 0, 'admin', '2023-02-26 19:58:23', 'admin', '2023-05-20 11:46:18');
+INSERT INTO `qrtz_job` VALUES ('908c3637e3c9914eb97f4576f187d668', '本地调用测试', 'DFAULT', 0, 'cn.com.mfish.scheduler.job.MfJob', 'test', '[\n  \"本地测试\"\n]', 0, 1, 0, 'Asia/Shanghai', 1, '本地单个参数测试', 1, 'admin', '2023-02-24 23:02:42', 'admin', '2023-05-20 12:22:29');
 
 -- ----------------------------
 -- Table structure for qrtz_job_details
