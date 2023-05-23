@@ -52,13 +52,13 @@ public class SsoMenuController {
     @ApiOperation(value = "获取菜单树")
     @GetMapping("/tree")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
-        return queryMenu(reqSsoMenu, oAuth2Service.getCurrentUser());
+        return queryMenu(reqSsoMenu, AuthInfoUtils.getCurrentUserId());
     }
 
     @ApiOperation("获取角色树-左侧菜单")
     @GetMapping("/roleTree")
     public Result<List<SsoMenu>> queryRoleMenuTree() {
-        return queryMenu(new ReqSsoMenu().setClientId(AuthInfoUtils.getCurrentClientId()).setNoButton(true), oAuth2Service.getCurrentUser());
+        return queryMenu(new ReqSsoMenu().setClientId(AuthInfoUtils.getCurrentClientId()).setNoButton(true), AuthInfoUtils.getCurrentUserId());
     }
 
     private Result<List<SsoMenu>> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {

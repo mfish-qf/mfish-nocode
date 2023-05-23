@@ -33,8 +33,6 @@ public interface OAuth2Service {
 
     UserInfoVo getUserInfoAndRoles(String userId, String clientId);
 
-    String getCurrentUser();
-
     /**
      * 获取在线用户
      *

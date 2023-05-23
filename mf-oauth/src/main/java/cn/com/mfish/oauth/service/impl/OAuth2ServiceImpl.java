@@ -2,7 +2,6 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.secret.SM4Utils;
-import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.PageResult;
@@ -168,15 +167,6 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         userInfoVo.setUserRoles(ssoUserService.getUserRoles(userId, clientId));
         userInfoVo.setPermissions(ssoUserService.getUserPermissions(userId, clientId));
         return userInfoVo;
-    }
-
-    @Override
-    public String getCurrentUser() {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject == null) {
-            return AuthInfoUtils.getCurrentUserId();
-        }
-        return (String) subject.getPrincipal();
     }
 
     /**
