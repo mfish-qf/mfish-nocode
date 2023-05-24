@@ -157,7 +157,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
      * @return
      */
     private List<SsoOrg> downOrg(String code) {
-        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().likeRight(SsoOrg::getOrgCode, code).eq(SsoOrg::getDelFlag, 0));
+        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().likeRight(SsoOrg::getOrgCode, code).eq(SsoOrg::getDelFlag, 0).orderByAsc(SsoOrg::getOrgSort));
     }
 
     /**
