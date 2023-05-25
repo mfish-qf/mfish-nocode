@@ -26,7 +26,7 @@ import java.util.List;
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.0.0
+ * @version: V1.0.1
  */
 @Service
 public class JobSubscribeServiceImpl extends ServiceImpl<JobSubscribeMapper, JobSubscribe> implements JobSubscribeService {

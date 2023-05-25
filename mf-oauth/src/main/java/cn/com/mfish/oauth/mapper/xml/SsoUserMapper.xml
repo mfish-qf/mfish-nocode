@@ -76,6 +76,7 @@
         <where>
             u.id = #{userId}
         </where>
+        group by u.id
     </select>
     <select id="getUserList" resultMap="userMap">
         <include refid="selectUser"/>

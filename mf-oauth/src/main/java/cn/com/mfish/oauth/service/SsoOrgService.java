@@ -24,4 +24,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     boolean removeOrg(String id);
 
     List<SsoOrg> queryOrgByCode(String fixCode, TreeDirection direction);
+
+    List<SsoOrg> queryOrgById(String id, TreeDirection direction);
 }
