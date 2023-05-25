@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.0.0
+ * @Version: V1.0.1
  */
 @Service
 @Slf4j
@@ -125,6 +125,19 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             throw new MyRuntimeException("错误:固定编码不允许为空");
         }
         SsoOrg org = baseMapper.selectOne(new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getOrgFixCode, fixCode));
+        return queryOrg(org, direction);
+    }
+
+    @Override
+    public List<SsoOrg> queryOrgById(String id, TreeDirection direction) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:组织id不允许为空");
+        }
+        SsoOrg org = baseMapper.selectOne(new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getId, id));
+        return queryOrg(org, direction);
+    }
+
+    List<SsoOrg> queryOrg(SsoOrg org, TreeDirection direction) {
         if (org == null) {
             return new ArrayList<>();
         }

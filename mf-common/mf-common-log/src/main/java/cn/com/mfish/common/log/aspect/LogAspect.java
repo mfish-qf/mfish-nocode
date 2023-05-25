@@ -1,5 +1,6 @@
 package cn.com.mfish.common.log.aspect;
 
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
@@ -41,6 +42,12 @@ public class LogAspect {
 
     @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String origin = request.getHeader(RPCConstants.REQ_ORIGIN);
+        if (!StringUtils.isEmpty(origin) && origin.equals(RPCConstants.INNER)) {
+            //内部请求不记入日志
+            return;
+        }
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String title;
         Log aLog = methodSignature.getMethod().getDeclaredAnnotation(Log.class);
@@ -54,7 +61,6 @@ public class LogAspect {
             }
         }
         SysLog sysLog = new SysLog();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         sysLog.setReqUri(request.getRequestURI());
         sysLog.setReqType(request.getMethod());
         sysLog.setReqParam(getParams(joinPoint.getArgs()));
@@ -119,6 +125,9 @@ public class LogAspect {
 
     private void setReturn(int state, String remark) {
         SysLog sysLog = logThreadLocal.get();
+        if (sysLog == null) {
+            return;
+        }
         sysLog.setCreateBy(AuthInfoUtils.getCurrentAccount());
         sysLog.setCreateTime(new Date());
         sysLog.setOperStatus(state);

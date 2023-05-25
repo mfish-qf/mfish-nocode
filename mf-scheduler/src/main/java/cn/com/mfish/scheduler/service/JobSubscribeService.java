@@ -11,7 +11,7 @@ import java.util.List;
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.0.0
+ * @version: V1.0.1
  */
 public interface JobSubscribeService extends IService<JobSubscribe> {
 

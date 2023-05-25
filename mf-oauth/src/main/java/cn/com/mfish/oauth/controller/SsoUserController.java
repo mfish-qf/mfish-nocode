@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
@@ -9,6 +10,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
@@ -18,6 +20,7 @@ import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqChangePwd;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
+import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoUserService;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
@@ -46,6 +49,8 @@ public class SsoUserController {
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
+    @Resource
+    SsoOrgService ssoOrgService;
 
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
@@ -73,7 +78,7 @@ public class SsoUserController {
 
     @ApiOperation("获取用户角色")
     @GetMapping("/roles")
-    @Log(title = "获取用户权限", operateType = OperateType.QUERY)
+    @Log(title = "获取用户角色", operateType = OperateType.QUERY)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID"),
             @ApiImplicitParam(name = "clientId", value = "客户端ID")
@@ -86,6 +91,21 @@ public class SsoUserController {
             clientId = AuthInfoUtils.getCurrentClientId();
         }
         return Result.ok(ssoUserService.getUserRoles(userId, clientId));
+    }
+
+    @ApiOperation("获取用户组织")
+    @GetMapping("/orgs")
+    @Log(title = "获取用户组织", operateType = OperateType.QUERY)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户ID"),
+            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true)
+    })
+    public Result<List<SsoOrg>> getOrgs(String userId, String direction) {
+        if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
+        }
+        SsoUser user = ssoUserService.getUserById(userId);
+        return Result.ok(ssoOrgService.queryOrgById(user.getOrgId(), TreeDirection.getDirection(direction)), "组织结构-查询成功!");
     }
 
     @ApiOperation("通过用户ID获取用户")
