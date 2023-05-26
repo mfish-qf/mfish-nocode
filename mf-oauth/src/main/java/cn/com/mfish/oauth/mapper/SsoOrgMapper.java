@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.mapper;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -21,4 +22,9 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
     List<SsoOrg> queryOrg(@Param("reqSsoOrg") ReqSsoOrg reqSsoOrg, @Param("levels") List<Integer> levels);
 
     int orgFixCodeExist(@Param("clientId") String clientId, @Param("orgId") String orgId, @Param("orgFixCode") String orgFixCode);
+
+    int insertOrgRole(@Param("orgId") String orgId, @Param("roles") List<String> roles);
+
+    @Delete("delete from sso_org_role where org_id = #{orgId}")
+    int deleteOrgRole(String orgId);
 }

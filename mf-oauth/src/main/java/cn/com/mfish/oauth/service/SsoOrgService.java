@@ -23,6 +23,8 @@ public interface SsoOrgService extends IService<SsoOrg> {
 
     boolean removeOrg(String id);
 
+    int insertOrgRole(String orgId, List<String> roles);
+
     List<SsoOrg> queryOrgByCode(String fixCode, TreeDirection direction);
 
     List<SsoOrg> queryOrgById(String id, TreeDirection direction);

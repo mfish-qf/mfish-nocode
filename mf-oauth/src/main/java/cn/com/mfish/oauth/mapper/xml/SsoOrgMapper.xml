@@ -47,8 +47,12 @@
             <include refid="reqCondition"/>
         </where>
     </select>
-    <select id="queryOrg" resultType="cn.com.mfish.common.oauth.api.entity.SsoOrg">
-        SELECT * FROM sso_org
+    <resultMap id="orgMap" type="cn.com.mfish.common.oauth.api.entity.SsoOrg">
+        <result property="roleIds" column="roleIds"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+    </resultMap>
+    <select id="queryOrg" resultMap="orgMap">
+        select o.*, GROUP_CONCAT(sor.role_id) roleIds from (SELECT * FROM sso_org
         <where>
             del_flag = 0
             <include refid="reqCondition"/>
@@ -63,6 +67,9 @@
             </where>
             )
         </foreach>
+        ) o
+        left join sso_org_role sor on o.id = sor.org_id
+        group by o.id
         order by org_sort
     </select>
     <select id="orgFixCodeExist" resultType="int">
@@ -74,4 +81,10 @@
             </if>
         </where>
     </select>
+    <insert id="insertOrgRole">
+        insert into sso_org_role(role_id, org_id) values
+        <foreach collection="roles" item="role" separator=",">
+            (#{role},#{orgId})
+        </foreach>
+    </insert>
 </mapper>
