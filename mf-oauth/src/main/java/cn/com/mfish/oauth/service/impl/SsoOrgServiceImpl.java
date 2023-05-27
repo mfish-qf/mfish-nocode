@@ -117,6 +117,9 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
                 throw new MyRuntimeException("错误:手机号不正确");
             }
         }
+        if (AuthInfoUtils.isContainSuperAdmin(ssoOrg.getRoleIds())) {
+            throw new MyRuntimeException("错误:不允许设置为超户!");
+        }
         return Result.ok("组织校验成功");
     }
 
