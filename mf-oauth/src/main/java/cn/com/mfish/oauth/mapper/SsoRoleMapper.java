@@ -28,7 +28,6 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
      * @param roleId
      * @return
      */
-    @Select("select user_id from sso_user_role where role_id=#{roleId}")
     List<String> getRoleUser(String roleId);
 
     @Select("select menu_id from sso_role_menu where role_id=#{roleId}")

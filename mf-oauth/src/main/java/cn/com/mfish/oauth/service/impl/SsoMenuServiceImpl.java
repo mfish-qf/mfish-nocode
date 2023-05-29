@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
@@ -47,18 +48,19 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
 
     @Override
     public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
+        List<String> roleIds = new ArrayList<>();
         //如果是超户获取所有菜单
-        if (AuthInfoUtils.isSuper(userId)) {
-            userId = null;
+        if (!AuthInfoUtils.isSuper(userId)) {
+            roleIds = OauthUtils.getRoles().stream().map((role)->role.getId()).collect(Collectors.toList());
         }
-        Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu, userId);
+        Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu, roleIds);
         List<Integer> list = new ArrayList<>();
         if (level != null) {
             for (int i = 1; i < level; i++) {
                 list.add(i);
             }
         }
-        List<SsoMenu> menus = baseMapper.queryMenu(reqSsoMenu, list, userId);
+        List<SsoMenu> menus = baseMapper.queryMenu(reqSsoMenu, list, roleIds);
         //菜单节点是从底部往上寻找，如果权限只设置了子节点，父节点并未存储
         //所以根据菜单类型展示时，先全部查出后再过滤不需要的类型
         if (reqSsoMenu.getMenuType() != null) {

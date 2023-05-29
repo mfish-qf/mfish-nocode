@@ -5,6 +5,7 @@ import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -27,4 +28,9 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
 
     @Delete("delete from sso_org_role where org_id = #{orgId}")
     int deleteOrgRole(String orgId);
+
+    @Select("select count(0) from sso_org_user where org_id = #{orgId}")
+    int queryUserCount(String orgId);
+    @Select("select user_id from sso_org_user where org_id = #{orgId}")
+    List<String> getOrgUserId(String orgId);
 }

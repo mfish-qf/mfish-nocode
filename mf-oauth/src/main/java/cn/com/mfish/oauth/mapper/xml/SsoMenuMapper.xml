@@ -56,10 +56,13 @@
         </where>
     </select>
     <sql id="menuJoin">
-        <if test="userId != null and  userId != ''">
+        <if test="roleIds != null and roleIds.size() > 0">
             inner join sso_role_menu rm on m.id = rm.menu_id
-            inner join sso_user_role ur on ur.role_id = rm.role_id and ur.user_id = #{userId}
-            inner join sso_role r on r.id = ur.role_id and r.status = 0
+            and rm.role_id in (
+                <foreach collection="roleIds" item="roleId" separator=",">
+                    #{roleId}
+                </foreach>
+            )
         </if>
     </sql>
     <!-- 找到当前菜单及所有他的父菜单 -->
