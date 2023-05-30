@@ -50,7 +50,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
         List<String> roleIds = new ArrayList<>();
         //如果是超户获取所有菜单
-        if (!AuthInfoUtils.isSuper(userId)) {
+        if (!StringUtils.isEmpty(userId) && !AuthInfoUtils.isSuper(userId)) {
             roleIds = OauthUtils.getRoles().stream().map((role)->role.getId()).collect(Collectors.toList());
         }
         Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu, roleIds);
