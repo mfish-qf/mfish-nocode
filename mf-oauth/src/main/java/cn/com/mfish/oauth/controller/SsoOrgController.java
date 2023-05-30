@@ -10,6 +10,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -58,6 +59,13 @@ public class SsoOrgController {
         List<SsoOrg> orgList = new ArrayList<>();
         TreeUtils.buildTree("", list, orgList, SsoOrg.class);
         return Result.ok(orgList, "组织结构表-查询成功!");
+    }
+
+    @ApiOperation(value = "获取组织的角色")
+    @GetMapping("/roles/{orgId}")
+    @RequiresPermissions("sys:org:query")
+    public Result<List<UserRole>> queryOrgRoles(@ApiParam(name = "orgId", value = "组织ID") @PathVariable("orgId") String orgId) {
+        return Result.ok(ssoOrgService.getOrgRoles(orgId), "组织角色-查询成功!");
     }
 
     /**

@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.service;
 import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -28,4 +29,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     List<SsoOrg> queryOrgByCode(String fixCode, TreeDirection direction);
 
     List<SsoOrg> queryOrgById(String id, TreeDirection direction);
+
+    List<UserRole> getOrgRoles(String orgId);
 }
