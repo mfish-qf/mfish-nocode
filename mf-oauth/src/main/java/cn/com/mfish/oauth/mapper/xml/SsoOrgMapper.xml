@@ -87,4 +87,12 @@
             (#{role},#{orgId})
         </foreach>
     </insert>
+    <select id="getOrgRoles" resultType="cn.com.mfish.common.oauth.api.entity.UserRole">
+        select r.id, r.role_name, r.role_code,1 source
+        from sso_role r
+        inner join sso_org_role sor on r.id = sor.role_id
+        <where>
+            r.status = 0 and r.del_flag = 0 and sor.org_id = #{orgId}
+        </where>
+    </select>
 </mapper>

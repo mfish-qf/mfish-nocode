@@ -7,6 +7,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.mapper.SsoOrgMapper;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
@@ -174,6 +175,11 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         SsoOrg org = baseMapper.selectOne(new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getId, id));
         return queryOrg(org, direction);
+    }
+
+    @Override
+    public List<UserRole> getOrgRoles(String orgId) {
+        return baseMapper.getOrgRoles(orgId);
     }
 
     List<SsoOrg> queryOrg(SsoOrg org, TreeDirection direction) {
