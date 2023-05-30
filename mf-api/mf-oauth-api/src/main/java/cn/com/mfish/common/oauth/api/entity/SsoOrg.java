@@ -2,6 +2,7 @@ package cn.com.mfish.common.oauth.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseTreeEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -9,6 +10,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * @Description: 组织结构表
@@ -49,4 +52,7 @@ public class SsoOrg extends BaseTreeEntity<String> {
     private Integer status;
     @ApiModelProperty(value = "删除标志（0正常 1删除）")
     private Integer delFlag;
+    @TableField(exist = false)
+    @ApiModelProperty("角色ID列表")
+    private List<String> roleIds;
 }

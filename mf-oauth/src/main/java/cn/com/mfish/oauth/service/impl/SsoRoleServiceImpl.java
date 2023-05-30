@@ -112,9 +112,17 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     private void removeRoleCache(String roleId, String clientId) {
         //查询角色对应的用户并删除角色权限缓存
         List<String> list = baseMapper.getRoleUser(roleId);
+        removeUserCache(list, clientId);
+    }
+
+    @Override
+    public void removeUserCache(List<String> userIds, String clientId) {
+        if (userIds == null || userIds.isEmpty()) {
+            return;
+        }
         List<String> roleKeys = new ArrayList<>();
         List<String> permissionKeys = new ArrayList<>();
-        for (String userId : list) {
+        for (String userId : userIds) {
             roleKeys.add(RedisPrefix.buildUser2RolesKey(userId, clientId));
             permissionKeys.add(RedisPrefix.buildUser2PermissionsKey(userId, clientId));
         }

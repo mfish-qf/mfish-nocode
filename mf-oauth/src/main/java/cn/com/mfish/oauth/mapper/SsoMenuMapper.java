@@ -17,9 +17,9 @@ import java.util.List;
 public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
     int insertMenu(SsoMenu ssoMenu);
 
-    Integer queryMaxMenuLevel(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("userId") String userId);
+    Integer queryMaxMenuLevel(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("roleIds") List<String> roleIds);
 
-    List<SsoMenu> queryMenu(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("levels") List<Integer> levels, @Param("userId") String userId);
+    List<SsoMenu> queryMenu(@Param("reqSsoMenu") ReqSsoMenu reqSsoMenu, @Param("levels") List<Integer> levels, @Param("roleIds") List<String> roleIds);
 
     /**
      * 获取按钮权限用户

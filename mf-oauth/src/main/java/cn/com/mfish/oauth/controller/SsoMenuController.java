@@ -8,7 +8,6 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
-import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,8 +32,6 @@ import java.util.List;
 public class SsoMenuController {
     @Resource
     SsoMenuService ssoMenuService;
-    @Resource
-    OAuth2Service oAuth2Service;
 
     /**
      * 分页列表查询

@@ -20,4 +20,6 @@ public class UserRole {
     private String roleName;
     @ApiModelProperty(value = "角色编码")
     private String roleCode;
+    @ApiModelProperty(value = "角色来源 0用户 1组织")
+    private int source;
 }

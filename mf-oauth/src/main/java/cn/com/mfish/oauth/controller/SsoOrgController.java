@@ -99,10 +99,7 @@ public class SsoOrgController {
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:org:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (ssoOrgService.removeOrg(id)) {
-            return Result.ok("组织结构表-删除成功!");
-        }
-        return Result.fail("错误:组织结构表-删除失败!");
+        return ssoOrgService.removeOrg(id);
     }
 
     /**

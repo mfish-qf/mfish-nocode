@@ -19,4 +19,13 @@
     <resultMap id="roleMap" type="cn.com.mfish.oauth.entity.SsoRole">
         <result property="menus" column="menus" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
     </resultMap>
+    <select id="getRoleUser" resultType="string">
+        select ur.user_id
+        from sso_user_role ur
+        where ur.role_id = #{roleId}
+        union
+        select ou.user_id
+        from sso_org_user ou
+                 inner join sso_org_role sor on sor.role_id = #{roleId}
+    </select>
 </mapper>
