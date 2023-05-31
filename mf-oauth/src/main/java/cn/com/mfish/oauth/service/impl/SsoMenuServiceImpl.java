@@ -52,6 +52,9 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         //如果是超户获取所有菜单
         if (!StringUtils.isEmpty(userId) && !AuthInfoUtils.isSuper(userId)) {
             roleIds = OauthUtils.getRoles().stream().map((role)->role.getId()).collect(Collectors.toList());
+            if(roleIds == null || roleIds.isEmpty()){
+                return new ArrayList<>();
+            }
         }
         Integer level = baseMapper.queryMaxMenuLevel(reqSsoMenu, roleIds);
         List<Integer> list = new ArrayList<>();
