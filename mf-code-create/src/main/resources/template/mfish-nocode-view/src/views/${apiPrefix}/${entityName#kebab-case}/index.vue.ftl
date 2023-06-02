@@ -41,13 +41,13 @@
   </div>
 </template>
 <script lang="ts">
-import { BasicTable, useTable, TableAction, PaginationProps } from "/@/components/general/Table";
+import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
 import { delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
 import { useModal } from "/@/components/general/Modal";
 import ${entityName}Modal from "./${entityName}Modal.vue";
 import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
 import { usePermission } from "/@/hooks/web/UsePermission";
-import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}";
+import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
 
 export default {
   name: "${entityName}Management",
