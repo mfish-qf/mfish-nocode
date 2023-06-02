@@ -2,18 +2,27 @@ html, body {
     height: 100%;
 }
 
+.back-color {
+    background: linear-gradient(to left, #00fff0, #0083fe);
+    background: -webkit-linear-gradient(to left, #00fff0, #0083fe);
+    height: 100%;
+}
+
 .login {
     display: -webkit-flex;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    background: #fbfbfb;
-    background: url(../img/login-bg.png), -webkit-linear-gradient(to left, #00fff0, #0083fe);
     background: url(../img/login-bg.png), linear-gradient(to left, #00fff0, #0083fe);
-    /*background:linear-gradient(136deg,#1fa4f3,#4c72ff);*/
+    background: url(../img/login-bg.png), -webkit-linear-gradient(to left, #00fff0, #0083fe);
     background-size: cover;
     height: 100%;
     font-size: 14px;
+    transform: translateX(-30px);
+    opacity: 0;
+    animation: enter-x-animation 0.4s ease-in-out 0.3s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.1s;
 }
 
 .login .logo {
