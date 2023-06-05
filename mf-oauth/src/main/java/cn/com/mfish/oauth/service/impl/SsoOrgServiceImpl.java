@@ -119,10 +119,8 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
                 baseMapper.orgFixCodeExist(ssoOrg.getClientId(), ssoOrg.getId(), ssoOrg.getOrgFixCode()) > 0) {
             throw new MyRuntimeException("错误:组织固定编码已存在");
         }
-        if (!StringUtils.isEmpty(ssoOrg.getPhone())) {
-            if (!StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", ssoOrg.getPhone())) {
-                throw new MyRuntimeException("错误:手机号不正确");
-            }
+        if (!StringUtils.isEmpty(ssoOrg.getPhone()) && !StringUtils.isPhone(ssoOrg.getPhone())) {
+            throw new MyRuntimeException("错误:手机号不正确");
         }
         if (AuthInfoUtils.isContainSuperAdmin(ssoOrg.getRoleIds())) {
             throw new MyRuntimeException("错误:不允许设置为超户!");
