@@ -209,14 +209,25 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /**
      * 判断字符串是否符合正则规则
+     *
      * @param pattern 规则
-     * @param str 字符串
+     * @param str     字符串
      * @return
      */
     public static boolean isMatch(String pattern, String str) {
         Pattern compile = Pattern.compile(pattern);
         Matcher matcher = compile.matcher(str);
         return matcher.matches();
+    }
+
+    /**
+     * 是否手机号
+     *
+     * @param phone 手机号
+     * @return
+     */
+    public static boolean isPhone(String phone) {
+        return StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", phone);
     }
 
 

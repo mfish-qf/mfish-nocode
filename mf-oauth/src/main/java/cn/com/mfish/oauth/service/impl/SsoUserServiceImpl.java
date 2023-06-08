@@ -241,7 +241,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (!AuthInfoUtils.isSuper(user.getId()) && AuthInfoUtils.isContainSuperAdmin(user.getRoleIds())) {
             throw new MyRuntimeException("错误:不允许设置为超户!");
         }
-        if (user.getAccount() != null) {
+        if (!StringUtils.isEmpty(user.getAccount())) {
             if (user.getAccount().length() > 30) {
                 throw new MyRuntimeException("错误:帐号字符不要超过30个字符");
             }
@@ -249,10 +249,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
                 throw new MyRuntimeException("错误:帐号必须只允许为数字和字母");
             }
         }
-        if (!StringUtils.isEmpty(user.getPhone())) {
-            if (!StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", user.getPhone())) {
-                throw new MyRuntimeException("错误:手机号不正确");
-            }
+        if (!StringUtils.isEmpty(user.getPhone()) && !StringUtils.isPhone(user.getPhone())) {
+            throw new MyRuntimeException("错误:手机号不正确");
         }
         return true;
     }

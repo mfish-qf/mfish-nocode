@@ -1,5 +1,6 @@
 package cn.com.mfish.oauth.realm;
 
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
@@ -78,8 +79,11 @@ public abstract class BaseRealm extends AuthorizingRealm {
      * @return
      */
     private SsoUser buildUser(String phone) {
-        if (phone.length() != 11) {
-            throw new UnknownAccountException("手机号不正确");
+        if (StringUtils.isEmpty(phone)) {
+            throw new UnknownAccountException("错误:手机号不允许为空");
+        }
+        if (!StringUtils.isPhone(phone)) {
+            throw new UnknownAccountException("错误:手机号不正确");
         }
         SsoUser userInfo = new SsoUser();
         userInfo.setPhone(phone);
