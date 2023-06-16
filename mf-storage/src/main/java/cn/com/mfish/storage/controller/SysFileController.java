@@ -1,6 +1,7 @@
 package cn.com.mfish.storage.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.PageResult;
@@ -99,9 +100,26 @@ public class SysFileController {
             return Result.fail(false, "错误:未找到文件!");
         }
         if (storageService.removeById(new StorageInfo().setId(id))) {
-            storageHandler.delete(storageInfo.getFilePath() + "/" + storageInfo.getFileKey());
+            try {
+                storageHandler.delete(storageInfo.getFilePath() + "/" + storageInfo.getFileKey());
+            } catch (MyRuntimeException ex) {
+                log.error("文件key:" + storageInfo.getFileKey() + ex.getMessage());
+            }
             return Result.ok(true, "文件存储-删除成功!");
         }
         return Result.fail(false, "错误:文件存储-删除失败!");
+    }
+
+    /**
+     * 通过fileKey查询文件信息
+     *
+     * @param fileKey 文件key
+     * @return 返回文件信息
+     */
+    @ApiOperation("获取文件信息-通过fileKey查询")
+    @GetMapping("/{fileKey}")
+    public Result<StorageInfo> queryByKey(@ApiParam(name = "fileKey", value = "文件key") @PathVariable String fileKey) {
+        StorageInfo storageInfo = storageService.getOne(new LambdaQueryWrapper<StorageInfo>().eq(StorageInfo::getFileKey, fileKey));
+        return Result.ok(storageInfo, "获取文件信息-查询成功!");
     }
 }
