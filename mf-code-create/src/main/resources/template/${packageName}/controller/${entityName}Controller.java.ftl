@@ -157,10 +157,9 @@ public class ${entityName}Controller {
 
 	/**
 	* 导出
-	*
 	* @param req${entityName} ${tableInfo.tableComment}请求参数
 	* @param reqPage 分页参数
-	* @return 返回${tableInfo.tableComment}-分页列表
+	* @throws IOException IO异常
 	*/
 	@ApiOperation(value = "导出${tableInfo.tableComment}", notes = "导出${tableInfo.tableComment}")
 	@GetMapping("/export")
