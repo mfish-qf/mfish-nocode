@@ -14,5 +14,5 @@ import lombok.Data;
 @ApiModel("租户对象")
 public class TenantVo extends SsoTenant {
     @ApiModelProperty("用户名")
-    private String userName;
+    private String account;
 }

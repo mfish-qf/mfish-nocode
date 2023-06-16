@@ -1,18 +1,16 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.excel.ExcelUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoTenant;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
 import cn.com.mfish.oauth.service.SsoTenantService;
-import cn.com.mfish.common.core.utils.StringUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.core.web.ReqPage;
-import com.github.pagehelper.PageHelper;
+import cn.com.mfish.oauth.vo.TenantVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,7 +46,7 @@ public class SsoTenantController {
     @ApiOperation(value = "租户信息表-分页列表查询", notes = "租户信息表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:ssoTenant:query")
-    public Result<PageResult<SsoTenant>> queryPageList(ReqSsoTenant reqSsoTenant, ReqPage reqPage) {
+    public Result<PageResult<TenantVo>> queryPageList(ReqSsoTenant reqSsoTenant, ReqPage reqPage) {
         return Result.ok(new PageResult<>(queryList(reqSsoTenant, reqPage)), "租户信息表-查询成功!");
     }
 
@@ -59,13 +57,8 @@ public class SsoTenantController {
      * @param reqPage      分页参数
      * @return 返回租户信息表-分页列表
      */
-    private List<SsoTenant> queryList(ReqSsoTenant reqSsoTenant, ReqPage reqPage) {
-        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper<SsoTenant> lambdaQueryWrapper = new LambdaQueryWrapper<SsoTenant>()
-                .eq(reqSsoTenant.getTenantType() != null, SsoTenant::getTenantType, reqSsoTenant.getTenantType())
-                .like(!StringUtils.isEmpty(reqSsoTenant.getDomain()), SsoTenant::getDomain, reqSsoTenant.getDomain())
-                .like(!StringUtils.isEmpty(reqSsoTenant.getName()), SsoTenant::getName, reqSsoTenant.getName());
-        return ssoTenantService.list(lambdaQueryWrapper);
+    private List<TenantVo> queryList(ReqSsoTenant reqSsoTenant, ReqPage reqPage) {
+        return ssoTenantService.queryList(reqSsoTenant, reqPage);
     }
 
     /**
@@ -152,10 +145,9 @@ public class SsoTenantController {
 
     /**
      * 导出
-     *
      * @param reqSsoTenant 租户信息表请求参数
-     * @param reqPage      分页参数
-     * @return 返回租户信息表-分页列表
+     * @param reqPage 分页参数
+     * @throws IOException
      */
     @ApiOperation(value = "导出租户信息表", notes = "导出租户信息表")
     @GetMapping("/export")
