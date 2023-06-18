@@ -458,4 +458,36 @@ INSERT INTO `sso_user_role` VALUES ('4ef9999a1cd0492db32c87d97659b963', '57ad11f
 INSERT INTO `sso_user_role` VALUES ('97df2175b64a4b65a3cf5c1614d6bc00', '210297727b74ecb505c1b4d97f76daee');
 INSERT INTO `sso_user_role` VALUES ('f4056d9589a64146a7538f04c6bcc10f', '67e95f5e81b8da9a8f70db7540b7409d');
 
+-- ----------------------------
+-- Table structure for sso_tenant
+-- ----------------------------
+DROP TABLE IF EXISTS `sso_tenant`;
+CREATE TABLE `sso_tenant`  (
+                               `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                               `tenant_type` tinyint(4) NULL DEFAULT NULL COMMENT '租户类型 0 个人 1 企业',
+                               `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户名称',
+                               `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '城市',
+                               `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '省份',
+                               `county` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '区县',
+                               `address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '地址',
+                               `corp_size` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '公司规模',
+                               `corp_years` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '营业年限',
+                               `trade` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '所属行业',
+                               `status` tinyint(1) NULL DEFAULT NULL COMMENT '状态 0正常 1注销',
+                               `logo` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'logo',
+                               `domain` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '域名',
+                               `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除状态(0-正常,1-已删除)',
+                               `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户ID，关联用户为管理员',
+                               `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
+                               `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                               `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
+                               `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                               PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '租户信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sso_tenant
+-- ----------------------------
+INSERT INTO `sso_tenant` VALUES ('a5bf7b95381a420ccfbfc497d9b4efaa', 1, '系统管理', NULL, NULL, NULL, '南京市秦淮区', 'xs', '3', '软件和信息技术服务业', 0, '3eae5734d0a54fea8c85820db058d775.ico', 'http://www.mfish.com.cn', 0, '1', 'admin', '2023-05-31 22:44:10', 'admin', '2023-06-16 23:28:14');
+
 SET FOREIGN_KEY_CHECKS = 1;
