@@ -16,4 +16,6 @@ import java.util.List;
  */
 public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     List<TenantVo> queryList(@Param("reqSsoTenant") ReqSsoTenant reqSsoTenant);
+
+    List<TenantVo> getUserTenant(String userId);
 }

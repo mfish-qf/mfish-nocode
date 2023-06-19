@@ -1,12 +1,14 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.excel.ExcelUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.entity.SsoTenant;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
 import cn.com.mfish.oauth.service.SsoTenantService;
@@ -145,8 +147,9 @@ public class SsoTenantController {
 
     /**
      * 导出
+     *
      * @param reqSsoTenant 租户信息表请求参数
-     * @param reqPage 分页参数
+     * @param reqPage      分页参数
      * @throws IOException
      */
     @ApiOperation(value = "导出租户信息表", notes = "导出租户信息表")
@@ -155,5 +158,16 @@ public class SsoTenantController {
     public void export(ReqSsoTenant reqSsoTenant, ReqPage reqPage) throws IOException {
         //swagger调用会用问题，使用postman测试
         ExcelUtils.write("SsoTenant", queryList(reqSsoTenant, reqPage));
+    }
+
+    /**
+     * 获取当前用户租户列表
+     *
+     * @return
+     */
+    @ApiOperation(value = "获取当前用户租户列表", notes = "获取当前用户租户列表")
+    @GetMapping("/list")
+    public Result<List<TenantVo>> getUserTenant() {
+        return Result.ok(ssoTenantService.getUserTenant(AuthInfoUtils.getCurrentUserId()), "获取当前租户列表成功!");
     }
 }

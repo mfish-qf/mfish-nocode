@@ -27,4 +27,9 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return baseMapper.queryList(reqSsoTenant);
     }
+
+    @Override
+    public List<TenantVo> getUserTenant(String userId) {
+        return baseMapper.getUserTenant(userId);
+    }
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SsoTenantMapper">
     <select id="queryList" resultType="cn.com.mfish.oauth.vo.TenantVo">
-        select t.*, u.account
+        select t.*, u.account,1 master
         from sso_tenant t
         left join sso_user u on t.user_id = u.id
         <where>
@@ -11,5 +11,13 @@
             <if test="reqSsoTenant.name!=null">and t.name = #{reqSsoTenant.name}</if>
         </where>
         order by create_time desc
+    </select>
+    <select id="getUserTenant" resultType="cn.com.mfish.oauth.vo.TenantVo">
+        SELECT t.*, if(ISNULL(u.id), 0, 1) master, su.account
+        from sso_tenant t
+                 left join sso_user u on t.user_id = u.id
+                 INNER JOIN sso_org o on t.id = o.tenant_id
+                 INNER JOIN sso_org_user ou on ou.org_id = o.id and ou.user_id = #{userId}
+                 INNER JOIN sso_user su ON su.id = ou.user_id
     </select>
 </mapper>
