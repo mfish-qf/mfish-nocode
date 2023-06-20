@@ -28,6 +28,8 @@ public class SsoOrg extends BaseTreeEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty("组织ID")
     private String id;
+    @ApiModelProperty("租户id")
+    private String tenantId;
     @ApiModelProperty(value = "客户端ID")
     private String clientId;
     @ApiModelProperty(value = "组织固定编码(可为空，不允许重复，用来通过此code识别具体是哪个组织)")

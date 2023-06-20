@@ -187,6 +187,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         int res = baseMapper.insert(user);
         if (res > 0) {
             insertUserClient(user.getId(), clientId);
+            //TODO 暂时前台只支持一个用户挂在一个组织下
             insertUserOrg(user.getId(), user.getOrgId());
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());
@@ -207,7 +208,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (res > 0) {
             user.setAccount(account);
             if (null != user.getOrgId()) {
-                baseMapper.deleteUserOrg(user.getId());
+                baseMapper.deleteUserOrg(user.getId(), null);
                 insertUserOrg(user.getId(), user.getOrgId());
             }
             if (null != user.getRoleIds()) {
@@ -343,12 +344,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public int insertUserOrg(String userId, String orgList) {
-        //todo 暂时只支持一个用户挂在一个组织下，后期根据情况完善是否一个用户挂在多个组织下
-        if (StringUtils.isEmpty(orgList)) {
+    public int insertUserOrg(String userId, String... orgList) {
+        if (orgList == null || orgList.length == 0) {
             return 0;
         }
-        int count = baseMapper.insertUserOrg(userId, Arrays.asList(new String[]{orgList}));
+        int count = baseMapper.insertUserOrg(userId, Arrays.asList(orgList));
         if (count > 0) {
             return count;
         }
@@ -364,5 +364,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             return count;
         }
         throw new MyRuntimeException("错误:插入用户所属客户端失败");
+    }
+
+    @Override
+    public int deleteUserOrg(String userId, String orgId) {
+        return baseMapper.deleteUserOrg(userId, orgId);
     }
 }

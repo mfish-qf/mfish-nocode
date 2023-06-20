@@ -78,7 +78,7 @@ public interface SsoUserService extends IService<SsoUser> {
      * @param orgList
      * @return
      */
-    int insertUserOrg(String userId, String orgList);
+    int insertUserOrg(String userId, String... orgList);
 
     /**
      * 插入用户所属客户端
@@ -89,5 +89,6 @@ public interface SsoUserService extends IService<SsoUser> {
      */
     int insertUserClient(String userId, String clientId);
 
+    int deleteUserOrg(String userId, String orgId);
 
 }

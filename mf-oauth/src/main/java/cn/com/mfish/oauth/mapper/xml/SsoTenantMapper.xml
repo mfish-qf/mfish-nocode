@@ -6,6 +6,7 @@
         from sso_tenant t
         left join sso_user u on t.user_id = u.id
         <where>
+            t.del_flag = 0
             <if test="reqSsoTenant.tenantType!=null">and t.tenant_type = #{reqSsoTenant.tenantType}</if>
             <if test="reqSsoTenant.domain!=null">and t.domain = #{reqSsoTenant.domain}</if>
             <if test="reqSsoTenant.name!=null">and t.name = #{reqSsoTenant.name}</if>

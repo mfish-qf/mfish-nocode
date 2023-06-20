@@ -13,6 +13,7 @@
             <if test="email != null">email,</if>
             <if test="status != null">status,</if>
             <if test="remark != null">remark,</if>
+            <if test="tenantId != null">tenant_id,</if>
             create_by, create_time
         </trim>
         select
@@ -29,6 +30,7 @@
             <if test="email != null">#{email},</if>
             <if test="status != null">#{status},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="tenantId != null">#{tenantId},</if>
             #{createBy}, now()
         </trim>
         from (select IFNULL(org_code,'') pcode,IFNULL(org_level,0)+1 lvl from (SELECT '' FROM dual) d left join

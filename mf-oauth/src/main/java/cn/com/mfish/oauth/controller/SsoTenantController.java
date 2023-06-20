@@ -74,10 +74,7 @@ public class SsoTenantController {
     @PostMapping
     @RequiresPermissions("sys:ssoTenant:insert")
     public Result<SsoTenant> add(@RequestBody SsoTenant ssoTenant) {
-        if (ssoTenantService.save(ssoTenant)) {
-            return Result.ok(ssoTenant, "租户信息表-添加成功!");
-        }
-        return Result.fail(ssoTenant, "错误:租户信息表-添加失败!");
+        return ssoTenantService.insertTenant(ssoTenant);
     }
 
     /**
@@ -91,10 +88,7 @@ public class SsoTenantController {
     @PutMapping
     @RequiresPermissions("sys:ssoTenant:update")
     public Result<SsoTenant> edit(@RequestBody SsoTenant ssoTenant) {
-        if (ssoTenantService.updateById(ssoTenant)) {
-            return Result.ok(ssoTenant, "租户信息表-编辑成功!");
-        }
-        return Result.fail(ssoTenant, "错误:租户信息表-编辑失败!");
+        return ssoTenantService.updateTenant(ssoTenant);
     }
 
     /**
@@ -108,27 +102,7 @@ public class SsoTenantController {
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:ssoTenant:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (ssoTenantService.removeById(id)) {
-            return Result.ok(true, "租户信息表-删除成功!");
-        }
-        return Result.fail(false, "错误:租户信息表-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids 批量ID
-     * @return 返回租户信息表-删除结果
-     */
-    @Log(title = "租户信息表-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation("租户信息表-批量删除")
-    @DeleteMapping("/batch")
-    @RequiresPermissions("sys:ssoTenant:delete")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.ssoTenantService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "租户信息表-批量删除成功!");
-        }
-        return Result.fail(false, "错误:租户信息表-批量删除失败!");
+        return ssoTenantService.deleteTenant(id);
     }
 
     /**

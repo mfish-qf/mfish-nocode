@@ -163,4 +163,13 @@
             (#{client},#{userId})
         </foreach>
     </insert>
+    <delete id="deleteUserOrg">
+        delete from sso_org_user
+        <where>
+            user_id = #{userId}
+            <if test="orgId != null and orgId != ''">
+                and org_id = #{orgId}
+            </if>
+        </where>
+    </delete>
 </mapper>
