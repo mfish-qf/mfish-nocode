@@ -19,5 +19,6 @@
                  INNER JOIN sso_org o on t.id = o.tenant_id
                  INNER JOIN sso_org_user ou on ou.org_id = o.id and ou.user_id = #{userId}
                  INNER JOIN sso_user su ON su.id = ou.user_id
+        order by master desc
     </select>
 </mapper>
