@@ -84,6 +84,8 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     private void setOrgLeader(SsoOrg org, String userId) {
         SsoUser ssoUser = ssoUserService.getUserById(userId);
         org.setLeader(ssoUser.getAccount());
+        //租户组织固定编码使用管理员帐号
+        org.setOrgFixCode(ssoUser.getAccount());
         org.setEmail(ssoUser.getEmail());
         org.setPhone(ssoUser.getPhone());
     }
@@ -123,7 +125,8 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             throw new MyRuntimeException("错误:删除用户组织关系失败");
         }
         org.setId(oldOrg.getId());
-        if (!ssoOrgService.updateById(org)) {
+        Result<SsoOrg> result = ssoOrgService.updateOrg(org);
+        if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:组织信息-更新失败");
         }
         //如果用户变更删除之前用户组织关系
@@ -145,5 +148,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             return Result.ok(true, "租户信息-删除成功!");
         }
         throw new MyRuntimeException("错误:租户信息-删除失败!");
+    }
+
+    @Override
+    public boolean isTenantMaster(String userId, String tenantId) {
+        return baseMapper.isTenantMaster(userId, tenantId) > 0;
     }
 }

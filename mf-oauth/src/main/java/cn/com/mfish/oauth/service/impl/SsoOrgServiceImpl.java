@@ -180,6 +180,11 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         return baseMapper.getOrgRoles(orgId);
     }
 
+    @Override
+    public boolean isTenantOrg(String orgId, String tenantId) {
+        return baseMapper.isTenantOrg(orgId, tenantId) > 0;
+    }
+
     List<SsoOrg> queryOrg(SsoOrg org, TreeDirection direction) {
         if (org == null) {
             return new ArrayList<>();

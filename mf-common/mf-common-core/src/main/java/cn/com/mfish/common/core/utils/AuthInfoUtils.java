@@ -57,6 +57,15 @@ public class AuthInfoUtils {
     }
 
     /**
+     * 获取当前租户ID
+     * @return
+     */
+    public static String getCurrentTenantId(){
+        //todo ID暂时写死逻辑待补充
+        return "57e357ca632f8654c8745dc00092bf79";
+    }
+
+    /**
      * 获取当前帐号(该方法要在主线程运行)
      *
      * @return

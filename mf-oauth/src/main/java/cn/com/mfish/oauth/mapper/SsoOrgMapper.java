@@ -36,4 +36,6 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
     List<String> getOrgUserId(String orgId);
 
     List<UserRole> getOrgRoles(String orgId);
+
+    int isTenantOrg(@Param("orgId") String orgId, @Param("tenantId") String tenantId);
 }

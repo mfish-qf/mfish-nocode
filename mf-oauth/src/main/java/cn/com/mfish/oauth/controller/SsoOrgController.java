@@ -49,7 +49,14 @@ public class SsoOrgController {
     @RequiresPermissions("sys:org:query")
     public Result<PageResult<SsoOrg>> queryPageList(ReqSsoOrg reqSsoOrg, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(ssoOrgService.list()), "组织结构表-查询成功!");
+        return Result.ok(new PageResult<>(ssoOrgService.list(new LambdaQueryWrapper<SsoOrg>()
+                .eq(SsoOrg::getDelFlag, 0)
+                .like(!StringUtils.isEmpty(reqSsoOrg.getOrgName()), SsoOrg::getOrgName, reqSsoOrg.getOrgName())
+                .eq(!StringUtils.isEmpty(reqSsoOrg.getTenantId()), SsoOrg::getTenantId, reqSsoOrg.getTenantId())
+                .like(!StringUtils.isEmpty(reqSsoOrg.getLeader()), SsoOrg::getLeader, reqSsoOrg.getLeader())
+                .like(!StringUtils.isEmpty(reqSsoOrg.getPhone()), SsoOrg::getPhone, reqSsoOrg.getPhone())
+                .eq(reqSsoOrg.getStatus() != null, SsoOrg::getStatus, reqSsoOrg.getStatus())
+        )), "组织结构表-查询成功!");
     }
 
     @ApiOperation(value = "获取组织结构")

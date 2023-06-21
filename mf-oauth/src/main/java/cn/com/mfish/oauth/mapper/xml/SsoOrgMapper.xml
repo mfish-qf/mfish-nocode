@@ -53,14 +53,26 @@
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
     </resultMap>
+    <sql id="selectOrg">
+        <if test="reqSsoOrg.tenantId==null or reqSsoOrg.tenantId == ''">
+            SELECT * FROM sso_org
+        </if>
+        <if test="reqSsoOrg.tenantId!=null">
+            select * from (SELECT * FROM sso_org WHERE org_code LIKE (SELECT CONCAT(org_code,'%') FROM sso_org WHERE
+            tenant_id = #{reqSsoOrg.tenantId})) sso_org
+        </if>
+    </sql>
     <select id="queryOrg" resultMap="orgMap">
-        select o.*, GROUP_CONCAT(sor.role_id) roleIds from (SELECT * FROM sso_org
+        select o.*, GROUP_CONCAT(sor.role_id) roleIds from (
+        <include refid="selectOrg" />
         <where>
             del_flag = 0
             <include refid="reqCondition"/>
         </where>
         <foreach collection="levels" item="value">
-            UNION SELECT * FROM sso_org WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
+            UNION
+            <include refid="selectOrg" />
+            WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
             FROM
             sso_org
             <where>
@@ -77,7 +89,7 @@
     <select id="orgFixCodeExist" resultType="int">
         select count(0) from sso_org
         <where>
-            client_id = #{clientId} and org_fix_code = #{orgFixCode}
+            client_id = #{clientId} and org_fix_code = #{orgFixCode} and del_flag = 0
             <if test="orgId!=null and orgId!=''">
                 and id != #{orgId}
             </if>
@@ -96,5 +108,14 @@
         <where>
             r.status = 0 and r.del_flag = 0 and sor.org_id = #{orgId}
         </where>
+    </select>
+    <select id="isTenantOrg" resultType="java.lang.Integer">
+        select count(0)
+        from (SELECT *
+              FROM sso_org
+              WHERE org_code LIKE (SELECT CONCAT(org_code, '%')
+                                   FROM sso_org
+                                   WHERE tenant_id = #{tenantId})) sso_org
+        where id = #{orgId}
     </select>
 </mapper>

@@ -90,7 +90,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
         return ServletUtils.webFluxResponseWriter(exchange.getResponse(), msg, HttpStatus.UNAUTHORIZED.value());
     }
 
-
     @Override
     public int getOrder() {
         return -1;

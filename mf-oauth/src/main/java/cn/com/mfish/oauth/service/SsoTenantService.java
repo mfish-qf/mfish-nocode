@@ -25,4 +25,6 @@ public interface SsoTenantService extends IService<SsoTenant> {
     Result<SsoTenant> updateTenant(SsoTenant ssoTenant);
 
     Result<Boolean> deleteTenant(String id);
+
+    boolean isTenantMaster(String userId, String tenantId);
 }
