@@ -29,8 +29,8 @@ public class SsoRole extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "角色ID")
     private String id;
-    @ApiModelProperty(value = "客户端ID")
-    private String clientId;
+    @ApiModelProperty(value = "租户ID")
+    private String tenantId;
     @ApiModelProperty(value = "角色名称")
     private String roleName;
     @ApiModelProperty(value = "角色编码")

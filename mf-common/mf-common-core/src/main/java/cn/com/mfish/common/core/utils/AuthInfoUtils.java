@@ -57,15 +57,6 @@ public class AuthInfoUtils {
     }
 
     /**
-     * 获取当前租户ID
-     * @return
-     */
-    public static String getCurrentTenantId(){
-        //todo ID暂时写死逻辑待补充
-        return "57e357ca632f8654c8745dc00092bf79";
-    }
-
-    /**
      * 获取当前帐号(该方法要在主线程运行)
      *
      * @return
@@ -76,13 +67,13 @@ public class AuthInfoUtils {
     }
 
     /**
-     * 获取当前客户端ID(该方法要在主线程运行)
-     *
+     * 获取当前租户ID(该方法要在主线程运行)
      * @return
      */
-    public static String getCurrentClientId() {
-        String clientId = ServletUtils.getHeader(RPCConstants.REQ_CLIENT_ID);
-        return StringUtils.isEmpty(clientId) ? null : clientId;
+    public static String getCurrentTenantId(){
+        //todo ID暂时写死逻辑待补充
+        String tenantId = ServletUtils.getHeader(RPCConstants.REQ_TENANT_ID);
+        return StringUtils.isEmpty(tenantId) ? "system" : tenantId;
     }
 
     /**

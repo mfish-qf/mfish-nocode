@@ -22,6 +22,7 @@ import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.oauth.vo.TenantVo;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public class SsoUserController {
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
     public Result<UserInfoVo> getUserInfo() {
-        return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
+        return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
     }
 
     @ApiOperation("获取用户权限")
@@ -64,16 +65,18 @@ public class SsoUserController {
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "clientId", value = "客户端ID")
+            @ApiImplicitParam(name = "tenantId", value = "租户ID")
     })
-    public Result<Set<String>> getPermissions(String userId, String clientId) {
+    public Result<Set<String>> getPermissions(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
             userId = AuthInfoUtils.getCurrentUserId();
         }
-        if (StringUtils.isEmpty(clientId)) {
-            clientId = AuthInfoUtils.getCurrentClientId();
+        if (AuthInfoUtils.isSuper()) {
+            tenantId = null;
+        } else if (StringUtils.isEmpty(tenantId)) {
+            tenantId = AuthInfoUtils.getCurrentTenantId();
         }
-        return Result.ok(ssoUserService.getUserPermissions(userId, clientId));
+        return Result.ok(ssoUserService.getUserPermissions(userId, tenantId));
     }
 
     @ApiOperation("获取用户角色")
@@ -81,16 +84,29 @@ public class SsoUserController {
     @Log(title = "获取用户角色", operateType = OperateType.QUERY)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "clientId", value = "客户端ID")
+            @ApiImplicitParam(name = "tenantId", value = "租户ID")
     })
-    public Result<List<UserRole>> getRoles(String userId, String clientId) {
+    public Result<List<UserRole>> getRoles(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
             userId = AuthInfoUtils.getCurrentUserId();
         }
-        if (StringUtils.isEmpty(clientId)) {
-            clientId = AuthInfoUtils.getCurrentClientId();
+        if (AuthInfoUtils.isSuper()) {
+            tenantId = null;
+        } else if (StringUtils.isEmpty(tenantId)) {
+            tenantId = AuthInfoUtils.getCurrentTenantId();
         }
-        return Result.ok(ssoUserService.getUserRoles(userId, clientId));
+        return Result.ok(ssoUserService.getUserRoles(userId, tenantId));
+    }
+
+    /**
+     * 获取当前用户租户列表
+     *
+     * @return
+     */
+    @ApiOperation(value = "获取当前用户租户列表", notes = "获取当前用户租户列表")
+    @GetMapping("/tenants")
+    public Result<List<TenantVo>> getUserTenants() {
+        return Result.ok(ssoUserService.getUserTenants(AuthInfoUtils.getCurrentUserId()), "获取当前租户列表成功!");
     }
 
     @ApiOperation("获取用户组织")

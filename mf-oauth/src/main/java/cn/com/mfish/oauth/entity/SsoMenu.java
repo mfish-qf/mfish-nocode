@@ -25,8 +25,8 @@ public class SsoMenu extends BaseTreeEntity<String> {
     private String id;
     @ApiModelProperty(value = "父菜单ID")
     private String parentId;
-    @ApiModelProperty(value = "客户端ID")
-    private String clientId;
+    @ApiModelProperty(value = "租户ID")
+    private String tenantId;
     @ApiModelProperty(value = "菜单名称")
     private String menuName;
     @ApiModelProperty(value = "菜单类型(0目录 1菜单 2按钮)")

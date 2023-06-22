@@ -153,17 +153,6 @@ public class SsoTenantController {
         ExcelUtils.write("SsoTenant", queryList(reqSsoTenant, reqPage));
     }
 
-    /**
-     * 获取当前用户租户列表
-     *
-     * @return
-     */
-    @ApiOperation(value = "获取当前用户租户列表", notes = "获取当前用户租户列表")
-    @GetMapping("/list")
-    public Result<List<TenantVo>> getUserTenant() {
-        return Result.ok(ssoTenantService.getUserTenant(AuthInfoUtils.getCurrentUserId()), "获取当前租户列表成功!");
-    }
-
     @ApiOperation(value = "获取租户组织树")
     @GetMapping("/org")
     public Result<List<SsoOrg>> queryOrgTree(ReqSsoOrg reqSsoOrg) {

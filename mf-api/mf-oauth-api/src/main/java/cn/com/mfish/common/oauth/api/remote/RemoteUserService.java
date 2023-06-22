@@ -41,20 +41,20 @@ public interface RemoteUserService {
      *
      * @param origin
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
     @GetMapping("/user/roles")
-    Result<List<UserRole>> getRoles(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("clientId") String clientId);
+    Result<List<UserRole>> getRoles(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("tenantId") String tenantId);
 
     /**
      * 获取用户权限
      *
      * @param origin
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
     @GetMapping("/user/permissions")
-    Result<Set<String>> getPermissions(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("clientId") String clientId);
+    Result<Set<String>> getPermissions(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("tenantId") String tenantId);
 }

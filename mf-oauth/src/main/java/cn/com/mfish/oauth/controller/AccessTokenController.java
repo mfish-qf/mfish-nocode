@@ -91,12 +91,8 @@ public class AccessTokenController {
             default:
                 throw new OAuthValidateException(result.getMsg());
         }
-        //TODO 登录暂时不判断用户所属客户端，此属性预留
-//        if (!ssoUserService.isUserClientExist(token.getUserId(), token.getClientId())) {
-//            throw new OAuthValidateException("错误:该用户无此客户端权限!");
-//        }
         //缓存用户角色信息
-        CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId(), token.getClientId()));
+        CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId()));
         userTokenCache.addUserTokenCache(DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()
                 , token.getUserId(), token.getAccessToken());

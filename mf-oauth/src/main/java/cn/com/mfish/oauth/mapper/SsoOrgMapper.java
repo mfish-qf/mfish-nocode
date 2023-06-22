@@ -23,7 +23,7 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
 
     List<SsoOrg> queryOrg(@Param("reqSsoOrg") ReqSsoOrg reqSsoOrg, @Param("levels") List<Integer> levels);
 
-    int orgFixCodeExist(@Param("clientId") String clientId, @Param("orgId") String orgId, @Param("orgFixCode") String orgFixCode);
+    int orgFixCodeExist(@Param("orgId") String orgId, @Param("orgFixCode") String orgFixCode);
 
     int insertOrgRole(@Param("orgId") String orgId, @Param("roles") List<String> roles);
 

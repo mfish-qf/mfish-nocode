@@ -160,12 +160,17 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public UserInfoVo getUserInfoAndRoles(String userId, String clientId) {
+    public UserInfoVo getUserInfoAndRoles(String userId) {
+        return getUserInfoAndRoles(userId, null);
+    }
+
+    @Override
+    public UserInfoVo getUserInfoAndRoles(String userId, String tenantId) {
         UserInfo userInfo = getUserInfo(userId);
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanUtils.copyProperties(userInfo, userInfoVo);
-        userInfoVo.setUserRoles(ssoUserService.getUserRoles(userId, clientId));
-        userInfoVo.setPermissions(ssoUserService.getUserPermissions(userId, clientId));
+        userInfoVo.setUserRoles(ssoUserService.getUserRoles(userId, tenantId));
+        userInfoVo.setPermissions(ssoUserService.getUserPermissions(userId, tenantId));
         return userInfoVo;
     }
 
@@ -192,9 +197,9 @@ public class OAuth2ServiceImpl implements OAuth2Service {
                     Object token = OauthUtils.getToken(tokens.get(0).toString());
                     OnlineUser user = null;
                     if (token instanceof RedisAccessToken) {
-                        user = buildOnlineUser((RedisAccessToken) token, key.replace(RedisPrefix.DEVICE2TOKEN,""));
+                        user = buildOnlineUser((RedisAccessToken) token, key.replace(RedisPrefix.DEVICE2TOKEN, ""));
                     } else if (token instanceof WeChatToken) {
-                        user = buildOnlineUser((WeChatToken) token, key.replace(RedisPrefix.DEVICE2TOKEN,""));
+                        user = buildOnlineUser((WeChatToken) token, key.replace(RedisPrefix.DEVICE2TOKEN, ""));
                     }
                     if (user != null) {
                         long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.get(0).toString()));

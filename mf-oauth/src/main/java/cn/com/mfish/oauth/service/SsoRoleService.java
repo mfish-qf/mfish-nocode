@@ -19,9 +19,9 @@ public interface SsoRoleService extends IService<SsoRole> {
 
     boolean deleteRole(String id);
 
-    boolean roleCodeExist(String clientId, String roleId, String roleCode);
+    boolean roleCodeExist(String roleId, String roleCode);
 
     List<String> getRoleMenus(String roleId);
 
-    void removeUserCache(List<String> userIds, String clientId);
+    void removeUserCache(List<String> userIds, String tenantId);
 }

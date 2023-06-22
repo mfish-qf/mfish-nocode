@@ -20,7 +20,7 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
     @Delete("delete from sso_role_menu where role_id=#{roleId}")
     int deleteRoleMenus(@Param("roleId") String roleId);
 
-    int roleCodeExist(@Param("clientId") String clientId, @Param("roleId") String roleId, @Param("roleCode") String roleCode);
+    int roleCodeExist(@Param("roleId") String roleId, @Param("roleCode") String roleCode);
 
     /**
      * 获取角色下所有的用户

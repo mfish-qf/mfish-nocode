@@ -23,7 +23,7 @@ public class UserPermissionTempCache extends BaseTempCache<Set<String>> {
     SsoUserMapper ssoUserMapper;
 
     /**
-     * key [0] userId [1] clientId
+     * key [0] userId [1] tenantId
      *
      * @param key
      * @return
@@ -34,7 +34,7 @@ public class UserPermissionTempCache extends BaseTempCache<Set<String>> {
     }
 
     /**
-     * key [0] userId [1] clientId
+     * key [0] userId [1] tenantId
      * @param key
      * @return
      */

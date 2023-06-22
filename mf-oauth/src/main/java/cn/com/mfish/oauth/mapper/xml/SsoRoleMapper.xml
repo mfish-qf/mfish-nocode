@@ -10,7 +10,7 @@
     <select id="roleCodeExist" resultType="int">
         select count(0) from sso_role
         <where>
-            client_id = #{clientId} and role_code = #{roleCode}
+            role_code = #{roleCode}
             <if test="roleId!=null and roleId!=''">
                 and id != #{roleId}
             </if>

@@ -64,10 +64,10 @@ public class SsoRoleController {
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }
 
-    private LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
+    public static LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
         return new LambdaQueryWrapper<SsoRole>()
                 .eq(SsoRole::getDelFlag, 0)
-                .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
+                .eq(reqSsoRole.getTenantId() != null, SsoRole::getTenantId, reqSsoRole.getTenantId())
                 .eq(reqSsoRole.getStatus() != null, SsoRole::getStatus, reqSsoRole.getStatus())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())

@@ -19,9 +19,9 @@ public class AutoUserCredentialsMatcher extends SimpleCredentialsMatcher {
     @Resource
     SsoUserService ssoUserService;
 
-    protected void insertNewUser(boolean newUser, SsoUser user, String clientId) {
+    protected void insertNewUser(boolean newUser, SsoUser user) {
         if (newUser) {
-            Result<SsoUser> result = ssoUserService.insertUser(user, clientId);
+            Result<SsoUser> result = ssoUserService.insertUser(user);
             if (!result.isSuccess()) {
                 throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
             }

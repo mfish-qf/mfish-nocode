@@ -78,7 +78,7 @@ public class OauthUtils {
      */
     public static List<UserRole> getRoles() {
         RemoteUserService remoteUserService = getUserService();
-        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
         if (result == null || !result.isSuccess()) {
             return null;
         }
@@ -111,7 +111,7 @@ public class OauthUtils {
      */
     public static Set<String> getPermission() {
         RemoteUserService remoteUserService = getUserService();
-        Result<Set<String>> result = remoteUserService.getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        Result<Set<String>> result = remoteUserService.getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
         if (result == null || !result.isSuccess()) {
             return null;
         }

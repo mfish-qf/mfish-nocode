@@ -20,7 +20,7 @@ public class UserRoleTempCache extends BaseTempCache<List<UserRole>> {
     SsoUserMapper ssoUserMapper;
 
     /**
-     * key [0] userId [1] clientId
+     * key [0] userId [1] tenantId
      *
      * @param key
      * @return
@@ -31,7 +31,7 @@ public class UserRoleTempCache extends BaseTempCache<List<UserRole>> {
     }
 
     /**
-     * key [0] userId [1] clientId
+     * key [0] userId [1] tenantId
      *
      * @param key
      * @return

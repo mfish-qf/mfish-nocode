@@ -12,7 +12,7 @@ public class WxCredentialsMatcher extends AutoUserCredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken authenticationToken, AuthenticationInfo authenticationInfo) {
         MyUsernamePasswordToken myToken = (MyUsernamePasswordToken) authenticationToken;
-        insertNewUser(myToken.isNew(), myToken.getUserInfo(), myToken.getClientId());
+        insertNewUser(myToken.isNew(), myToken.getUserInfo());
         return true;
     }
 }

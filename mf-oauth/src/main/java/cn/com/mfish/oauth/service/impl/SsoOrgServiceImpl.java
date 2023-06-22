@@ -90,7 +90,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
                 insertOrgRole(ssoOrg.getId(), ssoOrg.getRoleIds());
             }
             List<String> userIds = baseMapper.getOrgUserId(ssoOrg.getId());
-            ssoRoleService.removeUserCache(userIds, ssoOrg.getClientId());
+            ssoRoleService.removeUserCache(userIds, ssoOrg.getTenantId());
             return Result.ok(ssoOrg, "组织编辑成功!");
         }
         throw new MyRuntimeException("错误:更新组织失败");
@@ -109,14 +109,8 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         if (!StringUtils.isEmpty(ssoOrg.getId()) && ssoOrg.getId().equals(ssoOrg.getParentId())) {
             throw new MyRuntimeException("错误:父节点不允许设置自己");
         }
-        if (StringUtils.isEmpty(ssoOrg.getClientId())) {
-            ssoOrg.setClientId(AuthInfoUtils.getCurrentClientId());
-        }
-        if (StringUtils.isEmpty(ssoOrg.getClientId())) {
-            throw new MyRuntimeException("错误:客户端ID不存在");
-        }
         if (!StringUtils.isEmpty(ssoOrg.getOrgFixCode()) &&
-                baseMapper.orgFixCodeExist(ssoOrg.getClientId(), ssoOrg.getId(), ssoOrg.getOrgFixCode()) > 0) {
+                baseMapper.orgFixCodeExist(ssoOrg.getId(), ssoOrg.getOrgFixCode()) > 0) {
             throw new MyRuntimeException("错误:组织固定编码已存在");
         }
         if (!StringUtils.isEmpty(ssoOrg.getPhone()) && !StringUtils.isPhone(ssoOrg.getPhone())) {

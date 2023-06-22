@@ -46,16 +46,11 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     }
 
     @Override
-    public List<TenantVo> getUserTenant(String userId) {
-        return baseMapper.getUserTenant(userId);
-    }
-
-    @Override
     @Transactional
     public Result<SsoTenant> insertTenant(SsoTenant ssoTenant) {
         if (validateTenant(ssoTenant) && baseMapper.insert(ssoTenant) > 0) {
             SsoOrg org = new SsoOrg();
-            org.setClientId(AuthInfoUtils.getCurrentClientId());
+            org.setTenantId(AuthInfoUtils.getCurrentTenantId());
             org.setOrgName(ssoTenant.getName());
             org.setTenantId(ssoTenant.getId());
             org.setStatus(0);
