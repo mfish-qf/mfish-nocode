@@ -33,8 +33,8 @@
             <artifactId>mf-common-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
         <!-- oracle驱动 -->
         <!-- 需要引入oracle时，下面引用。自己本地导入ojdbc包 -->

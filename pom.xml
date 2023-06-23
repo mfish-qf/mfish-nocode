@@ -27,7 +27,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.7.7</spring-boot.version>
+        <spring-boot.version>2.7.8</spring-boot.version>
         <spring-boot-admin.version>2.7.10</spring-boot-admin.version>
         <spring-cloud.version>2021.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
@@ -36,7 +36,7 @@
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <pagehelper.boot.version>1.4.6</pagehelper.boot.version>
+        <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
         <druid.version>1.2.15</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
@@ -48,11 +48,11 @@
         <oauth2.version>1.0.2</oauth2.version>
         <shiro.version>1.11.0</shiro.version>
         <wechat.version>4.3.7.B</wechat.version>
-        <aliyun-oss.version>3.16.0</aliyun-oss.version>
+        <aliyun-oss.version>3.16.1</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
         <oracle.version>12.2.0.1</oracle.version>
-        <easyexcel.version>3.3.1</easyexcel.version>
+        <easyexcel.version>3.3.2</easyexcel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -147,6 +147,12 @@
                 <groupId>com.github.penggle</groupId>
                 <artifactId>kaptcha</artifactId>
                 <version>${kaptcha.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- pagehelper 分页插件 -->
