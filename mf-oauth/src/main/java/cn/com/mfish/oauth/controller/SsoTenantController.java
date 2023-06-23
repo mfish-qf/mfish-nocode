@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
@@ -11,13 +12,16 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.oauth.entity.SsoTenant;
+import cn.com.mfish.common.oauth.entity.AccessToken;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoTenantService;
-import cn.com.mfish.oauth.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -235,5 +238,37 @@ public class SsoTenantController {
             return Result.fail(false, "错误:不允许操作非自己租户下的组织");
         }
         return ssoOrgService.removeOrg(id);
+    }
+
+    @ApiOperation("切换租户")
+    @PutMapping("/change/{tenantId}")
+    public Result<String> changeTenant(@PathVariable("tenantId") String tenantId) {
+        if (StringUtils.isEmpty(tenantId)) {
+            return Result.fail(tenantId, "错误:租户ID不允许为空");
+        }
+        List<TenantVo> list = OauthUtils.getTenants();
+        if (list == null || !list.stream().anyMatch((tenantVo -> tenantVo.getId().equals(tenantId)))) {
+            return Result.fail(tenantId, "错误:该用户属于次租户");
+        }
+        Object token = OauthUtils.getToken();
+        if (token instanceof RedisAccessToken) {
+            RedisAccessToken rat = (RedisAccessToken) token;
+            if (tenantId.equals(rat.getTenantId())) {
+                return Result.ok(tenantId, "切换租户成功");
+            }
+            rat.setTenantId(tenantId);
+            OauthUtils.setToken(rat.getAccessToken(), rat);
+            return Result.ok(tenantId, "切换租户成功");
+        }
+        if (token instanceof WeChatToken) {
+            WeChatToken wct = (WeChatToken) token;
+            if (tenantId.equals(wct.getTenantId())) {
+                return Result.ok(tenantId, "切换租户成功");
+            }
+            wct.setTenantId(tenantId);
+            OauthUtils.setToken(((WeChatToken) token).getAccess_token(), token);
+            return Result.ok(tenantId, "切换租户成功");
+        }
+        return Result.fail(tenantId, "错误:未找到token");
     }
 }

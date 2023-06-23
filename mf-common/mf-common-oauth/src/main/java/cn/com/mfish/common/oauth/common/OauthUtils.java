@@ -11,6 +11,7 @@ import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.service.TokenService;
@@ -119,6 +120,20 @@ public class OauthUtils {
     }
 
     /**
+     * 获取租户列表
+     *
+     * @return
+     */
+    public static List<TenantVo> getTenants() {
+        RemoteUserService remoteUserService = getUserService();
+        Result<List<TenantVo>> result = remoteUserService.getTenants(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
+        if (result == null || !result.isSuccess()) {
+            return null;
+        }
+        return result.getData();
+    }
+
+    /**
      * 校验权限
      *
      * @param requiresPermissions 权限限制
@@ -181,6 +196,25 @@ public class OauthUtils {
         }
         return SpringBeanFactory.getBean(WebTokenServiceImpl.class);
 
+    }
+
+    /**
+     * 设置token
+     * @param tokenId
+     * @param token
+     */
+    public static void setToken(String tokenId, Object token) {
+        getTokenService(tokenId).setToken(token);
+    }
+
+    /**
+     * 获取当前token对象
+     *
+     * @return
+     */
+    public static Object getToken() {
+        String token = AuthInfoUtils.getAccessToken();
+        return getToken(getTokenService(token), token);
     }
 
     /**

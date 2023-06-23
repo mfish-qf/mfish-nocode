@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,10 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
                 return Result.fail("错误:获取按钮权限失败" + cause.getMessage());
             }
 
+            @Override
+            public Result<List<TenantVo>> getTenants(String origin, String userId) {
+                return Result.fail("错误:获取租户失败" + cause.getMessage());
+            }
         };
     }
 }

@@ -92,7 +92,7 @@ public class AccessTokenController {
                 throw new OAuthValidateException(result.getMsg());
         }
         //缓存用户角色信息
-        CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId()));
+        CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId(), token.getTenantId()));
         userTokenCache.addUserTokenCache(DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()
                 , token.getUserId(), token.getAccessToken());

@@ -28,4 +28,7 @@ public class UserInfoVo extends UserInfo {
     @TableField(exist = false)
     @ApiModelProperty("用户权限")
     private Set<String> permissions;
+    @TableField(exist = false)
+    @ApiModelProperty("用户租户")
+    private List<TenantVo> tenants;
 }

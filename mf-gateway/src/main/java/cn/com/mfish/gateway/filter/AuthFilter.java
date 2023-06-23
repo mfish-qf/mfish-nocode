@@ -66,8 +66,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
      * @return
      */
     private void defaultTokenDeal(RedisAccessToken accessToken, ServerHttpRequest.Builder mutate) {
-        //todo 租户ID获取方式待修改
-        GatewayUtils.addHeader(mutate, RPCConstants.REQ_TENANT_ID, accessToken.getClientId());
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_TENANT_ID, accessToken.getTenantId());
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_USER_ID, accessToken.getUserId());
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_ACCOUNT, accessToken.getAccount());
     }
@@ -80,8 +79,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
      * @return
      */
     private void weChatTokenDeal(WeChatToken weChatToken, ServerHttpRequest.Builder mutate) {
-        //todo 微信客户端暂时写死system，默认认为是系统客户端
-        GatewayUtils.addHeader(mutate, RPCConstants.REQ_TENANT_ID, "system");
+        GatewayUtils.addHeader(mutate, RPCConstants.REQ_TENANT_ID, weChatToken.getTenantId());
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_USER_ID, weChatToken.getUserId());
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_ACCOUNT, weChatToken.getAccount());
     }

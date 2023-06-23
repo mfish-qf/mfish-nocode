@@ -7,6 +7,7 @@ import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
@@ -85,6 +86,11 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         Subject subject = SecurityUtils.getSubject();
         code.setUserId((String) subject.getPrincipal());
         SsoUser user = ssoUserService.getUserById(code.getUserId());
+        List<TenantVo> tenants = ssoUserService.getUserTenants(code.getUserId());
+        if (tenants != null && !tenants.isEmpty()) {
+            //设置第一个为默认登录租户
+            code.setTenantId(tenants.get(0).getId());
+        }
         code.setAccount(user.getAccount());
         code.setCodeSessionId(subject.getSession().getId().toString());
         code.setScope(org.apache.shiro.util.StringUtils.join(request.getScopes().iterator(), ","));
@@ -160,15 +166,11 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public UserInfoVo getUserInfoAndRoles(String userId) {
-        return getUserInfoAndRoles(userId, null);
-    }
-
-    @Override
     public UserInfoVo getUserInfoAndRoles(String userId, String tenantId) {
         UserInfo userInfo = getUserInfo(userId);
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanUtils.copyProperties(userInfo, userInfoVo);
+        userInfoVo.setTenants(ssoUserService.getUserTenants(userId));
         userInfoVo.setUserRoles(ssoUserService.getUserRoles(userId, tenantId));
         userInfoVo.setPermissions(ssoUserService.getUserPermissions(userId, tenantId));
         return userInfoVo;

@@ -71,9 +71,8 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentTenantId(){
-        //todo ID暂时写死逻辑待补充
         String tenantId = ServletUtils.getHeader(RPCConstants.REQ_TENANT_ID);
-        return StringUtils.isEmpty(tenantId) ? "system" : tenantId;
+        return StringUtils.isEmpty(tenantId) ? null : tenantId;
     }
 
     /**

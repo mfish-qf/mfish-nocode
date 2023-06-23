@@ -22,7 +22,7 @@ import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoUserService;
-import cn.com.mfish.oauth.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -71,9 +71,7 @@ public class SsoUserController {
         if (StringUtils.isEmpty(userId)) {
             userId = AuthInfoUtils.getCurrentUserId();
         }
-        if (AuthInfoUtils.isSuper()) {
-            tenantId = null;
-        } else if (StringUtils.isEmpty(tenantId)) {
+        if (StringUtils.isEmpty(tenantId)) {
             tenantId = AuthInfoUtils.getCurrentTenantId();
         }
         return Result.ok(ssoUserService.getUserPermissions(userId, tenantId));
@@ -90,9 +88,7 @@ public class SsoUserController {
         if (StringUtils.isEmpty(userId)) {
             userId = AuthInfoUtils.getCurrentUserId();
         }
-        if (AuthInfoUtils.isSuper()) {
-            tenantId = null;
-        } else if (StringUtils.isEmpty(tenantId)) {
+        if (StringUtils.isEmpty(tenantId)) {
             tenantId = AuthInfoUtils.getCurrentTenantId();
         }
         return Result.ok(ssoUserService.getUserRoles(userId, tenantId));
@@ -105,8 +101,11 @@ public class SsoUserController {
      */
     @ApiOperation(value = "获取当前用户租户列表", notes = "获取当前用户租户列表")
     @GetMapping("/tenants")
-    public Result<List<TenantVo>> getUserTenants() {
-        return Result.ok(ssoUserService.getUserTenants(AuthInfoUtils.getCurrentUserId()), "获取当前租户列表成功!");
+    public Result<List<TenantVo>> getUserTenants(String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
+        }
+        return Result.ok(ssoUserService.getUserTenants(userId), "获取当前租户列表成功!");
     }
 
     @ApiOperation("获取用户组织")

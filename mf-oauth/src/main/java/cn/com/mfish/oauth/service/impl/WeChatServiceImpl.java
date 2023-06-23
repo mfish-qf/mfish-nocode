@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.Utils;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author: mfish
@@ -64,6 +66,11 @@ public class WeChatServiceImpl implements WeChatService {
         weChatToken.setRefresh_token(SerConstant.WX_PREFIX + Utils.uuid32());
         weChatToken.setUserId(userId);
         SsoUser user = ssoUserService.getUserById(userId);
+        List<TenantVo> tenants = ssoUserService.getUserTenants(userId);
+        if (tenants != null && !tenants.isEmpty()) {
+            //设置第一个为默认登录租户
+            weChatToken.setTenantId(tenants.get(0).getId());
+        }
         weChatToken.setAccount(user.getAccount());
         weChatToken.setExpires_in(tokenExpire);
         weChatToken.setReTokenExpire(reTokenExpire);

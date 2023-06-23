@@ -1,8 +1,8 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.entity.SsoTenant;
+import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.oauth.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
