@@ -55,7 +55,7 @@ public class SsoMenuController {
     @ApiOperation("获取角色树-左侧菜单")
     @GetMapping("/roleTree")
     public Result<List<SsoMenu>> queryRoleMenuTree() {
-        return queryMenu(new ReqSsoMenu().setTenantId(AuthInfoUtils.getCurrentTenantId()).setNoButton(true), AuthInfoUtils.getCurrentUserId());
+        return queryMenu(new ReqSsoMenu().setNoButton(true), AuthInfoUtils.getCurrentUserId());
     }
 
     private Result<List<SsoMenu>> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {

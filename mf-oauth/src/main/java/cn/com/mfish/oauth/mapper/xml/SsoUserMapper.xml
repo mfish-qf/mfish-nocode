@@ -17,12 +17,18 @@
             <include refid="byAccount"/>
         </where>
     </select>
+    <sql id="tenantCondition">
+        (
+        r.tenant_id = 'system'
+        <if test="tenantId!= null and tenantId != ''">
+            or r.tenant_id = #{tenantId}
+        </if> )
+    </sql>
     <sql id="userRolesCondition">
         <where>
             r.status = 0 and r.del_flag = 0 and u.id = #{userId}
-            <if test="tenantId!= null and tenantId != ''">
-                and r.tenant_id = #{tenantId}
-            </if>
+            and
+            <include refid="tenantCondition" />
         </where>
     </sql>
     <select id="getUserRoles" resultType="cn.com.mfish.common.oauth.api.entity.UserRole">
@@ -52,9 +58,7 @@
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
         inner join sso_role r on r.id = ur.role_id
-        <if test="tenantId!= null and tenantId != ''">
-            and r.tenant_id = #{tenantId}
-        </if>
+        and <include refid="tenantCondition" />
         inner join sso_role_menu rm on rm.role_id = ur.role_id
         inner join sso_menu m on rm.menu_id = m.id
         <include refid="userPerCondition" />
@@ -63,9 +67,7 @@
         from sso_user u
         inner join sso_org_user ou on u.id = ou.user_id
         inner join sso_org o on o.id = ou.org_id
-        <if test="tenantId!= null and tenantId != ''">
-            and o.tenant_id = #{tenantId}
-        </if>
+        AND o.org_code like (SELECT concat(org_code,'%') FROM sso_org o where o.tenant_id = #{tenantId})
         inner join sso_org_role sor on ou.org_id = sor.org_id
         inner join sso_role_menu rm on rm.role_id = sor.role_id
         inner join sso_menu m on rm.menu_id = m.id

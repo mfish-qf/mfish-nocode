@@ -15,8 +15,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("菜单权限表请求参数")
 public class ReqSsoMenu {
-    @ApiModelProperty(value = "租户ID")
-    private String tenantId;
     @ApiModelProperty(value = "菜单名称")
     private String menuName;
     @ApiModelProperty(value = "菜单类型（0目录 1菜单 2按钮）")

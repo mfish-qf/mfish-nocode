@@ -111,9 +111,6 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     private Result<SsoMenu> verifyMenu(SsoMenu ssoMenu) {
-        if (StringUtils.isEmpty(ssoMenu.getTenantId())) {
-            ssoMenu.setTenantId(AuthInfoUtils.getCurrentTenantId());
-        }
         if (StringUtils.isEmpty(ssoMenu.getParentId())) {
             ssoMenu.setParentId("");
         }
@@ -140,9 +137,6 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         }
         SsoMenu ssoMenu = baseMapper.selectById(menuId);
         if (baseMapper.deleteById(menuId) > 0) {
-            if (StringUtils.isEmpty(ssoMenu.getTenantId())) {
-                ssoMenu.setTenantId(AuthInfoUtils.getCurrentTenantId());
-            }
             CompletableFuture.runAsync(() -> removeMenuCache(ssoMenu));
             baseMapper.deleteMenuRoles(menuId);
             return Result.ok("菜单表-删除成功!");
@@ -161,8 +155,9 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             return;
         }
         List<String> list = baseMapper.queryMenuUser(ssoMenu.getId());
-        userPermissionTempCache.removeMoreCache(list.stream()
-                .map(item -> RedisPrefix.buildUser2PermissionsKey(item, ssoMenu.getTenantId())).collect(Collectors.toList()));
+        //todo 待修改
+//        userPermissionTempCache.removeMoreCache(list.stream()
+//                .map(item -> RedisPrefix.buildUser2PermissionsKey(item, ssoMenu.getTenantId())).collect(Collectors.toList()));
     }
 
 }
