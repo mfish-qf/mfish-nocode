@@ -136,6 +136,9 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     @Override
     @Transactional
     public Result<Boolean> deleteTenant(String id) {
+        if (AuthInfoUtils.isSuperTenant(id)) {
+            return Result.fail(false, "错误:系统租户不允许删除");
+        }
         if (baseMapper.updateById(new SsoTenant().setDelFlag(1).setId(id)) > 0
                 && ssoOrgService.update(new SsoOrg().setDelFlag(1), new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getTenantId, id))) {
             return Result.ok(true, "租户信息-删除成功!");
