@@ -17,9 +17,10 @@
             <include refid="byAccount"/>
         </where>
     </select>
+    <!-- 系统租户下的信息允许查询 -->
     <sql id="tenantCondition">
         (
-        r.tenant_id = 'system'
+        r.tenant_id = '1'
         <if test="tenantId!= null and tenantId != ''">
             or r.tenant_id = #{tenantId}
         </if> )

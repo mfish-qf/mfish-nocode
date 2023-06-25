@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
@@ -47,6 +48,7 @@ public class SsoRoleController {
     @RequiresPermissions("sys:role:query")
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        reqSsoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
         return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
@@ -85,6 +87,7 @@ public class SsoRoleController {
     @PostMapping
     @RequiresPermissions("sys:role:insert")
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
+        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
         return ssoRoleService.insertRole(ssoRole);
     }
 
@@ -99,6 +102,7 @@ public class SsoRoleController {
     @PutMapping
     @RequiresPermissions("sys:role:update")
     public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
+        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
         return ssoRoleService.updateRole(ssoRole);
     }
 
@@ -123,13 +127,10 @@ public class SsoRoleController {
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:role:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if ("1".equals(id)) {
+        if (AuthInfoUtils.isSuperRole(id)) {
             return Result.fail(false, "错误:超户角色不允许删除!");
         }
-        if (ssoRoleService.deleteRole(id)) {
-            return Result.ok("角色信息表-删除成功!");
-        }
-        return Result.fail("错误:角色信息表-删除失败!");
+        return ssoRoleService.deleteRole(id);
     }
 
     /**

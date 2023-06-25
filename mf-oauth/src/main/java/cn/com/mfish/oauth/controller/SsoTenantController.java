@@ -17,12 +17,16 @@ import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
+import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
 import cn.com.mfish.oauth.service.SsoOrgService;
+import cn.com.mfish.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.service.SsoTenantService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -49,6 +53,8 @@ public class SsoTenantController {
     SsoTenantService ssoTenantService;
     @Resource
     SsoOrgService ssoOrgService;
+    @Resource
+    SsoRoleService ssoRoleService;
 
     /**
      * 分页列表查询
@@ -156,90 +162,12 @@ public class SsoTenantController {
         ExcelUtils.write("SsoTenant", queryList(reqSsoTenant, reqPage));
     }
 
-    @ApiOperation(value = "获取租户组织树")
-    @GetMapping("/org")
-    public Result<List<SsoOrg>> queryOrgTree(ReqSsoOrg reqSsoOrg) {
-        List<SsoOrg> list = ssoOrgService.queryOrg(reqSsoOrg.setTenantId(AuthInfoUtils.getCurrentTenantId()));
-        List<SsoOrg> orgList = new ArrayList<>();
-        TreeUtils.buildTree("", list, orgList, SsoOrg.class);
-        return Result.ok(orgList, "组织结构表-查询成功!");
-    }
-
-    @Log(title = "组织结构表-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "组织结构表-添加", notes = "组织结构表-添加")
-    @PostMapping("/org")
-    public Result<SsoOrg> orgAdd(@RequestBody SsoOrg ssoOrg) {
-        Result<SsoOrg> result = verifyOrg(ssoOrg);
-        if (result.isSuccess()) {
-            return ssoOrgService.insertOrg(ssoOrg);
-        }
-        return result;
-    }
-
     /**
-     * 编辑
+     * 租户切换
      *
-     * @param ssoOrg
+     * @param tenantId 租户ID
      * @return
      */
-    @Log(title = "组织结构表-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "组织结构表-编辑", notes = "组织结构表-编辑")
-    @PutMapping("/org")
-    public Result<SsoOrg> orgEdit(@RequestBody SsoOrg ssoOrg) {
-        Result<SsoOrg> result = verifyOrg(ssoOrg);
-        if (result.isSuccess()) {
-            return ssoOrgService.updateOrg(ssoOrg);
-        }
-        return result;
-    }
-
-    /**
-     * 新增修改组织前校验
-     *
-     * @param ssoOrg
-     * @return
-     */
-    private Result<SsoOrg> verifyOrg(SsoOrg ssoOrg) {
-        String tenantId = AuthInfoUtils.getCurrentTenantId();
-        if (!ssoTenantService.isTenantMaster(AuthInfoUtils.getCurrentUserId(), tenantId)) {
-            return Result.fail(ssoOrg, "错误:只允许管理员修改");
-        }
-        SsoOrg org = ssoOrgService.getBaseMapper().selectOne(new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getTenantId, tenantId));
-        if (org == null) {
-            return Result.fail(ssoOrg, "错误:未找到租户父组织");
-        }
-        if (!StringUtils.isEmpty(ssoOrg.getId()) && !ssoOrgService.isTenantOrg(ssoOrg.getId(), tenantId)) {
-            return Result.fail(ssoOrg, "错误:不允许操作非自己租户下的组织");
-        }
-        if (StringUtils.isEmpty(ssoOrg.getParentId()) && !ssoOrg.getId().equals(org.getId())) {
-            ssoOrg.setParentId(org.getId());
-        }
-        return Result.ok();
-    }
-
-    /**
-     * 通过id删除
-     *
-     * @param id
-     * @return
-     */
-    @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "组织结构表-通过id删除", notes = "组织结构表-通过id删除")
-    @DeleteMapping("/org/{id}")
-    public Result<Boolean> orgDelete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if (StringUtils.isEmpty(id)) {
-            return Result.fail(false, "错误:ID不允许为空");
-        }
-        String tenantId = AuthInfoUtils.getCurrentTenantId();
-        if (!ssoTenantService.isTenantMaster(AuthInfoUtils.getCurrentUserId(), tenantId)) {
-            return Result.fail(false, "错误:只允许管理员修改");
-        }
-        if (!ssoOrgService.isTenantOrg(id, tenantId)) {
-            return Result.fail(false, "错误:不允许操作非自己租户下的组织");
-        }
-        return ssoOrgService.removeOrg(id);
-    }
-
     @ApiOperation("切换租户")
     @PutMapping("/change/{tenantId}")
     public Result<String> changeTenant(@PathVariable("tenantId") String tenantId) {
@@ -270,5 +198,200 @@ public class SsoTenantController {
             return Result.ok(tenantId, "切换租户成功");
         }
         return Result.fail(tenantId, "错误:未找到token");
+    }
+
+    /**
+     * 查询租户组织树
+     *
+     * @param reqSsoOrg
+     * @return
+     */
+    @ApiOperation(value = "获取租户组织树")
+    @GetMapping("/org")
+    public Result<List<SsoOrg>> queryOrgTree(ReqSsoOrg reqSsoOrg) {
+        List<SsoOrg> list = ssoOrgService.queryOrg(reqSsoOrg.setTenantId(AuthInfoUtils.getCurrentTenantId()));
+        List<SsoOrg> orgList = new ArrayList<>();
+        TreeUtils.buildTree("", list, orgList, SsoOrg.class);
+        return Result.ok(orgList, "组织结构表-查询成功!");
+    }
+
+    /**
+     * 租户组织结构添加
+     *
+     * @param ssoOrg
+     * @return
+     */
+    @Log(title = "租户组织结构-添加", operateType = OperateType.INSERT)
+    @ApiOperation(value = "租户组织结构-添加", notes = "租户组织结构-添加")
+    @PostMapping("/org")
+    public Result<SsoOrg> orgAdd(@RequestBody SsoOrg ssoOrg) {
+        Result<Boolean> result = verifyOrg(ssoOrg.getId());
+        if (result.isSuccess()) {
+            setParentOrg(ssoOrg);
+            return ssoOrgService.insertOrg(ssoOrg);
+        }
+        return Result.fail(ssoOrg, result.getMsg());
+    }
+
+    /**
+     * 租户组织结构编辑
+     *
+     * @param ssoOrg
+     * @return
+     */
+    @Log(title = "租户组织结构-编辑", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "租户组织结构-编辑", notes = "租户组织结构-编辑")
+    @PutMapping("/org")
+    public Result<SsoOrg> orgEdit(@RequestBody SsoOrg ssoOrg) {
+        Result<Boolean> result = verifyOrg(ssoOrg.getId());
+        if (result.isSuccess()) {
+            setParentOrg(ssoOrg);
+            return ssoOrgService.updateOrg(ssoOrg);
+        }
+        return Result.fail(ssoOrg, result.getMsg());
+    }
+
+    /**
+     * 租户是否管理员
+     *
+     * @return
+     */
+    private Result<Boolean> verifyTenant() {
+        if (!ssoTenantService.isTenantMaster(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId())) {
+            return Result.fail(false, "错误:只允许管理员操作");
+        }
+        return Result.ok();
+    }
+
+    /**
+     * 校验租户组织
+     *
+     * @param id
+     * @return
+     */
+    private Result<Boolean> verifyOrg(String id) {
+        Result<Boolean> result = verifyTenant();
+        if (!result.isSuccess()) {
+            return result;
+        }
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        if (!StringUtils.isEmpty(id) && !ssoOrgService.isTenantOrg(id, tenantId)) {
+            return Result.fail(false, "错误:不允许操作非自己租户下的组织");
+        }
+        return Result.ok();
+    }
+
+    /**
+     * 设置父组织
+     *
+     * @param ssoOrg
+     */
+    private void setParentOrg(SsoOrg ssoOrg) {
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        SsoOrg org = ssoOrgService.getBaseMapper().selectOne(new LambdaQueryWrapper<SsoOrg>().eq(SsoOrg::getTenantId, tenantId));
+        if (org == null) {
+            throw new MyRuntimeException("错误:未找到租户父组织");
+        }
+        if (StringUtils.isEmpty(ssoOrg.getParentId()) && !ssoOrg.getId().equals(org.getId())) {
+            ssoOrg.setParentId(org.getId());
+        }
+    }
+
+
+    /**
+     * 通过id删除组织
+     *
+     * @param id
+     * @return
+     */
+    @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
+    @ApiOperation(value = "组织结构表-通过id删除", notes = "组织结构表-通过id删除")
+    @DeleteMapping("/org/{id}")
+    public Result<Boolean> orgDelete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        Result<Boolean> result = verifyOrg(id);
+        if (result.isSuccess()) {
+            return ssoOrgService.removeOrg(id);
+        }
+        return result;
+    }
+
+    /**
+     * 查询租户角色列表
+     *
+     * @param reqSsoRole
+     * @param reqPage
+     * @return
+     */
+    @ApiOperation(value = "租户角色信息-分页列表查询", notes = "租户角色信息-分页列表查询")
+    @GetMapping("/role")
+    public Result<PageResult<SsoRole>> queryRolePageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        reqSsoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
+        return Result.ok(new PageResult<>(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole))), "角色信息表-查询成功!");
+    }
+
+    /**
+     * 租户角色信息添加
+     *
+     * @param ssoRole
+     * @return
+     */
+    @Log(title = "租户角色信息-添加", operateType = OperateType.INSERT)
+    @ApiOperation(value = "角色信息表-添加", notes = "租户角色信息-添加")
+    @PostMapping("/role")
+    public Result<SsoRole> addRole(@RequestBody SsoRole ssoRole) {
+        ssoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
+        Result<Boolean> result = verifyRole(ssoRole.getId());
+        if (result.isSuccess()) {
+            return ssoRoleService.insertRole(ssoRole);
+        }
+        return Result.fail(ssoRole, result.getMsg());
+    }
+
+    /**
+     * 租户角色信息编辑
+     *
+     * @param ssoRole
+     * @return
+     */
+    @Log(title = "租户角色信息-编辑", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "角色信息表-编辑", notes = "租户角色信息-编辑")
+    @PutMapping("/role")
+    public Result<SsoRole> editRole(@RequestBody SsoRole ssoRole) {
+        ssoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
+        Result<Boolean> result = verifyRole(ssoRole.getId());
+        if (result.isSuccess()) {
+            return ssoRoleService.updateRole(ssoRole);
+        }
+        return Result.fail(ssoRole, result.getMsg());
+    }
+
+    @Log(title = "租户角色信息-通过id删除", operateType = OperateType.DELETE)
+    @ApiOperation(value = "租户角色信息-通过id删除", notes = "租户角色信息-通过id删除")
+    @DeleteMapping("/role/{id}")
+    public Result<Boolean> deleteRole(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        Result<Boolean> result = verifyRole(id);
+        if (result.isSuccess()) {
+            return ssoRoleService.deleteRole(id);
+        }
+        return result;
+    }
+
+    /**
+     * 校验租户角色
+     *
+     * @param id
+     * @return
+     */
+    private Result<Boolean> verifyRole(String id) {
+        Result<Boolean> result = verifyTenant();
+        if (!result.isSuccess()) {
+            return result;
+        }
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        if (!StringUtils.isEmpty(id) && !ssoRoleService.isTenantRole(id, tenantId)) {
+            return Result.fail(false, "错误:不允许操作非自己租户下的角色");
+        }
+        return Result.ok();
     }
 }

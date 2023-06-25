@@ -87,15 +87,18 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     }
 
     @Override
-    public boolean deleteRole(String id) {
+    public Result<Boolean> deleteRole(String id) {
+        if (StringUtils.isEmpty(id)) {
+            return Result.fail(false, "错误:删除失败-组织ID不允许为空!");
+        }
         if (baseMapper.updateById(new SsoRole().setDelFlag(1).setId(id)) == 1) {
             String tenantId = AuthInfoUtils.getCurrentTenantId();
             CompletableFuture.runAsync(() -> removeRoleCache(id, tenantId));
             log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
-            return true;
+            return Result.ok(true, "角色信息-删除成功!");
         }
         log.error(MessageFormat.format("错误:删除角色失败,角色ID:{0}", id));
-        return false;
+        return Result.fail(false, "错误:角色信息-删除失败!");
     }
 
     /**
@@ -138,5 +141,13 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     @Override
     public List<String> getRoleMenus(String roleId) {
         return baseMapper.getRoleMenus(roleId);
+    }
+
+    @Override
+    public boolean isTenantRole(String roleId, String tenantId) {
+        if (StringUtils.isEmpty(roleId)) {
+            throw new MyRuntimeException("错误:角色ID不允许为空");
+        }
+        return baseMapper.isTenantRole(roleId, tenantId) > 0;
     }
 }

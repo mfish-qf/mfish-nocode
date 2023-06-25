@@ -28,4 +28,7 @@
         from sso_org_user ou
                  inner join sso_org_role sor on sor.role_id = #{roleId}
     </select>
+    <select id="isTenantRole" resultType="java.lang.Integer">
+        select count(0) from sso_role where tenant_id = #{tenantId} and id = #{roleId}
+    </select>
 </mapper>

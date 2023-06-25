@@ -15,6 +15,9 @@ import java.util.List;
  */
 @Slf4j
 public class AuthInfoUtils {
+    public static final String SUPER_ACCOUNT = "1";
+    public static final String SUPER_ROLE = "1";
+    public static final String SUPER_TENANT = "1";
     /**
      * 从请求中获取token值
      * token通过access_token=****直接赋值
@@ -68,9 +71,10 @@ public class AuthInfoUtils {
 
     /**
      * 获取当前租户ID(该方法要在主线程运行)
+     *
      * @return
      */
-    public static String getCurrentTenantId(){
+    public static String getCurrentTenantId() {
         String tenantId = ServletUtils.getHeader(RPCConstants.REQ_TENANT_ID);
         return StringUtils.isEmpty(tenantId) ? null : tenantId;
     }
@@ -91,17 +95,26 @@ public class AuthInfoUtils {
      * @return
      */
     public static boolean isSuper(String userId) {
-        return "1".equals(userId);
+        return SUPER_ACCOUNT.equals(userId);
     }
 
     /**
-     * 判断角色是否超户
+     * 判断角色是否超户角色
      *
      * @param roleId
      * @return
      */
-    public static boolean isSuperAdmin(String roleId) {
-        return "1".equals(roleId);
+    public static boolean isSuperRole(String roleId) {
+        return SUPER_ROLE.equals(roleId);
+    }
+
+    /**
+     * 判断是否系统默认租户
+     * @param tenantId
+     * @return
+     */
+    public static boolean isSuperTenant(String tenantId) {
+        return SUPER_TENANT.equals(tenantId);
     }
 
     /**
@@ -111,9 +124,9 @@ public class AuthInfoUtils {
      * @return
      */
     public static boolean isContainSuperAdmin(List<String> roleIds) {
-        if(roleIds == null){
+        if (roleIds == null) {
             return false;
         }
-        return roleIds.stream().anyMatch((roleId) -> isSuperAdmin(roleId));
+        return roleIds.stream().anyMatch((roleId) -> isSuperRole(roleId));
     }
 }

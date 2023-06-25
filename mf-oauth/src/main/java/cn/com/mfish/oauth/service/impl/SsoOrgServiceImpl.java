@@ -176,6 +176,9 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public boolean isTenantOrg(String orgId, String tenantId) {
+        if (StringUtils.isEmpty(orgId)) {
+            throw new MyRuntimeException("错误:组织ID不允许为空");
+        }
         return baseMapper.isTenantOrg(orgId, tenantId) > 0;
     }
 
