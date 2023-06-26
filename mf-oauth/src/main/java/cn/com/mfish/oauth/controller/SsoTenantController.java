@@ -13,6 +13,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
+import cn.com.mfish.common.oauth.common.Logical;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
@@ -328,6 +329,13 @@ public class SsoTenantController {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         reqSsoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
         return Result.ok(new PageResult<>(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole))), "角色信息表-查询成功!");
+    }
+
+    @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
+    @GetMapping("/role/all")
+    public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
+        reqSsoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
+        return Result.ok(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }
 
     /**

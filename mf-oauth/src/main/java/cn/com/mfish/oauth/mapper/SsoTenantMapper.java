@@ -28,4 +28,5 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     @Select("select count(0) from sso_tenant where user_id = #{userId} and id = #{tenantId}")
     int isTenantMaster(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
+    List<String> getTenantUser(String tenantId);
 }

@@ -19,16 +19,13 @@
     </select>
     <!-- 系统租户下的信息允许查询 -->
     <sql id="tenantCondition">
-        (
-        r.tenant_id = '1'
         <if test="tenantId!= null and tenantId != ''">
-            or r.tenant_id = #{tenantId}
-        </if> )
+            and (r.tenant_id = '1' or r.tenant_id = #{tenantId})
+        </if>
     </sql>
     <sql id="userRolesCondition">
         <where>
             r.status = 0 and r.del_flag = 0 and u.id = #{userId}
-            and
             <include refid="tenantCondition" />
         </where>
     </sql>
@@ -36,14 +33,15 @@
         select r.id, r.role_name, r.role_code, 0 source
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
-        inner join sso_role r on r.id = ur.role_id
+        inner join sso_role r on r.id = ur.role_id and r.del_flag = 0
         <include refid="userRolesCondition" />
         union
         select r.id, r.role_name, r.role_code,1 source
         from sso_user u
         inner join sso_org_user ou on u.id = ou.user_id
+        inner join sso_org o on o.id = ou.org_id and o.del_flag = 0
         inner join sso_org_role sor on ou.org_id = sor.org_id
-        INNER JOIN sso_role r on r.id = sor.role_id
+        INNER JOIN sso_role r on r.id = sor.role_id and r.del_flag = 0
         <include refid="userRolesCondition" />
     </select>
     <sql id="userPerCondition">
@@ -54,39 +52,44 @@
         </where>
     </sql>
     <select id="getUserPermissions" resultType="java.lang.String">
-        select GROUP_CONCAT(u.permissions) permissions from (
+        select GROUP_CONCAT(DISTINCT u.permissions) as permissions from (
         select u.id,m.permissions
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
-        inner join sso_role r on r.id = ur.role_id
-        and <include refid="tenantCondition" />
+        inner join sso_role r on r.id = ur.role_id and r.del_flag = 0
+        <include refid="tenantCondition"/>
         inner join sso_role_menu rm on rm.role_id = ur.role_id
         inner join sso_menu m on rm.menu_id = m.id
-        <include refid="userPerCondition" />
+        <include refid="userPerCondition"/>
         union
         select u.id,m.permissions
         from sso_user u
         inner join sso_org_user ou on u.id = ou.user_id
-        inner join sso_org o on o.id = ou.org_id
-        AND o.org_code like (SELECT concat(org_code,'%') FROM sso_org o where o.tenant_id = #{tenantId})
+        inner join sso_org o on o.id = ou.org_id and o.del_flag = 0
+        AND (
+        o.org_code like (SELECT concat(org_code,'%') FROM sso_org o where o.tenant_id = #{tenantId})
+        or
+        o.org_code like (SELECT concat(org_code,'%') FROM sso_org o where o.tenant_id = '1')
+        )
         inner join sso_org_role sor on ou.org_id = sor.org_id
+        inner join sso_role r on r.id = sor.role_id and r.del_flag = 0
         inner join sso_role_menu rm on rm.role_id = sor.role_id
         inner join sso_menu m on rm.menu_id = m.id
-        <include refid="userPerCondition" /> ) u
+        <include refid="userPerCondition"/>
+        ) u
         group by u.id
-        order by u.permissions
     </select>
     <select id="getUserTenants" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
         SELECT t.*,su.account,IF(u.id = su.id, 1, 0) MASTER
         FROM sso_tenant t
                  JOIN sso_user u ON u.id = t.user_id
                  JOIN sso_org_user ou ON ou.user_id = u.id
-                 JOIN sso_org o ON ou.org_id = o.id
+                 JOIN sso_org o ON ou.org_id = o.id and o.del_flag = 0
             AND o.org_code IN (SELECT SUBSTR(org_code, 1, 5)
                                FROM sso_user u
                                         JOIN sso_org_user ou ON ou.user_id = u.id
                                    AND ou.user_id = #{userId}
-                                        JOIN sso_org o ON o.id = ou.org_id)
+                                        JOIN sso_org o ON o.id = ou.org_id and o.del_flag = 0)
                  LEFT JOIN sso_user su ON su.id = #{userId}
         ORDER BY MASTER DESC
     </select>
@@ -101,25 +104,31 @@
     </select>
     <resultMap id="userMap" type="cn.com.mfish.common.oauth.api.entity.UserInfo">
         <result property="roleIds" column="roleIds"
-                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler" />
+        <result property="orgId" column="orgId"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler" />
     </resultMap>
     <resultMap id="ssoUserMap" type="cn.com.mfish.oauth.entity.SsoUser">
         <result property="roleIds" column="roleIds"
-                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler" />
+        <result property="orgId" column="orgId"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler" />
     </resultMap>
     <sql id="selectUser">
-        select u.*, GROUP_CONCAT(role_id) roleIds
+        select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgId
         from (select u.*, o.org_name, ou.org_id, ur.role_id
               from sso_user u
                        left join sso_org_user ou on ou.user_id = u.id
-                       left join sso_org o on o.id = ou.org_id
+                       left join sso_org o on o.id = ou.org_id and o.del_flag = 0
                        left join sso_user_role ur on u.id = ur.user_id
+                       left join sso_role r on r.id = ur.role_id and r.del_flag = 0
               union
               select u.*, o.org_name, ou.org_id, sor.role_id
               from sso_user u
-                       left join sso_org_user ou on ou.user_id = u.id
-                       left join sso_org o on o.id = ou.org_id
-                       left join sso_org_role sor on sor.org_id = o.id) u
+                       join sso_org_user ou on ou.user_id = u.id
+                       join sso_org o on o.id = ou.org_id and o.del_flag = 0
+                       join sso_org_role sor on sor.org_id = o.id
+                       join sso_role r on r.id = sor.role_id and r.del_flag = 0) u
     </sql>
     <select id="getUserById" resultMap="ssoUserMap">
         <include refid="selectUser"/>
@@ -133,7 +142,10 @@
         <where>
             u.del_flag = 0
             <if test="orgId != null and orgId != ''">
-                and u.org_id = #{orgId}
+                and u.id in (select u.id from sso_user u
+                INNER JOIN sso_org_user ou ON ou.user_id = u.id
+                inner JOIN sso_org o ON o.id = ou.org_id and o.del_flag = 0 and o.id = #{orgId}
+                )
             </if>
             <if test="phone != null and phone != ''">
                 and u.phone like concat('%',#{phone},'%')

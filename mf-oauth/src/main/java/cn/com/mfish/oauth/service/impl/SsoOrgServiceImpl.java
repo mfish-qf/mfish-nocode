@@ -8,10 +8,10 @@ import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.mapper.SsoOrgMapper;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
-import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> implements SsoOrgService {
     @Resource
-    SsoRoleService ssoRoleService;
+    ClearCache clearCache;
 
     @Override
     @Transactional
@@ -90,7 +91,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
                 insertOrgRole(ssoOrg.getId(), ssoOrg.getRoleIds());
             }
             List<String> userIds = baseMapper.getOrgUserId(ssoOrg.getId());
-            ssoRoleService.removeUserCache(userIds, ssoOrg.getTenantId());
+            CompletableFuture.runAsync(() -> clearCache.removeUserAuthCache(userIds));
             return Result.ok(ssoOrg, "组织编辑成功!");
         }
         throw new MyRuntimeException("错误:更新组织失败");

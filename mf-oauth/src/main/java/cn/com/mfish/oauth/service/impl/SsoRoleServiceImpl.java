@@ -1,12 +1,9 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.redis.common.RedisPrefix;
-import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
-import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
+import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
 import cn.com.mfish.oauth.service.SsoRoleService;
@@ -17,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,9 +28,7 @@ import java.util.concurrent.CompletableFuture;
 public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> implements SsoRoleService {
 
     @Resource
-    UserRoleTempCache userRoleTempCache;
-    @Resource
-    UserPermissionTempCache userPermissionTempCache;
+    ClearCache clearCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -57,8 +51,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
             log.info(MessageFormat.format("删除角色菜单数量:{0}条",
                     baseMapper.deleteRoleMenus(ssoRole.getId())));
             if (insertRoleMenus(ssoRole)) {
-                String tenantId = AuthInfoUtils.getCurrentTenantId();
-                CompletableFuture.runAsync(() -> removeRoleCache(ssoRole.getId(), tenantId));
+                CompletableFuture.runAsync(() -> removeRoleCache(ssoRole.getId()));
                 return Result.ok(ssoRole, "角色信息-修改成功");
             }
             throw new MyRuntimeException("错误:更新角色菜单失败");
@@ -92,8 +85,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
             return Result.fail(false, "错误:删除失败-组织ID不允许为空!");
         }
         if (baseMapper.updateById(new SsoRole().setDelFlag(1).setId(id)) == 1) {
-            String tenantId = AuthInfoUtils.getCurrentTenantId();
-            CompletableFuture.runAsync(() -> removeRoleCache(id, tenantId));
+            CompletableFuture.runAsync(() -> removeRoleCache(id));
             log.info(MessageFormat.format("删除角色成功,角色ID:{0}", id));
             return Result.ok(true, "角色信息-删除成功!");
         }
@@ -106,25 +98,10 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
      *
      * @param roleId
      */
-    private void removeRoleCache(String roleId, String tenantId) {
+    private void removeRoleCache(String roleId) {
         //查询角色对应的用户并删除角色权限缓存
         List<String> list = baseMapper.getRoleUser(roleId);
-        removeUserCache(list, tenantId);
-    }
-
-    @Override
-    public void removeUserCache(List<String> userIds, String tenantId) {
-        if (userIds == null || userIds.isEmpty()) {
-            return;
-        }
-        List<String> roleKeys = new ArrayList<>();
-        List<String> permissionKeys = new ArrayList<>();
-        for (String userId : userIds) {
-            roleKeys.add(RedisPrefix.buildUser2RolesKey(userId, tenantId));
-            permissionKeys.add(RedisPrefix.buildUser2PermissionsKey(userId, tenantId));
-        }
-        userRoleTempCache.removeMoreCache(roleKeys);
-        userPermissionTempCache.removeMoreCache(permissionKeys);
+        clearCache.removeUserAuthCache(list);
     }
 
     /**

@@ -63,6 +63,7 @@ public class SsoRoleController {
     @GetMapping("/all")
     @RequiresPermissions(value = {"sys:role:query", "sys:account:query"}, logical = Logical.OR)
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
+        reqSsoRole.setTenantId(null);
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }
 

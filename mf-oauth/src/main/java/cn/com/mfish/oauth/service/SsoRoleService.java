@@ -23,7 +23,5 @@ public interface SsoRoleService extends IService<SsoRole> {
 
     List<String> getRoleMenus(String roleId);
 
-    void removeUserCache(List<String> userIds, String tenantId);
-
     boolean isTenantRole(String roleId, String tenantId);
 }

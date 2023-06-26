@@ -7,16 +7,14 @@ import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.oauth.cache.temp.Account2IdTempCache;
-import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
-import cn.com.mfish.oauth.cache.temp.UserRoleTempCache;
-import cn.com.mfish.oauth.cache.temp.UserTempCache;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.oauth.cache.common.ClearCache;
+import cn.com.mfish.oauth.cache.temp.*;
 import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.SsoUserService;
-import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -54,6 +52,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     UserPermissionTempCache userPermissionTempCache;
     @Resource
     HashedCredentialsMatcher hashedCredentialsMatcher;
+    @Resource
+    UserTenantTempCache userTenantTempCache;
+    @Resource
+    ClearCache clearCache;
 
     /**
      * 修改用户密码
@@ -174,8 +176,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         int res = baseMapper.insert(user);
         if (res > 0) {
-            //TODO 暂时前台只支持一个用户挂在一个组织下
-            insertUserOrg(user.getId(), user.getOrgId());
+            insertUserOrg(user.getId(), user.getOrgId().toArray(new String[user.getOrgId().size()]));
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());
             return Result.ok(user, "用户信息-新增成功");
@@ -196,15 +197,14 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             user.setAccount(account);
             if (null != user.getOrgId()) {
                 baseMapper.deleteUserOrg(user.getId(), null);
-                insertUserOrg(user.getId(), user.getOrgId());
+                insertUserOrg(user.getId(), user.getOrgId().toArray(new String[user.getOrgId().size()]));
             }
             if (null != user.getRoleIds()) {
                 baseMapper.deleteUserRole(user.getId());
                 insertUserRole(user.getId(), user.getRoleIds());
             }
-            String tenantId = AuthInfoUtils.getCurrentTenantId();
             //移除缓存下次登录时会自动拉取
-            CompletableFuture.runAsync(() -> removeUserCache(user.getId(), tenantId));
+            CompletableFuture.runAsync(() -> clearCache.removeUserCache(user.getId()));
             return Result.ok(user, "用户信息-更新成功");
         }
         throw new MyRuntimeException("错误:未找到用户信息更新数据");
@@ -248,8 +248,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         SsoUser ssoUser = new SsoUser();
         ssoUser.setDelFlag(1).setId(id);
         if (baseMapper.updateById(ssoUser) == 1) {
-            String tenantId = AuthInfoUtils.getCurrentTenantId();
-            CompletableFuture.runAsync(() -> removeUserCache(id, tenantId));
+            CompletableFuture.runAsync(() -> clearCache.removeUserCache(id));
             log.info(MessageFormat.format("删除用户成功,用户ID:{0}", id));
             return true;
         }
@@ -257,16 +256,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         return false;
     }
 
-    /**
-     * 移除用户相关缓存
-     *
-     * @param userId
-     */
-    private void removeUserCache(String userId, String tenantId) {
-        userTempCache.removeOneCache(userId);
-        userRoleTempCache.removeOneCache(userId, tenantId);
-        userPermissionTempCache.removeOneCache(userId, tenantId);
-    }
+
 
     @Override
     public SsoUser getUserByAccount(String account) {
@@ -303,7 +293,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     public List<TenantVo> getUserTenants(String userId) {
-        return baseMapper.getUserTenants(userId);
+        return userTenantTempCache.getFromCacheAndDB(userId);
     }
 
     @Override

@@ -5,8 +5,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.redis.common.RedisPrefix;
-import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
+import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.mapper.SsoMenuMapper;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> implements SsoMenuService {
 
     @Resource
-    UserPermissionTempCache userPermissionTempCache;
+    ClearCache clearCache;
 
     @Override
     public Result<SsoMenu> insertMenu(SsoMenu ssoMenu) {
@@ -155,9 +154,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             return;
         }
         List<String> list = baseMapper.queryMenuUser(ssoMenu.getId());
-        //todo 待修改
-//        userPermissionTempCache.removeMoreCache(list.stream()
-//                .map(item -> RedisPrefix.buildUser2PermissionsKey(item, ssoMenu.getTenantId())).collect(Collectors.toList()));
+        CompletableFuture.runAsync(()->clearCache.removeUserAuthCache(list));
     }
 
 }

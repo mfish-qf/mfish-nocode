@@ -7,22 +7,26 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.oauth.cache.common.ClearCache;
+import cn.com.mfish.oauth.cache.temp.UserTenantTempCache;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoTenantService;
 import cn.com.mfish.oauth.service.SsoUserService;
-import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @description: 租户信息表
@@ -36,6 +40,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     SsoOrgService ssoOrgService;
     @Resource
     SsoUserService ssoUserService;
+    @Resource
+    UserTenantTempCache userTenantTempCache;
+    @Resource
+    ClearCache clearCache;
 
     @Override
     public List<TenantVo> queryList(ReqSsoTenant reqSsoTenant, ReqPage reqPage) {
@@ -122,12 +130,18 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:组织信息-更新失败");
         }
+
+        //移除租户相关用户的租户信息
+        List<String> userIds = baseMapper.getTenantUser(ssoTenant.getId());
+        userTenantTempCache.removeMoreCache(userIds.stream().map(RedisPrefix::buildUser2TenantsKey).collect(Collectors.toList()));
+
         //如果用户变更删除之前用户组织关系
         if (!userChange) {
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }
         ssoUserService.deleteUserOrg(oldTenant.getUserId(), org.getId());
         if (ssoUserService.insertUserOrg(ssoTenant.getUserId(), org.getId()) > 0) {
+            clearCache.removeUserAuthCache(Collections.singletonList(oldTenant.getUserId()));
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }
         throw new MyRuntimeException("错误:删除用户组织关系失败");

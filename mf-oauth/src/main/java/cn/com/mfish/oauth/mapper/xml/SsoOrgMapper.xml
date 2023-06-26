@@ -50,7 +50,7 @@
     </select>
     <resultMap id="orgMap" type="cn.com.mfish.common.oauth.api.entity.SsoOrg">
         <result property="roleIds" column="roleIds"
-                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <sql id="selectOrg">
         <if test="reqSsoOrg.tenantId==null or reqSsoOrg.tenantId == ''">
@@ -62,7 +62,7 @@
         </if>
     </sql>
     <select id="queryOrg" resultMap="orgMap">
-        select o.*, GROUP_CONCAT(sor.role_id) roleIds from (
+        select o.*, GROUP_CONCAT(DISTINCT sor.role_id) roleIds from (
         <include refid="selectOrg" />
         <where>
             del_flag = 0
@@ -83,7 +83,7 @@
         ) o
         left join sso_org_role sor on o.id = sor.org_id
         group by o.id
-        order by org_sort
+        order by o.org_sort
     </select>
     <select id="orgFixCodeExist" resultType="int">
         select count(0) from sso_org

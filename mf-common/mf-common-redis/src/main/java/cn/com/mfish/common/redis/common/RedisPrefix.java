@@ -2,6 +2,7 @@ package cn.com.mfish.common.redis.common;
 
 
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.utils.StringUtils;
 
 /**
  * @author: mfish
@@ -44,6 +45,8 @@ public class RedisPrefix {
     public static final String USER2ROLES = "user2roles:";
     //用户权限
     public static final String USER2PERMISSIONS = "user2permissions:";
+    //用户租户
+    public static final String USER2TENANTS = "user2tenants:";
     //字典编码获取字典项
     public static final String CODE2DICT_ITEM = "code2dict_item:";
 
@@ -213,26 +216,42 @@ public class RedisPrefix {
      * 构建用户角色key
      *
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
-    public static String buildUser2RolesKey(String userId, String clientId) {
-        return USER2ROLES + userId + clientId;
+    public static String buildUser2RolesKey(String userId, String tenantId) {
+        if(StringUtils.isEmpty(tenantId)){
+            tenantId = "";
+        }
+        return USER2ROLES + userId + tenantId;
     }
 
     /**
      * 构建用户权限key
      *
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
-    public static String buildUser2PermissionsKey(String userId, String clientId) {
-        return USER2PERMISSIONS + userId + clientId;
+    public static String buildUser2PermissionsKey(String userId, String tenantId) {
+        if(StringUtils.isEmpty(tenantId)){
+            tenantId = "";
+        }
+        return USER2PERMISSIONS + userId + tenantId;
+    }
+
+    /**
+     * 构建用户租户Key
+     * @param userId
+     * @return
+     */
+    public static String buildUser2TenantsKey(String userId) {
+        return USER2TENANTS + userId;
     }
 
     /**
      * 构建字典项Key
+     *
      * @param dictCode
      * @return
      */

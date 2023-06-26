@@ -47,7 +47,7 @@
         <commons-collections.version>3.2.2</commons-collections.version>
         <oauth2.version>1.0.2</oauth2.version>
         <shiro.version>1.11.0</shiro.version>
-        <wechat.version>4.4.6.B</wechat.version>
+        <wechat.version>4.4.8.B</wechat.version>
         <aliyun-oss.version>3.16.3</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
