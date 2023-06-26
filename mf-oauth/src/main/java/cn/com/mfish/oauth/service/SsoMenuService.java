@@ -16,6 +16,8 @@ import java.util.List;
 public interface SsoMenuService extends IService<SsoMenu> {
     Result<SsoMenu> insertMenu(SsoMenu ssoMenu);
 
+    Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu, String userId);
+
     List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId);
 
     Result<SsoMenu> updateMenu(SsoMenu ssoMenu);

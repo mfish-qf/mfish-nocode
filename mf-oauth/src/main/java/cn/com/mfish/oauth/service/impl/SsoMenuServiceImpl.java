@@ -3,7 +3,9 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
@@ -46,12 +48,20 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     @Override
+    public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu, String userId) {
+        List<SsoMenu> list = queryMenu(reqSsoMenu, userId);
+        List<SsoMenu> menuTrees = new ArrayList<>();
+        TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
+        return Result.ok(menuTrees, "菜单表-查询成功!");
+    }
+
+    @Override
     public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
         List<String> roleIds = new ArrayList<>();
         //如果是超户获取所有菜单
         if (!StringUtils.isEmpty(userId) && !AuthInfoUtils.isSuper(userId)) {
-            roleIds = OauthUtils.getRoles().stream().map((role)->role.getId()).collect(Collectors.toList());
-            if(roleIds == null || roleIds.isEmpty()){
+            roleIds = OauthUtils.getRoles().stream().map(UserRole::getId).collect(Collectors.toList());
+            if (roleIds.isEmpty()) {
                 return new ArrayList<>();
             }
         }
@@ -94,7 +104,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             }
             list.set(0, ssoMenu);
             //父节点发生变化，重新生成序列
-            baseMapper.deleteBatchIds(list.stream().map((menu) -> menu.getId()).collect(Collectors.toList()));
+            baseMapper.deleteBatchIds(list.stream().map(SsoMenu::getId).collect(Collectors.toList()));
             for (SsoMenu menu : list) {
                 if (baseMapper.insertMenu(menu) <= 0) {
                     throw new MyRuntimeException("错误:更新菜单失败");
@@ -154,7 +164,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             return;
         }
         List<String> list = baseMapper.queryMenuUser(ssoMenu.getId());
-        CompletableFuture.runAsync(()->clearCache.removeUserAuthCache(list));
+        CompletableFuture.runAsync(() -> clearCache.removeUserAuthCache(list));
     }
 
 }

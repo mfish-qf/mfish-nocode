@@ -20,6 +20,7 @@ import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class OauthUtils {
         RemoteUserService remoteUserService = getUserService();
         Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
         if (result == null || !result.isSuccess()) {
-            return null;
+            return new ArrayList<>();
         }
         return result.getData();
     }

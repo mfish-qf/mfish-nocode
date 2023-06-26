@@ -13,19 +13,20 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
-import cn.com.mfish.common.oauth.common.Logical;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
+import cn.com.mfish.oauth.service.SsoMenuService;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.service.SsoTenantService;
-import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -56,6 +57,8 @@ public class SsoTenantController {
     SsoOrgService ssoOrgService;
     @Resource
     SsoRoleService ssoRoleService;
+    @Resource
+    SsoMenuService ssoMenuService;
 
     /**
      * 分页列表查询
@@ -333,9 +336,25 @@ public class SsoTenantController {
 
     @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
     @GetMapping("/role/all")
-    public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
+    public Result<List<SsoRole>> queryRoleList(ReqSsoRole reqSsoRole) {
         reqSsoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
         return Result.ok(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole)), "角色信息表-查询成功!");
+    }
+
+    @ApiOperation("获取租户角色下的菜单ID")
+    @GetMapping("/role/menus/{roleId}")
+    public Result<List<String>> getRoleMenuIds(@ApiParam(name = "roleId", value = "角色ID") @PathVariable String roleId) {
+        Result<Boolean> result = verifyRole(roleId);
+        if (result.isSuccess()) {
+            return Result.ok(ssoRoleService.getRoleMenus(roleId), "查询租户菜单成功");
+        }
+        return Result.fail(new ArrayList<>(), "错误:查询租户菜单ID失败");
+    }
+
+    @ApiOperation(value = "获取用户菜单树")
+    @GetMapping("/menu/tree")
+    public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
+        return ssoMenuService.queryMenuTree(reqSsoMenu, AuthInfoUtils.getCurrentUserId());
     }
 
     /**
