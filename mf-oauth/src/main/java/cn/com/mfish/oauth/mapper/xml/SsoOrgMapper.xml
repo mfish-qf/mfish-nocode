@@ -62,7 +62,7 @@
         </if>
     </sql>
     <select id="queryOrg" resultMap="orgMap">
-        select o.*, GROUP_CONCAT(DISTINCT sor.role_id) roleIds from (
+        select o.*, GROUP_CONCAT(DISTINCT r.id) roleIds from (
         <include refid="selectOrg" />
         <where>
             del_flag = 0
@@ -82,6 +82,7 @@
         </foreach>
         ) o
         left join sso_org_role sor on o.id = sor.org_id
+        left join sso_role r on sor.role_id = r.id and r.del_flag = 0
         group by o.id
         order by o.org_sort
     </select>

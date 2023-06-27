@@ -142,7 +142,11 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         int count = baseMapper.queryUserCount(id);
         if (count > 0) {
-            return Result.fail(false, "错误:组织下存在用户，请先移出用户");
+            return Result.fail(false, "错误:组织下存在用户，请先移除用户");
+        }
+        count = baseMapper.queryChildCount(id);
+        if (count > 0) {
+            return Result.fail(false, "错误:组织下存子组织，请先删除子组织");
         }
         if (baseMapper.updateById(new SsoOrg().setId(id).setDelFlag(1)) == 1) {
             log.info(MessageFormat.format("删除组织成功,组织ID:{0}", id));

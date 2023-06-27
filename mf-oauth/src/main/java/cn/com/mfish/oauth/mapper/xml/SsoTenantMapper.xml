@@ -22,4 +22,12 @@
                                  FROM sso_org o
                                  WHERE o.tenant_id = #{tenantId})
     </select>
+    <select id="getTenantByOrgId" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
+        SELECT t.*
+        FROM sso_tenant t
+                 INNER JOIN sso_org o ON t.id = o.tenant_id and o.del_flag = 0
+            AND o.org_code = (SELECT SUBSTR(org_code, 1, 5)
+                              FROM sso_org o
+                              WHERE o.id = #{orgId})
+    </select>
 </mapper>

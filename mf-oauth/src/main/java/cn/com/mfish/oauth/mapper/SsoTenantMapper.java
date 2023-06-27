@@ -29,4 +29,11 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     int isTenantMaster(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
     List<String> getTenantUser(String tenantId);
+
+    /**
+     * 根据组织ID获取租户
+     * @param orgId 组织ID
+     * @return
+     */
+    TenantVo getTenantByOrgId(String orgId);
 }

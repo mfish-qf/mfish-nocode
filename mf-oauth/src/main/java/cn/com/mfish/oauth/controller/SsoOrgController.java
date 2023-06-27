@@ -78,7 +78,7 @@ public class SsoOrgController {
     /**
      * 添加
      *
-     * @param ssoOrg
+     * @param ssoOrg 组织
      * @return
      */
     @Log(title = "组织结构表-添加", operateType = OperateType.INSERT)
@@ -92,7 +92,7 @@ public class SsoOrgController {
     /**
      * 编辑
      *
-     * @param ssoOrg
+     * @param ssoOrg 组织
      * @return
      */
     @Log(title = "组织结构表-编辑", operateType = OperateType.UPDATE)

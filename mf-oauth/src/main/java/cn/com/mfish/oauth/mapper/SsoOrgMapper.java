@@ -30,8 +30,11 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
     @Delete("delete from sso_org_role where org_id = #{orgId}")
     int deleteOrgRole(String orgId);
 
-    @Select("select count(0) from sso_org_user where org_id = #{orgId}")
+    @Select("select count(0) from sso_org_user ou inner join sso_user u on ou.user_id = u.id and u.del_flag = 0 where org_id = #{orgId}")
     int queryUserCount(String orgId);
+
+    @Select("select count(0) from sso_org o where o.parent_id= #{orgId} and o.del_flag =0")
+    int queryChildCount(String orgId);
     @Select("select user_id from sso_org_user where org_id = #{orgId}")
     List<String> getOrgUserId(String orgId);
 

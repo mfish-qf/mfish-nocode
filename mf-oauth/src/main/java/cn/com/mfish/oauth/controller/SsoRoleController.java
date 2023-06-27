@@ -2,13 +2,16 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.Logical;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +39,8 @@ import java.util.List;
 public class SsoRoleController {
     @Resource
     private SsoRoleService ssoRoleService;
-
+    @Resource
+    SsoTenantMapper ssoTenantMapper;
     /**
      * 分页列表查询
      *
@@ -63,8 +68,15 @@ public class SsoRoleController {
     @GetMapping("/all")
     @RequiresPermissions(value = {"sys:role:query", "sys:account:query"}, logical = Logical.OR)
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
-        reqSsoRole.setTenantId(null);
-        return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
+        //组织参数不为空，获取组织所属租户的角色
+        if (!StringUtils.isEmpty(reqSsoRole.getOrgId())) {
+            TenantVo tenantVo = ssoTenantMapper.getTenantByOrgId(reqSsoRole.getOrgId());
+            if(tenantVo == null){
+                return Result.ok(new ArrayList<>(),"角色信息-查询成功");
+            }
+            reqSsoRole.setTenantId(tenantVo.getId());
+        }
+        return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息-查询成功!");
     }
 
     public static LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {

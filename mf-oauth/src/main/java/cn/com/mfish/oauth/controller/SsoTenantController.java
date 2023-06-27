@@ -179,8 +179,8 @@ public class SsoTenantController {
             return Result.fail(tenantId, "错误:租户ID不允许为空");
         }
         List<TenantVo> list = OauthUtils.getTenants();
-        if (list == null || !list.stream().anyMatch((tenantVo -> tenantVo.getId().equals(tenantId)))) {
-            return Result.fail(tenantId, "错误:该用户属于次租户");
+        if (list == null || list.stream().noneMatch((tenantVo -> tenantVo.getId().equals(tenantId)))) {
+            return Result.fail(tenantId, "错误:该用户不属于此租户");
         }
         Object token = OauthUtils.getToken();
         if (token instanceof RedisAccessToken) {
