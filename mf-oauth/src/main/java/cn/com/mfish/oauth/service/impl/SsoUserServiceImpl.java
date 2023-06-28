@@ -196,11 +196,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (res > 0) {
             user.setAccount(account);
             if (null != user.getOrgId()) {
-                baseMapper.deleteUserOrg(user.getId(), null);
-                insertUserOrg(user.getId(), user.getOrgId().toArray(new String[user.getOrgId().size()]));
+                log.info(MessageFormat.format("删除用户组织数量:{0}条", baseMapper.deleteUserOrg(user.getId(), null)));
+                insertUserOrg(user.getId(), user.getOrgId().toArray(new String[0]));
             }
             if (null != user.getRoleIds()) {
-                baseMapper.deleteUserRole(user.getId());
+                log.info(MessageFormat.format("删除用户角色数量:{0}条", baseMapper.deleteUserRole(user.getId())));
                 insertUserRole(user.getId(), user.getRoleIds());
             }
             //移除缓存下次登录时会自动拉取
@@ -255,7 +255,6 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         log.error(MessageFormat.format("删除用户失败,用户ID:{0}", id));
         return false;
     }
-
 
 
     @Override

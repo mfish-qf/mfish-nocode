@@ -163,8 +163,11 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         if (2 != ssoMenu.getMenuType()) {
             return;
         }
-        List<String> list = baseMapper.queryMenuUser(ssoMenu.getId());
-        CompletableFuture.runAsync(() -> clearCache.removeUserAuthCache(list));
+        CompletableFuture.runAsync(() -> removeUserAuthCache(ssoMenu.getId()));
     }
 
+    private void removeUserAuthCache(String menuId) {
+        List<String> list = baseMapper.queryMenuUser(menuId);
+        clearCache.removeUserAuthCache(list);
+    }
 }

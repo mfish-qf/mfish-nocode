@@ -117,7 +117,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             org.setOrgName(ssoTenant.getName());
         }
         boolean userChange = false;
-        if (!StringUtils.isEmpty(ssoTenant.getUserId()) && !ssoTenant.getUserId().equals(oldTenant.getName())) {
+        if (!StringUtils.isEmpty(ssoTenant.getUserId()) && !ssoTenant.getUserId().equals(oldTenant.getUserId())) {
             setOrgLeader(org, ssoTenant.getUserId());
             userChange = true;
         }

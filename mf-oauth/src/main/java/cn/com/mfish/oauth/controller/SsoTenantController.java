@@ -13,20 +13,15 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.entity.SsoRole;
-import cn.com.mfish.oauth.req.ReqSsoMenu;
-import cn.com.mfish.oauth.req.ReqSsoOrg;
-import cn.com.mfish.oauth.req.ReqSsoRole;
-import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.oauth.service.SsoMenuService;
-import cn.com.mfish.oauth.service.SsoOrgService;
-import cn.com.mfish.oauth.service.SsoRoleService;
-import cn.com.mfish.oauth.service.SsoTenantService;
+import cn.com.mfish.oauth.req.*;
+import cn.com.mfish.oauth.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -59,7 +54,8 @@ public class SsoTenantController {
     SsoRoleService ssoRoleService;
     @Resource
     SsoMenuService ssoMenuService;
-
+    @Resource
+    SsoUserService ssoUserService;
     /**
      * 分页列表查询
      *
@@ -420,5 +416,14 @@ public class SsoTenantController {
             return Result.fail(false, "错误:不允许操作非自己租户下的角色");
         }
         return Result.ok();
+    }
+
+    @ApiOperation(value = "租户用户信息-分页列表查询", notes = "租户用户信息-分页列表查询")
+    @GetMapping("/user")
+    public Result<PageResult<UserInfo>> queryUserPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        reqSsoUser.setTenantId(AuthInfoUtils.getCurrentTenantId());
+        List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
+        return Result.ok(new PageResult<>(pageList), "租户人员信息-查询成功!");
     }
 }

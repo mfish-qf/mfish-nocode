@@ -77,7 +77,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             }
             list.set(0, ssoOrg);
             //父节点发生变化，重新生成序列
-            baseMapper.deleteBatchIds(list.stream().map((org) -> org.getId()).collect(Collectors.toList()));
+            baseMapper.deleteBatchIds(list.stream().map(SsoOrg::getId).collect(Collectors.toList()));
             for (SsoOrg org : list) {
                 if (baseMapper.insertOrg(org) <= 0) {
                     throw new MyRuntimeException("错误:更新组织失败");
@@ -86,24 +86,27 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             success = true;
         }
         if (success) {
-            log.info(MessageFormat.format("删除组织角色数量:{0}条", baseMapper.deleteOrgRole(ssoOrg.getId())));
-            if (null != ssoOrg.getRoleIds() && !ssoOrg.getRoleIds().isEmpty()) {
+            if (ssoOrg.getRoleIds() != null) {
+                log.info(MessageFormat.format("删除组织角色数量:{0}条", baseMapper.deleteOrgRole(ssoOrg.getId())));
                 insertOrgRole(ssoOrg.getId(), ssoOrg.getRoleIds());
             }
-            List<String> userIds = baseMapper.getOrgUserId(ssoOrg.getId());
-            CompletableFuture.runAsync(() -> clearCache.removeUserAuthCache(userIds));
+            CompletableFuture.runAsync(() -> removeUserAuthCache(ssoOrg.getId()));
             return Result.ok(ssoOrg, "组织编辑成功!");
         }
         throw new MyRuntimeException("错误:更新组织失败");
+    }
+
+    private void removeUserAuthCache(String orgId) {
+        List<String> userIds = baseMapper.getOrgUserId(orgId);
+        clearCache.removeUserAuthCache(userIds);
     }
 
     /**
      * 校验组织参数
      *
      * @param ssoOrg 组织对象
-     * @return
      */
-    private Result<SsoOrg> verifyOrg(SsoOrg ssoOrg) {
+    private void verifyOrg(SsoOrg ssoOrg) {
         if (StringUtils.isEmpty(ssoOrg.getParentId())) {
             ssoOrg.setParentId("");
         }
@@ -120,7 +123,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         if (AuthInfoUtils.isContainSuperAdmin(ssoOrg.getRoleIds())) {
             throw new MyRuntimeException("错误:不允许设置为超户!");
         }
-        return Result.ok("组织校验成功");
+        Result.ok("组织校验成功");
     }
 
     @Override
