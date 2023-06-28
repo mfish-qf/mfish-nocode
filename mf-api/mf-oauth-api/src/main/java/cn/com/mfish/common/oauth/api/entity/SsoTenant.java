@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.entity;
+package cn.com.mfish.common.oauth.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
 import com.alibaba.excel.annotation.ExcelProperty;

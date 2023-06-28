@@ -4,7 +4,7 @@
     <insert id="insertMenu" parameterType="cn.com.mfish.oauth.entity.SsoMenu">
         insert into sso_menu
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            id, parent_id, client_id,menu_code, menu_level,
+            id, parent_id, menu_code, menu_level,
             <if test="menuName != null">menu_name,</if>
             <if test="menuIcon != null">menu_icon,</if>
             <if test="menuSort != null">menu_sort,</if>
@@ -21,7 +21,7 @@
         </trim>
         select
         <trim suffixOverrides=",">
-            #{id}, #{parentId}, #{clientId},
+            #{id}, #{parentId},
             CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( menu_code ) FROM sso_menu WHERE parent_id = #{parentId} ),
             0),(lvl-1)*5+1)+ 1, 5, 0 )),
             lvl,
@@ -43,7 +43,6 @@
         sso_menu on id = #{parentId}) t
     </insert>
     <sql id="reqCondition">
-        <if test="reqSsoMenu.clientId!=null">and m.client_id = #{reqSsoMenu.clientId}</if>
         <if test="reqSsoMenu.menuName != null">and m.menu_name like concat('%',#{reqSsoMenu.menuName},'%')</if>
         <if test="reqSsoMenu.isVisible!=null">and m.is_visible = #{reqSsoMenu.isVisible}</if>
         <if test="reqSsoMenu.permission != null">and m.permissions like concat('%',#{reqSsoMenu.permission},'%')</if>

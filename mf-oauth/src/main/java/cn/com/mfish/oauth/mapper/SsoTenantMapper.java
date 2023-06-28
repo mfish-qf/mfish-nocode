@@ -1,10 +1,11 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.entity.SsoTenant;
+import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.oauth.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -16,4 +17,23 @@ import java.util.List;
  */
 public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     List<TenantVo> queryList(@Param("reqSsoTenant") ReqSsoTenant reqSsoTenant);
+
+    /**
+     * 是否租户管理员
+     *
+     * @param userId
+     * @param tenantId
+     * @return
+     */
+    @Select("select count(0) from sso_tenant where user_id = #{userId} and id = #{tenantId}")
+    int isTenantMaster(@Param("userId") String userId, @Param("tenantId") String tenantId);
+
+    List<String> getTenantUser(String tenantId);
+
+    /**
+     * 根据组织ID获取租户
+     * @param orgId 组织ID
+     * @return
+     */
+    TenantVo getTenantByOrgId(String orgId);
 }

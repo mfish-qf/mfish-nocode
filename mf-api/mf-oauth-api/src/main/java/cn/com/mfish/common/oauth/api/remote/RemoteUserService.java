@@ -7,6 +7,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.fallback.RemoteUserFallback;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,20 +42,29 @@ public interface RemoteUserService {
      *
      * @param origin
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
     @GetMapping("/user/roles")
-    Result<List<UserRole>> getRoles(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("clientId") String clientId);
+    Result<List<UserRole>> getRoles(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("tenantId") String tenantId);
 
     /**
      * 获取用户权限
      *
      * @param origin
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
     @GetMapping("/user/permissions")
-    Result<Set<String>> getPermissions(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("clientId") String clientId);
+    Result<Set<String>> getPermissions(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("tenantId") String tenantId);
+
+    /**
+     * 获取当前租户列表
+     * @param origin
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user/tenants")
+    Result<List<TenantVo>> getTenants(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId);
 }

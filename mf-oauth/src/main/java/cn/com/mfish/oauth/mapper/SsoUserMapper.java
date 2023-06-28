@@ -4,6 +4,7 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -39,16 +40,19 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param userId
      * @return
      */
-    List<UserRole> getUserRoles(@Param("userId") String userId, @Param("clientId") String clientId);
+    List<UserRole> getUserRoles(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
     /**
      * 通过用户ID获取按钮权限
      *
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
-    String getUserPermissions(@Param("userId") String userId, @Param("clientId") String clientId);
+    String getUserPermissions(@Param("userId") String userId, @Param("tenantId") String tenantId);
+
+
+    List<TenantVo> getUserTenants(String userId);
 
     /**
      * 根据微信openId获取用户id
@@ -58,16 +62,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      */
     @Select("select id from sso_user where openid=#{openId}")
     String getUserIdByOpenId(String openid);
-
-    /**
-     * 判断帐号是否存在该客户端权限
-     *
-     * @param userId
-     * @param clientId
-     * @return
-     */
-    @Select("select count(0) from sso_client_user where client_id=#{clientId} and user_id=#{userId}")
-    Integer isUserClientExist(@Param("userId") String userId, @Param("clientId") String clientId);
 
     /**
      * 判断帐号是否存在（帐号可以是邮箱、用户名、手机号）
@@ -87,8 +81,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     int insertUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
-    @Delete("delete from sso_org_user where user_id = #{userId}")
-    int deleteUserOrg(String userId);
+    int deleteUserOrg(@Param("userId") String userId, @Param("orgId") String orgId);
 
-    int insertUserClient(@Param("userId") String userId, @Param("clientList") List<String> clientList);
 }

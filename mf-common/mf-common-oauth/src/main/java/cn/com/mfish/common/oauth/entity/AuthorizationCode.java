@@ -31,4 +31,6 @@ public class AuthorizationCode implements Serializable {
     private String redirectUri;
     @ApiModelProperty("父token，当code为其他账号帮忙获取时记录其token")
     private String parentToken;
+    @ApiModelProperty("租户ID")
+    private String tenantId;
 }

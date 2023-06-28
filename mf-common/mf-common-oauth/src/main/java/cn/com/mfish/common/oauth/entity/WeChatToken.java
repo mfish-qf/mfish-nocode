@@ -26,4 +26,6 @@ public class WeChatToken extends AccessToken {
     private Long reTokenExpire;
     @ApiModelProperty("ip地址")
     private String ip;
+    @ApiModelProperty("租户ID")
+    private String tenantId;
 }

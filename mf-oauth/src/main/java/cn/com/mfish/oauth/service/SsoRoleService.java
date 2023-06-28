@@ -17,11 +17,11 @@ public interface SsoRoleService extends IService<SsoRole> {
 
     Result<SsoRole> updateRole(SsoRole ssoRole);
 
-    boolean deleteRole(String id);
+    Result<Boolean> deleteRole(String id);
 
-    boolean roleCodeExist(String clientId, String roleId, String roleCode);
+    boolean roleCodeExist(String roleId, String roleCode);
 
     List<String> getRoleMenus(String roleId);
 
-    void removeUserCache(List<String> userIds, String clientId);
+    boolean isTenantRole(String roleId, String tenantId);
 }

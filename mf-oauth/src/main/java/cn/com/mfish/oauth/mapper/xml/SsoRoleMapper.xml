@@ -10,14 +10,14 @@
     <select id="roleCodeExist" resultType="int">
         select count(0) from sso_role
         <where>
-            client_id = #{clientId} and role_code = #{roleCode}
+            role_code = #{roleCode}
             <if test="roleId!=null and roleId!=''">
                 and id != #{roleId}
             </if>
         </where>
     </select>
     <resultMap id="roleMap" type="cn.com.mfish.oauth.entity.SsoRole">
-        <result property="menus" column="menus" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+        <result property="menus" column="menus" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <select id="getRoleUser" resultType="string">
         select ur.user_id
@@ -27,5 +27,8 @@
         select ou.user_id
         from sso_org_user ou
                  inner join sso_org_role sor on sor.role_id = #{roleId}
+    </select>
+    <select id="isTenantRole" resultType="java.lang.Integer">
+        select count(0) from sso_role where tenant_id = #{tenantId} and id = #{roleId}
     </select>
 </mapper>

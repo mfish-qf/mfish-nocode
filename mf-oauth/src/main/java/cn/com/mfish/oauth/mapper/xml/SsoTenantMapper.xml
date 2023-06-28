@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SsoTenantMapper">
-    <select id="queryList" resultType="cn.com.mfish.oauth.vo.TenantVo">
-        select t.*, u.account
+    <select id="queryList" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
+        select t.*, u.account,1 master
         from sso_tenant t
         left join sso_user u on t.user_id = u.id
         <where>
+            t.del_flag = 0
             <if test="reqSsoTenant.tenantType!=null">and t.tenant_type = #{reqSsoTenant.tenantType}</if>
             <if test="reqSsoTenant.domain!=null">and t.domain = #{reqSsoTenant.domain}</if>
             <if test="reqSsoTenant.name!=null">and t.name = #{reqSsoTenant.name}</if>
         </where>
         order by create_time desc
+    </select>
+    <select id="getTenantUser" resultType="java.lang.String">
+        SELECT u.id, u.account
+        FROM sso_user u
+                 INNER JOIN sso_org_user ou ON u.id = ou.user_id
+                 INNER JOIN sso_org o ON o.id = ou.org_id AND o.del_flag = 0
+            AND o.org_code LIKE (SELECT concat(org_code, '%')
+                                 FROM sso_org o
+                                 WHERE o.tenant_id = #{tenantId})
+    </select>
+    <select id="getTenantByOrgId" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
+        SELECT t.*
+        FROM sso_tenant t
+                 INNER JOIN sso_org o ON t.id = o.tenant_id and o.del_flag = 0
+            AND o.org_code = (SELECT SUBSTR(org_code, 1, 5)
+                              FROM sso_org o
+                              WHERE o.id = #{orgId})
     </select>
 </mapper>

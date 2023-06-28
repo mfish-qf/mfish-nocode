@@ -1,13 +1,17 @@
 package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.Logical;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -19,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +39,8 @@ import java.util.List;
 public class SsoRoleController {
     @Resource
     private SsoRoleService ssoRoleService;
-
+    @Resource
+    SsoTenantMapper ssoTenantMapper;
     /**
      * 分页列表查询
      *
@@ -47,6 +53,7 @@ public class SsoRoleController {
     @RequiresPermissions("sys:role:query")
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        reqSsoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
         return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
@@ -61,13 +68,21 @@ public class SsoRoleController {
     @GetMapping("/all")
     @RequiresPermissions(value = {"sys:role:query", "sys:account:query"}, logical = Logical.OR)
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
-        return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息表-查询成功!");
+        //组织参数不为空，获取组织所属租户的角色
+        if (!StringUtils.isEmpty(reqSsoRole.getOrgId())) {
+            TenantVo tenantVo = ssoTenantMapper.getTenantByOrgId(reqSsoRole.getOrgId());
+            if(tenantVo == null){
+                return Result.ok(new ArrayList<>(),"角色信息-查询成功");
+            }
+            reqSsoRole.setTenantId(tenantVo.getId());
+        }
+        return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息-查询成功!");
     }
 
-    private LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
+    public static LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
         return new LambdaQueryWrapper<SsoRole>()
                 .eq(SsoRole::getDelFlag, 0)
-                .eq(reqSsoRole.getClientId() != null, SsoRole::getClientId, reqSsoRole.getClientId())
+                .eq(reqSsoRole.getTenantId() != null, SsoRole::getTenantId, reqSsoRole.getTenantId())
                 .eq(reqSsoRole.getStatus() != null, SsoRole::getStatus, reqSsoRole.getStatus())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
@@ -85,6 +100,7 @@ public class SsoRoleController {
     @PostMapping
     @RequiresPermissions("sys:role:insert")
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
+        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
         return ssoRoleService.insertRole(ssoRole);
     }
 
@@ -99,6 +115,7 @@ public class SsoRoleController {
     @PutMapping
     @RequiresPermissions("sys:role:update")
     public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
+        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
         return ssoRoleService.updateRole(ssoRole);
     }
 
@@ -123,13 +140,10 @@ public class SsoRoleController {
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:role:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
-        if ("1".equals(id)) {
+        if (AuthInfoUtils.isSuperRole(id)) {
             return Result.fail(false, "错误:超户角色不允许删除!");
         }
-        if (ssoRoleService.deleteRole(id)) {
-            return Result.ok("角色信息表-删除成功!");
-        }
-        return Result.fail("错误:角色信息表-删除失败!");
+        return ssoRoleService.deleteRole(id);
     }
 
     /**

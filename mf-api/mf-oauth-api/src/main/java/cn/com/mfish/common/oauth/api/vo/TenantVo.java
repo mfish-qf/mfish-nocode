@@ -1,6 +1,6 @@
-package cn.com.mfish.oauth.vo;
+package cn.com.mfish.common.oauth.api.vo;
 
-import cn.com.mfish.oauth.entity.SsoTenant;
+import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,4 +15,6 @@ import lombok.Data;
 public class TenantVo extends SsoTenant {
     @ApiModelProperty("用户名")
     private String account;
+    @ApiModelProperty("是否管理员 1是 0否")
+    private Integer master;
 }

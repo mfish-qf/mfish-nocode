@@ -15,8 +15,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("角色信息表请求参数")
 public class ReqSsoRole {
-    @ApiModelProperty(value = "客户端ID")
-    private String clientId;
+    @ApiModelProperty(value = "租户ID")
+    private String tenantId;
+    @ApiModelProperty(value = "组织ID")
+    private String orgId;
     @ApiModelProperty(value = "角色名称")
     private String roleName;
     @ApiModelProperty(value = "角色编码")

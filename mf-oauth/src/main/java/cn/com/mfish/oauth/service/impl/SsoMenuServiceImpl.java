@@ -3,10 +3,11 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.redis.common.RedisPrefix;
-import cn.com.mfish.oauth.cache.temp.UserPermissionTempCache;
+import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.mapper.SsoMenuMapper;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> implements SsoMenuService {
 
     @Resource
-    UserPermissionTempCache userPermissionTempCache;
+    ClearCache clearCache;
 
     @Override
     public Result<SsoMenu> insertMenu(SsoMenu ssoMenu) {
@@ -47,12 +48,20 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     @Override
+    public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu, String userId) {
+        List<SsoMenu> list = queryMenu(reqSsoMenu, userId);
+        List<SsoMenu> menuTrees = new ArrayList<>();
+        TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
+        return Result.ok(menuTrees, "菜单表-查询成功!");
+    }
+
+    @Override
     public List<SsoMenu> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
         List<String> roleIds = new ArrayList<>();
         //如果是超户获取所有菜单
         if (!StringUtils.isEmpty(userId) && !AuthInfoUtils.isSuper(userId)) {
-            roleIds = OauthUtils.getRoles().stream().map((role)->role.getId()).collect(Collectors.toList());
-            if(roleIds == null || roleIds.isEmpty()){
+            roleIds = OauthUtils.getRoles().stream().map(UserRole::getId).collect(Collectors.toList());
+            if (roleIds.isEmpty()) {
                 return new ArrayList<>();
             }
         }
@@ -95,7 +104,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             }
             list.set(0, ssoMenu);
             //父节点发生变化，重新生成序列
-            baseMapper.deleteBatchIds(list.stream().map((menu) -> menu.getId()).collect(Collectors.toList()));
+            baseMapper.deleteBatchIds(list.stream().map(SsoMenu::getId).collect(Collectors.toList()));
             for (SsoMenu menu : list) {
                 if (baseMapper.insertMenu(menu) <= 0) {
                     throw new MyRuntimeException("错误:更新菜单失败");
@@ -111,9 +120,6 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     private Result<SsoMenu> verifyMenu(SsoMenu ssoMenu) {
-        if (StringUtils.isEmpty(ssoMenu.getClientId())) {
-            ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
-        }
         if (StringUtils.isEmpty(ssoMenu.getParentId())) {
             ssoMenu.setParentId("");
         }
@@ -140,9 +146,6 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         }
         SsoMenu ssoMenu = baseMapper.selectById(menuId);
         if (baseMapper.deleteById(menuId) > 0) {
-            if (StringUtils.isEmpty(ssoMenu.getClientId())) {
-                ssoMenu.setClientId(AuthInfoUtils.getCurrentClientId());
-            }
             CompletableFuture.runAsync(() -> removeMenuCache(ssoMenu));
             baseMapper.deleteMenuRoles(menuId);
             return Result.ok("菜单表-删除成功!");
@@ -160,9 +163,11 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
         if (2 != ssoMenu.getMenuType()) {
             return;
         }
-        List<String> list = baseMapper.queryMenuUser(ssoMenu.getId());
-        userPermissionTempCache.removeMoreCache(list.stream()
-                .map(item -> RedisPrefix.buildUser2PermissionsKey(item, ssoMenu.getClientId())).collect(Collectors.toList()));
+        CompletableFuture.runAsync(() -> removeUserAuthCache(ssoMenu.getId()));
     }
 
+    private void removeUserAuthCache(String menuId) {
+        List<String> list = baseMapper.queryMenuUser(menuId);
+        clearCache.removeUserAuthCache(list);
+    }
 }

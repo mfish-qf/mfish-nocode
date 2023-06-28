@@ -14,6 +14,7 @@ import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
+import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
@@ -22,6 +23,7 @@ import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +59,7 @@ public class SsoUserController {
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
     public Result<UserInfoVo> getUserInfo() {
-        return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId()));
+        return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
     }
 
     @ApiOperation("获取用户权限")
@@ -64,16 +67,14 @@ public class SsoUserController {
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "clientId", value = "客户端ID")
+            @ApiImplicitParam(name = "tenantId", value = "租户ID")
     })
-    public Result<Set<String>> getPermissions(String userId, String clientId) {
+    @InnerUser
+    public Result<Set<String>> getPermissions(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
             userId = AuthInfoUtils.getCurrentUserId();
         }
-        if (StringUtils.isEmpty(clientId)) {
-            clientId = AuthInfoUtils.getCurrentClientId();
-        }
-        return Result.ok(ssoUserService.getUserPermissions(userId, clientId));
+        return Result.ok(ssoUserService.getUserPermissions(userId, tenantId));
     }
 
     @ApiOperation("获取用户角色")
@@ -81,16 +82,27 @@ public class SsoUserController {
     @Log(title = "获取用户角色", operateType = OperateType.QUERY)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "clientId", value = "客户端ID")
+            @ApiImplicitParam(name = "tenantId", value = "租户ID")
     })
-    public Result<List<UserRole>> getRoles(String userId, String clientId) {
+    public Result<List<UserRole>> getRoles(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
             userId = AuthInfoUtils.getCurrentUserId();
         }
-        if (StringUtils.isEmpty(clientId)) {
-            clientId = AuthInfoUtils.getCurrentClientId();
+        return Result.ok(ssoUserService.getUserRoles(userId, tenantId));
+    }
+
+    /**
+     * 获取当前用户租户列表
+     *
+     * @return
+     */
+    @ApiOperation(value = "获取当前用户租户列表", notes = "获取当前用户租户列表")
+    @GetMapping("/tenants")
+    public Result<List<TenantVo>> getUserTenants(String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
         }
-        return Result.ok(ssoUserService.getUserRoles(userId, clientId));
+        return Result.ok(ssoUserService.getUserTenants(userId), "获取当前租户列表成功!");
     }
 
     @ApiOperation("获取用户组织")
@@ -105,7 +117,11 @@ public class SsoUserController {
             userId = AuthInfoUtils.getCurrentUserId();
         }
         SsoUser user = ssoUserService.getUserById(userId);
-        return Result.ok(ssoOrgService.queryOrgById(user.getOrgId(), TreeDirection.getDirection(direction)), "组织结构-查询成功!");
+        List<SsoOrg> list = new ArrayList<>();
+        for (String orgId : user.getOrgId()) {
+            list.addAll(ssoOrgService.queryOrgById(orgId, TreeDirection.getDirection(direction)));
+        }
+        return Result.ok(list, "组织结构-查询成功!");
     }
 
     @ApiOperation("通过用户ID获取用户")
@@ -192,6 +208,16 @@ public class SsoUserController {
     @PutMapping
     @RequiresPermissions("sys:account:update")
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
+        return ssoUserService.updateUser(ssoUser);
+    }
+
+    @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
+    @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
+    @PutMapping("/me")
+    public Result<SsoUser> editMe(@RequestBody SsoUser ssoUser) {
+        if (!ssoUser.getId().equals(AuthInfoUtils.getCurrentUserId())) {
+            return Result.fail(ssoUser, "错误:只允许修改自己的信息");
+        }
         return ssoUserService.updateUser(ssoUser);
     }
 

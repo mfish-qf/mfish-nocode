@@ -8,10 +8,10 @@ import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.mapper.SsoOrgMapper;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
-import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> implements SsoOrgService {
     @Resource
-    SsoRoleService ssoRoleService;
+    ClearCache clearCache;
 
     @Override
     @Transactional
@@ -76,7 +77,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             }
             list.set(0, ssoOrg);
             //父节点发生变化，重新生成序列
-            baseMapper.deleteBatchIds(list.stream().map((org) -> org.getId()).collect(Collectors.toList()));
+            baseMapper.deleteBatchIds(list.stream().map(SsoOrg::getId).collect(Collectors.toList()));
             for (SsoOrg org : list) {
                 if (baseMapper.insertOrg(org) <= 0) {
                     throw new MyRuntimeException("错误:更新组织失败");
@@ -85,38 +86,35 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             success = true;
         }
         if (success) {
-            log.info(MessageFormat.format("删除组织角色数量:{0}条", baseMapper.deleteOrgRole(ssoOrg.getId())));
-            if (null != ssoOrg.getRoleIds() && !ssoOrg.getRoleIds().isEmpty()) {
+            if (ssoOrg.getRoleIds() != null) {
+                log.info(MessageFormat.format("删除组织角色数量:{0}条", baseMapper.deleteOrgRole(ssoOrg.getId())));
                 insertOrgRole(ssoOrg.getId(), ssoOrg.getRoleIds());
             }
-            List<String> userIds = baseMapper.getOrgUserId(ssoOrg.getId());
-            ssoRoleService.removeUserCache(userIds, ssoOrg.getClientId());
+            CompletableFuture.runAsync(() -> removeUserAuthCache(ssoOrg.getId()));
             return Result.ok(ssoOrg, "组织编辑成功!");
         }
         throw new MyRuntimeException("错误:更新组织失败");
+    }
+
+    private void removeUserAuthCache(String orgId) {
+        List<String> userIds = baseMapper.getOrgUserId(orgId);
+        clearCache.removeUserAuthCache(userIds);
     }
 
     /**
      * 校验组织参数
      *
      * @param ssoOrg 组织对象
-     * @return
      */
-    private Result<SsoOrg> verifyOrg(SsoOrg ssoOrg) {
+    private void verifyOrg(SsoOrg ssoOrg) {
         if (StringUtils.isEmpty(ssoOrg.getParentId())) {
             ssoOrg.setParentId("");
         }
         if (!StringUtils.isEmpty(ssoOrg.getId()) && ssoOrg.getId().equals(ssoOrg.getParentId())) {
             throw new MyRuntimeException("错误:父节点不允许设置自己");
         }
-        if (StringUtils.isEmpty(ssoOrg.getClientId())) {
-            ssoOrg.setClientId(AuthInfoUtils.getCurrentClientId());
-        }
-        if (StringUtils.isEmpty(ssoOrg.getClientId())) {
-            throw new MyRuntimeException("错误:客户端ID不存在");
-        }
         if (!StringUtils.isEmpty(ssoOrg.getOrgFixCode()) &&
-                baseMapper.orgFixCodeExist(ssoOrg.getClientId(), ssoOrg.getId(), ssoOrg.getOrgFixCode()) > 0) {
+                baseMapper.orgFixCodeExist(ssoOrg.getId(), ssoOrg.getOrgFixCode()) > 0) {
             throw new MyRuntimeException("错误:组织固定编码已存在");
         }
         if (!StringUtils.isEmpty(ssoOrg.getPhone()) && !StringUtils.isPhone(ssoOrg.getPhone())) {
@@ -125,7 +123,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         if (AuthInfoUtils.isContainSuperAdmin(ssoOrg.getRoleIds())) {
             throw new MyRuntimeException("错误:不允许设置为超户!");
         }
-        return Result.ok("组织校验成功");
+        Result.ok("组织校验成功");
     }
 
     @Override
@@ -147,7 +145,11 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         int count = baseMapper.queryUserCount(id);
         if (count > 0) {
-            return Result.fail(false, "错误:组织下存在用户，请先移出用户");
+            return Result.fail(false, "错误:组织下存在用户，请先移除用户");
+        }
+        count = baseMapper.queryChildCount(id);
+        if (count > 0) {
+            return Result.fail(false, "错误:组织下存子组织，请先删除子组织");
         }
         if (baseMapper.updateById(new SsoOrg().setId(id).setDelFlag(1)) == 1) {
             log.info(MessageFormat.format("删除组织成功,组织ID:{0}", id));
@@ -178,6 +180,14 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     @Override
     public List<UserRole> getOrgRoles(String orgId) {
         return baseMapper.getOrgRoles(orgId);
+    }
+
+    @Override
+    public boolean isTenantOrg(String orgId, String tenantId) {
+        if (StringUtils.isEmpty(orgId)) {
+            throw new MyRuntimeException("错误:组织ID不允许为空");
+        }
+        return baseMapper.isTenantOrg(orgId, tenantId) > 0;
     }
 
     List<SsoOrg> queryOrg(SsoOrg org, TreeDirection direction) {

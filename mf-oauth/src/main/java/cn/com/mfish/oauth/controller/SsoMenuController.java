@@ -2,7 +2,6 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
-import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,26 +41,19 @@ public class SsoMenuController {
     @GetMapping
     @RequiresPermissions("sys:menu:query")
     public Result<List<SsoMenu>> queryList(ReqSsoMenu reqSsoMenu) {
-        return queryMenu(reqSsoMenu, null);
+        return ssoMenuService.queryMenuTree(reqSsoMenu, null);
     }
 
-    @ApiOperation(value = "获取菜单树")
+    @ApiOperation(value = "获取所有菜单树")
     @GetMapping("/tree")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
-        return queryMenu(reqSsoMenu, AuthInfoUtils.getCurrentUserId());
+        return ssoMenuService.queryMenuTree(reqSsoMenu, null);
     }
 
     @ApiOperation("获取角色树-左侧菜单")
     @GetMapping("/roleTree")
     public Result<List<SsoMenu>> queryRoleMenuTree() {
-        return queryMenu(new ReqSsoMenu().setClientId(AuthInfoUtils.getCurrentClientId()).setNoButton(true), AuthInfoUtils.getCurrentUserId());
-    }
-
-    private Result<List<SsoMenu>> queryMenu(ReqSsoMenu reqSsoMenu, String userId) {
-        List<SsoMenu> list = ssoMenuService.queryMenu(reqSsoMenu, userId);
-        List<SsoMenu> menuTrees = new ArrayList<>();
-        TreeUtils.buildTree("", list, menuTrees, SsoMenu.class);
-        return Result.ok(menuTrees, "菜单表-查询成功!");
+        return ssoMenuService.queryMenuTree(new ReqSsoMenu().setNoButton(true), AuthInfoUtils.getCurrentUserId());
     }
 
     /**

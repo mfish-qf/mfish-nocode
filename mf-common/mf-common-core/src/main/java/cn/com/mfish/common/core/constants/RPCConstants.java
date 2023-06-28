@@ -16,9 +16,9 @@ public class RPCConstants {
     public static final String INNER = "inner";
 
     /**
-     * 当前请求客户端ID
+     * 当前请求租户ID
      */
-    public static final String REQ_CLIENT_ID = "req-client-id";
+    public static final String REQ_TENANT_ID = "req-tenant-id";
 
     /**
      * 当前请求用户ID

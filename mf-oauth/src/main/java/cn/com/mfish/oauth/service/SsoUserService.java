@@ -5,6 +5,7 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoUser;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -16,8 +17,6 @@ import java.util.Set;
  */
 public interface SsoUserService extends IService<SsoUser> {
     Result<Boolean> changePassword(String userId, String oldPwd, String newPwd);
-
-    Result<SsoUser> insertUser(SsoUser user, String clientId);
 
     Result<SsoUser> insertUser(SsoUser user);
 
@@ -33,25 +32,18 @@ public interface SsoUserService extends IService<SsoUser> {
 
     List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
 
-    List<UserRole> getUserRoles(String userId, String clientId);
+    List<UserRole> getUserRoles(String userId, String tenantId);
 
     /**
      * 通过用户ID获取按钮权限
      *
      * @param userId
-     * @param clientId
+     * @param tenantId
      * @return
      */
-    Set<String> getUserPermissions(String userId, String clientId);
+    Set<String> getUserPermissions(String userId, String tenantId);
 
-    /**
-     * 判断客户端下是否存在该用户
-     *
-     * @param account
-     * @param clientId
-     * @return
-     */
-    boolean isUserClientExist(String account, String clientId);
+    List<TenantVo> getUserTenants(String userId);
 
     /**
      * 判断帐号是否存在
@@ -78,16 +70,8 @@ public interface SsoUserService extends IService<SsoUser> {
      * @param orgList
      * @return
      */
-    int insertUserOrg(String userId, String orgList);
+    int insertUserOrg(String userId, String... orgList);
 
-    /**
-     * 插入用户所属客户端
-     *
-     * @param userId
-     * @param clientId
-     * @return
-     */
-    int insertUserClient(String userId, String clientId);
-
+    int deleteUserOrg(String userId, String orgId);
 
 }

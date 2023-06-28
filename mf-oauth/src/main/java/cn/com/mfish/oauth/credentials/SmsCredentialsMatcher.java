@@ -21,7 +21,7 @@ public class SmsCredentialsMatcher extends AutoUserCredentialsMatcher {
         MyUsernamePasswordToken myToken = (MyUsernamePasswordToken) authenticationToken;
         boolean matches = super.doCredentialsMatch(authenticationToken, authenticationInfo);
         if (matches) {
-            insertNewUser(myToken.isNew(), myToken.getUserInfo(), myToken.getClientId());
+            insertNewUser(myToken.isNew(), myToken.getUserInfo());
         }
         boolean success = loginService.retryLimit(myToken.getUserInfo().getId(), matches);
         if (success) {

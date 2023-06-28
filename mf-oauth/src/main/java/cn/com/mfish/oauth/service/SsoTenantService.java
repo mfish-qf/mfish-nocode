@@ -1,9 +1,10 @@
 package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.common.core.web.ReqPage;
-import cn.com.mfish.oauth.entity.SsoTenant;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.oauth.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -16,4 +17,14 @@ import java.util.List;
  */
 public interface SsoTenantService extends IService<SsoTenant> {
     List<TenantVo> queryList(ReqSsoTenant reqSsoTenant, ReqPage reqPage);
+
+    Result<SsoTenant> insertTenant(SsoTenant ssoTenant);
+
+    Result<SsoTenant> updateTenant(SsoTenant ssoTenant);
+
+    Result<Boolean> deleteTenant(String id);
+
+    boolean isTenantMaster(String userId, String tenantId);
+
+
 }

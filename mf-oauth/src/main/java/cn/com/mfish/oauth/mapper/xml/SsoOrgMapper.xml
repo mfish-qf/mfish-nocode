@@ -4,7 +4,7 @@
     <insert id="insertOrg" parameterType="cn.com.mfish.common.oauth.api.entity.SsoOrg">
         insert into sso_org
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            id, parent_id, client_id,org_code, org_level,
+            id, parent_id, org_code, org_level,
             <if test="orgName != null">org_name,</if>
             <if test="orgFixCode != null">org_fix_code,</if>
             <if test="orgSort != null">org_sort,</if>
@@ -13,11 +13,12 @@
             <if test="email != null">email,</if>
             <if test="status != null">status,</if>
             <if test="remark != null">remark,</if>
+            <if test="tenantId != null">tenant_id,</if>
             create_by, create_time
         </trim>
         select
         <trim suffixOverrides=",">
-            #{id}, #{parentId},#{clientId},
+            #{id}, #{parentId},
             CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( org_code ) FROM sso_org WHERE parent_id = #{parentId} ),
             0),(lvl-1)*5+1)+ 1, 5, 0 )),
             lvl,
@@ -29,13 +30,13 @@
             <if test="email != null">#{email},</if>
             <if test="status != null">#{status},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="tenantId != null">#{tenantId},</if>
             #{createBy}, now()
         </trim>
         from (select IFNULL(org_code,'') pcode,IFNULL(org_level,0)+1 lvl from (SELECT '' FROM dual) d left join
         sso_org on id = #{parentId}) t
     </insert>
     <sql id="reqCondition">
-        <if test="reqSsoOrg.clientId!=null">and client_id = #{reqSsoOrg.clientId}</if>
         <if test="reqSsoOrg.orgName != null">and org_name like concat('%',#{reqSsoOrg.orgName},'%')</if>
         <if test="reqSsoOrg.leader != null">and leader like concat('%',#{reqSsoOrg.leader},'%')</if>
         <if test="reqSsoOrg.phone != null">and phone like concat('%',#{reqSsoOrg.phone},'%')</if>
@@ -49,16 +50,28 @@
     </select>
     <resultMap id="orgMap" type="cn.com.mfish.common.oauth.api.entity.SsoOrg">
         <result property="roleIds" column="roleIds"
-                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"></result>
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
+    <sql id="selectOrg">
+        <if test="reqSsoOrg.tenantId==null or reqSsoOrg.tenantId == ''">
+            SELECT * FROM sso_org
+        </if>
+        <if test="reqSsoOrg.tenantId!=null">
+            select * from (SELECT * FROM sso_org WHERE org_code LIKE (SELECT CONCAT(org_code,'%') FROM sso_org WHERE
+            tenant_id = #{reqSsoOrg.tenantId})) sso_org
+        </if>
+    </sql>
     <select id="queryOrg" resultMap="orgMap">
-        select o.*, GROUP_CONCAT(sor.role_id) roleIds from (SELECT * FROM sso_org
+        select o.*, GROUP_CONCAT(DISTINCT r.id) roleIds from (
+        <include refid="selectOrg" />
         <where>
             del_flag = 0
             <include refid="reqCondition"/>
         </where>
         <foreach collection="levels" item="value">
-            UNION SELECT * FROM sso_org WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
+            UNION
+            <include refid="selectOrg" />
+            WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
             FROM
             sso_org
             <where>
@@ -69,13 +82,14 @@
         </foreach>
         ) o
         left join sso_org_role sor on o.id = sor.org_id
+        left join sso_role r on sor.role_id = r.id and r.del_flag = 0
         group by o.id
-        order by org_sort
+        order by o.org_sort
     </select>
     <select id="orgFixCodeExist" resultType="int">
         select count(0) from sso_org
         <where>
-            client_id = #{clientId} and org_fix_code = #{orgFixCode}
+            org_fix_code = #{orgFixCode} and del_flag = 0
             <if test="orgId!=null and orgId!=''">
                 and id != #{orgId}
             </if>
@@ -94,5 +108,14 @@
         <where>
             r.status = 0 and r.del_flag = 0 and sor.org_id = #{orgId}
         </where>
+    </select>
+    <select id="isTenantOrg" resultType="java.lang.Integer">
+        select count(0)
+        from (SELECT *
+              FROM sso_org
+              WHERE org_code LIKE (SELECT CONCAT(org_code, '%')
+                                   FROM sso_org
+                                   WHERE tenant_id = #{tenantId})) sso_org
+        where id = #{orgId}
     </select>
 </mapper>

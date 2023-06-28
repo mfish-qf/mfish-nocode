@@ -31,7 +31,7 @@ public interface OAuth2Service {
 
     UserInfo getUserInfo(String userId);
 
-    UserInfoVo getUserInfoAndRoles(String userId, String clientId);
+    UserInfoVo getUserInfoAndRoles(String userId,String tenantId);
 
     /**
      * 获取在线用户

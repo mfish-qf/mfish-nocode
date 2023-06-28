@@ -11,6 +11,7 @@ import cn.com.mfish.common.oauth.annotation.RequiresRoles;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.service.TokenService;
@@ -19,6 +20,7 @@ import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -78,9 +80,9 @@ public class OauthUtils {
      */
     public static List<UserRole> getRoles() {
         RemoteUserService remoteUserService = getUserService();
-        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
         if (result == null || !result.isSuccess()) {
-            return null;
+            return new ArrayList<>();
         }
         return result.getData();
     }
@@ -111,7 +113,21 @@ public class OauthUtils {
      */
     public static Set<String> getPermission() {
         RemoteUserService remoteUserService = getUserService();
-        Result<Set<String>> result = remoteUserService.getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentClientId());
+        Result<Set<String>> result = remoteUserService.getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
+        if (result == null || !result.isSuccess()) {
+            return null;
+        }
+        return result.getData();
+    }
+
+    /**
+     * 获取租户列表
+     *
+     * @return
+     */
+    public static List<TenantVo> getTenants() {
+        RemoteUserService remoteUserService = getUserService();
+        Result<List<TenantVo>> result = remoteUserService.getTenants(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
         if (result == null || !result.isSuccess()) {
             return null;
         }
@@ -181,6 +197,25 @@ public class OauthUtils {
         }
         return SpringBeanFactory.getBean(WebTokenServiceImpl.class);
 
+    }
+
+    /**
+     * 设置token
+     * @param tokenId
+     * @param token
+     */
+    public static void setToken(String tokenId, Object token) {
+        getTokenService(tokenId).setToken(token);
+    }
+
+    /**
+     * 获取当前token对象
+     *
+     * @return
+     */
+    public static Object getToken() {
+        String token = AuthInfoUtils.getAccessToken();
+        return getToken(getTokenService(token), token);
     }
 
     /**

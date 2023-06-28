@@ -15,8 +15,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ApiModel("组织结构表请求参数")
 public class ReqSsoOrg {
-    @ApiModelProperty(value = "客户端ID")
-    private String clientId;
+    @ApiModelProperty(value = "租户ID")
+    private String tenantId;
     @ApiModelProperty(value = "组织名称")
     private String orgName;
     @ApiModelProperty(value = "负责人")
@@ -24,5 +24,5 @@ public class ReqSsoOrg {
     @ApiModelProperty(value = "联系电话")
     private String phone;
     @ApiModelProperty(value = "状态（0正常 1停用）")
-    private String status;
+    private Integer status;
 }
