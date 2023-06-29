@@ -120,18 +120,20 @@
     <sql id="selectUser">
         select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgId
         from (select u.*, o.org_name, ou.org_id, ur.role_id
-              from sso_user u
-                       left join sso_org_user ou on ou.user_id = u.id
-                       left join sso_org o on o.id = ou.org_id and o.del_flag = 0 and o.status = 0
-                       left join sso_user_role ur on u.id = ur.user_id
-                       left join sso_role r on r.id = ur.role_id and r.del_flag = 0 and r.status = 0
-              union
-              select u.*, o.org_name, ou.org_id, sor.role_id
-              from sso_user u
-                       join sso_org_user ou on ou.user_id = u.id
-                       join sso_org o on o.id = ou.org_id and o.del_flag = 0 and o.status = 0
-                       join sso_org_role sor on sor.org_id = o.id
-                       join sso_role r on r.id = sor.role_id and r.del_flag = 0 and r.status = 0) u
+        from sso_user u
+        join sso_org_user ou on ou.user_id = u.id
+        join sso_org o on o.id = ou.org_id
+        <include refid="orgFilter"/>
+        left join sso_user_role ur on u.id = ur.user_id
+        left join sso_role r on r.id = ur.role_id and r.del_flag = 0 and r.status = 0
+        union
+        select u.*, o.org_name, ou.org_id, sor.role_id
+        from sso_user u
+        join sso_org_user ou on ou.user_id = u.id
+        join sso_org o on o.id = ou.org_id
+        <include refid="orgFilter"/>
+        join sso_org_role sor on sor.org_id = o.id
+        join sso_role r on r.id = sor.role_id and r.del_flag = 0 and r.status = 0) u
     </sql>
     <select id="getUserById" resultMap="ssoUserMap">
         <include refid="selectUser"/>
