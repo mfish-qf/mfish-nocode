@@ -164,4 +164,9 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     public boolean isTenantMaster(String userId, String tenantId) {
         return baseMapper.isTenantMaster(userId, tenantId) > 0;
     }
+
+    @Override
+    public List<TenantVo> getTenantByRoleCode(String roleCode) {
+        return baseMapper.getTenantByRoleCode(roleCode);
+    }
 }

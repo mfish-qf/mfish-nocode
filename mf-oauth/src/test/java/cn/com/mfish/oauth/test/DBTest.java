@@ -26,7 +26,7 @@ public class DBTest {
 
     @Test
     public void getUser() {
-        SsoUser ssoUser = ssoUserMapper.getUserById("40062f1156ef42b9b3a341462c927fb6");
+        SsoUser ssoUser = ssoUserMapper.getUserById("40062f1156ef42b9b3a341462c927fb6",null);
         System.out.println(ssoUser);
     }
 }

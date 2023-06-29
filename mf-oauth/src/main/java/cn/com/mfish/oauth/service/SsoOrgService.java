@@ -6,7 +6,6 @@ import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

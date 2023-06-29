@@ -56,6 +56,7 @@ public class SsoTenantController {
     SsoMenuService ssoMenuService;
     @Resource
     SsoUserService ssoUserService;
+
     /**
      * 分页列表查询
      *
@@ -145,6 +146,12 @@ public class SsoTenantController {
     public Result<SsoTenant> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SsoTenant ssoTenant = ssoTenantService.getById(id);
         return Result.ok(ssoTenant, "租户信息表-查询成功!");
+    }
+
+    @ApiOperation("获取租户列表-通过角色编码查询")
+    @GetMapping("/roleCode/{roleCode}")
+    public Result<List<TenantVo>> queryByRoleCode(@ApiParam(name = "roleCode", value = "角色编码") @PathVariable String roleCode) {
+        return Result.ok(ssoTenantService.getTenantByRoleCode(roleCode), "获取租户列表成功!");
     }
 
     /**

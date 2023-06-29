@@ -31,9 +31,16 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     List<String> getTenantUser(String tenantId);
 
     /**
-     * 根据组织ID获取租户
+     * 根据组织ID获取组织所属租户
      * @param orgId 组织ID
      * @return
      */
     TenantVo getTenantByOrgId(String orgId);
+
+    /**
+     * 通过角色编码获取拥有该角色的租户
+     * @param roleCode
+     * @return
+     */
+    List<TenantVo> getTenantByRoleCode(String roleCode);
 }

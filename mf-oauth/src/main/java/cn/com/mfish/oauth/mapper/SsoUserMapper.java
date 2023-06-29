@@ -32,7 +32,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param userId
      * @return
      */
-    SsoUser getUserById(@Param("userId") String userId);
+    SsoUser getUserById(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
     /**
      * 通过用户ID获取用户角色

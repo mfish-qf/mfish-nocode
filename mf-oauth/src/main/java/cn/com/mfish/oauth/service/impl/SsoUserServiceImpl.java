@@ -82,7 +82,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         user.setOldPassword(setOldPwd(user.getOldPassword(), user.getPassword()));
         user.setPassword(passwordHelper.encryptPassword(userId, newPwd, user.getSalt()));
-        if (user.getOldPassword().indexOf(user.getPassword()) >= 0) {
+        if (user.getOldPassword().contains(user.getPassword())) {
             return Result.fail(false, "错误:密码5次内不得循环使用");
         }
         if (baseMapper.updateById(user) == 1) {
@@ -176,7 +176,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         int res = baseMapper.insert(user);
         if (res > 0) {
-            insertUserOrg(user.getId(), user.getOrgId().toArray(new String[user.getOrgId().size()]));
+            insertUserOrg(user.getId(), user.getOrgId().toArray(new String[0]));
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());
             return Result.ok(user, "用户信息-新增成功");
@@ -213,10 +213,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     /**
      * 校验用户帐号 账号，手机，email均不允许重复
      *
-     * @param user
-     * @return
+     * @param user 用户
+     * @param operate 操作
      */
-    private boolean validateUser(SsoUser user, String operate) {
+    private void validateUser(SsoUser user, String operate) {
         if (isAccountExist(user.getAccount(), user.getId())) {
             throw new MyRuntimeException("错误:帐号已存在-" + operate + "失败!");
         }
@@ -240,7 +240,6 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (!StringUtils.isEmpty(user.getPhone()) && !StringUtils.isPhone(user.getPhone())) {
             throw new MyRuntimeException("错误:手机号不正确");
         }
-        return true;
     }
 
     @Override
