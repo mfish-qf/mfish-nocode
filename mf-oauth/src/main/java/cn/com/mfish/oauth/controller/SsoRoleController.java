@@ -3,13 +3,12 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
-import cn.com.mfish.common.oauth.common.Logical;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
@@ -66,7 +65,6 @@ public class SsoRoleController {
 
     @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
     @GetMapping("/all")
-    @RequiresPermissions(value = {"sys:role:query", "sys:account:query"}, logical = Logical.OR)
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
         //组织参数不为空，获取组织所属租户的角色
         if (!StringUtils.isEmpty(reqSsoRole.getOrgId())) {
