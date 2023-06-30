@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.oauth.mapper.SsoTenantMapper">
-    <select id="queryList" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
-        select t.*, u.account,1 master
+    <resultMap id="tenantMap" type="cn.com.mfish.common.oauth.api.vo.TenantVo">
+        <result property="roleIds" column="roleIds"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+    </resultMap>
+    <select id="queryList" resultMap="tenantMap">
+        select t.*, u.account,u.nickname,u.phone,1 master,GROUP_CONCAT(DISTINCT r.id) roleIds
         from sso_tenant t
         left join sso_user u on t.user_id = u.id
+        left join sso_org o on o.tenant_id = t.id and o.`status` = 0 and o.del_flag = 0
+        left join sso_org_role sor on sor.org_id = o.id
+        left join sso_role r on r.id = sor.role_id and r.`status` = 0 and r.del_flag = 0
         <where>
             t.del_flag = 0
             <if test="reqSsoTenant.tenantType!=null">and t.tenant_type = #{reqSsoTenant.tenantType}</if>
             <if test="reqSsoTenant.domain!=null">and t.domain = #{reqSsoTenant.domain}</if>
             <if test="reqSsoTenant.name!=null">and t.name = #{reqSsoTenant.name}</if>
         </where>
+        group by t.id
         order by create_time desc
     </select>
     <select id="getTenantUser" resultType="java.lang.String">
-        SELECT u.id, u.account
+        SELECT u.id
         FROM sso_user u
                  INNER JOIN sso_org_user ou ON u.id = ou.user_id
                  INNER JOIN sso_org o ON o.id = ou.org_id AND o.del_flag = 0
@@ -22,7 +30,7 @@
                                  FROM sso_org o
                                  WHERE o.tenant_id = #{tenantId})
     </select>
-    <select id="getTenantByOrgId" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
+    <select id="getTenantByOrgId" resultType="cn.com.mfish.common.oauth.api.entity.SsoTenant">
         SELECT t.*
         FROM sso_tenant t
                  INNER JOIN sso_org o ON t.id = o.tenant_id and o.del_flag = 0
@@ -31,7 +39,7 @@
                               WHERE o.id = #{orgId})
     </select>
     <select id="getTenantByRoleCode" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
-        select t.*, u.account, IF(u.id is null, 0, 1) master, o.org_name
+        select t.*, u.account,u.nickname,u.phone, IF(u.id is null, 0, 1) master, o.org_name
         from sso_tenant t
                  INNER JOIN sso_user u on u.id = t.user_id
                  inner join sso_org o on o.tenant_id = t.id and o.status = 0 and o.del_flag = 0

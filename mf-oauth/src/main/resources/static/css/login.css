@@ -2,6 +2,10 @@ html, body {
     height: 100%;
 }
 
+::-ms-reveal {
+    display: none;
+}
+
 .back-color {
     background: linear-gradient(to left, #00fff0, #0083fe);
     background: -webkit-linear-gradient(to left, #00fff0, #0083fe);

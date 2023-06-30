@@ -35,7 +35,7 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
      * @param orgId 组织ID
      * @return
      */
-    TenantVo getTenantByOrgId(String orgId);
+    SsoTenant getTenantByOrgId(String orgId);
 
     /**
      * 通过角色编码获取拥有该角色的租户

@@ -61,6 +61,11 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     }
 
     @Override
+    public int deleteOrgRole(String orgId) {
+        return baseMapper.deleteOrgRole(orgId);
+    }
+
+    @Override
     @Transactional
     public Result<SsoOrg> updateOrg(SsoOrg ssoOrg) {
         verifyOrg(ssoOrg);
