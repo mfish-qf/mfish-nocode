@@ -3,6 +3,7 @@ package cn.com.mfish.common.oauth.api.entity;
 import cn.com.mfish.common.core.entity.BaseEntity;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -10,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * @description: 租户信息表
@@ -68,4 +71,7 @@ public class SsoTenant extends BaseEntity<String> {
     @ExcelProperty("用户ID，关联用户为管理员")
     @ApiModelProperty(value = "用户ID，关联用户为管理员")
 	private String userId;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "角色Id")
+    private List<String> roleIds;
 }

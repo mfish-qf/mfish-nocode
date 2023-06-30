@@ -20,10 +20,12 @@ import cn.com.mfish.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
  * @version: V1.0.0
  */
 @Service
+@Slf4j
 public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant> implements SsoTenantService {
     @Resource
     SsoOrgService ssoOrgService;
@@ -65,13 +68,14 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
                 setOrgLeader(org, ssoTenant.getUserId());
             }
             Result<SsoOrg> result = ssoOrgService.insertOrg(org);
-            if (result.isSuccess()) {
-                if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), org.getId()) > 0) {
-                    return Result.ok(ssoTenant, "租户信息-添加成功!");
-                }
-                throw new MyRuntimeException("错误:用户组织绑定出错");
+            if (!result.isSuccess()) {
+                throw new MyRuntimeException(result.getMsg());
             }
-            throw new MyRuntimeException(result.getMsg());
+            if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), org.getId()) > 0) {
+                ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
+                return Result.ok(ssoTenant, "租户信息-添加成功!");
+            }
+            throw new MyRuntimeException("错误:用户组织绑定出错");
         }
         return Result.fail(ssoTenant, "租户信息-添加失败!");
     }
@@ -129,6 +133,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         Result<SsoOrg> result = ssoOrgService.updateOrg(org);
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:组织信息-更新失败");
+        }
+        if (ssoTenant.getRoleIds() != null) {
+            log.info(MessageFormat.format("删除组织角色数量:{0}条", ssoOrgService.deleteOrgRole(oldOrg.getId())));
+            ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
         }
 
         //移除租户相关用户的租户信息

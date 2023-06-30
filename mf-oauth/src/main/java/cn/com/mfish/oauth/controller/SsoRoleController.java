@@ -8,7 +8,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
@@ -68,11 +68,11 @@ public class SsoRoleController {
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
         //组织参数不为空，获取组织所属租户的角色
         if (!StringUtils.isEmpty(reqSsoRole.getOrgId())) {
-            TenantVo tenantVo = ssoTenantMapper.getTenantByOrgId(reqSsoRole.getOrgId());
-            if(tenantVo == null){
+            SsoTenant tenant = ssoTenantMapper.getTenantByOrgId(reqSsoRole.getOrgId());
+            if(tenant == null){
                 return Result.ok(new ArrayList<>(),"角色信息-查询成功");
             }
-            reqSsoRole.setTenantId(tenantVo.getId());
+            reqSsoRole.setTenantId(tenant.getId());
         }
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息-查询成功!");
     }

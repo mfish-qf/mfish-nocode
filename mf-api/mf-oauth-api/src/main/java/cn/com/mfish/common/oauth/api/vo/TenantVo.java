@@ -15,6 +15,10 @@ import lombok.Data;
 public class TenantVo extends SsoTenant {
     @ApiModelProperty("用户名")
     private String account;
+    @ApiModelProperty("昵称")
+    private String nickname;
+    @ApiModelProperty("手机号")
+    private String phone;
     @ApiModelProperty("是否管理员 1是 0否")
     private Integer master;
 }
