@@ -108,17 +108,17 @@
     <resultMap id="userMap" type="cn.com.mfish.common.oauth.api.entity.UserInfo">
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
-        <result property="orgId" column="orgId"
+        <result property="orgIds" column="orgIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <resultMap id="ssoUserMap" type="cn.com.mfish.oauth.entity.SsoUser">
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
-        <result property="orgId" column="orgId"
+        <result property="orgIds" column="orgIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <sql id="selectUser">
-        select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgId
+        select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
         from (select u.*, o.org_name, ou.org_id, ur.role_id
         from sso_user u
         join sso_org_user ou on ou.user_id = u.id

@@ -32,10 +32,10 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
 
     /**
      * 根据组织ID获取组织所属租户
-     * @param orgId 组织ID
+     * @param orgIds 组织ID
      * @return
      */
-    SsoTenant getTenantByOrgId(String orgId);
+    List<SsoTenant> getTenantByOrgId(@Param("orgIds") String... orgIds);
 
     /**
      * 通过角色编码获取拥有该角色的租户

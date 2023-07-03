@@ -106,7 +106,10 @@
         from sso_role r
         inner join sso_org_role sor on r.id = sor.role_id
         <where>
-            r.status = 0 and r.del_flag = 0 and sor.org_id = #{orgId}
+            r.status = 0 and r.del_flag = 0 and sor.org_id in
+        <foreach collection="orgIds" item="orgId" separator="," open="(" close=")">
+            #{orgId}
+        </foreach>
         </where>
     </select>
     <select id="isTenantOrg" resultType="java.lang.Integer">

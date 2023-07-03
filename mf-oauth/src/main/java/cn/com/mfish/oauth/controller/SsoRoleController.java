@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 角色信息表
@@ -40,6 +41,7 @@ public class SsoRoleController {
     private SsoRoleService ssoRoleService;
     @Resource
     SsoTenantMapper ssoTenantMapper;
+
     /**
      * 分页列表查询
      *
@@ -67,24 +69,32 @@ public class SsoRoleController {
     @GetMapping("/all")
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
         //组织参数不为空，获取组织所属租户的角色
-        if (!StringUtils.isEmpty(reqSsoRole.getOrgId())) {
-            SsoTenant tenant = ssoTenantMapper.getTenantByOrgId(reqSsoRole.getOrgId());
-            if(tenant == null){
-                return Result.ok(new ArrayList<>(),"角色信息-查询成功");
+        if (!StringUtils.isEmpty(reqSsoRole.getOrgIds())) {
+            List<SsoTenant> tenants = ssoTenantMapper.getTenantByOrgId(reqSsoRole.getOrgIds().split(","));
+            if (tenants == null || tenants.isEmpty()) {
+                return Result.ok(new ArrayList<>(), "角色信息-查询成功");
             }
-            reqSsoRole.setTenantId(tenant.getId());
+            reqSsoRole.setTenantId(tenants.stream().map(SsoTenant::getId).collect(Collectors.joining(",")));
         }
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息-查询成功!");
     }
 
     public static LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
-        return new LambdaQueryWrapper<SsoRole>()
+        LambdaQueryWrapper<SsoRole> wrapper = new LambdaQueryWrapper<SsoRole>()
                 .eq(SsoRole::getDelFlag, 0)
-                .eq(reqSsoRole.getTenantId() != null, SsoRole::getTenantId, reqSsoRole.getTenantId())
                 .eq(reqSsoRole.getStatus() != null, SsoRole::getStatus, reqSsoRole.getStatus())
                 .like(reqSsoRole.getRoleCode() != null, SsoRole::getRoleCode, reqSsoRole.getRoleCode())
                 .like(reqSsoRole.getRoleName() != null, SsoRole::getRoleName, reqSsoRole.getRoleName())
                 .orderByAsc(SsoRole::getRoleSort);
+        if(!StringUtils.isEmpty(reqSsoRole.getTenantId())){
+            String[] ids = reqSsoRole.getTenantId().split(",");
+            wrapper.and(ssoRoleLambdaQueryWrapper -> {
+                for(String id : ids){
+                    ssoRoleLambdaQueryWrapper.or().eq(!StringUtils.isEmpty(id),SsoRole::getTenantId,id);
+                }
+            });
+        }
+        return wrapper;
     }
 
     /**

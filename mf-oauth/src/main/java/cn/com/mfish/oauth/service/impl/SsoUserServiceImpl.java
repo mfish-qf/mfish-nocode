@@ -176,7 +176,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         int res = baseMapper.insert(user);
         if (res > 0) {
-            insertUserOrg(user.getId(), user.getOrgId().toArray(new String[0]));
+            insertUserOrg(user.getId(), user.getOrgIds().toArray(new String[0]));
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());
             return Result.ok(user, "用户信息-新增成功");
@@ -195,9 +195,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         int res = baseMapper.updateById(user);
         if (res > 0) {
             user.setAccount(account);
-            if (null != user.getOrgId()) {
+            if (null != user.getOrgIds()) {
                 log.info(MessageFormat.format("删除用户组织数量:{0}条", baseMapper.deleteUserOrg(user.getId(), null)));
-                insertUserOrg(user.getId(), user.getOrgId().toArray(new String[0]));
+                insertUserOrg(user.getId(), user.getOrgIds().toArray(new String[0]));
             }
             if (null != user.getRoleIds()) {
                 log.info(MessageFormat.format("删除用户角色数量:{0}条", baseMapper.deleteUserRole(user.getId())));

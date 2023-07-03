@@ -18,7 +18,7 @@ public class ReqSsoRole {
     @ApiModelProperty(value = "租户ID")
     private String tenantId;
     @ApiModelProperty(value = "组织ID")
-    private String orgId;
+    private String orgIds;
     @ApiModelProperty(value = "角色名称")
     private String roleName;
     @ApiModelProperty(value = "角色编码")
