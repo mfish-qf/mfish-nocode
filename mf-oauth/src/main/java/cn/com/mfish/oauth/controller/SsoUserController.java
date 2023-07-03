@@ -118,7 +118,7 @@ public class SsoUserController {
         }
         SsoUser user = ssoUserService.getUserById(userId);
         List<SsoOrg> list = new ArrayList<>();
-        for (String orgId : user.getOrgId()) {
+        for (String orgId : user.getOrgIds()) {
             list.addAll(ssoOrgService.queryOrgById(orgId, TreeDirection.getDirection(direction)));
         }
         return Result.ok(list, "组织结构-查询成功!");

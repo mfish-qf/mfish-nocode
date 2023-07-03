@@ -41,6 +41,9 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     @Transactional
     public Result<SsoOrg> insertOrg(SsoOrg ssoOrg) {
         verifyOrg(ssoOrg);
+        if(StringUtils.isEmpty(ssoOrg.getTenantId())){
+            ssoOrg.setTenantId(null);
+        }
         if (baseMapper.insertOrg(ssoOrg) == 1) {
             insertOrgRole(ssoOrg.getId(), ssoOrg.getRoleIds());
             return Result.ok(ssoOrg, "组织结构表-添加成功!");
@@ -183,8 +186,8 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     }
 
     @Override
-    public List<UserRole> getOrgRoles(String orgId) {
-        return baseMapper.getOrgRoles(orgId);
+    public List<UserRole> getOrgRoles(String... orgIds) {
+        return baseMapper.getOrgRoles(orgIds);
     }
 
     @Override

@@ -33,10 +33,14 @@
     <select id="getTenantByOrgId" resultType="cn.com.mfish.common.oauth.api.entity.SsoTenant">
         SELECT t.*
         FROM sso_tenant t
-                 INNER JOIN sso_org o ON t.id = o.tenant_id and o.del_flag = 0
-            AND o.org_code = (SELECT SUBSTR(org_code, 1, 5)
-                              FROM sso_org o
-                              WHERE o.id = #{orgId})
+        INNER JOIN sso_org o ON t.id = o.tenant_id and o.del_flag = 0
+        AND o.org_code in (SELECT SUBSTR(org_code, 1, 5)
+        FROM sso_org o
+        WHERE o.id in
+        <foreach collection="orgIds" item="orgId" open="(" close=")" separator=",">
+            #{orgId}
+        </foreach>
+        )
     </select>
     <select id="getTenantByRoleCode" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
         select t.*, u.account,u.nickname,u.phone, IF(u.id is null, 0, 1) master, o.org_name

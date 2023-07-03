@@ -32,7 +32,7 @@ public interface SsoOrgService extends IService<SsoOrg> {
 
     List<SsoOrg> queryOrgById(String id, TreeDirection direction);
 
-    List<UserRole> getOrgRoles(String orgId);
+    List<UserRole> getOrgRoles(String... orgIds);
 
     boolean isTenantOrg(String orgId, String tenantId);
 }

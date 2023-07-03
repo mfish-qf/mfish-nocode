@@ -69,10 +69,13 @@ public class SsoOrgController {
     }
 
     @ApiOperation(value = "获取组织的角色")
-    @GetMapping("/roles/{orgId}")
+    @GetMapping("/roles/{orgIds}")
     @RequiresPermissions("sys:org:query")
-    public Result<List<UserRole>> queryOrgRoles(@ApiParam(name = "orgId", value = "组织ID") @PathVariable("orgId") String orgId) {
-        return Result.ok(ssoOrgService.getOrgRoles(orgId), "组织角色-查询成功!");
+    public Result<List<UserRole>> queryOrgRoles(@ApiParam(name = "orgIds", value = "组织ID") @PathVariable("orgIds") String orgIds) {
+        if (StringUtils.isEmpty(orgIds)) {
+            return Result.fail(new ArrayList<>(), "错误:组织ID不允许为空");
+        }
+        return Result.ok(ssoOrgService.getOrgRoles(orgIds.split(",")), "组织角色-查询成功!");
     }
 
     /**
