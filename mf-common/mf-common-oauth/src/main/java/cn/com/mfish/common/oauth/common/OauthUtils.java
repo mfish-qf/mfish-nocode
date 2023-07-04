@@ -100,7 +100,7 @@ public class OauthUtils {
         }
         Set<String> set = list.stream().map(UserRole::getRoleCode).collect(Collectors.toSet());
         //如果用户为超户，直接返回
-        if (null != set && set.contains(SerConstant.SUPER_ROLE)) {
+        if (set.contains(SerConstant.SUPER_ROLE)) {
             return true;
         }
         return checkValue(requiresRoles.logical(), requiresRoles.value(), set);

@@ -176,7 +176,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         int res = baseMapper.insert(user);
         if (res > 0) {
-            insertUserOrg(user.getId(), user.getOrgIds().toArray(new String[0]));
+            insertUserOrg(user.getId(), user.getOrgIds());
             insertUserRole(user.getId(), user.getRoleIds());
             userTempCache.updateCacheInfo(user, user.getId());
             return Result.ok(user, "用户信息-新增成功");
@@ -197,7 +197,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             user.setAccount(account);
             if (null != user.getOrgIds()) {
                 log.info(MessageFormat.format("删除用户组织数量:{0}条", baseMapper.deleteUserOrg(user.getId(), null)));
-                insertUserOrg(user.getId(), user.getOrgIds().toArray(new String[0]));
+                insertUserOrg(user.getId(), user.getOrgIds());
             }
             if (null != user.getRoleIds()) {
                 log.info(MessageFormat.format("删除用户角色数量:{0}条", baseMapper.deleteUserRole(user.getId())));
@@ -213,7 +213,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     /**
      * 校验用户帐号 账号，手机，email均不允许重复
      *
-     * @param user 用户
+     * @param user    用户
      * @param operate 操作
      */
     private void validateUser(SsoUser user, String operate) {
@@ -312,11 +312,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public int insertUserOrg(String userId, String... orgList) {
-        if (orgList == null || orgList.length == 0) {
+    public int insertUserOrg(String userId, List<String> orgList) {
+        if (orgList == null || orgList.size() == 0) {
             return 0;
         }
-        int count = baseMapper.insertUserOrg(userId, Arrays.asList(orgList));
+        int count = baseMapper.insertUserOrg(userId, orgList);
         if (count > 0) {
             return count;
         }
@@ -324,7 +324,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
-    public int deleteUserOrg(String userId, String orgId) {
-        return baseMapper.deleteUserOrg(userId, orgId);
+    public int deleteUserOrg(String userId, String... orgList) {
+        return baseMapper.deleteUserOrg(userId, Arrays.asList(orgList));
     }
 }

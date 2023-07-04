@@ -42,7 +42,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
         GatewayUtils.removeHeader(mutate, RPCConstants.REQ_ORIGIN);
-        Result result = tokenValidator.validator(request);
+        Result<?> result = tokenValidator.validator(request);
         if (!result.isSuccess()) {
             // 如果校验不成功，但该页面在白名单内则直接跳过
             if (StringUtils.matches(url, ignoreWhiteProperties.getWhites())) {

@@ -45,9 +45,6 @@ public class UserInfo extends BaseEntity<String> {
     @ApiModelProperty("备注")
     private String remark;
     @TableField(exist = false)
-    @ApiModelProperty("组织名称")
-    private String orgName;
-    @TableField(exist = false)
     @ApiModelProperty("组织ID")
     private List<String> orgIds;
     @TableField(exist = false)

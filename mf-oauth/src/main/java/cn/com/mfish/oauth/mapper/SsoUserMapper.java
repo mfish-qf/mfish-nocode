@@ -81,6 +81,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     int insertUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
-    int deleteUserOrg(@Param("userId") String userId, @Param("orgId") String orgId);
+    int deleteUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
 }
