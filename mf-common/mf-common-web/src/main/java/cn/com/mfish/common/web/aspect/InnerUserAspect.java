@@ -43,7 +43,7 @@ public class InnerUserAspect {
         if (RPCConstants.INNER.equals(source) && !innerUser.validateUser()) {
             return point.proceed();
         }
-        Result result = tokenValidator.validator(request);
+        Result<?> result = tokenValidator.validator(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }

@@ -70,8 +70,8 @@ public interface SsoUserService extends IService<SsoUser> {
      * @param orgList
      * @return
      */
-    int insertUserOrg(String userId, String... orgList);
+    int insertUserOrg(String userId, List<String> orgList);
 
-    int deleteUserOrg(String userId, String orgId);
+    int deleteUserOrg(String userId, String... orgList);
 
 }

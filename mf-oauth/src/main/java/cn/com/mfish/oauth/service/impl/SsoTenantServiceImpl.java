@@ -55,6 +55,11 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     }
 
     @Override
+    public TenantVo queryInfo(String id) {
+        return baseMapper.queryInfo(id);
+    }
+
+    @Override
     @Transactional
     public Result<SsoTenant> insertTenant(SsoTenant ssoTenant) {
         if (validateTenant(ssoTenant) && baseMapper.insert(ssoTenant) > 0) {
@@ -71,7 +76,8 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             if (!result.isSuccess()) {
                 throw new MyRuntimeException(result.getMsg());
             }
-            if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), org.getId()) > 0) {
+            ssoUserService.deleteUserOrg(ssoTenant.getUserId(), org.getId());
+            if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
                 ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
                 return Result.ok(ssoTenant, "租户信息-添加成功!");
             }
@@ -148,7 +154,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }
         ssoUserService.deleteUserOrg(oldTenant.getUserId(), org.getId());
-        if (ssoUserService.insertUserOrg(ssoTenant.getUserId(), org.getId()) > 0) {
+        if (ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
             clearCache.removeUserAuthCache(Collections.singletonList(oldTenant.getUserId()));
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }

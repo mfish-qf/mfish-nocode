@@ -18,6 +18,8 @@ import java.util.List;
 public interface SsoTenantService extends IService<SsoTenant> {
     List<TenantVo> queryList(ReqSsoTenant reqSsoTenant, ReqPage reqPage);
 
+    TenantVo queryInfo(String id);
+
     Result<SsoTenant> insertTenant(SsoTenant ssoTenant);
 
     Result<SsoTenant> updateTenant(SsoTenant ssoTenant);

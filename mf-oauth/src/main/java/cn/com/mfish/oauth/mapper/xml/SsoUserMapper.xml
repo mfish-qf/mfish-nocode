@@ -119,7 +119,7 @@
     </resultMap>
     <sql id="selectUser">
         select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
-        from (select u.*, o.org_name, ou.org_id, ur.role_id
+        from (select u.*, ou.org_id, ur.role_id
         from sso_user u
         join sso_org_user ou on ou.user_id = u.id
         join sso_org o on o.id = ou.org_id
@@ -127,7 +127,7 @@
         left join sso_user_role ur on u.id = ur.user_id
         left join sso_role r on r.id = ur.role_id and r.del_flag = 0 and r.status = 0
         union
-        select u.*, o.org_name, ou.org_id, sor.role_id
+        select u.*, ou.org_id, sor.role_id
         from sso_user u
         join sso_org_user ou on ou.user_id = u.id
         join sso_org o on o.id = ou.org_id
@@ -184,8 +184,11 @@
         delete from sso_org_user
         <where>
             user_id = #{userId}
-            <if test="orgId != null and orgId != ''">
-                and org_id = #{orgId}
+            <if test="orgList != null and orgList.size() > 0">
+                and org_id in
+               <foreach collection="orgList" item="orgId" separator="," open="(" close=")">
+               #{orgId}
+               </foreach>
             </if>
         </where>
     </delete>

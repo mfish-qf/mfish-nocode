@@ -83,6 +83,16 @@ public class SsoTenantController {
     }
 
     /**
+     * 获取当前租户信息
+     * @return 租户信息
+     */
+    @ApiOperation(value = "获取当前租户信息", notes = "获取当前租户信息")
+    @GetMapping("/info")
+    public Result<TenantVo> queryTenantInfo() {
+        return Result.ok(ssoTenantService.queryInfo(AuthInfoUtils.getCurrentTenantId()), "租户信息-查询成功!");
+    }
+
+    /**
      * 添加
      *
      * @param ssoTenant 租户信息表对象

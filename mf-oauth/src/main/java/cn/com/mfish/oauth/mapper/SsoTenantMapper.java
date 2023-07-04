@@ -18,6 +18,8 @@ import java.util.List;
 public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     List<TenantVo> queryList(@Param("reqSsoTenant") ReqSsoTenant reqSsoTenant);
 
+    TenantVo queryInfo(String id);
+
     /**
      * 是否租户管理员
      *

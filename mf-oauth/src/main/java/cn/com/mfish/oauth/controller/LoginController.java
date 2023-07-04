@@ -51,10 +51,10 @@ public class LoginController {
         if (!autoCreateUser && !ssoUserService.isAccountExist(phone, null)) {
             return Result.fail("错误:手机号不存在");
         }
-        Long codeTime = loginService.getSmsCodeTime(phone);
+        long codeTime = loginService.getSmsCodeTime(phone);
         //一分钟内返回code倒计时剩余时间
         if (codeTime > 0) {
-            return Result.fail(codeTime.toString(), "一分钟内不允许重复发送");
+            return Result.fail(Long.toString(codeTime), "一分钟内不允许重复发送");
         }
         String code = loginService.getSmsCode(phone);
         //如果5分钟内不重新生成code
