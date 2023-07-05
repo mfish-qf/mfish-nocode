@@ -327,4 +327,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     public int deleteUserOrg(String userId, String... orgList) {
         return baseMapper.deleteUserOrg(userId, Arrays.asList(orgList));
     }
+
+    @Override
+    public boolean isExistUserOrg(String userId, String orgId) {
+        return baseMapper.isExistUserOrg(userId, orgId) > 0;
+    }
 }

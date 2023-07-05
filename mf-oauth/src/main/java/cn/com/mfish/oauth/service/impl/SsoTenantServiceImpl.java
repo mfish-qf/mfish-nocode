@@ -62,12 +62,17 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     @Override
     @Transactional
     public Result<SsoTenant> insertTenant(SsoTenant ssoTenant) {
+        //未设置状态默认设置为未启用
+        if (ssoTenant.getStatus() == null) {
+            ssoTenant.setStatus(1);
+        }
         if (validateTenant(ssoTenant) && baseMapper.insert(ssoTenant) > 0) {
             SsoOrg org = new SsoOrg();
             org.setTenantId(AuthInfoUtils.getCurrentTenantId());
             org.setOrgName(ssoTenant.getName());
             org.setTenantId(ssoTenant.getId());
-            org.setStatus(0);
+            //组织状态与租户状态同步
+            org.setStatus(ssoTenant.getStatus());
             org.setOrgSort(1);
             if (!StringUtils.isEmpty(ssoTenant.getUserId())) {
                 setOrgLeader(org, ssoTenant.getUserId());
@@ -136,6 +141,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             throw new MyRuntimeException("错误:删除用户组织关系失败");
         }
         org.setId(oldOrg.getId());
+        org.setStatus(ssoTenant.getStatus());
         Result<SsoOrg> result = ssoOrgService.updateOrg(org);
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:组织信息-更新失败");
@@ -177,6 +183,11 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     @Override
     public boolean isTenantMaster(String userId, String tenantId) {
         return baseMapper.isTenantMaster(userId, tenantId) > 0;
+    }
+
+    @Override
+    public boolean isTenantMasterOrg(String userId, String orgId) {
+        return baseMapper.isTenantMasterOrg(userId, orgId) > 0;
     }
 
     @Override

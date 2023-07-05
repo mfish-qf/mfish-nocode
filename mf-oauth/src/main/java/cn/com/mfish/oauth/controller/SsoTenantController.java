@@ -18,8 +18,10 @@ import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.oauth.entity.UserOrg;
 import cn.com.mfish.oauth.req.*;
 import cn.com.mfish.oauth.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,6 +59,8 @@ public class SsoTenantController {
     SsoMenuService ssoMenuService;
     @Resource
     SsoUserService ssoUserService;
+    @Resource
+    ClearCache clearCache;
 
     /**
      * 分页列表查询
@@ -84,6 +89,7 @@ public class SsoTenantController {
 
     /**
      * 获取当前租户信息
+     *
      * @return 租户信息
      */
     @ApiOperation(value = "获取当前租户信息", notes = "获取当前租户信息")
@@ -277,7 +283,7 @@ public class SsoTenantController {
     /**
      * 校验租户组织
      *
-     * @param id
+     * @param id 组织ID
      * @return
      */
     private Result<Boolean> verifyOrg(String id) {
@@ -442,5 +448,39 @@ public class SsoTenantController {
         reqSsoUser.setTenantId(AuthInfoUtils.getCurrentTenantId());
         List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
         return Result.ok(new PageResult<>(pageList), "租户人员信息-查询成功!");
+    }
+
+    @ApiOperation("用户组织关系绑定")
+    @PostMapping("/user/org")
+    public Result<Boolean> bindUserOrg(@RequestBody UserOrg userOrg) {
+        Result<Boolean> result = verifyOrg(userOrg.getOrgId());
+        if (!result.isSuccess()) {
+            return result;
+        }
+        if (ssoUserService.isExistUserOrg(userOrg.getUserId(), userOrg.getOrgId())) {
+            return Result.fail(false, "错误:用户已绑定该组织");
+        }
+        if (ssoUserService.insertUserOrg(userOrg.getUserId(), Collections.singletonList(userOrg.getOrgId())) > 0) {
+            clearCache.removeUserCache(userOrg.getUserId());
+            return Result.ok(true, "用户分配组织成功");
+        }
+        return Result.fail(false, "错误:用户分配组织失败");
+    }
+
+    @ApiOperation("用户组织关系移除")
+    @DeleteMapping("/user/org")
+    public Result<Boolean> deleteUserOrg(@RequestBody UserOrg userOrg) {
+        Result<Boolean> result = verifyOrg(userOrg.getOrgId());
+        if (!result.isSuccess()) {
+            return result;
+        }
+        if (ssoTenantService.isTenantMasterOrg(userOrg.getUserId(), userOrg.getOrgId())) {
+            return Result.fail(false, "错误:不允许移除租户管理员");
+        }
+        if (ssoUserService.deleteUserOrg(userOrg.getUserId(), userOrg.getOrgId()) > 0) {
+            clearCache.removeUserCache(userOrg.getUserId());
+            return Result.ok(true, "用户移出组织成功");
+        }
+        return Result.fail(false, "错误:用户移出组织失败");
     }
 }

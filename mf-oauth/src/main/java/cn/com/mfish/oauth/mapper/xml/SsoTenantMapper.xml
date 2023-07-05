@@ -30,6 +30,13 @@
             t.del_flag = 0 and t.id = #{id}
         </where>
     </select>
+    <select id="isTenantMasterOrg" resultType="java.lang.Integer">
+        select count(0)
+        from sso_tenant t
+                 inner join sso_org o on o.tenant_id = t.id
+        where t.user_id = #{userId}
+          and o.id = #{orgId}
+    </select>
     <select id="getTenantUser" resultType="java.lang.String">
         SELECT u.id
         FROM sso_user u
