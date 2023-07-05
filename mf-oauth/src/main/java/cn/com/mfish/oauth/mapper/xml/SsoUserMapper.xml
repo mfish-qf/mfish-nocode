@@ -94,6 +94,8 @@
                                    AND ou.user_id = #{userId}
                                         JOIN sso_org o ON o.id = ou.org_id and o.del_flag = 0 and o.status = 0)
                  LEFT JOIN sso_user su ON su.id = #{userId}
+        where t.del_flag = 0
+          and t.status = 0
         ORDER BY MASTER DESC
     </select>
     <select id="isAccountExist" resultType="java.lang.Integer">

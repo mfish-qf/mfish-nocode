@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.0.1
+ * @Version: V1.1.0
  */
 @Slf4j
 @Api(tags = "角色信息表")

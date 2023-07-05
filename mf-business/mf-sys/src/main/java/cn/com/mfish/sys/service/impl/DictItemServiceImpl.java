@@ -14,7 +14,7 @@ import java.util.List;
  * @Description: 字典项
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.0.1
+ * @Version: V1.1.0
  */
 @Service
 public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> implements DictItemService {
