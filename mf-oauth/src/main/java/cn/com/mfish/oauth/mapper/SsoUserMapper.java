@@ -76,6 +76,15 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     int insertUserRole(@Param("userId") String userId, @Param("roles") List<String> roles);
 
+    /**
+     * 通过角色编码设置用户角色
+     *
+     * @param userId 用户ID
+     * @param roles  角色编码列表
+     * @return
+     */
+    int insertUserRoleByRoleCode(@Param("userId") String userId, @Param("roles") List<String> roles);
+
     @Delete("delete from sso_user_role where user_id = #{userId}")
     int deleteUserRole(String userId);
 
@@ -83,4 +92,5 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
 
     int deleteUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
+    int isExistUserOrg(@Param("userId") String userId, @Param("orgId") String orgId);
 }

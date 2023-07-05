@@ -174,6 +174,15 @@
             (#{role},#{userId})
         </foreach>
     </insert>
+    <insert id="insertUserRoleByRoleCode">
+        INSERT into sso_user_role (select #{userId} user_id, id role_id
+        from sso_role
+        where role_code in
+        <foreach collection="roles" item="roleCode" separator="," open="(" close=")">
+            #{roleCode}
+        </foreach>
+        )
+    </insert>
     <insert id="insertUserOrg">
         insert into sso_org_user(org_id, user_id) values
         <foreach collection="orgList" item="org" separator=",">
@@ -186,10 +195,16 @@
             user_id = #{userId}
             <if test="orgList != null and orgList.size() > 0">
                 and org_id in
-               <foreach collection="orgList" item="orgId" separator="," open="(" close=")">
-               #{orgId}
-               </foreach>
+                <foreach collection="orgList" item="orgId" separator="," open="(" close=")">
+                    #{orgId}
+                </foreach>
             </if>
         </where>
     </delete>
+    <select id="isExistUserOrg" resultType="java.lang.Integer">
+        select count(0)
+        from sso_org_user
+        where user_Id = #{userId}
+          and org_id = #{orgId}
+    </select>
 </mapper>
