@@ -180,6 +180,11 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     }
 
     @Override
+    public boolean isTenantMasterOrg(String userId, String orgId) {
+        return baseMapper.isTenantMasterOrg(userId, orgId) > 0;
+    }
+
+    @Override
     public List<TenantVo> getTenantByRoleCode(String roleCode) {
         return baseMapper.getTenantByRoleCode(roleCode);
     }

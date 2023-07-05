@@ -15,9 +15,22 @@ import java.util.List;
  */
 @Slf4j
 public class AuthInfoUtils {
+    /**
+     * 超户
+     */
     public static final String SUPER_ACCOUNT = "1";
+    /**
+     * 超户角色
+     */
     public static final String SUPER_ROLE = "1";
+    /**
+     * 系统默认租户
+     */
     public static final String SUPER_TENANT = "1";
+    /**
+     * 系统默认组织
+     */
+    public static final String SUPER_ORG = "1";
     /**
      * 从请求中获取token值
      * token通过access_token=****直接赋值

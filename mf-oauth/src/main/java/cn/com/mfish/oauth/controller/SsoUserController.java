@@ -16,11 +16,9 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.web.annotation.InnerUser;
-import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
-import cn.com.mfish.oauth.entity.UserOrg;
 import cn.com.mfish.oauth.req.ReqChangePwd;
 import cn.com.mfish.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -35,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -57,8 +54,6 @@ public class SsoUserController {
     SsoUserService ssoUserService;
     @Resource
     SsoOrgService ssoOrgService;
-    @Resource
-    ClearCache clearCache;
 
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
@@ -200,29 +195,6 @@ public class SsoUserController {
     @RequiresPermissions("sys:account:insert")
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
         return ssoUserService.insertUser(ssoUser);
-    }
-
-    @ApiOperation("用户组织关系绑定")
-    @PostMapping("/org")
-    public Result<Boolean> bindUserOrg(@RequestBody UserOrg userOrg) {
-        if (ssoUserService.isExistUserOrg(userOrg.getUserId(), userOrg.getOrgId())) {
-            return Result.fail(false, "错误:用户已绑定该组织");
-        }
-        if (ssoUserService.insertUserOrg(userOrg.getUserId(), Collections.singletonList(userOrg.getOrgId())) > 0) {
-            clearCache.removeUserCache(userOrg.getUserId());
-            return Result.ok(true, "用户分配组织成功");
-        }
-        return Result.fail(false, "错误:用户分配组织失败");
-    }
-
-    @ApiOperation("用户组织关系移除")
-    @DeleteMapping("/org")
-    public Result<Boolean> deleteUserOrg(@RequestBody UserOrg userOrg) {
-        if (ssoUserService.deleteUserOrg(userOrg.getUserId(), userOrg.getOrgId()) > 0) {
-            clearCache.removeUserCache(userOrg.getUserId());
-            return Result.ok(true, "用户移出组织成功");
-        }
-        return Result.fail(false, "错误:用户移出组织失败");
     }
 
     /**

@@ -28,5 +28,7 @@ public interface SsoTenantService extends IService<SsoTenant> {
 
     boolean isTenantMaster(String userId, String tenantId);
 
+    boolean isTenantMasterOrg(String userId, String orgId);
+
     List<TenantVo> getTenantByRoleCode(String roleCode);
 }

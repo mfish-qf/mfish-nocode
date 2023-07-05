@@ -1,5 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
+import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.secret.SM4Utils;
 import cn.com.mfish.common.core.utils.ServletUtils;
@@ -13,8 +15,9 @@ import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
-import cn.com.mfish.common.oauth.service.TokenService;
+import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -37,6 +40,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -52,7 +56,9 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     @Resource
     SsoUserService ssoUserService;
     @Resource
-    TokenService webTokenService;
+    WebTokenServiceImpl webTokenService;
+    @Resource
+    UserTokenCache userTokenCache;
 
     @Value("${oauth2.expire.code}")
     private long codeExpire = 180;
@@ -86,6 +92,10 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         Subject subject = SecurityUtils.getSubject();
         code.setUserId((String) subject.getPrincipal());
         SsoUser user = ssoUserService.getUserById(code.getUserId());
+        if (user == null) {
+            userTokenCache.delUserTokenCache(DeviceType.Web, subject.getSession().getId().toString(), code.getUserId());
+            throw new MyRuntimeException("错误:未获取到用户信息");
+        }
         List<TenantVo> tenants = ssoUserService.getUserTenants(code.getUserId());
         if (tenants != null && !tenants.isEmpty()) {
             //设置第一个为默认登录租户
@@ -137,7 +147,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         accessToken.setClientSecret(request.getClientSecret());
         accessToken.setExpire(tokenExpire);
         accessToken.setReTokenExpire(reTokenExpire);
-        accessToken.setIp(Utils.getRemoteIP(ServletUtils.getRequest()));
+        accessToken.setIp(Utils.getRemoteIP(Objects.requireNonNull(ServletUtils.getRequest())));
         webTokenService.setToken(accessToken);
         webTokenService.setRefreshToken(accessToken);
         delCode(code.getCode());
@@ -148,7 +158,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     public RedisAccessToken refresh2Token(RedisAccessToken token) {
         webTokenService.delToken(token.getAccessToken());
         token.setAccessToken(Utils.uuid32());
-        token.setIp(Utils.getRemoteIP(ServletUtils.getRequest()));
+        token.setIp(Utils.getRemoteIP(Objects.requireNonNull(ServletUtils.getRequest())));
         webTokenService.setToken(token);
         webTokenService.updateRefreshToken(token);
         return token;
@@ -204,10 +214,12 @@ public class OAuth2ServiceImpl implements OAuth2Service {
                         user = buildOnlineUser((WeChatToken) token, key.replace(RedisPrefix.DEVICE2TOKEN, ""));
                     }
                     if (user != null) {
-                        long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.get(0).toString()));
-                        user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
-                        user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));
-                        list.add(user);
+                        Long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.get(0).toString()));
+                        if (expire != null) {
+                            user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
+                            user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));
+                            list.add(user);
+                        }
                     }
                 }
             } else {

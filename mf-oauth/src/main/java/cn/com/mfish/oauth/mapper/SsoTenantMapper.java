@@ -30,10 +30,20 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     @Select("select count(0) from sso_tenant where user_id = #{userId} and id = #{tenantId}")
     int isTenantMaster(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
+    /**
+     * 是否租户默认组织管理员
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    int isTenantMasterOrg(@Param("userId") String userId, @Param("orgId") String orgId);
+
     List<String> getTenantUser(String tenantId);
 
     /**
      * 根据组织ID获取组织所属租户
+     *
      * @param orgIds 组织ID
      * @return
      */
@@ -41,6 +51,7 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
 
     /**
      * 通过角色编码获取拥有该角色的租户
+     *
      * @param roleCode
      * @return
      */
