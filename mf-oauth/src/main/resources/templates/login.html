@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="摸鱼低代码,摸鱼低代码平台,MFish,mfish,nocode,lowcode,mfish-nocode,mfish-nocode-view,低代码,开源低代码平台,摸鱼,摸鱼官网,摸鱼低代码官网,摸鱼低代码平台,摸鱼低代码文档,代码生成,java 快速开发平台,java 快速开发框架,spring boot快速开发框架,spring boot快速开发平台,java开发框架,java开源框架,开源快速开发,快速开发平台,开源后台管理系统,微服务,spring boot,springBoot,shiro,mybatis,thymeleaf,bootstrap,vue3">
-    <meta name="description" content="摸鱼低代码平台希望打造一个基于低代码的无代码平台。即能给程序员使用，也能满足非专业人士的需求。后端基于spring-cloud-alibaba微服务架构，前端基于vite+vue3.0+pnpm">
+    <meta name="keywords"
+          content="摸鱼低代码,摸鱼低代码平台,MFish,mfish,nocode,lowcode,mfish-nocode,mfish-nocode-view,低代码,开源低代码平台,摸鱼,摸鱼官网,摸鱼低代码官网,摸鱼低代码平台,摸鱼低代码文档,代码生成,java 快速开发平台,java 快速开发框架,spring boot快速开发框架,spring boot快速开发平台,java开发框架,java开源框架,开源快速开发,快速开发平台,开源后台管理系统,微服务,spring boot,springBoot,shiro,mybatis,thymeleaf,bootstrap,vue3">
+    <meta name="description"
+          content="摸鱼低代码平台希望打造一个基于低代码的无代码平台。即能给程序员使用，也能满足非专业人士的需求。后端基于spring-cloud-alibaba微服务架构，前端基于vite+vue3.0+pnpm">
     <title>摸鱼低代码平台</title>
     <script type="text/javascript" src="static/js/vue.min.js"></script>
     <script type="text/javascript" src="static/js/jquery.min.js"></script>
@@ -22,9 +24,7 @@
 <section class="back-color">
     <div id="newLogin" class="login">
         <div class="logo -enter-x">
-            <div class="brand">
-                <img src="static/img/logo.png" alt="logo">
-            </div>
+            <img class="brand" src="static/img/logo.png" alt="logo">
             <div class="title">
                 <h1>摸鱼低代码平台</h1>
                 <h6>MFish NoCode</h6>
@@ -50,8 +50,10 @@
                             <div v-show="userPasswordVisible">
                                 <form id="login" method="POST" class="enter-x">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" :class="{'is-invalid':error.username.show,'is-valid':isValid}"
-                                               id="inputUsername" v-model="username" name="username" placeholder="用户名" @blur="validateUserName">
+                                        <input type="text" class="form-control"
+                                               :class="{'is-invalid':error.username.show,'is-valid':isValid}"
+                                               id="inputUsername" v-model="username" name="username"
+                                               placeholder="用户名" @blur="validateUserName">
                                         <label for="inputUsername">用户名</label>
                                         <div class="invalid-feedback" v-if="error.username.show">
                                             {{error.username.msg}}
@@ -60,19 +62,24 @@
                                     <div class="input-group mb-3">
                                         <div class="form-floating">
                                             <input :type="passwordType" class="form-control"
-                                                   :class="{'is-invalid':error.password.show,'is-valid':isValid}" id="inputPassword"
-                                                   v-model="password" name="password" placeholder="密码" @blur="validatePassword">
+                                                   :class="{'is-invalid':error.password.show,'is-valid':isValid}"
+                                                   id="inputPassword"
+                                                   v-model="password" name="password" placeholder="密码"
+                                                   @blur="validatePassword">
                                             <label for="inputPassword">密码</label>
                                             <div class="invalid-feedback" v-if="error.password.show">
                                                 {{error.password.msg}}
                                             </div>
                                         </div>
-                                        <span class="btn send-msg" @mouseover="msgOver" @mouseleave="msgLeave" @click="pwdShowChange">
-                                        <svg v-if="passwordShow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" :fill="sendMsgColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                        <span class="btn send-msg" @mouseover="msgOver" @mouseleave="msgLeave"
+                                              @click="pwdShowChange">
+                                        <svg v-if="passwordShow" xmlns="http://www.w3.org/2000/svg" width="16"
+                                             height="16" :fill="sendMsgColor" class="bi bi-eye" viewBox="0 0 16 16">
                                           <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                                           <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                                         </svg>
-                                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" :fill="sendMsgColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             :fill="sendMsgColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
                                           <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
                                           <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
                                           <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
@@ -81,8 +88,11 @@
                                     </div>
                                     <div class="input-group mb-1">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" :class="{'is-invalid':error.captcha.show,'is-valid':isValid}" id="inputCaptcha"
-                                                   v-model="captchaValue" name="captchaValue" placeholder="验证码" @blur="validateCaptcha">
+                                            <input type="text" class="form-control"
+                                                   :class="{'is-invalid':error.captcha.show,'is-valid':isValid}"
+                                                   id="inputCaptcha"
+                                                   v-model="captchaValue" name="captchaValue" placeholder="验证码"
+                                                   @blur="validateCaptcha">
                                             <input type="hidden" name="captchaKey" v-model="captchaKey">
                                             <label for="inputCaptcha">验证码</label>
                                             <div class="invalid-feedback" v-if="error.captcha.show">
@@ -92,15 +102,18 @@
                                         <span><img :src="captchaUrl" @click="getCaptcha" class="captcha" alt="验证码"/></span>
                                     </div>
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" id="rememberMe" type="checkbox" name="rememberMe"
+                                        <input class="form-check-input" id="rememberMe" type="checkbox"
+                                               name="rememberMe"
                                                v-model="rememberMe">
                                         <label class="form-check-label" for="rememberMe">
                                             记住我
                                         </label>
-                                        <a style="float: right" href="https://jq.qq.com/?_wv=1027&k=0A2bxoZX" target="_blank">免费获取帐号密码</a>
+                                        <a style="float: right" href="https://jq.qq.com/?_wv=1027&k=0A2bxoZX"
+                                           target="_blank">免费获取帐号密码</a>
                                     </div>
                                     <div class="d-grid gap-2 mb-3">
-                                        <button type="button" class="btn btn-primary btn-block" @click="login">登录</button>
+                                        <button type="button" class="btn btn-primary btn-block" @click="login">登录
+                                        </button>
                                     </div>
                                     <div class="btn-tabs d-flex">
                                         <button type="button" class="btn btn-tab btn-default" @click="showPhoneSmsCode">
@@ -116,23 +129,29 @@
                             <div v-show="phoneSmsCodeVisible">
                                 <form id="smsLogin" method="post" class="enter-x">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" :class="{'is-invalid':error.phone.show,'is-valid':isValid}"
-                                               id="inputPhone" v-model="phone" name="username" placeholder="手机号" @blur="validatePhone">
+                                        <input type="text" class="form-control"
+                                               :class="{'is-invalid':error.phone.show,'is-valid':isValid}"
+                                               id="inputPhone" v-model="phone" name="username" placeholder="手机号"
+                                               @blur="validatePhone">
                                         <label for="inputPhone">手机号</label>
                                         <div class="invalid-feedback" v-if="error.phone.show">
                                             {{error.phone.msg}}
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
-                                        <div class="form-floating" :class="{'is-invalid':error.code.show,'is-valid':isValid}">
-                                            <input type="text" class="form-control" :class="{'is-invalid':error.code.show}"
-                                                   id="inputCode" v-model="codeValue" name="password" placeholder="验证码" @blur="validateCode">
+                                        <div class="form-floating"
+                                             :class="{'is-invalid':error.code.show,'is-valid':isValid}">
+                                            <input type="text" class="form-control"
+                                                   :class="{'is-invalid':error.code.show}"
+                                                   id="inputCode" v-model="codeValue" name="password"
+                                                   placeholder="验证码" @blur="validateCode">
                                             <label for="inputCode">验证码</label>
                                             <div class="invalid-feedback" v-if="error.code.show">
                                                 {{error.code.msg}}
                                             </div>
                                         </div>
-                                        <span class="btn send-msg" @click="sendMsg" :disabled="codeDisabled" @mouseover="msgOver" @mouseleave="msgLeave">
+                                        <span class="btn send-msg" @click="sendMsg" :disabled="codeDisabled"
+                                              @mouseover="msgOver" @mouseleave="msgLeave">
                                         <div v-if="codeDisabled">{{codeButton}}</div>
                                         <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                              class="bi bi-envelope" viewBox="0 0 16 16" :fill="sendMsgColor">
@@ -160,12 +179,13 @@
                                 <div class="qrcode-img mb-3">
                                     <div>
                                         <img class="qrcode" id="qrCode" :src="qrCode" alt="二维码"/>
-                                        <div class="qrcode-status"  v-if="scanStatus==3" >
+                                        <div class="qrcode-status" v-if="scanStatus==3">
                                             <p>二维码已失效</p>
-                                            <button type="button" class="btn btn-primary btn-block" @click="refreshQrCode">刷新二维码
+                                            <button type="button" class="btn btn-primary btn-block"
+                                                    @click="refreshQrCode">刷新二维码
                                             </button>
                                         </div>
-                                        <div class="qrcode-status"  v-if="scanStatus==1" >
+                                        <div class="qrcode-status" v-if="scanStatus==1">
                                             <img src="static/img/success.png" alt="成功"/>
                                             <p>扫描成功</p>
                                             <p>请在手机上确认登录</p>

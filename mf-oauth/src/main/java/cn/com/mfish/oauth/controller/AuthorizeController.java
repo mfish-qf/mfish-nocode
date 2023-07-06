@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
@@ -15,8 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +31,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.function.BiFunction;
 
@@ -76,11 +74,11 @@ public class AuthorizeController {
             @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
             @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码", paramType = "query", required = true)
+            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码", paramType = "query", required = true),
+            @ApiImplicitParam(name = SerConstant.REMEMBER_ME, value = "记住我", paramType = "query")
     })
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
-    public Object authorize(Model model, HttpServletRequest request)
-            throws URISyntaxException, OAuthSystemException, OAuthProblemException {
+    public Object authorize(Model model, HttpServletRequest request) {
         return authorize(model, request, (m, r) -> loginService.postLogin(m, r), false);
     }
 
