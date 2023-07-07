@@ -15,11 +15,11 @@ import java.util.logging.Logger;
  * @author: mfish
  * @date: 2023/3/16 10:51
  */
-public class NoPool implements PoolWrapper {
+public class NoPool implements PoolWrapper<Object> {
     private NoDataSource noDataSource;
 
     @Override
-    public PoolWrapper wrap(DataSourceOptions options) {
+    public PoolWrapper<Object> wrap(DataSourceOptions<Object> options) {
         this.noDataSource = new NoDataSource(options);
         return this;
     }
@@ -49,10 +49,10 @@ public class NoPool implements PoolWrapper {
         return this.noDataSource == null;
     }
 
-    private class NoDataSource implements DataSource {
-        private final DataSourceOptions dataSourceOptions;
+    private static class NoDataSource implements DataSource {
+        private final DataSourceOptions<?> dataSourceOptions;
 
-        public NoDataSource(DataSourceOptions dataSourceOptions) {
+        public NoDataSource(DataSourceOptions<?> dataSourceOptions) {
             this.dataSourceOptions = dataSourceOptions;
         }
 
