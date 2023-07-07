@@ -27,17 +27,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.7.8</spring-boot.version>
+        <spring-boot.version>2.7.13</spring-boot.version>
         <spring-boot-admin.version>2.7.10</spring-boot-admin.version>
-        <spring-cloud.version>2021.0.5</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
+        <spring-cloud.version>2021.0.8</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
         <alibaba.nacos.version>2.2.0</alibaba.nacos.version>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
-        <druid.version>1.2.15</druid.version>
+        <druid.version>1.2.16</druid.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
         <freemarker.version>2.3.31</freemarker.version>
@@ -51,7 +51,7 @@
         <aliyun-oss.version>3.16.3</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
-        <oracle.version>12.2.0.1</oracle.version>
+        <oracle.version>23.2.0.0</oracle.version>
         <easyexcel.version>3.3.2</easyexcel.version>
     </properties>
     <dependencyManagement>
