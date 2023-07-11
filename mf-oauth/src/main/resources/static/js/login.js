@@ -294,7 +294,7 @@ let app = new Vue({
             if (error !== undefined && error !== '') {
                 $('#error').text(error);
             } else {
-                error = $("#errorMsg").val();
+                error = $('#errorMsg').val();
             }
             if (error !== '' && error !== undefined) {
                 $('#errorShow').click()
