@@ -10,6 +10,7 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.sys.entity.CodeBuild;
 import cn.com.mfish.sys.req.ReqCodeBuild;
 import cn.com.mfish.sys.service.CodeBuildService;
@@ -54,6 +55,7 @@ public class CodeBuildController {
      */
     @ApiOperation(value = "代码构建-分页列表查询", notes = "代码构建-分页列表查询")
     @GetMapping
+    @RequiresPermissions("sys:codeBuild:query")
     public Result<PageResult<CodeBuild>> queryPageList(ReqCodeBuild reqCodeBuild, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return Result.ok(new PageResult<>(codeBuildService.list(new LambdaQueryWrapper<CodeBuild>()
@@ -72,6 +74,7 @@ public class CodeBuildController {
     @Log(title = "代码构建-添加", operateType = OperateType.INSERT)
     @ApiOperation("代码构建-添加")
     @PostMapping
+    @RequiresPermissions("sys:codeBuild:insert")
     public Result<CodeBuild> add(@RequestBody CodeBuild codeBuild) {
         return codeBuildService.insertCodeBuild(codeBuild);
     }
@@ -79,6 +82,7 @@ public class CodeBuildController {
     @Log(title = "查看代码", operateType = OperateType.QUERY)
     @ApiOperation("查看代码")
     @GetMapping("/view/{id}")
+    @RequiresPermissions("sys:codeBuild:query")
     public Result<List<CodeVo>> query(@PathVariable String id) {
         return remoteCodeService.getCode(buildReqCode(id));
     }
@@ -86,6 +90,7 @@ public class CodeBuildController {
     @Log(title = "下载代码", operateType = OperateType.EXPORT)
     @ApiOperation("下载代码")
     @GetMapping("/download/{id}")
+    @RequiresPermissions("sys:codeBuild:query")
     public void downloadCode(@PathVariable String id, HttpServletResponse response) throws IOException {
         ReqCode reqCode = buildReqCode(id);
         Result<byte[]> result = remoteCodeService.downloadCode(reqCode);
@@ -127,6 +132,7 @@ public class CodeBuildController {
     @Log(title = "代码构建-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation("代码构建-通过id删除")
     @DeleteMapping("/{id}")
+    @RequiresPermissions("sys:codeBuild:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (codeBuildService.removeById(id)) {
             return Result.ok(true, "代码构建-删除成功!");
@@ -143,6 +149,7 @@ public class CodeBuildController {
     @Log(title = "代码构建-批量删除", operateType = OperateType.DELETE)
     @ApiOperation("代码构建-批量删除")
     @DeleteMapping("/batch")
+    @RequiresPermissions("sys:codeBuild:delete")
     public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.codeBuildService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok(true, "代码构建-批量删除成功!");
@@ -158,6 +165,7 @@ public class CodeBuildController {
      */
     @ApiOperation("代码构建-通过id查询")
     @GetMapping("/{id}")
+    @RequiresPermissions("sys:codeBuild:query")
     public Result<CodeBuild> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         CodeBuild codeBuild = codeBuildService.getById(id);
         return Result.ok(codeBuild, "代码构建-查询成功!");

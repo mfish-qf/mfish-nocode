@@ -42,7 +42,7 @@ public class SysLogController {
      */
     @ApiOperation(value = "系统日志-分页列表查询", notes = "系统日志-分页列表查询")
     @GetMapping
-    @RequiresPermissions("sys.log.query")
+    @RequiresPermissions("sys:log:query")
     public Result<PageResult<SysLog>> queryPageList(ReqSysLog reqSysLog, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<SysLog> queryWrapper = new LambdaQueryWrapper<SysLog>()
@@ -100,7 +100,7 @@ public class SysLogController {
     @Log(title = "系统日志-通过id删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "系统日志-通过id删除", notes = "系统日志-通过id删除")
     @DeleteMapping("/{id}")
-    @RequiresPermissions("sys.log.delete")
+    @RequiresPermissions("sys:log:delete")
     public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (sysLogService.removeById(id)) {
             return Result.ok(true, "系统日志-删除成功!");
@@ -117,7 +117,7 @@ public class SysLogController {
     @Log(title = "系统日志-批量删除", operateType = OperateType.DELETE)
     @ApiOperation(value = "系统日志-批量删除", notes = "系统日志-批量删除")
     @DeleteMapping("/batch")
-    @RequiresPermissions("sys.log.delete")
+    @RequiresPermissions("sys:log:delete")
     public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
         if (this.sysLogService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok(true, "系统日志-批量删除成功!");
@@ -133,7 +133,7 @@ public class SysLogController {
      */
     @ApiOperation(value = "系统日志-通过id查询", notes = "系统日志-通过id查询")
     @GetMapping("/{id}")
-    @RequiresPermissions("sys.log.query")
+    @RequiresPermissions("sys:log:query")
     public Result<SysLog> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         SysLog sysLog = sysLogService.getById(id);
         return Result.ok(sysLog, "系统日志-查询成功!");
