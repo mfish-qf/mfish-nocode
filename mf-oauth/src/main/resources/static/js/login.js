@@ -18,6 +18,7 @@ let app = new Vue({
         password: '',
         loginType: '',
         loginTypeName: '帐号',
+        errorMsg: '',
         rememberMe: false,
         codeValue: '',
         codeButton: '',
@@ -59,7 +60,7 @@ let app = new Vue({
     mounted() {
         this.initLoginData();
         this.getCaptcha();
-        this.showError();
+        this.showError($('#errorMsg').val());
         this.screenChange();
         window.onresize = () => {
             return this.screenChange()
@@ -270,6 +271,7 @@ let app = new Vue({
             this.loginType = "user_password";
             this.loginTypeName = "帐号";
             clearInterval(this.timer)
+            this.clearError();
         },
         showPhoneSmsCode() {
             this.phoneSmsCodeVisible = true;
@@ -278,6 +280,7 @@ let app = new Vue({
             this.loginType = "phone_smsCode";
             this.loginTypeName = "手机";
             clearInterval(this.timer)
+            this.clearError();
         },
         showQrCode() {
             this.qrCodeVisible = true;
@@ -286,17 +289,17 @@ let app = new Vue({
             this.loginType = "qr_code";
             this.loginTypeName = "扫码";
             this.buildQRCode();
+            this.clearError();
         },
         refreshQrCode() {
             this.buildQRCode();
         },
+        clearError() {
+            this.errorMsg = '';
+        },
         showError(error) {
             if (error !== undefined && error !== '') {
-                $('#error').text(error);
-            } else {
-                error = $('#errorMsg').val();
-            }
-            if (error !== '' && error !== undefined) {
+                this.errorMsg = error;
                 $('#errorShow').click()
                 //两秒后关闭
                 setTimeout(() => {
