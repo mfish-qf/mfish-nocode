@@ -21,6 +21,14 @@
 <input type="hidden" th:value="${errorMsg}" id="errorMsg"/>
 <input type="hidden" th:value="${loginType}" id="loginType"/>
 <input type="hidden" th:value="${username}" id="username"/>
+<div id="errorShow" data-bs-toggle="modal" data-bs-target="#errorModal">
+</div>
+<div class="modal fade" id="errorModal">
+    <div class="modal-dialog">
+        <div id="error" class="alert alert-danger" role="alert" th:text="${errorMsg}">
+        </div>
+    </div>
+</div>
 <section class="back-color">
     <div id="newLogin" class="login">
         <div class="logo -enter-x">
@@ -28,15 +36,6 @@
             <div class="title">
                 <h1>摸鱼低代码平台</h1>
                 <h6>MFish NoCode</h6>
-            </div>
-        </div>
-        <div id="errorShow" data-bs-toggle="modal" data-bs-target="#errorModal" style="position: absolute">
-        </div>
-        <div class="modal fade" id="errorModal">
-            <div class="modal-dialog">
-                <div class="alert alert-danger" role="alert">
-                    {{errorMsg}}
-                </div>
             </div>
         </div>
         <div class="container">

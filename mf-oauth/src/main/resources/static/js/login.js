@@ -18,7 +18,6 @@ let app = new Vue({
         password: '',
         loginType: '',
         loginTypeName: '帐号',
-        errorMsg: '',
         rememberMe: false,
         codeValue: '',
         codeButton: '',
@@ -271,7 +270,6 @@ let app = new Vue({
             this.loginType = "user_password";
             this.loginTypeName = "帐号";
             clearInterval(this.timer)
-            this.clearError();
         },
         showPhoneSmsCode() {
             this.phoneSmsCodeVisible = true;
@@ -280,7 +278,6 @@ let app = new Vue({
             this.loginType = "phone_smsCode";
             this.loginTypeName = "手机";
             clearInterval(this.timer)
-            this.clearError();
         },
         showQrCode() {
             this.qrCodeVisible = true;
@@ -289,22 +286,17 @@ let app = new Vue({
             this.loginType = "qr_code";
             this.loginTypeName = "扫码";
             this.buildQRCode();
-            this.clearError();
         },
         refreshQrCode() {
             this.buildQRCode();
         },
-        clearError() {
-            this.errorMsg = '';
-            this.errorVisible = false;
-        },
         showError(error) {
-            if (error != null && error != '') {
-                this.errorMsg = error;
+            if (error !== undefined && error !== '') {
+                $('#error').text(error);
             } else {
-                this.errorMsg = $('#errorMsg').val();
+                error = $("#errorMsg").val();
             }
-            if (this.errorMsg !== '' && this.errorMsg !== undefined) {
+            if (error !== '' && error !== undefined) {
                 $('#errorShow').click()
                 //两秒后关闭
                 setTimeout(() => {
@@ -326,7 +318,7 @@ let app = new Vue({
                     break;
                 default:
                     const name = $('#username').val();
-                    if(name){
+                    if (name) {
                         this.username = name
                     }
                     this.showUserPassword();
