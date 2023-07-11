@@ -60,7 +60,7 @@ let app = new Vue({
     mounted() {
         this.initLoginData();
         this.getCaptcha();
-        this.showError();
+        this.showError($('#errorMsg').val());
         this.screenChange();
         window.onresize = () => {
             return this.screenChange()
@@ -296,15 +296,10 @@ let app = new Vue({
         },
         clearError() {
             this.errorMsg = '';
-            this.errorVisible = false;
         },
         showError(error) {
-            if (error != null && error != '') {
+            if (error !== undefined && error !== '') {
                 this.errorMsg = error;
-            } else {
-                this.errorMsg = $('#errorMsg').val();
-            }
-            if (this.errorMsg !== '' && this.errorMsg !== undefined) {
                 $('#errorShow').click()
                 //两秒后关闭
                 setTimeout(() => {
@@ -326,7 +321,7 @@ let app = new Vue({
                     break;
                 default:
                     const name = $('#username').val();
-                    if(name){
+                    if (name) {
                         this.username = name
                     }
                     this.showUserPassword();
