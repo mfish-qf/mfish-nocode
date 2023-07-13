@@ -12,7 +12,7 @@ public enum DeviceType {
     APP("1"),
     //微信
     WX("2");
-    private String value;
+    private final String value;
 
     DeviceType(String value) {
         this.value = value;

@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 
 /**
  * 通过fastjson序列化redis存储
+ *
  * @author: mfish
  * @date: 2021/8/12 15:23
  */

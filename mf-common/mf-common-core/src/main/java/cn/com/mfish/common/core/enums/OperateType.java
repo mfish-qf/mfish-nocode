@@ -26,7 +26,7 @@ public enum OperateType {
     LOGIN("登录"),
     //登出
     LOGOUT("登出");
-    private String value;
+    private final String value;
 
     OperateType(String value) {
         this.value = value;

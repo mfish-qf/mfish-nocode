@@ -15,7 +15,7 @@ public enum PoolType {
     Hikari("db_pool_hikari"),
     Druid("db_pool_druid");
 
-    private String value;
+    private final String value;
 
     PoolType(String value) {
         this.value = value;
@@ -29,7 +29,7 @@ public enum PoolType {
      */
     public static PoolType getPoolType(String value) {
         for (PoolType type : PoolType.values()) {
-            if (type.value == value) {
+            if (type.value.equals(value)) {
                 return type;
             }
         }
@@ -41,7 +41,7 @@ public enum PoolType {
      *
      * @return
      */
-    public PoolWrapper createPool() {
+    public PoolWrapper<?> createPool() {
         switch (this) {
             case Druid:
                 return new DruidPool();

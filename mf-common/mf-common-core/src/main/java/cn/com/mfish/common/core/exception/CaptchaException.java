@@ -13,9 +13,9 @@ public class CaptchaException extends RuntimeException {
         TIMEOUT("timeout", "错误:验证码已失效"),
         ERROR("error", "错误:验证码不正确");
 
-        private String name;
-        private String value;
-        private static Map<String, Info> map = new HashMap<>();
+        private final String name;
+        private final String value;
+        private static final Map<String, Info> map = new HashMap<>();
 
         static {
             for (Info info : Info.values()) {

@@ -30,7 +30,7 @@ public enum DataType {
         布尔("boolean"),
         日期("date");
 
-        private String type;
+        private final String type;
 
         public String getValue() {
             return type;
@@ -45,14 +45,14 @@ public enum DataType {
      * 数据类型
      */
     private String dataType;
-    private SlimType slimType;
+    private final SlimType slimType;
 
     DataType(String dataType, SlimType slimType) {
         this.dataType = dataType;
         this.slimType = slimType;
     }
 
-    private static Map<String, DataType> typeMap = new HashMap<>();
+    private static final Map<String, DataType> typeMap = new HashMap<>();
 
     /**
      * 数据库数据类型转换java类型(部分类型不完全准确)

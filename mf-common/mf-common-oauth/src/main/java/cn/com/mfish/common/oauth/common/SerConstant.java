@@ -45,8 +45,8 @@ public class SerConstant {
         // 人脸识别登录
         人脸识别("face_recognition", 5);
 
-        private String loginType;
-        private int index;
+        private final String loginType;
+        private final int index;
 
         LoginType(String type, int index) {
             this.loginType = type;
@@ -90,7 +90,7 @@ public class SerConstant {
         禁用(1),
         锁定(2);
 
-        private int value;
+        private final int value;
 
         AccountState(int value) {
             this.value = value;
@@ -114,7 +114,7 @@ public class SerConstant {
         已扫描("1"),
         已确认("2"),
         已取消("3");
-        private String value;
+        private final String value;
 
         ScanStatus(String value) {
             this.value = value;

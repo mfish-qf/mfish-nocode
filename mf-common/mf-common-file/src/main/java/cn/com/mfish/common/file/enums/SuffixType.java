@@ -24,9 +24,9 @@ public enum SuffixType {
     XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx"),
     PPT("application/vnd.ms-powerpoint", ".ppt"),
     PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", ".pptx");
-    private String value;
-    private String key;
-    private static Map<String, SuffixType> typeMap = new HashMap<>();
+    private final String value;
+    private final String key;
+    private static final Map<String, SuffixType> typeMap = new HashMap<>();
 
     static {
         for (SuffixType type : SuffixType.values()) {

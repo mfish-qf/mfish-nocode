@@ -8,7 +8,7 @@ package cn.com.mfish.common.core.enums;
 public enum HttpType {
     HTTP(0),
     HTTPS(1);
-    private int value;
+    private final int value;
 
     HttpType(int value) {
         this.value = value;
