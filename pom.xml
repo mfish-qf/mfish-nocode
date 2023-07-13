@@ -41,7 +41,7 @@
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <fastjson.version>2.0.22</fastjson.version>
+        <fastjson.version>2.0.35</fastjson.version>
         <zxing.version>3.4.1</zxing.version>
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -183,8 +183,8 @@
 
             <!-- JSON 解析器和生成器 -->
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
             <dependency>
