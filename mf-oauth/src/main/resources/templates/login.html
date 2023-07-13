@@ -53,7 +53,7 @@
                                         <input type="text" class="form-control"
                                                :class="{'is-invalid':error.username.show,'is-valid':isValid}"
                                                id="inputUsername" v-model="username" name="username"
-                                               placeholder="用户名" @blur="validateUserName">
+                                               placeholder="用户名" @blur="validateUserName" @keydown.enter="login">
                                         <label for="inputUsername">用户名</label>
                                         <div class="invalid-feedback" v-if="error.username.show">
                                             {{error.username.msg}}
@@ -65,7 +65,7 @@
                                                    :class="{'is-invalid':error.password.show,'is-valid':isValid}"
                                                    id="inputPassword"
                                                    v-model="password" name="password" placeholder="密码"
-                                                   @blur="validatePassword">
+                                                   @blur="validatePassword" @keydown.enter="login">
                                             <label for="inputPassword">密码</label>
                                             <div class="invalid-feedback" v-if="error.password.show">
                                                 {{error.password.msg}}
@@ -92,7 +92,7 @@
                                                    :class="{'is-invalid':error.captcha.show,'is-valid':isValid}"
                                                    id="inputCaptcha"
                                                    v-model="captchaValue" name="captchaValue" placeholder="验证码"
-                                                   @blur="validateCaptcha">
+                                                   @blur="validateCaptcha" @keydown.enter="login">
                                             <input type="hidden" name="captchaKey" v-model="captchaKey">
                                             <label for="inputCaptcha">验证码</label>
                                             <div class="invalid-feedback" v-if="error.captcha.show">
@@ -132,7 +132,7 @@
                                         <input type="text" class="form-control"
                                                :class="{'is-invalid':error.phone.show,'is-valid':isValid}"
                                                id="inputPhone" v-model="phone" name="username" placeholder="手机号"
-                                               @blur="validatePhone">
+                                               @blur="validatePhone" @keydown.enter="smsLogin">
                                         <label for="inputPhone">手机号</label>
                                         <div class="invalid-feedback" v-if="error.phone.show">
                                             {{error.phone.msg}}
@@ -144,7 +144,7 @@
                                             <input type="text" class="form-control"
                                                    :class="{'is-invalid':error.code.show}"
                                                    id="inputCode" v-model="codeValue" name="password"
-                                                   placeholder="验证码" @blur="validateCode">
+                                                   placeholder="验证码" @blur="validateCode" @keydown.enter="smsLogin">
                                             <label for="inputCode">验证码</label>
                                             <div class="invalid-feedback" v-if="error.code.show">
                                                 {{error.code.msg}}
