@@ -2,7 +2,7 @@ package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.web.Result;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
