@@ -10,7 +10,7 @@ public enum DBType {
     postgre(1),
     oracle(2);
 
-    private int value;
+    private final int value;
 
     DBType(int value) {
         this.value = value;

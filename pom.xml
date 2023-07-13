@@ -32,16 +32,17 @@
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
         <alibaba.nacos.version>2.2.3</alibaba.nacos.version>
-        <mybatis-plus.version>3.5.2</mybatis-plus.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <swagger.core.version>1.6.2</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
         <druid.version>1.2.16</druid.version>
-        <dynamic-ds.version>3.5.2</dynamic-ds.version>
+        <dynamic-ds.version>3.6.1</dynamic-ds.version>
         <commons.io.version>2.11.0</commons.io.version>
         <freemarker.version>2.3.31</freemarker.version>
         <fastjson.version>2.0.35</fastjson.version>
+        <jackson.version>2.15.2</jackson.version>
         <zxing.version>3.4.1</zxing.version>
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -186,6 +187,11 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

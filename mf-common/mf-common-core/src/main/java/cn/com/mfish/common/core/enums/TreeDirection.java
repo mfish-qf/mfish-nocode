@@ -9,7 +9,7 @@ public enum TreeDirection {
     双向("all"),
     向上("up"),
     向下("down");
-    private String value;
+    private final String value;
 
     TreeDirection(String value) {
         this.value = value;

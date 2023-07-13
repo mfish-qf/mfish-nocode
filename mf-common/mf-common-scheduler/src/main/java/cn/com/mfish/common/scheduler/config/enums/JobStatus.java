@@ -11,7 +11,7 @@ public enum JobStatus {
     调度失败(2),
     执行成功(3),
     执行失败(4);
-    private Integer status;
+    private final Integer status;
 
     JobStatus(int status) {
         this.status = status;

@@ -21,7 +21,7 @@ public class RedisCache implements Cache<String, Object> {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
     @Value("${redisCache.expire}")
-    private long expire = 0l;
+    private long expire = 0L;
     @Value("${redisCache.keyPrefix}")
     private String keyPrefix = "";
 

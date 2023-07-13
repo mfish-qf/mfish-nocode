@@ -12,7 +12,7 @@ public enum ReqSource {
     MANAGER(1),
     //手机端
     PHONE(2);
-    private Integer value;
+    private final Integer value;
 
     ReqSource(Integer value) {
         this.value = value;

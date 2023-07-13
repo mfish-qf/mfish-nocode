@@ -24,14 +24,14 @@ public enum FilterCondition {
     以开始("likeLeft", " LIKE ''{0}%''"),
     以结束("likeRight", " LIKE ''%{0}''");
     private String value;
-    private String condition;
+    private final String condition;
 
     FilterCondition(String value, String condition) {
         this.value = value;
         this.condition = condition;
     }
 
-    private static Map<String, FilterCondition> conditionMap = new HashMap<>();
+    private static final Map<String, FilterCondition> conditionMap = new HashMap<>();
 
     static {
         for (FilterCondition con : FilterCondition.values()) {
