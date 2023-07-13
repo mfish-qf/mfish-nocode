@@ -1,12 +1,10 @@
 package cn.com.mfish.common.core.secret;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import java.security.Key;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * @description: DES加解密
@@ -45,7 +43,7 @@ public class DesUtils {
      */
     public static String encrypt(String str) {
         //基于BASE64编码，接收byte[]并转换成String
-        BASE64Encoder encoder = new BASE64Encoder();
+        Base64.Encoder encoder = Base64.getEncoder();
         try {
             //按utf8编码
             byte[] bytes = str.getBytes(CHARSET_NAME);
@@ -56,7 +54,7 @@ public class DesUtils {
             //加密
             byte[] doFinal = cipher.doFinal(bytes);
             //byte[]to encode好的String 并返回
-            return encoder.encode(doFinal);
+            return encoder.encodeToString(doFinal);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -69,10 +67,10 @@ public class DesUtils {
      * @return
      */
     public static String decrypt(String str) {
-        BASE64Decoder decoder = new BASE64Decoder();
+        Base64.Decoder decoder = Base64.getDecoder();
         try {
             //将字符串decode成byte[]
-            byte[] bytes = decoder.decodeBuffer(str);
+            byte[] bytes = decoder.decode(str);
             //获取解密对象
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             //初始化解密信息
