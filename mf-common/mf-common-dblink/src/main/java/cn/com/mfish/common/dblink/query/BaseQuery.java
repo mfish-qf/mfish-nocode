@@ -9,7 +9,7 @@ import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dataset.datatable.MetaDataRow;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dataset.enums.TargetType;
-import cn.com.mfish.common.dblink.common.Constant;
+import cn.com.mfish.common.core.constants.DataConstant;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.manger.PoolManager;
 import cn.com.mfish.common.dblink.page.BoundSql;
@@ -35,10 +35,10 @@ import java.util.function.Function;
  */
 @Slf4j
 public class BaseQuery {
-    private final DataSourceOptions options;
+    private final DataSourceOptions<?> options;
     private static final long TIMEOUT = 15000;
 
-    public BaseQuery(final DataSourceOptions options) {
+    public BaseQuery(final DataSourceOptions<?> options) {
         this.options = options;
     }
 
@@ -105,7 +105,7 @@ public class BaseQuery {
                     field.setAccessible(true);
                     //数据库中是数字类型，字段类型为boolean时强制转换为boolean
                     if (field.getType().getTypeName().equals("java.lang.Boolean") && columnValue instanceof Number) {
-                        columnValue = DataUtils.numCompare(columnValue, 0) > 0 ? true : false;
+                        columnValue = DataUtils.numCompare(columnValue, 0) > 0;
                     }
                     field.set(t, columnValue);
                     break;
@@ -178,21 +178,19 @@ public class BaseQuery {
             MetaDataHeaders headers = new MetaDataHeaders();
             for (int i = 1; i <= rsMataData.getColumnCount(); i++) {
                 String colName = rsMataData.getColumnLabel(i);
-                if (Constant.ORACLE_ROW.equals(colName)) {
+                if (DataConstant.ORACLE_ROW.equals(colName)) {
                     continue;
                 }
                 final MetaDataHeader header = new MetaDataHeader();
                 //****默认别名与查询名称相同 后期修改别名后别名必须唯一
-                header.setColName(colName);
-                header.setFieldName(colName);
+                header.setColName(colName).setFieldName(colName);
                 //存在类似INT UNSIGNED类型的结果进行特殊处理
                 String dataType = rsMataData.getColumnTypeName(i).toUpperCase();
                 int index = dataType.indexOf(" ");
                 if (index > 0) {
                     dataType = dataType.substring(0, index);
                 }
-                header.setDataType(dataType);
-                header.setTargetType(TargetType.ORIGINAL);
+                header.setDataType(dataType).setTargetType(TargetType.ORIGINAL);
                 headers.addColumn(header);
             }
             return headers;
@@ -222,7 +220,7 @@ public class BaseQuery {
                 Object value = formatValue(type, rs.getObject(i));
                 if (value instanceof java.util.Date) {
                     //MetaDataTable返回类型日期强制格式为 yyyy-MM-dd HH:mm:ss
-                    if (type.equals("DATE")) {
+                    if (type.equals(DataConstant.DataType.DATE)) {
                         value = new SimpleDateFormat("yyyy-MM-dd").format(value);
                     } else {
                         value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
@@ -250,16 +248,16 @@ public class BaseQuery {
             return null;
         }
         columnTypeName = columnTypeName.toUpperCase(Locale.ROOT);
-        if (columnTypeName.contains("BINARY") || columnTypeName.contains("BLOB")) {
+        if (columnTypeName.contains(DataConstant.DataType.BINARY) || columnTypeName.contains(DataConstant.DataType.BLOB)) {
             value = new String((byte[]) value);
-        } else if (columnTypeName.contains("GEOMETRY")) {
+        } else if (columnTypeName.contains(DataConstant.DataType.GEOMETRY)) {
             value = value.toString();
-        } else if (columnTypeName.contains("BIT")) {
+        } else if (columnTypeName.contains(DataConstant.DataType.BIT)) {
             value = value instanceof Boolean && (Boolean) value ? 1 : 0;
-        } else if (columnTypeName.contains("DATETIME")) {
+        } else if (columnTypeName.contains(DataConstant.DataType.DATETIME)) {
             //LocalDateTime 转成Date类型
             value = value instanceof LocalDateTime ? Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant()) : value;
-        } else if (columnTypeName.contains("TIMESTAMP") && value != null) {
+        } else if (columnTypeName.contains(DataConstant.DataType.TIMESTAMP)) {
             String time = value.toString();
             if (!StringUtils.isEmpty(time)) {
                 try {

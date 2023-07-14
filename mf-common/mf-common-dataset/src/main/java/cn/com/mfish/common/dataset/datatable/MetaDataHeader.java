@@ -69,6 +69,11 @@ public class MetaDataHeader implements Serializable {
         return this;
     }
 
+    public MetaDataHeader setDataType(DataType.SlimType slimType) {
+        this.dataType = DataType.forType(slimType);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
