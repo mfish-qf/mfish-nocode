@@ -16,7 +16,7 @@ import java.util.Collection;
  * @date: 2023/3/21 23:05
  */
 public abstract class AbstractDialect implements Dialect {
-    private BaseQuery baseQuery;
+    private final BaseQuery baseQuery;
 
     public AbstractDialect(BaseQuery baseQuery) {
         this.baseQuery = baseQuery;
@@ -67,21 +67,17 @@ public abstract class AbstractDialect implements Dialect {
     }
 
     public String getSimpleCountSql(final String sql, String name) {
-        String stringBuilder = "SELECT COUNT(" +
+        return "SELECT COUNT(" +
                 name +
                 ") FROM ( \n" +
                 sql +
                 "\n ) TMP_COUNT";
-        return stringBuilder;
     }
 
     @Override
     public boolean beforePage() {
         Page page = getLocalPage();
-        if (page.isOrderByOnly() || page.getPageSize() > 0) {
-            return true;
-        }
-        return false;
+        return page.isOrderByOnly() || page.getPageSize() > 0;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class Constants {
     /**
      * 内容长度
      */
-    public static final String CONTENT_LENGTH="content-length";
+    public static final String CONTENT_LENGTH = "content-length";
 
     /**
      * 普通令牌键前缀
@@ -63,6 +63,4 @@ public class Constants {
      * 验证码有效期（分钟）
      */
     public static final long CAPTCHA_EXPIRE = 5;
-
-
 }

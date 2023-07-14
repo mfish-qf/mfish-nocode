@@ -1,5 +1,7 @@
 package cn.com.mfish.common.core.enums;
 
+import cn.com.mfish.common.core.constants.DataConstant;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,19 +34,20 @@ public enum DataType {
 
         private final String type;
 
-        public String getValue() {
-            return type;
-        }
-
         SlimType(String type) {
             this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return type;
         }
     }
 
     /**
      * 数据类型
      */
-    private String dataType;
+    private final String dataType;
     private final SlimType slimType;
 
     DataType(String dataType, SlimType slimType) {
@@ -61,70 +64,64 @@ public enum DataType {
         for (DataType con : DataType.values()) {
             typeMap.put(con.dataType, con);
         }
-        typeMap.put("ARRAY", DataType.STRING);
-        typeMap.put("TEXT", DataType.STRING);
-        typeMap.put("MEDIUMTEXT", DataType.STRING);
-        typeMap.put("TINYTEXT", DataType.STRING);
-        typeMap.put("LONGTEXT", DataType.STRING);
-        typeMap.put("CHAR", DataType.STRING);
-        typeMap.put("LONGVARCHAR", DataType.STRING);
-        typeMap.put("BINARY", DataType.STRING);
-        typeMap.put("VARBINARY", DataType.STRING);
-        typeMap.put("LONGVARBINARY", DataType.STRING);
-        typeMap.put("NULL", DataType.STRING);
-        typeMap.put("OTHER", DataType.STRING);
-        typeMap.put("BLOB", DataType.STRING);
-        typeMap.put("CLOB", DataType.STRING);
-        typeMap.put("CURSOR", DataType.STRING);
-        typeMap.put("NVARCHAR", DataType.STRING);
-        typeMap.put("NCHAR", DataType.STRING);
-        typeMap.put("NCLOB", DataType.STRING);
-        typeMap.put("STRUCT", DataType.STRING);
-        typeMap.put("JAVA_OBJECT", DataType.STRING);
-        typeMap.put("VARCHAR2", DataType.STRING);
-        typeMap.put("STRING", DataType.STRING);
-        typeMap.put("VARCHAR", DataType.STRING);
-        typeMap.put("TINYBLOB", DataType.STRING);
-        typeMap.put("MEDIUMBLOB", DataType.STRING);
-        typeMap.put("LONGBLOB", DataType.STRING);
-        typeMap.put("GEOMETRY", DataType.STRING);
-        typeMap.put("UNDEFINED", DataType.STRING);
+        typeMap.put(DataConstant.DataType.ARRAY, DataType.STRING);
+        typeMap.put(DataConstant.DataType.TEXT, DataType.STRING);
+        typeMap.put(DataConstant.DataType.MEDIUMTEXT, DataType.STRING);
+        typeMap.put(DataConstant.DataType.TINYTEXT, DataType.STRING);
+        typeMap.put(DataConstant.DataType.LONGTEXT, DataType.STRING);
+        typeMap.put(DataConstant.DataType.CHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.LONGVARCHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.BINARY, DataType.STRING);
+        typeMap.put(DataConstant.DataType.VARBINARY, DataType.STRING);
+        typeMap.put(DataConstant.DataType.LONGVARBINARY, DataType.STRING);
+        typeMap.put(DataConstant.DataType.NULL, DataType.STRING);
+        typeMap.put(DataConstant.DataType.OTHER, DataType.STRING);
+        typeMap.put(DataConstant.DataType.BLOB, DataType.STRING);
+        typeMap.put(DataConstant.DataType.CLOB, DataType.STRING);
+        typeMap.put(DataConstant.DataType.CURSOR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.NVARCHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.NCHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.NCLOB, DataType.STRING);
+        typeMap.put(DataConstant.DataType.STRUCT, DataType.STRING);
+        typeMap.put(DataConstant.DataType.JAVA_OBJECT, DataType.STRING);
+        typeMap.put(DataConstant.DataType.VARCHAR2, DataType.STRING);
+        typeMap.put(DataConstant.DataType.STRING, DataType.STRING);
+        typeMap.put(DataConstant.DataType.VARCHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.TINYBLOB, DataType.STRING);
+        typeMap.put(DataConstant.DataType.MEDIUMBLOB, DataType.STRING);
+        typeMap.put(DataConstant.DataType.LONGBLOB, DataType.STRING);
+        typeMap.put(DataConstant.DataType.GEOMETRY, DataType.STRING);
+        typeMap.put(DataConstant.DataType.UNDEFINED, DataType.STRING);
 
-        typeMap.put("BIT", DataType.INTEGER);
-        typeMap.put("INT", DataType.INTEGER);
-        typeMap.put("INT4", DataType.INTEGER);
-        typeMap.put("INT8", DataType.INTEGER);
-        typeMap.put("TINYINT", DataType.INTEGER);
-        typeMap.put("SMALLINT", DataType.INTEGER);
-        typeMap.put("INTEGER", DataType.INTEGER);
-        typeMap.put("BIGINT", DataType.LONG);
-        typeMap.put("MEDIUMINT", DataType.INTEGER);
-        typeMap.put("FLOAT", DataType.FLOAT);
-        typeMap.put("REAL", DataType.FLOAT);
-        typeMap.put("DOUBLE", DataType.DOUBLE);
-        typeMap.put("NUMERIC", DataType.BIGDECIMAL);
-        typeMap.put("DECIMAL", DataType.BIGDECIMAL);
-        typeMap.put("BOOLEAN", DataType.BOOLEAN);
-        typeMap.put("NUMBER", DataType.FLOAT);
+        typeMap.put(DataConstant.DataType.BIT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.INT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.INT4, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.INT8, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.TINYINT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.SMALLINT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.INTEGER, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.BIGINT, DataType.LONG);
+        typeMap.put(DataConstant.DataType.MEDIUMINT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.FLOAT, DataType.FLOAT);
+        typeMap.put(DataConstant.DataType.REAL, DataType.FLOAT);
+        typeMap.put(DataConstant.DataType.DOUBLE, DataType.DOUBLE);
+        typeMap.put(DataConstant.DataType.NUMERIC, DataType.BIGDECIMAL);
+        typeMap.put(DataConstant.DataType.DECIMAL, DataType.BIGDECIMAL);
+        typeMap.put(DataConstant.DataType.BOOLEAN, DataType.BOOLEAN);
+        typeMap.put(DataConstant.DataType.NUMBER, DataType.FLOAT);
 
-        typeMap.put("DATETIME", DataType.DATE);
-        typeMap.put("TIME", DataType.DATE);
-        typeMap.put("TIMESTAMP", DataType.DATE);
-        typeMap.put("DATETIMEOFFSET", DataType.DATE);
-        typeMap.put("DATE", DataType.DATE);
-        typeMap.put("YEAR", DataType.DATE);
+        typeMap.put(DataConstant.DataType.DATETIME, DataType.DATE);
+        typeMap.put(DataConstant.DataType.TIME, DataType.DATE);
+        typeMap.put(DataConstant.DataType.TIMESTAMP, DataType.DATE);
+        typeMap.put(DataConstant.DataType.DATETIMEOFFSET, DataType.DATE);
+        typeMap.put(DataConstant.DataType.DATE, DataType.DATE);
+        typeMap.put(DataConstant.DataType.YEAR, DataType.DATE);
     }
 
     public String getValue() {
         return dataType;
     }
 
-    public void setDataType(String dataType) {
-        if (typeMap.containsKey(dataType)) {
-            this.dataType = typeMap.get(dataType).getValue();
-        }
-        this.dataType = DataType.UNKNOWN.getValue();
-    }
 
     /**
      * 根据值获取操作条件
@@ -138,6 +135,15 @@ public enum DataType {
             return typeMap.get(type);
         }
         return DataType.UNKNOWN;
+    }
+
+    /**
+     * 通过精简数据类型获取数据类型
+     * @param slimType 精简数据类型
+     * @return 数据类型
+     */
+    public static DataType forType(SlimType slimType) {
+        return forType(slimType.toString());
     }
 
     /**
