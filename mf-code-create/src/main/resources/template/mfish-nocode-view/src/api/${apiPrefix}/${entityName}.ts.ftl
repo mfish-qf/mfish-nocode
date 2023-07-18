@@ -26,7 +26,7 @@ export const get${entityName}List = (req${entityName}?: Req${entityName}) => {
  * @param req${entityName}
  */
 export function export${entityName}(req${entityName}?: Req${entityName}) {
-  return defHttp.download({ url: Api.${entityName}+"/export", params: req${entityName} });
+  return defHttp.download({ url: Api.${entityName} + "/export", params: req${entityName} });
 };
 
 /**
