@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class MetaDataRow extends LinkedHashMap<String, Object> implements Comparable<MetaDataRow> {
 
-    private MetaDataHeaders headers;
+    private final MetaDataHeaders headers;
 
     public MetaDataHeaders getColHeaders() {
         return headers;

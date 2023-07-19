@@ -86,7 +86,7 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
             return false;
         }
         LinkedHashMap<String, MetaDataHeader> map = (LinkedHashMap<String, MetaDataHeader>) o;
-        MetaDataHeader[] headers = map.values().toArray(new MetaDataHeader[map.size()]);
+        MetaDataHeader[] headers = map.values().toArray(new MetaDataHeader[0]);
         if (headers.length != this.size()) {
             return false;
         }

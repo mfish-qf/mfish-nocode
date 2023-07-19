@@ -3,6 +3,7 @@ package cn.com.mfish.common.core.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -19,7 +20,7 @@ public class DataUtils {
     /**
      * 计算接口
      */
-    interface Operator {
+    public interface Operator {
         Object execute(BigDecimal value1, BigDecimal value2);
     }
 
@@ -52,15 +53,15 @@ public class DataUtils {
         } else if (obj instanceof Long) {
             value = new BigDecimal((long) obj);
         } else if (obj instanceof Float) {
-            value = new BigDecimal((float) obj);
+            value = BigDecimal.valueOf((float) obj);
         } else if (obj instanceof Double) {
-            value = new BigDecimal((double) obj);
+            value = BigDecimal.valueOf((double) obj);
         } else if (obj instanceof BigDecimal) {
             value = (BigDecimal) obj;
         } else if (obj instanceof String) {
             //如果是字符串类型强转数字类型
             try {
-                value = new BigDecimal(Double.parseDouble((String) obj));
+                value = BigDecimal.valueOf(Double.parseDouble((String) obj));
             } catch (NumberFormatException e) {
                 log.error(UNKNOWN_DATA);
                 return null;
@@ -115,10 +116,10 @@ public class DataUtils {
         if (value1 == null && value2 == null) {
             return 0;
         }
-        if (value1 == null && value2 != null) {
+        if (value1 == null) {
             return -1;
         }
-        if (value1 != null && value2 == null) {
+        if (value2 == null) {
             return 1;
         }
         return 2;
@@ -144,6 +145,99 @@ public class DataUtils {
         } catch (ParseException e) {
             return -1;
         }
+    }
+
+    /**
+     * 求和
+     *
+     * @param obj1
+     * @param obj2
+     * @return
+     */
+    public static Object sum(Object obj1, Object obj2) {
+        return calculator(obj1, obj2,
+                (value1, value2) -> {
+                    if (value1 == null || value2 == null) {
+                        return null;
+                    }
+                    return value1.add(value2).setScale(4, RoundingMode.HALF_UP);
+                });
+    }
+
+    /**
+     * 求差
+     *
+     * @param obj1
+     * @param obj2
+     * @return
+     */
+    public static Object subtract(Object obj1, Object obj2) {
+        return calculator(obj1, obj2,
+                (value1, value2) -> {
+                    if (value1 == null || value2 == null) {
+                        return null;
+                    }
+                    return value1.subtract(value2).setScale(4, RoundingMode.HALF_UP);
+                });
+    }
+
+    /**
+     * 数字转字符串类型
+     */
+    public static Object getChar(Object value) {
+        return String.valueOf(value);
+    }
+
+    /**
+     * 字符转数字类型
+     */
+
+    public static Object getInteger(Object value) {
+        return Integer.valueOf(value.toString());
+    }
+
+    /**
+     * 求乘积
+     *
+     * @param obj1
+     * @param obj2
+     * @return
+     */
+    public static Object multiply(Object obj1, Object obj2) {
+        return calculator(obj1, obj2,
+                (value1, value2) -> {
+                    if (value1 == null || value2 == null) {
+                        return null;
+                    }
+                    return value1.multiply(value2).setScale(4, RoundingMode.HALF_UP);
+                });
+    }
+
+    /**
+     * 除法
+     *
+     * @param obj1
+     * @param obj2
+     * @return
+     */
+    public static Object divide(Object obj1, Object obj2) {
+        return calculator(obj1, obj2, (value1, value2) -> {
+            if (value1 == null || value2 == null || value2.equals(BigDecimal.ZERO)) {
+                return null;
+            }
+            return value1.divide(value2, 4, RoundingMode.HALF_UP);
+        });
+    }
+
+    /**
+     * 算平均值
+     *
+     * @param obj1
+     * @param size
+     * @return
+     */
+    public static Object avg(Object obj1, Object size) {
+        return divide(obj1, size);
     }
 
 }

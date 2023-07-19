@@ -81,7 +81,6 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             if (!result.isSuccess()) {
                 throw new MyRuntimeException(result.getMsg());
             }
-            ssoUserService.deleteUserOrg(ssoTenant.getUserId(), org.getId());
             if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
                 ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
                 return Result.ok(ssoTenant, "租户信息-添加成功!");
@@ -98,6 +97,14 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
      * @param userId
      */
     private void setOrgLeader(SsoOrg org, String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            org.setLeader("");
+            //租户组织固定编码使用管理员帐号
+            org.setOrgFixCode("");
+            org.setEmail("");
+            org.setPhone("");
+            return;
+        }
         SsoUser ssoUser = ssoUserService.getUserById(userId);
         org.setLeader(ssoUser.getAccount());
         //租户组织固定编码使用管理员帐号
@@ -132,7 +139,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             org.setOrgName(ssoTenant.getName());
         }
         boolean userChange = false;
-        if (!StringUtils.isEmpty(ssoTenant.getUserId()) && !ssoTenant.getUserId().equals(oldTenant.getUserId())) {
+        if (null != ssoTenant.getUserId() && !ssoTenant.getUserId().equals(oldTenant.getUserId())) {
             setOrgLeader(org, ssoTenant.getUserId());
             userChange = true;
         }
@@ -160,6 +167,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }
         ssoUserService.deleteUserOrg(oldTenant.getUserId(), org.getId());
+        //如果原组织关系存在直接返回
+        if (ssoUserService.isExistUserOrg(ssoTenant.getUserId(), org.getId())) {
+            return Result.ok(ssoTenant, "租户信息-编辑成功!");
+        }
         if (ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
             clearCache.removeUserAuthCache(Collections.singletonList(oldTenant.getUserId()));
             return Result.ok(ssoTenant, "租户信息-编辑成功!");

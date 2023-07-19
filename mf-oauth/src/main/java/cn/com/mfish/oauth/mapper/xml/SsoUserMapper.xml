@@ -85,9 +85,9 @@
     <select id="getUserTenants" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
         SELECT t.*, su.account, IF(u.id = su.id, 1, 0) MASTER
         FROM sso_tenant t
-                 JOIN sso_user u ON u.id = t.user_id
+                 JOIN sso_user u ON u.id = t.user_id and u.del_flag = 0 and u.status = 0
                  JOIN sso_org_user ou ON ou.user_id = u.id
-                 JOIN sso_org o ON ou.org_id = o.id and o.del_flag = 0 and o.status = 0
+                 JOIN sso_org o ON ou.org_id = o.id and o.tenant_id = t.id and o.del_flag = 0 and o.status = 0
             AND o.org_code IN (SELECT SUBSTR(org_code, 1, 5)
                                FROM sso_user u
                                         JOIN sso_org_user ou ON ou.user_id = u.id
@@ -123,8 +123,16 @@
         select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
         from (select u.*, ou.org_id, ur.role_id
         from sso_user u
-        join sso_org_user ou on ou.user_id = u.id
-        join sso_org o on o.id = ou.org_id
+        left join sso_org_user ou on ou.user_id = u.id
+        <choose>
+            <when test="tenantId!= null and tenantId != ''">
+                inner join
+            </when>
+            <otherwise>
+                left join
+            </otherwise>
+        </choose>
+        sso_org o on o.id = ou.org_id
         <include refid="orgFilter"/>
         left join sso_user_role ur on u.id = ur.user_id
         left join sso_role r on r.id = ur.role_id and r.del_flag = 0 and r.status = 0

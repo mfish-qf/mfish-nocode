@@ -41,95 +41,97 @@
   </div>
 </template>
 <script lang="ts">
-import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
-import { delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
-import { useModal } from "/@/components/general/Modal";
-import ${entityName}Modal from "./${entityName}Modal.vue";
-import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
-import { usePermission } from "/@/hooks/web/UsePermission";
-import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
+  import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
+  import { delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
+  import { useModal } from "/@/components/general/Modal";
+  import ${entityName}Modal from "./${entityName}Modal.vue";
+  import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
+  import { usePermission } from "/@/hooks/web/UsePermission";
+  import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
 
-export default {
-  name: "${entityName}Management",
-  components: { BasicTable, ${entityName}Modal, TableAction },
-  setup() {
-    const { hasPermission } = usePermission();
-    const [registerModal, { openModal }] = useModal();
-    const [registerTable, { reload, getForm }] = useTable({
-      title: "${tableInfo.tableComment}列表",
-      api: get${entityName}List,
-      columns,
-      formConfig: {
-        name: "search_form_item",
-        labelWidth: 100,
-        schemas: searchFormSchema,
-        autoSubmitOnEnter: true
-      },
-      useSearchForm: true,
-      showTableSetting: true,
-      bordered: true,
-      showIndexColumn: false,
-      actionColumn: {
-        width: 80,
-        title: "操作",
-        dataIndex: "action"
+  export default {
+    name: "${entityName}Management",
+    components: { BasicTable, ${entityName}Modal, TableAction },
+    setup() {
+      const { hasPermission } = usePermission();
+      const [registerModal, { openModal }] = useModal();
+      const [registerTable, { reload, getForm }] = useTable({
+        title: "${tableInfo.tableComment}列表",
+        api: get${entityName}List,
+        columns,
+        formConfig: {
+          name: "search_form_item",
+          labelWidth: 100,
+          schemas: searchFormSchema,
+          autoSubmitOnEnter: true
+        },
+        useSearchForm: true,
+        showTableSetting: true,
+        bordered: true,
+        showIndexColumn: false,
+        actionColumn: {
+          width: 80,
+          title: "操作",
+          dataIndex: "action"
+        }
+      });
+
+      /**
+       * 新建
+       */
+      function handleCreate() {
+        openModal(true, {
+          isUpdate: false
+        });
       }
-    });
 
-    /**
-     * 新建
-     */
-    function handleCreate() {
-      openModal(true, {
-        isUpdate: false
-      });
+      /**
+       *  导出自动生成支持导出1000条可自行修改
+       */
+      function handleExport() {
+        export${entityName}({ ...getForm().getFieldsValue(), pageNum: 1, pageSize: 1000 });
+      }
+
+      /**
+       * 修改
+       * @param
+       */
+      function handleEdit(${entityName?uncap_first}: ${entityName}) {
+        openModal(true, {
+          record: ${entityName?uncap_first},
+          isUpdate: true
+        });
+      }
+
+      /**
+       * 删除
+       * @param
+       */
+      function handleDelete(${entityName?uncap_first}: ${entityName}) {
+        if(${entityName?uncap_first}.id){
+          delete${entityName}(${entityName?uncap_first}.id).then(() => {
+            handleSuccess();
+          });
+        }
+      }
+
+      /**
+       * 处理完成
+       */
+      function handleSuccess() {
+        reload();
+      }
+
+      return {
+        registerTable,
+        registerModal,
+        handleCreate,
+        handleEdit,
+        handleDelete,
+        handleExport,
+        handleSuccess,
+        hasPermission
+      };
     }
-
-    /**
-     *  导出自动生成支持导出1000条可自行修改
-     */
-    function handleExport() {
-      export${entityName}({ ...getForm().getFieldsValue(), pageNum: 1, pageSize: 1000 });
-    }
-
-    /**
-     * 修改
-     * @param
-     */
-    function handleEdit(${entityName?uncap_first}: ${entityName}) {
-      openModal(true, {
-        record: ${entityName?uncap_first},
-        isUpdate: true
-      });
-    }
-
-    /**
-     * 删除
-     * @param
-     */
-    function handleDelete(${entityName?uncap_first}: ${entityName}) {
-      delete${entityName}(${entityName?uncap_first}.id).then(() => {
-        handleSuccess();
-      });
-    }
-
-    /**
-     * 处理完成
-     */
-    function handleSuccess() {
-      reload();
-    }
-
-    return {
-      registerTable,
-      registerModal,
-      handleCreate,
-      handleEdit,
-      handleDelete,
-      handleExport,
-      handleSuccess,
-      hasPermission
-    };
-  }
-};
+  };
 </script>
