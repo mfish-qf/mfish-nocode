@@ -1,12 +1,12 @@
-/**
- * @description: ${tableInfo.tableComment}
- * @author: mfish
- * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.0.0
- */
 import { defHttp } from "/@/utils/http/axios";
 import { ${entityName}, Req${entityName}, ${entityName}PageModel } from "/@/api/${apiPrefix}/model/${entityName}Model";
 
+/**
+* @description: ${tableInfo.tableComment}
+* @author: mfish
+* @date: ${.now?string["yyyy-MM-dd"]}
+* @version: V1.0.0
+*/
 enum Api {
   ${entityName} = "/${apiPrefix}/${entityName?uncap_first}"
 }
