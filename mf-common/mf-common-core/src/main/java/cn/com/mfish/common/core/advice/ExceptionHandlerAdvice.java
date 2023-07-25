@@ -32,7 +32,7 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(OAuthValidateException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Result exception(OAuthValidateException exception) {
+    public Result<Integer> exception(OAuthValidateException exception) {
         log.error("401校验异常", exception);
         return Result.fail(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
     }
@@ -45,7 +45,7 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler({AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public Result badRequestException(AccessDeniedException exception) {
+    public Result<Integer> badRequestException(AccessDeniedException exception) {
         log.error("403异常", exception);
         return Result.fail(HttpStatus.FORBIDDEN.value(), exception.getMessage());
     }
@@ -60,7 +60,7 @@ public class ExceptionHandlerAdvice {
             , HttpMessageNotReadableException.class, UnsatisfiedServletRequestParameterException.class
             , MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result badRequestException(Exception exception) {
+    public Result<Integer> badRequestException(Exception exception) {
         log.error("400异常", exception);
         return Result.fail(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
@@ -74,7 +74,7 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(MyRuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Result myHandleException(Exception exception, HttpServletRequest request) {
+    public Result<Integer> myHandleException(Exception exception, HttpServletRequest request) {
         log.error("请求地址'{}',处理异常.", request.getRequestURI(), exception);
         return Result.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
     }
@@ -88,7 +88,7 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Result handleException(Exception exception, HttpServletRequest request) {
+    public Result<Integer> handleException(Exception exception, HttpServletRequest request) {
         log.error("请求地址'{}',发生系统异常.", request.getRequestURI(), exception);
         return Result.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), "错误:未知异常");
     }

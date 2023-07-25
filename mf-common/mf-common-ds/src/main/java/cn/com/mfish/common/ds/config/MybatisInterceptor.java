@@ -28,7 +28,7 @@ public class MybatisInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        BaseEntity parameter = getParameter(invocation);
+        BaseEntity<?> parameter = getParameter(invocation);
         if (parameter == null) {
             return invocation.proceed();
         }
@@ -42,7 +42,6 @@ public class MybatisInterceptor implements Interceptor {
                     parameter.setCreateBy(account);
                 }
                 parameter.setCreateTime(new Date());
-                break;
             case UPDATE:
                 if (!StringUtils.isEmpty(account)) {
                     parameter.setUpdateBy(account);
@@ -59,7 +58,7 @@ public class MybatisInterceptor implements Interceptor {
      * @param invocation
      * @return
      */
-    private BaseEntity getParameter(Invocation invocation) {
+    private BaseEntity<?> getParameter(Invocation invocation) {
         Object parameter = invocation.getArgs()[1];
         if (parameter instanceof MapperMethod.ParamMap) {
             MapperMethod.ParamMap<?> p = (MapperMethod.ParamMap<?>) parameter;
@@ -70,7 +69,7 @@ public class MybatisInterceptor implements Interceptor {
             }
         }
         if (parameter instanceof BaseEntity) {
-            return (BaseEntity) parameter;
+            return (BaseEntity<?>) parameter;
         }
         return null;
     }
