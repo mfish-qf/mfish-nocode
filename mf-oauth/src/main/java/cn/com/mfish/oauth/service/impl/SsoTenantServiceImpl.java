@@ -83,6 +83,9 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             }
             if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
                 ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
+                if(!StringUtils.isEmpty(ssoTenant.getUserId())){
+                    clearCache.removeUserCache(ssoTenant.getUserId());
+                }
                 return Result.ok(ssoTenant, "租户信息-添加成功!");
             }
             throw new MyRuntimeException("错误:用户组织绑定出错");
