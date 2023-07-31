@@ -8,8 +8,8 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate" v-if="hasPermission('sys:${entityName?uncap_first}:insert')">新增</a-button>
-        <a-button type="error" @click="handleExport" v-if="hasPermission('sys:${entityName?uncap_first}:export')">导出</a-button>
+        <a-button type="primary" @click="handleCreate" v-auth="'sys:${entityName?uncap_first}:insert'">新增</a-button>
+        <a-button type="error" @click="handleExport" v-auth="'sys:${entityName?uncap_first}:export'">导出</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -19,7 +19,7 @@
                 icon: 'ant-design:edit-outlined',
                 onClick: handleEdit.bind(null, record),
                 auth: 'sys:${entityName?uncap_first}:update',
-                tooltip: '修改',
+                tooltip: '修改'
               },
               {
                 icon: 'ant-design:delete-outlined',
@@ -30,8 +30,8 @@
                   confirm: handleDelete.bind(null, record),
                 },
                 auth: 'sys:${entityName?uncap_first}:delete',
-                tooltip: '删除',
-              },
+                tooltip: '删除'
+              }
             ]"
           />
         </template>
@@ -46,14 +46,12 @@
   import { useModal } from "/@/components/general/Modal";
   import ${entityName}Modal from "./${entityName}Modal.vue";
   import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
-  import { usePermission } from "/@/hooks/web/UsePermission";
   import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
 
   export default {
     name: "${entityName}Management",
     components: { BasicTable, ${entityName}Modal, TableAction },
     setup() {
-      const { hasPermission } = usePermission();
       const [registerModal, { openModal }] = useModal();
       const [registerTable, { reload, getForm }] = useTable({
         title: "${tableInfo.tableComment}列表",
@@ -94,7 +92,7 @@
 
       /**
        * 修改
-       * @param
+       * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
        */
       function handleEdit(${entityName?uncap_first}: ${entityName}) {
         openModal(true, {
@@ -105,7 +103,7 @@
 
       /**
        * 删除
-       * @param
+       * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
        */
       function handleDelete(${entityName?uncap_first}: ${entityName}) {
         if(${entityName?uncap_first}.id){
@@ -129,8 +127,7 @@
         handleEdit,
         handleDelete,
         handleExport,
-        handleSuccess,
-        hasPermission
+        handleSuccess
       };
     }
   };
