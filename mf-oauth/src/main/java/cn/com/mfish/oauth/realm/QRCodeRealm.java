@@ -29,8 +29,7 @@ public class QRCodeRealm extends BaseRealm {
         if (redisQrCode == null) {
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_SECRET_DESCRIPTION);
         }
-        AuthenticationInfo authorizationInfo = new SimpleAuthenticationInfo(
+        return new SimpleAuthenticationInfo(
                 user.getId(), redisQrCode.getCode() + "," + redisQrCode.getSecret(), getName());
-        return authorizationInfo;
     }
 }

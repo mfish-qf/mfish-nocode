@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -143,12 +144,12 @@ public class LoginServiceImpl implements LoginService {
         } catch (IncorrectCredentialsException ex) {
             //错误凭证错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
-            log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
+            log.info("用户:" + username + "登录客户端:" + "失败" + ex.getMessage());
             return result;
         } catch (Exception ex) {
             //其他异常错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
-            log.info("用户:" + username + "登录客户端:" + "" + "失败" + ex.getMessage());
+            log.info("用户:" + username + "登录客户端:" + "失败" + ex.getMessage());
             return result;
         } finally {
             result.setData(token.getUserInfo() != null ? token.getUserInfo().getId() : null);
@@ -231,7 +232,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public long getSmsCodeTime(String phone) {
+    public Long getSmsCodeTime(String phone) {
         return redisTemplate.getExpire(RedisPrefix.buildSMSCodeTimeKey(phone));
     }
 
@@ -253,7 +254,7 @@ public class LoginServiceImpl implements LoginService {
      */
     public int getLoginCount(String userId) {
         RedisAtomicLong ral = new RedisAtomicLong(RedisPrefix.buildLoginCountKey(userId)
-                , redisTemplate.getConnectionFactory());
+                , Objects.requireNonNull(redisTemplate.getConnectionFactory()));
         ral.incrementAndGet();
         //第一次设置允许错误的时间间隔
         if (ral.intValue() == 1) {
