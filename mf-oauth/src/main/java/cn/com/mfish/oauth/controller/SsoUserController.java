@@ -159,13 +159,14 @@ public class SsoUserController {
         return Result.fail(false, "错误:用户-设置状态失败!");
     }
 
-    @ApiOperation("用户登出")
+    @ApiOperation(value = "用户登出", notes = "用户登出--该方法只适用于web前端登录的用户登出")
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
             String error = "未获取到用户登录状态,无需登出";
+            log.error(error);
             return Result.ok(error);
         }
         String userId = (String) subject.getPrincipal();

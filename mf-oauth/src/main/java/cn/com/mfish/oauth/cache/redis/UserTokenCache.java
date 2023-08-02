@@ -31,7 +31,7 @@ public class UserTokenCache {
     @Value("${oauth2.login.mutex}")
     private boolean loginMutex = false;
     @Value("${redisSession.expire}")
-    private long expire = 0l;
+    private long expire = 0L;
 
 
     /**
@@ -157,6 +157,9 @@ public class UserTokenCache {
      */
     private void delTokenList(String deviceId) {
         List<Object> list = redisTemplate.opsForList().range(RedisPrefix.buildDevice2TokenKey(deviceId), 0, -1);
+        if (list == null) {
+            return;
+        }
         for (Object obj : list) {
             OauthUtils.delTokenAndRefreshToken(obj.toString());
         }

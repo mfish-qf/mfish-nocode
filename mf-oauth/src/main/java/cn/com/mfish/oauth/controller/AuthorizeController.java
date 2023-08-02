@@ -43,6 +43,8 @@ import java.util.function.BiFunction;
 @RequestMapping
 @Slf4j
 public class AuthorizeController {
+    private static final String LOGIN_PATH = "login";
+    private static final String FORCE_LOGIN = "force_login";
     @Resource
     LoginService loginService;
     @Resource
@@ -55,10 +57,10 @@ public class AuthorizeController {
             @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端ID", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
-            @ApiImplicitParam(name = "force_login", value = "强制登录 值为1时强行返回登录界面", paramType = "query")
+            @ApiImplicitParam(name = FORCE_LOGIN, value = "强制登录 值为1时强行返回登录界面", paramType = "query")
     })
     public Object getAuthorize(Model model, HttpServletRequest request) {
-        String force = request.getParameter("force_login");
+        String force = request.getParameter(FORCE_LOGIN);
         boolean forceLogin = false;
         if (!StringUtils.isEmpty(force) && "1".equals(force)) {
             forceLogin = true;
@@ -102,13 +104,13 @@ public class AuthorizeController {
         if (!SecurityUtils.getSubject().isAuthenticated()) {
             if (!function.apply(model, request)) {
                 //登录失败时跳转到登陆页面
-                return "login";
+                return LOGIN_PATH;
             }
         }
         //如果是强制登录，当前登录状态登出直接返回登录页面
         if (forceLogin) {
             SecurityUtils.getSubject().logout();
-            return "login";
+            return LOGIN_PATH;
         }
         return buildCodeResponse(request, oauthRequest);
 

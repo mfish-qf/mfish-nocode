@@ -120,8 +120,13 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     private Result<SsoMenu> verifyMenu(SsoMenu ssoMenu) {
+        //parentId为空时，设置为空字符串
         if (StringUtils.isEmpty(ssoMenu.getParentId())) {
             ssoMenu.setParentId("");
+        }
+        if (!StringUtils.isEmpty(ssoMenu.getPermissions())) {
+            //替换中文逗号
+            ssoMenu.setPermissions(ssoMenu.getPermissions().replace("，", ","));
         }
         if (!StringUtils.isEmpty(ssoMenu.getParentId())) {
             SsoMenu pMenu = baseMapper.selectById(ssoMenu.getParentId());
