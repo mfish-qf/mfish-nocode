@@ -23,8 +23,7 @@ public class PhoneSmsRealm extends BaseRealm {
         if (StringUtils.isEmpty(code)) {
             throw new IncorrectCredentialsException(SerConstant.INVALID_PHONE_CODE_DESCRIPTION);
         }
-        AuthenticationInfo authorizationInfo = new SimpleAuthenticationInfo(
+        return new SimpleAuthenticationInfo(
                 user.getId(), code, getName());
-        return authorizationInfo;
     }
 }

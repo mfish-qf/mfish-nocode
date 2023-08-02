@@ -108,7 +108,7 @@ public interface LoginService {
      * @param phone
      * @return
      */
-    long getSmsCodeTime(String phone);
+    Long getSmsCodeTime(String phone);
 
     /**
      * 临时缓存sessionKey

@@ -28,8 +28,7 @@ public class WxPhoneRealm extends BaseRealm {
         if (StringUtils.isEmpty(openId)) {
             throw new OAuthValidateException(SerConstant.INVALID_WX_ID_DESCRIPTION);
         }
-        AuthenticationInfo authorizationInfo = new SimpleAuthenticationInfo(
+        return new SimpleAuthenticationInfo(
                 user.getId(), sessionKey, getName());
-        return authorizationInfo;
     }
 }
