@@ -75,7 +75,7 @@ public class StorageController {
         }
         //如果文件是私有文件需要校验token后访问
         if (storageInfo.getIsPrivate() != null && storageInfo.getIsPrivate().equals(1)) {
-            Result result = tokenValidator.validator(ServletUtils.getRequest());
+            Result<?> result = tokenValidator.validator(ServletUtils.getRequest());
             if (!result.isSuccess()) {
                 throw new OAuthValidateException(result.getMsg());
             }
