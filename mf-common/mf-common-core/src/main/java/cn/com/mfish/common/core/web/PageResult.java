@@ -40,7 +40,7 @@ public class PageResult<T> implements Serializable {
      * @param list
      */
     public PageResult(List<T> list) {
-        PageInfo pageInfo = new PageInfo<>(list);
+        PageInfo<T> pageInfo = new PageInfo<>(list);
         this.setList(pageInfo.getList())
                 .setPageNum(pageInfo.getPageNum())
                 .setPageSize(pageInfo.getPageSize())
