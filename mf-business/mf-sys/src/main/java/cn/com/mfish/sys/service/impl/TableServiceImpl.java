@@ -3,7 +3,10 @@ package cn.com.mfish.sys.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.enums.TargetType;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
@@ -91,6 +94,32 @@ public class TableServiceImpl implements TableService {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         }
         return QueryHandler.queryT(dataSourceOptions, function.apply(dialect, dataSourceOptions.getDbName()), cls);
+    }
+
+    /**
+     * 获取数据集列头
+     *
+     * @param connectId 连接ID
+     * @param tableName 表名
+     * @return
+     */
+    @Override
+    public MetaDataHeaders getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
+        List<FieldInfo> list = getFieldList(connectId, tableName, reqPage);
+        MetaDataHeaders headers = new MetaDataHeaders();
+        if (list == null || list.isEmpty()) {
+            return headers;
+        }
+        for (FieldInfo fieldInfo : list) {
+            headers.addColumn(new MetaDataHeader()
+                    .setFieldName(fieldInfo.getFieldName())
+                    .setColName(fieldInfo.getFieldName())
+                    .setDataType(fieldInfo.getType())
+                    .setTargetType(TargetType.ORIGINAL)
+                    .setTableAlias(tableName)
+                    .setComment(fieldInfo.getComment()));
+        }
+        return headers;
     }
 
 }
