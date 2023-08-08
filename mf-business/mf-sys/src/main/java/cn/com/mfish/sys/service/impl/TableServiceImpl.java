@@ -7,7 +7,6 @@ import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
-import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
 import cn.com.mfish.common.dblink.query.QueryHandler;
@@ -67,10 +66,7 @@ public class TableServiceImpl implements TableService {
             throw new MyRuntimeException("错误:获取数据库连接出错");
         }
         DbConnect dbConnect = result.getData();
-        DataSourceOptions<?> dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
-        //代码生成不使用连接池，强制设置为无池状态
-        dataSourceOptions.setPoolType(PoolType.NoPool);
-        return dataSourceOptions;
+        return QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
     }
 
     /**
