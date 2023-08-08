@@ -21,12 +21,13 @@ public class MetaDataHeader implements Serializable {
 
     }
 
-    public MetaDataHeader(String colName, String fieldName, String expression, DataType dataType, TargetType targetType) {
+    public MetaDataHeader(String colName, String fieldName, String expression, DataType dataType, TargetType targetType,String comment) {
         this.colName = colName;
         this.fieldName = fieldName;
         this.expression = expression;
         this.dataType = dataType;
         this.targetType = targetType;
+        this.comment = comment;
     }
 
     /**
@@ -38,6 +39,11 @@ public class MetaDataHeader implements Serializable {
      * 字段名称 对应数据库中字段
      */
     private String fieldName;
+
+    /**
+     * 中文描述
+     */
+    private String comment;
 
     /**
      * 运算式子 运算指标设置该属性 主要用于显示
@@ -86,6 +92,7 @@ public class MetaDataHeader implements Serializable {
         return Objects.equals(colName, that.colName)
                 && Objects.equals(fieldName, that.fieldName)
                 && Objects.equals(expression, that.expression)
+                && Objects.equals(comment,that.comment)
                 && dataType == that.dataType
                 && Objects.equals(tableAlias, that.tableAlias)
                 && targetType == that.targetType;

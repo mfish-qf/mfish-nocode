@@ -68,7 +68,7 @@ public class TestConnect {
     public void testDataTable() {
         MetaDataTable table = new MetaDataTable();
         for (int i = 0; i < 10; i++) {
-            table.addColumn(new MetaDataHeader(i + "", i + "", i + "", DataType.STRING, TargetType.ORIGINAL));
+            table.addColumn(new MetaDataHeader(i + "", i + "", i + "", DataType.STRING, TargetType.ORIGINAL, ""));
         }
         List<MetaDataRow> list = new ArrayList<>();
         for (int j = 0; j < 5; j++) {
@@ -80,7 +80,7 @@ public class TestConnect {
         }
         table.addAll(list);
         table.add(3, new MetaDataRow(table.getColHeaders()));
-        table.addColumn(new MetaDataHeader("", "5", "", DataType.STRING, TargetType.ORIGINAL));
+        table.addColumn(new MetaDataHeader("", "5", "", DataType.STRING, TargetType.ORIGINAL, ""));
         table.removeColumn("5_1");
         table.removeColumn(7);
         MetaDataTable table2 = new MetaDataTable();
@@ -102,13 +102,13 @@ public class TestConnect {
     public void testDataRow() {
         MetaDataHeaders headers = new MetaDataHeaders();
         for (int i = 0; i < 5; i++) {
-            headers.addColumn(new MetaDataHeader(i + "", i + "", i + "", DataType.STRING, TargetType.ORIGINAL));
+            headers.addColumn(new MetaDataHeader(i + "", i + "", i + "", DataType.STRING, TargetType.ORIGINAL, ""));
         }
         MetaDataRow row = new MetaDataRow(headers);
         row.setCellValue("0", 1);
         row.setCellValue("1", 1);
         row.setCellValue("2", 2);
-        row.addColumn(new MetaDataHeader("1", "1", "", DataType.STRING, TargetType.ORIGINAL), 1);
+        row.addColumn(new MetaDataHeader("1", "1", "", DataType.STRING, TargetType.ORIGINAL, ""), 1);
         row.setCellValue(4, 5);
         row.removeCell("1");
         row.removeCell(0);

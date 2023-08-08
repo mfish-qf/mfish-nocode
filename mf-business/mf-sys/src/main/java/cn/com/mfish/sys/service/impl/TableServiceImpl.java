@@ -3,11 +3,13 @@ package cn.com.mfish.sys.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.enums.TargetType;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
-import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
 import cn.com.mfish.common.dblink.query.QueryHandler;
@@ -61,16 +63,13 @@ public class TableServiceImpl implements TableService {
         return query(connectId, "select * from " + tableName, reqPage);
     }
 
-    private DataSourceOptions buildDBQuery(String connectId) {
+    private DataSourceOptions<?> buildDBQuery(String connectId) {
         Result<DbConnect> result = dbConnectService.queryById(connectId);
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:获取数据库连接出错");
         }
         DbConnect dbConnect = result.getData();
-        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
-        //代码生成不使用连接池，强制设置为无池状态
-        dataSourceOptions.setPoolType(PoolType.NoPool);
-        return dataSourceOptions;
+        return QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
     }
 
     /**
@@ -81,7 +80,7 @@ public class TableServiceImpl implements TableService {
      * @return
      */
     private MetaDataTable query(String connectId, String sql, ReqPage reqPage) {
-        DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
+        DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         }
@@ -89,12 +88,38 @@ public class TableServiceImpl implements TableService {
     }
 
     private <T> List<T> queryT(String connectId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
-        DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
+        DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
         DBDialect dialect = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         }
         return QueryHandler.queryT(dataSourceOptions, function.apply(dialect, dataSourceOptions.getDbName()), cls);
+    }
+
+    /**
+     * 获取数据集列头
+     *
+     * @param connectId 连接ID
+     * @param tableName 表名
+     * @return
+     */
+    @Override
+    public MetaDataHeaders getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
+        List<FieldInfo> list = getFieldList(connectId, tableName, reqPage);
+        MetaDataHeaders headers = new MetaDataHeaders();
+        if (list == null || list.isEmpty()) {
+            return headers;
+        }
+        for (FieldInfo fieldInfo : list) {
+            headers.addColumn(new MetaDataHeader()
+                    .setFieldName(fieldInfo.getFieldName())
+                    .setColName(fieldInfo.getFieldName())
+                    .setDataType(fieldInfo.getType())
+                    .setTargetType(TargetType.ORIGINAL)
+                    .setTableAlias(tableName)
+                    .setComment(fieldInfo.getComment()));
+        }
+        return headers;
     }
 
 }

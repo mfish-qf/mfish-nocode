@@ -30,7 +30,7 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
 
     @Override
     public Result<DbConnect> insertConnect(DbConnect dbConnect) {
-        Result result = testConnect(dbConnect);
+        Result<Boolean> result = testConnect(dbConnect);
         if (!result.isSuccess()) {
             return Result.fail(dbConnect, "错误:尝试连接失败!");
         }
@@ -42,7 +42,7 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
 
     @Override
     public Result<DbConnect> updateConnect(DbConnect dbConnect) {
-        Result result = testConnect(dbConnect);
+        Result<Boolean> result = testConnect(dbConnect);
         if (!result.isSuccess()) {
             return Result.fail(dbConnect, "错误:尝试连接失败!");
         }
@@ -54,7 +54,7 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
 
     @Override
     public Result<Boolean> testConnect(DbConnect dbConnect) {
-        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
+        DataSourceOptions<?> dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
         //测试连接不使用连接池
         dataSourceOptions.setPoolType(PoolType.NoPool);
         try {
@@ -81,4 +81,5 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
         }
         return Result.ok(dbConnect, "数据库连接-查询成功!");
     }
+
 }
