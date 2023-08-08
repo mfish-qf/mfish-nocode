@@ -13,7 +13,7 @@ import java.util.List;
  * @date: 2023/3/20
  */
 public class MetaDataTable extends Page<MetaDataRow> {
-    private MetaDataHeaders headers = new MetaDataHeaders();
+    private final MetaDataHeaders headers = new MetaDataHeaders();
 
     public MetaDataTable() {
         super();

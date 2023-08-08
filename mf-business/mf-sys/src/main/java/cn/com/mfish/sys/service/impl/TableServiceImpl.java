@@ -61,13 +61,13 @@ public class TableServiceImpl implements TableService {
         return query(connectId, "select * from " + tableName, reqPage);
     }
 
-    private DataSourceOptions buildDBQuery(String connectId) {
+    private DataSourceOptions<?> buildDBQuery(String connectId) {
         Result<DbConnect> result = dbConnectService.queryById(connectId);
         if (!result.isSuccess()) {
             throw new MyRuntimeException("错误:获取数据库连接出错");
         }
         DbConnect dbConnect = result.getData();
-        DataSourceOptions dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
+        DataSourceOptions<?> dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
         //代码生成不使用连接池，强制设置为无池状态
         dataSourceOptions.setPoolType(PoolType.NoPool);
         return dataSourceOptions;
@@ -81,7 +81,7 @@ public class TableServiceImpl implements TableService {
      * @return
      */
     private MetaDataTable query(String connectId, String sql, ReqPage reqPage) {
-        DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
+        DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         }
@@ -89,7 +89,7 @@ public class TableServiceImpl implements TableService {
     }
 
     private <T> List<T> queryT(String connectId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
-        DataSourceOptions dataSourceOptions = buildDBQuery(connectId);
+        DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
         DBDialect dialect = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());

@@ -307,7 +307,7 @@ public class QueryHandler {
      * @return
      */
     private static MetaDataTable pageQuery(BoundSql boundSql) {
-        return pageQuery(boundSql, boundSql1 -> pageHelper.query(boundSql1));
+        return pageQuery(boundSql, pageHelper::query);
     }
 
     /**
@@ -339,18 +339,17 @@ public class QueryHandler {
      * @param dbConnect 数据库连接信息
      * @return
      */
-    public static DataSourceOptions buildDataSourceOptions(DbConnect dbConnect, String privateKey) {
+    public static DataSourceOptions<?> buildDataSourceOptions(DbConnect dbConnect, String privateKey) {
         String pwd = SM2Utils.decrypt(privateKey, dbConnect.getPassword());
         if (StringUtils.isEmpty(pwd)) {
             throw new MyRuntimeException("错误:密码解密失败");
         }
         DBType dbType = DBType.getType(dbConnect.getDbType());
-        DataSourceOptions dataSourceOptions = new DataSourceOptions().setDbType(dbType)
+        return new DataSourceOptions<>().setDbType(dbType)
                 .setDbName(dbConnect.getDbName())
                 .setPoolType(PoolType.getPoolType(dbConnect.getPoolType()))
                 .setUser(dbConnect.getUsername())
                 .setPassword(pwd)
                 .setJdbcUrl(DBAdapter.getDBDialect(dbType).getJdbc(dbConnect.getHost(), dbConnect.getPort(), dbConnect.getDbName()));
-        return dataSourceOptions;
     }
 }
