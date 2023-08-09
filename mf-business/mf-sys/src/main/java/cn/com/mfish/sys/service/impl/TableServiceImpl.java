@@ -4,7 +4,6 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
-import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dataset.enums.TargetType;
 import cn.com.mfish.common.dblink.db.DBAdapter;
@@ -23,6 +22,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -104,14 +104,14 @@ public class TableServiceImpl implements TableService {
      * @return
      */
     @Override
-    public MetaDataHeaders getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
+    public List<MetaDataHeader> getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
         List<FieldInfo> list = getFieldList(connectId, tableName, reqPage);
-        MetaDataHeaders headers = new MetaDataHeaders();
+        List<MetaDataHeader> headers = new ArrayList<>();
         if (list == null || list.isEmpty()) {
             return headers;
         }
         for (FieldInfo fieldInfo : list) {
-            headers.addColumn(new MetaDataHeader()
+            headers.add(new MetaDataHeader()
                     .setFieldName(fieldInfo.getFieldName())
                     .setColName(fieldInfo.getFieldName())
                     .setDataType(fieldInfo.getType())
