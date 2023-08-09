@@ -17,10 +17,10 @@ public class MetaHeaderDataTable {
     /**
      * 头信息
      */
-    private MetaDataHeaders header;
+    private MetaDataHeaders headers;
 
     public MetaHeaderDataTable(MetaDataTable metaDataTable) {
         this.table = new PageResult<>(metaDataTable);
-        this.header = metaDataTable.getColHeaders();
+        this.headers = metaDataTable.getColHeaders();
     }
 }
