@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.enums;
 
 import cn.com.mfish.common.core.constants.DataConstant;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -48,6 +49,13 @@ public enum DataType {
      * 数据类型
      */
     private final String dataType;
+    /**
+     * -- GETTER --
+     *  获取精简类型
+     *
+     * @return
+     */
+    @Getter
     private final SlimType slimType;
 
     DataType(String dataType, SlimType slimType) {
@@ -156,12 +164,4 @@ public enum DataType {
         return forType(type).slimType;
     }
 
-    /**
-     * 获取精简类型
-     *
-     * @return
-     */
-    public SlimType getSlimType() {
-        return this.slimType;
-    }
 }
