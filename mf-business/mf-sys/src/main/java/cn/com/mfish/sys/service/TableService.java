@@ -1,7 +1,7 @@
 package cn.com.mfish.sys.service;
 
 import cn.com.mfish.common.core.web.ReqPage;
-import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
@@ -58,5 +58,5 @@ public interface TableService {
      * @param reqPage   分页
      * @return
      */
-    MetaDataHeaders getDataHeaders(String connectId, String tableName, ReqPage reqPage);
+    List<MetaDataHeader> getDataHeaders(String connectId, String tableName, ReqPage reqPage);
 }

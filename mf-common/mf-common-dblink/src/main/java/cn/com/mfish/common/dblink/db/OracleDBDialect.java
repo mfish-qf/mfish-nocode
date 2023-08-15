@@ -3,6 +3,8 @@ package cn.com.mfish.common.dblink.db;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.dblink.page.BoundSql;
 
+import java.util.Locale;
+
 /**
  * @description: oracle数据库相关信息
  * @author: mfish
@@ -51,8 +53,8 @@ public class OracleDBDialect implements DBDialect {
     private BoundSql buildCondition(String sql, String tableName) {
         BoundSql boundSql = new BoundSql();
         if (!StringUtils.isEmpty(tableName)) {
-            sql += " and a.TABLE_NAME = upper(?)\n";
-            boundSql.getParams().add(tableName);
+            sql += " and a.TABLE_NAME = ?";
+            boundSql.getParams().add(tableName.toUpperCase(Locale.ROOT));
         }
         return boundSql.setSql(sql);
     }

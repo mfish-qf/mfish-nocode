@@ -12,7 +12,7 @@ import cn.com.mfish.scheduler.enums.JobType;
 import cn.com.mfish.scheduler.invoke.BaseInvoke;
 import cn.com.mfish.scheduler.service.JobLogService;
 import cn.com.mfish.scheduler.service.JobSubscribeService;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;

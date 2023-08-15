@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dataset.datatable.MetaHeaderDataTable;
 import cn.com.mfish.common.log.annotation.Log;
@@ -130,8 +130,8 @@ public class DbConnectController {
             @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
     })
-    public Result<MetaDataHeaders> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        MetaDataHeaders headers = tableService.getDataHeaders(connectId, tableName, reqPage);
+    public Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        List<MetaDataHeader> headers = tableService.getDataHeaders(connectId, tableName, reqPage);
         return Result.ok(headers, "获取表数据成功");
     }
 
