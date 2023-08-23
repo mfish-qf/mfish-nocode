@@ -80,6 +80,10 @@ public class MetaDataHeader implements Serializable {
         return this;
     }
 
+    public DataType.SlimType getDataType(){
+        return this.dataType.getSlimType();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

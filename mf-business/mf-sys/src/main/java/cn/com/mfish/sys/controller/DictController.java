@@ -99,7 +99,7 @@ public class DictController {
     @PutMapping
     @RequiresPermissions("sys:dict:update")
     public Result<Dict> edit(@RequestBody Dict dict) {
-        Result result = verifyDict(dict);
+        Result<Dict> result = verifyDict(dict);
         if (!result.isSuccess()) {
             return result;
         }
