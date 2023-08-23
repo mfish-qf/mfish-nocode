@@ -22,7 +22,7 @@ public enum DataType {
     FLOAT("Float", SlimType.NUMBER),//浮点类型
     DOUBLE("Double", SlimType.NUMBER),//双精度类型
     BIGDECIMAL("BigDecimal", SlimType.NUMBER),//双精度类型
-    DATE("Date", SlimType.NUMBER);//日期类型
+    DATE("Date", SlimType.DATE);//日期类型
 
     /**
      * 精简类型
