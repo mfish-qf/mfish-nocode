@@ -69,7 +69,6 @@ public class MetaDataHeader implements Serializable {
         this.dataType = DataType.forType(dataType);
         return this;
     }
-
     public MetaDataHeader setDataType(DataType dataType) {
         this.dataType = dataType;
         return this;
@@ -78,6 +77,10 @@ public class MetaDataHeader implements Serializable {
     public MetaDataHeader setDataType(DataType.SlimType slimType) {
         this.dataType = DataType.forType(slimType);
         return this;
+    }
+
+    public DataType.SlimType getDataType(){
+        return this.dataType.getSlimType();
     }
 
     @Override
