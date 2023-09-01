@@ -1,4 +1,6 @@
-package cn.com.mfish.common.dataset.common;
+package cn.com.mfish.common.dataset.enums;
+
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.Map;
  * @author: mfish
  * @date: 2023/5/9 21:04
  */
+@Getter
 public enum FilterCondition {
     错误("error", ""),
     等于("eq", " = ''{0}''"),
@@ -23,7 +26,19 @@ public enum FilterCondition {
     不包含("notLike", " NOT LIKE ''%{0}%''"),
     以开始("likeLeft", " LIKE ''{0}%''"),
     以结束("likeRight", " LIKE ''%{0}''");
+    /**
+     * -- GETTER --
+     *  获取值
+     *
+     * @return
+     */
     private String value;
+    /**
+     * -- GETTER --
+     *  获取条件
+     *
+     * @return
+     */
     private final String condition;
 
     FilterCondition(String value, String condition) {
@@ -39,26 +54,8 @@ public enum FilterCondition {
         }
     }
 
-    /**
-     * 获取值
-     *
-     * @return
-     */
-    public String getValue() {
-        return value;
-    }
-
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /**
-     * 获取条件
-     *
-     * @return
-     */
-    public String getCondition() {
-        return condition;
     }
 
     /**

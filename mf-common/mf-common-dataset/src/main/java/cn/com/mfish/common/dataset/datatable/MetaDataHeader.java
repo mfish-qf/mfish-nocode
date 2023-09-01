@@ -69,7 +69,6 @@ public class MetaDataHeader implements Serializable {
         this.dataType = DataType.forType(dataType);
         return this;
     }
-
     public MetaDataHeader setDataType(DataType dataType) {
         this.dataType = dataType;
         return this;
