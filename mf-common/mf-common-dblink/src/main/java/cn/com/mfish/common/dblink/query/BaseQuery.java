@@ -136,6 +136,7 @@ public class BaseQuery {
                 }
             }
             log.info("执行查询:" + boundSql.getSql());
+            log.info("参数:" + boundSql.getParams());
             long start = System.currentTimeMillis();
             rs = stmt.executeQuery();
             long end = System.currentTimeMillis();
