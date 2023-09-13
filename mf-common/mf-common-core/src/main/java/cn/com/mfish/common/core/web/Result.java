@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.web;
 
 import cn.com.mfish.common.core.constants.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class Result<T> implements Serializable {
     private String msg;
     @ApiModelProperty("数据对象")
     private T data;
+    @JsonIgnore
     @ApiModelProperty("补充参数 用于多次检查时携带上一次参数提供下次使用")
     private Map<String, String> param = new HashMap<>();
 

@@ -29,7 +29,7 @@ public abstract class AbstractStorage implements Storage {
     public String buildUrl(String filePath, Integer isPrivate) {
         int index = filePath.lastIndexOf("/");
         String keyName;
-        if (index > 0 && index < filePath.length()) {
+        if (index > 0) {
             keyName = filePath.substring(index + 1);
         } else {
             keyName = filePath;
