@@ -29,7 +29,7 @@ public class Account2IdTempCache extends BaseTempCache<String> {
     protected String getFromDB(String... key) {
         SsoUser user = ssoUserMapper.getUserByAccount(key[0]);
         if (user == null) {
-            log.info(MessageFormat.format("错误:账号{0}未找到对应用户!", key));
+            log.info(MessageFormat.format("错误:账号{0}未找到对应用户!", key[0]));
             return null;
         }
         return user.getId();
