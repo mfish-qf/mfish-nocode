@@ -27,8 +27,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.7.13</spring-boot.version>
-        <spring-boot-admin.version>2.7.10</spring-boot-admin.version>
+        <spring-boot.version>2.7.15</spring-boot.version>
+        <spring-boot-admin.version>2.7.11</spring-boot-admin.version>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
         <alibaba.nacos.version>2.2.3</alibaba.nacos.version>
@@ -39,17 +39,17 @@
         <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
         <druid.version>1.2.16</druid.version>
         <dynamic-ds.version>3.6.1</dynamic-ds.version>
-        <commons.io.version>2.11.0</commons.io.version>
+        <commons.io.version>2.13.0</commons.io.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <fastjson.version>2.0.35</fastjson.version>
+        <fastjson.version>2.0.40</fastjson.version>
         <jackson.version>2.15.2</jackson.version>
         <zxing.version>3.4.1</zxing.version>
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <oauth2.version>1.0.2</oauth2.version>
-        <shiro.version>1.11.0</shiro.version>
-        <wechat.version>4.5.1.B</wechat.version>
-        <aliyun-oss.version>3.16.3</aliyun-oss.version>
+        <shiro.version>1.12.0</shiro.version>
+        <wechat.version>4.5.5.B</wechat.version>
+        <aliyun-oss.version>3.17.1</aliyun-oss.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
         <oracle.version>23.2.0.0</oracle.version>
@@ -382,6 +382,11 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>versions-maven-plugin</artifactId>-->
+<!--                <version>2.7</version>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
