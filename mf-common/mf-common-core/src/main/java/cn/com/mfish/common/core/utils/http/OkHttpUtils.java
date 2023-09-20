@@ -3,6 +3,7 @@ package cn.com.mfish.common.core.utils.http;
 import cn.com.mfish.common.core.enums.HttpType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.Result;
+import com.alibaba.fastjson2.JSON;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +37,9 @@ public class OkHttpUtils {
     @Data
     @Accessors(chain = true)
     public static class TimeOut {
-        private long connectTimeOut = 10;
-        private long readTimeOut = 10;
-        private long writeTimeout = 10;
+        private long connectTimeOut = 30;
+        private long readTimeOut = 30;
+        private long writeTimeout = 60;
         private TimeUnit timeUnit = TimeUnit.SECONDS;
     }
 
@@ -65,31 +66,31 @@ public class OkHttpUtils {
         if (params == null || params.isEmpty()) {
             return get(url, headers, timeOut);
         }
-        StringBuffer sb = new StringBuffer(url);
+        StringBuilder sb = new StringBuilder(url);
         boolean firstFlag = true;
         for (Map.Entry<String, String> entry : params.entrySet()) {
             if (firstFlag) {
-                sb.append("?" + entry.getKey() + "=" + entry.getValue());
+                sb.append("?").append(entry.getKey()).append("=").append(entry.getValue());
                 firstFlag = false;
             } else {
-                sb.append("&" + entry.getKey() + "=" + entry.getValue());
+                sb.append("&").append(entry.getKey()).append("=").append(entry.getValue());
             }
         }
         return get(sb.toString(), headers, timeOut);
     }
 
     public static Result<String> get(String url, Map<String, String> headers, TimeOut timeOut) throws IOException {
-        log.info("请求url：{},请求入参：{}", url);
+        log.info("请求url：{},请求入参：{}", url, JSON.toJSONString(headers));
         OkHttpClient okHttpClient = buildOkHttpClient(url, timeOut);
         Request request = buildRequest(url, headers, null, RequestMethod.GET);
         return buildResult(okHttpClient, request);
     }
 
-    public static Result postForm(String url, String params) throws IOException {
+    public static Result<String> postForm(String url, String params) throws IOException {
         return postForm(url, params, null);
     }
 
-    public static Result postForm(String url, String params, Map<String, String> headers) throws IOException {
+    public static Result<String> postForm(String url, String params, Map<String, String> headers) throws IOException {
         return postForm(url, params, headers, null);
     }
 
@@ -102,15 +103,15 @@ public class OkHttpUtils {
      * @param timeOut
      * @return
      */
-    public static Result postForm(String url, String params, Map<String, String> headers, TimeOut timeOut) throws IOException {
+    public static Result<String> postForm(String url, String params, Map<String, String> headers, TimeOut timeOut) throws IOException {
         return post(url, params, headers, timeOut, Form_TYPE);
     }
 
-    public static Result postJson(String url, String params) throws IOException {
+    public static Result<String> postJson(String url, String params) throws IOException {
         return postJson(url, params, null);
     }
 
-    public static Result postJson(String url, String params, Map<String, String> headers) throws IOException {
+    public static Result<String> postJson(String url, String params, Map<String, String> headers) throws IOException {
         return postJson(url, params, headers, null);
     }
 
@@ -123,7 +124,7 @@ public class OkHttpUtils {
      * @param timeOut
      * @return
      */
-    public static Result postJson(String url, String params, Map<String, String> headers, TimeOut timeOut) throws IOException {
+    public static Result<String> postJson(String url, String params, Map<String, String> headers, TimeOut timeOut) throws IOException {
         return post(url, params, headers, timeOut, JSON_TYPE);
     }
 
@@ -170,7 +171,7 @@ public class OkHttpUtils {
     }
 
     public static Result<String> upload(String url, File file, Map<String, String> headers, MediaType mediaType) throws IOException {
-        return upload(url, file, headers, null);
+        return upload(url, file, headers, null, mediaType);
     }
 
     /**
@@ -209,8 +210,7 @@ public class OkHttpUtils {
         }
         HttpType httpType = HttpType.getHttpType(url);
         if (httpType == HttpType.HTTPS) {
-            clientBuilder.sslSocketFactory(SSLBuild.getSSLSocketFactory(), SSLBuild.getX509TrustManager())
-                    .hostnameVerifier(SSLBuild.getHostnameVerifier());
+            clientBuilder.sslSocketFactory(SSLBuild.getSSLSocketFactory(), SSLBuild.getX509TrustManager());
         }
         return clientBuilder.build();
     }
@@ -264,6 +264,7 @@ public class OkHttpUtils {
                 throw new MyRuntimeException(MessageFormat.format("错误:OkHttp请求异常。请求:{0} 结果:{1}"
                         , request.body(), response.body()));
             }
+            assert response.body() != null;
             return Result.buildResult(response.body().string(), response.code(), response.message());
         } catch (IOException e) {
             log.error("错误:OkHttp请求异常", e);
@@ -303,11 +304,6 @@ public class OkHttpUtils {
             };
         }
 
-        //获取HostnameVerifier
-        public static HostnameVerifier getHostnameVerifier() {
-            return (s, sslSession) -> true;
-        }
-
         public static X509TrustManager getX509TrustManager() {
             X509TrustManager trustManager = null;
             try {
@@ -319,7 +315,7 @@ public class OkHttpUtils {
                 }
                 trustManager = (X509TrustManager) trustManagers[0];
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
 
             return trustManager;
