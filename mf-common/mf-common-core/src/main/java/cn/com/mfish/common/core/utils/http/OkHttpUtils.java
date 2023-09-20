@@ -171,7 +171,7 @@ public class OkHttpUtils {
     }
 
     public static Result<String> upload(String url, File file, Map<String, String> headers, MediaType mediaType) throws IOException {
-        return upload(url, file, headers, null, mediaType);
+        return upload(url, file, headers, new TimeOut(), mediaType);
     }
 
     /**
