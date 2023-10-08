@@ -17,7 +17,7 @@ public enum JobType {
     LocalJob(0),
     RpcJob(1),
     MqJob(2);
-    private int value;
+    private final int value;
     private static final Map<Integer, BaseInvoke> map = new HashMap<>();
 
     JobType(int type) {
