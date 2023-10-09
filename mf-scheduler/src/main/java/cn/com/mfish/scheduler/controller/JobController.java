@@ -51,7 +51,7 @@ public class JobController {
     @RequiresPermissions("sys:job:query")
     public Result<PageResult<Job>> queryPageList(ReqJob reqJob, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Job>()
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<Job>()
                 .like(reqJob.getJobName() != null, Job::getJobName, reqJob.getJobName())
                 .like(reqJob.getJobGroup() != null, Job::getJobGroup, reqJob.getJobGroup())
                 .eq(reqJob.getStatus() != null, Job::getStatus, reqJob.getStatus())

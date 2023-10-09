@@ -1,14 +1,13 @@
 package cn.com.mfish.scheduler.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
 import cn.com.mfish.scheduler.req.ReqJobSubscribe;
-import cn.com.mfish.scheduler.service.JobService;
 import cn.com.mfish.scheduler.service.JobSubscribeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -36,8 +35,6 @@ import java.util.List;
 public class JobSubscribeController {
     @Resource
     private JobSubscribeService jobSubscribeService;
-    @Resource
-    JobService jobService;
 
     /**
      * 分页列表查询
