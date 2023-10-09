@@ -5,6 +5,7 @@ import cn.com.mfish.sys.api.entity.FieldInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -12,6 +13,7 @@ import lombok.experimental.Accessors;
  * @author: mfish
  * @date: 2023/5/9 22:14
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
 @ApiModel("搜索条件增加字段信息")

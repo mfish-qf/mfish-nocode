@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.http.EscapeUtil;
 import cn.com.mfish.gateway.config.properties.XssProperties;
 import io.netty.buffer.ByteBufAllocator;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -61,7 +62,8 @@ public class XssFilter implements GlobalFilter, Ordered {
     }
 
     private ServerHttpRequestDecorator requestDecorator(ServerWebExchange exchange) {
-        ServerHttpRequestDecorator serverHttpRequestDecorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+        return new ServerHttpRequestDecorator(exchange.getRequest()) {
+            @NotNull
             @Override
             public Flux<DataBuffer> getBody() {
                 Flux<DataBuffer> body = super.getBody();
@@ -81,6 +83,7 @@ public class XssFilter implements GlobalFilter, Ordered {
                 });
             }
 
+            @NotNull
             @Override
             public HttpHeaders getHeaders() {
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -92,7 +95,6 @@ public class XssFilter implements GlobalFilter, Ordered {
             }
 
         };
-        return serverHttpRequestDecorator;
     }
 
     @Override

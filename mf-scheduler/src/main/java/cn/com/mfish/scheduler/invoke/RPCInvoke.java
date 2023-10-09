@@ -30,7 +30,7 @@ public class RPCInvoke implements BaseInvoke {
             log.info("返回结果:" + obj);
             //如果返回结果为Result类型，判断结果是否成功。不成功认为任务失败
             if (obj instanceof Result) {
-                Result result = (Result) obj;
+                Result<?> result = (Result<?>) obj;
                 if (!result.isSuccess()) {
                     throw new MyRuntimeException(result.getMsg());
                 }

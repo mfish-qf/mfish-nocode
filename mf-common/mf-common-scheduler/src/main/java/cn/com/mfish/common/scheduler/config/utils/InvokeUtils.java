@@ -2,8 +2,8 @@ package cn.com.mfish.common.scheduler.config.utils;
 
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -92,7 +92,7 @@ public class InvokeUtils {
                         listTypes.add(Class.forName(iParam.getType()));
                     }
                     if (iParam.getValue() instanceof JSONObject) {
-                        listValues.add(JSONObject.toJavaObject((JSONObject) iParam.getValue(), Class.forName(iParam.getType())));
+                        listValues.add(JSONObject.parseObject(JSON.toJSONString(iParam.getValue()), Class.forName(iParam.getType())));
                         continue;
                     }
                     listValues.add(iParam.getValue());

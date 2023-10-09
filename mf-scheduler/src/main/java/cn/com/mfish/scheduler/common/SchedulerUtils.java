@@ -9,7 +9,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class SchedulerUtils {
      * @param job
      */
     public static void createScheduler(Scheduler scheduler, Job job, JobSubscribe jobSubscribe, boolean cover) throws SchedulerException, ClassNotFoundException {
-        createScheduler(scheduler, job, Arrays.asList(jobSubscribe), cover);
+        createScheduler(scheduler, job, Collections.singletonList(jobSubscribe), cover);
     }
 
     /**

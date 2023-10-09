@@ -49,7 +49,7 @@ public class JobLogController {
     @RequiresPermissions("sys:jobLog:query")
     public Result<PageResult<JobLog>> queryPageList(ReqJobLog reqJobLog, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<JobLog>()
+        LambdaQueryWrapper<JobLog> queryWrapper = new LambdaQueryWrapper<JobLog>()
                 .like(reqJobLog.getJobName() != null, JobLog::getJobName, reqJobLog.getJobName())
                 .like(reqJobLog.getJobGroup() != null, JobLog::getJobGroup, reqJobLog.getJobGroup())
                 .eq(reqJobLog.getJobType() != null, JobLog::getJobType, reqJobLog.getJobType())
@@ -110,7 +110,7 @@ public class JobLogController {
         String remark = jobLog.getRemark();
         if (!StringUtils.isEmpty(remark)) {
             //数据库设置长度1000，截取999位
-            if (remark != null && remark.length() >= 1000) {
+            if (remark.length() >= 1000) {
                 remark = remark.substring(0, 999);
             }
             newLog.setRemark(remark);

@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.enums;
 
 import cn.com.mfish.common.core.constants.DataConstant;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -13,25 +14,26 @@ import java.util.Map;
  * @date: 2023/3/20
  */
 public enum DataType {
-    UNKNOWN("unknown", SlimType.未知),//未知类型
-    STRING("String", SlimType.字符),//字符类型
-    BOOLEAN("Boolean", SlimType.布尔),//布尔类型
-    INTEGER("Integer", SlimType.数字),//整数类型
-    LONG("Long", SlimType.数字),//整数类型
-    FLOAT("Float", SlimType.数字),//浮点类型
-    DOUBLE("Double", SlimType.数字),//双精度类型
-    BIGDECIMAL("BigDecimal", SlimType.数字),//双精度类型
-    DATE("Date", SlimType.数字);//日期类型
+    UNKNOWN("unknown", SlimType.UNKNOWN),//未知类型
+    STRING("String", SlimType.STRING),//字符类型
+    BOOLEAN("Boolean", SlimType.BOOLEAN),//布尔类型
+    INTEGER("Integer", SlimType.NUMBER),//整数类型
+    LONG("Long", SlimType.NUMBER),//整数类型
+    FLOAT("Float", SlimType.NUMBER),//浮点类型
+    DOUBLE("Double", SlimType.NUMBER),//双精度类型
+    BIGDECIMAL("BigDecimal", SlimType.NUMBER),//双精度类型
+    DATE("Date", SlimType.DATE);//日期类型
 
     /**
      * 精简类型
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public enum SlimType {
-        未知("unknown"),
-        字符("string"),
-        数字("number"),
-        布尔("boolean"),
-        日期("date");
+        UNKNOWN("unknown"),
+        STRING("string"),
+        NUMBER("number"),
+        BOOLEAN("boolean"),
+        DATE("date");
 
         private final String type;
 

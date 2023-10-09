@@ -235,14 +235,14 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
     public int compareTo(@NotNull MetaDataRow row) {
         int value = 0;
         for (Map.Entry<String, MetaDataHeader> header : headers.entrySet()) {
-            switch (header.getValue().getDataType().getSlimType()) {
-                case 数字:
+            switch (header.getValue().getDataType()) {
+                case NUMBER:
                     value = DataUtils.numCompare(this.getCellValue(header.getValue().getColName()), row.getCellValue(header.getValue().getColName()));
                     break;
-                case 日期:
+                case DATE:
                     value = DataUtils.dateCompare(this.getCellValue(header.getValue().getColName()), row.getCellValue(header.getValue().getColName()));
                     break;
-                case 字符:
+                case STRING:
                     value = DataUtils.strCompare(this.getCellValue(header.getValue().getColName()), row.getCellValue(header.getValue().getColName()));
                     break;
             }

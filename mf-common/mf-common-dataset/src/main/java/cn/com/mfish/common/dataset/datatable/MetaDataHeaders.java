@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,16 +16,19 @@ import java.util.Map;
  * @date: 2023/3/20
  */
 public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
-
     /**
      * 增加列
      *
      * @param columns 列头组
      */
-    public void addColumn(MetaDataHeaders columns) {
-        for (Map.Entry<String, MetaDataHeader> entry : columns.entrySet()) {
-            addColumn(entry.getValue());
+    public void addColumn(List<MetaDataHeader> columns) {
+        for (MetaDataHeader col :columns) {
+            addColumn(col);
         }
+    }
+
+    public void put(MetaDataHeader value) {
+        put(value.getColName(), value);
     }
 
     /**

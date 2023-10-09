@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -150,5 +151,34 @@ public class ServletUtils {
         Result<?> result = Result.fail(code, value.toString());
         DataBuffer dataBuffer = response.bufferFactory().wrap(JSONObject.toJSONString(result).getBytes());
         return response.writeWith(Mono.just(dataBuffer));
+    }
+
+    /**
+     * 将ParameterMap转换成map<string,string>格式
+     * @param request 请求
+     * @return map
+     */
+    public static Map<String, String> getParameterStringMap(HttpServletRequest request) {
+        Map<String, String[]> properties = request.getParameterMap();
+        Map<String, String> returnMap = new HashMap<>();
+        String value = "";
+        for (Map.Entry<String, String[]> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            String[] values = entry.getValue();
+            if (null == values) {
+                value = "";
+
+            } else if (values.length > 1) {
+                //用于请求参数中有多个相同名称
+                for (String s : values) {
+                    value = "," + s;
+                }
+                value = value.substring(1);
+            } else {
+                value = values[0];
+            }
+            returnMap.put(key, value);
+        }
+        return returnMap;
     }
 }

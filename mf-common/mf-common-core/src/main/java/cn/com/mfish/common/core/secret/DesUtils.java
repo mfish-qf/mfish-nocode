@@ -1,12 +1,10 @@
 package cn.com.mfish.common.core.secret;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import java.security.Key;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * @description: DES加解密
@@ -14,10 +12,10 @@ import java.security.SecureRandom;
  * @date: 2023/3/16
  */
 public class DesUtils {
-    private static Key key;
-    private static String KEY_STR = "myKey";
-    private static String CHARSET_NAME = "UTF-8";
-    private static String ALGORITHM = "DES";
+    private static final Key key;
+    private static final String KEY_STR = "myKey";
+    private static final String CHARSET_NAME = "UTF-8";
+    private static final String ALGORITHM = "DES";
 
     static {
         try {
@@ -45,7 +43,6 @@ public class DesUtils {
      */
     public static String encrypt(String str) {
         //基于BASE64编码，接收byte[]并转换成String
-        BASE64Encoder encoder = new BASE64Encoder();
         try {
             //按utf8编码
             byte[] bytes = str.getBytes(CHARSET_NAME);
@@ -56,7 +53,7 @@ public class DesUtils {
             //加密
             byte[] doFinal = cipher.doFinal(bytes);
             //byte[]to encode好的String 并返回
-            return encoder.encode(doFinal);
+            return new String(Base64.getEncoder().encode(doFinal));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -69,10 +66,9 @@ public class DesUtils {
      * @return
      */
     public static String decrypt(String str) {
-        BASE64Decoder decoder = new BASE64Decoder();
         try {
             //将字符串decode成byte[]
-            byte[] bytes = decoder.decodeBuffer(str);
+            byte[] bytes = Base64.getDecoder().decode(str);
             //获取解密对象
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             //初始化解密信息
@@ -83,5 +79,11 @@ public class DesUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void main(String[] args){
+        String mFish =  encrypt("mfish");
+        System.out.println(mFish);
+        System.out.println(decrypt(mFish));
     }
 }

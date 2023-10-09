@@ -62,10 +62,10 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
                 String rspStr = resolveBodyFromRequest(request);
                 Map<String, String> map = getParamMap(rspStr);
                 //判断是否还需要进行参数比对
-                if (gatewayCheck == CheckStatus.参数校验 && !matchParam(map, captchaProperties.getGatewayCheckCaptcha())) {
+                if (gatewayCheck == CheckStatus.参数校验 && unMatchParam(map, captchaProperties.getGatewayCheckCaptcha())) {
                     return chain.filter(exchange);
                 }
-                if (selfCheck == CheckStatus.参数校验 && !matchParam(map, captchaProperties.getSelfCheckCaptcha())) {
+                if (selfCheck == CheckStatus.参数校验 && unMatchParam(map, captchaProperties.getSelfCheckCaptcha())) {
                     return chain.filter(exchange);
                 }
                 checkCodeService.checkCaptcha(map.get(CAPTCHA_VALUE), map.get(CAPTCHA_KEY));
@@ -125,7 +125,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
      * @param checkList 检测列表
      * @return
      */
-    private boolean matchParam(Map<String, String> map, String[] checkList) {
+    private boolean unMatchParam(Map<String, String> map, String[] checkList) {
         List<Boolean> matchList = new ArrayList<>();
         for (String check : checkList) {
             int index = check.indexOf("?");
@@ -136,7 +136,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
             boolean isMatch = true;
             Map<String, String> param = getParamMap(check.substring(index + 1));
             for (Map.Entry<String, String> entry : param.entrySet()) {
-                //如果存在参数值不想等则没匹配到
+                //如果存在参数值不相等则没匹配到
                 if (!entry.getValue().equals(map.get(entry.getKey()))) {
                     isMatch = false;
                     break;
@@ -147,10 +147,10 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
         for (Boolean match : matchList) {
             //如果存在一个匹配到的表示已匹配到链接
             if (match) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -164,7 +164,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
         Map<String, String> map = new HashMap<>();
         for (String s : params) {
             String[] kv = s.split("=");
-            if (kv != null && kv.length == 2) {
+            if (kv.length == 2) {
                 map.put(kv[0], kv[1]);
             }
         }

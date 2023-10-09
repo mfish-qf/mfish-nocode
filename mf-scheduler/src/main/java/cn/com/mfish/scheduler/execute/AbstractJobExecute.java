@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractJobExecute extends QuartzJobBean {
-    private static ThreadLocal<JobLog> threadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<JobLog> threadLocal = new ThreadLocal<>();
     private static final String OPERATOR = "scheduler_robot";
 
     /**
@@ -65,7 +65,6 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
             success = true;
         } catch (Exception ex) {
             log.error(MessageFormat.format("任务:{0}-执行状态:异常-任务ID:{1}-订阅ID:{2}", job.getJobName(), job.getId(), subscribeId), ex);
-            success = false;
             error = ex.getMessage();
         } finally {
             executeCallBack(success, error);

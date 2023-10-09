@@ -65,7 +65,7 @@ public class TriggerUtils {
         if (!StringUtils.isEmpty(triggerMeta.getCalendar())) { // 设置日历
             triggerBuilder.modifiedByCalendar(triggerMeta.getCalendar());
         }
-        ScheduleBuilder cronTriggerBuilder = getScheduleBuilder(triggerMeta);
+        ScheduleBuilder<?> cronTriggerBuilder = getScheduleBuilder(triggerMeta);
         // 将cronTrigger设置到triggerBuilder中
         triggerBuilder.withSchedule(cronTriggerBuilder);
         // 构造Trigger
@@ -80,7 +80,7 @@ public class TriggerUtils {
      * @param triggerMeta
      * @return
      */
-    private static ScheduleBuilder getScheduleBuilder(TriggerMeta triggerMeta) {
+    private static ScheduleBuilder<?> getScheduleBuilder(TriggerMeta triggerMeta) {
         if (SINGLE_TRIGGER.equals(triggerMeta.getCron())) {
             return SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0);
         }
