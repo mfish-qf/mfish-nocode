@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class IDBuild {
-    private static RedisTemplate<String, Long> redisTemplate;
+    private static final RedisTemplate<String, Long> redisTemplate;
 
     static {
         redisTemplate = SpringBeanFactory.getBean("redisTemplate");
@@ -29,9 +30,7 @@ public class IDBuild {
      */
     public static String getID(String prefix) {
         String id = prefix + new Date().getTime();
-        StringBuilder sb = new StringBuilder(id);
-        sb.append(getSuffix(id));
-        return sb.toString();
+        return id + getSuffix(id);
     }
 
     /**
@@ -41,11 +40,7 @@ public class IDBuild {
      * @return
      */
     private static String getSuffix(String key) {
-        StringBuilder seq = new StringBuilder(getSequence(key).toString());
-        while (seq.length() < 4) {
-            seq.insert(0, "0");
-        }
-        return seq.toString();
+        return getSequence(key).toString();
     }
 
     /**
@@ -55,14 +50,8 @@ public class IDBuild {
      * @return
      */
     private static Long getSequence(String key) {
-        return getSequence(key, 1, 30);
-    }
-
-    private static Long getSequence(String key, int increment, long expire) {
-        RedisAtomicLong counter = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
-        if (expire > 0) {
-            counter.expire(expire, TimeUnit.SECONDS);
-        }
-        return counter.getAndAdd(increment);
+        RedisAtomicLong counter = new RedisAtomicLong(key, Objects.requireNonNull(redisTemplate.getConnectionFactory()));
+        counter.expire(30, TimeUnit.SECONDS);
+        return counter.getAndAdd(1);
     }
 }
