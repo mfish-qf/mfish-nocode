@@ -59,7 +59,7 @@ public class DictController {
      */
     private List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<Dict>()
+        LambdaQueryWrapper<Dict> queryWrapper = new LambdaQueryWrapper<Dict>()
                 .like(reqDict.getDictCode() != null, Dict::getDictCode, reqDict.getDictCode())
                 .like(reqDict.getDictName() != null, Dict::getDictName, reqDict.getDictName())
                 .eq(reqDict.getStatus() != null, Dict::getStatus, reqDict.getStatus())
@@ -78,7 +78,7 @@ public class DictController {
     @PostMapping
     @RequiresPermissions("sys:dict:insert")
     public Result<Dict> add(@RequestBody Dict dict) {
-        Result result = verifyDict(dict);
+        Result<Dict> result = verifyDict(dict);
         if (!result.isSuccess()) {
             return result;
         }
