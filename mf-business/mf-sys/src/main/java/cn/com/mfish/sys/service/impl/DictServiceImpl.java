@@ -35,11 +35,11 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     public Result<Dict> updateDict(Dict dict) {
         List<DictItem> list = dictItemService.getDictItems(new ReqDictItem().setDictId(dict.getId()));
         String orgCode = null;
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             orgCode = list.get(0).getDictCode();
         }
         if (orgCode != null && !orgCode.equals(dict.getDictCode())) {
-            for (DictItem item : list) {
+            for (DictItem<?> item : list) {
                 item.setDictCode(dict.getDictCode());
             }
             if (!dictItemService.updateBatchById(list)) {
