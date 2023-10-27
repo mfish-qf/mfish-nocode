@@ -26,7 +26,7 @@ public class TreeUtils {
      * @param <P>   id类型
      */
     public static <T extends BaseTreeEntity<P>, P> void buildTree(P pId, List<T> items, List<T> trees, Class<T> cls) {
-        if (items == null || items.size() == 0) {
+        if (items == null || items.isEmpty()) {
             return;
         }
         for (T item : items) {
@@ -43,7 +43,7 @@ public class TreeUtils {
                     buildTree(item.getId(), items, (List<T>) child, cls);
                 }
                 //没有child设置为空防止前端显示多一个折叠符号
-                if (child.size() == 0) {
+                if (child.isEmpty()) {
                     parent.setChildren(null);
                 }
             } catch (InstantiationException | IllegalAccessException e) {

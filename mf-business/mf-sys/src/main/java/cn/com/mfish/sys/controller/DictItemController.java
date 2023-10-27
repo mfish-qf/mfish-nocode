@@ -78,7 +78,7 @@ public class DictItemController {
     @PostMapping
     @RequiresPermissions("sys:dict:insert")
     public Result<DictItem> add(@RequestBody DictItem dictItem) {
-        Result result = verifyDict(dictItem);
+        Result<DictItem> result = verifyDict(dictItem);
         if (!result.isSuccess()) {
             return result;
         }
