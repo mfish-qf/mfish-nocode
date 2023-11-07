@@ -50,6 +50,7 @@
         <shiro.version>1.12.0</shiro.version>
         <wechat.version>4.5.5.B</wechat.version>
         <aliyun-oss.version>3.17.1</aliyun-oss.version>
+        <qiniu-sdk.version>7.14.0</qiniu-sdk.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
         <oracle.version>23.2.0.0</oracle.version>
@@ -242,6 +243,11 @@
                 <groupId>com.aliyun.oss</groupId>
                 <artifactId>aliyun-sdk-oss</artifactId>
                 <version>${aliyun-oss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu-sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
