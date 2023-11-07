@@ -18,60 +18,31 @@ public class StorageProperties {
     private String active;
     private Local local;
     private AliYun aliyun;
+    private QiNiu qiNiu;
     /**
      * 后端服务文件接口地址
      */
     private String address;
 
+    @Data
     public static class Local {
         private String storagePath;
-
-        public String getStoragePath() {
-            return storagePath;
-        }
-
-        public void setStoragePath(String storagePath) {
-            this.storagePath = storagePath;
-        }
     }
 
+    @Data
     public static class AliYun {
         private String endpoint;
         private String accessKeyId;
         private String accessKeySecret;
         private String bucketName;
+    }
 
-        public String getEndpoint() {
-            return endpoint;
-        }
-
-        public void setEndpoint(String endpoint) {
-            this.endpoint = endpoint;
-        }
-
-        public String getAccessKeyId() {
-            return accessKeyId;
-        }
-
-        public void setAccessKeyId(String accessKeyId) {
-            this.accessKeyId = accessKeyId;
-        }
-
-        public String getAccessKeySecret() {
-            return accessKeySecret;
-        }
-
-        public void setAccessKeySecret(String accessKeySecret) {
-            this.accessKeySecret = accessKeySecret;
-        }
-
-        public String getBucketName() {
-            return bucketName;
-        }
-
-        public void setBucketName(String bucketName) {
-            this.bucketName = bucketName;
-        }
+    @Data
+    public static class QiNiu{
+        private String accessKey;
+        private String secretKey;
+        private String bucket;
+        private String domain;
     }
 
 }
