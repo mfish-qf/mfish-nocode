@@ -12,7 +12,7 @@ public abstract class AbstractStorage implements Storage {
     /**
      * 接口地址
      */
-    private String address;
+    private final String address;
 
     public AbstractStorage(String address) {
         this.address = address;
