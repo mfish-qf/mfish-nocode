@@ -39,7 +39,8 @@
         <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
         <druid.version>1.2.16</druid.version>
         <dynamic-ds.version>3.6.1</dynamic-ds.version>
-        <commons.io.version>2.13.0</commons.io.version>
+        <commons.io.version>2.15.1</commons.io.version>
+        <commons.text.version>1.10.0</commons.text.version>
         <freemarker.version>2.3.31</freemarker.version>
         <fastjson.version>2.0.40</fastjson.version>
         <jackson.version>2.15.2</jackson.version>
@@ -168,6 +169,12 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
             </dependency>
             <!-- 代码生成使用模板 -->
             <dependency>
@@ -388,11 +395,6 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>versions-maven-plugin</artifactId>-->
-<!--                <version>2.7</version>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
