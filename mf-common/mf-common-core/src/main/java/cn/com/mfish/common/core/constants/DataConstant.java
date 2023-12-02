@@ -51,6 +51,7 @@ public class DataConstant {
         public static final String DOUBLE = "DOUBLE";
         public static final String NUMERIC = "NUMERIC";
         public static final String DECIMAL = "DECIMAL";
+        public static final String BIGDECIMAL = "BIGDECIMAL";
         public static final String BOOLEAN = "BOOLEAN";
         public static final String NUMBER = "NUMBER";
         public static final String DATETIME = "DATETIME";
