@@ -117,6 +117,7 @@ public enum DataType {
         typeMap.put(DataConstant.DataType.DOUBLE, DataType.DOUBLE);
         typeMap.put(DataConstant.DataType.NUMERIC, DataType.BIGDECIMAL);
         typeMap.put(DataConstant.DataType.DECIMAL, DataType.BIGDECIMAL);
+        typeMap.put(DataConstant.DataType.BIGDECIMAL,DataType.BIGDECIMAL);
         typeMap.put(DataConstant.DataType.BOOLEAN, DataType.BOOLEAN);
         typeMap.put(DataConstant.DataType.NUMBER, DataType.FLOAT);
 
