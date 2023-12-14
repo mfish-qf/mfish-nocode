@@ -3,6 +3,8 @@ package cn.com.mfish.sys.api.fallback;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
+import cn.com.mfish.common.dataset.datatable.MetaHeaderDataTable;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
@@ -11,6 +13,8 @@ import cn.com.mfish.sys.api.req.ReqDbConnect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @description: 远程数据连接失败处理
@@ -42,6 +46,16 @@ public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectS
             @Override
             public Result<PageResult<FieldInfo>> getFieldList(String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询表字段列表出错");
+            }
+
+            @Override
+            public Result<MetaHeaderDataTable> getDataTable(String connectId, String tableName, ReqPage reqPage) {
+                return Result.fail("错误:查询表数据失败");
+            }
+
+            @Override
+            public Result<List<MetaDataHeader>> getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
+                return Result.fail("错误:获取表列头失败");
             }
         };
     }
