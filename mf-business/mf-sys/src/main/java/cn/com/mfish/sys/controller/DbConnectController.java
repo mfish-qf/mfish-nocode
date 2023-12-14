@@ -132,7 +132,7 @@ public class DbConnectController {
     })
     public Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         List<MetaDataHeader> headers = tableService.getDataHeaders(connectId, tableName, reqPage);
-        return Result.ok(headers, "获取表数据成功");
+        return Result.ok(headers, "获取表列头成功");
     }
 
     /**

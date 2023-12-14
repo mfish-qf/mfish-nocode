@@ -36,7 +36,7 @@ public class Result<T> implements Serializable {
     private Map<String, String> param = new HashMap<>();
 
     public static <T> Result<T> buildResult(T data, int code, String msg) {
-        return new Result<T>().setCode(code).setData(data).setMsg(msg).setSuccess(code == Constants.SUCCESS ? true : false);
+        return new Result<T>().setCode(code).setData(data).setMsg(msg).setSuccess(code == Constants.SUCCESS);
     }
 
     public static <T> Result<T> ok() {
