@@ -42,8 +42,7 @@
         <commons.io.version>2.15.1</commons.io.version>
         <commons.text.version>1.10.0</commons.text.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <fastjson.version>2.0.40</fastjson.version>
-        <jackson.version>2.15.2</jackson.version>
+        <fastjson.version>2.0.43</fastjson.version>
         <zxing.version>3.4.1</zxing.version>
         <common-pool.version>2.10.0</common-pool.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -195,11 +194,6 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
