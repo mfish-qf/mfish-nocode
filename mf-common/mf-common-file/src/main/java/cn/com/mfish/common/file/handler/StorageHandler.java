@@ -1,10 +1,10 @@
 package cn.com.mfish.common.file.handler;
 
+import cn.com.mfish.common.core.utils.FileUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
-import cn.com.mfish.common.core.utils.FileUtils;
-import cn.com.mfish.common.file.entity.StorageInfo;
 import cn.com.mfish.common.file.enums.SuffixType;
+import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.MediaType;
