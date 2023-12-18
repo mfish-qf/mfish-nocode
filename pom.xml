@@ -54,7 +54,7 @@
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
         <oracle.version>23.2.0.0</oracle.version>
-        <easyexcel.version>3.3.2</easyexcel.version>
+        <easyexcel.version>3.3.3</easyexcel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -340,6 +340,11 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-code-api</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-storage-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
         </dependencies>

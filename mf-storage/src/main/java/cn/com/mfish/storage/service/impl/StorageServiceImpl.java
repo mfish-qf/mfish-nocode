@@ -1,6 +1,6 @@
 package cn.com.mfish.storage.service.impl;
 
-import cn.com.mfish.common.file.entity.StorageInfo;
+import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.storage.mapper.StorageMapper;
 import cn.com.mfish.storage.service.StorageService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

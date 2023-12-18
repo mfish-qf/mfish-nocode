@@ -16,6 +16,7 @@
         <module>mf-oauth-api</module>
         <module>mf-scheduler-api</module>
         <module>mf-code-api</module>
+        <module>mf-storage-api</module>
     </modules>
 
     <properties>
