@@ -10,4 +10,5 @@ public class ServiceConstants {
     public static final String CODE_SERVICE = "mf-code";
     public static final String SYS_SERVICE = "mf-sys";
     public static final String SCHEDULER_SERVICE = "mf-scheduler";
+    public static final String STORAGE_SERVICE = "mf-storage";
 }

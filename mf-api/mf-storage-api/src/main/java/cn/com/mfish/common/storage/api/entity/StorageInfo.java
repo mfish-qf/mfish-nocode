@@ -1,4 +1,4 @@
-package cn.com.mfish.common.file.entity;
+package cn.com.mfish.common.storage.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;

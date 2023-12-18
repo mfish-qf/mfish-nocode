@@ -1,6 +1,6 @@
 package cn.com.mfish.storage.mapper;
 
-import cn.com.mfish.common.file.entity.StorageInfo;
+import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
