@@ -83,9 +83,8 @@ public class QiNiuStorage extends AbstractStorage {
         String publicUrl = String.format("%s/%s", domain, encodedFileName);
         long expireInSeconds = 3600;//1小时，可以自定义链接过期时间
         String downloadRUL = auth.privateDownloadUrl(publicUrl, expireInSeconds);
-        Resource resource;
         try {
-            resource = new UrlResource(downloadRUL);
+            Resource resource = new UrlResource(downloadRUL);
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             }
@@ -103,6 +102,7 @@ public class QiNiuStorage extends AbstractStorage {
             log.error(e.getMessage(), e);
         }
     }
+
     @Override
     public String buildUrl(String filePath, Integer isPrivate) {
         //公有文件前端直接访问七牛云oss文件地址

@@ -1,7 +1,13 @@
 package cn.com.mfish.common.file.handler;
 
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.FileUtils;
+import org.springframework.core.io.Resource;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @description: 抽象缓存处理类
@@ -35,5 +41,25 @@ public abstract class AbstractStorage implements Storage {
             keyName = filePath;
         }
         return FileUtils.formatFilePath(address) + "/" + keyName;
+    }
+
+    @Override
+    public InputStream getInputStream(String filePath){
+        try {
+            Resource resource = loadAsResource(filePath);
+            return resource.getInputStream();
+        } catch (IOException e) {
+            throw new MyRuntimeException("错误：获取文件流异常", e);
+        }
+    }
+
+    @Override
+    public File getFile(String filePath){
+        Resource resource = loadAsResource(filePath);
+        try {
+            return resource.getFile();
+        } catch (IOException e) {
+            throw new MyRuntimeException("错误：获取文件异常", e);
+        }
     }
 }
