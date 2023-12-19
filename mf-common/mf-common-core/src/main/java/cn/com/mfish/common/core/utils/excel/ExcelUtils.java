@@ -101,11 +101,19 @@ public class ExcelUtils {
      * @return
      */
     public static LinkedHashMap<Integer, String> readHeader(InputStream stream) {
-        LinkedHashMap<Integer, String> listMap = new LinkedHashMap<>();
-        Consumer<Map<Integer, String>> consumer = listMap::putAll;
-        HeadReadListener listener = new HeadReadListener(consumer);
-        EasyExcel.read(stream, listener).sheet().head(new ArrayList<>()).doRead();
-        return listMap;
+        try {
+            LinkedHashMap<Integer, String> listMap = new LinkedHashMap<>();
+            Consumer<Map<Integer, String>> consumer = listMap::putAll;
+            HeadReadListener listener = new HeadReadListener(consumer);
+            EasyExcel.read(stream, listener).sheet().head(new ArrayList<>()).doRead();
+            return listMap;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                log.error("文件流关闭异常", e);
+            }
+        }
     }
 
     /**
@@ -146,18 +154,27 @@ public class ExcelUtils {
      * @return
      */
     public static PageResult<Map<String, String>> read(InputStream stream, ReqPage reqPage) {
-        List<Map<String, String>> listMap = new ArrayList<>();
-        Consumer<List<Map<String, String>>> consumer = listMap::addAll;
-        PageHelperReadListener listener = new PageHelperReadListener(reqPage.getPageSize(), consumer);
-        int start = reqPage.getPageNum() > 0 ? (reqPage.getPageNum() - 1) * 10 + 1 : 1;
-        EasyExcel.read(stream, listener).sheet().headRowNumber(start).head(new ArrayList<>()).doRead();
-        //easyExcel获取total不准确，CSV获取为空
-        int total = listener.getTotal() != null ? listener.getTotal() : 1;
-        return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), total);
+        try {
+            List<Map<String, String>> listMap = new ArrayList<>();
+            Consumer<List<Map<String, String>>> consumer = listMap::addAll;
+            PageHelperReadListener listener = new PageHelperReadListener(reqPage.getPageSize(), consumer);
+            int start = reqPage.getPageNum() > 0 ? (reqPage.getPageNum() - 1) * 10 + 1 : 1;
+            EasyExcel.read(stream, listener).sheet().headRowNumber(start).head(new ArrayList<>()).doRead();
+            //easyExcel获取total不准确，CSV获取为空
+            int total = listener.getTotal() != null ? listener.getTotal() : 1;
+            return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), total);
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                log.error("文件流关闭异常", e);
+            }
+        }
     }
 
     /**
      * 通用读取excel数据（excel必须一行为行头）
+     *
      * @param filePath 文件路径
      * @return
      */
@@ -168,6 +185,7 @@ public class ExcelUtils {
 
     /**
      * 通用读取excel数据（excel必须一行为行头）
+     *
      * @param file 文件
      * @return
      */
@@ -184,14 +202,23 @@ public class ExcelUtils {
 
     /**
      * 通用读取excel数据（excel必须一行为行头）
+     *
      * @param stream 文件流
      * @return
      */
     public static List<Map<String, String>> read(InputStream stream) {
-        List<Map<String, String>> listMap = new ArrayList<>();
-        Consumer<List<Map<String, String>>> consumer = listMap::addAll;
-        PageHelperReadListener listener = new PageHelperReadListener(consumer);
-        EasyExcel.read(stream, listener).sheet().head(new ArrayList<>()).doRead();
-        return listMap;
+        try {
+            List<Map<String, String>> listMap = new ArrayList<>();
+            Consumer<List<Map<String, String>>> consumer = listMap::addAll;
+            PageHelperReadListener listener = new PageHelperReadListener(consumer);
+            EasyExcel.read(stream, listener).sheet().head(new ArrayList<>()).doRead();
+            return listMap;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                log.error("文件流关闭异常", e);
+            }
+        }
     }
 }
