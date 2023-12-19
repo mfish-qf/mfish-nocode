@@ -74,10 +74,7 @@ public class StorageHandler {
      * @return
      */
     public ResponseEntity<org.springframework.core.io.Resource> fetch(String key, String fileName, String filePath, String fileType, Integer size) {
-        if (filePath.endsWith("/")) {
-            filePath = filePath.substring(0, filePath.length() - 1);
-        }
-        org.springframework.core.io.Resource file = loadAsResource(filePath + "/" + key);
+        org.springframework.core.io.Resource file = loadAsResource(buildFilePath(filePath, key));
         if (file == null) {
             return ResponseEntity.notFound().build();
         }
@@ -101,6 +98,13 @@ public class StorageHandler {
         return builder.body(file);
     }
 
+    private String buildFilePath(String filePath, String key) {
+        if (filePath.endsWith("/")) {
+            filePath = filePath.substring(0, filePath.length() - 1);
+        }
+        return filePath + "/" + key;
+    }
+
     /**
      * 构建文件key
      *
@@ -120,6 +124,17 @@ public class StorageHandler {
 
     public org.springframework.core.io.Resource loadAsResource(String filePath) {
         return storage.loadAsResource(filePath);
+    }
+
+    /**
+     * 获取文件流
+     *
+     * @param filePath 文件路径
+     * @param key      文件key
+     * @return
+     */
+    public InputStream getInputStream(String filePath, String key) {
+        return storage.getInputStream(buildFilePath(filePath, key));
     }
 
     public void delete(String filePath) {

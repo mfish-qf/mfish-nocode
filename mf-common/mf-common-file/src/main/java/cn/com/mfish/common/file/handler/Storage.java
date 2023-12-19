@@ -2,6 +2,7 @@ package cn.com.mfish.common.file.handler;
 
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -27,6 +28,20 @@ public interface Storage {
      * @return
      */
     Resource loadAsResource(String filePath);
+
+    /**
+     * 获取文件流
+     * @param filePath
+     * @return
+     */
+    InputStream getInputStream(String filePath);
+
+    /**
+     * 获取文件
+     * @param filePath
+     * @return
+     */
+    File getFile(String filePath);
 
     /**
      * 删除文件
