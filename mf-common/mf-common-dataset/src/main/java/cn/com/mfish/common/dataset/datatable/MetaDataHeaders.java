@@ -5,10 +5,7 @@ import cn.com.mfish.common.dataset.common.Constant;
 import cn.com.mfish.common.dataset.common.DataSetUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @description: 元数据列头列表
@@ -22,13 +19,15 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
      * @param columns 列头组
      */
     public void addColumn(List<MetaDataHeader> columns) {
-        for (MetaDataHeader col :columns) {
+        for (MetaDataHeader col : columns) {
             addColumn(col);
         }
     }
 
-    public void put(MetaDataHeader value) {
-        put(value.getColName(), value);
+    public void addColumn(MetaDataHeaders columns) {
+        for (Map.Entry<String, MetaDataHeader> entry : columns.entrySet()) {
+            addColumn(entry.getValue());
+        }
     }
 
     /**
@@ -90,15 +89,8 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
             return false;
         }
         LinkedHashMap<String, MetaDataHeader> map = (LinkedHashMap<String, MetaDataHeader>) o;
-        MetaDataHeader[] headers = map.values().toArray(new MetaDataHeader[0]);
-        if (headers.length != this.size()) {
-            return false;
-        }
-        for (int i = 0; i < headers.length; i++) {
-            if (!headers[i].equals(this.values().toArray()[i])) {
-                return false;
-            }
-        }
-        return true;
+        String[] headers = map.keySet().toArray(new String[0]);
+        String[] objs = this.keySet().toArray(new String[0]);
+        return Arrays.equals(headers, objs);
     }
 }

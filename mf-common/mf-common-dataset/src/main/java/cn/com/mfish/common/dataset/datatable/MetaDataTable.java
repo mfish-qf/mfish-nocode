@@ -33,6 +33,17 @@ public class MetaDataTable extends Page<MetaDataRow> {
         super(pageNum, pageSize);
     }
 
+    public void copyTable(MetaDataTable table) {
+        if (!headers.isEmpty()) {
+            headers.clear();
+        }
+        headers.addColumn(table.getColHeaders());
+        super.setPageNum(table.getPageNum());
+        super.setPageSize(table.getPageSize());
+        super.setTotal(table.getTotal());
+        this.addAll(table);
+    }
+
     /**
      * 新增行
      *
@@ -197,7 +208,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * @return
      */
     public boolean containColumn(String colName) {
-        if (headers == null || headers.size() == 0) {
+        if (headers == null || headers.isEmpty()) {
             return false;
         }
         return headers.containsKey(colName);
@@ -210,7 +221,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * @return
      */
     public MetaDataHeader getColHeader(int index) {
-        if (headers == null || headers.size() == 0) {
+        if (headers == null || headers.isEmpty()) {
             return null;
         }
         return headers.getColHeader(index);
