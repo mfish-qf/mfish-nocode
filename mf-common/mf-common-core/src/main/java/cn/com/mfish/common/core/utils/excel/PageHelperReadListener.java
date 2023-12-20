@@ -67,6 +67,12 @@ public class PageHelperReadListener extends AnalysisEventListener<Map<Integer, S
     private void readEnd(AnalysisContext context) {
         consumer.accept(dataList);
         dataList.clear();
+        //easyExcel获取total不准确，CSV获取为空
         total = context.readSheetHolder().getApproximateTotalRowNumber();
+        total = total == null ? 0 : total;
+        if (total > 0) {
+            //去除行头记录数
+            total--;
+        }
     }
 }

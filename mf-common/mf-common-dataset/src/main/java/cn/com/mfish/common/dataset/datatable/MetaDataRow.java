@@ -1,8 +1,8 @@
 package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.dataset.common.Constant;
 import cn.com.mfish.common.core.utils.DataUtils;
+import cn.com.mfish.common.dataset.common.Constant;
 import cn.com.mfish.common.dataset.common.DataSetUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,14 +17,20 @@ import java.util.Map;
  */
 public class MetaDataRow extends LinkedHashMap<String, Object> implements Comparable<MetaDataRow> {
 
-    private final MetaDataHeaders headers;
+    private MetaDataHeaders headers;
 
     public MetaDataHeaders getColHeaders() {
         return headers;
     }
 
+    public void setColHeaders(MetaDataHeaders headers) {
+        this.headers = new MetaDataHeaders();
+        this.headers.addColumn(headers);
+    }
+
     public MetaDataRow(MetaDataHeaders headers) {
-        this.headers = headers;
+        this.headers = new MetaDataHeaders();
+        this.headers.addColumn(headers);
         for (Map.Entry<String, MetaDataHeader> entry : headers.entrySet()) {
             this.put(entry.getKey(), null);
         }
@@ -177,9 +183,7 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      */
     public void removeColumn(int index) {
         String colName = getColName(index);
-        if (this.containsKey(colName)) {
-            this.remove(colName);
-        }
+        this.remove(colName);
         throw new MyRuntimeException(Constant.NotFoundException);
     }
 
@@ -209,7 +213,7 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      * @return
      */
     public MetaDataHeader getColHeader(int index) {
-        if (headers == null || headers.size() == 0) {
+        if (headers == null || headers.isEmpty()) {
             return null;
         }
         return headers.getColHeader(index);

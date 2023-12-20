@@ -160,9 +160,7 @@ public class ExcelUtils {
             PageHelperReadListener listener = new PageHelperReadListener(reqPage.getPageSize(), consumer);
             int start = reqPage.getPageNum() > 0 ? (reqPage.getPageNum() - 1) * 10 + 1 : 1;
             EasyExcel.read(stream, listener).sheet().headRowNumber(start).head(new ArrayList<>()).doRead();
-            //easyExcel获取total不准确，CSV获取为空
-            int total = listener.getTotal() != null ? listener.getTotal() : 1;
-            return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), total);
+            return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), listener.getTotal());
         } finally {
             try {
                 stream.close();
