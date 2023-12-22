@@ -162,7 +162,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      *
      * @param table 新表格
      */
-    public MetaDataTable mergeTable(MetaDataTable table) {
+    public void mergeTable(MetaDataTable table) {
         if (this.size() != table.size()) {
             throw new MyRuntimeException("行数不相等不允许合并");
         }
@@ -172,24 +172,20 @@ public class MetaDataTable extends Page<MetaDataRow> {
                 this.get(i).addColumn(table.getColHeader(j), table.getCellValue(i, j));
             }
         }
-        return this;
     }
 
-    /**
-     * 合并表格
-     *
-     * @param list 行列表
-     */
-    public MetaDataTable mergeTable(List<MetaDataRow> list) {
+    public void mergeTable(List<MetaDataCell> list) {
         if (this.size() != list.size()) {
             throw new MyRuntimeException("行数不相等不允许合并");
         }
         if (list.isEmpty()) {
             throw new MyRuntimeException(Constant.NotFoundException);
         }
-        MetaDataTable table = new MetaDataTable(list.get(0).getColHeaders());
-        table.addAll(list);
-        return mergeTable(table);
+        MetaDataHeader header = list.get(0).getHeader();
+        addColumn(header);
+        for (int i = 0; i < this.size(); i++) {
+            this.get(i).addColumn(header, list.get(i).getValue());
+        }
     }
 
     /**
