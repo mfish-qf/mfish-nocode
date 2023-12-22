@@ -93,8 +93,7 @@ public class TestConnect {
             table2.add(j, row);
             list2.add(row);
         }
-//        MetaDataTable table3 = table.mergeTable(table2);
-        MetaDataTable table4 = table.mergeTable(list2);
+        table.mergeTable(table2);
         System.out.println(JSON.toJSONString(table));
     }
 

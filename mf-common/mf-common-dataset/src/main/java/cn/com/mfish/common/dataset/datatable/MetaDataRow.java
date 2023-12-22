@@ -1,5 +1,6 @@
 package cn.com.mfish.common.dataset.datatable;
 
+import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.DataUtils;
 import cn.com.mfish.common.dataset.common.Constant;
@@ -227,6 +228,15 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      */
     public MetaDataHeader getColHeader(String colName) {
         return headers.getColHeader(colName);
+    }
+
+    /**
+     * 获取数据类型
+     * @param colName
+     * @return
+     */
+    public DataType.SlimType getHeaderDataType(String colName){
+        return getColHeader(colName).getDataType();
     }
 
     /**
