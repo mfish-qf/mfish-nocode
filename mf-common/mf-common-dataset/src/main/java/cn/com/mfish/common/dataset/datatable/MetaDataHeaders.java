@@ -32,8 +32,8 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
 
     /**
      * 增加列
-     *
-     * @param header 列头
+     * @param header
+     * @return 返回列名
      */
     public void addColumn(MetaDataHeader header) {
         String colName = DataSetUtils.calcColName(0, DataSetUtils.chooseColName(header), this.keySet());
