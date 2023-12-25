@@ -19,4 +19,6 @@ public class ReqSysFile {
     private String fileName;
     @ApiModelProperty(value = "文件类型")
     private String fileType;
+    @ApiModelProperty(value = "删除标签 1删除 0未删除")
+    private String delFlag;
 }

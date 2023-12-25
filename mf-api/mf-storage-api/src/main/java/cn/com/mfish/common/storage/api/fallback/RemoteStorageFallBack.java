@@ -23,6 +23,11 @@ public class RemoteStorageFallBack implements FallbackFactory<RemoteStorageServi
             public Result<StorageInfo> queryByKey(String fileKey) {
                 return Result.fail("错误:根据ID获取组织列表失败" + cause.getMessage());
             }
+
+            @Override
+            public Result<Boolean> logicDelete(String id) {
+                return Result.fail("错误:逻辑删除文件失败" + cause.getMessage());
+            }
         };
 
     }

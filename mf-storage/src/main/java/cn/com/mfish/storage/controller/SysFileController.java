@@ -48,8 +48,8 @@ public class SysFileController {
     @RequiresPermissions("sys:file:query")
     public Result<PageResult<StorageInfo>> queryPageList(ReqSysFile reqSysFile, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<StorageInfo>()
-                .eq(StorageInfo::getDelFlag, 0)
+        LambdaQueryWrapper<StorageInfo> queryWrapper = new LambdaQueryWrapper<StorageInfo>()
+                .eq(reqSysFile.getDelFlag() != null, StorageInfo::getDelFlag, reqSysFile.getDelFlag())
                 .like(reqSysFile.getFileName() != null, StorageInfo::getFileName, reqSysFile.getFileName())
                 .like(reqSysFile.getFileType() != null, StorageInfo::getFileType, reqSysFile.getFileType())
                 .orderByDesc(StorageInfo::getCreateTime);
@@ -73,6 +73,17 @@ public class SysFileController {
         return Result.fail(storageInfo, "错误:文件状态设置失败!");
     }
 
+    @Log(title = "逻辑删除文件恢复", operateType = OperateType.UPDATE)
+    @ApiOperation("逻辑删除文件恢复")
+    @PutMapping("/restore/{id}")
+    @RequiresPermissions("sys:file:delete")
+    public Result<Boolean> restore(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+        if (storageService.updateById(new StorageInfo().setId(id).setDelFlag(0))) {
+            return Result.ok(true, "文件存储-逻辑删除成功!");
+        }
+        return Result.fail(false, "错误:文件存储-逻辑删除失败!");
+    }
+
     /**
      * 通过id逻辑删除
      *
@@ -80,14 +91,14 @@ public class SysFileController {
      * @return 返回文件存储-删除结果
      */
     @Log(title = "文件存储-通过id逻辑删除", operateType = OperateType.DELETE)
-    @ApiOperation("文件存储-通过id删除")
+    @ApiOperation("文件存储-通过id逻辑删除")
     @DeleteMapping("/logic/{id}")
     @RequiresPermissions("sys:file:delete")
     public Result<Boolean> logicDelete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
         if (storageService.updateById(new StorageInfo().setId(id).setDelFlag(1))) {
-            return Result.ok(true, "文件存储-删除成功!");
+            return Result.ok(true, "文件存储-逻辑删除成功!");
         }
-        return Result.fail(false, "错误:文件存储-删除失败!");
+        return Result.fail(false, "错误:文件存储-逻辑删除失败!");
     }
 
     @Log(title = "文件存储-通过id删除", operateType = OperateType.DELETE)
@@ -120,6 +131,9 @@ public class SysFileController {
     @GetMapping("/{fileKey}")
     public Result<StorageInfo> queryByKey(@ApiParam(name = "fileKey", value = "文件key") @PathVariable String fileKey) {
         StorageInfo storageInfo = storageService.getOne(new LambdaQueryWrapper<StorageInfo>().eq(StorageInfo::getFileKey, fileKey));
+        if (null == storageInfo) {
+            return Result.fail("错误:获取文件信息失败!");
+        }
         return Result.ok(storageInfo, "获取文件信息-查询成功!");
     }
 }
