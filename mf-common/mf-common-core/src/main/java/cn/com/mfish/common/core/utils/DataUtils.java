@@ -58,17 +58,14 @@ public class DataUtils {
             value = BigDecimal.valueOf((double) obj);
         } else if (obj instanceof BigDecimal) {
             value = (BigDecimal) obj;
-        } else if (obj instanceof String) {
+        } else {
             //如果是字符串类型强转数字类型
             try {
                 value = BigDecimal.valueOf(Double.parseDouble((String) obj));
             } catch (NumberFormatException e) {
                 log.error(UNKNOWN_DATA);
-                return null;
+                return BigDecimal.ZERO;
             }
-        } else {
-            log.error(UNKNOWN_DATA);
-            return null;
         }
         return value;
     }
@@ -184,16 +181,19 @@ public class DataUtils {
     /**
      * 数字转字符串类型
      */
-    public static Object getChar(Object value) {
-        return String.valueOf(value);
+    public static String num2char(Object value) {
+        if (null == value) {
+            return "";
+        }
+        return value + "";
     }
 
     /**
      * 字符转数字类型
      */
 
-    public static Object getInteger(Object value) {
-        return Integer.valueOf(value.toString());
+    public static BigDecimal char2num(Object value) {
+        return switchDecimal(value);
     }
 
     /**
@@ -238,6 +238,129 @@ public class DataUtils {
      */
     public static Object avg(Object obj1, Object size) {
         return divide(obj1, size);
+    }
+
+    /**
+     * 获取绝对值
+     *
+     * @param object 数据
+     * @return
+     */
+    public static Object getABS(Object object) {
+        BigDecimal value = switchDecimal(object);
+        if (value != null) {
+            return Math.abs(value.doubleValue());
+        }
+        return object;
+    }
+
+    /**
+     * 向上取整
+     *
+     * @param object
+     * @return
+     */
+    public static Object getCeiling(Object object) {
+        BigDecimal value = switchDecimal(object);
+        if (value != null) {
+            return value.setScale(0, RoundingMode.CEILING).longValue();
+        }
+        return object;
+    }
+
+    /**
+     * 向下取整
+     *
+     * @param object
+     * @return
+     */
+    public static Object getFloor(Object object) {
+        BigDecimal value = switchDecimal(object);
+        if (value != null) {
+            return value.setScale(0, RoundingMode.FLOOR).longValue();
+        }
+        return object;
+    }
+
+    /**
+     * e的x次方
+     *
+     * @param object
+     * @return
+     */
+    public static Object getExp(Object object) {
+        BigDecimal value = switchDecimal(object);
+        if (value != null) {
+            return Math.pow(Math.E, value.doubleValue());
+        }
+        return object;
+    }
+
+    /**
+     * x的y次方
+     *
+     * @param base  基数
+     * @param value 指数
+     * @return
+     */
+    public static double power(String base, String value) {
+        double d1 = switchDecimal(base).doubleValue();
+        double d2 = switchDecimal(value).doubleValue();
+        return Math.pow(d1, d2);
+
+    }
+
+    /**
+     * log
+     *
+     * @param value
+     * @param base
+     * @return
+     */
+    public static double getLog(Object base, Object value) {
+        if (null == base) {
+            return Math.log(switchDecimal(value).doubleValue());
+        } else {
+            return Math.log(switchDecimal(value).doubleValue()) / Math.log(switchDecimal(base).doubleValue());
+        }
+    }
+
+    /**
+     * 删除字符左边空格
+     *
+     * @param object
+     * @return
+     */
+    public static String getLTrim(Object object) {
+        if (object == null || StringUtils.isEmpty(object.toString())) {
+            return "";
+        }
+        return object.toString().replaceAll("^\\s+", "");
+    }
+
+    /**
+     * 删除字符右边空格
+     *
+     * @param object
+     * @return
+     */
+    public static String getRTrim(Object object) {
+        if (object == null || StringUtils.isEmpty(object.toString())) {
+            return "";
+        }
+        return object.toString().replaceAll("\\s+$", "");
+    }
+
+    /**
+     * 替换
+     *
+     * @param str1 字符
+     * @param str2 字符
+     * @param str3 字符
+     * @return
+     */
+    public static String replace(String str1, String str2, String str3) {
+        return str1.replace(str2, str3);
     }
 
 }
