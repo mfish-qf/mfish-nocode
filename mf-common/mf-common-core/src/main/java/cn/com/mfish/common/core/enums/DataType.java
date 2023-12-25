@@ -17,8 +17,9 @@ public enum DataType {
     UNKNOWN("unknown", SlimType.UNKNOWN),//未知类型
     STRING("String", SlimType.STRING),//字符类型
     BOOLEAN("Boolean", SlimType.BOOLEAN),//布尔类型
+    SHORT("Short", SlimType.NUMBER),//短整数类型
     INTEGER("Integer", SlimType.NUMBER),//整数类型
-    LONG("Long", SlimType.NUMBER),//整数类型
+    LONG("Long", SlimType.NUMBER),//长整数类型
     FLOAT("Float", SlimType.NUMBER),//浮点类型
     DOUBLE("Double", SlimType.NUMBER),//双精度类型
     BIGDECIMAL("BigDecimal", SlimType.NUMBER),//双精度类型
@@ -97,6 +98,7 @@ public enum DataType {
         typeMap.put(DataConstant.DataType.VARCHAR2, DataType.STRING);
         typeMap.put(DataConstant.DataType.STRING, DataType.STRING);
         typeMap.put(DataConstant.DataType.VARCHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.BPCHAR, DataType.STRING);
         typeMap.put(DataConstant.DataType.TINYBLOB, DataType.STRING);
         typeMap.put(DataConstant.DataType.MEDIUMBLOB, DataType.STRING);
         typeMap.put(DataConstant.DataType.LONGBLOB, DataType.STRING);
@@ -105,13 +107,16 @@ public enum DataType {
 
         typeMap.put(DataConstant.DataType.BIT, DataType.INTEGER);
         typeMap.put(DataConstant.DataType.INT, DataType.INTEGER);
-        typeMap.put(DataConstant.DataType.INT4, DataType.INTEGER);
-        typeMap.put(DataConstant.DataType.INT8, DataType.INTEGER);
-        typeMap.put(DataConstant.DataType.TINYINT, DataType.INTEGER);
-        typeMap.put(DataConstant.DataType.SMALLINT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.INT2, DataType.SHORT);
+        typeMap.put(DataConstant.DataType.INT4, DataType.LONG);
+        typeMap.put(DataConstant.DataType.INT8, DataType.LONG);
+        typeMap.put(DataConstant.DataType.SHORT, DataType.SHORT);
+        typeMap.put(DataConstant.DataType.LONG, DataType.LONG);
+        typeMap.put(DataConstant.DataType.TINYINT, DataType.SHORT);
+        typeMap.put(DataConstant.DataType.SMALLINT, DataType.SHORT);
         typeMap.put(DataConstant.DataType.INTEGER, DataType.INTEGER);
         typeMap.put(DataConstant.DataType.BIGINT, DataType.LONG);
-        typeMap.put(DataConstant.DataType.MEDIUMINT, DataType.INTEGER);
+        typeMap.put(DataConstant.DataType.MEDIUMINT, DataType.LONG);
         typeMap.put(DataConstant.DataType.FLOAT, DataType.FLOAT);
         typeMap.put(DataConstant.DataType.REAL, DataType.FLOAT);
         typeMap.put(DataConstant.DataType.DOUBLE, DataType.DOUBLE);

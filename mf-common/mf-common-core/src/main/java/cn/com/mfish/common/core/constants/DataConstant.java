@@ -32,6 +32,7 @@ public class DataConstant {
         public static final String VARCHAR2 = "VARCHAR2";
         public static final String STRING = "STRING";
         public static final String VARCHAR = "VARCHAR";
+        public static final String BPCHAR = "BPCHAR";
         public static final String TINYBLOB = "TINYBLOB";
         public static final String MEDIUMBLOB = "MEDIUMBLOB";
         public static final String LONGBLOB = "LONGBLOB";
@@ -39,8 +40,11 @@ public class DataConstant {
         public static final String UNDEFINED = "UNDEFINED";
         public static final String BIT = "BIT";
         public static final String INT = "INT";
+        public static final String INT2 = "INT2";
         public static final String INT4 = "INT4";
         public static final String INT8 = "INT8";
+        public static final String SHORT = "SHORT";
+        public static final String LONG = "LONG";
         public static final String TINYINT = "TINYINT";
         public static final String SMALLINT = "SMALLINT";
         public static final String INTEGER = "INTEGER";

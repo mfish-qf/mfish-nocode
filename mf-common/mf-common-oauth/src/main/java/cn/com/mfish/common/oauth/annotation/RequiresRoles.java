@@ -15,5 +15,5 @@ import java.lang.annotation.*;
 public @interface RequiresRoles {
     String[] value();
 
-    Logical logical() default Logical.AND;
+    Logical logical() default Logical.OR;
 }
