@@ -46,6 +46,7 @@ public class DataUtils {
      * @return
      */
     public static BigDecimal switchDecimal(Object obj) {
+        if (obj == null) return null;
         BigDecimal value;
         if (obj instanceof Short) {
             value = new BigDecimal((short) obj);
@@ -65,7 +66,7 @@ public class DataUtils {
                 value = BigDecimal.valueOf(Double.parseDouble((String) obj));
             } catch (NumberFormatException e) {
                 log.error(UNKNOWN_DATA);
-                return BigDecimal.ZERO;
+                return null;
             }
         }
         return value;

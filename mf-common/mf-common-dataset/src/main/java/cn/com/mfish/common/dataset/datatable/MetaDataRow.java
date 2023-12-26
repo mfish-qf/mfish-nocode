@@ -170,11 +170,8 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      * @param colName 列名称
      */
     public void removeColumn(String colName) {
-        if (this.containsKey(colName)) {
-            this.remove(colName);
-            return;
-        }
-        throw new MyRuntimeException(Constant.NotFoundException);
+        this.headers.remove(colName);
+        this.remove(colName);
     }
 
     /**
@@ -184,8 +181,7 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
      */
     public void removeColumn(int index) {
         String colName = getColName(index);
-        this.remove(colName);
-        throw new MyRuntimeException(Constant.NotFoundException);
+        this.removeColumn(colName);
     }
 
     /**
@@ -232,10 +228,11 @@ public class MetaDataRow extends LinkedHashMap<String, Object> implements Compar
 
     /**
      * 获取数据类型
+     *
      * @param colName
      * @return
      */
-    public DataType.SlimType getHeaderDataType(String colName){
+    public DataType.SlimType getHeaderDataType(String colName) {
         return getColHeader(colName).getDataType();
     }
 
