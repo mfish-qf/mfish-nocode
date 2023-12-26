@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @description: 数据处理通用方法
@@ -363,4 +364,58 @@ public class DataUtils {
         return str1.replace(str2, str3);
     }
 
+    /**
+     * 四舍五入
+     *
+     * @param value 需要四舍五入的值
+     * @param num   保留几位小数
+     * @return
+     */
+    public static Double getRound(Object value, int num) {
+        BigDecimal b = switchDecimal(value);
+        return b.setScale(num, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    /**
+     * 开方
+     *
+     * @param value 需要开放的值
+     * @return
+     */
+    public static double getSqrt(Object value) {
+        return Math.sqrt(switchDecimal(value).doubleValue());
+    }
+
+    /**
+     * 截取字段
+     *
+     * @param str    字符串
+     * @param start  开始
+     * @param length 长度
+     * @return
+     */
+    public static String subStr(String str, int start, int length) {
+        if (start > 0) {
+            start = start - 1;
+        } else {
+            start = 0;
+        }
+        return StringUtils.substring(str, start, start + length);
+    }
+
+    /**
+     * 转换日期
+     *
+     * @param strDate 字符日期
+     * @return
+     * @throws ParseException
+     */
+    public static Date switchDate(String strDate) throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String value = strDate.trim().replace("/", "-");
+        if (!value.contains(":")) {
+            value += " 00:00:00";
+        }
+        return df.parse(value);
+    }
 }

@@ -29,9 +29,9 @@ public class MfPageHelper extends PageMethod implements Dialect {
 
     @Override
     public boolean skip(DataSourceOptions<?> dataSourceOptions, RowBounds rowBounds) {
-        Page page = MfPageHelper.getLocalPage();
+        Page<?> page = MfPageHelper.getLocalPage();
         if (page == null && rowBounds != null) {
-            page = new Page(rowBounds.getOffset(), rowBounds.getLimit());
+            page = new Page<>(rowBounds.getOffset(), rowBounds.getLimit());
             MfPageHelper.setLocalPage(page);
         }
         //设置默认的 count 列

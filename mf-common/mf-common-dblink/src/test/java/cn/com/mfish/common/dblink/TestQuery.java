@@ -1,9 +1,11 @@
 package cn.com.mfish.common.dblink;
 
+import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.dataset.datatable.MetaDataRow;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
@@ -55,8 +57,8 @@ public class TestQuery {
         options.setDbType(DBType.mysql);
         options.setPoolType(PoolType.Hikari);
         MfPageHelper.startPage(1, 10);
-        List<Object> params = new ArrayList<>();
-        params.add("聊天");
+        List<QueryParam> params = new ArrayList<>();
+        params.add(new QueryParam().setValue("聊天").setType(DataType.STRING));
         PageResult<MetaDataRow> table = new PageResult<>(QueryHandler.query(options, "select * from sso_menu where menu_name=?", params));
         System.out.println(JSON.toJSONString(table));
     }

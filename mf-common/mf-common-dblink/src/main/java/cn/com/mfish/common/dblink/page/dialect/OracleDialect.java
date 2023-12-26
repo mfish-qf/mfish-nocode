@@ -1,6 +1,8 @@
 package cn.com.mfish.common.dblink.page.dialect;
 
 import cn.com.mfish.common.core.constants.DataConstant;
+import cn.com.mfish.common.core.enums.DataType;
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.query.BaseQuery;
 import com.github.pagehelper.Page;
@@ -22,8 +24,8 @@ public class OracleDialect extends AbstractDialect {
                 boundSql.getSql() +
                 ") TMP_PAGE)" +
                 " WHERE " + DataConstant.ORACLE_ROW + " <= ? AND " + DataConstant.ORACLE_ROW + " > ?";
-        boundSql.getParams().add(page.getEndRow());
-        boundSql.getParams().add(page.getStartRow());
+        boundSql.getParams().add(new QueryParam().setValue(page.getEndRow()).setType(DataType.INTEGER));
+        boundSql.getParams().add(new QueryParam().setValue(page.getStartRow()).setType(DataType.INTEGER));
         return boundSql.setSql(sql);
     }
 }

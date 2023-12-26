@@ -1,5 +1,7 @@
 package cn.com.mfish.common.dblink.page.dialect;
 
+import cn.com.mfish.common.core.enums.DataType;
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.query.BaseQuery;
 import com.github.pagehelper.Page;
@@ -21,12 +23,12 @@ public class PostgreDialect extends AbstractDialect {
         sqlBuilder.append("SELECT * FROM (" + boundSql.getSql());
         if (page.getStartRow() == 0) {
             sqlBuilder.append(") TEMP LIMIT ?");
-            boundSql.getParams().add(page.getPageSize());
+            boundSql.getParams().add(new QueryParam().setValue(page.getPageSize()).setType(DataType.INTEGER));
             return boundSql.setSql(sqlBuilder.toString());
         }
         sqlBuilder.append(") TEMP LIMIT ? OFFSET ?");
-        boundSql.getParams().add(page.getPageSize());
-        boundSql.getParams().add(page.getStartRow());
+        boundSql.getParams().add(new QueryParam().setValue(page.getPageSize()).setType(DataType.INTEGER));
+        boundSql.getParams().add(new QueryParam().setValue(page.getStartRow()).setType(DataType.INTEGER));
         return boundSql.setSql(sqlBuilder.toString());
     }
 }

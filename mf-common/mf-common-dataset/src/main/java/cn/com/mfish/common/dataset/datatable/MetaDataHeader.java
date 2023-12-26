@@ -21,7 +21,7 @@ public class MetaDataHeader implements Serializable {
 
     }
 
-    public MetaDataHeader(String colName, String fieldName, String expression, DataType dataType, TargetType targetType,String comment) {
+    public MetaDataHeader(String colName, String fieldName, String expression, DataType dataType, TargetType targetType, String comment) {
         this.colName = colName;
         this.fieldName = fieldName;
         this.expression = expression;
@@ -69,6 +69,7 @@ public class MetaDataHeader implements Serializable {
         this.dataType = DataType.forType(dataType);
         return this;
     }
+
     public MetaDataHeader setDataType(DataType dataType) {
         this.dataType = dataType;
         return this;
@@ -79,8 +80,12 @@ public class MetaDataHeader implements Serializable {
         return this;
     }
 
-    public DataType.SlimType getDataType(){
+    public DataType.SlimType getDataType() {
         return this.dataType.getSlimType();
+    }
+
+    public DataType getFullDataType(){
+        return this.dataType;
     }
 
     @Override
@@ -95,7 +100,7 @@ public class MetaDataHeader implements Serializable {
         return Objects.equals(colName, that.colName)
                 && Objects.equals(fieldName, that.fieldName)
                 && Objects.equals(expression, that.expression)
-                && Objects.equals(comment,that.comment)
+                && Objects.equals(comment, that.comment)
                 && dataType == that.dataType
                 && Objects.equals(tableAlias, that.tableAlias)
                 && targetType == that.targetType;

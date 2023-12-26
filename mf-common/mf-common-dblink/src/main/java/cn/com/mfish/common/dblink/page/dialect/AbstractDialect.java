@@ -26,7 +26,7 @@ public abstract class AbstractDialect implements Dialect {
         return this.baseQuery;
     }
 
-    public Page getLocalPage() {
+    public Page<?> getLocalPage() {
         return MfPageHelper.getLocalPage();
     }
 
@@ -37,13 +37,13 @@ public abstract class AbstractDialect implements Dialect {
 
     @Override
     public boolean beforeCount() {
-        Page page = getLocalPage();
+        Page<?> page = getLocalPage();
         return !page.isOrderByOnly() && page.isCount();
     }
 
     @Override
     public boolean afterCount(long count) {
-        Page page = getLocalPage();
+        Page<?> page = getLocalPage();
         page.setTotal(count);
         //pageSize < 0 的时候，不执行分页查询
         //pageSize = 0 的时候，还需要执行后续查询，但是不会分页
@@ -76,13 +76,13 @@ public abstract class AbstractDialect implements Dialect {
 
     @Override
     public boolean beforePage() {
-        Page page = getLocalPage();
+        Page<?> page = getLocalPage();
         return page.isOrderByOnly() || page.getPageSize() > 0;
     }
 
     @Override
     public BoundSql getPageSql(BoundSql boundSql) {
-        Page page = getLocalPage();
+        Page<?> page = getLocalPage();
         return getPageSql(boundSql, page);
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractDialect implements Dialect {
 
     @Override
     public <T extends Collection> T afterPage(T dataTable) {
-        Page page = getLocalPage();
+        Page<?> page = getLocalPage();
         if (page == null) {
             return dataTable;
         }
