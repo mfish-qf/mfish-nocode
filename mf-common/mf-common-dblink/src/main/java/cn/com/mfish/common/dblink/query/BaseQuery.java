@@ -1,5 +1,6 @@
 package cn.com.mfish.common.dblink.query;
 
+import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
@@ -17,6 +18,7 @@ import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -132,7 +134,7 @@ public class BaseQuery {
             stmt = conn.prepareStatement(boundSql.getSql());
             if (boundSql.getParams() != null && !boundSql.getParams().isEmpty()) {
                 for (int i = 0; i < boundSql.getParams().size(); i++) {
-                    stmt.setObject(i + 1, boundSql.getParams().get(i));
+                    setParams(stmt, i, boundSql);
                 }
             }
             log.info("执行查询:" + boundSql.getSql());
@@ -142,12 +144,43 @@ public class BaseQuery {
             long end = System.currentTimeMillis();
             log.info("查询SQL耗时:" + (end - start));
             return function.apply(rs);
-        } catch (SQLException ex) {
+        } catch (ParseException | SQLException ex) {
             log.error(String.format("执行SQL:%s，Msg:%s", boundSql.getSql(), ex));
             throw new MyRuntimeException(ex);
         } finally {
             PoolManager.release();
             release(stmt, rs);
+        }
+    }
+
+    private void setParams(PreparedStatement stmt, int i, BoundSql boundSql) throws SQLException, ParseException {
+        DataType type = boundSql.getParams().get(i).getType();
+        String value = boundSql.getParams().get(i).getValue() == null ? "" : boundSql.getParams().get(i).getValue().toString();
+        switch (type) {
+            case SHORT:
+                stmt.setShort(i + 1, Short.parseShort(value));
+                break;
+            case LONG:
+                stmt.setLong(i + 1, Long.parseLong(value));
+                break;
+            case INTEGER:
+                stmt.setInt(i + 1, Integer.parseInt(value));
+                break;
+            case FLOAT:
+                stmt.setFloat(i + 1, Float.parseFloat(value));
+                break;
+            case DOUBLE:
+                stmt.setDouble(i + 1, Double.parseDouble(value));
+                break;
+            case BIGDECIMAL:
+                stmt.setBigDecimal(i + 1, new BigDecimal(value));
+                break;
+            case DATE:
+                stmt.setTimestamp(i + 1, new Timestamp(DataUtils.switchDate(value).getTime()));
+                break;
+            default:
+                stmt.setObject(i + 1, value);
+                break;
         }
     }
 

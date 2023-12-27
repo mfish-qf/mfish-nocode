@@ -1,6 +1,7 @@
 package cn.com.mfish.common.dblink.db;
 
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.page.BoundSql;
 
 import java.util.Locale;
@@ -54,7 +55,7 @@ public class OracleDBDialect implements DBDialect {
         BoundSql boundSql = new BoundSql();
         if (!StringUtils.isEmpty(tableName)) {
             sql += " and a.TABLE_NAME = ?";
-            boundSql.getParams().add(tableName.toUpperCase(Locale.ROOT));
+            boundSql.getParams().add(new QueryParam().setValue(tableName.toUpperCase(Locale.ROOT)));
         }
         return boundSql.setSql(sql);
     }

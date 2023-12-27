@@ -7,6 +7,7 @@ import cn.com.mfish.common.dataset.datatable.MetaDataRow;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.page.BoundSql;
@@ -45,7 +46,7 @@ public class QueryHandler {
      * @param params            参数
      * @return
      */
-    public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<Object> params) {
+    public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params) {
         return query(dataSourceOptions, new BoundSql(strSql, params), null);
     }
 
@@ -72,7 +73,7 @@ public class QueryHandler {
      * @param rowBounds         分页参数
      * @return
      */
-    public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<Object> params, RowBounds rowBounds) {
+    public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, RowBounds rowBounds) {
         return query(dataSourceOptions, new BoundSql(strSql, params), rowBounds);
     }
 
@@ -106,7 +107,7 @@ public class QueryHandler {
      * @param params            参数
      * @return
      */
-    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<Object> params, Class<T> cls) {
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, Class<T> cls) {
         return queryT(dataSourceOptions, new BoundSql(strSql, params), null, cls);
     }
 
@@ -133,7 +134,7 @@ public class QueryHandler {
      * @param rowBounds         分页参数
      * @return
      */
-    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<Object> params, RowBounds rowBounds, Class<T> cls) {
+    public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, RowBounds rowBounds, Class<T> cls) {
         return queryT(dataSourceOptions, new BoundSql(strSql, params), rowBounds, cls);
     }
 

@@ -73,8 +73,8 @@ public class DialectAdapter {
                 throw new MyRuntimeException("错误的查询类型");
             }
             if (AbstractDialect.class.isAssignableFrom(property)) {
-                Constructor sCon = property.getDeclaredConstructor(BaseQuery.class);
-                Constructor qCon = BaseQuery.class.getDeclaredConstructor(dataSourceOptions.getClass());
+                Constructor<?> sCon = property.getDeclaredConstructor(BaseQuery.class);
+                Constructor<?> qCon = BaseQuery.class.getDeclaredConstructor(dataSourceOptions.getClass());
                 dialect = (AbstractDialect) sCon.newInstance(qCon.newInstance(dataSourceOptions));
             } else {
                 throw new PageException("使用 PageHelper 时，方言必须是实现 " + AbstractDialect.class.getCanonicalName() + " 接口的实现类!");

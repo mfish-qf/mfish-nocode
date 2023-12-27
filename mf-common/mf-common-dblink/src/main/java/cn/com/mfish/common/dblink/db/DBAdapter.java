@@ -16,7 +16,7 @@ public class DBAdapter {
 
     }
 
-    private static Map<DBType, DBDialect> dialectMap = new HashMap<>();
+    private static final Map<DBType, DBDialect> dialectMap = new HashMap<>();
 
     static {
         dialectMap.put(DBType.mysql, new MysqlDBDialect());
