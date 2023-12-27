@@ -1,5 +1,6 @@
 package cn.com.mfish.common.dblink.page;
 
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class BoundSql {
     @ApiModelProperty("查询SQL")
     private String sql;
     @ApiModelProperty("查询参数")
-    private List<Object> params;
+    private List<QueryParam> params;
 
     public BoundSql() {
         this("");
@@ -41,7 +42,7 @@ public class BoundSql {
      * @param sql    sql语句
      * @param params 参数
      */
-    public BoundSql(String sql, List<Object> params) {
+    public BoundSql(String sql, List<QueryParam> params) {
         this.sql = sql;
         if (params == null) {
             params = new ArrayList<>();

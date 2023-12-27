@@ -54,7 +54,7 @@ public enum DataType {
     private final String dataType;
     /**
      * -- GETTER --
-     *  获取精简类型
+     * 获取精简类型
      *
      * @return
      */
@@ -122,7 +122,7 @@ public enum DataType {
         typeMap.put(DataConstant.DataType.DOUBLE, DataType.DOUBLE);
         typeMap.put(DataConstant.DataType.NUMERIC, DataType.BIGDECIMAL);
         typeMap.put(DataConstant.DataType.DECIMAL, DataType.BIGDECIMAL);
-        typeMap.put(DataConstant.DataType.BIGDECIMAL,DataType.BIGDECIMAL);
+        typeMap.put(DataConstant.DataType.BIGDECIMAL, DataType.BIGDECIMAL);
         typeMap.put(DataConstant.DataType.BOOLEAN, DataType.BOOLEAN);
         typeMap.put(DataConstant.DataType.NUMBER, DataType.FLOAT);
 
@@ -155,10 +155,14 @@ public enum DataType {
 
     /**
      * 通过精简数据类型获取数据类型
+     *
      * @param slimType 精简数据类型
      * @return 数据类型
      */
     public static DataType forType(SlimType slimType) {
+        if (slimType == null) {
+            return DataType.UNKNOWN;
+        }
         return forType(slimType.toString());
     }
 

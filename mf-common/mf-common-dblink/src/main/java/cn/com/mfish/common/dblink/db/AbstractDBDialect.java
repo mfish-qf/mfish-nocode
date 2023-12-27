@@ -1,6 +1,7 @@
 package cn.com.mfish.common.dblink.db;
 
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.page.BoundSql;
 
 import java.text.MessageFormat;
@@ -13,10 +14,11 @@ import java.text.MessageFormat;
 public abstract class AbstractDBDialect implements DBDialect {
     /**
      * mysql pg通用 jdbc
-     * @param host 地址
-     * @param port 端口
+     *
+     * @param host   地址
+     * @param port   端口
      * @param dbName 数据库名称
-     * @param head 头部标签
+     * @param head   头部标签
      * @return
      */
     protected String getJdbc(String host, String port, String dbName, String head) {
@@ -30,8 +32,9 @@ public abstract class AbstractDBDialect implements DBDialect {
 
     /**
      * mysql pg通用查询条件
-     * @param sql sql
-     * @param dbName 数据库名称
+     *
+     * @param sql       sql
+     * @param dbName    数据库名称
      * @param tableName 表名称
      * @return
      */
@@ -39,11 +42,11 @@ public abstract class AbstractDBDialect implements DBDialect {
         BoundSql boundSql = new BoundSql();
         if (!StringUtils.isEmpty(tableName)) {
             sql += " and table_name = ?";
-            boundSql.getParams().add(tableName);
+            boundSql.getParams().add(new QueryParam().setValue(tableName));
         }
         if (!StringUtils.isEmpty(dbName)) {
             sql += " and table_schema = ?";
-            boundSql.getParams().add(dbName);
+            boundSql.getParams().add(new QueryParam().setValue(dbName));
         }
         return boundSql.setSql(sql);
     }

@@ -121,12 +121,28 @@ public class MetaDataTable extends Page<MetaDataRow> {
     /**
      * 增加列
      *
-     * @param col 列
+     * @param header 列
      */
-    public void addColumn(MetaDataHeader col) {
-        this.headers.addColumn(col);
+    public void addColumn(MetaDataHeader header) {
+        this.headers.addColumn(header);
         for (MetaDataRow row : this) {
-            row.addColumn(col, null);
+            row.addColumn(header, null);
+        }
+    }
+
+    /**
+     * 移除多列
+     *
+     * @param colNames 列集合
+     */
+    public void removeColumns(List<String> colNames) {
+        for (String colName : colNames) {
+            this.headers.remove(colName);
+        }
+        for (MetaDataRow row : this) {
+            for (String colName : colNames) {
+                row.removeColumn(colName);
+            }
         }
     }
 
@@ -137,11 +153,9 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * @return
      */
     public void removeColumn(String colName) {
-        if (this.headers.containsKey(colName)) {
-            this.headers.remove(colName);
-            for (MetaDataRow row : this) {
-                row.removeColumn(colName);
-            }
+        this.headers.remove(colName);
+        for (MetaDataRow row : this) {
+            row.removeColumn(colName);
         }
     }
 
@@ -151,9 +165,9 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * @param index 索引
      */
     public void removeColumn(int index) {
-        MetaDataHeader col = headers.getColHeader(index);
-        if (col != null) {
-            removeColumn(col.getColName());
+        MetaDataHeader header = headers.getColHeader(index);
+        if (header != null) {
+            removeColumn(header.getColName());
         }
     }
 
@@ -226,12 +240,12 @@ public class MetaDataTable extends Page<MetaDataRow> {
     /**
      * 根据列名称获取
      *
-     * @param alias 列别名
+     * @param colName 列别名
      * @return
      */
-    public MetaDataHeader getColHeader(String alias) {
-        if (containColumn(alias)) {
-            return headers.getColHeader(alias);
+    public MetaDataHeader getColHeader(String colName) {
+        if (containColumn(colName)) {
+            return headers.getColHeader(colName);
         }
         return null;
     }
