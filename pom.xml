@@ -27,30 +27,30 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.7.17</spring-boot.version>
-        <spring-boot-admin.version>2.7.12</spring-boot-admin.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot-admin.version>2.7.15</spring-boot-admin.version>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
         <alibaba.nacos.version>2.2.3</alibaba.nacos.version>
-        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <swagger.fox.version>3.0.0</swagger.fox.version>
-        <swagger.core.version>1.6.2</swagger.core.version>
+        <swagger.core.version>1.6.12</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
-        <druid.version>1.2.16</druid.version>
-        <dynamic-ds.version>3.6.1</dynamic-ds.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <pagehelper.boot.version>2.1.0</pagehelper.boot.version>
+        <jsqlparser.version>4.8</jsqlparser.version>
+        <druid.version>1.2.21</druid.version>
+        <dynamic-ds.version>4.3.0</dynamic-ds.version>
         <commons.io.version>2.15.1</commons.io.version>
-        <commons.text.version>1.10.0</commons.text.version>
-        <freemarker.version>2.3.31</freemarker.version>
-        <fastjson.version>2.0.43</fastjson.version>
-        <zxing.version>3.4.1</zxing.version>
-        <common-pool.version>2.10.0</common-pool.version>
+        <commons.text.version>1.11.0</commons.text.version>
+        <freemarker.version>2.3.32</freemarker.version>
+        <fastjson.version>2.0.45</fastjson.version>
+        <zxing.version>3.5.2</zxing.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <oauth2.version>1.0.2</oauth2.version>
-        <shiro.version>1.12.0</shiro.version>
-        <wechat.version>4.5.5.B</wechat.version>
-        <aliyun-oss.version>3.17.1</aliyun-oss.version>
-        <qiniu-sdk.version>7.14.0</qiniu-sdk.version>
+        <shiro.version>1.13.0</shiro.version>
+        <wechat.version>4.6.0</wechat.version>
+        <aliyun-oss.version>3.17.4</aliyun-oss.version>
+        <qiniu-sdk.version>7.15.0</qiniu-sdk.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <bcprov.version>1.70</bcprov.version>
         <oracle.version>23.2.0.0</oracle.version>
@@ -114,17 +114,49 @@
                 <version>${spring-boot-admin.version}</version>
             </dependency>
 
+            <!-- 单独引入jSqlParser防止pageHelper与mybatisPlus引入版本不一致造成冲突-->
+            <dependency>
+                <groupId>com.github.jsqlparser</groupId>
+                <artifactId>jsqlparser</artifactId>
+                <version>${jsqlparser.version}</version>
+            </dependency>
+
+            <!-- pagehelper 分页插件 -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.jsqlparser</groupId>
+                        <artifactId>jsqlparser</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <!-- Mybatis 依赖配置 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.jsqlparser</groupId>
+                        <artifactId>jsqlparser</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.jsqlparser</groupId>
+                        <artifactId>jsqlparser</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -157,12 +189,6 @@
                 </exclusions>
             </dependency>
 
-            <!-- pagehelper 分页插件 -->
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${pagehelper.boot.version}</version>
-            </dependency>
             <!-- io常用工具类 -->
             <dependency>
                 <groupId>commons-io</groupId>
