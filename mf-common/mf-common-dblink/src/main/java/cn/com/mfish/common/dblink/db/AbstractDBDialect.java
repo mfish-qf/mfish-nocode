@@ -41,12 +41,14 @@ public abstract class AbstractDBDialect implements DBDialect {
     protected BoundSql buildCondition(String sql, String dbName, String tableName) {
         BoundSql boundSql = new BoundSql();
         if (!StringUtils.isEmpty(tableName)) {
-            sql += " and table_name = ?";
-            boundSql.getParams().add(new QueryParam().setValue(tableName));
+            sql += " and (table_name = ? or table_name = ?) ";
+            boundSql.getParams().add(new QueryParam().setValue(tableName.toUpperCase()));
+            boundSql.getParams().add(new QueryParam().setValue(tableName.toLowerCase()));
         }
         if (!StringUtils.isEmpty(dbName)) {
-            sql += " and table_schema = ?";
-            boundSql.getParams().add(new QueryParam().setValue(dbName));
+            sql += " and (table_schema = ? or table_schema = ?)";
+            boundSql.getParams().add(new QueryParam().setValue(dbName.toUpperCase()));
+            boundSql.getParams().add(new QueryParam().setValue(dbName.toLowerCase()));
         }
         return boundSql.setSql(sql);
     }
