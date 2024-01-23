@@ -12,38 +12,42 @@ import java.util.Map;
  */
 @Getter
 public enum FilterCondition {
-    错误("error", ""),
-    等于("eq", " = ''{0}''"),
-    不等于("ne", " != ''{0}''"),
-    大于("gt", " > ''{0}''"),
-    大于等于("ge", " >= ''{0}''"),
-    小于("lt", " < ''{0}''"),
-    小于等于("le", " <= ''{0}''"),
-    介于之间("between", " BETWEEN ''{0}'' AND ''{1}''"),
-    为空("isNull", " IS NULL"),
-    不为空("isNotNull", " IS NOT NULL"),
-    包含("like", " LIKE ''%{0}%''"),
-    不包含("notLike", " NOT LIKE ''%{0}%''"),
-    以开始("likeLeft", " LIKE ''{0}%''"),
-    以结束("likeRight", " LIKE ''%{0}''");
+    错误("error", "", ""),
+    等于("eq", " = ''{0}''", " = {0}"),
+    不等于("ne", " != ''{0}''", " != {0}"),
+    大于("gt", " > ''{0}''", " > {0}"),
+    大于等于("ge", " >= ''{0}''", " >= {0}"),
+    小于("lt", " < ''{0}''", " < {0}"),
+    小于等于("le", " <= ''{0}''", " <= {0}"),
+    介于之间("between", " BETWEEN ''{0}'' AND ''{1}''", " BETWEEN {0} AND {1}"),
+    为空("isNull", " IS NULL", " IS NULL"),
+    不为空("isNotNull", " IS NOT NULL", " IS NOT NULL"),
+    包含("like", " LIKE ''%{0}%''", " LIKE CONCAT(''%'',{0},''%'')"),
+    不包含("notLike", " NOT LIKE ''%{0}%''", " NOT LIKE CONCAT(''%'',{0},''%'')"),
+    以开始("likeLeft", " LIKE ''{0}%''", " LIKE CONCAT({0},''%'')"),
+    以结束("likeRight", " LIKE ''%{0}''", " LIKE CONCAT(''%'',{0})");
     /**
-     * -- GETTER --
-     *  获取值
+     * 获取值
      *
      * @return
      */
-    private String value;
+    private final String value;
     /**
-     * -- GETTER --
-     *  获取条件
+     * 普通值条件
      *
      * @return
      */
     private final String condition;
+    /**
+     * 字段条件(默认mysql，其他数据库类型需要重写)
+     * 实现IAnalysis中的getFieldCondition方法来重写
+     */
+    private final String fieldCondition;
 
-    FilterCondition(String value, String condition) {
+    FilterCondition(String value, String condition, String fieldCondition) {
         this.value = value;
         this.condition = condition;
+        this.fieldCondition = fieldCondition;
     }
 
     private static final Map<String, FilterCondition> conditionMap = new HashMap<>();
@@ -52,10 +56,6 @@ public enum FilterCondition {
         for (FilterCondition con : FilterCondition.values()) {
             conditionMap.put(con.value, con);
         }
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     /**

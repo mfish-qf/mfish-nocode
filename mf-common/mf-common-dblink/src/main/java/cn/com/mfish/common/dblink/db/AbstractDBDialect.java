@@ -22,11 +22,7 @@ public abstract class AbstractDBDialect implements DBDialect {
      * @return
      */
     protected String getJdbc(String host, String port, String dbName, String head) {
-        if (!StringUtils.isEmpty(dbName)) {
-            dbName = "/" + dbName;
-        } else {
-            dbName = "";
-        }
+        dbName = !StringUtils.isEmpty(dbName) ? "/" + dbName : "";
         return MessageFormat.format("{0}://{1}:{2}{3}?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai", head, host, port, dbName);
     }
 
