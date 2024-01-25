@@ -26,7 +26,7 @@ public class MysqlDBDialect extends AbstractDBDialect {
 
     @Override
     public BoundSql getTableInfo(String dbName, String tableName) {
-        String sql = "SELECT table_name, table_comment, table_schema\n" +
+        String sql = "SELECT table_name, table_comment, table_schema, if(table_type='VIEW',1,0) table_type\n" +
                 "        FROM INFORMATION_SCHEMA.TABLES where 1=1";
         return buildCondition(sql, dbName, tableName);
     }
