@@ -17,9 +17,9 @@ public class MysqlDialect extends AbstractDialect {
     }
 
     @Override
-    protected BoundSql getPageSql(BoundSql boundSql, Page page) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT * FROM (").append(boundSql.getSql());
+    protected BoundSql getPageSql(BoundSql boundSql, Page<?> page) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM (");
+        sqlBuilder.append(boundSql.getSql());
         if (page.getStartRow() == 0) {
             sqlBuilder.append(") TEMP LIMIT ?");
             boundSql.getParams().add(new QueryParam().setValue(page.getPageSize()).setType(DataType.INTEGER));

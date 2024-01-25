@@ -43,7 +43,7 @@ public class OracleDBDialect implements DBDialect {
 
     @Override
     public BoundSql getTableInfo(String dbName, String tableName) {
-        String sql = "select u.table_name, u.comments table_comment, a.owner table_schema\n" +
+        String sql = "select u.table_name, u.comments table_comment, a.owner table_schema,DECODE(u.table_type,'VIEW', 1, 0) table_type\n" +
                 " from user_tab_comments u\n" +
                 " inner join all_tab_comments a\n" +
                 " on u.table_name = a.table_name\n" +
@@ -54,8 +54,10 @@ public class OracleDBDialect implements DBDialect {
     private BoundSql buildCondition(String sql, String tableName) {
         BoundSql boundSql = new BoundSql();
         if (!StringUtils.isEmpty(tableName)) {
-            sql += " and a.TABLE_NAME = ?";
+            //这里虽然匹配大小写，但是建议oracle表名视图都创建大写名称，避免数据查询时无法查到
+            sql += " and (a.TABLE_NAME = ? or a.TABLE_NAME = ?)";
             boundSql.getParams().add(new QueryParam().setValue(tableName.toUpperCase(Locale.ROOT)));
+            boundSql.getParams().add(new QueryParam().setValue(tableName.toLowerCase(Locale.ROOT)));
         }
         return boundSql.setSql(sql);
     }

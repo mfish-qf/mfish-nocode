@@ -35,18 +35,18 @@ public class PostgreDBDialect extends AbstractDBDialect {
 
     @Override
     public BoundSql getTableInfo(String dbName, String tableName) {
-        String strSql = "SELECT d.table_name,\n" +
+        String strSql = "SELECT\n" +
+                "d.table_name,\n" +
                 "CAST(obj_description(C.relfilenode, 'pg_class') AS VARCHAR) AS TABLE_COMMENT,\n" +
-                "d.table_schema \n" +
+                "d.table_schema,\n" +
+                "(CASE WHEN c.relkind = 'v' THEN 1 ELSE 0 END ) AS table_type\n" +
                 "FROM\n" +
                 "pg_class c,\n" +
                 "information_schema.tables d \n" +
                 "WHERE\n" +
-                "c.relkind = 'r' \n" +
-                "AND c.relname NOT LIKE'pg_%' \n" +
-                "AND c.relname NOT LIKE'sql_%' \n" +
-                "AND c.relkind = 'r' \n" +
-                "AND c.relname = d.TABLE_NAME\n";
+                "c.relnamespace IN ( SELECT relnamespace FROM pg_class WHERE relkind = 'r' AND relname NOT LIKE'pg_%' AND relname NOT LIKE'sql_%' ) \n" +
+                "AND ( c.relkind = 'r' OR c.relkind = 'v' )\n" +
+                "AND c.relname = d.TABLE_NAME";
         //pg数据库table_schema是单独定义的schema不是数据库名称，此处暂时不传。参数预留
         return buildCondition(strSql, "", tableName);
     }

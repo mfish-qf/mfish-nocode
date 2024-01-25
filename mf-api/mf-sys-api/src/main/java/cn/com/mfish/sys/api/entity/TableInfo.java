@@ -25,6 +25,8 @@ public class TableInfo implements Serializable {
     private String tableComment;
     @ApiModelProperty("库")
     private String tableSchema;
+    @ApiModelProperty("表类型 0表 1视图")
+    private Integer tableType;
     @ApiModelProperty("列信息")
     private List<FieldInfo> columns;
 }
