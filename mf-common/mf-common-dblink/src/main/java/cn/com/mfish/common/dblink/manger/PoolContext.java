@@ -1,6 +1,8 @@
 package cn.com.mfish.common.dblink.manger;
 
 import cn.com.mfish.common.dblink.dbpool.PoolWrapper;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -13,35 +15,23 @@ import java.sql.SQLException;
  */
 public class PoolContext {
     //连接池有效期(一天 单位:秒)
+    @Setter
+    @Getter
     private long expire = 24 * 60 * 60;
     //检查时间
     // 当datasource被获取的1分钟内，不执行清理线程，降低线程额外开销
+    @Getter
+    @Setter
     private long checkTime;
     //连接池包装类
-    private PoolWrapper poolWrapper;
+    private final PoolWrapper<?> poolWrapper;
 
-    public PoolContext(PoolWrapper poolWrapper) {
+    public PoolContext(PoolWrapper<?> poolWrapper) {
         this.poolWrapper = poolWrapper;
     }
 
     public void close() {
         poolWrapper.close();
-    }
-
-    public long getExpire() {
-        return expire;
-    }
-
-    public void setExpire(long expire) {
-        this.expire = expire;
-    }
-
-    public long getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(long checkTime) {
-        this.checkTime = checkTime;
     }
 
     public DataSource getDataSource() {

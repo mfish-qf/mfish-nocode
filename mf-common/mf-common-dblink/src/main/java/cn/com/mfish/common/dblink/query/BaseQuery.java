@@ -103,12 +103,8 @@ public class BaseQuery {
                         continue;
                     }
                     String type = rs.getMetaData().getColumnTypeName(i);
-                    Object columnValue = formatValue(type, rs.getObject(i));
+                    Object columnValue = formatValue(type, getValue(field.getType().getTypeName(), rs, i));
                     field.setAccessible(true);
-                    //数据库中是数字类型，字段类型为boolean时强制转换为boolean
-                    if (field.getType().getTypeName().equals("java.lang.Boolean") && columnValue instanceof Number) {
-                        columnValue = DataUtils.numCompare(columnValue, 0) > 0;
-                    }
                     field.set(t, columnValue);
                     break;
                 }
@@ -116,6 +112,36 @@ public class BaseQuery {
             list.add(t);
         }
         return list;
+    }
+
+    //数据库中是数字类型，字段类型为boolean时强制转换为boolean
+    private Object getValue(String typeName, ResultSet rs, int i) throws SQLException {
+        //todo 类型不全后续根据实际情况补充
+        if ("java.lang.Boolean".equals(typeName) || "boolean".equals(typeName)) {
+            return rs.getBoolean(i);
+        }
+        if ("java.lang.Integer".equals(typeName) || "int".equals(typeName)) {
+            return rs.getInt(i);
+        }
+        if ("java.lang.Long".equals(typeName) || "long".equals(typeName)) {
+            return rs.getLong(i);
+        }
+        if ("java.lang.Float".equals(typeName) || "float".equals(typeName)) {
+            return rs.getFloat(i);
+        }
+        if ("java.lang.Double".equals(typeName) || "double".equals(typeName)) {
+            return rs.getDouble(i);
+        }
+        if ("java.lang.Short".equals(typeName) || "short".equals(typeName)) {
+            return rs.getShort(i);
+        }
+        if ("java.math.BigDecimal".equals(typeName)) {
+            return rs.getBigDecimal(i);
+        }
+        if ("java.util.Date".equals(typeName)) {
+            return rs.getTimestamp(i);
+        }
+        return rs.getObject(i);
     }
 
     /**
