@@ -36,3 +36,11 @@
 /mf-common/target/
 /mf-business/target/
 /mf-api/mf-storage-api/target/
+/mf-start/mf-start-code/target/
+/mf-start/mf-start-boot/target/
+/mf-start/mf-start-gateway/target/
+/mf-start/mf-start-oauth/target/
+/mf-start/mf-start-scheduler/target/
+/mf-start/mf-start-storage/target/
+/mf-start/mf-start-sys/target/
+/mf-common/mf-common-captcha/target/

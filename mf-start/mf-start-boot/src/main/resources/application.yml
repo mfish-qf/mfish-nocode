@@ -1,0 +1,179 @@
+# mybatis配置
+spring:
+  profiles:
+    include:
+      - oauth
+      - code
+      - swagger
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  redis:
+    host: localhost
+    port: 6379
+    password: 1qaz@WSX
+    database: 5
+    timeout: 10s
+    lettuce:
+      pool:
+        # 连接池中的最小空闲连接
+        min-idle: 0
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池的最大数据库连接数
+        max-active: 8
+        # #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 1200MB
+      # 设置总上传的文件大小
+      max-request-size: 1200MB
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,slf4j
+      datasource:
+        # 主库数据源
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/mfish_nocode?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: 123456
+          # 从库数据源
+          # slave:
+          # username:
+          # password:
+          # url:
+          # driver-class-name:
+      # seata: true    # 开启seata代理，开启后默认每个数据源都代理，如果某个不需要代理可单独关闭
+# feign 配置
+feign:
+  sentinel:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
+  compression:
+    request:
+      enabled: false
+    response:
+      enabled: false
+
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+# mybatis配置
+mybatis-plus:
+  # 搜索指定包别名
+  type-aliases-package: cn.com.mfish.**.mapper
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath*:cn/com/mfish/**/mapper/**/*Mapper.xml
+  global-config:
+    # 关闭MP3.0自带的banner
+    banner: false
+    db-config:
+      #主键类型  0:"数据库ID自增",1:"该类型为未设置主键类型", 2:"用户输入ID",3:"全局唯一ID (数字类型唯一ID)", 4:"全局唯一ID UUID",5:"字符串全局唯一ID (idWorker 的字符串表示)";
+      #id-type: 0
+      # 默认数据库表下划线命名
+      table-underline: true
+      #逻辑删除 删除前
+      logic-not-delete-value: 0
+      #逻辑删除 删除后
+      logic-delete-value: 1
+  configuration:
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 返回类型为Map,显示null对应的字段
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+    jdbc-type-for-null:
+logging:
+  config: classpath:logback-logstash.xml
+log:
+  level: info
+  maxSize: 30MB
+# 临时缓存存储时间（单位：天）
+cache:
+  temp:
+    time: 7
+DBConnect:
+  password:
+    privateKey: 54f0e36b98cf63c3bc6185b61c6e4f2a6e1df3bdeb293a50d7b0bc66881c2419
+# 文件存储
+storage:
+  active: local
+  address: http://localhost:8888/storage/file/
+  local:
+    storagePath: E:/storage
+  aliyun:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    accessKeyId: LTAI5***********FsgT
+    accessKeySecret: ZtZGF***************JADjS2f
+    bucketName: landwise
+  qiniu:
+    domain: http://cdn.mfish.com.cn
+    accessKey: cHlX4*******************cdsexgvP
+    secretKey: QPACH*******************1vEa1t4S
+    bucket: mfish-nocode
+#调度中心
+org:
+  quartz:
+    scheduler:
+      instanceName: MfishClusteredScheduler
+      instanceId: AUTO
+    threadPool:
+      poolClass: org.quartz.simpl.SimpleThreadPool
+      threadCount: 50
+      threadPriority: 5
+    jobStore:
+      jdbcClass: org.quartz.impl.jdbcjobstore.JobStoreTX
+      driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      useProperties: true
+      isClustered: true
+      tablePrefix: QRTZ_
+      dataSource: mf_scheduler
+      clusterCheckinInterval: 20000
+      misfireThreshold: 60000
+#rocketmq配置信息
+rocketmq:
+  #nameservice服务器地址（多个以英文逗号隔开）
+  name-server: 127.0.0.1:9876
+  #生产者配置
+  producer:
+    #组名
+    group: mfish-scheduler-group
+    sendMessageTimeout: 300000
+    #目的地（topic:tag）
+    #topic
+    topic: mfish-scheduler-topic

@@ -2,6 +2,7 @@ package cn.com.mfish.common.swagger.config;
 
 import cn.com.mfish.common.core.constants.Constants;
 import io.swagger.annotations.Api;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -137,11 +138,12 @@ public class SwaggerConfig implements WebMvcConfigurer {
     public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
         return new BeanPostProcessor() {
             @Override
-            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
                 if (bean instanceof WebMvcRequestHandlerProvider || bean instanceof WebFluxRequestHandlerProvider) {
                     List<RequestMappingInfoHandlerMapping> list;
                     try {
                         Field field = ReflectionUtils.findField(bean.getClass(), "handlerMappings");
+                        assert field != null;
                         field.setAccessible(true);
                         list = (List<RequestMappingInfoHandlerMapping>) field.get(bean);
                     } catch (IllegalArgumentException | IllegalAccessException e) {

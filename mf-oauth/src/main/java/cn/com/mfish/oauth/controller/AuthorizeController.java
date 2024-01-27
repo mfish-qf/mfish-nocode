@@ -54,7 +54,7 @@ public class AuthorizeController {
     @GetMapping("/authorize")
     @ApiImplicitParams({
             @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端ID", paramType = "query", required = true),
+            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
             @ApiImplicitParam(name = FORCE_LOGIN, value = "强制登录 值为1时强行返回登录界面", paramType = "query")
@@ -72,7 +72,8 @@ public class AuthorizeController {
     @PostMapping("/authorize")
     @ApiImplicitParams({
             @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端ID", paramType = "query", required = true),
+            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true),
+            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端密钥", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
             @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
             @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email", paramType = "query", required = true),

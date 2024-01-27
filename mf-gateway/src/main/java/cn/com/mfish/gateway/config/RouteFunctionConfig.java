@@ -1,6 +1,6 @@
 package cn.com.mfish.gateway.config;
 
-import cn.com.mfish.gateway.service.CheckCodeService;
+import cn.com.mfish.common.captcha.service.CheckCodeService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -24,7 +24,7 @@ public class RouteFunctionConfig {
     CheckCodeService checkCodeService;
 
     @Bean
-    public RouterFunction captcha() {
+    public RouterFunction<?> captcha() {
         return RouterFunctions.route(RequestPredicates.GET("/captcha")
                 .and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), request -> {
             try {

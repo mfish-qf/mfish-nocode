@@ -1,4 +1,4 @@
-package cn.com.mfish.gateway.config;
+package cn.com.mfish.common.captcha.config;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;

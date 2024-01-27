@@ -1,4 +1,4 @@
-package cn.com.mfish.gateway.service;
+package cn.com.mfish.common.captcha.service;
 
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.web.Result;

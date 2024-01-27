@@ -1,10 +1,10 @@
 swagger:
-  enabled : true
-  title : 摸鱼框架
+  title: '摸鱼低代码平台'
+  enabled: true
   description : 摸鱼框架接口文档
   license : Powered By mfish
   licenseUrl : http://www.mfish.com.cn
-  version : 版本号:V1.0.0
+  version : 版本号:V1.1.0
   termsOfServiceUrl : http://www.mfish.com.cn
   contact:
     name: mfish

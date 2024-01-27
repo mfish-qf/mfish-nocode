@@ -1,0 +1,29 @@
+spring:
+  thymeleaf:
+    cache: false
+redisCache:
+  expire: 50400
+  keyPrefix: sso_cache
+redisSession:
+  expire: 50400
+  keyPrefix: sso_session
+shiro:
+  security:
+    algorithmName: md5
+    hashIterations: 2
+    hexEncoded: true
+oauth2:
+  expire:
+    code: 180
+    token: 21600
+    refreshToken: 604800
+  login:
+    mutex: false
+  user:
+    autoCreate: false
+  token:
+    sm4key: 143be1ae6ee10b048f7e441cec2a9803
+wechat:
+  miniapp:
+    appId: wx*************4a3
+    secret: a6***************efa227

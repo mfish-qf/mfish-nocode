@@ -1,11 +1,11 @@
-package cn.com.mfish.gateway.service.impl;
+package cn.com.mfish.common.captcha.service.impl;
 
+import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
+import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.gateway.config.properties.CaptchaProperties;
-import cn.com.mfish.gateway.service.CheckCodeService;
 import com.google.code.kaptcha.Producer;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,7 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,7 +36,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 
     @Override
     public Result<Map<String, Object>> createCaptcha() {
-        Result<Map<String, Object>> ajax = Result.ok(new HashMap());
+        Result<Map<String, Object>> ajax = Result.ok(new HashMap<>());
         boolean captchaOnOff = captchaProperties.getEnabled();
         ajax.getData().put("captchaOnOff", captchaOnOff);
         if (!captchaOnOff) {
@@ -47,18 +44,15 @@ public class CheckCodeServiceImpl implements CheckCodeService {
         }
         String code, value;
         BufferedImage img;
-        switch (captchaProperties.getType()) {
-            case 计算:
-                String capText = mathCaptchaProducer.createText();
-                String[] caps = capText.split("#");
-                code = caps[0];
-                value = caps[1];
-                img = mathCaptchaProducer.createImage(code);
-                break;
-            default:
-                code = value = charCaptchaProducer.createText();
-                img = charCaptchaProducer.createImage(code);
-                break;
+        if (Objects.requireNonNull(captchaProperties.getType()) == CaptchaProperties.CaptchaType.计算) {
+            String capText = mathCaptchaProducer.createText();
+            String[] caps = capText.split("#");
+            code = caps[0];
+            value = caps[1];
+            img = mathCaptchaProducer.createImage(code);
+        } else {
+            code = value = charCaptchaProducer.createText();
+            img = charCaptchaProducer.createImage(code);
         }
         String uuid = UUID.randomUUID().toString();
         String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;

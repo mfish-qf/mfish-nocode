@@ -1,4 +1,4 @@
-package cn.com.mfish.gateway.config.properties;
+package cn.com.mfish.common.captcha.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,7 +41,7 @@ public class CaptchaProperties {
     public enum CaptchaType {
         计算("math"),
         字符("char");
-        private String captchaType;
+        private final String captchaType;
 
         CaptchaType(String type) {
             this.captchaType = type;
