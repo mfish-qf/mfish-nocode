@@ -34,7 +34,7 @@ public class CaptchaConfig {
 
         // 缓存key
         properties.setProperty(KAPTCHA_SESSION_CONFIG_KEY, "mathCaptchaCode");
-        properties.setProperty(KAPTCHA_TEXTPRODUCER_IMPL, "cn.com.mfish.gateway.config.MathCaptchaCreate");
+        properties.setProperty(KAPTCHA_TEXTPRODUCER_IMPL, "cn.com.mfish.common.captcha.common.MathCaptchaCreate");
         // 干扰实现类
         properties.setProperty(KAPTCHA_NOISE_IMPL, "com.google.code.kaptcha.impl.NoNoise");
         Config config = new Config(properties);

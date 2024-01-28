@@ -1,3 +1,9 @@
+# 验证码配置
+security:
+  # 验证码
+  captcha:
+    enabled: true
+    type: math
 spring:
   thymeleaf:
     cache: false

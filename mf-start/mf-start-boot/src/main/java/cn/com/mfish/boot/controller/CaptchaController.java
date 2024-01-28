@@ -1,5 +1,6 @@
 package cn.com.mfish.boot.controller;
 
+import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.web.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -20,9 +22,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/captcha")
 public class CaptchaController {
+    @Resource
+    CheckCodeService checkCodeService;
     @ApiOperation(value = "获取验证码", notes = "获取验证码")
     @GetMapping
     public Result<Map<String, Object>> getCaptcha() {
-        return Result.ok();
+        return checkCodeService.createCaptcha();
     }
 }

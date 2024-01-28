@@ -44,7 +44,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
         }
         String code, value;
         BufferedImage img;
-        if (Objects.requireNonNull(captchaProperties.getType()) == CaptchaProperties.CaptchaType.计算) {
+        if (captchaProperties.getType() == CaptchaProperties.CaptchaType.计算) {
             String capText = mathCaptchaProducer.createText();
             String[] caps = capText.split("#");
             code = caps[0];
