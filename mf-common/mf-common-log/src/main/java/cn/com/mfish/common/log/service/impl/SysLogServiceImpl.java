@@ -1,8 +1,8 @@
-package cn.com.mfish.sys.service.impl;
+package cn.com.mfish.common.log.service.impl;
 
+import cn.com.mfish.common.log.mapper.SysLogMapper;
+import cn.com.mfish.common.log.service.SysLogService;
 import cn.com.mfish.sys.api.entity.SysLog;
-import cn.com.mfish.sys.mapper.SysLogMapper;
-import cn.com.mfish.sys.service.SysLogService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

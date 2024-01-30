@@ -3,7 +3,7 @@
     <springProperty name="rootLevel" source="log.level" />
     <springProperty name="maxFileSize" source="log.maxSize" />
     <!-- 日志存放路径 -->
-    <property name="log.path" value="logs/mf-sys"/>
+    <property name="log.path" value="logs/mfish-nocode"/>
     <!-- 日志输出格式 -->
     <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n"/>
 
@@ -85,7 +85,7 @@
     <!-- Spring日志级别控制  -->
     <logger name="org.springframework" level="warn"/>
     <!--数据库操作日志-->
-    <logger name="cn.com.mfish.sys.mapper" level="debug" additivity="true">
+    <logger name="cn.com.mfish.**.mapper" level="debug" additivity="true">
         <appender-ref ref="file_sql"/>
     </logger>
 

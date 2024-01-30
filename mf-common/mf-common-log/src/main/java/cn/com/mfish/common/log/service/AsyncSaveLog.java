@@ -1,10 +1,12 @@
 package cn.com.mfish.common.log.service;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.api.remote.RemoteLogService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -20,15 +22,29 @@ import javax.annotation.Resource;
 @EnableAsync
 @Slf4j
 public class AsyncSaveLog {
+    //服务类型默认使用spring-cloud微服务
+    @Value("${mfish.type:cloud}")
+    private String type;
     @Resource
     RemoteLogService remoteLogService;
+    @Resource
+    SysLogService sysLogService;
 
     @Async
     public void saveLog(SysLog sysLog) {
-        Result result = remoteLogService.addLog(RPCConstants.INNER, sysLog);
+        //单实例时直接入库 微服务时使用远程日志接口
+        Result<SysLog> result;
+        if (ServiceConstants.isBoot(type)) {
+            if (!sysLogService.save(sysLog)) {
+                log.error("错误:保存日志出错");
+            }
+            return;
+        }
+        result = remoteLogService.addLog(RPCConstants.INNER, sysLog);
         if (result.isSuccess()) {
             return;
         }
-        log.error("错误:保存日志出错", result.getMsg());
+        log.error("错误:保存日志出错，错误信息:" + result.getMsg());
+
     }
 }

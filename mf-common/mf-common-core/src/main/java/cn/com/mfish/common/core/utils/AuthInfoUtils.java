@@ -140,6 +140,6 @@ public class AuthInfoUtils {
         if (roleIds == null) {
             return false;
         }
-        return roleIds.stream().anyMatch((roleId) -> isSuperRole(roleId));
+        return roleIds.stream().anyMatch(AuthInfoUtils::isSuperRole);
     }
 }

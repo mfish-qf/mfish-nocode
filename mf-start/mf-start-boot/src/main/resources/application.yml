@@ -1,3 +1,18 @@
+mfish:
+  type: boot
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8888
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    basedir: ./tomcat
+    threads:
+      # tomcat最大线程数，默认为200
+      max: 200
+      # Tomcat启动初始化的线程数，默认值10
+      min-spare: 10
 # mybatis配置
 spring:
   profiles:
@@ -82,7 +97,6 @@ feign:
       enabled: false
     response:
       enabled: false
-
 # 暴露监控端点
 management:
   endpoints:

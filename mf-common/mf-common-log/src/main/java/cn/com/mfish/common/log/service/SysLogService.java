@@ -1,4 +1,4 @@
-package cn.com.mfish.sys.service;
+package cn.com.mfish.common.log.service;
 
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.baomidou.mybatisplus.extension.service.IService;
