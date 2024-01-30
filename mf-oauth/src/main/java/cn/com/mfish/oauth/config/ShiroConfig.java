@@ -161,11 +161,10 @@ public class ShiroConfig {
      * @return
      */
     private <T extends HashedCredentialsMatcher> HashedCredentialsMatcher createHashedCredentialsMatcher(T t) {
-        HashedCredentialsMatcher hashedCredentialsMatcher = t;
-        hashedCredentialsMatcher.setHashAlgorithmName(ShiroProperties.algorithmName);
-        hashedCredentialsMatcher.setHashIterations(ShiroProperties.hashIterations);
-        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(ShiroProperties.hexEncoded);
-        return hashedCredentialsMatcher;
+        t.setHashAlgorithmName(ShiroProperties.algorithmName);
+        t.setHashIterations(ShiroProperties.hashIterations);
+        t.setStoredCredentialsHexEncoded(ShiroProperties.hexEncoded);
+        return t;
     }
 
     @Bean

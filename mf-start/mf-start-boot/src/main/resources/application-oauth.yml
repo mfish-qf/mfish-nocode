@@ -13,11 +13,6 @@ redisCache:
 redisSession:
   expire: 50400
   keyPrefix: sso_session
-shiro:
-  security:
-    algorithmName: md5
-    hashIterations: 2
-    hexEncoded: true
 oauth2:
   expire:
     code: 180
