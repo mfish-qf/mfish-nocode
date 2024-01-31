@@ -33,7 +33,7 @@ import java.util.List;
  * @description: 数据库连接
  * @author: mfish
  * @date: 2023-03-13
- * @version: V1.1.0
+ * @version: V1.2.0
  */
 @Slf4j
 @Api(tags = "数据库连接")
