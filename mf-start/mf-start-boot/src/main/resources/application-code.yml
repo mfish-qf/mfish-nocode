@@ -1,0 +1,17 @@
+code:
+  template:
+    keys:
+      - ${packageName}/controller/${entityName}Controller.java.ftl
+      - ${packageName}/entity/${entityName}.java.ftl
+      - ${packageName}/mapper/${entityName}Mapper.java.ftl
+      - ${packageName}/mapper/xml/${entityName}Mapper.xml.ftl
+      - ${packageName}/req/Req${entityName}.java.ftl
+      - ${packageName}/service/${entityName}Service.java.ftl
+      - ${packageName}/service/impl/${entityName}ServiceImpl.java.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName#uncap_first}.data.ts.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName}Modal.vue.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/index.vue.ftl
+      - mfish-nocode-view/src/api/${apiPrefix}/model/${entityName}Model.ts.ftl
+      - mfish-nocode-view/src/api/${apiPrefix}/${entityName}.ts.ftl
+    path: template
+  savePath: D:/mfish

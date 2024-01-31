@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.core.utils.SpringBeanFactory
+  cn.com.mfish.common.core.utils.SpringBeanFactory,\
+  cn.com.mfish.common.core.config.ServiceProperties

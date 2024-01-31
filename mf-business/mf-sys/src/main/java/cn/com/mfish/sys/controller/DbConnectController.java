@@ -17,7 +17,7 @@ import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.entity.DBTreeNode;
 import cn.com.mfish.sys.service.DbConnectService;
-import cn.com.mfish.sys.service.TableService;
+import cn.com.mfish.common.dblink.service.TableService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
@@ -33,7 +33,7 @@ import java.util.List;
  * @description: 数据库连接
  * @author: mfish
  * @date: 2023-03-13
- * @version: V1.1.0
+ * @version: V1.2.0
  */
 @Slf4j
 @Api(tags = "数据库连接")

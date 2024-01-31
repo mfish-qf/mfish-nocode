@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.realm;
 
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.util.ByteSource;
 

@@ -19,9 +19,9 @@ import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
-import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
@@ -205,7 +205,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
                 //获取相同设备下的token列表
                 List<Object> tokens = redisTemplate.opsForList().range(key, 0, -1);
                 //只显示一个token的登录时间
-                if (tokens != null || tokens.size() > 0) {
+                if (tokens != null && !tokens.isEmpty()) {
                     Object token = OauthUtils.getToken(tokens.get(0).toString());
                     OnlineUser user = null;
                     if (token instanceof RedisAccessToken) {

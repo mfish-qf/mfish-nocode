@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.1.0
+ * @Version: V1.2.0
  */
 @Service
 @Slf4j
@@ -53,7 +53,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public int insertOrgRole(String orgId, List<String> roles) {
-        if (roles == null || roles.size() == 0) {
+        if (roles == null || roles.isEmpty()) {
             return 0;
         }
         int count = baseMapper.insertOrgRole(orgId, roles);

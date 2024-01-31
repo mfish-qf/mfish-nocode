@@ -25,7 +25,7 @@ import javax.annotation.Resource;
  * @description: 文件存储
  * @author: mfish
  * @date: 2023-03-02
- * @version: V1.1.0
+ * @version: V1.2.0
  */
 @Slf4j
 @Api(tags = "文件存储")

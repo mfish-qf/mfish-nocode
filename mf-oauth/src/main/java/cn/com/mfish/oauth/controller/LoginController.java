@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.service.LoginService;
-import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

@@ -18,6 +18,8 @@ import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.req.ReqSsoUser;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.entity.SsoRole;

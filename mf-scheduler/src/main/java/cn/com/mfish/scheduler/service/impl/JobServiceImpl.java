@@ -29,7 +29,7 @@ import java.util.List;
  * @description: 定时调度任务
  * @author: mfish
  * @date: 2023-02-03
- * @version: V1.1.0
+ * @version: V1.2.0
  */
 @Service
 public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobService {

@@ -62,7 +62,7 @@ public class QRCodeUtils {
      * @throws IOException
      */
     public static BufferedImage createQRCode(String content, String imgPath, boolean needCompress) throws WriterException, IOException {
-        Hashtable hints = new Hashtable();
+        Hashtable<EncodeHintType,Object> hints = new Hashtable<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
         hints.put(EncodeHintType.MARGIN, 2);

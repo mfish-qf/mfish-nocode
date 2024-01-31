@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   cn.com.mfish.common.log.aspect.LogAspect,\
-  cn.com.mfish.common.log.service.AsyncSaveLog
+  cn.com.mfish.common.log.service.AsyncSaveLog,\
+  cn.com.mfish.common.log.service.impl.SysLogServiceImpl
