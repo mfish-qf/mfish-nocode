@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.test;
 
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

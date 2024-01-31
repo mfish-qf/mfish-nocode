@@ -13,13 +13,11 @@
         <module>mf-oauth</module>
         <module>mf-test</module>
         <module>mf-business</module>
-        <module>mf-code-create</module>
         <module>mf-api</module>
         <module>mf-storage</module>
         <module>mf-monitor</module>
         <module>mf-scheduler</module>
         <module>mf-start</module>
-        <module>mf-common/mf-common-captcha</module>
     </modules>
 
     <properties>
@@ -357,6 +355,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-code</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
@@ -368,11 +371,6 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-scheduler-api</artifactId>
-                <version>${mfish.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.com.mfish</groupId>
-                <artifactId>mf-code-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>

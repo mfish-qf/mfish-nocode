@@ -7,9 +7,10 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
+import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.service.LoginService;
-import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     private boolean validateCode(Model model, HttpServletRequest request) {
-        Result result = getCodeValidator.validateClient(request, null);
+        Result<OAuthClient> result = getCodeValidator.validateClient(request, null);
         if (!result.isSuccess()) {
             model.addAttribute(SerConstant.ERROR_MSG, result.getMsg());
             return false;

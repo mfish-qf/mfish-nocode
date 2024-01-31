@@ -26,6 +26,8 @@
         <module>mf-common-dblink</module>
         <module>mf-common-file</module>
         <module>mf-common-dataset</module>
+        <module>mf-common-captcha</module>
+        <module>mf-common-code</module>
     </modules>
 
 </project>

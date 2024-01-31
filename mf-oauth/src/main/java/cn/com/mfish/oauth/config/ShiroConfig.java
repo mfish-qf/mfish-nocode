@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.config;
 
 import cn.com.mfish.common.core.constants.ServiceConstants;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
@@ -25,7 +26,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -43,8 +43,6 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
-    @Value("${mfish.type:cloud}")
-    private String type;
 
     /**
      * 设置shiro拦截器
@@ -57,7 +55,7 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //单体服务走shiro拦截 微服务网关拦截
-        if (ServiceConstants.isBoot(type)) {
+        if (ServiceConstants.isBoot(Utils.getServiceType())) {
             //拦截器
             Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
             // 配置不会被拦截的链接 顺序判断

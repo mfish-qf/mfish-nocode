@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.common;
 
 import cn.com.mfish.common.oauth.common.SerConstant;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.shiro.authc.UsernamePasswordToken;

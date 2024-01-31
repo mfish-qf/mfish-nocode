@@ -2,15 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
+        <artifactId>mf-common</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <artifactId>mfish-nocode</artifactId>
         <version>1.1.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
-
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>mf-common-captcha</artifactId>
+    <description>摸鱼通用验证码</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

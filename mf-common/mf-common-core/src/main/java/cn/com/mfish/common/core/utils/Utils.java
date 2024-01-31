@@ -1,5 +1,6 @@
 package cn.com.mfish.common.core.utils;
 
+import cn.com.mfish.common.core.config.ServiceProperties;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -122,5 +123,14 @@ public class Utils {
             }
         }
         return ip;
+    }
+
+    /**
+     * 获取当前服务类型 是微服务还是单体服务
+     * @return
+     */
+    public static String getServiceType() {
+        ServiceProperties properties = SpringBeanFactory.getBean(ServiceProperties.class);
+        return StringUtils.isEmpty(properties.getType()) ? "cloud" : properties.getType();
     }
 }

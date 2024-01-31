@@ -17,7 +17,6 @@
         <module>mf-start-sys</module>
         <module>mf-start-scheduler</module>
         <module>mf-start-storage</module>
-        <module>mf-start-code</module>
         <module>mf-start-gateway</module>
     </modules>
     <properties>

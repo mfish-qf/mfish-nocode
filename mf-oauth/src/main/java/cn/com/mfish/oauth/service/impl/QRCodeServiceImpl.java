@@ -34,7 +34,7 @@ public class QRCodeServiceImpl implements QRCodeService {
     @Override
     public void updateQRCode(RedisQrCode qrCode) {
         String key = RedisPrefix.buildQrCodeKey(qrCode.getCode());
-        long expire = redisTemplate.getExpire(key);
+        Long expire = redisTemplate.getExpire(key);
         redisTemplate.opsForValue().set(key, qrCode, expire, TimeUnit.SECONDS);
     }
 }

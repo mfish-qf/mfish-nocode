@@ -11,7 +11,7 @@
         </if>
         )
     </sql>
-    <select id="getUserByAccount" resultType="cn.com.mfish.oauth.entity.SsoUser">
+    <select id="getUserByAccount" resultType="cn.com.mfish.common.oauth.entity.SsoUser">
         select * from sso_user
         <where>
             <include refid="byAccount"/>
@@ -113,7 +113,7 @@
         <result property="orgIds" column="orgIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
-    <resultMap id="ssoUserMap" type="cn.com.mfish.oauth.entity.SsoUser">
+    <resultMap id="ssoUserMap" type="cn.com.mfish.common.oauth.entity.SsoUser">
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
         <result property="orgIds" column="orgIds"

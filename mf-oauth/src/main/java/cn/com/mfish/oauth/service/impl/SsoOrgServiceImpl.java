@@ -53,7 +53,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public int insertOrgRole(String orgId, List<String> roles) {
-        if (roles == null || roles.size() == 0) {
+        if (roles == null || roles.isEmpty()) {
             return 0;
         }
         int count = baseMapper.insertOrgRole(orgId, roles);

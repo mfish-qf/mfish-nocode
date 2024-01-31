@@ -59,24 +59,20 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
         throw new MyRuntimeException("错误:更新角色失败");
     }
 
-    private boolean validateRole(SsoRole ssoRole) {
+    private void validateRole(SsoRole ssoRole) {
         if (roleCodeExist(ssoRole.getId(), ssoRole.getRoleCode())) {
             throw new MyRuntimeException("错误:角色编码已存在");
         }
-        return true;
     }
 
 
     private boolean insertRoleMenus(SsoRole ssoRole) {
-        if (ssoRole.getMenus() == null || ssoRole.getMenus().size() == 0) {
+        if (ssoRole.getMenus() == null || ssoRole.getMenus().isEmpty()) {
             return true;
         }
         int count = baseMapper.insertRoleMenus(ssoRole.getId(), ssoRole.getMenus());
         log.info(MessageFormat.format("插入角色菜单数量:{0}条", count));
-        if (count > 0) {
-            return true;
-        }
-        return false;
+        return count > 0;
     }
 
     @Override

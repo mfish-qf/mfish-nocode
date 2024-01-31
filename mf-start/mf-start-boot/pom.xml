@@ -39,11 +39,6 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-code-create</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-captcha</artifactId>
         </dependency>
     </dependencies>

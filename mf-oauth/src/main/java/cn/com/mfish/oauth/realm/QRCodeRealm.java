@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.realm;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.entity.RedisQrCode;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.service.QRCodeService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.*;
