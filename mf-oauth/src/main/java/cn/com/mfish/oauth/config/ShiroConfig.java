@@ -13,7 +13,6 @@ import cn.com.mfish.oauth.realm.MultipleRealm;
 import cn.com.mfish.oauth.realm.PhoneSmsRealm;
 import cn.com.mfish.oauth.realm.QRCodeRealm;
 import cn.com.mfish.oauth.realm.UserPasswordRealm;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
@@ -42,7 +41,6 @@ import java.util.Map;
  * @author: mfish
  * @date: 2020/2/10 18:05
  */
-@Slf4j
 @Configuration
 public class ShiroConfig {
     @Value("${mfish.type:cloud}")
@@ -71,6 +69,7 @@ public class ShiroConfig {
             filterChainDefinitionMap.put("/oauth2/qrCodeLogin/**", "anon");
             filterChainDefinitionMap.put("/oauth2/wx/bind/**", "anon");
             filterChainDefinitionMap.put("/oauth2/static/**", "anon");
+            filterChainDefinitionMap.put("/captcha", "anon");
             filterChainDefinitionMap.put("/storage/file/*.*", "anon");
             filterChainDefinitionMap.put("/code/**", "anon");
             filterChainDefinitionMap.put("/css/**", "anon");
@@ -83,7 +82,7 @@ public class ShiroConfig {
             filterChainDefinitionMap.put("/v2/api-docs/**", "anon");
             filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
-            Map<String, Filter> filterMap = new HashMap<>(1);
+            Map<String, Filter> filterMap = new HashMap<>();
             filterMap.put("token", new TokenFilter());
             shiroFilterFactoryBean.setFilters(filterMap);
             //过滤链定义从上向下顺序执行，一般将/**放在最为下边
@@ -128,9 +127,10 @@ public class ShiroConfig {
      * LifecycleBeanPostProcessor，这是个DestructionAwareBeanPostProcessor的子类，
      * 负责org.apache.shiro.util.Initializable类型bean的生命周期的，初始化和销毁。
      * 主要是AuthorizingRealm类的子类，以及EhCacheManager类。
+     * 解决方法:将LifecycleBeanPostProcessor的配置方法改成静态（防止@Value无法读取到配置）
      */
     @Bean(name = "lifecycleBeanPostProcessor")
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
@@ -279,8 +279,8 @@ public class ShiroConfig {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        assert keygen != null;
         SecretKey deskey = keygen.generateKey();
         System.out.println(Base64.encodeToString(deskey.getEncoded()));
     }
 }
-

@@ -1,4 +1,4 @@
-Application Name: ${spring.application.name}
+Application Name: mfish-nocode
 Application Version: ${mfish.version}
 Spring Boot Version: ${spring-boot.version}
 

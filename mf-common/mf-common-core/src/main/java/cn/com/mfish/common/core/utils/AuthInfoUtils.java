@@ -31,6 +31,7 @@ public class AuthInfoUtils {
      * 系统默认组织
      */
     public static final String SUPER_ORG = "1";
+
     /**
      * 从请求中获取token值
      * token通过access_token=****直接赋值
@@ -68,7 +69,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentUserId() {
-        String userId = ServletUtils.getHeader(RPCConstants.REQ_USER_ID);
+        String userId = getAttr(RPCConstants.REQ_USER_ID);
         return StringUtils.isEmpty(userId) ? null : userId;
     }
 
@@ -78,7 +79,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentAccount() {
-        String account = ServletUtils.getHeader(RPCConstants.REQ_ACCOUNT);
+        String account = getAttr(RPCConstants.REQ_ACCOUNT);
         return StringUtils.isEmpty(account) ? null : account;
     }
 
@@ -88,8 +89,27 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentTenantId() {
-        String tenantId = ServletUtils.getHeader(RPCConstants.REQ_TENANT_ID);
+        String tenantId = getAttr(RPCConstants.REQ_TENANT_ID);
         return StringUtils.isEmpty(tenantId) ? null : tenantId;
+    }
+
+    /**
+     * 获取属性 先到header中查找，找不到再到attribute中查找
+     * 微服务架构用户属性放在header中传递
+     * 单实例架构用户属性放在attribute中传递
+     * @param attr
+     * @return
+     */
+    private static String getAttr(String attr) {
+        String value = ServletUtils.getHeader(attr);
+        if (StringUtils.isEmpty(value)) {
+            Object obj = ServletUtils.getAttribute(attr);
+            if (obj == null) {
+                return null;
+            }
+            value = obj.toString();
+        }
+        return StringUtils.isEmpty(value) ? null : value;
     }
 
     /**
@@ -123,6 +143,7 @@ public class AuthInfoUtils {
 
     /**
      * 判断是否系统默认租户
+     *
      * @param tenantId
      * @return
      */

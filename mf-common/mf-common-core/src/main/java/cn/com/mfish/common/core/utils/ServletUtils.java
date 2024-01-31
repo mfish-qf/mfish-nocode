@@ -60,6 +60,19 @@ public class ServletUtils {
     }
 
     /**
+     * 获取请求属性
+     * @param attr
+     * @return
+     */
+    public static Object getAttribute(String attr) {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getAttribute(attr);
+    }
+
+    /**
      * 获取response
      */
     public static HttpServletResponse getResponse() {
