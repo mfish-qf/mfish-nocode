@@ -1,0 +1,28 @@
+mfish:
+  version: 1.2.0
+# Tomcat
+server:
+  port: 9224
+
+# Spring
+spring: 
+  application:
+    # 应用名称
+    name: mf-scheduler
+  profiles:
+    # 环境配置
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: localhost:19014
+      config:
+        # 配置中心地址
+        server-addr: localhost:19014
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs[0]:
+          data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          refresh: true

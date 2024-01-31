@@ -11,10 +11,10 @@ import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.cache.temp.*;
 import cn.com.mfish.oauth.common.PasswordHelper;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
-import cn.com.mfish.oauth.req.ReqSsoUser;
-import cn.com.mfish.oauth.service.SsoUserService;
+import cn.com.mfish.common.oauth.req.ReqSsoUser;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -313,7 +313,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
 
     @Override
     public int insertUserOrg(String userId, List<String> orgList) {
-        if (orgList == null || orgList.size() == 0) {
+        if (orgList == null || orgList.isEmpty()) {
             return 0;
         }
         int count = baseMapper.insertUserOrg(userId, orgList);

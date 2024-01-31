@@ -1,7 +1,9 @@
 package cn.com.mfish.oauth.common;
 
 import cn.com.mfish.common.oauth.common.SerConstant;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
@@ -11,14 +13,18 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 public class MyUsernamePasswordToken extends UsernamePasswordToken {
 
     //用户ID
+    @Setter
+    @Getter
     private SsoUser userInfo;
     //是否新用户
     private boolean isNew;
 
     //登录类型
+    @Getter
     private SerConstant.LoginType loginType = SerConstant.LoginType.密码登录;
 
     //客户端ID
+    @Getter
     private String clientId;
 
     public MyUsernamePasswordToken(String username, String password) {
@@ -30,21 +36,8 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
     }
 
 
-    public SerConstant.LoginType getLoginType() {
-        return loginType;
-    }
-
     public MyUsernamePasswordToken setLoginType(SerConstant.LoginType loginType) {
         this.loginType = loginType;
-        return this;
-    }
-
-    public SsoUser getUserInfo() {
-        return userInfo;
-    }
-
-    public MyUsernamePasswordToken setUserInfo(SsoUser userInfo) {
-        this.userInfo = userInfo;
         return this;
     }
 
@@ -55,10 +48,6 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
     public MyUsernamePasswordToken setNew(boolean aNew) {
         isNew = aNew;
         return this;
-    }
-
-    public String getClientId() {
-        return clientId;
     }
 
     public MyUsernamePasswordToken setClientId(String clientId) {

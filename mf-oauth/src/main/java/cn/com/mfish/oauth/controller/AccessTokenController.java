@@ -12,7 +12,6 @@ import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
-import cn.com.mfish.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.Code2TokenValidator;
 import cn.com.mfish.oauth.validator.Refresh2TokenValidator;
 import io.swagger.annotations.Api;
@@ -52,8 +51,6 @@ public class AccessTokenController {
     LoginService loginService;
     @Resource
     UserTokenCache userTokenCache;
-    @Resource
-    SsoUserService ssoUserService;
 
     @ApiOperation("token获取")
     @PostMapping(value = "/accessToken")

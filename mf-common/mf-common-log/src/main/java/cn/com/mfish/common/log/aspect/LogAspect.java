@@ -80,7 +80,7 @@ public class LogAspect {
      */
     private String getParams(Object[] paramsArray) {
         String params = "";
-        if (paramsArray != null && paramsArray.length > 0) {
+        if (paramsArray != null) {
             for (Object obj : paramsArray) {
                 if (null == obj || obj instanceof Map && ((Map) obj).isEmpty() || obj instanceof HttpServletResponse) {
                     continue;

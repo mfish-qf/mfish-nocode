@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.com.mfish.common.captcha.config.properties.CaptchaProperties,\
+  cn.com.mfish.common.captcha.config.CaptchaConfig,\
+  cn.com.mfish.common.captcha.service.impl.CheckCodeServiceImpl
+

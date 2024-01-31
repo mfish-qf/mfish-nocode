@@ -22,7 +22,7 @@ public class RedisConfig {
      */
     @Bean(name = "sessionRedisTemplate")
     public RedisTemplate<String, Object> sessionRedisTemplate(@Lazy RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate sessionRedisTemplate = new RedisTemplate();
+        RedisTemplate<String, Object> sessionRedisTemplate = new RedisTemplate<>();
         sessionRedisTemplate.setConnectionFactory(redisConnectionFactory);
         // 设置key的序列化方式，采用StringRedisSerializer
         GenericToStringSerializer<String> keySerializer = new GenericToStringSerializer<>(String.class);

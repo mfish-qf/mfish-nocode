@@ -16,7 +16,7 @@ import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.service.DbConnectService;
-import cn.com.mfish.sys.service.TableService;
+import cn.com.mfish.common.dblink.service.TableService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;

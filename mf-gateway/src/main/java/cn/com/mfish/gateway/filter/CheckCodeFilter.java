@@ -1,11 +1,11 @@
 package cn.com.mfish.gateway.filter;
 
+import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
+import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.gateway.common.GatewayUtils;
-import cn.com.mfish.gateway.config.properties.CaptchaProperties;
-import cn.com.mfish.gateway.service.CheckCodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;

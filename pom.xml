@@ -6,24 +6,24 @@
     <groupId>cn.com.mfish</groupId>
     <artifactId>mfish-nocode</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <modules>
         <module>mf-gateway</module>
         <module>mf-common</module>
         <module>mf-oauth</module>
         <module>mf-test</module>
         <module>mf-business</module>
-        <module>mf-code-create</module>
         <module>mf-api</module>
         <module>mf-storage</module>
         <module>mf-monitor</module>
         <module>mf-scheduler</module>
+        <module>mf-start</module>
     </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <mfish.version>1.1.0</mfish.version>
+        <mfish.version>1.2.0</mfish.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -350,6 +350,16 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-captcha</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-code</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
@@ -361,11 +371,6 @@
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-scheduler-api</artifactId>
-                <version>${mfish.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.com.mfish</groupId>
-                <artifactId>mf-code-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
             <dependency>

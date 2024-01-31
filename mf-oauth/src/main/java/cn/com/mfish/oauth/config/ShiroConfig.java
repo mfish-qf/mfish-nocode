@@ -1,5 +1,7 @@
 package cn.com.mfish.oauth.config;
 
+import cn.com.mfish.common.core.constants.ServiceConstants;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
@@ -7,11 +9,11 @@ import cn.com.mfish.oauth.config.properties.ShiroProperties;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
+import cn.com.mfish.oauth.filter.TokenFilter;
 import cn.com.mfish.oauth.realm.MultipleRealm;
 import cn.com.mfish.oauth.realm.PhoneSmsRealm;
 import cn.com.mfish.oauth.realm.QRCodeRealm;
 import cn.com.mfish.oauth.realm.UserPasswordRealm;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
@@ -29,15 +31,16 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.servlet.Filter;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author: mfish
  * @date: 2020/2/10 18:05
  */
-@Slf4j
 @Configuration
 public class ShiroConfig {
 
@@ -51,28 +54,39 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-        //拦截器.
-//        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-
-        // 配置不会被拦截的链接 顺序判断
-        //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
-//        filterChainDefinitionMap.put("/logout", "logout");
-//        filterChainDefinitionMap.put("/oauth2/**", "anon");
-//        filterChainDefinitionMap.put("/sendMsg", "anon");
-//        filterChainDefinitionMap.put("/qrCodeLogin/**","anon");
-//        filterChainDefinitionMap.put("/css/**", "anon");
-//        filterChainDefinitionMap.put("/img/**", "anon");
-//        filterChainDefinitionMap.put("/js/**", "anon");
-//        filterChainDefinitionMap.put("/fonts/**", "anon");
-//        filterChainDefinitionMap.put("/wx/**", "anon");
-//        filterChainDefinitionMap.put("/swagger-ui.html/**", "anon");
-//        filterChainDefinitionMap.put("/swagger-resources/**", "anon");
-//        filterChainDefinitionMap.put("/v2/api-docs/**", "anon");
-//        filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
-        //<!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
-        //<!-- authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问-->
-//        filterChainDefinitionMap.put("/**", "user");
-//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        //单体服务走shiro拦截 微服务网关拦截
+        if (ServiceConstants.isBoot(Utils.getServiceType())) {
+            //拦截器
+            Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+            // 配置不会被拦截的链接 顺序判断
+            //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
+            filterChainDefinitionMap.put("/logout", "logout");
+            filterChainDefinitionMap.put("/oauth2/authorize", "anon");
+            filterChainDefinitionMap.put("/oauth2/accessToken", "anon");
+            filterChainDefinitionMap.put("/oauth2/sendMsg", "anon");
+            filterChainDefinitionMap.put("/oauth2/qrCodeLogin/**", "anon");
+            filterChainDefinitionMap.put("/oauth2/wx/bind/**", "anon");
+            filterChainDefinitionMap.put("/oauth2/static/**", "anon");
+            filterChainDefinitionMap.put("/captcha", "anon");
+            filterChainDefinitionMap.put("/storage/file/*.*", "anon");
+            filterChainDefinitionMap.put("/code/**", "anon");
+            filterChainDefinitionMap.put("/css/**", "anon");
+            filterChainDefinitionMap.put("/img/**", "anon");
+            filterChainDefinitionMap.put("/js/**", "anon");
+            filterChainDefinitionMap.put("/fonts/**", "anon");
+            filterChainDefinitionMap.put("/wx/**", "anon");
+            filterChainDefinitionMap.put("/swagger-ui.html/**", "anon");
+            filterChainDefinitionMap.put("/swagger-resources/**", "anon");
+            filterChainDefinitionMap.put("/v2/api-docs/**", "anon");
+            filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
+            //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
+            Map<String, Filter> filterMap = new HashMap<>();
+            filterMap.put("token", new TokenFilter());
+            shiroFilterFactoryBean.setFilters(filterMap);
+            //过滤链定义从上向下顺序执行，一般将/**放在最为下边
+            filterChainDefinitionMap.put("/**", "token");
+            shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        }
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/login");
         //未授权界面;
@@ -111,9 +125,10 @@ public class ShiroConfig {
      * LifecycleBeanPostProcessor，这是个DestructionAwareBeanPostProcessor的子类，
      * 负责org.apache.shiro.util.Initializable类型bean的生命周期的，初始化和销毁。
      * 主要是AuthorizingRealm类的子类，以及EhCacheManager类。
+     * 解决方法:将LifecycleBeanPostProcessor的配置方法改成静态（防止@Value无法读取到配置）
      */
     @Bean(name = "lifecycleBeanPostProcessor")
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
@@ -144,11 +159,10 @@ public class ShiroConfig {
      * @return
      */
     private <T extends HashedCredentialsMatcher> HashedCredentialsMatcher createHashedCredentialsMatcher(T t) {
-        HashedCredentialsMatcher hashedCredentialsMatcher = t;
-        hashedCredentialsMatcher.setHashAlgorithmName(ShiroProperties.algorithmName);
-        hashedCredentialsMatcher.setHashIterations(ShiroProperties.hashIterations);
-        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(ShiroProperties.hexEncoded);
-        return hashedCredentialsMatcher;
+        t.setHashAlgorithmName(ShiroProperties.algorithmName);
+        t.setHashIterations(ShiroProperties.hashIterations);
+        t.setStoredCredentialsHexEncoded(ShiroProperties.hexEncoded);
+        return t;
     }
 
     @Bean
@@ -263,8 +277,8 @@ public class ShiroConfig {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        assert keygen != null;
         SecretKey deskey = keygen.generateKey();
         System.out.println(Base64.encodeToString(deskey.getEncoded()));
     }
 }
-

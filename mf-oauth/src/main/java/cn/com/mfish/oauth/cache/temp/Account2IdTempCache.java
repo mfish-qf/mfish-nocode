@@ -3,7 +3,7 @@ package cn.com.mfish.oauth.cache.temp;
 import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
-import cn.com.mfish.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.SsoUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
