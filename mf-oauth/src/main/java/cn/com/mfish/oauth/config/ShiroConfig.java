@@ -69,16 +69,14 @@ public class ShiroConfig {
             filterChainDefinitionMap.put("/oauth2/static/**", "anon");
             filterChainDefinitionMap.put("/captcha", "anon");
             filterChainDefinitionMap.put("/storage/file/*.*", "anon");
-            filterChainDefinitionMap.put("/code/**", "anon");
             filterChainDefinitionMap.put("/css/**", "anon");
             filterChainDefinitionMap.put("/img/**", "anon");
             filterChainDefinitionMap.put("/js/**", "anon");
             filterChainDefinitionMap.put("/fonts/**", "anon");
             filterChainDefinitionMap.put("/wx/**", "anon");
-            filterChainDefinitionMap.put("/swagger-ui.html/**", "anon");
+            filterChainDefinitionMap.put("/swagger-ui/index.html", "anon");
             filterChainDefinitionMap.put("/swagger-resources/**", "anon");
-            filterChainDefinitionMap.put("/v2/api-docs/**", "anon");
-            filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
+            filterChainDefinitionMap.put("/v3/api-docs/**", "anon");
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
             Map<String, Filter> filterMap = new HashMap<>();
             filterMap.put("token", new TokenFilter());
