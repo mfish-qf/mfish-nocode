@@ -19,7 +19,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix("/oauth2", p -> p.getPackage().getName().startsWith("cn.com.mfish.oauth"));
-        configurer.addPathPrefix("/code", p -> p.getPackage().getName().startsWith("cn.com.mfish.code"));
         configurer.addPathPrefix("/sys", p -> p.getPackage().getName().startsWith("cn.com.mfish.sys"));
         configurer.addPathPrefix("/storage", p -> p.getPackage().getName().startsWith("cn.com.mfish.storage"));
         configurer.addPathPrefix("/scheduler", p -> p.getPackage().getName().startsWith("cn.com.mfish.scheduler"));
