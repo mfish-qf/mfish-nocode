@@ -10,7 +10,7 @@
 [![fork](https://gitee.com/qiufeng9862/mfish-nocode/badge/fork.svg?theme=white)](https://gitee.com/qiufeng9862/mfish-nocode/members)
 
 ## 架构图
-![](https://oscimg.oschina.net/oscnet/up-63e6a3ba5667370d5bf2ef4d9401e007972.png)
+![](https://oscimg.oschina.net/oscnet/up-7cb78605937aa402dbbdc8bdad8c2888b72.png)
 
 ## 项目介绍
 摸鱼低代码平台希望打造一个基于低代码的无代码平台。即能给程序员使用，也能满足非专业人士的需求。
