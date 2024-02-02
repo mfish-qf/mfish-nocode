@@ -2,7 +2,7 @@ package cn.com.mfish.gateway.filter;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.http.EscapeUtil;
-import cn.com.mfish.gateway.config.properties.XssProperties;
+import cn.com.mfish.common.core.config.XssProperties;
 import io.netty.buffer.ByteBufAllocator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,6 +37,9 @@ public class XssFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (!xssProperties.getEnabled()) {
+            return chain.filter(exchange);
+        }
         ServerHttpRequest request = exchange.getRequest();
         // GET DELETE 不过滤
         HttpMethod method = request.getMethod();
@@ -73,7 +76,7 @@ public class XssFilter implements GlobalFilter, Ordered {
                     DataBufferUtils.release(dataBuffer);
                     String bodyStr = new String(content, StandardCharsets.UTF_8);
                     // 防xss攻击过滤
-                    bodyStr = EscapeUtil.clean(bodyStr);
+                    bodyStr = EscapeUtil.clean(bodyStr).trim();
                     // 转成字节
                     byte[] bytes = bodyStr.getBytes();
                     NettyDataBufferFactory nettyDataBufferFactory = new NettyDataBufferFactory(ByteBufAllocator.DEFAULT);
