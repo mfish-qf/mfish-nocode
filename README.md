@@ -15,9 +15,10 @@
 ## 项目介绍
 摸鱼低代码平台希望打造一个基于低代码的无代码平台。即能给程序员使用，也能满足非专业人士的需求。
 * 后端基于Spring Cloud Alibaba，实现微服务，单体服务代码一体化
-* 注册中心、配置中心采用nacos
-* 当前版本完成oauth2统一认证接入
-* 持续进行功能完善
+* 注册中心、配置中心采用nacos(作为单体服务时无需使用注册中心)
+* 支持oauth2统一认证接入
+* 脚手架功能齐全
+* 支持可视化配置查询API接口
 
 ## 前端源码地址
 [![github](https://img.shields.io/badge/前端地址-github-red.svg)](https://github.com/mfish-qf/mfish-nocode-view)
