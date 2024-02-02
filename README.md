@@ -14,7 +14,7 @@
 
 ## 项目介绍
 摸鱼低代码平台希望打造一个基于低代码的无代码平台。即能给程序员使用，也能满足非专业人士的需求。
-* 后端基于Spring Cloud Alibaba
+* 后端基于Spring Cloud Alibaba，实现微服务，单体服务代码一体化
 * 注册中心、配置中心采用nacos
 * 当前版本完成oauth2统一认证接入
 * 持续进行功能完善
@@ -122,12 +122,19 @@
 ![](https://oscimg.oschina.net/oscnet/up-736398ce5030ce21b6dda45ba9f24af4a72.png)
 #### 数据库信息
 
-|文件|描述|
-|---|---|
-|`mf_config.sql`| nacos数据库 |
-|`mf_oauth.sql`| 认证数据库 |
-|`mf_system.sql`| 系统管理数据库 |
-|`mf_scheduler.sql`| 调度中心数据库 |
+| 文件                 | 描述       |
+|--------------------|----------|
+| `mf_config.sql`    | nacos数据库 |
+| `mf_oauth.sql`     | 认证数据库    |
+| `mf_system.sql`    | 系统管理数据库  |
+| `mf_scheduler.sql` | 调度中心数据库  |
+| `mfish-nocode.sql` | 单实例数据库   |
+
+```
+如果单实例使用只需要导入mfish_nocode.sql库即可
+如果使用微服务需要导入mf_config.sql、mf_oauth.sql
+、mf_system.sql、mf_scheduler.sql四个数据库
+```
 
 #### swagger访问地址
 
