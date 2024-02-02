@@ -1,4 +1,4 @@
-package cn.com.mfish.gateway.config.properties;
+package cn.com.mfish.common.core.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
