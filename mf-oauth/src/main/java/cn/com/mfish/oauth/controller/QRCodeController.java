@@ -110,7 +110,7 @@ public class QRCodeController {
     @ApiOperation("检测扫码登录状态")
     @GetMapping("/check")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public Result<QRCode> qrCodeLoginCheck(String code) throws InvocationTargetException, IllegalAccessException {
         RedisQrCode redisQrCode = qrCodeService.checkQRCode(code);
@@ -125,7 +125,7 @@ public class QRCodeController {
     @ApiOperation("扫描二维码登录")
     @PostMapping("/scan")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public Result<String> scanQrCode(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.未扫描, SerConstant.ScanStatus.已扫描);
@@ -134,8 +134,8 @@ public class QRCodeController {
     @ApiOperation("扫码确认登录")
     @PostMapping("/login")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true),
-            @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public Result<String> qrCodeLogin(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已确认);
@@ -144,8 +144,8 @@ public class QRCodeController {
     @ApiOperation("扫码取消登录")
     @PostMapping("/cancel")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true),
-            @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public Result<String> qrCodeCancel(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已取消);
