@@ -24,7 +24,7 @@ import java.util.Properties;
  */
 @Configuration
 public class SchedulerConfig {
-    private SchedulerProperties schedulerProperties;
+    private final SchedulerProperties schedulerProperties;
 
     @Autowired
     public SchedulerConfig(SchedulerProperties schedulerProperties) {

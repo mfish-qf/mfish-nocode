@@ -66,8 +66,8 @@ public class SsoUserController {
     @GetMapping("/permissions")
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "tenantId", value = "租户ID")
+            @ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "tenantId", value = "租户ID", dataTypeClass = String.class)
     })
     @InnerUser
     public Result<Set<String>> getPermissions(String userId, String tenantId) {
@@ -81,8 +81,8 @@ public class SsoUserController {
     @GetMapping("/roles")
     @Log(title = "获取用户角色", operateType = OperateType.QUERY)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "tenantId", value = "租户ID")
+            @ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "tenantId", value = "租户ID", dataTypeClass = String.class)
     })
     public Result<List<UserRole>> getRoles(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
@@ -109,8 +109,8 @@ public class SsoUserController {
     @GetMapping("/orgs")
     @Log(title = "获取用户组织", operateType = OperateType.QUERY)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true)
+            @ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public Result<List<SsoOrg>> getOrgs(String userId, String direction) {
         if (StringUtils.isEmpty(userId)) {

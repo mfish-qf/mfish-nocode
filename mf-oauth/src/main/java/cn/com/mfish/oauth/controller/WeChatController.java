@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ public class WeChatController {
     @GetMapping("/bind/check")
     @ApiOperation("检查微信是否绑定 如果已绑定返回accessToken")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "微信认证code", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "微信认证code", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public AccessToken checkBind(String code) {
         WxMaJscode2SessionResult session = getSession(code);
@@ -109,9 +108,9 @@ public class WeChatController {
     @PostMapping("/bind")
     @ApiOperation("绑定账号和微信")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.OAUTH_CODE, value = "微信认证code", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email grant_type=password时必须", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query", required = true)
+            @ApiImplicitParam(name = OAuth.OAUTH_CODE, value = "微信认证code", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email grant_type=password时必须", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query", required = true, dataTypeClass = String.class)
     })
     @Log(title = "绑定微信", operateType = OperateType.LOGIN)
     public AccessToken bindWeChat(HttpServletRequest request) {
@@ -135,11 +134,11 @@ public class WeChatController {
     @ApiOperation("获取用户信息")
     @GetMapping("/userInfo")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer+token组合，例如Bearer39a5304bc77c655afbda6b967e5346fa", paramType = "header"),
-            @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query")
+            @ApiImplicitParam(name = OAuth.HeaderType.AUTHORIZATION, value = "认证token，header和access_token参数两种方式任意一种即可，格式为Bearer+token组合，例如Bearer39a5304bc77c655afbda6b967e5346fa", paramType = "header", dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_ACCESS_TOKEN, value = "token值 header和access_token参数两种方式任意一种即可", paramType = "query", dataTypeClass = String.class)
     })
     @Log(title = "微信获取用户信息", operateType = OperateType.QUERY)
-    public Result<UserInfo> getUserInfo(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
+    public Result<UserInfo> getUserInfo(HttpServletRequest request) {
         Result<WeChatToken> result = weChatTokenValidator.validate(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
@@ -150,10 +149,10 @@ public class WeChatController {
     @PostMapping("/login/pwd")
     @ApiOperation("通过密码绑定账号")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "微信认证code", paramType = "query", required = true),
-            @ApiImplicitParam(name = SerConstant.NICKNAME, value = "微信昵称", paramType = "query"),
-            @ApiImplicitParam(name = SerConstant.PHONE, value = "手机", paramType = "query", required = true),
-            @ApiImplicitParam(name = SerConstant.PASSWORD, value = "短信验证码", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "微信认证code", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = SerConstant.NICKNAME, value = "微信昵称", paramType = "query", dataTypeClass = String.class),
+            @ApiImplicitParam(name = SerConstant.PHONE, value = "手机", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = SerConstant.PASSWORD, value = "短信验证码", paramType = "query", required = true, dataTypeClass = String.class)
     })
     @Log(title = "微信登录", operateType = OperateType.LOGIN)
     public AccessToken pwdLogin(String code, String nickname, String phone, String password) {
@@ -182,7 +181,7 @@ public class WeChatController {
     @ApiOperation("获取sessionKey 与手机登录联合使用")
     @GetMapping("/session")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "微信认证code", paramType = "query", required = true)
+            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "微信认证code", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public Map<String, String> getSessionKey(String code) {
         WxMaJscode2SessionResult session = getSession(code);
@@ -195,10 +194,10 @@ public class WeChatController {
     @ApiOperation("通过手机号绑定账号 先调用/sessionKey方法")
     @PostMapping("/login/phone")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sessionKey", value = "微信登录返回的sessionKey", paramType = "query", required = true),
-            @ApiImplicitParam(name = "nickname", value = "微信昵称", paramType = "query"),
-            @ApiImplicitParam(name = "encryptedData", value = "微信获取手机号数据", paramType = "query", required = true),
-            @ApiImplicitParam(name = "iv", value = "微信获取手机号iv", paramType = "query", required = true)
+            @ApiImplicitParam(name = "sessionKey", value = "微信登录返回的sessionKey", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "nickname", value = "微信昵称", paramType = "query", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "encryptedData", value = "微信获取手机号数据", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "iv", value = "微信获取手机号iv", paramType = "query", required = true, dataTypeClass = String.class)
     })
     public AccessToken phoneLogin(String sessionKey, String nickname, String encryptedData, String iv) {
         String openid = loginService.getOpenIdBySessionKey(sessionKey);
@@ -218,7 +217,7 @@ public class WeChatController {
             nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
-            AccessToken token =  new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));
+            AccessToken token = new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));
             userTokenCache.addUserTokenCache(DeviceType.WX, openid, loginResult.getData(), token.getAccess_token());
             return token;
         }

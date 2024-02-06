@@ -42,7 +42,7 @@ public class LoginController {
     @ApiOperation("发送短信")
     @PostMapping("/sendMsg")
     @ResponseBody
-    @ApiImplicitParam(name = "phone", value = "手机号", paramType = "query", required = true)
+    @ApiImplicitParam(name = "phone", value = "手机号", paramType = "query", required = true, dataTypeClass = String.class)
     public Result<String> sendMsg(String phone) throws NoSuchAlgorithmException {
         if (StringUtils.isEmpty(phone)) {
             return Result.fail("错误:手机号不允许为空");
