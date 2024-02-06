@@ -73,8 +73,8 @@ public class DbConnectController {
     @GetMapping("/tables")
     @RequiresPermissions("sys:database:query")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
-            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", dataTypeClass = String.class, paramType = "query")
     })
     public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
@@ -83,7 +83,7 @@ public class DbConnectController {
     @ApiOperation("获取数据库树形结构信息-只能分层查询")
     @GetMapping("/tree")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "parentId", value = "父节点ID 为空时查询数据库列表 有值时查询库下面的表列表", paramType = "query")
+            @ApiImplicitParam(name = "parentId", value = "父节点ID 为空时查询数据库列表 有值时查询库下面的表列表", paramType = "query", dataTypeClass = String.class)
     })
     public Result<List<DBTreeNode>> getDBTree(@RequestParam(name = "parentId", required = false) String parentId) {
         List<DBTreeNode> treeNodes = new ArrayList<>();
@@ -106,8 +106,8 @@ public class DbConnectController {
     @GetMapping("/fields")
     @RequiresPermissions("sys:database:query")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
-            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", dataTypeClass = String.class)
     })
     public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取表列表成功");
@@ -116,8 +116,8 @@ public class DbConnectController {
     @ApiOperation("获取表数据")
     @GetMapping("/data")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
-            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", dataTypeClass = String.class)
     })
     public Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         MetaDataTable table = tableService.getDataTable(connectId, tableName, reqPage);
@@ -127,8 +127,8 @@ public class DbConnectController {
     @ApiOperation("获取表列头信息")
     @GetMapping("/headers")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", required = true),
-            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query")
+            @ApiImplicitParam(name = "connectId", value = "数据库ID", paramType = "query", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", dataTypeClass = String.class)
     })
     public Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         List<MetaDataHeader> headers = tableService.getDataHeaders(connectId, tableName, reqPage);

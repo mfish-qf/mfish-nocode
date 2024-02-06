@@ -39,10 +39,10 @@ public class StorageController {
     @ApiOperation("文件新增")
     @PostMapping
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "file", value = "文件", required = true),
-            @ApiImplicitParam(name = "fileName", value = "文件名称 默认为空字符串"),
-            @ApiImplicitParam(name = "path", value = "定义特殊文件路径 默认为空字符串"),
-            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是"),
+            @ApiImplicitParam(name = "file", value = "文件", required = true, dataTypeClass = MultipartFile.class),
+            @ApiImplicitParam(name = "fileName", value = "文件名称 默认为空字符串", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "path", value = "定义特殊文件路径 默认为空字符串", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是", dataTypeClass = Integer.class),
     })
     @RequiresPermissions("sys:file:upload")
     public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file

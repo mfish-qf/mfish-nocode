@@ -141,8 +141,8 @@ public class SsoOrgController {
     @GetMapping("/fixCode")
     @RequiresPermissions("sys:org:query")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "固定编码", paramType = "query", required = true),
-            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true),
+            @ApiImplicitParam(name = "code", value = "固定编码", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
     })
     public Result<List<SsoOrg>> queryByFixCode(@RequestParam String code, @RequestParam String direction) {
         List<SsoOrg> list = ssoOrgService.queryOrgByCode(code, TreeDirection.getDirection(direction));

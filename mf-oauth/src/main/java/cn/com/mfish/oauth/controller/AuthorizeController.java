@@ -53,11 +53,11 @@ public class AuthorizeController {
     @ApiOperation("认证接口")
     @GetMapping("/authorize")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
-            @ApiImplicitParam(name = FORCE_LOGIN, value = "强制登录 值为1时强行返回登录界面", paramType = "query")
+            @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query", dataTypeClass = String.class),
+            @ApiImplicitParam(name = FORCE_LOGIN, value = "强制登录 值为1时强行返回登录界面", paramType = "query", dataTypeClass = String.class)
     })
     public Object getAuthorize(Model model, HttpServletRequest request) {
         String force = request.getParameter(FORCE_LOGIN);
@@ -71,14 +71,14 @@ public class AuthorizeController {
     @ApiOperation("认证接口")
     @PostMapping("/authorize")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端密钥", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query"),
-            @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email", paramType = "query", required = true),
-            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码", paramType = "query", required = true),
-            @ApiImplicitParam(name = SerConstant.REMEMBER_ME, value = "记住我", paramType = "query")
+            @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端密钥", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query", dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码", paramType = "query", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = SerConstant.REMEMBER_ME, value = "记住我", paramType = "query", dataTypeClass = String.class)
     })
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request) {
