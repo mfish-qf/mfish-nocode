@@ -74,7 +74,7 @@ public class ShiroConfig {
             filterChainDefinitionMap.put("/js/**", "anon");
             filterChainDefinitionMap.put("/fonts/**", "anon");
             filterChainDefinitionMap.put("/wx/**", "anon");
-            filterChainDefinitionMap.put("/swagger-ui/index.html", "anon");
+            filterChainDefinitionMap.put("/swagger-ui/**", "anon");
             filterChainDefinitionMap.put("/swagger-resources/**", "anon");
             filterChainDefinitionMap.put("/v3/api-docs/**", "anon");
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
