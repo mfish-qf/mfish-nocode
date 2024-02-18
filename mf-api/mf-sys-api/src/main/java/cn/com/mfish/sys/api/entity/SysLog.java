@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * @Description: 系统日志
  * @Author: mfish
  * @date: 2022-09-02
- * @Version: V1.0.0
+ * @Version: V1.2.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

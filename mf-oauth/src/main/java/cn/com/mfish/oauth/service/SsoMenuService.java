@@ -11,7 +11,7 @@ import java.util.List;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @Version: V1.0.0
+ * @Version: V1.2.0
  */
 public interface SsoMenuService extends IService<SsoMenu> {
     Result<SsoMenu> insertMenu(SsoMenu ssoMenu);
