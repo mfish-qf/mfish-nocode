@@ -1,29 +1,37 @@
 package cn.com.mfish.oauth.filter;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
-import org.apache.shiro.web.filter.authc.UserFilter;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
+import java.io.IOException;
 
 /**
  * @description: token过滤器
  * @author: mfish
  * @date: 2024/1/30
  */
-public class TokenFilter extends UserFilter {
-
+public class TokenFilter implements Filter {
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        Result<?> result = isAccessAllowed(servletRequest, servletResponse);
+        if (result.isSuccess()) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+        throw new OAuthValidateException(result.getMsg());
+    }
+
+    protected Result<?> isAccessAllowed(ServletRequest request, ServletResponse response) {
         TokenValidator tokenValidator = SpringBeanFactory.getBean(TokenValidator.class);
         Result<?> result = tokenValidator.validator(request);
         if (!result.isSuccess()) {
-            return false;
+            return result;
         }
         //验证通过后请求中补充用户相关信息，单实例服务用户属性放在attribute中传递
         if (result.getData() instanceof WeChatToken) {
@@ -37,7 +45,7 @@ public class TokenFilter extends UserFilter {
             request.setAttribute(RPCConstants.REQ_USER_ID, token.getUserId());
             request.setAttribute(RPCConstants.REQ_TENANT_ID, token.getTenantId());
         }
-        return super.isAccessAllowed(request, response, mappedValue);
+        return Result.ok();
     }
 
 }

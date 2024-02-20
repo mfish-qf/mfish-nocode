@@ -31,7 +31,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
     @Resource
     private RedisTemplate<String, Object> sessionRedisTemplate;
     @Value("${redisSession.expire}")
-    private long expire = 0l;
+    private long expire = 0L;
     @Value("${redisSession.keyPrefix}")
     private String keyPrefix = "";
 

@@ -77,6 +77,7 @@ public class ShiroConfig {
             filterChainDefinitionMap.put("/swagger-ui/**", "anon");
             filterChainDefinitionMap.put("/swagger-resources/**", "anon");
             filterChainDefinitionMap.put("/v3/api-docs/**", "anon");
+            filterChainDefinitionMap.put("/404", "anon");
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
             Map<String, Filter> filterMap = new HashMap<>();
             filterMap.put("token", new TokenFilter());
@@ -86,8 +87,8 @@ public class ShiroConfig {
             shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         }
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-        shiroFilterFactoryBean.setLoginUrl("/login");
-        //未授权界面;
+        shiroFilterFactoryBean.setLoginUrl("/404");
+        //未授权界面
         shiroFilterFactoryBean.setUnauthorizedUrl("/404");
         return shiroFilterFactoryBean;
     }
