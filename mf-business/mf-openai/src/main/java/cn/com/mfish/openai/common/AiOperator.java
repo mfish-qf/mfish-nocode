@@ -26,7 +26,7 @@ public class AiOperator {
      * @return
      * @throws IllegalAccessException
      */
-    public static Result answerMyQuestion(String url, String token, String ask_string) throws IOException {
+    public static Result<String> answerMyQuestion(String url, String token, String ask_string) throws IOException {
         Completion openAi = new Completion();
         //添加我们需要输入的内容
         openAi.setModel("text-davinci-003");

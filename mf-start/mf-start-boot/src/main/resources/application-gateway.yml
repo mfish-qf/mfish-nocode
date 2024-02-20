@@ -1,0 +1,14 @@
+gateway:
+  routes:
+    - path: /oauth2
+      packageName: cn.com.mfish.oauth
+    - path: /scheduler
+      packageName: cn.com.mfish.scheduler
+    - path: /storage
+      packageName: cn.com.mfish.storage
+    - path: /sys
+      packageName: cn.com.mfish.sys
+    - path: /web
+      packageName: cn.com.mfish.web
+    - path: /ai
+      packageName: cn.com.mfish.openai
