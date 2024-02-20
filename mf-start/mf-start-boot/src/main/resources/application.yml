@@ -21,6 +21,7 @@ spring:
       - oauth
       - code
       - swagger
+      - gateway
   autoconfigure:
     exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   redis:

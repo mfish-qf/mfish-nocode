@@ -9,7 +9,7 @@
         <version>1.2.0</version>
     </parent>
 
-    <artifactId>mf-start-boot</artifactId>
+    <artifactId>mf-start-openai</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -17,35 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-captcha</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-oauth</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-storage</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-scheduler</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-sys</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-web</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-openai</artifactId>
@@ -69,4 +40,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
