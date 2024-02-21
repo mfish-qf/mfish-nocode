@@ -11,9 +11,9 @@ import org.apache.commons.lang3.StringUtils;
  * @date: 2023/1/7 15:25
  */
 public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
-    TokenService tokenService;
+    TokenService<?> tokenService;
 
-    public AbstractTokenValidator(TokenService tokenService) {
+    public AbstractTokenValidator(TokenService<?> tokenService) {
         this.tokenService = tokenService;
     }
 
