@@ -108,6 +108,7 @@ INSERT INTO `sys_dict` VALUES ('4cc4c6a6c90c5534d11ae9d2db12902f', '数据库连
 INSERT INTO `sys_dict` VALUES ('55ccc731fe3958c4afca60cbd852a55f', '营业年限', 'tenant_corp_years', 0, '企业营业年限', 'admin', '2023-06-13 17:18:11', 'admin', '2023-06-13 17:33:55');
 INSERT INTO `sys_dict` VALUES ('5665dd400700ebea77fcc6f8e39fc355', '请求类型', 'sys_req_type', 0, 'http请求类型', 'admin', '2023-01-09 15:53:31', 'admin', '2023-01-10 17:50:52');
 INSERT INTO `sys_dict` VALUES ('5ed7c51e261ce27109e5f4948d40d6e2', 'Hikari连接池配置', 'db_pool_hikari', 0, 'Hikari连接池相关配置信息', 'admin', '2023-03-13 11:18:45', '', NULL);
+INSERT INTO `sys_dict` VALUES ('6ddca50d9ddad44806ef18c3bf4721c9', '公式类型', 'nc_formula_type', 0, '对运算公式分类', 'admin', '2023-10-27 09:09:25', 'admin', '2023-10-27 09:09:25');
 INSERT INTO `sys_dict` VALUES ('75ce8aab0fca2be5183770260d145c17', '认证方式', 'sso_grant_type', 0, '统一认证grant_type', 'admin', '2023-05-16 21:49:41', '', NULL);
 INSERT INTO `sys_dict` VALUES ('81e4b91e932f0a671021a7eca2f665b9', '登录模式', 'sys_login_mode', 0, '登录模式 0 浏览器 1 微信', 'admin', '2023-03-09 14:48:59', '', NULL);
 INSERT INTO `sys_dict` VALUES ('8a992d89a43f27fa2dbdf75871bd7e74', '所属行业', 'tenant_corp_trade', 0, '租户所属行业', 'admin', '2023-06-13 17:04:44', 'admin', '2023-06-15 22:32:41');
@@ -145,6 +146,7 @@ CREATE TABLE `sys_dict_item`  (
 -- ----------------------------
 -- Records of sys_dict_item
 -- ----------------------------
+INSERT INTO `sys_dict_item` VALUES ('026de48a5c41ce981d0f941b510120b0', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '数字运算', 'num_op', 0, 2, '', 0, '', 'admin', '2023-10-27 09:17:47', 'admin', '2023-10-27 14:21:53');
 INSERT INTO `sys_dict_item` VALUES ('027eb9340eafdcf78cc9b96cc211b6b3', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'maxEvictableIdleTimeMillis', '900000', 1, 7, NULL, 0, '配置一个连接在池中最大生存的时间，单位是毫秒', 'admin', '2023-03-13 11:27:11', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('0625b88c24a5cd98e045a58679370249', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '新增', '新增', 0, 3, 'blue', 0, NULL, 'admin', '2023-01-09 11:27:52', 'admin', '2023-01-09 16:11:41');
 INSERT INTO `sys_dict_item` VALUES ('0737910a2d8f6eb55fe12e2a9be5032b', '0bb92966ec419ed35b9cb46979867e69', 'sys_time_zone', '日本/东京', 'Asia/Tokyo', 0, 3, '', 0, '', 'admin', '2023-02-21 18:09:59', 'admin', '2023-02-21 18:16:33');
@@ -221,9 +223,11 @@ INSERT INTO `sys_dict_item` VALUES ('d48596048bd2bd62c5844e4bc5d70208', 'd42d4e3
 INSERT INTO `sys_dict_item` VALUES ('d53cec8854c1a92c33059caffcb6af00', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'maxLifetime', '300000', 1, 5, '', 0, '一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired）； 缺省:30分钟，建议设置比数据库超时时长少30秒', 'admin', '2023-03-13 11:22:15', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('d563a2b3f99baff573193c81a96bacf6', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'filters', 'stat,wall', 0, 13, '', 0, '配置监控统计拦截的filters，去掉后监控界面sql无法统计，\'wall\'用于防火墙', 'admin', '2023-03-13 11:31:47', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('d781dcc93f41b65dd5f44bb48a69a57c', '55ccc731fe3958c4afca60cbd852a55f', 'tenant_corp_years', '五年以内', '5', 0, 2, NULL, 0, NULL, 'admin', '2023-06-13 17:21:00', 'admin', '2023-06-13 17:31:57');
+INSERT INTO `sys_dict_item` VALUES ('d82a25d50542f74cd2fef5cc7f04e9aa', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '高级功能', 'advance_op', 0, 4, NULL, 0, NULL, 'admin', '2023-12-24 16:40:20', 'admin', '2023-12-24 16:40:20');
 INSERT INTO `sys_dict_item` VALUES ('df72218dba18e67c91dc2e12493b15ed', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'poolPreparedStatements', 'true', 2, 11, '', 0, '是否缓存游标', 'admin', '2023-03-13 11:30:08', 'admin', '2023-03-14 20:26:08');
 INSERT INTO `sys_dict_item` VALUES ('e1ce7b2d2de8f28789a30cce64ebd5d3', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '100到300人', 's', 0, 2, NULL, 0, NULL, 'admin', '2023-06-13 17:11:27', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('e27a2f5ecad5a50a7d788756da095245', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'minEvictableIdleTimeMillis', '300000', 1, 6, NULL, 0, '配置一个连接在池中最小生存的时间，单位是毫秒', 'admin', '2023-03-13 11:26:48', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('e27c1ecf50054eb7e0263d3b9580f469', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '日期处理', 'date_op', 0, 3, '', 0, '', 'admin', '2023-10-27 09:19:16', 'admin', '2023-10-27 14:22:00');
 INSERT INTO `sys_dict_item` VALUES ('e3431f70eafa566d0aa0ced7a9b11552', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '300到500人', 'm', 0, 3, '', 0, '', 'admin', '2023-06-13 17:11:48', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('e534f060f0969be49a93254796a2a24b', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '100人以下', 'xs', 0, 1, NULL, 0, NULL, 'admin', '2023-06-13 17:10:45', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('eadbf511b6dfe30b72c4fcad6f10680c', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '执行失败', '4', 0, 5, 'red', 0, '异步执行失败', 'admin', '2023-03-01 18:00:03', '', NULL);
@@ -233,6 +237,7 @@ INSERT INTO `sys_dict_item` VALUES ('f3b5faffba629cc8e07e5d57d76e4e49', '55ccc73
 INSERT INTO `sys_dict_item` VALUES ('f442a8f38c5ce32b6b05c640cc3ecc2b', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '包含', 'like', 0, 2, NULL, 0, NULL, 'admin', '2023-05-10 16:12:34', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('f84c6e754d183f40a4b1d7a5b72371c7', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'password', 'password', 0, 2, 'blue', 0, '帐号密码认证方式', 'admin', '2023-05-16 21:50:40', 'admin', '2023-05-18 10:20:12');
 INSERT INTO `sys_dict_item` VALUES ('f88a8a4a391e3ae455ba6d8157f22260', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'POST', 'POST', 0, 2, 'blue', 0, '新增', 'admin', '2023-01-09 16:12:41', 'admin', '2023-02-21 18:02:00');
+INSERT INTO `sys_dict_item` VALUES ('fae13a8680a44565b4ffab652c7c9d6b', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '字符处理', 'char_op', 0, 1, NULL, 0, NULL, 'admin', '2023-10-27 09:12:06', 'admin', '2023-10-27 14:21:43');
 
 -- ----------------------------
 -- Table structure for sys_log

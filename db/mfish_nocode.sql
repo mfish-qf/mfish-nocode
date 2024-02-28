@@ -387,9 +387,6 @@ CREATE TABLE `sso_client_details`  (
 -- Records of sso_client_details
 -- ----------------------------
 INSERT INTO `sso_client_details` VALUES ('1', 'system', '系统', NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://localhost:5281/oauth2.*,http://localhost:11119/oauth2.*', NULL, 1, NULL, NULL, 'admin', '2023-10-13 16:02:05', 0);
-INSERT INTO `sso_client_details` VALUES ('28554e4c0951441688ae8dc830be6271', '918f4fd242a14683b117966cede1a48e', '', '2323', 'd83e8f6ff86e468fbbf4f1684eb3903f', '2323', '', '', '', 1, 'admin', '2023-05-16 20:37:08', 'admin', '2023-05-16 21:21:03', 1);
-INSERT INTO `sso_client_details` VALUES ('5f38d9babdb4b6a390cfa14b24517159', 'c41b71f10fa747a39e848e5e05ef097e', '测试', NULL, '6da9c1649e8247f5a440b7eafe5ada28', 'all', 'authorization_code,password,refresh_token', 'http://www.baidu.com,https://aaa,http://bbbb', NULL, 1, 'admin', '2023-05-17 22:14:40', 'admin', '2023-05-18 11:30:07', 0);
-INSERT INTO `sso_client_details` VALUES ('c5acd33ff4ef5d8f371b74549bd6fb46', 'fda6ce617e1e48259571ae077eb1882d', 'aaa', NULL, '865396c5762344e99f20bbd8930d3bd8', 'all', 'password,authorization_code', 'aaa', NULL, 1, 'admin', '2023-05-16 22:27:27', 'admin', '2023-05-16 23:01:41', 1);
 
 -- ----------------------------
 -- Table structure for sso_menu
@@ -940,19 +937,7 @@ CREATE TABLE `sys_code_build`  (
   `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码构建' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of sys_code_build
--- ----------------------------
-INSERT INTO `sys_code_build` VALUES (1, 'd7ab5cb99b4ac336ffec5ddcd805d394', 'sso_tenant', 'oauth2', 'tenant', 'cn.com.mfish.oauth', NULL, '[{\"id\":\"8af521a3371449df9d821d30a062fded\",\"field\":\"id\",\"condition\":\"eq\"},{\"id\":\"22beac3fdc56463a96bc11726c7ae4be\",\"field\":\"name\",\"condition\":\"like\"}]', 'mfish', '2023-07-11 09:59:19', '', NULL);
-INSERT INTO `sys_code_build` VALUES (3, '84d7705198296cea52383816b7da95ea', 'mf_api_folder', 'nocode', 'apiFolder', 'cn.com.mfish.nocode', NULL, '[{\"id\":\"be3e24e06b2640fc8777c1b2c11b00a4\",\"field\":\"id\",\"condition\":\"eq\"},{\"id\":\"40fd8b26b702449f8d0dca169f72a0c5\",\"field\":\"name\",\"condition\":\"like\"}]', 'admin', '2023-07-21 10:42:50', '', NULL);
-INSERT INTO `sys_code_build` VALUES (8, '84d7705198296cea52383816b7da95ea', 'mf_api', 'nocode', 'mf_api', 'cn.com.mfish.nocode', NULL, '[{\"id\":\"0792670cc9304c2d827fd3e73975f4ff\",\"field\":\"folder_id\",\"condition\":\"eq\"},{\"id\":\"d18395861bed42a1807d4f2c3a831612\",\"field\":\"name\",\"condition\":\"like\"}]', 'admin', '2023-07-31 11:32:01', 'admin', '2023-07-31 11:32:01');
-INSERT INTO `sys_code_build` VALUES (9, '84d7705198296cea52383816b7da95ea', 'mf_api', 'nocode', 'mf_api', 'cn.com.mfish.nocode', NULL, '[{\"id\":\"264a37bb3e0448eeb977352e9c5a1df2\",\"field\":\"name\",\"condition\":\"like\"},{\"id\":\"2ad9b0364ebc4f72ad6d4e8769936580\",\"field\":\"folder_id\",\"condition\":\"eq\"}]', 'admin', '2023-07-31 11:39:51', 'admin', '2023-07-31 11:39:51');
-INSERT INTO `sys_code_build` VALUES (11, '84d7705198296cea52383816b7da95ea', 'mf_api_params', 'nocode', 'api_params', 'cn.com.mfish.nocode', NULL, NULL, 'admin', '2023-08-25 11:32:02', 'admin', '2023-08-25 11:32:02');
-INSERT INTO `sys_code_build` VALUES (13, '84d7705198296cea52383816b7da95ea', 'mf_formula_info', 'nocode', 'formula_info', 'cn.com.mfish.nocode', NULL, '[{\"id\":\"d7401e24c571475f896971b25d43d723\",\"field\":\"en_name\",\"condition\":\"like\"}]', 'admin', '2023-10-27 10:09:49', 'admin', '2023-10-27 10:09:49');
-INSERT INTO `sys_code_build` VALUES (14, '84d7705198296cea52383816b7da95ea', 'mf_file', 'nocode', '', 'cn.com.mfish.nocode', '文件数据源', NULL, 'admin', '2023-12-13 11:14:29', 'admin', '2023-12-13 11:14:29');
-INSERT INTO `sys_code_build` VALUES (15, '84d7705198296cea52383816b7da95ea', 'mf_screen_folder', 'nocode', 'screen_folder', 'cn.com.mfish.nocode', NULL, '[{\"id\":\"3148f8eae2934088a85a44c1d3dc89f3\",\"field\":\"name\",\"condition\":\"like\"},{\"id\":\"ed92656e12f74a1e8d03d88dddf648af\",\"field\":\"parent_id\",\"condition\":\"eq\"},{\"id\":\"2e0afd09ea1549c9bdeb21a37e2b2671\",\"field\":\"tenant_id\",\"condition\":\"eq\"}]', 'admin', '2024-01-08 17:49:51', 'admin', '2024-01-08 17:49:51');
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码构建' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for sys_config
