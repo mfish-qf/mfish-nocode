@@ -30,7 +30,7 @@ public class UserTokenCache {
     //登录是否互斥 默认不互斥
     @Value("${oauth2.login.mutex}")
     private boolean loginMutex = false;
-    @Value("${redisSession.expire}")
+    @Value("${oauth2.expire.token}")
     private long expire = 0L;
 
 

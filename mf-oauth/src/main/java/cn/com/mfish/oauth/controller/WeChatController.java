@@ -73,7 +73,7 @@ public class WeChatController {
             userTokenCache.addUserTokenCache(DeviceType.WX, openid, userId, token.getAccess_token());
             return token;
         }
-        log.error("微信:" + openid + ",未绑定成功");
+        log.error("微信:" + openid + "未绑定成功");
         throw new OAuthValidateException("错误:微信未绑定");
     }
 
