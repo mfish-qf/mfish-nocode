@@ -19,7 +19,7 @@ import java.io.IOException;
 public class TokenFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        Result<?> result = isAccessAllowed(servletRequest, servletResponse);
+        Result<?> result = isAccessAllowed(servletRequest);
         if (result.isSuccess()) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
@@ -27,7 +27,7 @@ public class TokenFilter implements Filter {
         throw new OAuthValidateException(result.getMsg());
     }
 
-    protected Result<?> isAccessAllowed(ServletRequest request, ServletResponse response) {
+    protected Result<?> isAccessAllowed(ServletRequest request) {
         TokenValidator tokenValidator = SpringBeanFactory.getBean(TokenValidator.class);
         Result<?> result = tokenValidator.validator(request);
         if (!result.isSuccess()) {

@@ -15,20 +15,21 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
+import cn.com.mfish.common.oauth.common.OauthUtils;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.req.ReqSsoUser;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OnlineUser;
-import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqChangePwd;
-import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.service.SsoOrgService;
-import cn.com.mfish.common.oauth.service.SsoUserService;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -163,14 +164,20 @@ public class SsoUserController {
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject == null) {
-            String error = "未获取到用户登录状态,无需登出";
+        String userId = AuthInfoUtils.getCurrentUserId();
+        if (StringUtils.isEmpty(userId)) {
+            String error = "未获取到用户登录状态，无需登出";
             log.error(error);
             return Result.ok(error);
         }
-        String userId = (String) subject.getPrincipal();
-        userTokenCache.delUserTokenCache(DeviceType.Web, subject.getSession().getId().toString(), userId);
+        Object token = OauthUtils.getToken();
+        String sId = "";
+        if (token instanceof RedisAccessToken) {
+            sId = ((RedisAccessToken) token).getTokenSessionId();
+        } else if (token instanceof WeChatToken) {
+            sId = ((WeChatToken) token).getOpenid();
+        }
+        userTokenCache.delUserTokenCache(DeviceType.Web, sId, userId);
         return Result.ok(true, "成功登出");
     }
 
