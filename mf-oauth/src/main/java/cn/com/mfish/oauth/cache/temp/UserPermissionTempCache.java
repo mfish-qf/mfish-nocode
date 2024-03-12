@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,11 +45,11 @@ public class UserPermissionTempCache extends BaseTempCache<Set<String>> {
         if (AuthInfoUtils.isSuper(key[0])) {
             perSet.add(SerConstant.ALL_PERMISSION);
         }
-        String permissions = ssoUserMapper.getUserPermissions(key[0], key[1]);
-        if (StringUtils.isEmpty(permissions)) {
+        List<String> permissions = ssoUserMapper.getUserPermissions(key[0], key[1]);
+        if (permissions == null || permissions.isEmpty()) {
             return perSet;
         }
-        for (String per : permissions.split(",")) {
+        for (String per : StringUtils.join(permissions, ",").split(",")) {
             if (StringUtils.isEmpty(per)) {
                 continue;
             }
