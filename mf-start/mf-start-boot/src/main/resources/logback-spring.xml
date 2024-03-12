@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="60 seconds" debug="false">
-    <springProperty name="rootLevel" source="log.level" />
-    <springProperty name="maxFileSize" source="log.maxSize" />
+<configuration>
+    <property name="log.level" value="info"/>
+    <property name="log.maxFileSize" value="30MB"/>
     <!-- 日志存放路径 -->
     <property name="log.path" value="logs/mfish-nocode"/>
     <!-- 日志输出格式 -->
@@ -24,7 +24,7 @@
             <fileNamePattern>${log.path}/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 日志最大的历史 60天 -->
             <maxHistory>60</maxHistory>
-            <maxFileSize>${maxFileSize}</maxFileSize>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -48,7 +48,7 @@
             <fileNamePattern>${log.path}/sql.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 日志最大的历史 60天 -->
             <maxHistory>60</maxHistory>
-            <maxFileSize>${maxFileSize}</maxFileSize>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -64,7 +64,7 @@
             <fileNamePattern>${log.path}/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 日志最大的历史 60天 -->
             <maxHistory>60</maxHistory>
-            <maxFileSize>${maxFileSize}</maxFileSize>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -85,12 +85,20 @@
     <!-- Spring日志级别控制  -->
     <logger name="org.springframework" level="warn"/>
     <!--数据库操作日志-->
-    <logger name="cn.com.mfish.**.mapper" level="debug" additivity="true">
+    <logger name="cn.com.mfish.oauth.mapper" level="debug" additivity="true">
         <appender-ref ref="file_sql"/>
     </logger>
-
+    <logger name="cn.com.mfish.sys.mapper" level="debug" additivity="true">
+        <appender-ref ref="file_sql"/>
+    </logger>
+    <logger name="cn.com.mfish.scheduler.mapper" level="debug" additivity="true">
+        <appender-ref ref="file_sql"/>
+    </logger>
+    <logger name="cn.com.mfish.storage.mapper" level="debug" additivity="true">
+        <appender-ref ref="file_sql"/>
+    </logger>
     <!--系统操作日志-->
-    <root level="${rootLevel}">
+    <root level="${log.level}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="file_info"/>
         <appender-ref ref="file_error"/>
