@@ -49,7 +49,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @param tenantId
      * @return
      */
-    String getUserPermissions(@Param("userId") String userId, @Param("tenantId") String tenantId);
+    List<String> getUserPermissions(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
 
     List<TenantVo> getUserTenants(String userId);
