@@ -59,7 +59,7 @@
         </where>
     </sql>
     <select id="getUserPermissions" resultType="java.lang.String">
-        select GROUP_CONCAT(DISTINCT u.permissions) as permissions from (
+        select DISTINCT u.permissions as permissions from (
         select u.id,m.permissions
         from sso_user u
         inner join sso_user_role ur on ur.user_id = u.id
@@ -80,7 +80,6 @@
         inner join sso_menu m on rm.menu_id = m.id
         <include refid="userPerCondition"/>
         ) u
-        group by u.id
     </select>
     <select id="getUserTenants" resultType="cn.com.mfish.common.oauth.api.vo.TenantVo">
         SELECT t.*, su.account, IF(u.id = su.id, 1, 0) MASTER
