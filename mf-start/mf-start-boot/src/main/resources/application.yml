@@ -144,10 +144,7 @@ mybatis-plus:
     auto-mapping-behavior: full
     jdbc-type-for-null:
 logging:
-  config: classpath:logback-logstash.xml
-log:
-  level: info
-  maxSize: 30MB
+  config: classpath:logback-spring.xml
 # 临时缓存存储时间（单位：天）
 cache:
   temp:
