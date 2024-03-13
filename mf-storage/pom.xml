@@ -23,18 +23,6 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-swagger</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-ds</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-log</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-web</artifactId>
         </dependency>
         <dependency>
