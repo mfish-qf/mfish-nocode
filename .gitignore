@@ -47,3 +47,5 @@
 /mf-common/mf-common-code/target/
 /mf-start/mf-start-web/target/
 /mf-start/mf-start-openai/target/
+# 忽略 .iml 文件
+*.iml

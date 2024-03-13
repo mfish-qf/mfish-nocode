@@ -16,11 +16,6 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
     <dependencies>
-        <!-- Mysql Connector -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-web</artifactId>
@@ -28,10 +23,6 @@
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-dblink</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
