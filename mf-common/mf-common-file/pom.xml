@@ -17,14 +17,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
         </dependency>
