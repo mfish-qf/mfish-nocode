@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.mfish.sys.mapper.DictCategoryMapper">
+    <insert id="insertCategory" parameterType="cn.com.mfish.sys.entity.DictCategory">
+        insert into sys_dict_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, parent_id, tree_code, tree_level,
+            <if test="categoryName != null">category_name,</if>
+            <if test="categoryCode != null">category_code,</if>
+            <if test="sort != null">sort,</if>
+            create_by, create_time
+        </trim>
+        select
+        <trim suffixOverrides=",">
+            #{id}, #{parentId},
+            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( tree_code ) FROM sys_dict_category WHERE parent_id =
+            #{parentId} ),
+            0),(lvl-1)*5+1)+ 1, 5, 0 )),
+            lvl,
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="categoryCode != null">#{categoryCode},</if>
+            <if test="sort != null">#{sort},</if>
+            #{createBy}, now()
+        </trim>
+        from (select IFNULL(tree_code,'') pcode,IFNULL(tree_level,0)+1 lvl from (SELECT '' FROM dual) d left join
+        sys_dict_category on id = #{parentId}) t
+    </insert>
+    <sql id="reqCondition">
+        <if test="reqDictCategory.categoryName != null and reqDictCategory.categoryName != ''">and c.category_name like concat('%',#{reqDictCategory.categoryName},'%')</if>
+        <if test="reqDictCategory.categoryCode != null and reqDictCategory.categoryCode != ''">and c.category_code like concat('%',#{reqDictCategory.categoryCode},'%')</if>
+    </sql>
+    <select id="queryMaxCategoryLevel" resultType="java.lang.Integer">
+        select max(c.tree_level) from sys_dict_category c
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+    </select>
+    <select id="queryOneLevelCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
+        select * from (<include refid="queryCategorySql"/>) a where a.tree_level = 1
+    </select>
+    <sql id="queryCategorySql">
+        SELECT c.* FROM sys_dict_category c
+        <where>
+            <include refid="reqCondition"/>
+        </where>
+        <if test="levels != null and levels.size()>0">
+            UNION
+            SELECT c.* FROM sys_dict_category c where tree_code IN (
+            <foreach collection="levels" item="value" index="index">
+                <if test="index != 0">
+                    UNION
+                </if>
+                SELECT SUBSTR(tree_code,1,(tree_level-#{value})*5) FROM sys_dict_category c
+                <where>
+                    <include refid="reqCondition"/>
+                </where>
+            </foreach>
+            )
+        </if>
+        order by tree_level,sort,tree_code
+    </sql>
+    <select id="queryCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
+        <include refid="queryCategorySql" />
+    </select>
+    <select id="queryChildCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
+        SELECT * FROM (<include refid="queryCategorySql" />) a
+        <where>
+            <foreach collection="list" item="value">
+                or tree_code like concat(#{value},'%')
+            </foreach>
+        </where>
+    </select>
+</mapper>

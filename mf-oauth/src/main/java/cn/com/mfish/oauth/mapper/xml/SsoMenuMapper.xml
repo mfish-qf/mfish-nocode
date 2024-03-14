@@ -66,7 +66,7 @@
     </sql>
     <!-- 找到当前菜单及所有他的父菜单 -->
     <select id="queryMenu" resultType="cn.com.mfish.oauth.entity.SsoMenu">
-        SELECT distinct m.* FROM sso_menu m
+        SELECT m.* FROM sso_menu m
         <include refid="menuJoin"/>
         <where>
             <include refid="reqCondition"/>
@@ -75,20 +75,25 @@
                 and m.menu_type != 2
             </if>
         </where>
-        <foreach collection="levels" item="value">
+        <if test="levels != null and levels.size()>0">
             UNION
-            SELECT m.* FROM sso_menu m
-            where menu_code IN (SELECT DISTINCT SUBSTR(menu_code,1,(menu_level-#{value})*5) FROM sso_menu m
-            <include refid="menuJoin"/>
-            <where>
-                <include refid="reqCondition"/>
-            </where>
+            SELECT m.* FROM sso_menu m where menu_code IN (
+            <foreach collection="levels" item="value" index="index">
+                <if test="index != 0">
+                    UNION
+                </if>
+                SELECT SUBSTR(menu_code,1,(menu_level-#{value})*5) FROM sso_menu m
+                <include refid="menuJoin"/>
+                <where>
+                    <include refid="reqCondition"/>
+                </where>
+            </foreach>
             )
             <!--查询时是否包含按钮 -->
             <if test="reqSsoMenu.noButton">
                 and m.menu_type != 2
             </if>
-        </foreach>
+        </if>
         order by menu_sort,menu_type
     </select>
     <select id="queryMenuUser" resultType="java.lang.String">
