@@ -37,6 +37,7 @@
     </select>
     <select id="queryOneLevelCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
         select * from (<include refid="queryCategorySql"/>) a where a.tree_level = 1
+        order by tree_level,sort,tree_code
     </select>
     <sql id="queryCategorySql">
         SELECT c.* FROM sys_dict_category c
@@ -57,7 +58,6 @@
             </foreach>
             )
         </if>
-        order by tree_level,sort,tree_code
     </sql>
     <select id="queryCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
         <include refid="queryCategorySql" />
@@ -69,5 +69,6 @@
                 or tree_code like concat(#{value},'%')
             </foreach>
         </where>
+        order by tree_level,sort,tree_code
     </select>
 </mapper>
