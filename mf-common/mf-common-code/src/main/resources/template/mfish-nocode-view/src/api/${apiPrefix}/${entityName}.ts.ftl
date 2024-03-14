@@ -55,6 +55,6 @@ export function update${entityName}(${entityName?uncap_first}: ${entityName}) {
  * @param id 唯一ID
  * @return
  */
-export function delete${entityName}(id: string) {
+export function delete${entityName}(id: <#if tableInfo.idType==''||tableInfo.idType=='String'>string<#else>number</#if>) {
   return defHttp.delete<${entityName}>({ url: Api.${entityName} + "/" + id }, { successMessageMode: "message" });
 };

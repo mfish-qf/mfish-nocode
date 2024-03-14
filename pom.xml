@@ -283,11 +283,11 @@
             </dependency>
             <!-- oracle驱动 -->
             <!--oracle连接驱动-->
-            <!-- <dependency> -->
-            <!--     <groupId>com.oracle</groupId> -->
-            <!--     <artifactId>ojdbc8</artifactId> -->
-            <!--     <version>${oracle.version}</version> -->
-            <!-- </dependency> -->
+             <dependency>
+                 <groupId>com.oracle</groupId>
+                 <artifactId>ojdbc8</artifactId>
+                 <version>${oracle.version}</version>
+             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-core</artifactId>

@@ -289,4 +289,39 @@ CREATE TABLE `sys_storage`  (
                                 INDEX `key`(`file_key`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件存储表' ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Table structure for sys_dict_category
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict_category`;
+CREATE TABLE `sys_dict_category`  (
+                                      `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+                                      `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父分类id',
+                                      `category_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类编码',
+                                      `category_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类名称',
+                                      `tree_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类树编码（系统自动编码）',
+                                      `tree_level` tinyint(6) NOT NULL COMMENT '分类树层级（自动生成）',
+                                      `sort` int(11) NULL DEFAULT 0 COMMENT '排序',
+                                      `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
+                                      `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                      `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
+                                      `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                      PRIMARY KEY (`id`) USING BTREE,
+                                      INDEX `tree_code_index`(`tree_code`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '树形分类字典' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_dict_category
+-- ----------------------------
+INSERT INTO `sys_dict_category` VALUES ('063eafb8b1b481c1f2f99799ebc7ada7', '26c427a7125dd186ddc238647a7f4ba1', '', '苹果笔记本', '0000100003', 2, 3, 'admin', '2024-03-14 14:36:17', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('0e55dc203886fbce5cdb0dd3ba2023b3', '26c427a7125dd186ddc238647a7f4ba1', '', '联想笔记本', '0000100006', 2, 4, 'admin', '2024-03-14 14:36:43', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('2207ba37d3071c1e87a344c3f61a5155', '926abe03a1935946b43fdcc031c9d3c8', '', '小米', '0000200006', 2, 1, 'admin', '2024-03-14 14:38:19', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('26c427a7125dd186ddc238647a7f4ba1', '', 'notebook', '笔记本', '00001', 1, 0, 'admin', '2024-03-14 14:35:15', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('47eba0ed867cba5909503642bf10f2b4', '26c427a7125dd186ddc238647a7f4ba1', '', '华为笔记本', '0000100005', 2, 1, 'admin', '2024-03-14 14:36:31', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('6577e71c515e8014297ac7a9b2fb17af', '926abe03a1935946b43fdcc031c9d3c8', 'iPhone', '苹果', '0000200007', 2, 2, 'admin', '2024-03-14 14:38:23', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('90329d2cd947b18ef46a02509873f81c', '926abe03a1935946b43fdcc031c9d3c8', '', 'vivio', '0000200008', 2, 4, 'admin', '2024-03-14 14:38:36', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('926abe03a1935946b43fdcc031c9d3c8', '', 'phone', '手机', '00002', 1, 1, 'admin', '2024-03-14 14:36:08', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('964b67d7277654e21a7e3b03e1363300', '926abe03a1935946b43fdcc031c9d3c8', '', '华为', '0000200005', 2, 0, 'admin', '2024-03-14 14:38:15', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('af9d4abecbd728a49170f8f8ac46dfff', '26c427a7125dd186ddc238647a7f4ba1', 'mi', '小米笔记本', '0000100007', 2, 2, 'admin', '2024-03-14 14:36:59', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('d90b48828eaeda14e1ec6daca7fb20e7', '926abe03a1935946b43fdcc031c9d3c8', '', 'oppo', '0000200009', 2, 5, 'admin', '2024-03-14 14:38:48', NULL, NULL);
+
 SET FOREIGN_KEY_CHECKS = 1;
