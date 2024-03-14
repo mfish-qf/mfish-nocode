@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.0.0
+ * @version: V1.2.0
  */
 @Service
 public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, DictCategory> implements DictCategoryService {

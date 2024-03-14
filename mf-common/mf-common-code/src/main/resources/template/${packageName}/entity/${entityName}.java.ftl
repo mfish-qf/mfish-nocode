@@ -15,7 +15,9 @@ import lombok.experimental.Accessors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
-<#break>
+</#if>
+<#if fieldInfo.type=='BigDecimal'>
+import java.math.BigDecimal;
 </#if>
 </#list>
 
@@ -45,10 +47,10 @@ public class ${entityName} extends BaseEntity<<#if tableInfo.idType==''>String<#
     <#list tableInfo.columns as fieldInfo>
 	<#if !fieldInfo.isPrimary>
       <#if fieldInfo.type =='Date'>
-        <#if fieldInfo.dbType =='DATE'>
+        <#if fieldInfo.dbType =='DATE' || fieldInfo.dbType =='date'>
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-          <#elseif fieldInfo.dbType =='DATETIME'>
+          <#elseif fieldInfo.dbType =='DATETIME' || fieldInfo.dbType =='datetime'>
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         </#if>
