@@ -58,6 +58,7 @@
             </foreach>
             )
         </if>
+        order by tree_level,sort,tree_code
     </sql>
     <select id="queryCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
         <include refid="queryCategorySql" />
