@@ -60,7 +60,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     }
 
     private void validateRole(SsoRole ssoRole) {
-        if (roleCodeExist(ssoRole.getId(), ssoRole.getRoleCode())) {
+        if (roleCodeExist(ssoRole.getId(), ssoRole.getTenantId(), ssoRole.getRoleCode())) {
             throw new MyRuntimeException("错误:角色编码已存在");
         }
     }
@@ -107,8 +107,8 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
      * @return
      */
     @Override
-    public boolean roleCodeExist(String roleId, String roleCode) {
-        return baseMapper.roleCodeExist(roleId, roleCode) > 0;
+    public boolean roleCodeExist(String roleId, String tenantId, String roleCode) {
+        return baseMapper.roleCodeExist(roleId, tenantId, roleCode) > 0;
     }
 
     @Override
