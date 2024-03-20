@@ -8,6 +8,7 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,7 +73,7 @@ public abstract class BaseTempCache<T> {
             return value;
         }
         RedisAtomicLong ral = new RedisAtomicLong(RedisPrefix.buildAtomicCountKey(key)
-                , redisTemplate.getConnectionFactory());
+                , Objects.requireNonNull(redisTemplate.getConnectionFactory()));
         long inc = ral.getAndIncrement();
         if (inc == 0) {
             ral.expire(5, TimeUnit.MINUTES);

@@ -38,7 +38,7 @@
           and o.id = #{orgId}
     </select>
     <select id="getTenantUser" resultType="java.lang.String">
-        SELECT u.id
+        SELECT distinct u.id
         FROM sso_user u
                  INNER JOIN sso_org_user ou ON u.id = ou.user_id
                  INNER JOIN sso_org o ON o.id = ou.org_id AND o.del_flag = 0
