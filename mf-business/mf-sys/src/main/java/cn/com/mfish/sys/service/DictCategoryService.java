@@ -1,5 +1,6 @@
 package cn.com.mfish.sys.service;
 
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -74,4 +75,20 @@ public interface DictCategoryService extends IService<DictCategory> {
      * @return
      */
     Result<DictCategory> updateCategory(DictCategory category);
+
+    /**
+     * 根据分类编码查询分类目录树
+     * @param fixCode
+     * @param direction
+     * @return
+     */
+    List<DictCategory> queryCategoryTreeByCode(String fixCode, TreeDirection direction);
+
+    /**
+     * 根据分类编码查询分类目录列表
+     * @param fixCode
+     * @param direction
+     * @return
+     */
+    List<DictCategory> queryCategoryListByCode(String fixCode, TreeDirection direction);
 }
