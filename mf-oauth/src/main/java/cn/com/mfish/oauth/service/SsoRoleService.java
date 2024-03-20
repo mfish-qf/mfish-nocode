@@ -19,7 +19,7 @@ public interface SsoRoleService extends IService<SsoRole> {
 
     Result<Boolean> deleteRole(String id);
 
-    boolean roleCodeExist(String roleId, String roleCode);
+    boolean roleCodeExist(String roleId, String tenantId, String roleCode);
 
     List<String> getRoleMenus(String roleId);
 

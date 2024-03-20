@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,7 +84,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             }
             if (StringUtils.isEmpty(ssoTenant.getUserId()) || ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
                 ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
-                if(!StringUtils.isEmpty(ssoTenant.getUserId())){
+                if (!StringUtils.isEmpty(ssoTenant.getUserId())) {
                     clearCache.removeUserCache(ssoTenant.getUserId());
                 }
                 return Result.ok(ssoTenant, "租户信息-添加成功!");
@@ -161,8 +162,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
         }
 
-        //移除租户相关用户的租户信息
+        //移除租户相关用户的租户缓存
         List<String> userIds = baseMapper.getTenantUser(ssoTenant.getId());
+        //移除新用户之前的租户缓存
+        userIds.add(ssoTenant.getUserId());
         userTenantTempCache.removeMoreCache(userIds.stream().map(RedisPrefix::buildUser2TenantsKey).collect(Collectors.toList()));
 
         //如果用户变更删除之前用户组织关系
@@ -175,7 +178,8 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }
         if (ssoUserService.insertUserOrg(ssoTenant.getUserId(), Collections.singletonList(org.getId())) > 0) {
-            clearCache.removeUserAuthCache(Collections.singletonList(oldTenant.getUserId()));
+            //移除新旧用户的缓存
+            clearCache.removeUserAuthCache(Arrays.asList(oldTenant.getUserId(), ssoTenant.getUserId()));
             return Result.ok(ssoTenant, "租户信息-编辑成功!");
         }
         throw new MyRuntimeException("错误:删除用户组织关系失败");
