@@ -1,6 +1,7 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -9,9 +10,7 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.sys.entity.DictCategory;
 import cn.com.mfish.sys.req.ReqDictCategory;
 import cn.com.mfish.sys.service.DictCategoryService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -109,4 +108,23 @@ public class DictCategoryController {
         return Result.ok(dictCategory, "树形分类-查询成功!");
     }
 
+    @ApiOperation(value = "分类树-通过分类编码查询", notes = "分类树-通过分类编码查询")
+    @GetMapping("/tree/{code}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
+    })
+    public Result<List<DictCategory>> queryTreeByCode(@ApiParam(name = "code", value = "分类") @PathVariable String code, @RequestParam String direction) {
+        List<DictCategory> list = dictCategoryService.queryCategoryTreeByCode(code, TreeDirection.getDirection(direction));
+        return Result.ok(list, "分类树-查询成功!");
+    }
+
+    @ApiOperation(value = "分类列表-通过分类编码查询", notes = "分类列表-通过分类编码查询")
+    @GetMapping("/list/{code}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
+    })
+    public Result<List<DictCategory>> queryListByCode(@ApiParam(name = "code", value = "分类") @PathVariable String code, @RequestParam String direction) {
+        List<DictCategory> list = dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction));
+        return Result.ok(list, "分类列表-查询成功!");
+    }
 }

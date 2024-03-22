@@ -1,0 +1,20 @@
+# 可匿名访问的路径（不校验白名单）
+shiro-access:
+  anonUrls:
+    - "/oauth2/authorize"
+    - "/oauth2/accessToken"
+    - "/oauth2/sendMsg"
+    - "/oauth2/qrCodeLogin/**"
+    - "/oauth2/wx/bind/**"
+    - "/oauth2/static/**"
+    - "/captcha"
+    - "/storage/file/*.*"
+    - "/css/**"
+    - "/img/**"
+    - "/js/**"
+    - "/fonts/**"
+    - "/wx/**"
+    - "/swagger-ui/**"
+    - "/swagger-resources/**"
+    - "/v3/api-docs/**"
+    - "/404"

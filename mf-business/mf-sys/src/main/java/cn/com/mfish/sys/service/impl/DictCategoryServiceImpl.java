@@ -1,5 +1,6 @@
 package cn.com.mfish.sys.service.impl;
 
+import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
@@ -148,5 +149,81 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         }
         return Result.ok(category, "分类-更新成功!");
 
+    }
+
+    @Override
+    public List<DictCategory> queryCategoryTreeByCode(String fixCode, TreeDirection direction) {
+        if (StringUtils.isEmpty(fixCode)) {
+            throw new MyRuntimeException("错误:固定编码不允许为空");
+        }
+        DictCategory category = baseMapper.selectOne(new LambdaQueryWrapper<DictCategory>().eq(DictCategory::getCategoryCode, fixCode));
+        List<DictCategory> categoryList = queryCategory(category, direction);
+        List<DictCategory> categoryTree = new ArrayList<>();
+        if (direction.equals(TreeDirection.向下)) {
+            TreeUtils.buildTree(category.getParentId(), categoryList, categoryTree, DictCategory.class);
+        } else {
+            TreeUtils.buildTree("", categoryList, categoryTree, DictCategory.class);
+        }
+        return categoryTree;
+    }
+
+    @Override
+    public List<DictCategory> queryCategoryListByCode(String fixCode, TreeDirection direction) {
+        if (StringUtils.isEmpty(fixCode)) {
+            throw new MyRuntimeException("错误:固定编码不允许为空");
+        }
+        DictCategory category = baseMapper.selectOne(new LambdaQueryWrapper<DictCategory>().eq(DictCategory::getCategoryCode, fixCode));
+        return queryCategory(category, direction);
+
+    }
+
+    private List<DictCategory> queryCategory(DictCategory category, TreeDirection direction) {
+        if (category == null) {
+            return new ArrayList<>();
+        }
+        List<DictCategory> categoryList;
+        switch (direction) {
+            case 向下:
+                categoryList = downCategory(category.getTreeCode());
+                break;
+            case 向上:
+                categoryList = upCategory(category.getTreeCode(), category.getTreeLevel());
+                break;
+            default:
+                categoryList = downCategory(category.getTreeCode());
+                //向下已经查了自己，向上查询不查
+                List<DictCategory> ups = upCategory(category.getTreeCode(), category.getTreeLevel() - 1);
+                categoryList.addAll(0, ups);
+                break;
+        }
+        return categoryList;
+    }
+
+    /**
+     * 向下查询分类
+     *
+     * @param treeCode 树编码
+     * @return
+     */
+    private List<DictCategory> downCategory(String treeCode) {
+        return baseMapper.selectList(new LambdaQueryWrapper<DictCategory>().likeRight(DictCategory::getTreeCode, treeCode).orderByAsc(DictCategory::getTreeLevel, DictCategory::getSort));
+    }
+
+    /**
+     * 向上查询分类
+     *
+     * @param treeCode 树编码
+     * @param level    等级
+     * @return
+     */
+    private List<DictCategory> upCategory(String treeCode, int level) {
+        List<String> list = new ArrayList<>();
+        if (level < 1) {
+            return new ArrayList<>();
+        }
+        for (int i = 1; i <= level; i++) {
+            list.add(treeCode.substring(0, i * 5));
+        }
+        return baseMapper.selectList(new LambdaQueryWrapper<DictCategory>().in(DictCategory::getTreeCode, list).orderByAsc(DictCategory::getTreeLevel, DictCategory::getSort));
     }
 }

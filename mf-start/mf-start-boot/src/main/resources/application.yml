@@ -22,6 +22,7 @@ spring:
       - code
       - swagger
       - gateway
+      - shiro
   autoconfigure:
     exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   redis:
