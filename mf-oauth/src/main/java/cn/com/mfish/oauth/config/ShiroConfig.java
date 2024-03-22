@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
+import cn.com.mfish.oauth.config.properties.ShiroAccessProperties;
 import cn.com.mfish.oauth.config.properties.ShiroProperties;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
@@ -26,6 +27,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,6 +46,9 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    @Autowired
+    private ShiroAccessProperties shiroAccessProperties;
+
     /**
      * 设置shiro拦截器
      *
@@ -61,23 +66,8 @@ public class ShiroConfig {
             // 配置不会被拦截的链接 顺序判断
             //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
             filterChainDefinitionMap.put("/logout", "logout");
-            filterChainDefinitionMap.put("/oauth2/authorize", "anon");
-            filterChainDefinitionMap.put("/oauth2/accessToken", "anon");
-            filterChainDefinitionMap.put("/oauth2/sendMsg", "anon");
-            filterChainDefinitionMap.put("/oauth2/qrCodeLogin/**", "anon");
-            filterChainDefinitionMap.put("/oauth2/wx/bind/**", "anon");
-            filterChainDefinitionMap.put("/oauth2/static/**", "anon");
-            filterChainDefinitionMap.put("/captcha", "anon");
-            filterChainDefinitionMap.put("/storage/file/*.*", "anon");
-            filterChainDefinitionMap.put("/css/**", "anon");
-            filterChainDefinitionMap.put("/img/**", "anon");
-            filterChainDefinitionMap.put("/js/**", "anon");
-            filterChainDefinitionMap.put("/fonts/**", "anon");
-            filterChainDefinitionMap.put("/wx/**", "anon");
-            filterChainDefinitionMap.put("/swagger-ui/**", "anon");
-            filterChainDefinitionMap.put("/swagger-resources/**", "anon");
-            filterChainDefinitionMap.put("/v3/api-docs/**", "anon");
-            filterChainDefinitionMap.put("/404", "anon");
+            // 设置免认证 url （可匿名访问）
+            shiroAccessProperties.getAnonUrls().forEach(url -> filterChainDefinitionMap.put(url, "anon"));
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
             Map<String, Filter> filterMap = new HashMap<>();
             filterMap.put("token", new TokenFilter());
