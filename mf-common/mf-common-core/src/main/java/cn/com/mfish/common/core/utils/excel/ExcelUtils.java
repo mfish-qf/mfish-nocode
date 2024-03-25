@@ -8,6 +8,7 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -38,6 +39,19 @@ public class ExcelUtils {
      * @throws IOException IO异常
      */
     public static <T> void write(String fileName, List<T> list) throws IOException {
+        write(fileName, list, null);
+    }
+
+    /**
+     * excel 导出下载（无数据时excel可展示列头）
+     *
+     * @param fileName 文件名称（不带后缀默认为xlsx）
+     * @param list     数据
+     * @param cls      泛型类型
+     * @param <T>      泛型
+     * @throws IOException IO异常
+     */
+    public static <T> void write(String fileName, List<T> list, Class<T> cls) throws IOException {
         //swagger调用会用问题，使用postman测试
         HttpServletResponse response = ServletUtils.getResponse();
         try {
@@ -51,11 +65,18 @@ public class ExcelUtils {
             }
             response.setHeader("Content-disposition", "attachment;filename*=utf-8'zh_cn'" + fileName + ".xlsx");
             if (list == null || list.isEmpty()) {
-                IOUtils.write(new byte[]{}, response.getOutputStream());
-                return;
+                if (cls != null) {
+                    list = new ArrayList<>();
+                    list.add(cls.newInstance());
+                } else {
+                    IOUtils.write(new byte[]{}, response.getOutputStream());
+                    return;
+                }
             }
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), list.get(0).getClass()).autoCloseStream(Boolean.FALSE).sheet("sheet1")
+            EasyExcel.write(response.getOutputStream(), list.get(0).getClass())
+                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    .autoCloseStream(Boolean.FALSE).sheet("sheet1")
                     .doWrite(list);
         } catch (Exception e) {
             // 重置response
