@@ -14,7 +14,9 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: mfish
@@ -28,28 +30,38 @@ public class MybatisInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        BaseEntity<?> parameter = getParameter(invocation);
-        if (parameter == null) {
+        List<?> parameters = getParameter(invocation);
+        if (parameters == null) {
             return invocation.proceed();
         }
         //不支持异步调用获取当前帐号
         String account = AuthInfoUtils.getCurrentAccount();
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-        SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
-        switch (sqlCommandType) {
-            case INSERT:
-                if (!StringUtils.isEmpty(account)) {
-                    parameter.setCreateBy(account);
-                }
-                parameter.setCreateTime(new Date());
-            case UPDATE:
-                if (!StringUtils.isEmpty(account)) {
-                    parameter.setUpdateBy(account);
-                }
-                parameter.setUpdateTime(new Date());
-                break;
-        }
+        setParam(mappedStatement, account, parameters);
         return invocation.proceed();
+    }
+
+    private void setParam(MappedStatement mappedStatement, String account, List<?> list) {
+        for (Object entity : list) {
+            if (!(entity instanceof BaseEntity)) {
+                continue;
+            }
+            BaseEntity<?> parameter = (BaseEntity<?>) entity;
+            SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
+            switch (sqlCommandType) {
+                case INSERT:
+                    if (!StringUtils.isEmpty(account)) {
+                        parameter.setCreateBy(account);
+                    }
+                    parameter.setCreateTime(new Date());
+                case UPDATE:
+                    if (!StringUtils.isEmpty(account)) {
+                        parameter.setUpdateBy(account);
+                    }
+                    parameter.setUpdateTime(new Date());
+                    break;
+            }
+        }
     }
 
     /**
@@ -58,18 +70,25 @@ public class MybatisInterceptor implements Interceptor {
      * @param invocation
      * @return
      */
-    private BaseEntity<?> getParameter(Invocation invocation) {
+    private List<?> getParameter(Invocation invocation) {
         Object parameter = invocation.getArgs()[1];
         if (parameter instanceof MapperMethod.ParamMap) {
             MapperMethod.ParamMap<?> p = (MapperMethod.ParamMap<?>) parameter;
             if (p.containsKey("et")) {
                 parameter = p.get("et");
-            } else {
+            } else if (p.containsKey("param1")) {
                 parameter = p.get("param1");
+            } else if (p.containsKey("list")) {
+                parameter = p.get("list");
             }
         }
         if (parameter instanceof BaseEntity) {
-            return (BaseEntity<?>) parameter;
+            List<Object> list = new ArrayList<>();
+            list.add(parameter);
+            return list;
+        }
+        if (parameter instanceof List) {
+            return (List<?>) parameter;
         }
         return null;
     }
