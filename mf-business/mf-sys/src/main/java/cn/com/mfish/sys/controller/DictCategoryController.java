@@ -10,6 +10,7 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.sys.entity.DictCategory;
 import cn.com.mfish.sys.req.ReqDictCategory;
 import cn.com.mfish.sys.service.DictCategoryService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -126,5 +127,13 @@ public class DictCategoryController {
     public Result<List<DictCategory>> queryListByCode(@ApiParam(name = "code", value = "分类") @PathVariable String code, @RequestParam String direction) {
         List<DictCategory> list = dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction));
         return Result.ok(list, "分类列表-查询成功!");
+    }
+
+    @ApiOperation("分类-通过编码查询")
+    @GetMapping("/one/{code}")
+    public Result<DictCategory> queryOneByCode(@ApiParam(name = "code", value = "唯一性ID") @PathVariable String code) {
+        DictCategory materialCategory = dictCategoryService.getOne(new LambdaQueryWrapper<DictCategory>()
+                .eq(DictCategory::getCategoryCode, code));
+        return Result.ok(materialCategory, "物料分类-查询成功!");
     }
 }
