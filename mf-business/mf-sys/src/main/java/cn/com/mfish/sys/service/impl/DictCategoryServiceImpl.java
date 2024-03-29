@@ -96,7 +96,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         if (StringUtils.isEmpty(dictCategory.getParentId())) {
             dictCategory.setParentId("");
         } else if (dictCategory.getParentId().equals(dictCategory.getId())) {
-            return Result.fail("错误:父节点不允许设置自己");
+            return Result.fail("错误：父节点不允许设置自己");
+        }
+        if (!StringUtils.isEmpty(dictCategory.getCategoryCode()) && baseMapper.exists(new LambdaQueryWrapper<DictCategory>()
+                .eq(DictCategory::getCategoryCode, dictCategory.getCategoryCode())
+                .ne(!StringUtils.isEmpty(dictCategory.getId()), DictCategory::getId, dictCategory.getId()))) {
+            return Result.fail("错误：分类编码已存在");
         }
         return Result.ok("分类校验成功");
     }
