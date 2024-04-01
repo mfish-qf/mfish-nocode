@@ -904,7 +904,7 @@ CREATE TABLE `sso_user`  (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('1', 'admin', '18900000001', 'mfish@qq.com', '66d4ae108116cb9044c8b9ccae4a0b6c', '22d374999f108f1573aad145657ed698', '管理员', '77f39fdc429142bf9b2b1fff631098ef.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2023-06-28 13:05:17');
+INSERT INTO `sso_user` VALUES ('1', 'admin', '18900000001', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', '77f39fdc429142bf9b2b1fff631098ef.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2023-06-28 13:05:17');
 INSERT INTO `sso_user` VALUES ('bd54e030ae204be8b77e36cf48583f35', 'xzh', '18911111111', 'liudehua@qq.com', 'b16e23b22364b73715fe678b8493a250', NULL, '新租户', '08170556fd804908812a2768380896e3.png', NULL, NULL, 1, 0, 0, '57c61f5a32e75728843b7f6d0cf38cb1', NULL, NULL, 'mfish', '2023-07-04 10:06:06', 'admin', '2023-07-19 15:26:17');
 INSERT INTO `sso_user` VALUES ('c51fde3955594074bb4db31e654a4483', 'mfish', '18900000002', 'mfish2@qq.com', '997ba196adf807d32b030d2ee8e242f9', NULL, '摸鱼', NULL, '', '2023-06-28', 1, 0, 0, '2833ba3ab03c7fb357cf5d71676146e8', NULL, '', 'admin', '2023-06-28 11:14:45', 'mfish', '2023-07-25 11:35:25');
 
