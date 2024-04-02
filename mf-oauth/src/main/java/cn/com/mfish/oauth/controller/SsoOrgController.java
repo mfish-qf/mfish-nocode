@@ -149,7 +149,7 @@ public class SsoOrgController {
         return Result.ok(list, "组织结构表-查询成功!");
     }
 
-    @ApiOperation(value = "获取组织下的用户-通过固定编码查询", notes = "获取组织下的用户-通过固定编码查询")
+    @ApiOperation(value = "获取组织及子组织下的所有用户-通过固定编码查询", notes = "获取组织及子组织下的所有用户-通过固定编码查询")
     @GetMapping("/user/{code}")
     public Result<PageResult<UserInfo>> queryUserByCode(@ApiParam(name = "code", value = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
         return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage),"组织下用户查询成功");
