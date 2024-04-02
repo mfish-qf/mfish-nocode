@@ -1,7 +1,10 @@
 package cn.com.mfish.common.oauth.api.fallback;
 
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.remote.RemoteOrgService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -29,6 +32,11 @@ public class RemoteOrgFallback implements FallbackFactory<RemoteOrgService> {
             @Override
             public Result<List<SsoOrg>> queryByFixCode(String code, String direction) {
                 return Result.fail("错误:根据编码获取组织树失败" + cause.getMessage());
+            }
+
+            @Override
+            public Result<PageResult<UserInfo>> queryUserByCode(String code, String account, String nickname, String phone, ReqPage reqPage) {
+                return Result.fail("错误:根据编码获取组织下用户失败" + cause.getMessage());
             }
         };
     }

@@ -10,7 +10,9 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.oauth.req.ReqOrgUser;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import cn.com.mfish.oauth.service.SsoOrgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -138,14 +140,18 @@ public class SsoOrgController {
     }
 
     @ApiOperation(value = "组织结构表-通过固定编码查询", notes = "组织结构表-通过固定编码查询")
-    @GetMapping("/fixCode")
-    @RequiresPermissions("sys:org:query")
+    @GetMapping("/code/{code}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "固定编码", paramType = "query", required = true, dataTypeClass = String.class),
             @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
     })
-    public Result<List<SsoOrg>> queryByFixCode(@RequestParam String code, @RequestParam String direction) {
+    public Result<List<SsoOrg>> queryByFixCode(@ApiParam(name = "code", value = "固定编码") @PathVariable("code") String code, @RequestParam String direction) {
         List<SsoOrg> list = ssoOrgService.queryOrgByCode(code, TreeDirection.getDirection(direction));
         return Result.ok(list, "组织结构表-查询成功!");
+    }
+
+    @ApiOperation(value = "获取组织及子组织下的所有用户-通过固定编码查询", notes = "获取组织及子组织下的所有用户-通过固定编码查询")
+    @GetMapping("/user/{code}")
+    public Result<PageResult<UserInfo>> queryUserByCode(@ApiParam(name = "code", value = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
+        return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage),"组织下用户查询成功");
     }
 }

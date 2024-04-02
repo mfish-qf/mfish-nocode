@@ -1,9 +1,13 @@
 package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.common.core.enums.TreeDirection;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.oauth.req.ReqOrgUser;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -35,4 +39,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     List<UserRole> getOrgRoles(String... orgIds);
 
     boolean isTenantOrg(String orgId, String tenantId);
+
+    PageResult<UserInfo> queryUserByCode(String code, ReqOrgUser reqOrgUser, ReqPage reqPage);
 }
