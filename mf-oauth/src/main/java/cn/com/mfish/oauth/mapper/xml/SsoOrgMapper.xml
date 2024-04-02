@@ -121,4 +121,22 @@
                                    WHERE tenant_id = #{tenantId})) sso_org
         where id = #{orgId}
     </select>
+    <select id="queryUserByCode" resultType="cn.com.mfish.common.oauth.api.entity.UserInfo">
+        select su.*
+        from sso_user su
+        inner JOIN sso_org_user sou on sou.user_id = su.id
+        inner JOIN sso_org so on so.id = sou.org_id
+        WHERE so.org_code like (select CONCAT(org_code, '%') from sso_org o
+        where o.org_fix_code = #{code} and o.status=0 and o.del_flag=0
+        )
+        <if test="reqOrgUser.nickname != null and reqOrgUser.nickname != ''">
+            and su.nickname like CONCAT('%',#{reqOrgUser.nickname},'%')
+        </if>
+        <if test="reqOrgUser.account != null and reqOrgUser.account != ''">
+            and su.account like CONCAT('%',#{reqOrgUser.account},'%')
+        </if>
+        <if test="reqOrgUser.phone != null and reqOrgUser.phone != ''">
+            and su.phone like CONCAT('%',#{reqOrgUser.phone},'%')
+        </if>
+    </select>
 </mapper>

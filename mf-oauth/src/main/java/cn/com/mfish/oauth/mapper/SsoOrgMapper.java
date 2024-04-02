@@ -1,7 +1,9 @@
 package cn.com.mfish.oauth.mapper;
 
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.oauth.req.ReqOrgUser;
 import cn.com.mfish.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
@@ -35,10 +37,13 @@ public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
 
     @Select("select count(0) from sso_org o where o.parent_id= #{orgId} and o.del_flag =0")
     int queryChildCount(String orgId);
+
     @Select("select user_id from sso_org_user where org_id = #{orgId}")
     List<String> getOrgUserId(String orgId);
 
     List<UserRole> getOrgRoles(@Param("orgIds") String... orgIds);
 
     int isTenantOrg(@Param("orgId") String orgId, @Param("tenantId") String tenantId);
+
+    List<UserInfo> queryUserByCode(@Param("code") String code, @Param("reqOrgUser") ReqOrgUser reqOrgUser);
 }
