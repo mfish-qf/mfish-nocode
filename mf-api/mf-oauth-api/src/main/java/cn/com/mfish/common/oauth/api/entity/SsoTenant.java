@@ -1,6 +1,7 @@
 package cn.com.mfish.common.oauth.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -71,6 +72,7 @@ public class SsoTenant extends BaseEntity<String> {
     @ExcelProperty("用户ID，关联用户为管理员")
     @ApiModelProperty(value = "用户ID，关联用户为管理员")
 	private String userId;
+    @ExcelIgnore
     @TableField(exist = false)
     @ApiModelProperty(value = "角色Id")
     private List<String> roleIds;

@@ -119,7 +119,10 @@
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <sql id="selectUser">
-        select u.*, GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
+        select u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
+        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
+        ,u.create_time,u.update_by,u.update_time
+         , GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
         from (select u.*, ou.org_id, ur.role_id
         from sso_user u
         left join sso_org_user ou on ou.user_id = u.id
@@ -149,7 +152,9 @@
         <where>
             u.id = #{userId}
         </where>
-        group by u.id
+        group by u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
+        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
+        ,u.create_time,u.update_by,u.update_time
     </select>
     <select id="getUserList" resultMap="userMap">
         <include refid="selectUser"/>
@@ -174,7 +179,9 @@
                 and u.status = #{status}
             </if>
         </where>
-        group by u.id
+        group by u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
+        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
+        ,u.create_time,u.update_by,u.update_time
         order by u.create_time desc
     </select>
     <insert id="insertUserRole">
