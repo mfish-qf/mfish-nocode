@@ -6,7 +6,9 @@
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <sql id="selectTenant">
-        select t.*, u.account, u.nickname, u.phone, 1 master, GROUP_CONCAT(DISTINCT r.id) roleIds
+        select t.id,t.tenant_type,t.name,t.city,t.province,t.county,t.address,t.corp_size,t.corp_years
+               ,t.trade,t.status,t.logo,t.domain,t.del_flag,t.user_id,t.create_by,t.create_time,t.update_by,t.update_time
+               , u.account, u.nickname, u.phone, 1 master, GROUP_CONCAT(DISTINCT r.id) roleIds
         from sso_tenant t
                  left join sso_user u on t.user_id = u.id
                  left join sso_org o on o.tenant_id = t.id and o.`status` = 0 and o.del_flag = 0
@@ -21,7 +23,9 @@
             <if test="reqSsoTenant.domain!=null">and t.domain = #{reqSsoTenant.domain}</if>
             <if test="reqSsoTenant.name!=null">and t.name = #{reqSsoTenant.name}</if>
         </where>
-        group by t.id
+        group by t.id,t.tenant_type,t.name,t.city,t.province,t.county,t.address,t.corp_size,t.corp_years
+        ,t.trade,t.status,t.logo,t.domain,t.del_flag,t.user_id,t.create_by,t.create_time,t.update_by,t.update_time
+        , u.account, u.nickname, u.phone
         order by create_time desc
     </select>
     <select id="queryInfo" resultMap="tenantMap">

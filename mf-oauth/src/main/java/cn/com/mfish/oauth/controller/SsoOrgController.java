@@ -139,7 +139,7 @@ public class SsoOrgController {
         return Result.ok(ssoOrgService.list(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, idList)), "组织结构表-查询成功!");
     }
 
-    @ApiOperation(value = "组织结构表-通过固定编码查询", notes = "组织结构表-通过固定编码查询")
+    @ApiOperation(value = "组织树-通过固定编码查询", notes = "组织树-通过固定编码查询")
     @GetMapping("/code/{code}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),

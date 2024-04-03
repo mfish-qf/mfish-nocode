@@ -62,7 +62,9 @@
         </if>
     </sql>
     <select id="queryOrg" resultMap="orgMap">
-        select o.*, GROUP_CONCAT(DISTINCT r.id) roleIds from (
+        select o.id,o.parent_id,o.tenant_id,o.org_fix_code,o.org_code,o.org_level,o.org_name,o.org_sort,o.leader
+        ,o.phone,o.email,o.remark,o.status,o.del_flag,o.create_by,o.create_time,o.update_by,o.update_time
+        , GROUP_CONCAT(DISTINCT r.id) roleIds from (
         <include refid="selectOrg" />
         <where>
             del_flag = 0
@@ -83,7 +85,8 @@
         ) o
         left join sso_org_role sor on o.id = sor.org_id
         left join sso_role r on sor.role_id = r.id and r.del_flag = 0
-        group by o.id
+        group by o.id,o.parent_id,o.tenant_id,o.org_fix_code,o.org_code,o.org_level,o.org_name,o.org_sort,o.leader
+        ,o.phone,o.email,o.remark,o.status,o.del_flag,o.create_by,o.create_time,o.update_by,o.update_time
         order by o.org_sort
     </select>
     <select id="orgFixCodeExist" resultType="int">
