@@ -97,7 +97,7 @@ public class OauthUtils {
         }
         Set<String> set = list.stream().map(UserRole::getRoleCode).collect(Collectors.toSet());
         //如果用户为超户，直接返回
-        if (set.contains(SerConstant.SUPER_ROLE)) {
+        if (set.contains(AuthInfoUtils.SUPER_ROLE)) {
             return true;
         }
         return checkValue(requiresRoles.logical(), requiresRoles.value(), set);
@@ -148,7 +148,7 @@ public class OauthUtils {
     public static boolean checkPermission(RequiresPermissions requiresPermissions) {
         Set<String> set = getPermission();
         //如果用户拥有所有权限直接返回true
-        if (null != set && set.contains(SerConstant.ALL_PERMISSION)) {
+        if (null != set && set.contains(AuthInfoUtils.ALL_PERMISSION)) {
             return true;
         }
         return checkValue(requiresPermissions.logical(), requiresPermissions.value(), set);
