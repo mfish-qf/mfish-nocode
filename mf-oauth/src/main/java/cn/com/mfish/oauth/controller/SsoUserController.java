@@ -17,6 +17,7 @@ import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.SimpleUserInfo;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
@@ -197,10 +198,20 @@ public class SsoUserController {
         return Result.ok(new PageResult<>(pageList), "用户信息-查询成功!");
     }
 
+    @ApiOperation(value = "检索用户列表-限制最多查询50人(有新增租户用户权限人允许检索)", notes = "检索用户列表")
+    @GetMapping("/search")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "condition", value = "检索条件，可输入用户名、昵称、手机号", dataTypeClass = String.class)
+    })
+    @RequiresPermissions("sys:tenantUser:insert")
+    public Result<List<SimpleUserInfo>> queryUserList(String condition) {
+        return Result.ok(ssoUserService.searchUserList(condition), "用户信息-检索成功!");
+    }
+
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
     @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
     @PostMapping
-    @RequiresPermissions("sys:account:insert")
+    @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
         return ssoUserService.insertUser(ssoUser);
     }

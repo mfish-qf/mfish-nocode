@@ -22,9 +22,6 @@ public class SerConstant {
     public static final String NICKNAME = "nickname";
     public static final String PHONE = "phone";
     public static final String PASSWORD = "password";
-    public static final String ALL_PERMISSION = "*:*:*";
-    public static final String SUPER_ROLE = "superAdmin";
-    public static final String SUPER_USER = "admin";
     //微信token前缀
     public static final String WX_PREFIX = "wx-";
 
