@@ -223,4 +223,14 @@
         where user_Id = #{userId}
           and org_id = #{orgId}
     </select>
+    <select id="searchUserList" resultType="cn.com.mfish.common.oauth.entity.SimpleUserInfo">
+        select * from sso_user
+        <where>
+            <if test="condition != null and condition != ''">
+                or account like CONCAT('%',#{condition},'%')
+                or nickname like CONCAT('%',#{condition},'%')
+                or phone like CONCAT('%',#{condition},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

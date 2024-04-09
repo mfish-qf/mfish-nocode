@@ -54,7 +54,7 @@ public class SsoRoleController {
     @RequiresPermissions("sys:role:query")
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        reqSsoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
+        reqSsoRole.setTenantId(AuthInfoUtils.SUPER_TENANT_ID);
         return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
@@ -108,7 +108,7 @@ public class SsoRoleController {
     @PostMapping
     @RequiresPermissions("sys:role:insert")
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
-        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
+        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT_ID);
         return ssoRoleService.insertRole(ssoRole);
     }
 
@@ -123,7 +123,7 @@ public class SsoRoleController {
     @PutMapping
     @RequiresPermissions("sys:role:update")
     public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
-        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT);
+        ssoRole.setTenantId(AuthInfoUtils.SUPER_TENANT_ID);
         return ssoRoleService.updateRole(ssoRole);
     }
 

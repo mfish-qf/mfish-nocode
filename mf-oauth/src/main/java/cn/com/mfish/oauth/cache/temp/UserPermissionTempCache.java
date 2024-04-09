@@ -43,7 +43,7 @@ public class UserPermissionTempCache extends BaseTempCache<Set<String>> {
     protected Set<String> getFromDB(String... key) {
         Set<String> perSet = new HashSet<>();
         if (AuthInfoUtils.isSuper(key[0])) {
-            perSet.add(SerConstant.ALL_PERMISSION);
+            perSet.add(AuthInfoUtils.ALL_PERMISSION);
         }
         List<String> permissions = ssoUserMapper.getUserPermissions(key[0], key[1]);
         if (permissions == null || permissions.isEmpty()) {

@@ -18,19 +18,25 @@ public class AuthInfoUtils {
     /**
      * 超户
      */
-    public static final String SUPER_ACCOUNT = "1";
+    public static final String SUPER_ACCOUNT_ID = "1";
     /**
-     * 超户角色
+     * 超户角色ID
      */
-    public static final String SUPER_ROLE = "1";
+    public static final String SUPER_ROLE_ID = "1";
+    /**
+     * 超户角色编码
+     */
+    public static final String SUPER_ROLE = "superAdmin";
     /**
      * 系统默认租户
      */
-    public static final String SUPER_TENANT = "1";
+    public static final String SUPER_TENANT_ID = "1";
     /**
      * 系统默认组织
      */
-    public static final String SUPER_ORG = "1";
+    public static final String SUPER_ORG_ID = "1";
+
+    public static final String ALL_PERMISSION = "*:*:*";
 
     /**
      * 从请求中获取token值
@@ -128,7 +134,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static boolean isSuper(String userId) {
-        return SUPER_ACCOUNT.equals(userId);
+        return SUPER_ACCOUNT_ID.equals(userId);
     }
 
     /**
@@ -138,7 +144,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static boolean isSuperRole(String roleId) {
-        return SUPER_ROLE.equals(roleId);
+        return SUPER_ROLE_ID.equals(roleId);
     }
 
     /**
@@ -148,7 +154,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static boolean isSuperTenant(String tenantId) {
-        return SUPER_TENANT.equals(tenantId);
+        return SUPER_TENANT_ID.equals(tenantId);
     }
 
     /**

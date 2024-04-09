@@ -2,6 +2,7 @@ package cn.com.mfish.oauth.mapper;
 
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.entity.SimpleUserInfo;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
@@ -93,4 +94,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     int deleteUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
     int isExistUserOrg(@Param("userId") String userId, @Param("orgId") String orgId);
+
+    List<SimpleUserInfo> searchUserList(@Param("condition") String condition);
 }
