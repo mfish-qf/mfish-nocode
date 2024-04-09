@@ -72,7 +72,7 @@ public class SsoOrgController {
 
     @ApiOperation(value = "获取组织的角色")
     @GetMapping("/roles/{orgIds}")
-    @RequiresPermissions("sys:org:query")
+    @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
     public Result<List<UserRole>> queryOrgRoles(@ApiParam(name = "orgIds", value = "组织ID") @PathVariable("orgIds") String orgIds) {
         if (StringUtils.isEmpty(orgIds)) {
             return Result.fail(new ArrayList<>(), "错误:组织ID不允许为空");
@@ -152,6 +152,6 @@ public class SsoOrgController {
     @ApiOperation(value = "获取组织及子组织下的所有用户-通过固定编码查询", notes = "获取组织及子组织下的所有用户-通过固定编码查询")
     @GetMapping("/user/{code}")
     public Result<PageResult<UserInfo>> queryUserByCode(@ApiParam(name = "code", value = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
-        return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage),"组织下用户查询成功");
+        return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage), "组织下用户查询成功");
     }
 }

@@ -8,6 +8,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.entity.SimpleUserInfo;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.cache.temp.*;
 import cn.com.mfish.oauth.common.PasswordHelper;
@@ -16,6 +17,7 @@ import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -331,5 +333,12 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     public boolean isExistUserOrg(String userId, String orgId) {
         return baseMapper.isExistUserOrg(userId, orgId) > 0;
+    }
+
+    @Override
+    public List<SimpleUserInfo> searchUserList(String condition) {
+        //最多检索50条
+        PageHelper.startPage(1, 50);
+        return baseMapper.searchUserList(condition);
     }
 }
