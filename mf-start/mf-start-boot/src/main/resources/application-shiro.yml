@@ -1,6 +1,7 @@
 # 可匿名访问的路径（不校验白名单）
 shiro-access:
   anonUrls:
+    - "/oauth2/user/revoke"
     - "/oauth2/authorize"
     - "/oauth2/accessToken"
     - "/oauth2/sendMsg"

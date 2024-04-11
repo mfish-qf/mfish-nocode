@@ -198,6 +198,9 @@ public class SsoTenantController {
             return Result.fail(tenantId, "错误:该用户不属于此租户");
         }
         Object token = OauthUtils.getToken();
+        if(token == null){
+            return Result.fail(tenantId, "错误:未找到token");
+        }
         if (token instanceof RedisAccessToken) {
             RedisAccessToken rat = (RedisAccessToken) token;
             if (tenantId.equals(rat.getTenantId())) {

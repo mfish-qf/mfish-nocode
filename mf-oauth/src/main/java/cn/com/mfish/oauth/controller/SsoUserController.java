@@ -31,6 +31,8 @@ import cn.com.mfish.oauth.service.SsoOrgService;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -165,13 +167,24 @@ public class SsoUserController {
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
-        String userId = AuthInfoUtils.getCurrentUserId();
+        Subject subject = SecurityUtils.getSubject();
+        String userId = null;
+        //session中存在userId,优先使用session中的userId
+        if (subject != null) {
+            userId = (String) subject.getPrincipal();
+        }
+        //session中不存在userId获取token中的userId
         if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
+        } else {
+            subject.logout();
+        }
+        Object token = OauthUtils.getToken();
+        if (StringUtils.isEmpty(userId) || token == null) {
             String error = "未获取到用户登录状态，无需登出";
             log.error(error);
             return Result.ok(error);
         }
-        Object token = OauthUtils.getToken();
         String sId = "";
         if (token instanceof RedisAccessToken) {
             sId = ((RedisAccessToken) token).getTokenSessionId();
