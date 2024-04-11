@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
@@ -197,7 +198,7 @@ public class OauthUtils {
      * @return
      */
     public static TokenService getTokenService(String token) {
-        if (token.startsWith(SerConstant.WX_PREFIX)) {
+        if (!StringUtils.isEmpty(token) && token.startsWith(SerConstant.WX_PREFIX)) {
             return SpringBeanFactory.getBean(WeChatTokenServiceImpl.class);
         }
         return SpringBeanFactory.getBean(WebTokenServiceImpl.class);
@@ -221,6 +222,9 @@ public class OauthUtils {
      */
     public static Object getToken() {
         String token = AuthInfoUtils.getAccessToken();
+        if(StringUtils.isEmpty(token)) {
+            return null;
+        }
         return getToken(getTokenService(token), token);
     }
 

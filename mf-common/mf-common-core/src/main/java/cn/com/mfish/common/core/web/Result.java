@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.web;
 
 import cn.com.mfish.common.core.constants.Constants;
+import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -75,4 +76,8 @@ public class Result<T> implements Serializable {
         return buildResult(null, code, msg);
     }
 
+    @Override
+    public String toString(){
+        return JSON.toJSONString(this);
+    }
 }
