@@ -58,3 +58,13 @@ export function update${entityName}(${entityName?uncap_first}: ${entityName}) {
 export function delete${entityName}(id: <#if tableInfo.idType==''||tableInfo.idType=='String'>string<#else>number</#if>) {
   return defHttp.delete<${entityName}>({ url: Api.${entityName} + "/" + id }, { successMessageMode: "message" });
 };
+
+/**
+* 批量删除${tableInfo.tableComment}
+*
+* @param ids 唯一ID多个逗号隔开
+* @return
+*/
+export function deleteBatch${entityName}(ids: string) {
+return defHttp.delete<${entityName}>({ url: Api.${entityName} + "/batch/" + ids }, { successMessageMode: "message" });
+};

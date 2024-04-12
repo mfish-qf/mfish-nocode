@@ -132,9 +132,9 @@ public class ${entityName}Controller {
 	 */
 	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
 	@ApiOperation("${tableInfo.tableComment}-批量删除")
-	@DeleteMapping("/batch")
+	@DeleteMapping("/batch/{ids}")
 	@RequiresPermissions("sys:${entityName?uncap_first}:delete")
-	public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
+	public Result<Boolean> deleteBatch(@ApiParam(name = "ids", value = "唯一性ID") @PathVariable String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))) {
 		    return Result.ok(true, "${tableInfo.tableComment}-批量删除成功!");
 		}
