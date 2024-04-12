@@ -9,7 +9,8 @@
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate" v-auth="'sys:${entityName?uncap_first}:insert'">新增</a-button>
-        <a-button type="error" @click="handleExport" v-auth="'sys:${entityName?uncap_first}:export'">导出</a-button>
+        <a-button type="warning" @click="handleExport" v-auth="'sys:${entityName?uncap_first}:export'">导出</a-button>
+        <a-button type="error" @click="handleBatchDelete" v-auth="'sys:${entityName?uncap_first}:delete'">批量删除</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -42,17 +43,27 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
-  import { delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
+  import { deleteBatch${entityName}, delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
   import { useModal } from "/@/components/general/Modal";
   import ${entityName}Modal from "./${entityName}Modal.vue";
   import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
   import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
+  import { TableProps } from "ant-design-vue";
+  import { ref } from "vue";
+  import { useMessage } from "/@/hooks/web/UseMessage";
 
   defineOptions({ name: "${entityName}Management" });
   const [registerModal, { openModal }] = useModal();
+  const selectedRowKeys = ref<string[]>([]);
+  const rowSelection: TableProps["rowSelection"] = {
+    onChange: (rowKeys: string[]) => {
+      selectedRowKeys.value = rowKeys;
+    }
+  };
   const [registerTable, { reload, getForm }] = useTable({
     title: "${tableInfo.tableComment}列表",
     api: get${entityName}List,
+    rowKey: "id",
     columns,
     formConfig: {
       name: "search_form_item",
@@ -64,13 +75,14 @@
     showTableSetting: true,
     bordered: true,
     showIndexColumn: false,
+    rowSelection: rowSelection,
     actionColumn: {
       width: 80,
       title: "操作",
       dataIndex: "action"
     }
   });
-
+  const { createMessage } = useMessage();
   /**
    * 新建
    */
@@ -107,6 +119,20 @@
       delete${entityName}(${entityName?uncap_first}.id).then(() => {
         handleSuccess();
       });
+    }
+  }
+
+  /**
+   * 批量删除
+   * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
+   */
+  function handleBatchDelete() {
+    if (selectedRowKeys.value.length > 0) {
+      deleteBatch${entityName}(selectedRowKeys.value.join(",")).then(() => {
+        handleSuccess();
+      });
+    } else {
+      createMessage.warning("请勾选要删除的数据");
     }
   }
 
