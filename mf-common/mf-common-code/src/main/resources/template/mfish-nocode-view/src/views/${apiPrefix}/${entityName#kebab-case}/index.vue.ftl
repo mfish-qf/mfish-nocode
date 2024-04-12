@@ -43,12 +43,14 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
-  import { delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
+  import { deleteBatch${entityName}, delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
   import { useModal } from "/@/components/general/Modal";
   import ${entityName}Modal from "./${entityName}Modal.vue";
   import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
   import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
   import { TableProps } from "ant-design-vue";
+  import { ref } from "vue";
+  import { useMessage } from "/@/hooks/web/UseMessage";
 
   defineOptions({ name: "${entityName}Management" });
   const [registerModal, { openModal }] = useModal();
@@ -126,7 +128,7 @@
    */
   function handleBatchDelete() {
     if (selectedRowKeys.value.length > 0) {
-      deleteBatch${entityName}(${entityName?uncap_first}.id)(selectedRowKeys.value.join(",")).then(() => {
+      deleteBatch${entityName}(selectedRowKeys.value.join(",")).then(() => {
         handleSuccess();
       });
     } else {
