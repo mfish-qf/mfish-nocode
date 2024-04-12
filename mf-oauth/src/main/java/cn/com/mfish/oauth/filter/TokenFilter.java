@@ -6,8 +6,8 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
-import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ public class TokenFilter implements Filter {
         }
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setContentType(ContentType.APPLICATION_JSON.toString());
-        response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().println(result);
     }
 
