@@ -5,9 +5,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 上传存储操作
- *
- * @param <T>
+ * @description: 上传存储操作
+ * @author: mfish
+ * @date: 2023/12/18
  */
 @Repository
 public interface UploadDAO<T> {
