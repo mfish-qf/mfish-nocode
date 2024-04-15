@@ -1,7 +1,6 @@
 package cn.com.mfish.oauth.cache.temp;
 
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
-import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
