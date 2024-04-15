@@ -21,16 +21,16 @@ public class WebTokenValidator extends AbstractTokenValidator<RedisAccessToken> 
     }
 
     public Result<RedisAccessToken> validate(ServerHttpRequest request) {
-        return validateT(request, null);
+        return validateT(request);
     }
 
     public Result<RedisAccessToken> validate(HttpServletRequest request) {
-        return validateT(request, null);
+        return validateT(request);
     }
 
     @Override
     public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
-        return validateT(request, result);
+        return validateT(request);
     }
 
 }

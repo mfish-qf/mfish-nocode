@@ -24,7 +24,7 @@ public class GrantTypeExistValidator extends AbstractClientValidator {
         if (StringUtils.isEmpty(grantType)) {
             return result1.setSuccess(false).setMsg("错误:grant_type为空");
         }
-        if (result1.getData().getGrantTypes().indexOf(grantType) < 0) {
+        if (!result1.getData().getGrantTypes().contains(grantType)) {
             return result1.setSuccess(false).setMsg("错误:该客户端不支持" + grantType + "请求方式！");
         }
         return result1;

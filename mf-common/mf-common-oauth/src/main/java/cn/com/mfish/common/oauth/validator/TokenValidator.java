@@ -22,11 +22,8 @@ public class TokenValidator {
 
     public <R> Result<?> validator(R request) {
         String accessToken = AuthInfoUtils.getAccessToken(request);
-        if (StringUtils.isEmpty(accessToken)) {
-            return Result.fail("错误:令牌token不允许为空");
-        }
         Result<?> result;
-        if (accessToken.startsWith(SerConstant.WX_PREFIX)) {
+        if (!StringUtils.isEmpty(accessToken) && accessToken.startsWith(SerConstant.WX_PREFIX)) {
             result = weChatTokenValidator.validate(accessToken);
         } else {
             result = webTokenValidator.validate(accessToken);
