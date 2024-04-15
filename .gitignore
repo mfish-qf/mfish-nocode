@@ -45,6 +45,7 @@
 /mf-common/mf-common-captcha/target/
 /mf-start/target/
 /mf-common/mf-common-code/target/
+/tomcat/
 /mf-start/mf-start-web/target/
 /mf-start/mf-start-openai/target/
 # 忽略 .iml 文件
