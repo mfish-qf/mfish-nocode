@@ -2,6 +2,7 @@ package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.http.WebRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,10 @@ public class AuthInfoUtils {
      */
     public static String getCurrentUserId() {
         String userId = getAttr(RPCConstants.REQ_USER_ID);
-        return StringUtils.isEmpty(userId) ? null : userId;
+        if (StringUtils.isEmpty(userId)) {
+            throw new OAuthValidateException("错误：未获取到当前用户id");
+        }
+        return userId;
     }
 
     /**
@@ -86,7 +90,10 @@ public class AuthInfoUtils {
      */
     public static String getCurrentAccount() {
         String account = getAttr(RPCConstants.REQ_ACCOUNT);
-        return StringUtils.isEmpty(account) ? null : account;
+        if (StringUtils.isEmpty(account)) {
+            throw new OAuthValidateException("错误：未获取到当前账号");
+        }
+        return account;
     }
 
     /**
@@ -96,13 +103,17 @@ public class AuthInfoUtils {
      */
     public static String getCurrentTenantId() {
         String tenantId = getAttr(RPCConstants.REQ_TENANT_ID);
-        return StringUtils.isEmpty(tenantId) ? null : tenantId;
+        if (StringUtils.isEmpty(tenantId)) {
+            throw new OAuthValidateException("错误：未获取到租户信息");
+        }
+        return tenantId;
     }
 
     /**
      * 获取属性 先到header中查找，找不到再到attribute中查找
      * 微服务架构用户属性放在header中传递
      * 单实例架构用户属性放在attribute中传递
+     *
      * @param attr
      * @return
      */
