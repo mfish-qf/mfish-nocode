@@ -89,11 +89,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentAccount() {
-        String account = getAttr(RPCConstants.REQ_ACCOUNT);
-        if (StringUtils.isEmpty(account)) {
-            throw new OAuthValidateException("错误：未获取到当前账号");
-        }
-        return account;
+        return getAttr(RPCConstants.REQ_ACCOUNT);
     }
 
     /**
