@@ -43,7 +43,7 @@ public class Code2TokenValidator extends MultipleValidator {
      * 校验code换token两次传入的clientId是否一致
      */
     @Component
-    public class ClientIdEqualValidator extends AbstractCodeValidator {
+    public static class ClientIdEqualValidator extends AbstractCodeValidator {
         @Override
         public Result<AuthorizationCode> validate(HttpServletRequest request, Result<AuthorizationCode> result) {
             Result<AuthorizationCode> result1 = getAuthCode(request, result);
@@ -62,7 +62,7 @@ public class Code2TokenValidator extends MultipleValidator {
      * 校验code换token两次传入的uri是否一致
      */
     @Component
-    public class UriEqualValidator extends AbstractCodeValidator {
+    public static class UriEqualValidator extends AbstractCodeValidator {
         @Override
         public Result<AuthorizationCode> validate(HttpServletRequest request, Result<AuthorizationCode> result) {
             Result<AuthorizationCode> result1 = getAuthCode(request, result);
