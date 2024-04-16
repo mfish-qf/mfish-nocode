@@ -6,6 +6,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.req.ReqSysLog;
 import cn.com.mfish.common.log.service.SysLogService;
@@ -68,11 +69,9 @@ public class SysLogController {
      */
     @ApiOperation(value = "系统日志-添加", notes = "系统日志-添加")
     @PostMapping
+    @InnerUser
     public Result<SysLog> add(@RequestBody SysLog sysLog) {
-        if (sysLogService.save(sysLog)) {
-            return Result.ok(sysLog, "系统日志-添加成功!");
-        }
-        return Result.fail(sysLog, "错误:系统日志-添加失败!");
+        return sysLogService.insertLog(sysLog);
     }
 
     /**

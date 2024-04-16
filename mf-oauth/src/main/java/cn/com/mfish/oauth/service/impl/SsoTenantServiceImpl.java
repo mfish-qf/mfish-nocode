@@ -14,7 +14,7 @@ import cn.com.mfish.oauth.cache.temp.UserTenantTempCache;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.oauth.service.SsoOrgService;
+import cn.com.mfish.common.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoTenantService;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

@@ -16,7 +16,6 @@ import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
-import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.oauth.service.TokenService;
 import cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl;
 import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
@@ -39,18 +38,24 @@ public class OauthUtils {
 
     }
 
+    private static RemoteUserService getRemoteUserService() {
+        RemoteUserService remoteUserService;
+        //单体服务通过name获取RPC的覆盖服务
+        if (ServiceConstants.isBoot(Utils.getServiceType())) {
+            remoteUserService = SpringBeanFactory.getBean(StringUtils.firstLowerCase(RemoteUserService.class.getSimpleName()));
+        } else {
+            remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
+        }
+        return remoteUserService;
+    }
+
     /**
      * 获取用户信息
      *
      * @return
      */
     public static UserInfo getUser() {
-        if (ServiceConstants.isBoot(Utils.getServiceType())) {
-            SsoUserService userService = SpringBeanFactory.getBean(SsoUserService.class);
-            return userService.getUserById(AuthInfoUtils.getCurrentUserId());
-        }
-        RemoteUserService remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
-        Result<UserInfo> result = remoteUserService.getUserById(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
+        Result<UserInfo> result = getRemoteUserService().getUserById(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
         if (result == null || !result.isSuccess()) {
             return null;
         }
@@ -73,12 +78,7 @@ public class OauthUtils {
      * @return
      */
     public static List<UserRole> getRoles() {
-        if (ServiceConstants.isBoot(Utils.getServiceType())) {
-            SsoUserService userService = SpringBeanFactory.getBean(SsoUserService.class);
-            return userService.getUserRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
-        }
-        RemoteUserService remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
-        Result<List<UserRole>> result = remoteUserService.getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
+        Result<List<UserRole>> result = getRemoteUserService().getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
         if (result == null || !result.isSuccess()) {
             return new ArrayList<>();
         }
@@ -110,12 +110,7 @@ public class OauthUtils {
      * @return
      */
     public static Set<String> getPermission() {
-        if (ServiceConstants.isBoot(Utils.getServiceType())) {
-            SsoUserService userService = SpringBeanFactory.getBean(SsoUserService.class);
-            return userService.getUserPermissions(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
-        }
-        RemoteUserService remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
-        Result<Set<String>> result = remoteUserService.getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
+        Result<Set<String>> result = getRemoteUserService().getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
         if (result == null || !result.isSuccess()) {
             return null;
         }
@@ -128,12 +123,7 @@ public class OauthUtils {
      * @return
      */
     public static List<TenantVo> getTenants() {
-        if (ServiceConstants.isBoot(Utils.getServiceType())) {
-            SsoUserService userService = SpringBeanFactory.getBean(SsoUserService.class);
-            return userService.getUserTenants(AuthInfoUtils.getCurrentUserId());
-        }
-        RemoteUserService remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
-        Result<List<TenantVo>> result = remoteUserService.getTenants(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
+        Result<List<TenantVo>> result = getRemoteUserService().getTenants(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
         if (result == null || !result.isSuccess()) {
             return null;
         }
@@ -222,7 +212,7 @@ public class OauthUtils {
      */
     public static Object getToken() {
         String token = AuthInfoUtils.getAccessToken();
-        if(StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(token)) {
             return null;
         }
         return getToken(getTokenService(token), token);

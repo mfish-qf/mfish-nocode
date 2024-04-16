@@ -8,7 +8,7 @@ import cn.com.mfish.common.file.handler.StorageHandler;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
-import cn.com.mfish.storage.service.StorageService;
+import cn.com.mfish.common.file.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;

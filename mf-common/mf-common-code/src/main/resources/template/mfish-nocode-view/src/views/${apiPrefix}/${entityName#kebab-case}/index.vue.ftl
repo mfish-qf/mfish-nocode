@@ -9,8 +9,8 @@
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate" v-auth="'sys:${entityName?uncap_first}:insert'">新增</a-button>
-        <a-button color="warning" @click="handleExport" v-auth="'sys:${entityName?uncap_first}:export'">导出</a-button>
-        <a-button color="error" @click="handleBatchDelete" v-auth="'sys:${entityName?uncap_first}:delete'">批量删除</a-button>
+        <a-button type="warning" @click="handleExport" v-auth="'sys:${entityName?uncap_first}:export'">导出</a-button>
+        <a-button type="error" @click="handleBatchDelete" v-auth="'sys:${entityName?uncap_first}:delete'">批量删除</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">

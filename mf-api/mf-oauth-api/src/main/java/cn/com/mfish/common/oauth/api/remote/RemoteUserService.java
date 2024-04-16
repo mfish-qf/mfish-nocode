@@ -4,10 +4,12 @@ import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.fallback.RemoteUserFallback;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +34,7 @@ public interface RemoteUserService {
      * @return
      */
     @GetMapping("/user/info")
-    Result<UserInfo> getUserInfo(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
+    Result<UserInfoVo> getUserInfo(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
 
     @GetMapping("/user/{id}")
     Result<UserInfo> getUserById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
@@ -67,4 +69,13 @@ public interface RemoteUserService {
      */
     @GetMapping("/user/tenants")
     Result<List<TenantVo>> getTenants(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId);
+
+    /**
+     * 获取用户组织
+     * @param userId
+     * @param direction
+     * @return
+     */
+    @GetMapping("/user/orgs/{userId}")
+    Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam("direction") String direction);
 }

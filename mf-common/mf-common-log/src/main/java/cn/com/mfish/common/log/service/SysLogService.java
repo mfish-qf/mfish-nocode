@@ -1,5 +1,6 @@
 package cn.com.mfish.common.log.service;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,5 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version: V1.2.0
  */
 public interface SysLogService extends IService<SysLog> {
-
+    Result<SysLog> insertLog(SysLog sysLog);
 }

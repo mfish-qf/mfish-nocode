@@ -18,5 +18,5 @@ import java.util.List;
 @FeignClient(contextId = "remoteDictService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteDictFallback.class)
 public interface RemoteDictService {
     @GetMapping("/dictItem/{dictCode}")
-    Result<List<DictItem>> queryList(@PathVariable("dictCode") String dictCode);
+    Result<List<DictItem>> queryByCode(@PathVariable("dictCode") String dictCode);
 }

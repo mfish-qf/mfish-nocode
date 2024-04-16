@@ -1,7 +1,10 @@
-package cn.com.mfish.sys.service;
+package cn.com.mfish.common.dblink.service;
 
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.DbConnect;
+import cn.com.mfish.sys.api.req.ReqDbConnect;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version: V1.2.0
  */
 public interface DbConnectService extends IService<DbConnect> {
+    Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage);
     Result<DbConnect> insertConnect(DbConnect dbConnect);
     Result<DbConnect> updateConnect(DbConnect dbConnect);
     Result<Boolean> testConnect(DbConnect dbConnect);

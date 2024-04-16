@@ -50,7 +50,7 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
      * @param <T>
      * @return
      */
-    public <T> T getBean(String name, Class<T> clazz) {
+    public static <T> T getBean(String name, Class<T> clazz) {
         return beanFactory.getBean(name, clazz);
     }
 

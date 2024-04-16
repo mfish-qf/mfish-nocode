@@ -2,17 +2,17 @@ package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.sys.req.ReqDictItem;
+import cn.com.mfish.common.sys.service.DictItemService;
+import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.cache.DictCache;
 import cn.com.mfish.sys.entity.Dict;
-import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.mapper.DictMapper;
-import cn.com.mfish.sys.req.ReqDictItem;
-import cn.com.mfish.sys.service.DictItemService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -58,12 +58,8 @@ public class DictItemController {
 
     @ApiOperation("根据字典编码获取字典项(值根据类型设置进行转换)")
     @GetMapping("/{dictCode}")
-    public Result<List<DictItem>> queryList(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
-        List<DictItem> list = dictCache.getFromCacheAndDB(dictCode);
-        if (list == null || list.isEmpty()) {
-            return Result.fail("错误:未获取到字典信息");
-        }
-        return Result.ok(list, "字典项-查询成功!");
+    public Result<List<DictItem>> queryByCode(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
+        return dictItemService.queryByCode(dictCode);
     }
 
 

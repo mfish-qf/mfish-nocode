@@ -1,8 +1,10 @@
 package cn.com.mfish.common.dblink.service;
 
 import cn.com.mfish.common.core.web.ReqPage;
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.datatable.MetaHeaderDataTable;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 
@@ -41,6 +43,14 @@ public interface TableService {
      */
     List<TableInfo> getTableList(String connectId, String tableName, ReqPage reqPage);
 
+    /**
+     * 获取带头信息数据
+     * @param connectId
+     * @param tableName
+     * @param reqPage
+     * @return
+     */
+    Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableName, ReqPage reqPage);
     /**
      * 获取数据
      *

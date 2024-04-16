@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
+import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.test.entity.TestParam;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class TestController {
     RemoteUserService remoteUserService;
 
     @GetMapping("/user")
-    public Result<UserInfo> getUserInfo(HttpServletRequest request) {
+    public Result<UserInfoVo> getUserInfo(HttpServletRequest request) {
         String token = AuthInfoUtils.getAccessToken(request);
         return remoteUserService.getUserInfo(RPCConstants.INNER, token);
     }
