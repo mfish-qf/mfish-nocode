@@ -22,11 +22,11 @@ public class WeChatTokenValidator extends AbstractTokenValidator<WeChatToken> {
     }
 
     public Result<WeChatToken> validate(HttpServletRequest request) {
-        return validateT(request, null);
+        return validateT(request);
     }
 
     @Override
     public Result<WeChatToken> validate(HttpServletRequest request, Result<WeChatToken> result) {
-        return validateT(request, result);
+        return validateT(request);
     }
 }

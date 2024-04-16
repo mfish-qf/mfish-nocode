@@ -1,0 +1,13 @@
+services:
+  mfish-nocode-service:
+    build: mf-start/mf-start-boot
+    container_name: mfish-nocode-service
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 11116:8888
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+      - /home/srv/docker_volumes/mfish-nocode-service/code:/app/code
+      - /home/srv/docker_volumes/mfish-nocode-service/storage:/app/storage

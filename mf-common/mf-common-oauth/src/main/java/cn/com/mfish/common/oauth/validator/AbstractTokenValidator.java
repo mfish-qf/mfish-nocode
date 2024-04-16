@@ -21,16 +21,13 @@ public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
      * 校验不同类型request中包含的token信息是否正确
      *
      * @param request
-     * @param result  如果result已存在结果不再校验
      * @param <R>
      * @return
      */
-    public <R> Result<T> validateT(R request, Result<T> result) {
-        if (result == null || result.getData() == null) {
-            String accessToken = AuthInfoUtils.getAccessToken(request);
-            return validate(accessToken);
-        }
-        return result;
+    public <R> Result<T> validateT(R request) {
+        String accessToken = AuthInfoUtils.getAccessToken(request);
+        return validate(accessToken);
+
     }
 
     /**
@@ -40,22 +37,14 @@ public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
      * @return
      */
     public Result<T> validate(String accessToken) {
-        return validate(accessToken, null);
-    }
-
-    public Result<T> validate(String accessToken, Result<T> result) {
         T token;
-        if (result == null || result.getData() == null) {
-            result = new Result<>();
-            if (StringUtils.isEmpty(accessToken)) {
-                return result.setSuccess(false).setMsg("错误:令牌token不允许为空");
-            }
-            token = (T) tokenService.getToken(accessToken);
-            if (token == null) {
-                return result.setSuccess(false).setMsg("错误:token不存在或已过期");
-            }
-            return result.setData(token);
+        if (StringUtils.isEmpty(accessToken)) {
+            Result.fail("错误:令牌token不允许为空");
         }
-        return result;
+        token = (T) tokenService.getToken(accessToken);
+        if (token == null) {
+            return Result.fail("错误:token不存在或已过期");
+        }
+        return Result.ok(token);
     }
 }
