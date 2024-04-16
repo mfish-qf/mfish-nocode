@@ -1,0 +1,76 @@
+services:
+  gateway:
+    build: mf-start/mf-start-gateway
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 11116:8888
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+
+  oauth:
+    build: mf-start/mf-start-oauth
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9218:9218
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+
+  sys:
+    build: mf-start/mf-start-sys
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9221:9221
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+      - /home/srv/docker_volumes/mfish-nocode-service/code:/app/code
+
+
+
+  storage:
+    build: mf-start/mf-start-storage
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9222:9222
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+      - /home/srv/docker_volumes/mfish-nocode-service/storage:/app/storage
+
+  scheduler:
+    build: mf-start/mf-start-scheduler
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9224:9224
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+
+  openai:
+    build: mf-start/mf-start-openai
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9226:9226
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+
+  web:
+    build: mf-start/mf-start-web
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9225:9225
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs
+
+  monitor:
+    build: mf-monitor
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 11121:9223
+    volumes:
+      - /home/srv/docker_volumes/mfish-nocode-service/logs:/app/logs

@@ -1,0 +1,17 @@
+stages:
+    - build
+
+.standard-rules:
+    rules:
+        - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+        - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+build-job:
+    stage: build
+    script:
+        - mvn clean package
+        - docker compose build
+        - docker compose up -d
+    rules:
+        - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+        - when: manual
