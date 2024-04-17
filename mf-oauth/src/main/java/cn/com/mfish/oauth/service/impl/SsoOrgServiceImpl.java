@@ -11,11 +11,11 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
+import cn.com.mfish.common.oauth.req.ReqOrgUser;
+import cn.com.mfish.common.oauth.req.ReqSsoOrg;
+import cn.com.mfish.common.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.mapper.SsoOrgMapper;
-import cn.com.mfish.oauth.req.ReqOrgUser;
-import cn.com.mfish.oauth.req.ReqSsoOrg;
-import cn.com.mfish.oauth.service.SsoOrgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -46,7 +46,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     @Transactional
     public Result<SsoOrg> insertOrg(SsoOrg ssoOrg) {
         verifyOrg(ssoOrg);
-        if(StringUtils.isEmpty(ssoOrg.getTenantId())){
+        if (StringUtils.isEmpty(ssoOrg.getTenantId())) {
             ssoOrg.setTenantId(null);
         }
         if (baseMapper.insertOrg(ssoOrg) == 1) {
@@ -201,6 +201,15 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             throw new MyRuntimeException("错误:组织ID不允许为空");
         }
         return baseMapper.isTenantOrg(orgId, tenantId) > 0;
+    }
+
+    @Override
+    public Result<List<SsoOrg>> queryByIds(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            return Result.fail(null, "错误:id不允许为空");
+        }
+        String[] idList = ids.split(",");
+        return Result.ok(baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, idList)), "组织结构表-查询成功!");
     }
 
     @Override

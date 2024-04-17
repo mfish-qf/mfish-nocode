@@ -28,5 +28,9 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-code</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-sys</artifactId>
+        </dependency>
     </dependencies>
 </project>

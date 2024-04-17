@@ -100,19 +100,14 @@ public class FreemarkerUtils {
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
-            TableInfo tableInfo;
-            if (ServiceConstants.isBoot(Utils.getServiceType())) {
-                tableInfo = SpringBeanFactory.getBean(TableService.class).getTableInfo(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
-            } else {
-                Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
-                if (!result.isSuccess()) {
-                    throw new MyRuntimeException(result.getMsg());
-                }
-                if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
-                    throw new MyRuntimeException("错误:未获取到表信息");
-                }
-                tableInfo = result.getData().getList().get(0);
+            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+            if (!result.isSuccess()) {
+                throw new MyRuntimeException(result.getMsg());
             }
+            if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
+                throw new MyRuntimeException("错误:未获取到表信息");
+            }
+            TableInfo tableInfo = result.getData().getList().get(0);
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }

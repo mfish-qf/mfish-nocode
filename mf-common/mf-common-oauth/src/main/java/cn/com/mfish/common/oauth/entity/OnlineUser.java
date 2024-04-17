@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.entity;
+package cn.com.mfish.common.oauth.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;

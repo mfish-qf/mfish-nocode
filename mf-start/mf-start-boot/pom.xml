@@ -51,6 +51,11 @@
             <artifactId>mf-openai</artifactId>
             <version>${mfish.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-api</artifactId>
+            <version>${mfish.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

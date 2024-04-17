@@ -360,6 +360,16 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-sys</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-bi</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>

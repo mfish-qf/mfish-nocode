@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.service;
+package cn.com.mfish.common.oauth.service;
 
 import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.PageResult;
@@ -7,8 +7,8 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.oauth.req.ReqOrgUser;
-import cn.com.mfish.oauth.req.ReqSsoOrg;
+import cn.com.mfish.common.oauth.req.ReqOrgUser;
+import cn.com.mfish.common.oauth.req.ReqSsoOrg;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -37,6 +37,8 @@ public interface SsoOrgService extends IService<SsoOrg> {
     List<SsoOrg> queryOrgById(String id, TreeDirection direction);
 
     List<UserRole> getOrgRoles(String... orgIds);
+
+    Result<List<SsoOrg>> queryByIds(String ids);
 
     boolean isTenantOrg(String orgId, String tenantId);
 

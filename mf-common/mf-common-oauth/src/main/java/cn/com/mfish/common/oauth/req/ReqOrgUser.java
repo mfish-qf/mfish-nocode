@@ -1,7 +1,8 @@
-package cn.com.mfish.oauth.req;
+package cn.com.mfish.common.oauth.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @description: 组织用户请求
@@ -9,6 +10,7 @@ import lombok.Data;
  * @date: 2024/4/2
  */
 @Data
+@Accessors(chain = true)
 public class ReqOrgUser {
     @ApiModelProperty("账号")
     private String account;

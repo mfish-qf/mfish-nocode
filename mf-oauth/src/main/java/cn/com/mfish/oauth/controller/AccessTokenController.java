@@ -8,6 +8,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.service.LoginService;
@@ -47,6 +48,8 @@ public class AccessTokenController {
     Refresh2TokenValidator refresh2TokenValidator;
     @Resource
     OAuth2Service oAuth2Service;
+    @Resource
+    SsoUserService ssoUserService;
     @Resource
     LoginService loginService;
     @Resource
@@ -89,7 +92,7 @@ public class AccessTokenController {
                 throw new OAuthValidateException(result.getMsg());
         }
         //缓存用户角色信息
-        CompletableFuture.supplyAsync(() -> oAuth2Service.getUserInfoAndRoles(token.getUserId(), token.getTenantId()));
+        CompletableFuture.supplyAsync(() -> ssoUserService.getUserInfoAndRoles(token.getUserId(), token.getTenantId()));
         userTokenCache.addUserTokenCache(DeviceType.Web
                 , SecurityUtils.getSubject().getSession().getId().toString()
                 , token.getUserId(), token.getAccessToken());

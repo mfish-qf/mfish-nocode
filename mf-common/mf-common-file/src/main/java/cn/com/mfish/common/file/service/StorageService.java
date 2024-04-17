@@ -1,5 +1,6 @@
-package cn.com.mfish.storage.service;
+package cn.com.mfish.common.file.service;
 
+import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -11,4 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface StorageService extends IService<StorageInfo> {
 
+    Result<StorageInfo> queryByKey(String fileKey);
+
+    Result<Boolean> logicDelete(String id);
 }

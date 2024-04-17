@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
+import cn.com.mfish.common.dataset.datatable.MetaHeaderDataTable;
 import cn.com.mfish.common.dataset.enums.TargetType;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
@@ -15,7 +16,7 @@ import cn.com.mfish.common.dblink.query.QueryHandler;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
-import cn.com.mfish.sys.service.DbConnectService;
+import cn.com.mfish.common.dblink.service.DbConnectService;
 import cn.com.mfish.common.dblink.service.TableService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -56,6 +57,12 @@ public class TableServiceImpl implements TableService {
     @Override
     public List<TableInfo> getTableList(String connectId, String tableName, ReqPage reqPage) {
         return queryT(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableName), reqPage);
+    }
+
+    @Override
+    public Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableName, ReqPage reqPage) {
+        MetaDataTable table = getDataTable(connectId, tableName, reqPage);
+        return Result.ok(new MetaHeaderDataTable(table), "获取表数据成功");
     }
 
     @Override

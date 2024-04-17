@@ -13,6 +13,7 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.service.LoginService;
@@ -51,7 +52,7 @@ public class WeChatController {
     @Resource
     LoginService loginService;
     @Resource
-    OAuth2Service oAuth2Service;
+    SsoUserService ssoUserService;
     @Resource
     WeChatTokenValidator weChatTokenValidator;
     @Resource
@@ -143,7 +144,7 @@ public class WeChatController {
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());
         }
-        return Result.ok(oAuth2Service.getUserInfo(result.getData().getUserId()));
+        return Result.ok(ssoUserService.getUserInfo(result.getData().getUserId()));
     }
 
     @PostMapping("/login/pwd")

@@ -1,4 +1,4 @@
-package cn.com.mfish.sys.req;
+package cn.com.mfish.common.sys.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
-import cn.com.mfish.common.core.enums.TreeDirection;
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
@@ -16,18 +16,12 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.oauth.entity.SimpleUserInfo;
-import cn.com.mfish.common.oauth.entity.SsoUser;
-import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.entity.*;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
-import cn.com.mfish.oauth.entity.OnlineUser;
 import cn.com.mfish.oauth.req.ReqChangePwd;
-import cn.com.mfish.oauth.service.OAuth2Service;
-import cn.com.mfish.oauth.service.SsoOrgService;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +30,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -51,19 +44,15 @@ import java.util.Set;
 public class SsoUserController {
 
     @Resource
-    OAuth2Service oAuth2Service;
-    @Resource
     UserTokenCache userTokenCache;
     @Resource
     SsoUserService ssoUserService;
-    @Resource
-    SsoOrgService ssoOrgService;
 
     @ApiOperation("获取用户、权限相关信息")
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
     public Result<UserInfoVo> getUserInfo() {
-        return Result.ok(oAuth2Service.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
+        return Result.ok(ssoUserService.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
     }
 
     @ApiOperation("获取用户权限")
@@ -110,22 +99,13 @@ public class SsoUserController {
     }
 
     @ApiOperation("获取用户组织")
-    @GetMapping("/orgs")
+    @GetMapping("/orgs/{userId}")
     @Log(title = "获取用户组织", operateType = OperateType.QUERY)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = String.class),
             @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class)
     })
-    public Result<List<SsoOrg>> getOrgs(String userId, String direction) {
-        if (StringUtils.isEmpty(userId)) {
-            userId = AuthInfoUtils.getCurrentUserId();
-        }
-        SsoUser user = ssoUserService.getUserById(userId);
-        List<SsoOrg> list = new ArrayList<>();
-        for (String orgId : user.getOrgIds()) {
-            list.addAll(ssoOrgService.queryOrgById(orgId, TreeDirection.getDirection(direction)));
-        }
-        return Result.ok(list, "组织结构-查询成功!");
+    public Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam String direction) {
+        return ssoUserService.getOrgs(userId, direction);
     }
 
     @ApiOperation("通过用户ID获取用户")
@@ -175,23 +155,33 @@ public class SsoUserController {
         }
         //session中不存在userId获取token中的userId
         if (StringUtils.isEmpty(userId)) {
-            userId = AuthInfoUtils.getCurrentUserId();
+            try {
+                userId = AuthInfoUtils.getCurrentUserId();
+            } catch (OAuthValidateException e) {
+                log.error(e.getMessage());
+            }
         } else {
             subject.logout();
         }
-        Object token = OauthUtils.getToken();
-        if (StringUtils.isEmpty(userId) || token == null) {
+        if (StringUtils.isEmpty(userId)) {
             String error = "未获取到用户登录状态，无需登出";
             log.error(error);
-            return Result.ok(error);
+            return Result.ok(true, error);
         }
-        String sId = "";
-        if (token instanceof RedisAccessToken) {
-            sId = ((RedisAccessToken) token).getTokenSessionId();
-        } else if (token instanceof WeChatToken) {
-            sId = ((WeChatToken) token).getOpenid();
+        Object token = OauthUtils.getToken();
+        if (token != null) {
+            String sId = "";
+            if (token instanceof RedisAccessToken) {
+                RedisAccessToken redisAccessToken = (RedisAccessToken) token;
+                sId = redisAccessToken.getTokenSessionId();
+                userId = redisAccessToken.getUserId();
+            } else if (token instanceof WeChatToken) {
+                WeChatToken weChatToken = (WeChatToken) token;
+                sId = weChatToken.getOpenid();
+                userId = weChatToken.getUserId();
+            }
+            userTokenCache.delUserTokenCache(DeviceType.Web, sId, userId);
         }
-        userTokenCache.delUserTokenCache(DeviceType.Web, sId, userId);
         return Result.ok(true, "成功登出");
     }
 
@@ -286,7 +276,7 @@ public class SsoUserController {
     @GetMapping("/online")
     @RequiresPermissions("sys:online:query")
     public Result<PageResult<OnlineUser>> userOnline(ReqPage reqPage) {
-        return Result.ok(oAuth2Service.getOnlineUser(reqPage), "获取在线用户成功");
+        return Result.ok(ssoUserService.getOnlineUser(reqPage), "获取在线用户成功");
     }
 
     @ApiOperation("踢出指定用户")
@@ -294,7 +284,7 @@ public class SsoUserController {
     @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
     @RequiresPermissions("sys:online:revoke")
     public Result<Boolean> revokeUser(@ApiParam(name = "sid", value = "指定用户的sessionId") @PathVariable String sid) {
-        userTokenCache.delDeviceTokenCache(oAuth2Service.decryptSid(sid));
+        userTokenCache.delDeviceTokenCache(ssoUserService.decryptSid(sid));
         return Result.ok(true, "成功登出");
     }
 

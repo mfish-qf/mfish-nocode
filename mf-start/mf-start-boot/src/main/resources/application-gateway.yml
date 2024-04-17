@@ -12,3 +12,5 @@ gateway:
       packageName: cn.com.mfish.web
     - path: /ai
       packageName: cn.com.mfish.openai
+    - path: /nocode
+      packageName: cn.com.mfish.nocode

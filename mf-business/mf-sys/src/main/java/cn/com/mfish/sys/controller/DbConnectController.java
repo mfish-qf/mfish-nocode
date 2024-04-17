@@ -16,10 +16,8 @@ import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.entity.DBTreeNode;
-import cn.com.mfish.sys.service.DbConnectService;
+import cn.com.mfish.common.dblink.service.DbConnectService;
 import cn.com.mfish.common.dblink.service.TableService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -55,18 +53,7 @@ public class DbConnectController {
     @GetMapping
     @RequiresPermissions("sys:database:query")
     public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
-        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        List<DbConnect> list = dbConnectService.list(new LambdaQueryWrapper<DbConnect>()
-                .like(reqDbConnect.getDbTitle() != null, DbConnect::getDbTitle, reqDbConnect.getDbTitle())
-                .eq(reqDbConnect.getDbType() != null, DbConnect::getDbType, reqDbConnect.getDbType())
-                .like(reqDbConnect.getDbName() != null, DbConnect::getDbName, reqDbConnect.getDbName())
-                .like(reqDbConnect.getHost() != null, DbConnect::getHost, reqDbConnect.getHost())
-                .orderByDesc(DbConnect::getCreateTime));
-        //密码不返回查询界面
-        for (DbConnect connect : list) {
-            connect.setPassword(null);
-        }
-        return Result.ok(new PageResult<>(list), "数据库连接-查询成功!");
+        return dbConnectService.queryPageList(reqDbConnect, reqPage);
     }
 
     @ApiOperation("获取数据库表信息")
@@ -110,7 +97,7 @@ public class DbConnectController {
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", dataTypeClass = String.class)
     })
     public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取表列表成功");
+        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取字段列表成功");
     }
 
     @ApiOperation("获取表数据")
@@ -120,8 +107,7 @@ public class DbConnectController {
             @ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", dataTypeClass = String.class)
     })
     public Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        MetaDataTable table = tableService.getDataTable(connectId, tableName, reqPage);
-        return Result.ok(new MetaHeaderDataTable(table), "获取表数据成功");
+        return tableService.getHeaderDataTable(connectId, tableName, reqPage);
     }
 
     @ApiOperation("获取表列头信息")
