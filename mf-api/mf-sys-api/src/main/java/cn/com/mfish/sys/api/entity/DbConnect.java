@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * @description: 数据库连接
  * @author: mfish
  * @date: 2023-03-13
- * @version: V1.2.0
+ * @version: V1.2.1
  */
 @Data
 @TableName("sys_db_connect")
