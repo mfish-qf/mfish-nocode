@@ -18,7 +18,7 @@ import java.util.Date;
  * @description: 任务日志
  * @author: mfish
  * @date: 2023-02-14
- * @version: V1.2.0
+ * @version: V1.2.1
  */
 @Data
 @TableName("qrtz_job_log")

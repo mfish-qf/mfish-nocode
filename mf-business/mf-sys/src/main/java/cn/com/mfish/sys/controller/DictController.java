@@ -27,7 +27,7 @@ import java.util.List;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.2.0
+ * @Version: V1.2.1
  */
 @Slf4j
 @Api(tags = "字典")
