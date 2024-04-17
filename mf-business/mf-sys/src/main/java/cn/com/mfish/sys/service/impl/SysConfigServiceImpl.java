@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V1.2.0
+ * @version: V1.2.1
  */
 @Service
 public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig> implements SysConfigService {

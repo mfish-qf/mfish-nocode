@@ -29,7 +29,7 @@ import java.util.List;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.2.0
+ * @Version: V1.2.1
  */
 @Slf4j
 @Api(tags = "组织结构表")

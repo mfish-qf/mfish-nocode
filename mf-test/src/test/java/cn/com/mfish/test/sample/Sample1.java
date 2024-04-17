@@ -54,7 +54,7 @@ public class Sample1 {
 
     @Test
     public void testDict() {
-        Result<List<DictItem>> result = remoteDictService.queryList("sso_grant_type");
+        Result<List<DictItem>> result = remoteDictService.queryByCode("sso_grant_type");
         System.out.println(result.getData());
     }
 

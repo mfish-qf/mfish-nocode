@@ -13,7 +13,7 @@ import java.util.List;
  * @description: 代码构建
  * @author: mfish
  * @date: 2023-04-11
- * @version: V1.2.0
+ * @version: V1.2.1
  */
 public interface CodeBuildService extends IService<CodeBuild> {
     Result<CodeBuild> insertCodeBuild(CodeBuild codeBuild);
