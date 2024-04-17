@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
+import cn.com.mfish.oauth.oltu.common.message.types.GrantType;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

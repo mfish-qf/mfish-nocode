@@ -2,8 +2,8 @@ package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
-import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
+import cn.com.mfish.oauth.oltu.as.request.OAuthAuthzRequest;
+import cn.com.mfish.oauth.oltu.as.request.OAuthTokenRequest;
 
 /**
  * @author: mfish

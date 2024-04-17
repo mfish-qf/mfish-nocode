@@ -14,7 +14,7 @@ import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.common.OAuth;
+import cn.com.mfish.oauth.oltu.common.OAuth;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
