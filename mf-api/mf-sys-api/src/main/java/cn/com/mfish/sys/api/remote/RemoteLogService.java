@@ -18,5 +18,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(contextId = "remoteLogService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteLogFallback.class)
 public interface RemoteLogService {
     @PostMapping("/sysLog")
-    Result<SysLog> addLog(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody SysLog sysLog);
+    Result<SysLog> insertLog(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody SysLog sysLog);
 }

@@ -1,7 +1,8 @@
-package cn.com.mfish.sys.service;
+package cn.com.mfish.common.sys.service;
 
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.sys.req.ReqDictItem;
 import cn.com.mfish.sys.api.entity.DictItem;
-import cn.com.mfish.sys.req.ReqDictItem;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -28,4 +29,5 @@ public interface DictItemService extends IService<DictItem> {
      */
     boolean deleteDictItemsByCode(String dictCode);
 
+    Result<List<DictItem>> queryByCode(String dictCode);
 }

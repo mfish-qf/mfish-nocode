@@ -1,10 +1,12 @@
 package cn.com.mfish.common.oauth.api.fallback;
 
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
@@ -25,7 +27,7 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
         log.error("用户服务调用失败:" + cause.getMessage());
         return new RemoteUserService() {
             @Override
-            public Result<UserInfo> getUserInfo(String origin, String token) {
+            public Result<UserInfoVo> getUserInfo(String origin, String token) {
                 return Result.fail("错误:获取用户失败" + cause.getMessage());
             }
 
@@ -47,6 +49,11 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
             @Override
             public Result<List<TenantVo>> getTenants(String origin, String userId) {
                 return Result.fail("错误:获取租户失败" + cause.getMessage());
+            }
+
+            @Override
+            public Result<List<SsoOrg>> getOrgs(String userId, String direction) {
+                return Result.fail("错误:获取用户组织失败" + cause.getMessage());
             }
         };
     }

@@ -10,7 +10,7 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.storage.req.ReqSysFile;
-import cn.com.mfish.storage.service.StorageService;
+import cn.com.mfish.common.file.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;

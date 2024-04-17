@@ -12,9 +12,9 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.oauth.req.ReqOrgUser;
-import cn.com.mfish.oauth.req.ReqSsoOrg;
-import cn.com.mfish.oauth.service.SsoOrgService;
+import cn.com.mfish.common.oauth.req.ReqOrgUser;
+import cn.com.mfish.common.oauth.req.ReqSsoOrg;
+import cn.com.mfish.common.oauth.service.SsoOrgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
@@ -131,12 +131,8 @@ public class SsoOrgController {
     @ApiOperation(value = "组织结构表-通过id查询", notes = "组织结构表-通过id查询")
     @GetMapping("/{ids}")
     @RequiresPermissions("sys:org:query")
-    public Result<List<SsoOrg>> queryById(@ApiParam(name = "ids", value = "唯一性ID") @PathVariable("ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            return Result.fail(null, "错误:id不允许为空");
-        }
-        String[] idList = ids.split(",");
-        return Result.ok(ssoOrgService.list(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, idList)), "组织结构表-查询成功!");
+    public Result<List<SsoOrg>> queryByIds(@ApiParam(name = "ids", value = "唯一性ID") @PathVariable("ids") String ids) {
+        return ssoOrgService.queryByIds(ids);
     }
 
     @ApiOperation(value = "组织树-通过固定编码查询", notes = "组织树-通过固定编码查询")

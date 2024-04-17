@@ -97,6 +97,9 @@
     <logger name="cn.com.mfish.storage.mapper" level="debug" additivity="true">
         <appender-ref ref="file_sql"/>
     </logger>
+    <logger name="cn.com.mfish.nocode.mapper" level="debug" additivity="true">
+        <appender-ref ref="file_sql"/>
+    </logger>
     <!--系统操作日志-->
     <root level="${log.level}">
         <appender-ref ref="STDOUT"/>

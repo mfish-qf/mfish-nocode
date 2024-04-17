@@ -1,20 +1,26 @@
 package cn.com.mfish.sys.service.impl;
 
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
 import cn.com.mfish.common.dblink.enums.PoolType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
 import cn.com.mfish.common.dblink.query.QueryHandler;
 import cn.com.mfish.sys.api.entity.DbConnect;
+import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.mapper.DbConnectMapper;
-import cn.com.mfish.sys.service.DbConnectService;
+import cn.com.mfish.common.dblink.service.DbConnectService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @description: 数据库连接
@@ -27,6 +33,22 @@ import java.sql.SQLException;
 public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect> implements DbConnectService {
     @Value("${DBConnect.password.privateKey}")
     private String privateKey;
+
+    @Override
+    public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        List<DbConnect> list = baseMapper.selectList(new LambdaQueryWrapper<DbConnect>()
+                .like(reqDbConnect.getDbTitle() != null, DbConnect::getDbTitle, reqDbConnect.getDbTitle())
+                .eq(reqDbConnect.getDbType() != null, DbConnect::getDbType, reqDbConnect.getDbType())
+                .like(reqDbConnect.getDbName() != null, DbConnect::getDbName, reqDbConnect.getDbName())
+                .like(reqDbConnect.getHost() != null, DbConnect::getHost, reqDbConnect.getHost())
+                .orderByDesc(DbConnect::getCreateTime));
+        //密码不返回查询界面
+        for (DbConnect connect : list) {
+            connect.setPassword(null);
+        }
+        return Result.ok(new PageResult<>(list), "数据库连接-查询成功!");
+    }
 
     @Override
     public Result<DbConnect> insertConnect(DbConnect dbConnect) {

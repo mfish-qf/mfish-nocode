@@ -60,5 +60,9 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-sys-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
+        </dependency>
     </dependencies>
 </project>

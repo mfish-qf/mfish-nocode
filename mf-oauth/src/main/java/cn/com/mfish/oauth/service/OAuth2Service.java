@@ -1,12 +1,7 @@
 package cn.com.mfish.oauth.service;
 
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.oauth.api.entity.UserInfo;
-import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
-import cn.com.mfish.common.core.web.ReqPage;
-import cn.com.mfish.oauth.entity.OnlineUser;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 
@@ -29,23 +24,6 @@ public interface OAuth2Service {
 
     RedisAccessToken refresh2Token(RedisAccessToken token);
 
-    UserInfo getUserInfo(String userId);
 
-    UserInfoVo getUserInfoAndRoles(String userId,String tenantId);
-
-    /**
-     * 获取在线用户
-     *
-     * @return
-     */
-    PageResult<OnlineUser> getOnlineUser(ReqPage reqPage);
-
-    /**
-     * 解密token
-     *
-     * @param sid
-     * @return
-     */
-    String decryptSid(String sid);
 
 }

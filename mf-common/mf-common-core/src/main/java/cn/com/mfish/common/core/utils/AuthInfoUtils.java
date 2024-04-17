@@ -2,6 +2,7 @@ package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.http.WebRequest;
 import lombok.extern.slf4j.Slf4j;

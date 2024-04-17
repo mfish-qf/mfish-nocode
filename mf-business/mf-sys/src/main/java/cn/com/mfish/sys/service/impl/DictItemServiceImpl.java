@@ -1,13 +1,16 @@
 package cn.com.mfish.sys.service.impl;
 
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.sys.req.ReqDictItem;
+import cn.com.mfish.common.sys.service.DictItemService;
 import cn.com.mfish.sys.api.entity.DictItem;
+import cn.com.mfish.sys.cache.DictCache;
 import cn.com.mfish.sys.mapper.DictItemMapper;
-import cn.com.mfish.sys.req.ReqDictItem;
-import cn.com.mfish.sys.service.DictItemService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -18,6 +21,9 @@ import java.util.List;
  */
 @Service
 public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> implements DictItemService {
+
+    @Resource
+    private DictCache dictCache;
 
     @Override
     public List<DictItem> getDictItems(ReqDictItem reqDictItem) {
@@ -37,5 +43,14 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> i
                 .eq(reqDictItem.getStatus() != null, DictItem::getStatus, reqDictItem.getStatus())
                 .eq(reqDictItem.getDictId() != null, DictItem::getDictId, reqDictItem.getDictId())
                 .orderByAsc(DictItem::getDictSort);
+    }
+
+    @Override
+    public Result<List<DictItem>> queryByCode(String dictCode) {
+        List<DictItem> list = dictCache.getFromCacheAndDB(dictCode);
+        if (list == null || list.isEmpty()) {
+            return Result.fail("错误:未获取到字典信息");
+        }
+        return Result.ok(list, "字典项-查询成功!");
     }
 }
