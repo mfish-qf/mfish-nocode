@@ -19,8 +19,15 @@
     <dependencies>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-api</artifactId>
-            <version>${mfish.version}</version>
+            <artifactId>mf-oauth-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-storage-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-sys-api</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
