@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.validator.IBaseValidator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.common.OAuth;
+import cn.com.mfish.oauth.oltu.common.OAuth;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

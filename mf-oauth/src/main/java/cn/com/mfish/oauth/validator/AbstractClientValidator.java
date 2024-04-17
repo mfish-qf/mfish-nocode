@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.validator.IBaseValidator;
 import cn.com.mfish.oauth.cache.temp.ClientTempCache;
 import cn.com.mfish.oauth.entity.OAuthClient;
-import org.apache.oltu.oauth2.common.OAuth;
+import cn.com.mfish.oauth.oltu.common.OAuth;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

@@ -61,15 +61,15 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //单体服务走shiro拦截 微服务网关拦截
         if (ServiceConstants.isBoot(Utils.getServiceType())) {
+            //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
+            Map<String, Filter> filterMap = new HashMap<>();
+            filterMap.put("token", new TokenFilter());
+            shiroFilterFactoryBean.setFilters(filterMap);
             //拦截器
             Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
             // 配置不会被拦截的链接 顺序判断
             // 设置免认证 url （可匿名访问）
             shiroAccessProperties.getAnonUrls().forEach(url -> filterChainDefinitionMap.put(url, "anon"));
-            //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
-            Map<String, Filter> filterMap = new HashMap<>();
-            filterMap.put("token", new TokenFilter());
-            shiroFilterFactoryBean.setFilters(filterMap);
             //过滤链定义从上向下顺序执行，一般将/**放在最为下边
             filterChainDefinitionMap.put("/**", "token");
             shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);

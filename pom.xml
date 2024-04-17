@@ -46,7 +46,6 @@
         <fastjson.version>2.0.45</fastjson.version>
         <zxing.version>3.5.2</zxing.version>
         <commons-collections.version>3.2.2</commons-collections.version>
-        <oauth2.version>1.0.2</oauth2.version>
         <shiro.version>1.13.0</shiro.version>
         <wechat.version>4.6.0</wechat.version>
         <aliyun-oss.version>3.17.4</aliyun-oss.version>
@@ -258,11 +257,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-core</artifactId>
-                <version>${shiro.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
@@ -383,6 +377,7 @@
                 <artifactId>mf-storage-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
     <!-- 私有库暂时停用，代码注销-->
