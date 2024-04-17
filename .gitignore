@@ -50,3 +50,5 @@
 /mf-start/mf-start-openai/target/
 # 忽略 .iml 文件
 *.iml
+/mf-common/mf-common-api/target/
+/mf-common/mf-common-sys/target/
