@@ -1,6 +1,7 @@
 package cn.com.mfish.common.swagger.config;
 
 import cn.com.mfish.common.core.constants.Constants;
+import cn.com.mfish.common.core.utils.StringUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +31,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
      */
     @Bean
     public OpenAPI openAPIBean(SwaggerProperties swaggerProperties) {
-        return new OpenAPI().info(apiInfo(swaggerProperties))
+        OpenAPI api = new OpenAPI().info(apiInfo(swaggerProperties))
                 .externalDocs(new ExternalDocumentation()
                         .description(swaggerProperties.getDescription())
                         .url(swaggerProperties.getTermsOfServiceUrl()))
@@ -37,6 +39,10 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .components(new Components().addSecuritySchemes(Constants.AUTHENTICATION
                         , new SecurityScheme().name(Constants.AUTHENTICATION)
                                 .in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.HTTP).scheme("Bearer")));
+        if(!StringUtils.isEmpty(swaggerProperties.getPrefix())){
+            api.addServersItem(new Server().url(swaggerProperties.getPrefix()));
+        }
+        return api;
     }
 
     /**

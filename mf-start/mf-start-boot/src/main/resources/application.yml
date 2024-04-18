@@ -81,24 +81,6 @@ spring:
           # url:
           # driver-class-name:
       # seata: true    # 开启seata代理，开启后默认每个数据源都代理，如果某个不需要代理可单独关闭
-# feign 配置
-feign:
-  sentinel:
-    enabled: true
-  okhttp:
-    enabled: true
-  httpclient:
-    enabled: false
-  client:
-    config:
-      default:
-        connectTimeout: 10000
-        readTimeout: 10000
-  compression:
-    request:
-      enabled: false
-    response:
-      enabled: false
 # 暴露监控端点
 management:
   endpoints:
