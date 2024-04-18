@@ -6,7 +6,7 @@ import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author: mfish

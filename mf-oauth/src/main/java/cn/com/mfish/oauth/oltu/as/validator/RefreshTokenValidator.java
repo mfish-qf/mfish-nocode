@@ -24,7 +24,7 @@ package cn.com.mfish.oauth.oltu.as.validator;
 
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.validators.AbstractValidator;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Validator that checks for the required fields in an OAuth Token request with the Refresh token grant type.

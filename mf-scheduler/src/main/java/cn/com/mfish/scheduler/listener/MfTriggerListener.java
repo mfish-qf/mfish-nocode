@@ -7,7 +7,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerListener;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @description: 触发器监听

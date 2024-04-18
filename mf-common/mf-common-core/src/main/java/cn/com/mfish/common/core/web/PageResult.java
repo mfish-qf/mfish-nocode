@@ -1,8 +1,7 @@
 package cn.com.mfish.common.core.web;
 
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -16,18 +15,18 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("分页查询结果")
+@Schema(description = "分页查询结果")
 public class PageResult<T> implements Serializable {
 
-    @ApiModelProperty("第几页")
+    @Schema(description = "第几页")
     private int pageNum;
-    @ApiModelProperty("每页条数")
+    @Schema(description = "每页条数")
     private int pageSize;
-    @ApiModelProperty("总页数")
+    @Schema(description = "总页数")
     private int pages;
-    @ApiModelProperty("总条数")
+    @Schema(description = "总条数")
     private long total;
-    @ApiModelProperty("数据结果")
+    @Schema(description = "数据结果")
     private List<T> list;
 
     public PageResult(){

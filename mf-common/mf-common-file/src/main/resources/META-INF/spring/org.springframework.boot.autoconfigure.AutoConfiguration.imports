@@ -1,0 +1,3 @@
+cn.com.mfish.common.file.handler.StorageHandler
+cn.com.mfish.common.file.config.properties.StorageProperties
+cn.com.mfish.common.file.config.StorageConfig

@@ -14,12 +14,14 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     nacos:
+      username: @nacos.username@
+      password: @nacos.password@
       discovery:
         # 服务注册地址
-        server-addr: localhost:19014
+        server-addr: @nacos.server-addr@
       config:
         # 配置中心地址
-        server-addr: localhost:19014
+        server-addr: @nacos.server-addr@
         # 配置文件格式
         file-extension: yml
         # 共享配置
@@ -36,7 +38,7 @@ spring:
       datasource:
         ds1:
           nacos:
-            server-addr: localhost:19014
+            server-addr: @nacos.server-addr@
             dataId: sentinel-mf-gateway
             groupId: DEFAULT_GROUP
             data-type: json

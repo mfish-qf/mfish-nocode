@@ -6,22 +6,21 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.sys.entity.SysConfig;
 import cn.com.mfish.sys.service.SysConfigService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 
 /**
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "界面配置")
+@Tag(name = "界面配置")
 @RestController
 @RequestMapping("/sysConfig")
 public class SysConfigController {
@@ -33,7 +32,7 @@ public class SysConfigController {
      *
      * @return 返回界面配置对象
      */
-    @ApiOperation("界面配置-通过token查询")
+    @Operation(summary = "界面配置-通过token查询")
     @GetMapping
     public Result<SysConfig> queryConfig() {
         SysConfig sysConfig = sysConfigService.querySysConfig(AuthInfoUtils.getCurrentUserId());
@@ -47,7 +46,7 @@ public class SysConfigController {
      * @return 返回界面配置-添加结果
      */
     @Log(title = "界面配置-保存", operateType = OperateType.INSERT)
-    @ApiOperation("界面配置-保存")
+    @Operation(summary = "界面配置-保存")
     @PostMapping
     public Result<SysConfig> save(@RequestBody SysConfig sysConfig) {
         return sysConfigService.saveSysConfig(sysConfig);
@@ -60,9 +59,9 @@ public class SysConfigController {
      * @return 返回界面配置-删除结果
      */
     @Log(title = "界面配置-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation("界面配置-通过id删除")
+    @Operation(summary = "界面配置-通过id删除")
     @DeleteMapping("/{id}")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if (sysConfigService.removeById(id)) {
             return Result.ok(true, "界面配置-删除成功!");
         }

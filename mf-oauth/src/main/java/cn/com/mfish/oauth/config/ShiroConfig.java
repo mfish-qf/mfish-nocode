@@ -15,8 +15,10 @@ import cn.com.mfish.oauth.realm.MultipleRealm;
 import cn.com.mfish.oauth.realm.PhoneSmsRealm;
 import cn.com.mfish.oauth.realm.QRCodeRealm;
 import cn.com.mfish.oauth.realm.UserPasswordRealm;
+import jakarta.servlet.Filter;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.codec.Base64;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -33,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.servlet.Filter;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -49,6 +50,7 @@ public class ShiroConfig {
     @Autowired
     private ShiroAccessProperties shiroAccessProperties;
 
+
     /**
      * 设置shiro拦截器
      *
@@ -62,7 +64,7 @@ public class ShiroConfig {
         //单体服务走shiro拦截 微服务网关拦截
         if (ServiceConstants.isBoot(Utils.getServiceType())) {
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
-            Map<String, Filter> filterMap = new HashMap<>();
+            Map<String, Filter> filterMap = new HashMap<>(1);
             filterMap.put("token", new TokenFilter());
             shiroFilterFactoryBean.setFilters(filterMap);
             //拦截器
@@ -107,6 +109,7 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
 
     /**
      * LifecycleBeanPostProcessor，这是个DestructionAwareBeanPostProcessor的子类，
@@ -254,6 +257,7 @@ public class ShiroConfig {
         securityManager.setSessionManager(sessionManager);
         securityManager.setCacheManager(redisCacheManager);
         securityManager.setRememberMeManager(cookieRememberMeManager());
+        SecurityUtils.setSecurityManager(securityManager);
         return securityManager;
     }
 

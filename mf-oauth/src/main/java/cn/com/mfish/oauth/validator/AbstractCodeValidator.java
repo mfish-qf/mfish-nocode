@@ -3,11 +3,10 @@ package cn.com.mfish.oauth.validator;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
 import cn.com.mfish.common.oauth.validator.IBaseValidator;
-import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.oltu.common.OAuth;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import cn.com.mfish.oauth.service.OAuth2Service;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish

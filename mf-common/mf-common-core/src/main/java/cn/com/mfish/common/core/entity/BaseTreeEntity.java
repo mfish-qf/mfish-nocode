@@ -1,8 +1,8 @@
 package cn.com.mfish.common.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -17,12 +17,12 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel("基础树对象")
+@Schema(description = "基础树对象")
 public class BaseTreeEntity<T> extends BaseEntity<T> {
-    @ApiModelProperty("父节点ID")
+    @Schema(description = "父节点ID")
     private T parentId;
 
-    @ApiModelProperty("子节点")
+    @Schema(description = "子节点")
     @TableField(exist = false)
     private List<BaseTreeEntity<T>> children;
 }

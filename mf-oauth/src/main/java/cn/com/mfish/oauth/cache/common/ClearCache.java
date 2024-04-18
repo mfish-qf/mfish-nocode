@@ -8,7 +8,7 @@ import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.cache.temp.UserTenantTempCache;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

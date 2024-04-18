@@ -1,8 +1,10 @@
 package cn.com.mfish.oauth.realm;
 
 import cn.com.mfish.common.oauth.entity.SsoUser;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * @author: mfish

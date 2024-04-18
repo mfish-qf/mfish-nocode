@@ -15,23 +15,23 @@ import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.mapper.DictMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * @Description: 字典项
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Slf4j
-@Api(tags = "字典项")
+@Tag(name = "字典项")
 @RestController
 @RequestMapping("/dictItem")
 public class DictItemController {
@@ -48,7 +48,7 @@ public class DictItemController {
      * @param reqDictItem
      * @return
      */
-    @ApiOperation(value = "字典项-分页列表查询", notes = "字典项-分页列表查询")
+    @Operation(summary = "字典项-分页列表查询", description =  "字典项-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:dict:query")
     public Result<PageResult<DictItem>> queryPageList(ReqDictItem reqDictItem, ReqPage reqPage) {
@@ -56,9 +56,9 @@ public class DictItemController {
         return Result.ok(new PageResult<>(dictItemService.getDictItems(reqDictItem)), "字典项-查询成功!");
     }
 
-    @ApiOperation("根据字典编码获取字典项(值根据类型设置进行转换)")
+    @Operation(summary = "根据字典编码获取字典项(值根据类型设置进行转换)")
     @GetMapping("/{dictCode}")
-    public Result<List<DictItem>> queryByCode(@ApiParam(name = "dictCode", value = "字典编码") @PathVariable String dictCode) {
+    public Result<List<DictItem>> queryByCode(@Parameter(name = "dictCode", description = "字典编码") @PathVariable String dictCode) {
         return dictItemService.queryByCode(dictCode);
     }
 
@@ -70,7 +70,7 @@ public class DictItemController {
      * @return
      */
     @Log(title = "字典项-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "字典项-添加", notes = "字典项-添加")
+    @Operation(summary = "字典项-添加", description =  "字典项-添加")
     @PostMapping
     @RequiresPermissions("sys:dict:insert")
     public Result<DictItem> add(@RequestBody DictItem dictItem) {
@@ -115,7 +115,7 @@ public class DictItemController {
      * @return
      */
     @Log(title = "字典项-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "字典项-编辑", notes = "字典项-编辑")
+    @Operation(summary = "字典项-编辑", description =  "字典项-编辑")
     @PutMapping
     @RequiresPermissions("sys:dict:update")
     public Result<DictItem> edit(@RequestBody DictItem dictItem) {
@@ -137,10 +137,10 @@ public class DictItemController {
      * @return
      */
     @Log(title = "字典项-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "字典项-通过id删除", notes = "字典项-通过id删除")
+    @Operation(summary = "字典项-通过id删除", description =  "字典项-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:dict:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         DictItem dictItem = dictItemService.getById(id);
         if (dictItem != null && dictItemService.removeById(id)) {
             dictCache.removeOneCache(dictItem.getDictCode());

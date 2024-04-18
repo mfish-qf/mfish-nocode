@@ -6,29 +6,28 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.file.handler.StorageHandler;
+import cn.com.mfish.common.file.service.StorageService;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.storage.req.ReqSysFile;
-import cn.com.mfish.common.file.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 
 /**
  * @description: 文件存储
  * @author: mfish
  * @date: 2023-03-02
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "文件存储")
+@Tag(name = "文件存储")
 @RestController
 @RequestMapping("/sysFile")
 public class SysFileController {
@@ -43,7 +42,7 @@ public class SysFileController {
      * @param reqSysFile 文件存储请求参数
      * @return 返回文件存储-分页列表
      */
-    @ApiOperation(value = "文件存储-分页列表查询", notes = "文件存储-分页列表查询")
+    @Operation(summary = "文件存储-分页列表查询", description =  "文件存储-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:file:query")
     public Result<PageResult<StorageInfo>> queryPageList(ReqSysFile reqSysFile, ReqPage reqPage) {
@@ -57,7 +56,7 @@ public class SysFileController {
     }
 
     @Log(title = "设置文件状态", operateType = OperateType.UPDATE)
-    @ApiOperation("设置文件状态 0 公开 1 私密")
+    @Operation(summary = "设置文件状态 0 公开 1 私密")
     @PutMapping("/status")
     @RequiresPermissions("sys:file:status")
     public Result<StorageInfo> setStatus(@RequestBody StorageInfo storageInfo) {
@@ -74,10 +73,10 @@ public class SysFileController {
     }
 
     @Log(title = "逻辑删除文件恢复", operateType = OperateType.UPDATE)
-    @ApiOperation("逻辑删除文件恢复")
+    @Operation(summary = "逻辑删除文件恢复")
     @PutMapping("/restore/{id}")
     @RequiresPermissions("sys:file:delete")
-    public Result<Boolean> restore(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> restore(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if (storageService.updateById(new StorageInfo().setId(id).setDelFlag(0))) {
             return Result.ok(true, "文件存储-逻辑删除成功!");
         }
@@ -91,10 +90,10 @@ public class SysFileController {
      * @return 返回文件存储-删除结果
      */
     @Log(title = "文件存储-通过id逻辑删除", operateType = OperateType.DELETE)
-    @ApiOperation("文件存储-通过id逻辑删除")
+    @Operation(summary = "文件存储-通过id逻辑删除")
     @DeleteMapping("/logic/{id}")
     @RequiresPermissions("sys:file:delete")
-    public Result<Boolean> logicDelete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> logicDelete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if (storageService.updateById(new StorageInfo().setId(id).setDelFlag(1))) {
             return Result.ok(true, "文件存储-逻辑删除成功!");
         }
@@ -102,10 +101,10 @@ public class SysFileController {
     }
 
     @Log(title = "文件存储-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation("文件存储-通过id删除")
+    @Operation(summary = "文件存储-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:file:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         StorageInfo storageInfo = storageService.getById(id);
         if (storageInfo == null) {
             return Result.fail(false, "错误:未找到文件!");
@@ -127,9 +126,9 @@ public class SysFileController {
      * @param fileKey 文件key
      * @return 返回文件信息
      */
-    @ApiOperation("获取文件信息-通过fileKey查询")
+    @Operation(summary = "获取文件信息-通过fileKey查询")
     @GetMapping("/{fileKey}")
-    public Result<StorageInfo> queryByKey(@ApiParam(name = "fileKey", value = "文件key") @PathVariable String fileKey) {
+    public Result<StorageInfo> queryByKey(@Parameter(name = "fileKey", description = "文件key") @PathVariable String fileKey) {
         StorageInfo storageInfo = storageService.getOne(new LambdaQueryWrapper<StorageInfo>().eq(StorageInfo::getFileKey, fileKey));
         if (null == storageInfo) {
             return Result.fail("错误:获取文件信息失败!");

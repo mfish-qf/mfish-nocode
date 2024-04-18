@@ -6,7 +6,7 @@ import cn.com.mfish.common.redis.temp.BaseTempCache;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

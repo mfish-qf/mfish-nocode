@@ -15,11 +15,14 @@
     <dependencies>
         <!-- Swagger -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${swagger.fox.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
-
+        <!-- 官方建议是springdoc替代springfox-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-core</artifactId>

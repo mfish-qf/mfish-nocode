@@ -24,7 +24,7 @@ package cn.com.mfish.oauth.oltu.common.validators;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.*;
 

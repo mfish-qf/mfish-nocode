@@ -2,6 +2,7 @@ package cn.com.mfish.gateway.handler;
 
 import cn.com.mfish.common.core.utils.ServletUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,9 @@ import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
+    @NotNull
     @Override
-    public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
+    public Mono<Void> handle(ServerWebExchange exchange, @NotNull Throwable ex) {
         ServerHttpResponse response = exchange.getResponse();
         if (exchange.getResponse().isCommitted()) {
             return Mono.error(ex);
@@ -29,8 +31,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         String msg;
         if (ex instanceof NotFoundException) {
             msg = "错误:服务未找到";
-        } else if (ex instanceof ResponseStatusException) {
-            ResponseStatusException responseStatusException = (ResponseStatusException) ex;
+        } else if (ex instanceof ResponseStatusException responseStatusException) {
             msg = responseStatusException.getMessage();
         } else {
             msg = "错误:内部服务器错误";

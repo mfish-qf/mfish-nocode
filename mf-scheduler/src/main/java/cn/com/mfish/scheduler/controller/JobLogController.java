@@ -2,24 +2,24 @@ package cn.com.mfish.scheduler.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.scheduler.api.entity.JobLog;
-import cn.com.mfish.common.core.web.PageResult;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.scheduler.config.enums.JobStatus;
 import cn.com.mfish.scheduler.req.ReqJobLog;
 import cn.com.mfish.scheduler.service.JobLogService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,10 +28,10 @@ import java.util.Date;
  * @description: 任务日志
  * @author: mfish
  * @date: 2023-02-14
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "任务日志")
+@Tag(name = "任务日志")
 @RestController
 @RequestMapping("/jobLog")
 public class JobLogController {
@@ -44,7 +44,7 @@ public class JobLogController {
      * @param reqJobLog 任务日志请求参数
      * @return 返回任务日志-分页列表
      */
-    @ApiOperation(value = "任务日志-分页列表查询", notes = "任务日志-分页列表查询")
+    @Operation(summary = "任务日志-分页列表查询", description =  "任务日志-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:jobLog:query")
     public Result<PageResult<JobLog>> queryPageList(ReqJobLog reqJobLog, ReqPage reqPage) {
@@ -66,7 +66,7 @@ public class JobLogController {
      * @return 返回任务日志-添加结果
      */
     @Log(title = "任务日志-添加", operateType = OperateType.INSERT)
-    @ApiOperation("任务日志-添加")
+    @Operation(summary = "任务日志-添加")
     @PostMapping
     public Result<JobLog> add(@RequestBody JobLog jobLog) {
         if (jobLogService.save(jobLog)) {
@@ -82,7 +82,7 @@ public class JobLogController {
      * @return 返回任务日志-编辑结果
      */
     @Log(title = "任务日志-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation("任务日志-编辑")
+    @Operation(summary = "任务日志-编辑")
     @PutMapping
     public Result<JobLog> edit(@RequestBody JobLog jobLog) {
         if (jobLogService.updateById(jobLog)) {
@@ -92,7 +92,7 @@ public class JobLogController {
     }
 
     @Log(title = "回调设置执行状态", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "回调设置执行状态", notes = "回调设置执行状态")
+    @Operation(summary = "回调设置执行状态", description =  "回调设置执行状态")
     @PutMapping("/callBackStatus")
     public Result<Boolean> callBackStatus(@RequestBody JobLog jobLog) {
         if (!jobLog.getStatus().equals(JobStatus.执行成功.getValue()) && !jobLog.getStatus().equals(JobStatus.执行失败.getValue())) {
@@ -129,10 +129,10 @@ public class JobLogController {
      * @return 返回任务日志-删除结果
      */
     @Log(title = "任务日志-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation("任务日志-通过id删除")
+    @Operation(summary = "任务日志-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:jobLog:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if (jobLogService.removeById(id)) {
             return Result.ok(true, "任务日志-删除成功!");
         }
@@ -146,7 +146,7 @@ public class JobLogController {
      * @return 返回任务日志-删除结果
      */
     @Log(title = "任务日志-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation("任务日志-批量删除")
+    @Operation(summary = "任务日志-批量删除")
     @DeleteMapping("/batch")
     @RequiresPermissions("sys:jobLog:delete")
     public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
@@ -162,10 +162,10 @@ public class JobLogController {
      * @param id 唯一ID
      * @return 返回任务日志对象
      */
-    @ApiOperation("任务日志-通过id查询")
+    @Operation(summary = "任务日志-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:jobLog:query")
-    public Result<JobLog> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<JobLog> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         JobLog jobLog = jobLogService.getById(id);
         return Result.ok(jobLog, "任务日志-查询成功!");
     }

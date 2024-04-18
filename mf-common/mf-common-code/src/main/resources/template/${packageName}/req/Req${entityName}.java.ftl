@@ -1,8 +1,8 @@
 package ${packageName}.req;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 <#if searchList?size!=0>
-import io.swagger.annotations.ApiModelProperty;
+
 </#if>
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -11,11 +11,11 @@ import lombok.experimental.Accessors;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("${tableInfo.tableComment}请求参数")
+@Schema(description = "${tableInfo.tableComment}请求参数")
 public class Req${entityName} {
 <#list searchList as search>
  <#if !search.fieldInfo.isPrimary>
@@ -29,7 +29,7 @@ public class Req${entityName} {
    </#if>
   </#if>
  </#if>
-    @ApiModelProperty(value = "${search.fieldInfo.comment}")
+    @Schema(description = "${search.fieldInfo.comment}")
     private <#if search.fieldInfo.type=='java.sql.Blob'>byte[]<#else>${search.fieldInfo.type}</#if> ${search.fieldInfo.fieldName};
 </#list>
 }

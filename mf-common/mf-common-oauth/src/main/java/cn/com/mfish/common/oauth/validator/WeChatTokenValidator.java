@@ -7,7 +7,7 @@ import cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish

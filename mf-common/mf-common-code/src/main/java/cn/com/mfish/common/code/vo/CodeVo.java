@@ -1,7 +1,7 @@
 package cn.com.mfish.common.code.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,12 +12,12 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("代码相关信息")
+@Schema(description = "代码相关信息")
 public class CodeVo {
-    @ApiModelProperty("代码存储路径")
+    @Schema(description = "代码存储路径")
     private String path;
-    @ApiModelProperty("文件名称")
+    @Schema(description = "文件名称")
     private String name;
-    @ApiModelProperty("生成代码")
+    @Schema(description = "生成代码")
     private String code;
 }

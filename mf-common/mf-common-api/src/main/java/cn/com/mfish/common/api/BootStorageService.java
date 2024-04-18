@@ -6,7 +6,7 @@ import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import org.springframework.stereotype.Service;
 import cn.com.mfish.common.storage.api.remote.RemoteStorageService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @description: 缓存接口单实例实现

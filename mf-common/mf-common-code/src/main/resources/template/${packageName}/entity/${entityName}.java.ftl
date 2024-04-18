@@ -5,8 +5,8 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -25,22 +25,22 @@ import java.math.BigDecimal;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Data
 @TableName("${tableInfo.tableName}")
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@ApiModel(value = "${tableInfo.tableName}对象", description = "${tableInfo.tableComment}")
+@Schema(description = "${tableInfo.tableName}对象 ${tableInfo.tableComment}")
 public class ${entityName} extends BaseEntity<<#if tableInfo.idType==''>String<#else>${tableInfo.idType}</#if>> {
     <#if tableInfo.idType=='String'>
     @ExcelProperty("唯一ID")
-    @ApiModelProperty(value = "唯一ID")
+    @Schema(description = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)
     private ${tableInfo.idType} id;
     <#elseif tableInfo.idType!=''>
     @ExcelProperty("唯一ID")
-    @ApiModelProperty(value = "唯一ID")
+    @Schema(description = "唯一ID")
     @TableId(type = IdType.AUTO)
     private ${tableInfo.idType} id;
     </#if>
@@ -57,7 +57,7 @@ public class ${entityName} extends BaseEntity<<#if tableInfo.idType==''>String<#
       </#if>
     </#if>
     @ExcelProperty("${fieldInfo.comment}")
-    @ApiModelProperty(value = "${fieldInfo.comment}")
+    @Schema(description = "${fieldInfo.comment}")
 	private <#if fieldInfo.type=='java.sql.Blob'>byte[]<#else>${fieldInfo.type}</#if> ${fieldInfo.fieldName};
 	</#list>
 }

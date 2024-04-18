@@ -5,7 +5,7 @@ import cn.com.mfish.oauth.service.LoginService;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 
 /**

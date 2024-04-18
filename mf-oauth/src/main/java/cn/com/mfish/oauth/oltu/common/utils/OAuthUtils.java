@@ -58,7 +58,7 @@ public final class OAuthUtils {
                     && !OAuthUtils.isEmpty(value)) {
                 final String encodedName = encode(parameter.getKey(), encoding);
                 final String encodedValue = encode(value, encoding);
-                if (result.length() > 0) {
+                if (!result.isEmpty()) {
                     result.append(PARAMETER_SEPARATOR);
                 }
                 result.append(encodedName);
@@ -176,12 +176,12 @@ public final class OAuthUtils {
                 }
 
                 if (paramsTypes.length == 0) {
-                    return clazz.newInstance();
+                    return clazz.getDeclaredConstructor().newInstance();
                 }
                 Constructor<T> clazzConstructor = clazz.getConstructor(paramsTypes);
                 return clazzConstructor.newInstance(paramValues);
             }
-            return clazz.newInstance();
+            return clazz.getDeclaredConstructor().newInstance();
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
@@ -244,7 +244,7 @@ public final class OAuthUtils {
     }
 
     public static Set<String> decodeScopes(String s) {
-        Set<String> scopes = new HashSet<String>();
+        Set<String> scopes = new HashSet<>();
         if (!OAuthUtils.isEmpty(s)) {
             StringTokenizer tokenizer = new StringTokenizer(s, " ");
 

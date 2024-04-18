@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.req;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 
 /**
@@ -9,13 +9,13 @@ import lombok.Data;
  * @description: 修改密码入参
  * @date: 2022/12/21 22:17
  */
-@ApiModel("修改密码入参")
+@Schema(description = "修改密码入参")
 @Data
 public class ReqChangePwd {
-    @ApiModelProperty("用户ID")
+    @Schema(description = "用户ID")
     private String userId;
-    @ApiModelProperty("旧密码")
+    @Schema(description = "旧密码")
     private String oldPwd;
-    @ApiModelProperty("新密码")
+    @Schema(description = "新密码")
     private String newPwd;
 }

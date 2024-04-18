@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

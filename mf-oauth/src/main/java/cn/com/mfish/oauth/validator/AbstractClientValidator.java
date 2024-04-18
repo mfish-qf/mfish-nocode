@@ -5,9 +5,8 @@ import cn.com.mfish.common.oauth.validator.IBaseValidator;
 import cn.com.mfish.oauth.cache.temp.ClientTempCache;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.oltu.common.OAuth;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish

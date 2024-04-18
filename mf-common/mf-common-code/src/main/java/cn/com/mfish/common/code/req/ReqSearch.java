@@ -1,7 +1,7 @@
 package cn.com.mfish.common.code.req;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,12 +10,12 @@ import lombok.experimental.Accessors;
  * @author: mfish
  * @date: 2023/5/9 19:31
  */
-@ApiModel("查询条件")
+@Schema(description = "查询条件")
 @Data
 @Accessors(chain = true)
 public class ReqSearch {
-    @ApiModelProperty("字段")
+    @Schema(description = "字段")
     private String field;
-    @ApiModelProperty("查询条件")
+    @Schema(description = "查询条件")
     private String condition;
 }

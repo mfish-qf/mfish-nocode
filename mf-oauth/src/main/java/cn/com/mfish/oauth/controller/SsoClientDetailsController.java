@@ -14,23 +14,23 @@ import cn.com.mfish.oauth.req.ReqSsoClientDetails;
 import cn.com.mfish.oauth.service.SsoClientDetailsService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * @description: 客户端信息
  * @author: mfish
  * @date: 2023-05-12
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "客户端信息")
+@Tag(name = "客户端信息")
 @RestController
 @RequestMapping("/ssoClientDetails")
 public class SsoClientDetailsController {
@@ -44,7 +44,7 @@ public class SsoClientDetailsController {
      * @param reqPage             分页参数
      * @return 返回客户端信息-分页列表
      */
-    @ApiOperation(value = "客户端信息-分页列表查询", notes = "客户端信息-分页列表查询")
+    @Operation(summary = "客户端信息-分页列表查询", description =  "客户端信息-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:client:query")
     public Result<PageResult<SsoClientDetails>> queryPageList(ReqSsoClientDetails reqSsoClientDetails, ReqPage reqPage) {
@@ -78,7 +78,7 @@ public class SsoClientDetailsController {
      * @return 返回客户端信息-添加结果
      */
     @Log(title = "客户端信息-添加", operateType = OperateType.INSERT)
-    @ApiOperation("客户端信息-添加")
+    @Operation(summary = "客户端信息-添加")
     @PostMapping
     @RequiresPermissions("sys:client:insert")
     public Result<SsoClientDetails> add(@RequestBody SsoClientDetails ssoClientDetails) {
@@ -119,7 +119,7 @@ public class SsoClientDetailsController {
      * @return 返回客户端信息-编辑结果
      */
     @Log(title = "客户端信息-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation("客户端信息-编辑")
+    @Operation(summary = "客户端信息-编辑")
     @PutMapping
     @RequiresPermissions("sys:client:update")
     public Result<SsoClientDetails> edit(@RequestBody SsoClientDetails ssoClientDetails) {
@@ -130,7 +130,7 @@ public class SsoClientDetailsController {
     }
 
     @Log(title = "显示密钥", operateType = OperateType.QUERY)
-    @ApiOperation("显示密钥")
+    @Operation(summary = "显示密钥")
     @GetMapping("/secret/{id}")
     @RequiresPermissions("sys:client:query")
     public Result<String> showSecret(@PathVariable String id) {
@@ -142,7 +142,7 @@ public class SsoClientDetailsController {
     }
 
     @Log(title = "重置密钥", operateType = OperateType.UPDATE)
-    @ApiOperation("重置密钥")
+    @Operation(summary = "重置密钥")
     @PutMapping("/secret/{id}")
     @RequiresPermissions("sys:client:update")
     public Result<String> resetSecret(@PathVariable String id) {
@@ -166,10 +166,10 @@ public class SsoClientDetailsController {
      * @return 返回客户端信息-删除结果
      */
     @Log(title = "客户端信息-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation("客户端信息-通过id删除")
+    @Operation(summary = "客户端信息-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:client:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SsoClientDetails ssoClientDetails = new SsoClientDetails();
         ssoClientDetails.setDelFlag(true).setId(id);
         Result<SsoClientDetails> result = ssoClientDetailsService.updateClient(ssoClientDetails);
@@ -185,10 +185,10 @@ public class SsoClientDetailsController {
      * @param id 唯一ID
      * @return 返回客户端信息对象
      */
-    @ApiOperation("客户端信息-通过id查询")
+    @Operation(summary = "客户端信息-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:client:query")
-    public Result<SsoClientDetails> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<SsoClientDetails> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SsoClientDetails ssoClientDetails = ssoClientDetailsService.getById(id);
         return Result.ok(ssoClientDetails, "客户端信息-查询成功!");
     }

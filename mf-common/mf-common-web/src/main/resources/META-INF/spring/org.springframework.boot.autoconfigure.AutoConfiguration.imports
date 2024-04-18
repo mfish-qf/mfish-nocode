@@ -1,0 +1,3 @@
+cn.com.mfish.common.web.aspect.InnerUserAspect
+cn.com.mfish.common.web.interceptor.BearerTokenInterceptor
+cn.com.mfish.common.web.config.FeignConfig

@@ -1,7 +1,7 @@
 package cn.com.mfish.sys.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,14 +14,14 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("数据库树节点")
+@Schema(description = "数据库树节点")
 public class DBTreeNode implements Serializable {
-    @ApiModelProperty("编码")
+    @Schema(description = "编码")
     private String code;
-    @ApiModelProperty("父编码")
+    @Schema(description = "父编码")
     private String parentCode;
-    @ApiModelProperty("标签")
+    @Schema(description = "标签")
     private String label;
-    @ApiModelProperty("节点类型 0 数据库 1表")
+    @Schema(description = "节点类型 0 数据库 1表")
     private int type;
 }

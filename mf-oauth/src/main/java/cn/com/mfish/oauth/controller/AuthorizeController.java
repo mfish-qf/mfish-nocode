@@ -5,18 +5,21 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
-import cn.com.mfish.oauth.service.LoginService;
-import cn.com.mfish.oauth.service.OAuth2Service;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import cn.com.mfish.oauth.oltu.as.request.OAuthAuthzRequest;
 import cn.com.mfish.oauth.oltu.as.response.OAuthASResponse;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.OAuthResponse;
+import cn.com.mfish.oauth.service.LoginService;
+import cn.com.mfish.oauth.service.OAuth2Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,9 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.function.BiFunction;
@@ -38,7 +38,7 @@ import java.util.function.BiFunction;
  * @author: mfish
  * @date: 2020/2/11 11:42
  */
-@Api(tags = "认证code获取")
+@Tag(name = "认证code获取")
 @Controller
 @RequestMapping
 @Slf4j
@@ -50,14 +50,14 @@ public class AuthorizeController {
     @Resource
     OAuth2Service oAuth2Service;
 
-    @ApiOperation("认证接口")
+    @Operation(summary = "认证接口")
     @GetMapping("/authorize")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = FORCE_LOGIN, value = "强制登录 值为1时强行返回登录界面", paramType = "query", dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = OAuth.OAUTH_RESPONSE_TYPE, description = "返回类型", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_ID, description = "客户端ID", required = true),
+            @Parameter(name = OAuth.OAUTH_REDIRECT_URI, description = "回调地址", required = true),
+            @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
+            @Parameter(name = FORCE_LOGIN, description = "强制登录 值为1时强行返回登录界面")
     })
     public Object getAuthorize(Model model, HttpServletRequest request) {
         String force = request.getParameter(FORCE_LOGIN);
@@ -68,17 +68,17 @@ public class AuthorizeController {
         return authorize(model, request, (m, r) -> loginService.getLogin(m, r), forceLogin);
     }
 
-    @ApiOperation("认证接口")
+    @Operation(summary = "认证接口")
     @PostMapping("/authorize")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.OAUTH_RESPONSE_TYPE, value = "返回类型", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端密钥", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = SerConstant.REMEMBER_ME, value = "记住我", paramType = "query", dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = OAuth.OAUTH_RESPONSE_TYPE, description = "返回类型", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_ID, description = "客户端ID", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_SECRET, description = "客户端密钥", required = true),
+            @Parameter(name = OAuth.OAUTH_REDIRECT_URI, description = "回调地址", required = true),
+            @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
+            @Parameter(name = OAuth.OAUTH_USERNAME, description = "账号，手机，email", required = true),
+            @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码", required = true),
+            @Parameter(name = SerConstant.REMEMBER_ME, description = "记住我")
     })
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request) {

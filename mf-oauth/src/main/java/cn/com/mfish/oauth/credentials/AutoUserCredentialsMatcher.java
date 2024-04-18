@@ -7,7 +7,7 @@ import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 不存在的用户自动创建用户

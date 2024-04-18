@@ -14,12 +14,14 @@ spring:
     active: dev
   cloud:
     nacos:
+      username: @nacos.username@
+      password: @nacos.password@
       discovery:
         # 服务注册地址
-        server-addr: localhost:19014
+        server-addr: @nacos.server-addr@
       config:
         # 配置中心地址
-        server-addr: localhost:19014
+        server-addr: @nacos.server-addr@
         # 配置文件格式
         file-extension: yml
         # 共享配置

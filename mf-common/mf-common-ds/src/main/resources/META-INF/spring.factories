@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.ds.config.MybatisInterceptor,\
-  cn.com.mfish.common.ds.config.BatchSqlInjector

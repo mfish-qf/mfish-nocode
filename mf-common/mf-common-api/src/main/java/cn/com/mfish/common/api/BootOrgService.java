@@ -11,7 +11,7 @@ import cn.com.mfish.common.oauth.req.ReqOrgUser;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**
