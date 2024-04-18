@@ -6,11 +6,11 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.entity.ContentType;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -19,6 +19,7 @@ import java.io.IOException;
  * @date: 2024/1/30
  */
 public class TokenFilter implements Filter {
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         Result<?> result = isAccessAllowed(servletRequest);
@@ -39,8 +40,7 @@ public class TokenFilter implements Filter {
             return result;
         }
         //验证通过后请求中补充用户相关信息，单实例服务用户属性放在attribute中传递
-        if (result.getData() instanceof WeChatToken) {
-            WeChatToken token = (WeChatToken) result.getData();
+        if (result.getData() instanceof WeChatToken token) {
             request.setAttribute(RPCConstants.REQ_ACCOUNT, token.getAccount());
             request.setAttribute(RPCConstants.REQ_USER_ID, token.getUserId());
             request.setAttribute(RPCConstants.REQ_TENANT_ID, token.getTenantId());

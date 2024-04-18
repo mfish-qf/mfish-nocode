@@ -4,11 +4,10 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl;
 import cn.com.mfish.common.oauth.validator.IBaseValidator;
-import org.apache.commons.lang3.StringUtils;
 import cn.com.mfish.oauth.oltu.common.OAuth;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author: mfish

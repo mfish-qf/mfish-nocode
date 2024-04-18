@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.cloud.openfeign.FeignContext;
 
 /**
  * @author: mfish
@@ -65,16 +64,16 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
         return beanFactory.getType(name);
     }
 
-    /**
-     * 获取FeignClient的bean
-     *
-     * @param name
-     * @param tClass
-     * @param <T>
-     * @return
-     */
-    public static <T> T getFeignBean(String name, Class<T> tClass) {
-        FeignContext feignContext = beanFactory.getBean(FeignContext.class);
-        return feignContext.getInstance(name, tClass);
-    }
+//    /**
+//     * 获取FeignClient的bean
+//     *
+//     * @param name
+//     * @param tClass
+//     * @param <T>
+//     * @return
+//     */
+//    public static <T> T getFeignBean(String name, Class<T> tClass) {
+//        FeignContext feignContext = beanFactory.getBean(FeignContext.class);
+//        return feignContext.getInstance(name, tClass);
+//    }
 }

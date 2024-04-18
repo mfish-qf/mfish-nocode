@@ -1,0 +1,6 @@
+cn.com.mfish.common.oauth.service.impl.WebTokenServiceImpl
+cn.com.mfish.common.oauth.service.impl.WeChatTokenServiceImpl
+cn.com.mfish.common.oauth.aspect.AuthorizationAspect
+cn.com.mfish.common.oauth.validator.WebTokenValidator
+cn.com.mfish.common.oauth.validator.WeChatTokenValidator
+cn.com.mfish.common.oauth.validator.TokenValidator

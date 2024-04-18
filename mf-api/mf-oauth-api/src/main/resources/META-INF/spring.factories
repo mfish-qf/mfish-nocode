@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.oauth.api.fallback.RemoteUserFallback,\
-  cn.com.mfish.common.oauth.api.fallback.RemoteOrgFallback

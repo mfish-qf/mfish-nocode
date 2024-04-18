@@ -11,26 +11,27 @@ import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.entity.OAuthClient;
+import cn.com.mfish.oauth.oltu.as.request.OAuthTokenRequest;
+import cn.com.mfish.oauth.oltu.common.OAuth;
+import cn.com.mfish.oauth.oltu.common.message.types.GrantType;
+import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
+import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.validator.Code2TokenValidator;
 import cn.com.mfish.oauth.validator.Refresh2TokenValidator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import cn.com.mfish.oauth.oltu.as.request.OAuthTokenRequest;
-import cn.com.mfish.oauth.oltu.common.OAuth;
-import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
-import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
-import cn.com.mfish.oauth.oltu.common.message.types.GrantType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,7 +39,7 @@ import java.util.concurrent.CompletableFuture;
  * @author: mfish
  * @date: 2020/2/17 14:17
  */
-@Api(tags = "token获取")
+@Tag(name = "token获取")
 @RestController
 @RequestMapping
 public class AccessTokenController {
@@ -55,19 +56,19 @@ public class AccessTokenController {
     @Resource
     UserTokenCache userTokenCache;
 
-    @ApiOperation("token获取")
+    @Operation(summary = "token获取")
     @PostMapping(value = "/accessToken")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = OAuth.HeaderType.CONTENT_TYPE, value = "请求类型,必须使用application/x-www-form-urlencoded类型", required = true, paramType = "header", dataTypeClass = String.class, defaultValue = "application/x-www-form-urlencoded"),
-            @ApiImplicitParam(name = OAuth.OAUTH_GRANT_TYPE, value = "token获取类型", required = true, paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_ID, value = "客户端ID", required = true, paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_CLIENT_SECRET, value = "客户端密钥", required = true, paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_REDIRECT_URI, value = "回调地址", required = true, paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_STATE, value = "状态", paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_CODE, value = "认证code grant_type=authorization_code时必须", paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_USERNAME, value = "账号，手机，email grant_type=password时必须", paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_PASSWORD, value = "密码 grant_type=password时必须", paramType = "query", dataTypeClass = String.class),
-            @ApiImplicitParam(name = OAuth.OAUTH_REFRESH_TOKEN, value = "密码 grant_type=refresh_token时必须", paramType = "query", dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = OAuth.HeaderType.CONTENT_TYPE, description = "请求类型,必须使用application/x-www-form-urlencoded类型", required = true, in = ParameterIn.HEADER),
+            @Parameter(name = OAuth.OAUTH_GRANT_TYPE, description = "token获取类型", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_ID, description = "客户端ID", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_SECRET, description = "客户端密钥", required = true),
+            @Parameter(name = OAuth.OAUTH_REDIRECT_URI, description = "回调地址", required = true),
+            @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
+            @Parameter(name = OAuth.OAUTH_CODE, description = "认证code grant_type=authorization_code时必须"),
+            @Parameter(name = OAuth.OAUTH_USERNAME, description = "账号，手机，email grant_type=password时必须"),
+            @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码 grant_type=password时必须"),
+            @Parameter(name = OAuth.OAUTH_REFRESH_TOKEN, description = "密码 grant_type=refresh_token时必须")
     })
     @Log(title = "获取token", operateType = OperateType.LOGIN)
     public Result<AccessToken> token(HttpServletRequest request) throws OAuthProblemException, InvocationTargetException, IllegalAccessException, OAuthSystemException {

@@ -13,13 +13,13 @@ import cn.com.mfish.sys.req.ReqDict;
 import cn.com.mfish.sys.service.DictService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,10 +27,10 @@ import java.util.List;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Slf4j
-@Api(tags = "字典")
+@Tag(name = "字典")
 @RestController
 @RequestMapping("/dict")
 public class DictController {
@@ -43,7 +43,7 @@ public class DictController {
      * @param reqDict
      * @return
      */
-    @ApiOperation(value = "字典-分页列表查询", notes = "字典-分页列表查询")
+    @Operation(summary = "字典-分页列表查询", description =  "字典-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:dict:query")
     public Result<PageResult<Dict>> queryPageList(ReqDict reqDict, ReqPage reqPage) {
@@ -74,7 +74,7 @@ public class DictController {
      * @return
      */
     @Log(title = "字典-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "字典-添加", notes = "字典-添加")
+    @Operation(summary = "字典-添加", description =  "字典-添加")
     @PostMapping
     @RequiresPermissions("sys:dict:insert")
     public Result<Dict> add(@RequestBody Dict dict) {
@@ -95,7 +95,7 @@ public class DictController {
      * @return
      */
     @Log(title = "字典-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "字典-编辑", notes = "字典-编辑")
+    @Operation(summary = "字典-编辑", description =  "字典-编辑")
     @PutMapping
     @RequiresPermissions("sys:dict:update")
     public Result<Dict> edit(@RequestBody Dict dict) {
@@ -132,10 +132,10 @@ public class DictController {
      * @return
      */
     @Log(title = "字典-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "字典-通过id删除", notes = "字典-通过id删除")
+    @Operation(summary = "字典-通过id删除", description =  "字典-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:dict:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return dictService.deleteDict(id);
     }
 
@@ -145,10 +145,10 @@ public class DictController {
      * @param id
      * @return
      */
-    @ApiOperation(value = "字典-通过id查询", notes = "字典-通过id查询")
+    @Operation(summary = "字典-通过id查询", description =  "字典-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:dict:query")
-    public Result<Dict> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Dict> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         Dict dict = dictService.getById(id);
         return Result.ok(dict, "字典-查询成功!");
     }
@@ -159,7 +159,7 @@ public class DictController {
      * @param reqPage
      * @throws IOException
      */
-    @ApiOperation(value = "导出字典", notes = "导出字典")
+    @Operation(summary = "导出字典", description =  "导出字典")
     @GetMapping("/export")
     @RequiresPermissions("sys:dict:query")
     public void export(ReqDict reqDict, ReqPage reqPage) throws IOException {

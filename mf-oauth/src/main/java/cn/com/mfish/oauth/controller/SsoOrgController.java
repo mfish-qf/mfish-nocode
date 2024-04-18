@@ -17,11 +17,14 @@ import cn.com.mfish.common.oauth.req.ReqSsoOrg;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +32,10 @@ import java.util.List;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Slf4j
-@Api(tags = "组织结构表")
+@Tag(name = "组织结构表")
 @RestController
 @RequestMapping("/org")
 public class SsoOrgController {
@@ -46,7 +49,7 @@ public class SsoOrgController {
      * @param reqPage
      * @return
      */
-    @ApiOperation(value = "组织结构表-分页列表查询", notes = "组织结构表-分页列表查询")
+    @Operation(summary = "组织结构表-分页列表查询", description =  "组织结构表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:org:query")
     public Result<PageResult<SsoOrg>> queryPageList(ReqSsoOrg reqSsoOrg, ReqPage reqPage) {
@@ -61,7 +64,7 @@ public class SsoOrgController {
         )), "组织结构表-查询成功!");
     }
 
-    @ApiOperation(value = "获取组织结构")
+    @Operation(summary = "获取组织结构")
     @GetMapping("/tree")
     public Result<List<SsoOrg>> queryOrgTree(ReqSsoOrg reqSsoOrg) {
         List<SsoOrg> list = ssoOrgService.queryOrg(reqSsoOrg);
@@ -70,10 +73,10 @@ public class SsoOrgController {
         return Result.ok(orgList, "组织结构表-查询成功!");
     }
 
-    @ApiOperation(value = "获取组织的角色")
+    @Operation(summary = "获取组织的角色")
     @GetMapping("/roles/{orgIds}")
     @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
-    public Result<List<UserRole>> queryOrgRoles(@ApiParam(name = "orgIds", value = "组织ID") @PathVariable("orgIds") String orgIds) {
+    public Result<List<UserRole>> queryOrgRoles(@Parameter(name = "orgIds", description = "组织ID") @PathVariable("orgIds") String orgIds) {
         if (StringUtils.isEmpty(orgIds)) {
             return Result.fail(new ArrayList<>(), "错误:组织ID不允许为空");
         }
@@ -87,7 +90,7 @@ public class SsoOrgController {
      * @return
      */
     @Log(title = "组织结构表-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "组织结构表-添加", notes = "组织结构表-添加")
+    @Operation(summary = "组织结构表-添加", description =  "组织结构表-添加")
     @PostMapping
     @RequiresPermissions("sys:org:insert")
     public Result<SsoOrg> add(@RequestBody SsoOrg ssoOrg) {
@@ -101,7 +104,7 @@ public class SsoOrgController {
      * @return
      */
     @Log(title = "组织结构表-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "组织结构表-编辑", notes = "组织结构表-编辑")
+    @Operation(summary = "组织结构表-编辑", description =  "组织结构表-编辑")
     @PutMapping
     @RequiresPermissions("sys:org:update")
     public Result<SsoOrg> edit(@RequestBody SsoOrg ssoOrg) {
@@ -115,10 +118,10 @@ public class SsoOrgController {
      * @return
      */
     @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "组织结构表-通过id删除", notes = "组织结构表-通过id删除")
+    @Operation(summary = "组织结构表-通过id删除", description =  "组织结构表-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:org:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return ssoOrgService.removeOrg(id);
     }
 
@@ -128,26 +131,26 @@ public class SsoOrgController {
      * @param ids 多个ID逗号分隔
      * @return
      */
-    @ApiOperation(value = "组织结构表-通过id查询", notes = "组织结构表-通过id查询")
+    @Operation(summary = "组织结构表-通过id查询", description =  "组织结构表-通过id查询")
     @GetMapping("/{ids}")
     @RequiresPermissions("sys:org:query")
-    public Result<List<SsoOrg>> queryByIds(@ApiParam(name = "ids", value = "唯一性ID") @PathVariable("ids") String ids) {
+    public Result<List<SsoOrg>> queryByIds(@Parameter(name = "ids", description = "唯一性ID") @PathVariable("ids") String ids) {
         return ssoOrgService.queryByIds(ids);
     }
 
-    @ApiOperation(value = "组织树-通过固定编码查询", notes = "组织树-通过固定编码查询")
+    @Operation(summary = "组织树-通过固定编码查询", description =  "组织树-通过固定编码查询")
     @GetMapping("/code/{code}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
     })
-    public Result<List<SsoOrg>> queryByFixCode(@ApiParam(name = "code", value = "固定编码") @PathVariable("code") String code, @RequestParam String direction) {
+    public Result<List<SsoOrg>> queryByFixCode(@Parameter(name = "code", description = "固定编码") @PathVariable("code") String code, @RequestParam String direction) {
         List<SsoOrg> list = ssoOrgService.queryOrgByCode(code, TreeDirection.getDirection(direction));
         return Result.ok(list, "组织结构表-查询成功!");
     }
 
-    @ApiOperation(value = "获取组织及子组织下的所有用户-通过固定编码查询", notes = "获取组织及子组织下的所有用户-通过固定编码查询")
+    @Operation(summary = "获取组织及子组织下的所有用户-通过固定编码查询", description =  "获取组织及子组织下的所有用户-通过固定编码查询")
     @GetMapping("/user/{code}")
-    public Result<PageResult<UserInfo>> queryUserByCode(@ApiParam(name = "code", value = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
+    public Result<PageResult<UserInfo>> queryUserByCode(@Parameter(name = "code", description = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
         return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage), "组织下用户查询成功");
     }
 }

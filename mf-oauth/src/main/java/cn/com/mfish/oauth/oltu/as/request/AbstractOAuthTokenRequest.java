@@ -17,13 +17,17 @@
 
 package cn.com.mfish.oauth.oltu.as.request;
 
+
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
 import cn.com.mfish.oauth.oltu.common.validators.OAuthValidator;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
 import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * Abstract OAuth Token request class
+ */
 public abstract class AbstractOAuthTokenRequest extends OAuthRequest {
 
   protected AbstractOAuthTokenRequest(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException {

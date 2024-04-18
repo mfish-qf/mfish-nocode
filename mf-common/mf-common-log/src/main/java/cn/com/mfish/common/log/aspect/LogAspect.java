@@ -9,7 +9,10 @@ import cn.com.mfish.common.log.service.AsyncSaveLog;
 import cn.com.mfish.sys.api.entity.SysLog;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -21,9 +24,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Map;
 
@@ -53,9 +53,10 @@ public class LogAspect {
         Log aLog = methodSignature.getMethod().getDeclaredAnnotation(Log.class);
         title = aLog.title();
         if (StringUtils.isEmpty(title)) {
-            ApiOperation apiOperation = methodSignature.getMethod().getDeclaredAnnotation(ApiOperation.class);
+
+            Operation apiOperation = methodSignature.getMethod().getDeclaredAnnotation(Operation.class);
             if (apiOperation != null) {
-                title = apiOperation.value();
+                title = apiOperation.description();
             } else {
                 title = methodSignature.getName();
             }

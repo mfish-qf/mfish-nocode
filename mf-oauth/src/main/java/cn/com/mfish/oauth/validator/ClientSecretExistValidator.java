@@ -2,11 +2,10 @@ package cn.com.mfish.oauth.validator;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
-import org.apache.commons.lang3.StringUtils;
 import cn.com.mfish.oauth.oltu.common.OAuth;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish

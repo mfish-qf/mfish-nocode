@@ -1,6 +1,7 @@
 package cn.com.mfish.common.oauth.req;
 
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,10 +13,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class ReqOrgUser {
-    @ApiModelProperty("账号")
+    @Schema(description = "账号")
     private String account;
-    @ApiModelProperty("手机号")
+    @Schema(description = "手机号")
     private String phone;
-    @ApiModelProperty("昵称--用于显示")
+    @Schema(description = "昵称--用于显示")
     private String nickname;
 }

@@ -6,7 +6,7 @@ import cn.com.mfish.common.oauth.validator.IBaseValidator;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import lombok.Data;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 

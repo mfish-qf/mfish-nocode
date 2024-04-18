@@ -17,8 +17,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @description: 代码构建
  * @author: mfish
  * @date: 2023-04-11
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Service
 public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild> implements CodeBuildService {

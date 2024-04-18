@@ -8,23 +8,23 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.service.SsoMenuService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * @Description: 菜单表
  * @Author: mfish
  * @date: 2022-09-21
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Slf4j
-@Api(tags = "菜单表")
+@Tag(name = "菜单表")
 @RestController
 @RequestMapping("/menu")
 public class SsoMenuController {
@@ -37,20 +37,20 @@ public class SsoMenuController {
      * @param reqSsoMenu
      * @return
      */
-    @ApiOperation(value = "菜单表-分页列表查询", notes = "菜单表-分页列表查询")
+    @Operation(summary = "菜单表-分页列表查询", description =  "菜单表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:menu:query")
     public Result<List<SsoMenu>> queryList(ReqSsoMenu reqSsoMenu) {
         return ssoMenuService.queryMenuTree(reqSsoMenu, null);
     }
 
-    @ApiOperation(value = "获取所有菜单树")
+    @Operation(summary = "获取所有菜单树")
     @GetMapping("/tree")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
         return ssoMenuService.queryMenuTree(reqSsoMenu, null);
     }
 
-    @ApiOperation("获取角色树-左侧菜单")
+    @Operation(summary = "获取角色树-左侧菜单")
     @GetMapping("/roleTree")
     public Result<List<SsoMenu>> queryRoleMenuTree() {
         return ssoMenuService.queryMenuTree(new ReqSsoMenu().setNoButton(true), AuthInfoUtils.getCurrentUserId());
@@ -63,7 +63,7 @@ public class SsoMenuController {
      * @return
      */
     @Log(title = "菜单表-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "菜单表-添加", notes = "菜单表-添加")
+    @Operation(summary = "菜单表-添加", description =  "菜单表-添加")
     @PostMapping
     @RequiresPermissions("sys:menu:insert")
     public Result<SsoMenu> add(@RequestBody SsoMenu ssoMenu) {
@@ -77,7 +77,7 @@ public class SsoMenuController {
      * @return
      */
     @Log(title = "菜单表-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "菜单表-编辑", notes = "菜单表-编辑")
+    @Operation(summary = "菜单表-编辑", description =  "菜单表-编辑")
     @PutMapping
     @RequiresPermissions("sys:menu:update")
     public Result<SsoMenu> edit(@RequestBody SsoMenu ssoMenu) {
@@ -92,10 +92,10 @@ public class SsoMenuController {
      * @return
      */
     @Log(title = "菜单表-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "菜单表-通过id删除", notes = "菜单表-通过id删除")
+    @Operation(summary = "菜单表-通过id删除", description =  "菜单表-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:menu:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return ssoMenuService.deleteMenu(id);
     }
 
@@ -105,10 +105,10 @@ public class SsoMenuController {
      * @param id
      * @return
      */
-    @ApiOperation(value = "菜单表-通过id查询", notes = "菜单表-通过id查询")
+    @Operation(summary = "菜单表-通过id查询", description =  "菜单表-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:menu:query")
-    public Result<SsoMenu> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<SsoMenu> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SsoMenu ssoMenu = ssoMenuService.getById(id);
         return Result.ok(ssoMenu, "菜单表-查询成功!");
     }

@@ -1,8 +1,8 @@
 package cn.com.mfish.common.oauth.validator;
 
 import cn.com.mfish.common.core.web.Result;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish

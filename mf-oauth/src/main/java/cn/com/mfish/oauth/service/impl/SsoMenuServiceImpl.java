@@ -17,7 +17,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Service
 public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> implements SsoMenuService {

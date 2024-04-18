@@ -15,12 +15,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Arrays;
 import java.io.IOException;
 import java.util.List;
@@ -29,10 +29,10 @@ import java.util.List;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "${tableInfo.tableComment}")
+@Tag(name = "${tableInfo.tableComment}")
 @RestController
 @RequestMapping("/${entityName?uncap_first}")
 public class ${entityName}Controller {
@@ -46,7 +46,7 @@ public class ${entityName}Controller {
 	 * @param reqPage 分页参数
 	 * @return 返回${tableInfo.tableComment}-分页列表
 	 */
-	@ApiOperation(value = "${tableInfo.tableComment}-分页列表查询", notes = "${tableInfo.tableComment}-分页列表查询")
+	@Operation(summary = "${tableInfo.tableComment}-分页列表查询", description = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
     @RequiresPermissions("sys:${entityName?uncap_first}:query")
 	public Result<PageResult<${entityName}>> queryPageList(Req${entityName} req${entityName}, ReqPage reqPage) {
@@ -80,7 +80,7 @@ public class ${entityName}Controller {
 	 * @return 返回${tableInfo.tableComment}-添加结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-添加", operateType = OperateType.INSERT)
-	@ApiOperation("${tableInfo.tableComment}-添加")
+	@Operation(summary = "${tableInfo.tableComment}-添加")
 	@PostMapping
 	@RequiresPermissions("sys:${entityName?uncap_first}:insert")
 	public Result<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
@@ -97,7 +97,7 @@ public class ${entityName}Controller {
 	 * @return 返回${tableInfo.tableComment}-编辑结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-编辑", operateType = OperateType.UPDATE)
-	@ApiOperation("${tableInfo.tableComment}-编辑")
+	@Operation(summary = "${tableInfo.tableComment}-编辑")
 	@PutMapping
 	@RequiresPermissions("sys:${entityName?uncap_first}:update")
 	public Result<${entityName}> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
@@ -114,10 +114,10 @@ public class ${entityName}Controller {
 	 * @return 返回${tableInfo.tableComment}-删除结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-通过id删除", operateType = OperateType.DELETE)
-	@ApiOperation("${tableInfo.tableComment}-通过id删除")
+	@Operation(summary = "${tableInfo.tableComment}-通过id删除")
 	@DeleteMapping("/{id}")
 	@RequiresPermissions("sys:${entityName?uncap_first}:delete")
-	public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+	public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
 		if (${entityName?uncap_first}Service.removeById(id)) {
 			return Result.ok(true, "${tableInfo.tableComment}-删除成功!");
 		}
@@ -131,10 +131,10 @@ public class ${entityName}Controller {
 	 * @return 返回${tableInfo.tableComment}-删除结果
 	 */
 	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
-	@ApiOperation("${tableInfo.tableComment}-批量删除")
+	@Operation(summary = "${tableInfo.tableComment}-批量删除")
 	@DeleteMapping("/batch/{ids}")
 	@RequiresPermissions("sys:${entityName?uncap_first}:delete")
-	public Result<Boolean> deleteBatch(@ApiParam(name = "ids", value = "唯一性ID") @PathVariable String ids) {
+	public Result<Boolean> deleteBatch(@Parameter(name = "ids", description = "唯一性ID") @PathVariable String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))) {
 		    return Result.ok(true, "${tableInfo.tableComment}-批量删除成功!");
 		}
@@ -147,10 +147,10 @@ public class ${entityName}Controller {
 	 * @param id 唯一ID
 	 * @return 返回${tableInfo.tableComment}对象
 	 */
-	@ApiOperation("${tableInfo.tableComment}-通过id查询")
+	@Operation(summary = "${tableInfo.tableComment}-通过id查询")
 	@GetMapping("/{id}")
 	@RequiresPermissions("sys:${entityName?uncap_first}:query")
-	public Result<${entityName}> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+	public Result<${entityName}> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
 		return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-查询成功!");
 	}
@@ -161,7 +161,7 @@ public class ${entityName}Controller {
 	* @param reqPage 分页参数
 	* @throws IOException IO异常
 	*/
-	@ApiOperation(value = "导出${tableInfo.tableComment}", notes = "导出${tableInfo.tableComment}")
+	@Operation(summary = "导出${tableInfo.tableComment}", description = "导出${tableInfo.tableComment}")
 	@GetMapping("/export")
 	@RequiresPermissions("sys:${entityName?uncap_first}:export")
 	public void export(Req${entityName} req${entityName}, ReqPage reqPage) throws IOException {

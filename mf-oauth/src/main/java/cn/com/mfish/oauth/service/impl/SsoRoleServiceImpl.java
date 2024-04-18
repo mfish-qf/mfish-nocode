@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Service
 @Slf4j

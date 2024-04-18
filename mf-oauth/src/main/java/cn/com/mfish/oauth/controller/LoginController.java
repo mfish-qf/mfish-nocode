@@ -2,11 +2,12 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.common.oauth.service.SsoUserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import cn.com.mfish.oauth.service.LoginService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,14 +16,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import java.security.NoSuchAlgorithmException;
 
 /**
  * @author: mfish
  * @date: 2020/2/11 11:13
  */
-@Api(tags = "登录")
+@Tag(name = "登录")
 @Controller
 @Slf4j
 @RefreshScope
@@ -39,10 +39,10 @@ public class LoginController {
      *
      * @return
      */
-    @ApiOperation("发送短信")
+    @Operation(summary = "发送短信")
     @PostMapping("/sendMsg")
     @ResponseBody
-    @ApiImplicitParam(name = "phone", value = "手机号", paramType = "query", required = true, dataTypeClass = String.class)
+    @Parameter(name = "phone", description = "手机号", required = true)
     public Result<String> sendMsg(String phone) throws NoSuchAlgorithmException {
         if (StringUtils.isEmpty(phone)) {
             return Result.fail("错误:手机号不允许为空");

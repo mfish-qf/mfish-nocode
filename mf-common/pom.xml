@@ -28,8 +28,8 @@
         <module>mf-common-dataset</module>
         <module>mf-common-captcha</module>
         <module>mf-common-code</module>
-        <module>mf-common-sys</module>
         <module>mf-common-api</module>
+        <module>mf-common-sys</module>
     </modules>
 
 </project>

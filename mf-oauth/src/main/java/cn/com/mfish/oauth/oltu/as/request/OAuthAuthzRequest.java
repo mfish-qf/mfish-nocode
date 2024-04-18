@@ -30,7 +30,7 @@ import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
 import cn.com.mfish.oauth.oltu.common.validators.OAuthValidator;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
 import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 public class OAuthAuthzRequest extends OAuthRequest {

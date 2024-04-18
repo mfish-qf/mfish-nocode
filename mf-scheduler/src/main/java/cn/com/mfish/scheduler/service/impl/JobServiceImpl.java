@@ -22,14 +22,14 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**
  * @description: 定时调度任务
  * @author: mfish
  * @date: 2023-02-03
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Service
 public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobService {

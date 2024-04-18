@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @description: 文件缓存
  * @author: mfish
  * @date: 2023-01-05
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 public interface StorageMapper extends BaseMapper<StorageInfo> {
 

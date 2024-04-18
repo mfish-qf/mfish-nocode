@@ -6,7 +6,7 @@ import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.api.remote.RemoteDictService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

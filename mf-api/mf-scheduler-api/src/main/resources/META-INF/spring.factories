@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.scheduler.api.fallback.RemoteSchedulerFallBack

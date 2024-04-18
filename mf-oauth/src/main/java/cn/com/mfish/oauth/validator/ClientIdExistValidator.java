@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish

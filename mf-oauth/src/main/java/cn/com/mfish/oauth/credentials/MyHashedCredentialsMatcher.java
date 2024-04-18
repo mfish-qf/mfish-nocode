@@ -6,7 +6,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author: mfish

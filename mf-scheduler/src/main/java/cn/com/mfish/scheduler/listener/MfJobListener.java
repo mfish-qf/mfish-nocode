@@ -7,7 +7,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 import org.quartz.SchedulerException;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @description: 任务监听

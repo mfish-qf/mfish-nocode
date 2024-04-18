@@ -26,17 +26,21 @@ import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.entity.SsoMenu;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.entity.UserOrg;
-import cn.com.mfish.oauth.req.*;
-import cn.com.mfish.oauth.service.*;
+import cn.com.mfish.oauth.req.ReqSsoMenu;
+import cn.com.mfish.oauth.req.ReqSsoRole;
+import cn.com.mfish.oauth.req.ReqSsoTenant;
+import cn.com.mfish.oauth.service.SsoMenuService;
+import cn.com.mfish.oauth.service.SsoRoleService;
+import cn.com.mfish.oauth.service.SsoTenantService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,10 +50,10 @@ import java.util.List;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "租户信息表")
+@Tag(name = "租户信息表")
 @RestController
 @RequestMapping("/ssoTenant")
 public class SsoTenantController {
@@ -73,7 +77,7 @@ public class SsoTenantController {
      * @param reqPage      分页参数
      * @return 返回租户信息表-分页列表
      */
-    @ApiOperation(value = "租户信息表-分页列表查询", notes = "租户信息表-分页列表查询")
+    @Operation(summary = "租户信息表-分页列表查询", description =  "租户信息表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:ssoTenant:query")
     public Result<PageResult<TenantVo>> queryPageList(ReqSsoTenant reqSsoTenant, ReqPage reqPage) {
@@ -96,7 +100,7 @@ public class SsoTenantController {
      *
      * @return 租户信息
      */
-    @ApiOperation(value = "获取当前租户信息", notes = "获取当前租户信息")
+    @Operation(summary = "获取当前租户信息", description =  "获取当前租户信息")
     @GetMapping("/info")
     public Result<TenantVo> queryTenantInfo() {
         return Result.ok(ssoTenantService.queryInfo(AuthInfoUtils.getCurrentTenantId()), "租户信息-查询成功!");
@@ -109,7 +113,7 @@ public class SsoTenantController {
      * @return 返回租户信息表-添加结果
      */
     @Log(title = "租户信息表-添加", operateType = OperateType.INSERT)
-    @ApiOperation("租户信息表-添加")
+    @Operation(summary = "租户信息表-添加")
     @PostMapping
     @RequiresPermissions("sys:ssoTenant:insert")
     public Result<SsoTenant> add(@RequestBody SsoTenant ssoTenant) {
@@ -123,7 +127,7 @@ public class SsoTenantController {
      * @return 返回租户信息表-编辑结果
      */
     @Log(title = "租户信息表-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation("租户信息表-编辑")
+    @Operation(summary = "租户信息表-编辑")
     @PutMapping
     @RequiresPermissions("sys:ssoTenant:update")
     public Result<SsoTenant> edit(@RequestBody SsoTenant ssoTenant) {
@@ -131,7 +135,7 @@ public class SsoTenantController {
     }
 
     @Log(title = "管理员编辑自己租户信息", operateType = OperateType.UPDATE)
-    @ApiOperation("管理员编辑自己租户信息")
+    @Operation(summary = "管理员编辑自己租户信息")
     @PutMapping("/me")
     public Result<SsoTenant> editMe(@RequestBody SsoTenant ssoTenant) {
         if (ssoTenantService.isTenantMaster(ssoTenant.getUserId(), ssoTenant.getId())) {
@@ -147,10 +151,10 @@ public class SsoTenantController {
      * @return 返回租户信息表-删除结果
      */
     @Log(title = "租户信息表-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation("租户信息表-通过id删除")
+    @Operation(summary = "租户信息表-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:ssoTenant:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return ssoTenantService.deleteTenant(id);
     }
 
@@ -160,9 +164,9 @@ public class SsoTenantController {
      * @param id 唯一ID
      * @return 返回租户信息表对象
      */
-    @ApiOperation("租户信息表-通过id查询")
+    @Operation(summary = "租户信息表-通过id查询")
     @GetMapping("/{id}")
-    public Result<SsoTenant> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<SsoTenant> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SsoTenant ssoTenant = ssoTenantService.getById(id);
         return Result.ok(ssoTenant, "租户信息表-查询成功!");
     }
@@ -175,7 +179,7 @@ public class SsoTenantController {
      * @param reqPage      分页参数
      * @throws IOException
      */
-    @ApiOperation(value = "导出租户信息表", notes = "导出租户信息表")
+    @Operation(summary = "导出租户信息表", description =  "导出租户信息表")
     @GetMapping("/export")
     @RequiresPermissions("sys:ssoTenant:export")
     public void export(ReqSsoTenant reqSsoTenant, ReqPage reqPage) throws IOException {
@@ -189,7 +193,7 @@ public class SsoTenantController {
      * @param tenantId 租户ID
      * @return
      */
-    @ApiOperation("切换租户")
+    @Operation(summary = "切换租户")
     @PutMapping("/change/{tenantId}")
     public Result<String> changeTenant(@PathVariable("tenantId") String tenantId) {
         if (StringUtils.isEmpty(tenantId)) {
@@ -230,7 +234,7 @@ public class SsoTenantController {
      * @param reqSsoOrg
      * @return
      */
-    @ApiOperation(value = "获取租户组织树")
+    @Operation(summary = "获取租户组织树")
     @GetMapping("/org")
     @RequiresPermissions("sys:tenantOrg:query")
     public Result<List<SsoOrg>> queryOrgTree(ReqSsoOrg reqSsoOrg) {
@@ -247,7 +251,7 @@ public class SsoTenantController {
      * @return
      */
     @Log(title = "租户组织结构-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "租户组织结构-添加", notes = "租户组织结构-添加")
+    @Operation(summary = "租户组织结构-添加", description =  "租户组织结构-添加")
     @PostMapping("/org")
     @RequiresPermissions("sys:tenantOrg:insert")
     public Result<SsoOrg> orgAdd(@RequestBody SsoOrg ssoOrg) {
@@ -266,7 +270,7 @@ public class SsoTenantController {
      * @return
      */
     @Log(title = "租户组织结构-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "租户组织结构-编辑", notes = "租户组织结构-编辑")
+    @Operation(summary = "租户组织结构-编辑", description =  "租户组织结构-编辑")
     @PutMapping("/org")
     @RequiresPermissions("sys:tenantOrg:update")
     public Result<SsoOrg> orgEdit(@RequestBody SsoOrg ssoOrg) {
@@ -332,10 +336,10 @@ public class SsoTenantController {
      * @return
      */
     @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "组织结构表-通过id删除", notes = "组织结构表-通过id删除")
+    @Operation(summary = "组织结构表-通过id删除", description =  "组织结构表-通过id删除")
     @DeleteMapping("/org/{id}")
     @RequiresPermissions("sys:tenantOrg:delete")
-    public Result<Boolean> orgDelete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> orgDelete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         Result<Boolean> result = verifyOrg(id);
         if (result.isSuccess()) {
             return ssoOrgService.removeOrg(id);
@@ -350,7 +354,7 @@ public class SsoTenantController {
      * @param reqPage
      * @return
      */
-    @ApiOperation(value = "租户角色信息-分页列表查询", notes = "租户角色信息-分页列表查询")
+    @Operation(summary = "租户角色信息-分页列表查询", description =  "租户角色信息-分页列表查询")
     @GetMapping("/role")
     @RequiresPermissions("sys:tenantRole:query")
     public Result<PageResult<SsoRole>> queryRolePageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
@@ -359,7 +363,7 @@ public class SsoTenantController {
         return Result.ok(new PageResult<>(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
-    @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
+    @Operation(summary = "角色信息表-列表查询", description =  "角色信息表-列表查询")
     @GetMapping("/role/all")
     @RequiresPermissions("sys:tenantRole:query")
     public Result<List<SsoRole>> queryRoleList(ReqSsoRole reqSsoRole) {
@@ -367,10 +371,10 @@ public class SsoTenantController {
         return Result.ok(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }
 
-    @ApiOperation("获取租户角色下的菜单ID")
+    @Operation(summary = "获取租户角色下的菜单ID")
     @GetMapping("/role/menus/{roleId}")
     @RequiresPermissions("sys:tenantRole:query")
-    public Result<List<String>> getRoleMenuIds(@ApiParam(name = "roleId", value = "角色ID") @PathVariable String roleId) {
+    public Result<List<String>> getRoleMenuIds(@Parameter(name = "roleId", description = "角色ID") @PathVariable String roleId) {
         Result<Boolean> result = verifyRole(roleId);
         if (result.isSuccess()) {
             return Result.ok(ssoRoleService.getRoleMenus(roleId), "查询租户菜单成功");
@@ -378,7 +382,7 @@ public class SsoTenantController {
         return Result.fail(new ArrayList<>(), "错误:查询租户菜单ID失败");
     }
 
-    @ApiOperation(value = "获取用户菜单树")
+    @Operation(summary = "获取用户菜单树")
     @GetMapping("/menu/tree")
     @RequiresPermissions("sys:tenantRole:query")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
@@ -392,7 +396,7 @@ public class SsoTenantController {
      * @return
      */
     @Log(title = "租户角色信息-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "角色信息表-添加", notes = "租户角色信息-添加")
+    @Operation(summary = "角色信息表-添加", description =  "租户角色信息-添加")
     @PostMapping("/role")
     @RequiresPermissions("sys:tenantRole:insert")
     public Result<SsoRole> addRole(@RequestBody SsoRole ssoRole) {
@@ -411,7 +415,7 @@ public class SsoTenantController {
      * @return
      */
     @Log(title = "租户角色信息-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "角色信息表-编辑", notes = "租户角色信息-编辑")
+    @Operation(summary = "角色信息表-编辑", description =  "租户角色信息-编辑")
     @PutMapping("/role")
     @RequiresPermissions("sys:tenantRole:update")
     public Result<SsoRole> editRole(@RequestBody SsoRole ssoRole) {
@@ -424,10 +428,10 @@ public class SsoTenantController {
     }
 
     @Log(title = "租户角色信息-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "租户角色信息-通过id删除", notes = "租户角色信息-通过id删除")
+    @Operation(summary = "租户角色信息-通过id删除", description =  "租户角色信息-通过id删除")
     @DeleteMapping("/role/{id}")
     @RequiresPermissions("sys:tenantRole:delete")
-    public Result<Boolean> deleteRole(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> deleteRole(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         Result<Boolean> result = verifyRole(id);
         if (result.isSuccess()) {
             return ssoRoleService.deleteRole(id);
@@ -435,9 +439,9 @@ public class SsoTenantController {
         return result;
     }
 
-    @ApiOperation("获取租户列表-通过角色编码查询")
+    @Operation(summary = "获取租户列表-通过角色编码查询")
     @GetMapping("/roleCode/{roleCode}")
-    public Result<List<TenantVo>> queryByRoleCode(@ApiParam(name = "roleCode", value = "角色编码") @PathVariable String roleCode) {
+    public Result<List<TenantVo>> queryByRoleCode(@Parameter(name = "roleCode", description = "角色编码") @PathVariable String roleCode) {
         return Result.ok(ssoTenantService.getTenantByRoleCode(roleCode), "获取租户列表成功!");
     }
 
@@ -459,7 +463,7 @@ public class SsoTenantController {
         return Result.ok();
     }
 
-    @ApiOperation(value = "租户用户信息-分页列表查询", notes = "租户用户信息-分页列表查询")
+    @Operation(summary = "租户用户信息-分页列表查询", description =  "租户用户信息-分页列表查询")
     @GetMapping("/user")
     @RequiresPermissions("sys:tenantUser:query")
     public Result<PageResult<UserInfo>> queryUserPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
@@ -469,7 +473,7 @@ public class SsoTenantController {
         return Result.ok(new PageResult<>(pageList), "租户人员信息-查询成功!");
     }
 
-    @ApiOperation("用户组织关系绑定")
+    @Operation(summary = "用户组织关系绑定")
     @PostMapping("/user/org")
     @RequiresPermissions("sys:tenantUser:insert")
     public Result<Boolean> bindUserOrg(@RequestBody UserOrg userOrg) {
@@ -487,7 +491,7 @@ public class SsoTenantController {
         return Result.fail(false, "错误:用户分配组织失败");
     }
 
-    @ApiOperation("用户组织关系移除")
+    @Operation(summary = "用户组织关系移除")
     @DeleteMapping("/user/org")
     @RequiresPermissions("sys:tenantUser:delete")
     public Result<Boolean> deleteUserOrg(@RequestBody UserOrg userOrg) {

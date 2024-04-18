@@ -21,38 +21,38 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <mfish.version>1.2.1</mfish.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <spring-boot-admin.version>2.7.15</spring-boot-admin.version>
-        <spring-cloud.version>2021.0.8</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-        <alibaba.nacos.version>2.2.3</alibaba.nacos.version>
-        <swagger.fox.version>3.0.0</swagger.fox.version>
-        <swagger.core.version>1.6.12</swagger.core.version>
+        <spring-boot.version>3.0.13</spring-boot.version>
+        <spring-boot-admin.version>3.2.3</spring-boot-admin.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <swagger.doc.version>2.5.0</swagger.doc.version>
+        <swagger.core.version>2.2.21</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <pagehelper.boot.version>2.1.0</pagehelper.boot.version>
-        <jsqlparser.version>4.8</jsqlparser.version>
+        <jsqlparser.version>4.9</jsqlparser.version>
         <druid.version>1.2.21</druid.version>
         <dynamic-ds.version>4.3.0</dynamic-ds.version>
-        <commons.io.version>2.15.1</commons.io.version>
-        <commons.text.version>1.11.0</commons.text.version>
+        <commons.io.version>2.16.1</commons.io.version>
+        <commons.text.version>1.12.0</commons.text.version>
         <freemarker.version>2.3.32</freemarker.version>
-        <fastjson.version>2.0.45</fastjson.version>
+        <fastjson.version>2.0.49</fastjson.version>
         <zxing.version>3.5.2</zxing.version>
         <commons-collections.version>3.2.2</commons-collections.version>
-        <shiro.version>1.13.0</shiro.version>
+        <shiro.version>2.0.0</shiro.version>
         <wechat.version>4.6.0</wechat.version>
         <aliyun-oss.version>3.17.4</aliyun-oss.version>
         <qiniu-sdk.version>7.15.0</qiniu-sdk.version>
-        <rocketmq.version>2.2.3</rocketmq.version>
-        <bcprov.version>1.70</bcprov.version>
+        <rocketmq.version>2.3.0</rocketmq.version>
+        <bcprov.version>1.78</bcprov.version>
         <oracle.version>23.2.0.0</oracle.version>
+        <pgsql.version>42.7.3</pgsql.version>
         <easyexcel.version>3.3.4</easyexcel.version>
     </properties>
     <dependencyManagement>
@@ -73,13 +73,6 @@
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <!-- Alibaba Nacos 配置 -->
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${alibaba.nacos.version}</version>
             </dependency>
 
             <!-- SpringBoot 依赖配置 -->
@@ -165,14 +158,20 @@
             </dependency>
             <!-- Swagger 依赖配置 -->
             <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-models</artifactId>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
                 <version>${swagger.core.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.core.version}</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${swagger.doc.version}</version>
+            </dependency>
+            <!-- 官方建议是springdoc替代springfox-->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+                <version>${swagger.doc.version}</version>
             </dependency>
 
             <!-- 验证码 -->
@@ -227,7 +226,7 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <dependency>
@@ -258,6 +257,35 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
+                <classifier>jakarta</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>shiro-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>shiro-web</artifactId>
+                    </exclusion>
+                </exclusions>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-web</artifactId>
+                <classifier>jakarta</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>shiro-core</artifactId>
+                    </exclusion>
+                </exclusions>
                 <version>${shiro.version}</version>
             </dependency>
             <dependency>
@@ -272,16 +300,21 @@
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
+                <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bcprov.version}</version>
             </dependency>
             <!-- oracle驱动 -->
             <!--oracle连接驱动-->
-             <dependency>
-                 <groupId>com.oracle</groupId>
-                 <artifactId>ojdbc8</artifactId>
-                 <version>${oracle.version}</version>
-             </dependency>
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>${oracle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${pgsql.version}</version>
+            </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-core</artifactId>
@@ -359,6 +392,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-bi</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-sys-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
@@ -377,7 +415,6 @@
                 <artifactId>mf-storage-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
     <!-- 私有库暂时停用，代码注销-->
@@ -414,6 +451,21 @@
     <!--            <url>http://app.mfish.com.cn:18122/repository/mf-snapshots/</url>-->
     <!--        </snapshotRepository>-->
     <!--    </distributionManagement>-->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- 开发环境 -->
+                <profile.name>dev</profile.name>
+                <nacos.server-addr>localhost:19014</nacos.server-addr>
+                <nacos.username></nacos.username>
+                <nacos.password></nacos.password>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>

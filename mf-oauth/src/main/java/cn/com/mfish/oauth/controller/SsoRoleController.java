@@ -15,13 +15,13 @@ import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,10 +30,10 @@ import java.util.stream.Collectors;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.2.1
+ * @Version: V1.3.0
  */
 @Slf4j
-@Api(tags = "角色信息表")
+@Tag(name = "角色信息表")
 @RestController
 @RequestMapping("/role")
 public class SsoRoleController {
@@ -49,7 +49,7 @@ public class SsoRoleController {
      * @param reqPage
      * @return
      */
-    @ApiOperation(value = "角色信息表-分页列表查询", notes = "角色信息表-分页列表查询")
+    @Operation(summary = "角色信息表-分页列表查询", description =  "角色信息表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:role:query")
     public Result<PageResult<SsoRole>> queryPageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
@@ -58,14 +58,14 @@ public class SsoRoleController {
         return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
-    @ApiOperation("获取角色下的菜单ID")
+    @Operation(summary = "获取角色下的菜单ID")
     @GetMapping("/menus/{roleId}")
     @RequiresPermissions("sys:role:query")
-    public Result<List<String>> getRoleMenuIds(@ApiParam(name = "roleId", value = "角色ID") @PathVariable String roleId) {
+    public Result<List<String>> getRoleMenuIds(@Parameter(name = "roleId", description = "角色ID") @PathVariable String roleId) {
         return Result.ok(ssoRoleService.getRoleMenus(roleId), "查询角色下菜单成功");
     }
 
-    @ApiOperation(value = "角色信息表-列表查询", notes = "角色信息表-列表查询")
+    @Operation(summary = "角色信息表-列表查询", description =  "角色信息表-列表查询")
     @GetMapping("/all")
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
         //组织参数不为空，获取组织所属租户的角色
@@ -104,7 +104,7 @@ public class SsoRoleController {
      * @return
      */
     @Log(title = "角色信息表-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "角色信息表-添加", notes = "角色信息表-添加")
+    @Operation(summary = "角色信息表-添加", description =  "角色信息表-添加")
     @PostMapping
     @RequiresPermissions("sys:role:insert")
     public Result<SsoRole> add(@RequestBody SsoRole ssoRole) {
@@ -119,7 +119,7 @@ public class SsoRoleController {
      * @return
      */
     @Log(title = "角色信息表-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "角色信息表-编辑", notes = "角色信息表-编辑")
+    @Operation(summary = "角色信息表-编辑", description =  "角色信息表-编辑")
     @PutMapping
     @RequiresPermissions("sys:role:update")
     public Result<SsoRole> edit(@RequestBody SsoRole ssoRole) {
@@ -128,7 +128,7 @@ public class SsoRoleController {
     }
 
     @Log(title = "角色信息表-设置状态", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "角色信息表-设置状态", notes = "角色信息表-设置状态")
+    @Operation(summary = "角色信息表-设置状态", description =  "角色信息表-设置状态")
     @PutMapping("/status")
     public Result<Boolean> setStatus(@RequestBody SsoRole ssoRole) {
         if (ssoRoleService.updateById(new SsoRole().setId(ssoRole.getId()).setStatus(ssoRole.getStatus()))) {
@@ -144,10 +144,10 @@ public class SsoRoleController {
      * @return
      */
     @Log(title = "角色信息表-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "角色信息表-通过id删除", notes = "角色信息表-通过id删除")
+    @Operation(summary = "角色信息表-通过id删除", description =  "角色信息表-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:role:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if (AuthInfoUtils.isSuperRole(id)) {
             return Result.fail(false, "错误:超户角色不允许删除!");
         }
@@ -160,10 +160,10 @@ public class SsoRoleController {
      * @param id
      * @return
      */
-    @ApiOperation(value = "角色信息表-通过id查询", notes = "角色信息表-通过id查询")
+    @Operation(summary = "角色信息表-通过id查询", description =  "角色信息表-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:role:query")
-    public Result<SsoRole> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<SsoRole> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SsoRole ssoRole = ssoRoleService.getById(id);
         return Result.ok(ssoRole, "角色信息表-查询成功!");
     }

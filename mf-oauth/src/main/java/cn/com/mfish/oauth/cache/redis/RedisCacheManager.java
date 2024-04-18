@@ -5,7 +5,7 @@ import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author: mfish

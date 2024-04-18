@@ -1,7 +1,7 @@
 package cn.com.mfish.common.swagger.config;
 
+import io.swagger.v3.oas.models.info.Contact;
 import lombok.Data;
-import springfox.documentation.service.Contact;
 
 /**
  * @author: mfish
@@ -15,6 +15,10 @@ public class MyContact {
     private String email;
 
     public Contact getContact() {
-        return new Contact(name, url, email);
+        Contact contact = new Contact();
+        contact.setName(name);
+        contact.setUrl(url);
+        contact.setEmail(email);
+        return contact;
     }
 }

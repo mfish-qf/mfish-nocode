@@ -1,34 +1,34 @@
 package cn.com.mfish.sys.controller;
 
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.log.service.SysLogService;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.req.ReqSysLog;
-import cn.com.mfish.common.log.service.SysLogService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 
 /**
  * @description: 系统日志
  * @author: mfish
  * @date: 2023-01-08
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "系统日志")
+@Tag(name = "系统日志")
 @RestController
 @RequestMapping("/sysLog")
 public class SysLogController {
@@ -41,10 +41,10 @@ public class SysLogController {
      * @param reqSysLog 系统日志请求参数
      * @return 返回系统日志
      */
-    @ApiOperation(value = "系统日志-分页列表查询", notes = "系统日志-分页列表查询")
+    @Operation(summary = "系统日志-分页列表查询", description =  "系统日志-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:log:query")
-    public Result<PageResult<SysLog>> queryPageList(ReqSysLog reqSysLog, ReqPage reqPage) {
+    public Result<PageResult<SysLog>> queryPageList( ReqSysLog reqSysLog,  ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<SysLog> queryWrapper = new LambdaQueryWrapper<SysLog>()
                 .like(reqSysLog.getTitle() != null, SysLog::getTitle, reqSysLog.getTitle())
@@ -67,7 +67,7 @@ public class SysLogController {
      * @param sysLog
      * @return
      */
-    @ApiOperation(value = "系统日志-添加", notes = "系统日志-添加")
+    @Operation(summary = "系统日志-添加", description =  "系统日志-添加")
     @PostMapping
     @InnerUser
     public Result<SysLog> add(@RequestBody SysLog sysLog) {
@@ -81,7 +81,7 @@ public class SysLogController {
      * @return
      */
     @Log(title = "系统日志-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "系统日志-编辑", notes = "系统日志-编辑")
+    @Operation(summary = "系统日志-编辑", description =  "系统日志-编辑")
     @PutMapping
     public Result<SysLog> edit(@RequestBody SysLog sysLog) {
         if (sysLogService.updateById(sysLog)) {
@@ -97,10 +97,10 @@ public class SysLogController {
      * @return
      */
     @Log(title = "系统日志-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "系统日志-通过id删除", notes = "系统日志-通过id删除")
+    @Operation(summary = "系统日志-通过id删除", description =  "系统日志-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:log:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if (sysLogService.removeById(id)) {
             return Result.ok(true, "系统日志-删除成功!");
         }
@@ -114,7 +114,7 @@ public class SysLogController {
      * @return
      */
     @Log(title = "系统日志-批量删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "系统日志-批量删除", notes = "系统日志-批量删除")
+    @Operation(summary = "系统日志-批量删除", description =  "系统日志-批量删除")
     @DeleteMapping("/batch")
     @RequiresPermissions("sys:log:delete")
     public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
@@ -130,10 +130,10 @@ public class SysLogController {
      * @param id
      * @return
      */
-    @ApiOperation(value = "系统日志-通过id查询", notes = "系统日志-通过id查询")
+    @Operation(summary = "系统日志-通过id查询", description =  "系统日志-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:log:query")
-    public Result<SysLog> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<SysLog> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SysLog sysLog = sysLogService.getById(id);
         return Result.ok(sysLog, "系统日志-查询成功!");
     }

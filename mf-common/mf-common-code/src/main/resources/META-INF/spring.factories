@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.code.common.FreemarkerUtils,\
-  cn.com.mfish.common.code.config.properties.FreemarkerProperties,\
-  cn.com.mfish.common.code.config.FreemarkerConfig
-

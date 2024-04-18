@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.com.mfish.common.web.aspect.InnerUserAspect,\
-  cn.com.mfish.common.web.interceptor.BearerTokenInterceptor
-  

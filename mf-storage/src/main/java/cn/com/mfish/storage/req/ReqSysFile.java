@@ -1,7 +1,7 @@
 package cn.com.mfish.storage.req;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,16 +9,16 @@ import lombok.experimental.Accessors;
  * @description: 文件存储
  * @author: mfish
  * @date: 2023-03-02
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("文件存储请求参数")
+@Schema(description = "文件存储请求参数")
 public class ReqSysFile {
-    @ApiModelProperty(value = "文件名")
+    @Schema(description = "文件名")
     private String fileName;
-    @ApiModelProperty(value = "文件类型")
+    @Schema(description = "文件类型")
     private String fileType;
-    @ApiModelProperty(value = "删除标签 1删除 0未删除")
+    @Schema(description = "删除标签 1删除 0未删除")
     private String delFlag;
 }

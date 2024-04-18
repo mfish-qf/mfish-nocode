@@ -7,7 +7,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

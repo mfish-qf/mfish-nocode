@@ -5,18 +5,21 @@ import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.file.handler.StorageHandler;
+import cn.com.mfish.common.file.service.StorageService;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
-import cn.com.mfish.common.file.service.StorageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
@@ -24,7 +27,7 @@ import java.io.IOException;
  * @author: mfish
  * @date: 2023/1/5 15:42
  */
-@Api(tags = "文件缓存操作")
+@Tag(name = "文件缓存操作")
 @RestController
 @RequestMapping("/file")
 @Slf4j
@@ -36,13 +39,13 @@ public class StorageController {
     @Resource
     TokenValidator tokenValidator;
 
-    @ApiOperation("文件新增")
+    @Operation(summary = "文件新增")
     @PostMapping
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "file", value = "文件", required = true, dataTypeClass = MultipartFile.class),
-            @ApiImplicitParam(name = "fileName", value = "文件名称 默认为空字符串", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "path", value = "定义特殊文件路径 默认为空字符串", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "isPrivate", value = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是", dataTypeClass = Integer.class),
+    @Parameters({
+            @Parameter(name = "file", description = "文件", required = true),
+            @Parameter(name = "fileName", description = "文件名称 默认为空字符串"),
+            @Parameter(name = "path", description = "定义特殊文件路径 默认为空字符串"),
+            @Parameter(name = "isPrivate", description = "是否私有文件，私有文件需要带token才允许访问 1是 0否 默认是"),
     })
     @RequiresPermissions("sys:file:upload")
     public Result<StorageInfo> upload(@RequestParam("file") MultipartFile file
@@ -60,9 +63,9 @@ public class StorageController {
         return Result.fail(info, "错误:文件新增失败");
     }
 
-    @ApiOperation("文件获取")
+    @Operation(summary = "文件获取")
     @GetMapping("/{key:.+}")
-    public ResponseEntity<org.springframework.core.io.Resource> fetch(@ApiParam(name = "key", value = "文件key") @PathVariable String key) {
+    public ResponseEntity<org.springframework.core.io.Resource> fetch(@Parameter(name = "key", description = "文件key") @PathVariable String key) {
         if (key == null) {
             return ResponseEntity.notFound().build();
         }
