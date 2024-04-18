@@ -4,15 +4,26 @@ swagger:
   description : 摸鱼框架接口文档
   license : Powered By mfish
   licenseUrl : https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE
-  version : 版本号:V1.2.1
+  version : 版本号:V1.3.0
   termsOfServiceUrl : http://www.mfish.com.cn
   contact:
     name: mfish
     email: qiufeng9862@qq.com
     url: http://www.mfish.com.cn
   needAuth : true
-#增加下面属性防止swagger页面无法查看接口，报错no operations defined in spec错误
-spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
+springdoc:
+  api-docs:
+    #生产设置false
+    enabled: true
+  swagger-ui:
+    #生产设置false
+    enabled: true
+    path: /index.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    default-models-expand-depth: -1
+    docExpansion: none
+  group-configs:
+    - group: mfish-nocode
+      paths-to-match: /**
+  default-flat-param-object: true

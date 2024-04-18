@@ -11,21 +11,24 @@ import cn.com.mfish.sys.entity.DictCategory;
 import cn.com.mfish.sys.req.ReqDictCategory;
 import cn.com.mfish.sys.service.DictCategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * @description: 树行分类字典
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Slf4j
-@Api(tags = "树形分类")
+@Tag(name = "树形分类")
 @RestController
 @RequestMapping("/dictCategory")
 public class DictCategoryController {
@@ -39,14 +42,14 @@ public class DictCategoryController {
      * @param reqPage             分页参数
      * @return 返回树形分类-分页列表
      */
-    @ApiOperation(value = "树形分类-分页列表查询", notes = "树形分类-分页列表查询")
+    @Operation(summary = "树形分类-分页列表查询", description = "树形分类-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:dictCategory:query")
     public Result<PageResult<DictCategory>> queryPageList(ReqDictCategory reqDictCategory, ReqPage reqPage) {
         return dictCategoryService.queryCategoryTree(reqDictCategory, reqPage);
     }
 
-    @ApiOperation(value = "树形分类查询", notes = "树形分类")
+    @Operation(summary = "树形分类查询", description =  "树形分类")
     @GetMapping("/tree")
     @RequiresPermissions("sys:dictCategory:query")
     public Result<List<DictCategory>> queryList(ReqDictCategory reqDictCategory) {
@@ -60,7 +63,7 @@ public class DictCategoryController {
      * @return 返回树形分类-添加结果
      */
     @Log(title = "树形分类-添加", operateType = OperateType.INSERT)
-    @ApiOperation("树形分类-添加")
+    @Operation(summary = "树形分类-添加")
     @PostMapping
     @RequiresPermissions("sys:dictCategory:insert")
     public Result<DictCategory> add(@RequestBody DictCategory dictCategory) {
@@ -74,7 +77,7 @@ public class DictCategoryController {
      * @return 返回树形分类-编辑结果
      */
     @Log(title = "树形分类-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation("树形分类-编辑")
+    @Operation(summary = "树形分类-编辑")
     @PutMapping
     @RequiresPermissions("sys:dictCategory:update")
     public Result<DictCategory> edit(@RequestBody DictCategory dictCategory) {
@@ -88,10 +91,10 @@ public class DictCategoryController {
      * @return 返回树形分类-删除结果
      */
     @Log(title = "树形分类-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation("树形分类-通过id删除")
+    @Operation(summary = "树形分类-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:dictCategory:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return dictCategoryService.deleteCategory(id);
     }
 
@@ -101,37 +104,37 @@ public class DictCategoryController {
      * @param id 唯一ID
      * @return 返回树形分类对象
      */
-    @ApiOperation("树形分类-通过id查询")
+    @Operation(summary = "树形分类-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:dictCategory:query")
-    public Result<DictCategory> queryById(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<DictCategory> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         DictCategory dictCategory = dictCategoryService.getById(id);
         return Result.ok(dictCategory, "树形分类-查询成功!");
     }
 
-    @ApiOperation(value = "分类树-通过分类编码查询", notes = "分类树-通过分类编码查询")
+    @Operation(summary = "分类树-通过分类编码查询", description =  "分类树-通过分类编码查询")
     @GetMapping("/tree/{code}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
     })
-    public Result<List<DictCategory>> queryTreeByCode(@ApiParam(name = "code", value = "分类") @PathVariable String code, @RequestParam String direction) {
+    public Result<List<DictCategory>> queryTreeByCode(@Parameter(name = "code", description = "分类") @PathVariable String code, @RequestParam String direction) {
         List<DictCategory> list = dictCategoryService.queryCategoryTreeByCode(code, TreeDirection.getDirection(direction));
         return Result.ok(list, "分类树-查询成功!");
     }
 
-    @ApiOperation(value = "分类列表-通过分类编码查询", notes = "分类列表-通过分类编码查询")
+    @Operation(summary = "分类列表-通过分类编码查询", description =  "分类列表-通过分类编码查询")
     @GetMapping("/list/{code}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class),
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
     })
-    public Result<List<DictCategory>> queryListByCode(@ApiParam(name = "code", value = "分类") @PathVariable String code, @RequestParam String direction) {
+    public Result<List<DictCategory>> queryListByCode(@Parameter(name = "code", description = "分类") @PathVariable String code, @RequestParam String direction) {
         List<DictCategory> list = dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction));
         return Result.ok(list, "分类列表-查询成功!");
     }
 
-    @ApiOperation("分类-通过编码查询")
+    @Operation(summary = "分类-通过编码查询")
     @GetMapping("/one/{code}")
-    public Result<DictCategory> queryOneByCode(@ApiParam(name = "code", value = "唯一性ID") @PathVariable String code) {
+    public Result<DictCategory> queryOneByCode(@Parameter(name = "code", description = "唯一性ID") @PathVariable String code) {
         DictCategory materialCategory = dictCategoryService.getOne(new LambdaQueryWrapper<DictCategory>()
                 .eq(DictCategory::getCategoryCode, code));
         return Result.ok(materialCategory, "物料分类-查询成功!");

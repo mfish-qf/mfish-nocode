@@ -1,7 +1,7 @@
 package cn.com.mfish.common.oauth.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 import java.io.Serializable;
 
@@ -9,13 +9,13 @@ import java.io.Serializable;
  * @author: mfish
  * @date: 2020/2/17 15:09
  */
-@ApiModel("返回accessToken信息")
+@Schema(description = "返回accessToken信息")
 public class AccessToken implements Serializable {
-    @ApiModelProperty("token值")
+    @Schema(description = "token值")
     private String access_token;
-    @ApiModelProperty("刷新token用于重新获取token")
+    @Schema(description = "刷新token用于重新获取token")
     private String refresh_token;
-    @ApiModelProperty("有效期")
+    @Schema(description = "有效期")
     private Long expires_in;
 
     public AccessToken() {

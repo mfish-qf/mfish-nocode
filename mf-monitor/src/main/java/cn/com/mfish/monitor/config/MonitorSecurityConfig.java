@@ -27,9 +27,9 @@ public class MonitorSecurityConfig {
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + "/");
-        http.authorizeRequests()
+        http.authorizeHttpRequests()
                 //无需登录即可访问
-                .antMatchers(adminContextPath + "/assets/**",
+                .requestMatchers(adminContextPath + "/assets/**",
                         adminContextPath + "/login",
                         adminContextPath + "/actuator/health").permitAll()
                 .anyRequest().authenticated()
@@ -43,7 +43,7 @@ public class MonitorSecurityConfig {
                 .headers().frameOptions().disable().and()
                 .csrf()
                 //开启基于cookie的csrf保护
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringAntMatchers(
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringRequestMatchers(
                         adminContextPath + "/instances",
                         adminContextPath + "/actuator/**"
                 );

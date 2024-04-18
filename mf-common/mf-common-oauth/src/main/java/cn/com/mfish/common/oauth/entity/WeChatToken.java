@@ -1,7 +1,7 @@
 package cn.com.mfish.common.oauth.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,20 +12,20 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel("缓存中的微信token")
+@Schema(description = "缓存中的微信token")
 public class WeChatToken extends AccessToken {
-    @ApiModelProperty("微信openid")
+    @Schema(description = "微信openid")
     private String openid;
-    @ApiModelProperty("微信返回session参数")
+    @Schema(description = "微信返回session参数")
     private String session_key;
-    @ApiModelProperty("用户id")
+    @Schema(description = "用户id")
     private String userId;
-    @ApiModelProperty("用户账号")
+    @Schema(description = "用户账号")
     private String account;
-    @ApiModelProperty("refreshToken时效")
+    @Schema(description = "refreshToken时效")
     private Long reTokenExpire;
-    @ApiModelProperty("ip地址")
+    @Schema(description = "ip地址")
     private String ip;
-    @ApiModelProperty("租户ID")
+    @Schema(description = "租户ID")
     private String tenantId;
 }

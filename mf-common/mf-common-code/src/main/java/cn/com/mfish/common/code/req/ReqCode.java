@@ -1,7 +1,7 @@
 package cn.com.mfish.common.code.req;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 
 import java.util.List;
@@ -12,20 +12,20 @@ import java.util.List;
  * @date: 2022/12/23 19:39
  */
 @Data
-@ApiModel("代码生成参数")
+@Schema(description = "代码生成参数")
 public class ReqCode {
-    @ApiModelProperty("数据库连接ID(必传 通过数据库列表接口查询)")
+    @Schema(description = "数据库连接ID(必传 通过数据库列表接口查询)")
     private String connectId;
-    @ApiModelProperty("表名(必传)")
+    @Schema(description = "表名(必传)")
     private String tableName;
-    @ApiModelProperty("表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")
+    @Schema(description = "表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")
     private String tableComment;
-    @ApiModelProperty("项目包名(不传使用默认包名 cn.com.mfish.web)")
+    @Schema(description = "项目包名(不传使用默认包名 cn.com.mfish.web)")
     private String packageName;
-    @ApiModelProperty("实体类名(不传会使用表名驼峰化)")
+    @Schema(description = "实体类名(不传会使用表名驼峰化)")
     private String entityName;
-    @ApiModelProperty("接口路径前缀 例如:/oauth2/user接口前缀为oauth2(不传会使用packageName，最底层包名 例如:cn.com.mfish.sys包会使用sys)")
+    @Schema(description = "接口路径前缀 例如:/oauth2/user接口前缀为oauth2(不传会使用packageName，最底层包名 例如:cn.com.mfish.sys包会使用sys)")
     private String apiPrefix;
-    @ApiModelProperty("查询条件列表 所有条件为and关系")
+    @Schema(description = "查询条件列表 所有条件为and关系")
     private List<ReqSearch> searches;
 }

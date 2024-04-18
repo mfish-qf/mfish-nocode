@@ -1,9 +1,9 @@
 package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.config.ServiceProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;

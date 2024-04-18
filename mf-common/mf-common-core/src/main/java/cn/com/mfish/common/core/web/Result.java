@@ -3,8 +3,8 @@ package cn.com.mfish.common.core.web;
 import cn.com.mfish.common.core.constants.Constants;
 import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,22 +18,22 @@ import java.util.Map;
  * @author: mfish
  * @date: 2021/3/16 14:34
  */
-@ApiModel("通用泛型结果返回")
+@Schema(description = "通用泛型结果返回")
 @Accessors(chain = true)
 @Data
 public class Result<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty("是否成功")
+    @Schema(description = "是否成功")
     private boolean success = true;
-    @ApiModelProperty("状态码")
+    @Schema(description = "状态码")
     private int code = Constants.SUCCESS;
-    @ApiModelProperty("返回内容")
+    @Schema(description = "返回内容")
     private String msg;
-    @ApiModelProperty("数据对象")
+    @Schema(description = "数据对象")
     private T data;
     @JsonIgnore
-    @ApiModelProperty("补充参数 用于多次检查时携带上一次参数提供下次使用")
+    @Schema(description = "补充参数 用于多次检查时携带上一次参数提供下次使用")
     private Map<String, String> param = new HashMap<>();
 
     public static <T> Result<T> buildResult(T data, int code, String msg) {

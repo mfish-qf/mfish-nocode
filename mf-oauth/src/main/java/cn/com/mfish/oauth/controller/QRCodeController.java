@@ -5,17 +5,20 @@ import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
 import cn.com.mfish.oauth.common.QRCodeUtils;
 import cn.com.mfish.oauth.entity.QRCode;
 import cn.com.mfish.oauth.entity.QRCodeImg;
 import cn.com.mfish.oauth.entity.RedisQrCode;
-import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.oauth.service.QRCodeService;
-import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
 import com.google.zxing.WriterException;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,13 +42,14 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequestMapping("/qrCodeLogin")
+@Tag(name="扫码登录接口")
 public class QRCodeController {
     @Resource
     QRCodeService qrCodeService;
     @Resource
     WeChatTokenValidator weChatTokenValidator;
 
-    @ApiOperation("生成二维码")
+    @Operation(summary = "生成二维码")
     @GetMapping("/build")
     public Result<QRCodeImg> buildQRCode() {
         String error = "错误:生成二维码异常!";
@@ -107,10 +109,10 @@ public class QRCodeController {
         return qrCodeImg;
     }
 
-    @ApiOperation("检测扫码登录状态")
+    @Operation(summary = "检测扫码登录状态")
     @GetMapping("/check")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = SerConstant.QR_CODE, description = "二维码生成的code值", required = true)
     })
     public Result<QRCode> qrCodeLoginCheck(String code) throws InvocationTargetException, IllegalAccessException {
         RedisQrCode redisQrCode = qrCodeService.checkQRCode(code);
@@ -122,30 +124,30 @@ public class QRCodeController {
         return Result.ok(qrCode);
     }
 
-    @ApiOperation("扫描二维码登录")
+    @Operation(summary = "扫描二维码登录")
     @PostMapping("/scan")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = SerConstant.QR_CODE, description = "二维码生成的code值", required = true)
     })
     public Result<String> scanQrCode(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.未扫描, SerConstant.ScanStatus.已扫描);
     }
 
-    @ApiOperation("扫码确认登录")
+    @Operation(summary = "扫码确认登录")
     @PostMapping("/login")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true, dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = SerConstant.QR_CODE, description = "二维码生成的code值", required = true),
+            @Parameter(name = SerConstant.QR_SECRET, description = "前一次扫码返回的密钥", required = true)
     })
     public Result<String> qrCodeLogin(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已确认);
     }
 
-    @ApiOperation("扫码取消登录")
+    @Operation(summary = "扫码取消登录")
     @PostMapping("/cancel")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = SerConstant.QR_CODE, value = "二维码生成的code值", paramType = "query", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = SerConstant.QR_SECRET, value = "前一次扫码返回的密钥", paramType = "query", required = true, dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = SerConstant.QR_CODE, description = "二维码生成的code值", required = true),
+            @Parameter(name = SerConstant.QR_SECRET, description = "前一次扫码返回的密钥", required = true)
     })
     public Result<String> qrCodeCancel(HttpServletRequest request) {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已取消);

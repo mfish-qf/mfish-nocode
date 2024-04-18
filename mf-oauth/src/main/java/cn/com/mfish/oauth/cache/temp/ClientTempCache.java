@@ -6,7 +6,7 @@ import cn.com.mfish.oauth.mapper.ClientMapper;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author: mfish

@@ -1,7 +1,7 @@
 package cn.com.mfish.common.oauth.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 
 /**
@@ -10,14 +10,14 @@ import lombok.Data;
  * @date: 2024/4/9
  */
 @Data
-@ApiModel("简单用户信息")
+@Schema(description = "简单用户信息")
 public class SimpleUserInfo {
-    @ApiModelProperty("唯一id")
+    @Schema(description = "唯一id")
     private String id;
-    @ApiModelProperty("账号")
+    @Schema(description = "账号")
     private String account;
-    @ApiModelProperty("昵称--用于显示")
+    @Schema(description = "昵称--用于显示")
     private String nickname;
-    @ApiModelProperty("头像")
+    @Schema(description = "头像")
     private String headImgUrl;
 }

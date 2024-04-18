@@ -10,7 +10,7 @@ import java.util.List;
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 public interface JobSubscribeMapper extends BaseMapper<JobSubscribe> {
     int insertJobSubscribes(@Param("jobSubscribeList") List<JobSubscribe> jobSubscribeList);

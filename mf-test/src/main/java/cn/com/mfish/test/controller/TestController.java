@@ -8,14 +8,13 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.test.entity.TestParam;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: mfish
@@ -23,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date: 2021/12/3 17:12
  */
 @RestController
-@Api(tags = "测试接口")
+@Tag(name = "测试接口")
 public class TestController {
     @Resource
     RemoteUserService remoteUserService;

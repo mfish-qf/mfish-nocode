@@ -23,13 +23,16 @@ import cn.com.mfish.common.web.annotation.InnerUser;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.req.ReqChangePwd;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +40,7 @@ import java.util.Set;
  * @author: mfish
  * @date: 2020/2/17 18:49
  */
-@Api(tags = "用户信息")
+@Tag(name = "用户信息")
 @RestController
 @RequestMapping("/user")
 @Slf4j
@@ -48,19 +51,19 @@ public class SsoUserController {
     @Resource
     SsoUserService ssoUserService;
 
-    @ApiOperation("获取用户、权限相关信息")
+    @Operation(summary = "获取用户、权限相关信息")
     @GetMapping("/info")
     @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
     public Result<UserInfoVo> getUserInfo() {
         return Result.ok(ssoUserService.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
     }
 
-    @ApiOperation("获取用户权限")
+    @Operation(summary = "获取用户权限")
     @GetMapping("/permissions")
     @Log(title = "获取用户权限", operateType = OperateType.QUERY)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "tenantId", value = "租户ID", dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = "userId", description = "用户ID"),
+            @Parameter(name = "tenantId", description = "租户ID")
     })
     @InnerUser
     public Result<Set<String>> getPermissions(String userId, String tenantId) {
@@ -70,12 +73,12 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserPermissions(userId, tenantId));
     }
 
-    @ApiOperation("获取用户角色")
+    @Operation(summary = "获取用户角色")
     @GetMapping("/roles")
     @Log(title = "获取用户角色", operateType = OperateType.QUERY)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "tenantId", value = "租户ID", dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = "userId", description = "用户ID"),
+            @Parameter(name = "tenantId", description = "租户ID")
     })
     public Result<List<UserRole>> getRoles(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
@@ -89,7 +92,7 @@ public class SsoUserController {
      *
      * @return
      */
-    @ApiOperation(value = "获取当前用户租户列表", notes = "获取当前用户租户列表")
+    @Operation(summary = "获取当前用户租户列表", description =  "获取当前用户租户列表")
     @GetMapping("/tenants")
     public Result<List<TenantVo>> getUserTenants(String userId) {
         if (StringUtils.isEmpty(userId)) {
@@ -98,23 +101,23 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserTenants(userId), "获取当前租户列表成功!");
     }
 
-    @ApiOperation("获取用户组织")
+    @Operation(summary = "获取用户组织")
     @GetMapping("/orgs/{userId}")
     @Log(title = "获取用户组织", operateType = OperateType.QUERY)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "direction", value = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", paramType = "query", required = true, dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
     })
     public Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam String direction) {
         return ssoUserService.getOrgs(userId, direction);
     }
 
-    @ApiOperation("通过用户ID获取用户")
+    @Operation(summary = "通过用户ID获取用户")
     @GetMapping("/{id}")
-    public Result<UserInfo> getUserById(@ApiParam(name = "id", value = "用户ID") @PathVariable String id) {
+    public Result<UserInfo> getUserById(@Parameter(name = "id", description = "用户ID") @PathVariable String id) {
         return Result.ok(ssoUserService.getUserByIdNoPwd(id));
     }
 
-    @ApiOperation("修改密码")
+    @Operation(summary = "修改密码")
     @PutMapping("/pwd")
     @Log(title = "修改密码", operateType = OperateType.UPDATE)
     public Result<Boolean> changePassword(@RequestBody ReqChangePwd reqChangePwd) {
@@ -130,7 +133,7 @@ public class SsoUserController {
     }
 
     @Log(title = "用户-设置状态", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "用户-设置状态", notes = "用户-设置状态")
+    @Operation(summary = "用户-设置状态", description =  "用户-设置状态")
     @PutMapping("/status")
     @RequiresPermissions("sys:account:update")
     public Result<Boolean> setStatus(@RequestBody SsoUser ssoUser) {
@@ -143,7 +146,7 @@ public class SsoUserController {
         return Result.fail(false, "错误:用户-设置状态失败!");
     }
 
-    @ApiOperation(value = "用户登出", notes = "用户登出--该方法只适用于web前端登录的用户登出")
+    @Operation(summary = "用户登出", description =  "用户登出--该方法只适用于web前端登录的用户登出")
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
@@ -192,7 +195,7 @@ public class SsoUserController {
      * @param reqPage
      * @return
      */
-    @ApiOperation(value = "用户信息-分页列表查询", notes = "用户信息-分页列表查询")
+    @Operation(summary = "用户信息-分页列表查询", description =  "用户信息-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:account:query")
     public Result<PageResult<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
@@ -201,10 +204,10 @@ public class SsoUserController {
         return Result.ok(new PageResult<>(pageList), "用户信息-查询成功!");
     }
 
-    @ApiOperation(value = "检索用户列表-限制最多查询50人(有新增租户用户权限人允许检索)", notes = "检索用户列表")
+    @Operation(summary = "检索用户列表-限制最多查询50人(有新增租户用户权限人允许检索)", description =  "检索用户列表")
     @GetMapping("/search")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "condition", value = "检索条件，可输入用户名、昵称、手机号", dataTypeClass = String.class)
+    @Parameters({
+            @Parameter(name = "condition", description = "检索条件，可输入用户名、昵称、手机号")
     })
     @RequiresPermissions("sys:tenantUser:insert")
     public Result<List<SimpleUserInfo>> queryUserList(String condition) {
@@ -212,7 +215,7 @@ public class SsoUserController {
     }
 
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
-    @ApiOperation(value = "用户信息-添加", notes = "用户信息-添加")
+    @Operation(summary = "用户信息-添加", description =  "用户信息-添加")
     @PostMapping
     @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
@@ -226,7 +229,7 @@ public class SsoUserController {
      * @return
      */
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
+    @Operation(summary = "用户信息-编辑", description =  "用户信息-编辑")
     @PutMapping
     @RequiresPermissions("sys:account:update")
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
@@ -234,7 +237,7 @@ public class SsoUserController {
     }
 
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
-    @ApiOperation(value = "用户信息-编辑", notes = "用户信息-编辑")
+    @Operation(summary = "用户信息-编辑", description =  "用户信息-编辑")
     @PutMapping("/me")
     public Result<SsoUser> editMe(@RequestBody SsoUser ssoUser) {
         if (!ssoUser.getId().equals(AuthInfoUtils.getCurrentUserId())) {
@@ -250,10 +253,10 @@ public class SsoUserController {
      * @return
      */
     @Log(title = "用户信息-通过id删除", operateType = OperateType.DELETE)
-    @ApiOperation(value = "用户信息-通过id删除", notes = "用户信息-通过id删除")
+    @Operation(summary = "用户信息-通过id删除", description =  "用户信息-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:account:delete")
-    public Result<Boolean> delete(@ApiParam(name = "id", value = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         if ("1".equals(id)) {
             return Result.fail(false, "错误:admin帐号不允许删除!");
         }
@@ -263,27 +266,27 @@ public class SsoUserController {
         return Result.fail(false, "错误:用户信息-删除失败!");
     }
 
-    @ApiOperation("判断用户是否存在")
+    @Operation(summary = "判断用户是否存在")
     @GetMapping("/exist/{account}")
-    public Result<Boolean> isAccountExist(@ApiParam(name = "account", value = "帐号名称") @PathVariable String account) {
+    public Result<Boolean> isAccountExist(@Parameter(name = "account", description = "帐号名称") @PathVariable String account) {
         if (ssoUserService.isAccountExist(account, null)) {
             return Result.fail(true, "帐号[" + account + "]存在");
         }
         return Result.ok(false, "帐号[" + account + "]不存在");
     }
 
-    @ApiOperation("获取在线用户信息")
+    @Operation(summary = "获取在线用户信息")
     @GetMapping("/online")
     @RequiresPermissions("sys:online:query")
     public Result<PageResult<OnlineUser>> userOnline(ReqPage reqPage) {
         return Result.ok(ssoUserService.getOnlineUser(reqPage), "获取在线用户成功");
     }
 
-    @ApiOperation("踢出指定用户")
+    @Operation(summary = "踢出指定用户")
     @GetMapping("/revoke/{sid}")
     @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
     @RequiresPermissions("sys:online:revoke")
-    public Result<Boolean> revokeUser(@ApiParam(name = "sid", value = "指定用户的sessionId") @PathVariable String sid) {
+    public Result<Boolean> revokeUser(@Parameter(name = "sid", description = "指定用户的sessionId") @PathVariable String sid) {
         userTokenCache.delDeviceTokenCache(ssoUserService.decryptSid(sid));
         return Result.ok(true, "成功登出");
     }

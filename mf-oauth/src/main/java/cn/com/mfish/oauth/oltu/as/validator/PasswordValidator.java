@@ -24,7 +24,7 @@ package cn.com.mfish.oauth.oltu.as.validator;
 
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.validators.AbstractValidator;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class PasswordValidator extends AbstractValidator<HttpServletRequest> {
 

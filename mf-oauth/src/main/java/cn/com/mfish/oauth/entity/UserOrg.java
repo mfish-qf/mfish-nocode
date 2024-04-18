@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 
 /**
@@ -10,10 +10,10 @@ import lombok.Data;
  * @date: 2023/7/4
  */
 @Data
-@ApiModel("用户组织")
+@Schema(description = "用户组织")
 public class UserOrg {
-    @ApiModelProperty("组织ID")
+    @Schema(description = "组织ID")
     private String orgId;
-    @ApiModelProperty("用户ID")
+    @Schema(description = "用户ID")
     private String userId;
 }

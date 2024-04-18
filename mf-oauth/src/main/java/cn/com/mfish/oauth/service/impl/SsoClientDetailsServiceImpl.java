@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @description: 客户端信息
  * @author: mfish
  * @date: 2023-05-12
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Service
 public class SsoClientDetailsServiceImpl extends ServiceImpl<SsoClientDetailsMapper, SsoClientDetails> implements SsoClientDetailsService {

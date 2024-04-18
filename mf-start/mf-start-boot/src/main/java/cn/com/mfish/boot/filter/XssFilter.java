@@ -2,14 +2,14 @@ package cn.com.mfish.boot.filter;
 
 import cn.com.mfish.common.core.config.XssProperties;
 import cn.com.mfish.common.core.utils.StringUtils;
+import jakarta.annotation.Resource;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**

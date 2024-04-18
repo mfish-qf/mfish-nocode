@@ -1,7 +1,7 @@
 package cn.com.mfish.scheduler.req;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -10,13 +10,13 @@ import lombok.experimental.Accessors;
  * @description: 任务日志
  * @author: mfish
  * @date: 2023-02-14
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
-@ApiModel("任务日志请求参数")
+@Schema(description = "任务日志请求参数")
 public class ReqJobLog extends ReqJob {
-    @ApiModelProperty(value = "cron表达式")
+    @Schema(description = "cron表达式")
     private String cron;
 }

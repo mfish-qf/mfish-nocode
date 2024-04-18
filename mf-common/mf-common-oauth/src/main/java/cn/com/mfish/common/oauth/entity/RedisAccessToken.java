@@ -1,7 +1,7 @@
 package cn.com.mfish.common.oauth.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,24 +9,24 @@ import lombok.EqualsAndHashCode;
  * @author: mfish
  * @date: 2020/2/17 15:04
  */
-@ApiModel("存储的accessToken信息")
+@Schema(description = "存储的accessToken信息")
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class RedisAccessToken extends AuthorizationCode {
-    @ApiModelProperty("获取token时传入sessionId")
+    @Schema(description = "获取token时传入sessionId")
     private String tokenSessionId;
-    @ApiModelProperty("客户端密钥")
+    @Schema(description = "客户端密钥")
     private String clientSecret;
-    @ApiModelProperty("token值")
+    @Schema(description = "token值")
     private String accessToken;
-    @ApiModelProperty("refreshToken值")
+    @Schema(description = "refreshToken值")
     private String refreshToken;
-    @ApiModelProperty("获取token的类型")
+    @Schema(description = "获取token的类型")
     private String grantType;
-    @ApiModelProperty("token时效")
+    @Schema(description = "token时效")
     private Long expire;
-    @ApiModelProperty("refreshToken时效")
+    @Schema(description = "refreshToken时效")
     private Long reTokenExpire;
-    @ApiModelProperty("ip地址")
+    @Schema(description = "ip地址")
     private String ip;
 }

@@ -26,9 +26,9 @@ import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
 import cn.com.mfish.oauth.oltu.common.validators.OAuthValidator;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
 import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

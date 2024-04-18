@@ -1,7 +1,7 @@
 package cn.com.mfish.common.oauth.common;
 
 import cn.com.mfish.common.core.enums.DeviceType;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,10 +13,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class LoginMutexEntity {
-    @ApiModelProperty("设备类型")
+    @Schema(description = "设备类型")
     DeviceType deviceType;
-    @ApiModelProperty("设备ID web端为sessionid app端为认证app的mac地址 微信为openid")
+    @Schema(description = "设备ID web端为sessionid app端为认证app的mac地址 微信为openid")
     String deviceId;
-    @ApiModelProperty("用户id")
+    @Schema(description = "用户id")
     String userId;
 }

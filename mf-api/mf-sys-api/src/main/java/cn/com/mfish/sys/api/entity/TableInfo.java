@@ -1,7 +1,7 @@
 package cn.com.mfish.sys.api.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,19 +14,19 @@ import java.util.List;
  * @date: 2022/8/29 16:46
  */
 @Data
-@ApiModel("表信息")
+@Schema(description = "表信息")
 @Accessors(chain = true)
 public class TableInfo implements Serializable {
-    @ApiModelProperty("id类型")
+    @Schema(description = "id类型")
     private String idType;
-    @ApiModelProperty("表名称")
+    @Schema(description = "表名称")
     private String tableName;
-    @ApiModelProperty("表描述信息")
+    @Schema(description = "表描述信息")
     private String tableComment;
-    @ApiModelProperty("库")
+    @Schema(description = "库")
     private String tableSchema;
-    @ApiModelProperty("表类型 0表 1视图")
+    @Schema(description = "表类型 0表 1视图")
     private Integer tableType;
-    @ApiModelProperty("列信息")
+    @Schema(description = "列信息")
     private List<FieldInfo> columns;
 }

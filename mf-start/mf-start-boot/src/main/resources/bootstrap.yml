@@ -1,0 +1,28 @@
+# Spring
+spring: 
+  application:
+    # 应用名称
+    name: mfish-nocode
+  profiles:
+    # 环境配置
+    active: dev
+  cloud:
+    nacos:
+      username: @nacos.username@
+      password: @nacos.password@
+      discovery:
+        # 服务注册地址
+        server-addr: @nacos.server-addr@
+        #单实例禁用nacos，yml文件
+        enabled: false
+        instance-enabled: false
+      config:
+        # 配置中心地址
+        server-addr:  @nacos.server-addr@
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs[0]:
+          data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+        enabled: false
+        refresh-enabled: false

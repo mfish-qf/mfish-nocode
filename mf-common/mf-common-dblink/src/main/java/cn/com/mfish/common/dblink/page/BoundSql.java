@@ -1,8 +1,8 @@
 package cn.com.mfish.common.dblink.page;
 
 import cn.com.mfish.common.dblink.entity.QueryParam;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -16,11 +16,11 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("sql包装")
+@Schema(description = "sql包装")
 public class BoundSql {
-    @ApiModelProperty("查询SQL")
+    @Schema(description = "查询SQL")
     private String sql;
-    @ApiModelProperty("查询参数")
+    @Schema(description = "查询参数")
     private List<QueryParam> params;
 
     public BoundSql() {

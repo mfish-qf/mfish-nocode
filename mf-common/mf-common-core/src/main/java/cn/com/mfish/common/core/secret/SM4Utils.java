@@ -2,7 +2,7 @@ package cn.com.mfish.common.core.secret;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
+import org.bouncycastle.pqc.legacy.math.linearalgebra.ByteUtils;
 import org.bouncycastle.util.encoders.Hex;
 
 import javax.crypto.Cipher;

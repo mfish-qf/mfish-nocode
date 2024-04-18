@@ -1,15 +1,15 @@
 package cn.com.mfish.common.web.interceptor;
 
 import cn.com.mfish.common.core.constants.Constants;
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Objects;

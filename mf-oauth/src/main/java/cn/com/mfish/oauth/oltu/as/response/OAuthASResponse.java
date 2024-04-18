@@ -24,7 +24,7 @@ package cn.com.mfish.oauth.oltu.as.response;
 
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.OAuthResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class OAuthASResponse extends OAuthResponse {
 

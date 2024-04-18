@@ -21,6 +21,11 @@
 
 package cn.com.mfish.oauth.oltu.common.error;
 
+/**
+ *
+ *
+ *
+ */
 public abstract class OAuthError {
 
     public static final class CodeResponse {

@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.2.1
+ * @version: V1.3.0
  */
 @Service
 @Slf4j
