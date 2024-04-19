@@ -36,6 +36,17 @@
             ]"
           />
         </template>
+        <#list searchList as search>
+          <#if search.component??>
+            <#list search.component as com>
+              <#if com_index == 1>
+        <template v-if="column.key === '${search.fieldInfo.fieldName}'">
+          <dict-tag code="${com}" :value="record.${search.fieldInfo.fieldName}" />
+        </template>
+              </#if>
+            </#list>
+          </#if>
+        </#list>
       </template>
     </BasicTable>
     <${entityName}Modal @register="registerModal" @success="handleSuccess" />
@@ -51,6 +62,17 @@
   import { TableProps } from "ant-design-vue";
   import { ref } from "vue";
   import { useMessage } from "/@/hooks/web/UseMessage";
+  <#assign dictIndex = 0>
+  <#list searchList as search>
+  <#if search.component??>
+  <#list search.component as com>
+  <#if com_index == 1&&dictIndex==0>
+  import DictTag from "/@/components/general/DictTag/DictTag.vue";
+  <#assign dictIndex = 1>
+  </#if>
+  </#list>
+  </#if>
+  </#list>
 
   defineOptions({ name: "${entityName}Management" });
   const [registerModal, { openModal }] = useModal();

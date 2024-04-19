@@ -65,7 +65,11 @@ public class ${entityName}Controller {
 	<#if searchList?size!=0>
 		LambdaQueryWrapper<${entityName}> lambdaQueryWrapper = new LambdaQueryWrapper<${entityName}>()
 		<#list searchList as search>
+			<#if search.fieldInfo.type =='String'>
 			.${search.condition}(!StringUtils.isEmpty(req${entityName}.get${search.field}()), ${entityName}::get${search.field}, req${entityName}.get${search.field}())
+			<#else>
+			.${search.condition}(null != req${entityName}.get${search.field}(), ${entityName}::get${search.field}, req${entityName}.get${search.field}())
+			</#if>
 		</#list>;
 		return ${entityName?uncap_first}Service.list(lambdaQueryWrapper);
 	<#else>

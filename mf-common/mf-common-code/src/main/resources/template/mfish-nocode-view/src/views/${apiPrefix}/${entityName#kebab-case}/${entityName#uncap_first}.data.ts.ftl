@@ -1,5 +1,16 @@
 import { BasicColumn } from "/@/components/general/Table";
 import { FormSchema } from "/@/components/general/Table";
+<#assign dictIndex = 0>
+<#list searchList as search>
+<#if search.component??>
+<#list search.component as com>
+<#if com_index == 1&&dictIndex==0>
+import { getDictProps } from "/@/utils/DictUtils";
+<#assign dictIndex = 1>
+</#if>
+</#list>
+</#if>
+</#list>
 
 /**
  * @description: ${tableInfo.tableComment}
@@ -21,7 +32,17 @@ export const searchFormSchema: FormSchema[] = [
   {
     field: "${search.fieldInfo.fieldName}",
     label: "${search.fieldInfo.comment}",
+    <#if search.component??>
+    <#list search.component as com>
+    <#if com_index == 0>
+    component: "${com}",
+    <#elseif com_index == 1>
+    componentProps: getDictProps("${com}"),
+    </#if>
+    </#list>
+    <#else>
     component: "Input",
+    </#if>
     colProps: { lg: 4, md: 5 }
   },
 </#list>
@@ -33,12 +54,30 @@ export const ${entityName?uncap_first}FormSchema: FormSchema[] = [
     component: "Input",
     show: false
   },
-<#list tableInfo.columns as fieldInfo>
+<#list tableInfo.fieldExpands as fieldExpands>
   {
-    field: "${fieldInfo.fieldName}",
-    label: "${fieldInfo.comment}",
+    field: "${fieldExpands.fieldInfo.fieldName}",
+    label: "${fieldExpands.fieldInfo.comment}",
+  <#if fieldExpands.dictComponent??>
+  <#list fieldExpands.dictComponent as com>
+  <#if com_index == 0>
+    component: "${com}",
+  <#elseif com_index == 1>
+    componentProps: getDictProps("${com}"),
+  </#if>
+  </#list>
+  <#elseif fieldExpands.fieldInfo.type=='Date'>
+    component: "DatePicker",
+    componentProps: {
+      valueFormat: "YYYY-MM-DD",
+      format: "YYYY-MM-DD"
+    }
+  <#elseif fieldExpands.fieldInfo.type=='Integer'||fieldExpands.fieldInfo.type=='Short'||fieldExpands.fieldInfo.type=='Long'||fieldExpands.fieldInfo.type=='Double'||fieldExpands.fieldInfo.type=='BigDecimal'>
+    component: "InputNumber",
+  <#else>
     component: "Input",
-  <#if !fieldInfo.nullAble>
+  </#if>
+  <#if !fieldExpands.fieldInfo.nullAble>
     required: true
   </#if>
   },
