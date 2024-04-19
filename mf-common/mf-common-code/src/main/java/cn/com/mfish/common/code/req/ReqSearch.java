@@ -1,9 +1,10 @@
 package cn.com.mfish.common.code.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * @description: 搜索请求
@@ -18,4 +19,6 @@ public class ReqSearch {
     private String field;
     @Schema(description = "查询条件")
     private String condition;
+    @Schema(description = "组件 索引0组件名称1字典编码")
+    private List<String> component;
 }

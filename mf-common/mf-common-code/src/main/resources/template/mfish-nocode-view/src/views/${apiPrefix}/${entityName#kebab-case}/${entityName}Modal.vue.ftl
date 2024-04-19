@@ -50,11 +50,13 @@
   }
 
   function save${entityName}(save, values) {
-    save(values).then(() => {
-      emit("success");
-      closeModal();
-    }).finally(() => {
-      setModalProps({ confirmLoading: false });
-    });
+    save(values)
+      .then(() => {
+        emit("success");
+        closeModal();
+      })
+      .finally(() => {
+        setModalProps({ confirmLoading: false });
+      });
   }
 </script>

@@ -1,8 +1,6 @@
 package cn.com.mfish.common.code.entity;
 
-import cn.com.mfish.sys.api.entity.TableInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -23,7 +21,7 @@ public class CodeInfo implements Serializable {
     @Schema(description = "实体名称(会自动转化为首字母大写驼峰)")
     private String entityName;
     @Schema(description = "表相关信息")
-    private TableInfo tableInfo;
+    private TableExpand tableInfo;
     @Schema(description = "接口前缀")
     private String apiPrefix;
     @Schema(description = "查询列表")

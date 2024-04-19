@@ -1,27 +1,26 @@
 package cn.com.mfish.common.code.common;
 
+import cn.com.mfish.common.code.config.properties.FreemarkerProperties;
+import cn.com.mfish.common.code.entity.CodeInfo;
+import cn.com.mfish.common.code.entity.FieldExpand;
+import cn.com.mfish.common.code.entity.SearchInfo;
+import cn.com.mfish.common.code.entity.TableExpand;
 import cn.com.mfish.common.code.req.ReqCode;
 import cn.com.mfish.common.code.req.ReqSearch;
 import cn.com.mfish.common.code.vo.CodeVo;
-import cn.com.mfish.common.code.config.properties.FreemarkerProperties;
-import cn.com.mfish.common.code.entity.CodeInfo;
-import cn.com.mfish.common.code.entity.SearchInfo;
-import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.entity.DefaultField;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.dblink.service.TableService;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.api.remote.RemoteDbConnectService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,7 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -126,21 +124,17 @@ public class FreemarkerUtils {
         codeInfo.setPackageName(reqCode.getPackageName());
         codeInfo.setEntityName(reqCode.getEntityName());
         codeInfo.setApiPrefix(reqCode.getApiPrefix());
-        List<FieldInfo> list;
-        if (ServiceConstants.isBoot(Utils.getServiceType())) {
-            list = SpringBeanFactory.getBean(TableService.class).getFieldList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
-        } else {
-            Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
-            if (!result.isSuccess()) {
-                throw new MyRuntimeException(result.getMsg());
-            }
-            if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
-                throw new MyRuntimeException("错误:未获取到字段信息");
-            }
-            list = result.getData().getList();
+        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+        if (!result.isSuccess()) {
+            throw new MyRuntimeException(result.getMsg());
         }
+        if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
+            throw new MyRuntimeException("错误:未获取到字段信息");
+        }
+        List<FieldInfo> list = result.getData().getList();
         codeInfo.setSearchList(buildSearch(reqCode.getSearches(), list));
         String idType = "";
+        List<FieldExpand> expandList = new ArrayList<>();
         //缺省字段字段不需要生成,获取列时过滤掉
         for (int i = 0; i < list.size(); i++) {
             FieldInfo fieldInfo = list.get(i);
@@ -157,9 +151,20 @@ public class FreemarkerUtils {
                 list.remove(i--);
                 continue;
             }
+            final String finalFieldName = fieldName;
+            Optional<SearchInfo> searchInfo = codeInfo.getSearchList().stream().filter((search) ->
+                            search.getFieldInfo().getFieldName().equals(finalFieldName) && search.getComponent().size() == 2)
+                    .findFirst();
             fieldInfo.setFieldName(StringUtils.toCamelCase(fieldName));
+            FieldExpand fieldExpand = new FieldExpand().setFieldInfo(fieldInfo);
+            //设置字典组件列表
+            searchInfo.ifPresent(info -> fieldExpand.setDictComponent(info.getComponent()));
+            expandList.add(fieldExpand);
         }
-        codeInfo.setTableInfo(new TableInfo().setColumns(list).setTableName(reqCode.getTableName()).setTableComment(reqCode.getTableComment()).setIdType(idType));
+        TableExpand tableExpand = new TableExpand();
+        tableExpand.setColumns(list).setTableName(reqCode.getTableName())
+                .setTableComment(reqCode.getTableComment()).setIdType(idType);
+        codeInfo.setTableInfo(tableExpand.setFieldExpands(expandList));
         return getCode(codeInfo);
     }
 
@@ -174,7 +179,10 @@ public class FreemarkerUtils {
                 continue;
             }
             SearchInfo searchInfo = new SearchInfo();
-            searchInfo.setFieldInfo(optional.get()).setField(StringUtils.toCamelBigCase(reqSearch.getField())).setCondition(reqSearch.getCondition());
+            searchInfo.setFieldInfo(optional.get())
+                    .setField(StringUtils.toCamelBigCase(reqSearch.getField()))
+                    .setCondition(reqSearch.getCondition())
+                    .setComponent(reqSearch.getComponent());
             searchInfos.add(searchInfo);
         }
         return searchInfos;
@@ -193,9 +201,6 @@ public class FreemarkerUtils {
             CodeVo codeVo = new CodeVo();
             String path = replaceVariable(key, regexMap);
             int index = path.lastIndexOf("/");
-            if (path.length() <= index) {
-                continue;
-            }
             String tempName = path.substring(index + 1).replace(".ftl", "");
             codeVo.setName(tempName).setPath(path.substring(0, index));
 //            if (key.contains("xml")) {

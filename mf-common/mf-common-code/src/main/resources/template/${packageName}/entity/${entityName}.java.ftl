@@ -10,14 +10,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+<#assign dateIndex = 0>
+<#assign decimalIndex = 0>
 <#list tableInfo.columns as fieldInfo>
-<#if fieldInfo.type=='Date'>
+<#if fieldInfo.type=='Date'&&dateIndex==0>
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
+<#assign dateIndex = dateIndex+1>
 </#if>
-<#if fieldInfo.type=='BigDecimal'>
+<#if fieldInfo.type=='BigDecimal'&&decimalIndex==0>
 import java.math.BigDecimal;
+<#assign decimalIndex = decimalIndex+1>
 </#if>
 </#list>
 
