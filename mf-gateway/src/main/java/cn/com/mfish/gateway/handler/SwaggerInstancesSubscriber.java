@@ -28,13 +28,14 @@ import java.util.Set;
 @Component
 public class SwaggerInstancesSubscriber extends Subscriber<InstancesChangeEvent> {
 
-    private static final String idPrefix = "ReactiveCompositeDiscoveryClient_";
-    @Value("${spring.application.name}")
-    private String applicationName;
+    private static final String ID_PREFIX = "ReactiveCompositeDiscoveryClient_";
+    private static final String DOC_PATH = "/v3/api-docs";
     @Resource
     private RouteDefinitionLocator locator;
     @Resource
     private SwaggerUiConfigProperties swaggerUiConfigProperties;
+    @Value("#{'${swagger.ignoreServers}'.split(',')}")
+    private Set<String> ignoreServers;
 
     @PostConstruct
     public void registerToNotifyCenter() {
@@ -52,11 +53,11 @@ public class SwaggerInstancesSubscriber extends Subscriber<InstancesChangeEvent>
         Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> set = new HashSet<>(routeList.size());
         for (RouteDefinition route : routeList) {
             if (!route.getMetadata().isEmpty()) {
-                String name = route.getId().replaceAll(idPrefix, "");
-                if (applicationName.equals(name)) {
+                String name = route.getId().replace(ID_PREFIX, "");
+                if (ignoreServers.contains(name)) {
                     continue;
                 }
-                set.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(name, "/" + name + "/v3/api-docs", ""));
+                set.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(name, "/" + name + DOC_PATH, name));
             }
         }
         swaggerUiConfigProperties.setUrls(set);
