@@ -97,10 +97,17 @@
         order by menu_sort,menu_type
     </select>
     <select id="queryMenuUser" resultType="java.lang.String">
-        select distinct ur.user_id
+        select ur.user_id
         from sso_menu m
         inner join sso_role_menu rm on m.id = rm.menu_id
         inner join sso_user_role ur on ur.role_id = rm.role_id
+        <where>m.id = #{menuId}</where>
+        union
+        select sou.user_id
+        from sso_menu m
+        inner join sso_role_menu rm on m.id = rm.menu_id
+        inner join sso_org_role sor on sor.role_id = rm.role_id
+        inner join sso_org_user sou on sor.org_id = sou.org_id
         <where>m.id = #{menuId}</where>
     </select>
 </mapper>
