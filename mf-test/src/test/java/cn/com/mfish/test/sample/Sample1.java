@@ -1,5 +1,6 @@
 package cn.com.mfish.test.sample;
 
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -48,20 +50,20 @@ public class Sample1 {
 
     @Test
     public void testController() {
-        Result<PageResult<DbConnect>> result = remoteDbConnectService.queryPageList(new ReqDbConnect().setDbName("aaa"), new ReqPage());
+        Result<PageResult<DbConnect>> result = remoteDbConnectService.queryPageList(RPCConstants.INNER, new ReqDbConnect().setDbName("aaa"), new ReqPage());
         System.out.println(result);
     }
 
     @Test
     public void testDict() {
-        Result<List<DictItem>> result = remoteDictService.queryByCode("sso_grant_type");
+        Result<List<DictItem>> result = remoteDictService.queryByCode(RPCConstants.INNER, "sso_grant_type");
         System.out.println(result.getData());
     }
 
     @Test
     public void testOrg() {
-        Result<List<SsoOrg>> result = remoteOrgService.queryByFixCode("mysyb", "all");
-        Result<List<SsoOrg>> result1 = remoteOrgService.queryById("a453767fa3907e320f458f254a4549ae,bb94731770f981fae7eec5cbb1b32bb3");
+        Result<List<SsoOrg>> result = remoteOrgService.queryByFixCode(RPCConstants.INNER, "mysyb", "all");
+        Result<List<SsoOrg>> result1 = remoteOrgService.queryById(RPCConstants.INNER, "a453767fa3907e320f458f254a4549ae,bb94731770f981fae7eec5cbb1b32bb3");
         System.out.println(result.getData());
         System.out.println(result1.getData());
     }

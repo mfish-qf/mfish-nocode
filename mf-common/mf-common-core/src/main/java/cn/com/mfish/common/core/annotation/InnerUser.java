@@ -1,4 +1,4 @@
-package cn.com.mfish.common.web.annotation;
+package cn.com.mfish.common.core.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

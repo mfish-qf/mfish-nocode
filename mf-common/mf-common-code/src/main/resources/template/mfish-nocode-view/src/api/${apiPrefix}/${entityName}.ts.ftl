@@ -60,11 +60,11 @@ export function delete${entityName}(id: <#if tableInfo.idType==''||tableInfo.idT
 };
 
 /**
-* 批量删除${tableInfo.tableComment}
-*
-* @param ids 唯一ID多个逗号隔开
-* @return
-*/
+ * 批量删除${tableInfo.tableComment}
+ *
+ * @param ids 唯一ID多个逗号隔开
+ * @return
+ */
 export function deleteBatch${entityName}(ids: string) {
-return defHttp.delete<${entityName}>({ url: Api.${entityName} + "/batch/" + ids }, { successMessageMode: "message" });
+  return defHttp.delete<${entityName}>({ url: Api.${entityName} + "/batch/" + ids }, { successMessageMode: "message" });
 };

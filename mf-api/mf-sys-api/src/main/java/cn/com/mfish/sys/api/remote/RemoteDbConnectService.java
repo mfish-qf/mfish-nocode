@@ -29,20 +29,20 @@ import java.util.List;
 @FeignClient(contextId = "remoteDbConnectService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteDbConnectFallback.class)
 public interface RemoteDbConnectService {
     @GetMapping("/dbConnect")
-    Result<PageResult<DbConnect>> queryPageList(@SpringQueryMap ReqDbConnect reqDbConnect, @SpringQueryMap ReqPage reqPage);
+    Result<PageResult<DbConnect>> queryPageList(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @SpringQueryMap ReqDbConnect reqDbConnect, @SpringQueryMap ReqPage reqPage);
 
     @GetMapping("/dbConnect/{id}")
     Result<DbConnect> queryById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
 
     @GetMapping("/dbConnect/tables")
-    Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
+    Result<PageResult<TableInfo>> getTableList(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
 
     @GetMapping("/dbConnect/fields")
-    Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
+    Result<PageResult<FieldInfo>> getFieldList(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
 
     @GetMapping("/dbConnect/data")
-    Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
+    Result<MetaHeaderDataTable> getDataTable(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
 
     @GetMapping("/dbConnect/headers")
-    Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
+    Result<List<MetaDataHeader>> getDataHeaders(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, @SpringQueryMap ReqPage reqPage);
 }

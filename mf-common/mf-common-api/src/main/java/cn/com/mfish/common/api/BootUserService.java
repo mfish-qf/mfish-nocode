@@ -13,6 +13,7 @@ import cn.com.mfish.common.oauth.service.SsoUserService;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public class BootUserService implements RemoteUserService {
     }
 
     @Override
-    public Result<List<SsoOrg>> getOrgs(String userId, String direction) {
+    public Result<List<SsoOrg>> getOrgs(String origin, String userId, String direction) {
         return ssoUserService.getOrgs(userId, direction);
     }
 }

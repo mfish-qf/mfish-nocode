@@ -11,7 +11,7 @@ import cn.com.mfish.common.dblink.service.DbConnectService;
 import cn.com.mfish.common.dblink.service.TableService;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.core.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -166,23 +165,6 @@ public class DbConnectController {
             return Result.ok(true, "数据库连接-删除成功!");
         }
         return Result.fail(false, "错误:数据库连接-删除失败!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids 批量ID
-     * @return 返回数据库连接-删除结果
-     */
-    @Log(title = "数据库连接-批量删除", operateType = OperateType.DELETE)
-    @Operation(summary = "数据库连接-批量删除")
-    @DeleteMapping("/batch")
-    @RequiresPermissions("sys:database:delete")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.dbConnectService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "数据库连接-批量删除成功!");
-        }
-        return Result.fail(false, "错误:数据库连接-批量删除失败!");
     }
 
     /**

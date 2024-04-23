@@ -48,9 +48,10 @@
 /tomcat/
 /mf-start/mf-start-web/target/
 /mf-start/mf-start-openai/target/
-/mf-business/mf-nocode/target/
-/mf-start/mf-start-nocode/target/
-/mf-common/mf-common-api/target/
-/mf-common/mf-common-sys/target/
 # 忽略 .iml 文件
 *.iml
+/mf-business/mf-nocode/target/
+/mf-start/mf-start-nocode/target/
+/mf-common/mf-common-bi/target/
+/mf-common/mf-common-api/target/
+/mf-common/mf-common-sys/target/

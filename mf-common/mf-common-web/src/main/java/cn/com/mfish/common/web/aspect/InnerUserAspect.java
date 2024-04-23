@@ -7,7 +7,7 @@ import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
-import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.core.annotation.InnerUser;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

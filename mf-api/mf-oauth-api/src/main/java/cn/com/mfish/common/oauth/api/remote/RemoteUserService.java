@@ -63,6 +63,7 @@ public interface RemoteUserService {
 
     /**
      * 获取当前租户列表
+     *
      * @param origin
      * @param userId
      * @return
@@ -72,10 +73,11 @@ public interface RemoteUserService {
 
     /**
      * 获取用户组织
+     *
      * @param userId
      * @param direction
      * @return
      */
     @GetMapping("/user/orgs/{userId}")
-    Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam("direction") String direction);
+    Result<List<SsoOrg>> getOrgs(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("direction") String direction);
 }
