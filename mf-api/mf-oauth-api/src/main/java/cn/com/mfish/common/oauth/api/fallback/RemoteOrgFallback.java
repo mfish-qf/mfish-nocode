@@ -22,20 +22,20 @@ import java.util.List;
 public class RemoteOrgFallback implements FallbackFactory<RemoteOrgService> {
     @Override
     public RemoteOrgService create(Throwable cause) {
-        log.error("组织服务调用失败:" + cause.getMessage());
+        log.error("组织服务调用失败:{}", cause.getMessage());
         return new RemoteOrgService() {
             @Override
-            public Result<List<SsoOrg>> queryById(String ids) {
+            public Result<List<SsoOrg>> queryById(String origin, String ids) {
                 return Result.fail("错误:根据ID获取组织列表失败" + cause.getMessage());
             }
 
             @Override
-            public Result<List<SsoOrg>> queryByFixCode(String code, String direction) {
+            public Result<List<SsoOrg>> queryByFixCode(String origin, String code, String direction) {
                 return Result.fail("错误:根据编码获取组织树失败" + cause.getMessage());
             }
 
             @Override
-            public Result<PageResult<UserInfo>> queryUserByCode(String code, String account, String nickname, String phone, ReqPage reqPage) {
+            public Result<PageResult<UserInfo>> queryUserByCode(String origin, String code, String account, String nickname, String phone, ReqPage reqPage) {
                 return Result.fail("错误:根据编码获取组织下用户失败" + cause.getMessage());
             }
         };

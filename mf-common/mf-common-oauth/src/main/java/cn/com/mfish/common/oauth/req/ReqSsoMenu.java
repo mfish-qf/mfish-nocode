@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.req;
+package cn.com.mfish.common.oauth.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

@@ -7,6 +7,7 @@ import cn.com.mfish.sys.api.remote.RemoteDictService;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class BootDictService implements RemoteDictService {
     DictItemService dictItemService;
 
     @Override
-    public Result<List<DictItem>> queryByCode(String dictCode) {
+    public Result<List<DictItem>> queryByCode(String origin, String dictCode) {
         return dictItemService.queryByCode(dictCode);
     }
 }

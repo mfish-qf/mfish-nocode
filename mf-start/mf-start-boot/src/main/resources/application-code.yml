@@ -1,17 +1,21 @@
 code:
   template:
     keys:
-      - ${packageName}/controller/${entityName}Controller.java.ftl
-      - ${packageName}/entity/${entityName}.java.ftl
-      - ${packageName}/mapper/${entityName}Mapper.java.ftl
-      - ${packageName}/mapper/xml/${entityName}Mapper.xml.ftl
-      - ${packageName}/req/Req${entityName}.java.ftl
-      - ${packageName}/service/${entityName}Service.java.ftl
-      - ${packageName}/service/impl/${entityName}ServiceImpl.java.ftl
+      - src/main/java/${packageName}/controller/${entityName}Controller.java.ftl
+      - src/main/java/${packageName}/entity/${entityName}.java.ftl
+      - src/main/java/${packageName}/mapper/${entityName}Mapper.java.ftl
+      - src/main/java/${packageName}/mapper/xml/${entityName}Mapper.xml.ftl
+      - src/main/java/${packageName}/req/Req${entityName}.java.ftl
+      - src/main/java/${packageName}/service/${entityName}Service.java.ftl
+      - src/main/java/${packageName}/service/impl/${entityName}ServiceImpl.java.ftl
       - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName#uncap_first}.data.ts.ftl
       - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName}Modal.vue.ftl
       - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/index.vue.ftl
       - mfish-nocode-view/src/api/${apiPrefix}/model/${entityName}Model.ts.ftl
       - mfish-nocode-view/src/api/${apiPrefix}/${entityName}.ts.ftl
     path: template
-  savePath: D:/mfish
+  savePath:
+    #前端地址
+    front: E:/webcode
+    #后端地址（需要指定到具体模块路径）
+    back: E:/javacode/mfish-nocode-pro/mf-business/mf-sys

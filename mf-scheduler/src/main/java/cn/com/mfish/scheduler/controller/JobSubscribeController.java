@@ -42,7 +42,7 @@ public class JobSubscribeController {
      * @param reqJobSubscribe 任务订阅表请求参数
      * @return 返回任务订阅表-分页列表
      */
-    @Operation(summary = "任务订阅表-分页列表查询", description =  "任务订阅表-分页列表查询")
+    @Operation(summary = "任务订阅表-分页列表查询", description = "任务订阅表-分页列表查询")
     @GetMapping
     public Result<PageResult<JobSubscribe>> queryPageList(ReqJobSubscribe reqJobSubscribe, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
@@ -93,7 +93,7 @@ public class JobSubscribeController {
     }
 
     @Log(title = "设置订阅状态", operateType = OperateType.UPDATE)
-    @Operation(summary = "设置订阅状态", description =  "设置订阅状态")
+    @Operation(summary = "设置订阅状态", description = "设置订阅状态")
     @PutMapping("/status")
     @RequiresPermissions("sys:job:update")
     public Result<Boolean> setStatus(@RequestBody JobSubscribe jobSubscribe) throws SchedulerException, ClassNotFoundException {
@@ -117,20 +117,4 @@ public class JobSubscribeController {
         return Result.fail(false, "错误:任务订阅表-删除失败!");
     }
 
-    /**
-     * 批量删除
-     *
-     * @param ids 批量ID
-     * @return 返回任务订阅表-删除结果
-     */
-    @Log(title = "任务订阅表-批量删除", operateType = OperateType.DELETE)
-    @Operation(summary = "任务订阅表-批量删除")
-    @DeleteMapping("/batch")
-    @RequiresPermissions("sys:job:delete")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
-        if (this.jobSubscribeService.removeByIds(Arrays.asList(ids.split(",")))) {
-            return Result.ok(true, "任务订阅表-批量删除成功!");
-        }
-        return Result.fail(false, "错误:任务订阅表-批量删除失败!");
-    }
 }

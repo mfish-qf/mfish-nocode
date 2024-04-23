@@ -4,11 +4,16 @@ import cn.com.mfish.common.code.req.ReqCode;
 import cn.com.mfish.common.code.req.ReqSearch;
 import cn.com.mfish.common.code.vo.CodeVo;
 import cn.com.mfish.common.code.common.FreemarkerUtils;
+import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.SsoMenu;
+import cn.com.mfish.common.oauth.api.remote.RemoteMenuService;
 import cn.com.mfish.sys.entity.CodeBuild;
 import cn.com.mfish.sys.mapper.CodeBuildMapper;
+import cn.com.mfish.sys.req.ReqMenuCreate;
 import cn.com.mfish.sys.service.CodeBuildService;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -19,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -32,6 +38,8 @@ import java.util.List;
 public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild> implements CodeBuildService {
     @Resource
     FreemarkerUtils freemarkerUtils;
+    @Resource
+    private RemoteMenuService remoteMenuService;
 
     @Override
     @Transactional
@@ -41,23 +49,30 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
             return result;
         }
         if (save(codeBuild)) {
-            ReqCode reqCode = new ReqCode();
-            BeanUtils.copyProperties(codeBuild, reqCode);
-            if (!freemarkerUtils.saveCode(reqCode)) {
-                throw new MyRuntimeException("错误:代码构建-失败");
-            }
             return Result.ok(codeBuild, "代码构建-添加成功!");
         }
         throw new MyRuntimeException("错误:代码生成失败");
     }
 
     @Override
-    public Result<List<CodeVo>> getCode(String id) {
+    public Result<CodeBuild> updateCodeBuild(CodeBuild codeBuild) {
+        Result<CodeBuild> result = validateCodeBuild(codeBuild);
+        if (!result.isSuccess()) {
+            return result;
+        }
+        if (updateById(codeBuild)) {
+            return Result.ok(codeBuild, "代码构建-更新成功!");
+        }
+        throw new MyRuntimeException("错误:代码生成更新失败");
+    }
+
+    @Override
+    public Result<List<CodeVo>> getCode(Long id) {
         return Result.ok(freemarkerUtils.getCode(buildReqCode(id)), "获取代码成功");
     }
 
     @Override
-    public void downloadCode(String id, HttpServletResponse response) throws IOException {
+    public void downloadCode(Long id, HttpServletResponse response) throws IOException {
         ReqCode reqCode = buildReqCode(id);
         response.reset();
         byte[] data;
@@ -66,6 +81,14 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         response.addHeader("Content-Length", data.length + "");
         response.setContentType("application/x-zip-compressed; charset=UTF-8");
         IOUtils.write(data, response.getOutputStream());
+    }
+
+    @Override
+    public Result<Boolean> saveLocal(Long id) {
+        if (!freemarkerUtils.saveCode(buildReqCode(id))) {
+            return Result.fail(false, "错误：代码保存本地失败");
+        }
+        return Result.ok(true, "代码保存成功，请重新启动后端");
     }
 
     private Result<CodeBuild> validateCodeBuild(CodeBuild codeBuild) {
@@ -81,7 +104,7 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
      * @param id 代码唯一id
      * @return 请求参数
      */
-    private ReqCode buildReqCode(String id) {
+    private ReqCode buildReqCode(Long id) {
         CodeBuild codeBuild = baseMapper.selectById(id);
         ReqCode reqCode = new ReqCode();
         BeanUtils.copyProperties(codeBuild, reqCode);
@@ -89,5 +112,50 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
             reqCode.setSearches(JSON.parseArray(codeBuild.getQueryParams(), ReqSearch.class));
         }
         return reqCode;
+    }
+
+    @Override
+    public Result<SsoMenu> createMenu(ReqMenuCreate reqMenuCreate) {
+        ReqCode reqCode = buildReqCode(reqMenuCreate.getId());
+        freemarkerUtils.initReqCode(reqCode);
+        String routePath = "/" + StringUtils.toKebabCase(reqCode.getEntityName());
+        if (remoteMenuService.routeExist(routePath).getData()) {
+            return Result.fail(null, "错误：菜单路由已存在，请勿重复操作");
+        }
+        SsoMenu ssoMenu = new SsoMenu();
+        ssoMenu.setMenuName(reqCode.getTableComment())
+                .setRoutePath(routePath)
+                .setComponent("/" + reqCode.getApiPrefix() + routePath + "/index.vue")
+                .setMenuIcon("ant-design:bars-outlined")
+                .setMenuSort(999).setMenuType(1).setIsExternal(0).setIsKeepalive(1).setIsVisible(1)
+                .setParentId(reqMenuCreate.getParentId());
+        Result<SsoMenu> result = remoteMenuService.add(RPCConstants.INNER, ssoMenu);
+        if (!result.isSuccess()) {
+            return result;
+        }
+        remoteMenuService.add(RPCConstants.INNER, buildButtonMenu(result.getData().getId(), reqCode, OperateType.QUERY, 1));
+        remoteMenuService.add(RPCConstants.INNER, buildButtonMenu(result.getData().getId(), reqCode, OperateType.INSERT, 2));
+        remoteMenuService.add(RPCConstants.INNER, buildButtonMenu(result.getData().getId(), reqCode, OperateType.UPDATE, 3));
+        remoteMenuService.add(RPCConstants.INNER, buildButtonMenu(result.getData().getId(), reqCode, OperateType.DELETE, 4));
+        return result;
+    }
+
+    private SsoMenu buildButtonMenu(String id, ReqCode reqCode, OperateType type, int sort) {
+        SsoMenu menu = new SsoMenu();
+        menu.setParentId(id)
+                .setMenuName(type.toString())
+                .setMenuType(2)
+                .setMenuSort(sort);
+        if (type == OperateType.QUERY) {
+            menu.setPermissions(reqCode.getApiPrefix() + ":" + StringUtils.firstLowerCase(reqCode.getEntityName())
+                    + ":" + StringUtils.toRootLowerCase(type.name()));
+        } else {
+            String lowerCaseEntity = StringUtils.firstLowerCase(reqCode.getEntityName());
+            menu.setPermissions(reqCode.getApiPrefix() + ":" + lowerCaseEntity
+                    + ":" + StringUtils.toRootLowerCase(OperateType.QUERY.name()) + "," +
+                    reqCode.getApiPrefix() + ":" + lowerCaseEntity
+                    + ":" + StringUtils.toRootLowerCase(type.name()));
+        }
+        return menu;
     }
 }

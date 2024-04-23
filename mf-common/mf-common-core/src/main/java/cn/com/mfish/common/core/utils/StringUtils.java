@@ -131,7 +131,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
-     * 首字母小写
+     * 首字母大写
      *
      * @param str
      * @return

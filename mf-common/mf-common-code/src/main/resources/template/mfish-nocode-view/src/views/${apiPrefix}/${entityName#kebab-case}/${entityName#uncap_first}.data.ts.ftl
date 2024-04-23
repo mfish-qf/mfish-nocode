@@ -70,7 +70,8 @@ export const ${entityName?uncap_first}FormSchema: FormSchema[] = [
     component: "DatePicker",
     componentProps: {
       valueFormat: "YYYY-MM-DD",
-      format: "YYYY-MM-DD"
+      format: "YYYY-MM-DD",
+      getPopupContainer: () => document.body
     }
   <#elseif fieldExpands.fieldInfo.type=='Integer'||fieldExpands.fieldInfo.type=='Short'||fieldExpands.fieldInfo.type=='Long'||fieldExpands.fieldInfo.type=='Double'||fieldExpands.fieldInfo.type=='BigDecimal'>
     component: "InputNumber",

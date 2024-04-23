@@ -12,6 +12,7 @@ import cn.com.mfish.common.oauth.service.SsoOrgService;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -25,17 +26,17 @@ public class BootOrgService implements RemoteOrgService {
     SsoOrgService ssoOrgService;
 
     @Override
-    public Result<List<SsoOrg>> queryById(String ids) {
+    public Result<List<SsoOrg>> queryById(String origin, String ids) {
         return ssoOrgService.queryByIds(ids);
     }
 
     @Override
-    public Result<List<SsoOrg>> queryByFixCode(String code, String direction) {
+    public Result<List<SsoOrg>> queryByFixCode(String origin, String code, String direction) {
         return Result.ok(ssoOrgService.queryOrgByCode(code, TreeDirection.getDirection(direction)), "组织结构表-查询成功!");
     }
 
     @Override
-    public Result<PageResult<UserInfo>> queryUserByCode(String code, String account, String nickname, String phone, ReqPage reqPage) {
+    public Result<PageResult<UserInfo>> queryUserByCode(String origin, String code, String account, String nickname, String phone, ReqPage reqPage) {
         return Result.ok(ssoOrgService.queryUserByCode(code
                         , new ReqOrgUser().setAccount(account).setNickname(nickname).setPhone(phone), reqPage)
                 , "组织下用户查询成功");

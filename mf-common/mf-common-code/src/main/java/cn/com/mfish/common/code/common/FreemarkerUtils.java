@@ -8,6 +8,7 @@ import cn.com.mfish.common.code.entity.TableExpand;
 import cn.com.mfish.common.code.req.ReqCode;
 import cn.com.mfish.common.code.req.ReqSearch;
 import cn.com.mfish.common.code.vo.CodeVo;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.entity.DefaultField;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,8 +52,10 @@ public class FreemarkerUtils {
     FreemarkerProperties freemarkerProperties;
     @Resource
     RemoteDbConnectService remoteDbConnectService;
-    @Value("${code.savePath}")
-    String savePath;
+    @Value("${code.savePath.front}")
+    String frontPath;
+    @Value("${code.savePath.back}")
+    String backPath;
 
     /**
      * 初始化请求参数
@@ -61,7 +63,7 @@ public class FreemarkerUtils {
      * @param reqCode
      * @return
      */
-    private void initReqCode(ReqCode reqCode) {
+    public void initReqCode(ReqCode reqCode) {
         if (StringUtils.isEmpty(reqCode.getConnectId())) {
             throw new MyRuntimeException("错误:库名不允许为空");
         }
@@ -98,7 +100,7 @@ public class FreemarkerUtils {
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
-            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(RPCConstants.INNER, reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
             if (!result.isSuccess()) {
                 throw new MyRuntimeException(result.getMsg());
             }
@@ -124,7 +126,7 @@ public class FreemarkerUtils {
         codeInfo.setPackageName(reqCode.getPackageName());
         codeInfo.setEntityName(reqCode.getEntityName());
         codeInfo.setApiPrefix(reqCode.getApiPrefix());
-        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(RPCConstants.INNER, reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
         if (!result.isSuccess()) {
             throw new MyRuntimeException(result.getMsg());
         }
@@ -286,7 +288,10 @@ public class FreemarkerUtils {
      */
     public boolean saveCode(ReqCode reqCode) {
         List<CodeVo> list = getCode(reqCode);
-        return saveCode(list);
+        List<CodeVo> listBack = list.stream().filter((codeVo -> codeVo.getPath().startsWith("src/main/java"))).toList();
+        List<CodeVo> listFront = list.stream().filter((codeVo -> codeVo.getPath().startsWith("mfish-nocode-view"))).toList();
+        return saveCode(listBack, backPath) && saveCode(listFront, frontPath);
+
     }
 
     /**
@@ -295,18 +300,16 @@ public class FreemarkerUtils {
      * @param list
      * @return
      */
-    public boolean saveCode(List<CodeVo> list) {
+    public boolean saveCode(List<CodeVo> list, String savePath) {
         savePath = savePath.replace("\\", "/");
         if (StringUtils.isEmpty(savePath)) {
             savePath = "/mfish/";
         } else if (!savePath.endsWith("/")) {
             savePath += "/";
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd-HH-mm-ss");
-        String path = savePath + sdf.format(new Date());
         for (CodeVo code : list) {
             try {
-                File file = new File(path + "/" + code.getPath(), code.getName());
+                File file = new File(savePath + "/" + code.getPath(), code.getName());
                 FileUtils.writeStringToFile(file, code.getCode(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 log.error("错误:文件保存异常", e);
