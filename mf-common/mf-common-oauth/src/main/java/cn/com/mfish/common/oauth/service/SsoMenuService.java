@@ -1,8 +1,8 @@
-package cn.com.mfish.oauth.service;
+package cn.com.mfish.common.oauth.service;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.entity.SsoMenu;
-import cn.com.mfish.oauth.req.ReqSsoMenu;
+import cn.com.mfish.common.oauth.api.entity.SsoMenu;
+import cn.com.mfish.common.oauth.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -23,4 +23,6 @@ public interface SsoMenuService extends IService<SsoMenu> {
     Result<SsoMenu> updateMenu(SsoMenu ssoMenu);
 
     Result<Boolean> deleteMenu(String menuId);
+
+    Result<Boolean> routeExist(String routePath);
 }

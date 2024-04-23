@@ -19,7 +19,7 @@ import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.*;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
-import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.core.annotation.InnerUser;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.req.ReqChangePwd;
 import com.github.pagehelper.PageHelper;

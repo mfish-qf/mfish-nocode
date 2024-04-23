@@ -8,16 +8,17 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.cache.common.ClearCache;
-import cn.com.mfish.oauth.entity.SsoMenu;
+import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.oauth.mapper.SsoMenuMapper;
-import cn.com.mfish.oauth.req.ReqSsoMenu;
-import cn.com.mfish.oauth.service.SsoMenuService;
+import cn.com.mfish.common.oauth.req.ReqSsoMenu;
+import cn.com.mfish.common.oauth.service.SsoMenuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -135,6 +136,11 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
                 return Result.fail("错误:上级菜单选择不正确");
             }
         }
+        if (baseMapper.exists(new LambdaQueryWrapper<SsoMenu>()
+                .eq(SsoMenu::getRoutePath, ssoMenu.getRoutePath())
+                .ne(!StringUtils.isEmpty(ssoMenu.getId()), SsoMenu::getId, ssoMenu.getId()))) {
+            return Result.fail("错误：路由地址已存在");
+        }
         return Result.ok("菜单校验成功");
     }
 
@@ -156,6 +162,14 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             return Result.ok("菜单表-删除成功!");
         }
         return Result.fail("错误:菜单表-删除失败!");
+    }
+
+    @Override
+    public Result<Boolean> routeExist(String routePath) {
+        if (baseMapper.exists(new LambdaQueryWrapper<SsoMenu>().eq(SsoMenu::getRoutePath, routePath))) {
+            return Result.ok(true, "路由地址已存在");
+        }
+        return Result.fail(false, "路由地址不存在");
     }
 
     /**

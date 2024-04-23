@@ -7,7 +7,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.SysLogService;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.common.web.annotation.InnerUser;
+import cn.com.mfish.common.core.annotation.InnerUser;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.req.ReqSysLog;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -41,10 +41,10 @@ public class SysLogController {
      * @param reqSysLog 系统日志请求参数
      * @return 返回系统日志
      */
-    @Operation(summary = "系统日志-分页列表查询", description =  "系统日志-分页列表查询")
+    @Operation(summary = "系统日志-分页列表查询", description = "系统日志-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:log:query")
-    public Result<PageResult<SysLog>> queryPageList( ReqSysLog reqSysLog,  ReqPage reqPage) {
+    public Result<PageResult<SysLog>> queryPageList(ReqSysLog reqSysLog, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<SysLog> queryWrapper = new LambdaQueryWrapper<SysLog>()
                 .like(reqSysLog.getTitle() != null, SysLog::getTitle, reqSysLog.getTitle())
@@ -67,7 +67,7 @@ public class SysLogController {
      * @param sysLog
      * @return
      */
-    @Operation(summary = "系统日志-添加", description =  "系统日志-添加")
+    @Operation(summary = "系统日志-添加", description = "系统日志-添加")
     @PostMapping
     @InnerUser
     public Result<SysLog> add(@RequestBody SysLog sysLog) {
@@ -81,7 +81,7 @@ public class SysLogController {
      * @return
      */
     @Log(title = "系统日志-编辑", operateType = OperateType.UPDATE)
-    @Operation(summary = "系统日志-编辑", description =  "系统日志-编辑")
+    @Operation(summary = "系统日志-编辑", description = "系统日志-编辑")
     @PutMapping
     public Result<SysLog> edit(@RequestBody SysLog sysLog) {
         if (sysLogService.updateById(sysLog)) {
@@ -97,7 +97,7 @@ public class SysLogController {
      * @return
      */
     @Log(title = "系统日志-通过id删除", operateType = OperateType.DELETE)
-    @Operation(summary = "系统日志-通过id删除", description =  "系统日志-通过id删除")
+    @Operation(summary = "系统日志-通过id删除", description = "系统日志-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:log:delete")
     public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
@@ -114,10 +114,10 @@ public class SysLogController {
      * @return
      */
     @Log(title = "系统日志-批量删除", operateType = OperateType.DELETE)
-    @Operation(summary = "系统日志-批量删除", description =  "系统日志-批量删除")
-    @DeleteMapping("/batch")
+    @Operation(summary = "系统日志-批量删除", description = "系统日志-批量删除")
+    @DeleteMapping("/batch/{ids}")
     @RequiresPermissions("sys:log:delete")
-    public Result<Boolean> deleteBatch(@RequestParam(name = "ids") String ids) {
+    public Result<Boolean> deleteBatch(@Parameter(name = "ids", description = "唯一性ID") @PathVariable String ids) {
         if (this.sysLogService.removeByIds(Arrays.asList(ids.split(",")))) {
             return Result.ok(true, "系统日志-批量删除成功!");
         }
@@ -130,7 +130,7 @@ public class SysLogController {
      * @param id
      * @return
      */
-    @Operation(summary = "系统日志-通过id查询", description =  "系统日志-通过id查询")
+    @Operation(summary = "系统日志-通过id查询", description = "系统日志-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:log:query")
     public Result<SysLog> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {

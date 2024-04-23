@@ -24,7 +24,7 @@ import java.util.Set;
 public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
     @Override
     public RemoteUserService create(Throwable cause) {
-        log.error("用户服务调用失败:" + cause.getMessage());
+        log.error("用户服务调用失败:{}", cause.getMessage());
         return new RemoteUserService() {
             @Override
             public Result<UserInfoVo> getUserInfo(String origin, String token) {
@@ -52,7 +52,7 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
             }
 
             @Override
-            public Result<List<SsoOrg>> getOrgs(String userId, String direction) {
+            public Result<List<SsoOrg>> getOrgs(String origin, String userId, String direction) {
                 return Result.fail("错误:获取用户组织失败" + cause.getMessage());
             }
         };

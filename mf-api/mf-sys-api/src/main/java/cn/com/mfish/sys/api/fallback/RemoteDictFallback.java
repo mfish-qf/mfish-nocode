@@ -18,6 +18,6 @@ public class RemoteDictFallback implements FallbackFactory<RemoteDictService> {
     @Override
     public RemoteDictService create(Throwable cause) {
         log.error("错误:字典调用异常", cause);
-        return dictCode -> Result.fail("错误:查询字典数据出错");
+        return (origin, dictCode) -> Result.fail("错误:查询字典数据出错");
     }
 }

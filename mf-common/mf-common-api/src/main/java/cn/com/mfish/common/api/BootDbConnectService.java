@@ -15,6 +15,7 @@ import cn.com.mfish.sys.api.req.ReqDbConnect;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class BootDbConnectService implements RemoteDbConnectService {
     DbConnectService dbConnectService;
 
     @Override
-    public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
+    public Result<PageResult<DbConnect>> queryPageList(String origin, ReqDbConnect reqDbConnect, ReqPage reqPage) {
         return dbConnectService.queryPageList(reqDbConnect, reqPage);
     }
 
@@ -40,22 +41,22 @@ public class BootDbConnectService implements RemoteDbConnectService {
     }
 
     @Override
-    public Result<PageResult<TableInfo>> getTableList(String connectId, String tableName, ReqPage reqPage) {
+    public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableName, ReqPage reqPage) {
         return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
     }
 
     @Override
-    public Result<PageResult<FieldInfo>> getFieldList(String connectId, String tableName, ReqPage reqPage) {
+    public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableName, ReqPage reqPage) {
         return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取字段列表成功");
     }
 
     @Override
-    public Result<MetaHeaderDataTable> getDataTable(String connectId, String tableName, ReqPage reqPage) {
+    public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableName, ReqPage reqPage) {
         return tableService.getHeaderDataTable(connectId, tableName, reqPage);
     }
 
     @Override
-    public Result<List<MetaDataHeader>> getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
+    public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableName, ReqPage reqPage) {
         return Result.ok(tableService.getDataHeaders(connectId, tableName, reqPage), "获取表列头成功");
     }
 }

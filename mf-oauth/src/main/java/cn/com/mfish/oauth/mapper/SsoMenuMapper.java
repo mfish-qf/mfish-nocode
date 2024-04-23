@@ -1,7 +1,7 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.entity.SsoMenu;
-import cn.com.mfish.oauth.req.ReqSsoMenu;
+import cn.com.mfish.common.oauth.api.entity.SsoMenu;
+import cn.com.mfish.common.oauth.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;

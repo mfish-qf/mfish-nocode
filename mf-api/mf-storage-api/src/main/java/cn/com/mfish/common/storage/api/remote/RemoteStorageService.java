@@ -1,5 +1,6 @@
 package cn.com.mfish.common.storage.api.remote;
 
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
@@ -8,6 +9,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
  * @description: 远程缓存接口
@@ -17,8 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(contextId = "remoteStorageService", value = ServiceConstants.STORAGE_SERVICE, fallbackFactory = RemoteStorageFallBack.class)
 public interface RemoteStorageService {
     @GetMapping("/sysFile/{fileKey}")
-    Result<StorageInfo> queryByKey(@PathVariable("fileKey") String fileKey);
+    Result<StorageInfo> queryByKey(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("fileKey") String fileKey);
 
     @DeleteMapping("/sysFile/logic/{id}")
-    Result<Boolean> logicDelete(@PathVariable("id") String id);
+    Result<Boolean> logicDelete(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
 }

@@ -29,7 +29,7 @@ public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectS
         log.error("错误:数据库连接调用异常", cause);
         return new RemoteDbConnectService() {
             @Override
-            public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
+            public Result<PageResult<DbConnect>> queryPageList(String origin, ReqDbConnect reqDbConnect, ReqPage reqPage) {
                 return Result.fail("错误:查询数据库连接列表出错");
             }
 
@@ -39,22 +39,22 @@ public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectS
             }
 
             @Override
-            public Result<PageResult<TableInfo>> getTableList(String connectId, String tableName, ReqPage reqPage) {
+            public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询数据库表列表出错");
             }
 
             @Override
-            public Result<PageResult<FieldInfo>> getFieldList(String connectId, String tableName, ReqPage reqPage) {
+            public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询表字段列表出错");
             }
 
             @Override
-            public Result<MetaHeaderDataTable> getDataTable(String connectId, String tableName, ReqPage reqPage) {
+            public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询表数据失败");
             }
 
             @Override
-            public Result<List<MetaDataHeader>> getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
+            public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:获取表列头失败");
             }
         };

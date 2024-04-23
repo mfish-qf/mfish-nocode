@@ -19,12 +19,12 @@ public class BootStorageService implements RemoteStorageService {
     StorageService storageService;
 
     @Override
-    public Result<StorageInfo> queryByKey(String fileKey) {
+    public Result<StorageInfo> queryByKey(String origin, String fileKey) {
         return storageService.queryByKey(fileKey);
     }
 
     @Override
-    public Result<Boolean> logicDelete(String id) {
+    public Result<Boolean> logicDelete(String origin, String id) {
         return storageService.logicDelete(id);
     }
 }
