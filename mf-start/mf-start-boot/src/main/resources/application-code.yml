@@ -18,4 +18,4 @@ code:
     #前端地址
     front: E:/webcode
     #后端地址（需要指定到具体模块路径）
-    back: E:/javacode/mfish-nocode-pro/mf-business/mf-sys
+    back: E:/javacode/mfish-nocode/mf-business/mf-sys
