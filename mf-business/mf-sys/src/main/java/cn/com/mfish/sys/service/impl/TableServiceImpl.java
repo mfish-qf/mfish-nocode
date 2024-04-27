@@ -1,6 +1,7 @@
 package cn.com.mfish.sys.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
@@ -23,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -42,11 +44,13 @@ public class TableServiceImpl implements TableService {
 
     @Override
     public List<FieldInfo> getFieldList(String connectId, String tableName, ReqPage reqPage) {
+        verifyTableName(tableName);
         return queryT(connectId, FieldInfo.class, (build, dbName) -> build.getColumns(dbName, tableName), reqPage);
     }
 
     @Override
     public TableInfo getTableInfo(String connectId, String tableName, ReqPage reqPage) {
+        verifyTableName(tableName);
         List<TableInfo> list = getTableList(connectId, tableName, reqPage);
         if (list == null || list.isEmpty()) {
             return null;
@@ -56,18 +60,36 @@ public class TableServiceImpl implements TableService {
 
     @Override
     public List<TableInfo> getTableList(String connectId, String tableName, ReqPage reqPage) {
+        verifyTableName(tableName);
         return queryT(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableName), reqPage);
     }
 
     @Override
     public Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableName, ReqPage reqPage) {
+        verifyTableName(tableName);
         MetaDataTable table = getDataTable(connectId, tableName, reqPage);
         return Result.ok(new MetaHeaderDataTable(table), "获取表数据成功");
     }
 
     @Override
     public MetaDataTable getDataTable(String connectId, String tableName, ReqPage reqPage) {
+        verifyTableName(tableName);
         return query(connectId, "select * from " + tableName, reqPage);
+    }
+
+    private void verifyTableName(String tableName) {
+        if (tableName == null) {
+            return;
+        }
+        if (tableName.contains(" ")) {
+            throw new MyRuntimeException("错误：表名不允许包含空格");
+        }
+        if (tableName.length() > 128) {
+            throw new MyRuntimeException("错误：表名称太长");
+        }
+        if (!StringUtils.isMatch("^[a-zA-Z0-9_\\.\\-]+$", tableName)) {
+            throw new MyRuntimeException("错误：表名不允许包含特殊字符");
+        }
     }
 
     private DataSourceOptions<?> buildDBQuery(String connectId) {
