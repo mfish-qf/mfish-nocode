@@ -7,5 +7,5 @@ package cn.com.mfish.common.ds.scope;
  */
 public interface DataScopeHandle {
 
-    String sqlChange(String sql, String table, String fieldName);
+    String sqlChange(String sql, String table, String fieldName, String value);
 }

@@ -1,7 +1,6 @@
 package cn.com.mfish.common.ds.config;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.ds.annotation.DataScope;
 import cn.com.mfish.common.ds.common.DataScopeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -57,11 +56,7 @@ public class SelectInterceptor implements Interceptor {
                 if (!oriSql.toLowerCase().contains(tableName.toLowerCase())) {
                     continue;
                 }
-                if (!StringUtils.isEmpty(scope.fieldName())) {
-                    oriSql = scope.type().getHandle().sqlChange(oriSql, tableName, scope.fieldName());
-                } else {
-                    oriSql = scope.type().getHandle().sqlChange(oriSql, tableName, "");
-                }
+                oriSql = scope.type().getHandle().sqlChange(oriSql, tableName, scope.fieldName(), scope.value());
             }
             Field field = boundSql.getClass().getDeclaredField("sql");
             field.setAccessible(true);

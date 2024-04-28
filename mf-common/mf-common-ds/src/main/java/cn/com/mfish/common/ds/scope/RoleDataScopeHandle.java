@@ -8,7 +8,7 @@ package cn.com.mfish.common.ds.scope;
 public class RoleDataScopeHandle implements DataScopeHandle {
 
     @Override
-    public String sqlChange(String sql, String table, String fieldName) {
+    public String sqlChange(String sql, String table, String fieldName,String value) {
         //todo 补充逻辑
         return sql;
     }
