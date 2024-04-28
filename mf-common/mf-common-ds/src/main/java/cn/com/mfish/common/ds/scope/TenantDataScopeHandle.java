@@ -14,13 +14,14 @@ import java.util.stream.Collectors;
  */
 public class TenantDataScopeHandle implements DataScopeHandle {
     @Override
-    public String sqlChange(String sql, String table, String fieldName) {
+    public String sqlChange(String sql, String table, String fieldName,String value) {
         fieldName = StringUtils.isEmpty(fieldName) ? "tenant_id" : fieldName;
+        value = StringUtils.isEmpty(value) ? AuthInfoUtils.getCurrentTenantId() : value;
         List<DataScopeUtils.SqlSplit> list = DataScopeUtils.splitSql(sql, table);
         for (DataScopeUtils.SqlSplit split : list) {
             if (split.isHaveTable()) {
                 split.setStatement(split.getStatement().replaceAll(table
-                        , "(select * from " + table + " where " + fieldName + "='" + AuthInfoUtils.getCurrentTenantId() + "')"));
+                        , "(select * from " + table + " where " + fieldName + "='" + value + "')"));
                 if (split.isHaveAlias()) {
                     continue;
                 }
