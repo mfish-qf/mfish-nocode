@@ -9,8 +9,11 @@ import cn.com.mfish.common.core.utils.excel.ExcelUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.ds.annotation.DataScope;
+import cn.com.mfish.common.ds.common.DataScopeType;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
@@ -18,18 +21,17 @@ import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
+import cn.com.mfish.common.oauth.req.ReqSsoMenu;
 import cn.com.mfish.common.oauth.req.ReqSsoOrg;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
+import cn.com.mfish.common.oauth.service.SsoMenuService;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.common.ClearCache;
-import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.entity.UserOrg;
-import cn.com.mfish.common.oauth.req.ReqSsoMenu;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.common.oauth.service.SsoMenuService;
 import cn.com.mfish.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.service.SsoTenantService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -357,17 +359,17 @@ public class SsoTenantController {
     @Operation(summary = "租户角色信息-分页列表查询", description = "租户角色信息-分页列表查询")
     @GetMapping("/role")
     @RequiresPermissions("sys:tenantRole:query")
+    @DataScope(table = "sso_role", type = DataScopeType.Tenant)
     public Result<PageResult<SsoRole>> queryRolePageList(ReqSsoRole reqSsoRole, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        reqSsoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
         return Result.ok(new PageResult<>(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
     @Operation(summary = "角色信息表-列表查询", description = "角色信息表-列表查询")
     @GetMapping("/role/all")
     @RequiresPermissions("sys:tenantRole:query")
+    @DataScope(table = "sso_role", type = DataScopeType.Tenant)
     public Result<List<SsoRole>> queryRoleList(ReqSsoRole reqSsoRole) {
-        reqSsoRole.setTenantId(AuthInfoUtils.getCurrentTenantId());
         return Result.ok(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole)), "角色信息表-查询成功!");
     }
 
