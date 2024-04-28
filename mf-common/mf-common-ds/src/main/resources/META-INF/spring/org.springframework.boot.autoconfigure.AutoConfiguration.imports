@@ -1,3 +1,5 @@
 cn.com.mfish.common.ds.config.MybatisInterceptor
+cn.com.mfish.common.ds.config.SelectInterceptor
+cn.com.mfish.common.ds.aspect.DataScopeAspect
 cn.com.mfish.common.ds.config.BatchSqlInjector
 com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
