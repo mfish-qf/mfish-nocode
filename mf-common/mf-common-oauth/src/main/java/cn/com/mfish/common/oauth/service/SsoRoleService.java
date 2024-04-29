@@ -1,7 +1,7 @@
-package cn.com.mfish.oauth.service;
+package cn.com.mfish.common.oauth.service;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.common.oauth.entity.SsoRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -24,4 +24,6 @@ public interface SsoRoleService extends IService<SsoRole> {
     List<String> getRoleMenus(String roleId);
 
     boolean isTenantRole(String roleId, String tenantId);
+
+    Result<List<String>> getRoleIdsByCode(String tenantId, List<String> roleCodes);
 }

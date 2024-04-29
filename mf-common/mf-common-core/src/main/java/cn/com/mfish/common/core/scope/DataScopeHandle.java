@@ -1,4 +1,4 @@
-package cn.com.mfish.common.ds.scope;
+package cn.com.mfish.common.core.scope;
 
 /**
  * @description: 数据范围处理
@@ -6,6 +6,5 @@ package cn.com.mfish.common.ds.scope;
  * @date: 2024/4/26
  */
 public interface DataScopeHandle {
-
-    String sqlChange(String sql, String table, String fieldName, String value);
+    String buildCondition(String fieldName, String[] values);
 }

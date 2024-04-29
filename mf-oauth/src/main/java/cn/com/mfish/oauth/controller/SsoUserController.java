@@ -92,7 +92,7 @@ public class SsoUserController {
      *
      * @return
      */
-    @Operation(summary = "获取当前用户租户列表", description =  "获取当前用户租户列表")
+    @Operation(summary = "获取当前用户租户列表", description = "获取当前用户租户列表")
     @GetMapping("/tenants")
     public Result<List<TenantVo>> getUserTenants(String userId) {
         if (StringUtils.isEmpty(userId)) {
@@ -101,14 +101,23 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserTenants(userId), "获取当前租户列表成功!");
     }
 
-    @Operation(summary = "获取用户组织")
+    @Operation(summary = "获取用户组织树")
     @GetMapping("/orgs/{userId}")
-    @Log(title = "获取用户组织", operateType = OperateType.QUERY)
     @Parameters({
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
     })
     public Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam String direction) {
         return ssoUserService.getOrgs(userId, direction);
+    }
+
+    @Operation(summary = "获取用户组织ID列表")
+    @GetMapping("/orgIds/{userId}")
+    @Parameters({
+            @Parameter(name = "tenantId", description = "租户id"),
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
+    })
+    public Result<List<String>> getOrgIds(@PathVariable("userId") String userId, @RequestParam String tenantId, @RequestParam String direction) {
+        return ssoUserService.getOrgIds(tenantId, userId, direction);
     }
 
     @Operation(summary = "通过用户ID获取用户")
@@ -133,7 +142,7 @@ public class SsoUserController {
     }
 
     @Log(title = "用户-设置状态", operateType = OperateType.UPDATE)
-    @Operation(summary = "用户-设置状态", description =  "用户-设置状态")
+    @Operation(summary = "用户-设置状态", description = "用户-设置状态")
     @PutMapping("/status")
     @RequiresPermissions("sys:account:update")
     public Result<Boolean> setStatus(@RequestBody SsoUser ssoUser) {
@@ -146,7 +155,7 @@ public class SsoUserController {
         return Result.fail(false, "错误:用户-设置状态失败!");
     }
 
-    @Operation(summary = "用户登出", description =  "用户登出--该方法只适用于web前端登录的用户登出")
+    @Operation(summary = "用户登出", description = "用户登出--该方法只适用于web前端登录的用户登出")
     @GetMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
@@ -195,7 +204,7 @@ public class SsoUserController {
      * @param reqPage
      * @return
      */
-    @Operation(summary = "用户信息-分页列表查询", description =  "用户信息-分页列表查询")
+    @Operation(summary = "用户信息-分页列表查询", description = "用户信息-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:account:query")
     public Result<PageResult<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
@@ -204,7 +213,7 @@ public class SsoUserController {
         return Result.ok(new PageResult<>(pageList), "用户信息-查询成功!");
     }
 
-    @Operation(summary = "检索用户列表-限制最多查询50人(有新增租户用户权限人允许检索)", description =  "检索用户列表")
+    @Operation(summary = "检索用户列表-限制最多查询50人(有新增租户用户权限人允许检索)", description = "检索用户列表")
     @GetMapping("/search")
     @Parameters({
             @Parameter(name = "condition", description = "检索条件，可输入用户名、昵称、手机号")
@@ -215,7 +224,7 @@ public class SsoUserController {
     }
 
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
-    @Operation(summary = "用户信息-添加", description =  "用户信息-添加")
+    @Operation(summary = "用户信息-添加", description = "用户信息-添加")
     @PostMapping
     @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
     public Result<SsoUser> add(@RequestBody SsoUser ssoUser) {
@@ -229,7 +238,7 @@ public class SsoUserController {
      * @return
      */
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
-    @Operation(summary = "用户信息-编辑", description =  "用户信息-编辑")
+    @Operation(summary = "用户信息-编辑", description = "用户信息-编辑")
     @PutMapping
     @RequiresPermissions("sys:account:update")
     public Result<SsoUser> edit(@RequestBody SsoUser ssoUser) {
@@ -237,7 +246,7 @@ public class SsoUserController {
     }
 
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
-    @Operation(summary = "用户信息-编辑", description =  "用户信息-编辑")
+    @Operation(summary = "用户信息-编辑", description = "用户信息-编辑")
     @PutMapping("/me")
     public Result<SsoUser> editMe(@RequestBody SsoUser ssoUser) {
         if (!ssoUser.getId().equals(AuthInfoUtils.getCurrentUserId())) {
@@ -253,7 +262,7 @@ public class SsoUserController {
      * @return
      */
     @Log(title = "用户信息-通过id删除", operateType = OperateType.DELETE)
-    @Operation(summary = "用户信息-通过id删除", description =  "用户信息-通过id删除")
+    @Operation(summary = "用户信息-通过id删除", description = "用户信息-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:account:delete")
     public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {

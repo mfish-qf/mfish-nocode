@@ -142,4 +142,11 @@
             and su.phone like CONCAT('%',#{reqOrgUser.phone},'%')
         </if>
     </select>
+    <select id="getOrgDownIdsByCode" resultType="java.lang.String">
+        select id from sso_org where 1!=1
+        <foreach collection="orgCodes" item="code">
+            or org_code like CONCAT(#{code},'%')
+        </foreach>
+        order by org_sort
+    </select>
 </mapper>

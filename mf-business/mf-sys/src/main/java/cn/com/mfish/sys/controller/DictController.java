@@ -43,7 +43,7 @@ public class DictController {
      * @param reqDict
      * @return
      */
-    @Operation(summary = "字典-分页列表查询", description =  "字典-分页列表查询")
+    @Operation(summary = "字典-分页列表查询", description = "字典-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:dict:query")
     public Result<PageResult<Dict>> queryPageList(ReqDict reqDict, ReqPage reqPage) {
@@ -57,6 +57,7 @@ public class DictController {
      * @param reqPage
      * @return
      */
+
     private List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<Dict> queryWrapper = new LambdaQueryWrapper<Dict>()
@@ -74,7 +75,7 @@ public class DictController {
      * @return
      */
     @Log(title = "字典-添加", operateType = OperateType.INSERT)
-    @Operation(summary = "字典-添加", description =  "字典-添加")
+    @Operation(summary = "字典-添加", description = "字典-添加")
     @PostMapping
     @RequiresPermissions("sys:dict:insert")
     public Result<Dict> add(@RequestBody Dict dict) {
@@ -95,7 +96,7 @@ public class DictController {
      * @return
      */
     @Log(title = "字典-编辑", operateType = OperateType.UPDATE)
-    @Operation(summary = "字典-编辑", description =  "字典-编辑")
+    @Operation(summary = "字典-编辑", description = "字典-编辑")
     @PutMapping
     @RequiresPermissions("sys:dict:update")
     public Result<Dict> edit(@RequestBody Dict dict) {
@@ -132,7 +133,7 @@ public class DictController {
      * @return
      */
     @Log(title = "字典-通过id删除", operateType = OperateType.DELETE)
-    @Operation(summary = "字典-通过id删除", description =  "字典-通过id删除")
+    @Operation(summary = "字典-通过id删除", description = "字典-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:dict:delete")
     public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
@@ -145,7 +146,7 @@ public class DictController {
      * @param id
      * @return
      */
-    @Operation(summary = "字典-通过id查询", description =  "字典-通过id查询")
+    @Operation(summary = "字典-通过id查询", description = "字典-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:dict:query")
     public Result<Dict> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
@@ -155,11 +156,12 @@ public class DictController {
 
     /**
      * 导出
+     *
      * @param reqDict
      * @param reqPage
      * @throws IOException
      */
-    @Operation(summary = "导出字典", description =  "导出字典")
+    @Operation(summary = "导出字典", description = "导出字典")
     @GetMapping("/export")
     @RequiresPermissions("sys:dict:query")
     public void export(ReqDict reqDict, ReqPage reqPage) throws IOException {

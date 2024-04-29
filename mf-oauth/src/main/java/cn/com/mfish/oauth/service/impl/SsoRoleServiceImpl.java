@@ -3,16 +3,16 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.entity.SsoRole;
+import cn.com.mfish.common.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.cache.common.ClearCache;
-import cn.com.mfish.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
-import cn.com.mfish.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -122,5 +122,10 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
             throw new MyRuntimeException("错误:角色ID不允许为空");
         }
         return baseMapper.isTenantRole(roleId, tenantId) > 0;
+    }
+
+    @Override
+    public Result<List<String>> getRoleIdsByCode(String tenantId, List<String> roleCodes) {
+        return Result.ok(baseMapper.getRoleIdsByCode(tenantId, roleCodes), "通过角色编码获取角色ID成功");
     }
 }

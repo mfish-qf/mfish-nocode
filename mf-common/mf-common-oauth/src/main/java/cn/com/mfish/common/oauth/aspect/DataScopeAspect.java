@@ -1,9 +1,9 @@
-package cn.com.mfish.common.ds.aspect;
+package cn.com.mfish.common.oauth.aspect;
 
 import cn.com.mfish.common.core.annotation.GlobalException;
-import cn.com.mfish.common.ds.annotation.DataScope;
-import cn.com.mfish.common.ds.annotation.DataScopes;
-import cn.com.mfish.common.ds.common.DataScopeUtils;
+import cn.com.mfish.common.oauth.annotation.DataScope;
+import cn.com.mfish.common.oauth.annotation.DataScopes;
+import cn.com.mfish.common.oauth.common.DataScopeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -29,7 +29,7 @@ import java.util.List;
 @Slf4j
 public class DataScopeAspect {
 
-    @Before("@annotation(cn.com.mfish.common.ds.annotation.DataScopes)||@annotation(cn.com.mfish.common.ds.annotation.DataScope)")
+    @Before("@annotation(cn.com.mfish.common.oauth.annotation.DataScopes)||@annotation(cn.com.mfish.common.oauth.annotation.DataScope)")
     public void doBefore(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
@@ -43,14 +43,14 @@ public class DataScopeAspect {
         DataScopeUtils.context.set(list);
     }
 
-    @AfterReturning("@annotation(cn.com.mfish.common.ds.annotation.DataScopes)||@annotation(cn.com.mfish.common.ds.annotation.DataScope)")
+    @AfterReturning("@annotation(cn.com.mfish.common.oauth.annotation.DataScopes)||@annotation(cn.com.mfish.common.oauth.annotation.DataScope)")
     public void doAfterReturning() {
         DataScopeUtils.context.remove();
-
     }
 
-    @AfterThrowing("@annotation(cn.com.mfish.common.ds.annotation.DataScopes)||@annotation(cn.com.mfish.common.ds.annotation.DataScope)")
-    public void doAfterThrowing() {
+    @AfterThrowing(value = "@annotation(cn.com.mfish.common.oauth.annotation.DataScopes)||@annotation(cn.com.mfish.common.oauth.annotation.DataScope)", throwing = "e")
+    public void doAfterThrowing(Throwable e) {
+        log.error("doAfterThrowing", e);
         DataScopeUtils.context.remove();
     }
 }

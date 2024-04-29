@@ -65,4 +65,9 @@ public class BootUserService implements RemoteUserService {
     public Result<List<SsoOrg>> getOrgs(String origin, String userId, String direction) {
         return ssoUserService.getOrgs(userId, direction);
     }
+
+    @Override
+    public Result<List<String>> getOrgIds(String origin, String userId, String tenantId, String direction) {
+        return ssoUserService.getOrgIds(tenantId, userId, direction);
+    }
 }

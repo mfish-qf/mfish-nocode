@@ -1,6 +1,8 @@
-package cn.com.mfish.common.ds.common;
+package cn.com.mfish.common.oauth.common;
 
-import cn.com.mfish.common.ds.annotation.DataScope;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.oauth.annotation.DataScope;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,6 +23,17 @@ public class DataScopeUtils {
     public static Set<String> FOLLOW_KEYWORD = new HashSet<>();
     public static Set<Character> START_KEYWORD = new HashSet<>();
     public static Set<Character> END_KEYWORD = new HashSet<>();
+
+    @Data
+    @Accessors(chain = true)
+    public static class SqlSplit {
+        @Schema(name = "语句类型")
+        private boolean haveTable = false;
+        @Schema(name = "语句")
+        private String statement;
+        @Schema(name = "是否存在别名")
+        private boolean haveAlias = false;
+    }
 
     static {
         START_KEYWORD.add('.');
@@ -135,14 +148,31 @@ public class DataScopeUtils {
         return sb.toString();
     }
 
-    @Data
-    @Accessors(chain = true)
-    public static class SqlSplit {
-        @Schema(name = "语句类型")
-        private boolean haveTable = false;
-        @Schema(name = "语句")
-        private String statement;
-        @Schema(name = "是否存在别名")
-        private boolean haveAlias = false;
+    /**
+     * 构建查询条件
+     *
+     * @param fieldName
+     * @param values
+     * @return
+     */
+    public static String buildCondition(String fieldName, String[] values) {
+        if (StringUtils.isEmpty(fieldName)) {
+            throw new MyRuntimeException("错误：未传入条件字段名称");
+        }
+        if (values == null || values.length == 0) {
+            throw new MyRuntimeException("错误：未传入条件值");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(fieldName);
+        if (values.length > 1) {
+            sb.append(" in ('");
+            sb.append(String.join("','", values));
+            sb.append("')");
+        } else {
+            sb.append(" = '");
+            sb.append(values[0]);
+            sb.append("'");
+        }
+        return sb.toString();
     }
 }

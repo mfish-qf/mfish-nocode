@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.mapper;
 
-import cn.com.mfish.oauth.entity.SsoRole;
+import cn.com.mfish.common.oauth.entity.SsoRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -34,4 +34,6 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
     List<String> getRoleMenus(String roleId);
 
     int isTenantRole(@Param("roleId") String roleId, @Param("tenantId") String tenantId);
+
+    List<String> getRoleIdsByCode(@Param("tenantId") String tenantId, @Param("roleCodes") List<String> roleCodes);
 }

@@ -16,7 +16,7 @@
             </if>
         </where>
     </select>
-    <resultMap id="roleMap" type="cn.com.mfish.oauth.entity.SsoRole">
+    <resultMap id="roleMap" type="cn.com.mfish.common.oauth.entity.SsoRole">
         <result property="menus" column="menus" typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <select id="getRoleUser" resultType="string">
@@ -30,5 +30,11 @@
     </select>
     <select id="isTenantRole" resultType="java.lang.Integer">
         select count(0) from sso_role where tenant_id = #{tenantId} and id = #{roleId}
+    </select>
+    <select id="getRoleIdsByCode" resultType="java.lang.String">
+        select id from sso_role where tenant_id=#{tenantId} and role_code in
+        <foreach collection="roleCodes" item="code" separator="," open="(" close=")">
+            #{code}
+        </foreach>
     </select>
 </mapper>

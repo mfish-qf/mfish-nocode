@@ -4,3 +4,5 @@ cn.com.mfish.common.oauth.aspect.AuthorizationAspect
 cn.com.mfish.common.oauth.validator.WebTokenValidator
 cn.com.mfish.common.oauth.validator.WeChatTokenValidator
 cn.com.mfish.common.oauth.validator.TokenValidator
+cn.com.mfish.common.oauth.scope.SelectInterceptor
+cn.com.mfish.common.oauth.aspect.DataScopeAspect
