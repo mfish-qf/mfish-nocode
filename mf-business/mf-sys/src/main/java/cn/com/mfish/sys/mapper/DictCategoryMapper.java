@@ -24,7 +24,7 @@ public interface DictCategoryMapper extends BaseMapper<DictCategory> {
      * 查询1级分类列表
      *
      * @param reqDictCategory 过滤参数
-     * @param levels              所有父级等级
+     * @param levels          所有父级等级
      * @return
      */
     List<DictCategory> queryOneLevelCategory(@Param("reqDictCategory") ReqDictCategory reqDictCategory, @Param("levels") List<Integer> levels);

@@ -7,6 +7,7 @@ import cn.com.mfish.oauth.mapper.SsoUserMapper;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 
 /**

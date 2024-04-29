@@ -18,19 +18,22 @@ import java.lang.annotation.Target;
 public @interface Log {
     /**
      * 标题
+     *
      * @return
      */
     String title() default "";
 
     /**
      * 操作类型
+     *
      * @return
      */
     OperateType operateType() default OperateType.OTHER;
 
     /**
      * 请求来源 默认为管理端
-      * @return
+     *
+     * @return
      */
     ReqSource reqSource() default ReqSource.MANAGER;
 }

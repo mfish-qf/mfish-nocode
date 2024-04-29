@@ -29,6 +29,7 @@ public class RedirectUriExistValidator extends AbstractClientValidator {
 
     /**
      * 模糊匹配Uri 满足正则和多个链接逗号隔开的均允许访问
+     *
      * @param call_back_url
      * @param client
      * @return

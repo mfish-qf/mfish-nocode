@@ -46,7 +46,7 @@ public class CaptchaConfig {
         Properties properties = new Properties();
         // 是否有边框 默认为true 我们可以自己设置yes，no
         properties.setProperty(KAPTCHA_BORDER, "no");
-        properties.setProperty(KAPTCHA_BORDER_THICKNESS,"1");
+        properties.setProperty(KAPTCHA_BORDER_THICKNESS, "1");
         // 边框颜色 默认为Color.BLACK
         properties.setProperty(KAPTCHA_BORDER_COLOR, "204,204,204");
         // 验证码文本字符颜色 默认为Color.BLACK
@@ -66,8 +66,8 @@ public class CaptchaConfig {
         //图文样式
         properties.setProperty(KAPTCHA_OBSCURIFICATOR_IMPL, "com.google.code.kaptcha.impl.ShadowGimpy");
         //渐变色
-        properties.setProperty(KAPTCHA_BACKGROUND_CLR_FROM,"white");
-        properties.setProperty(KAPTCHA_BACKGROUND_CLR_TO,"white");
+        properties.setProperty(KAPTCHA_BACKGROUND_CLR_FROM, "white");
+        properties.setProperty(KAPTCHA_BACKGROUND_CLR_TO, "white");
         return properties;
     }
 }

@@ -9,6 +9,7 @@ import cn.com.mfish.oauth.cache.temp.UserTenantTempCache;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,7 @@ public class ClearCache {
         userTenantTempCache.removeOneCache(userId);
         removeUserAuthCache(Collections.singletonList(userId));
     }
+
     /**
      * 移除用户角色，权限相关缓存
      *

@@ -31,6 +31,7 @@ public class QRCodeUtils {
 
     /**
      * 创建二维码
+     *
      * @param content 二维码内容
      * @return
      * @throws WriterException
@@ -42,6 +43,7 @@ public class QRCodeUtils {
 
     /**
      * 创建带logo二维码(默认压缩logo)
+     *
      * @param content 二维码内容
      * @param imgPath logo路径
      * @return
@@ -54,15 +56,16 @@ public class QRCodeUtils {
 
     /**
      * 创建带logo二维码
-     * @param content 二维码内容
-     * @param imgPath logo路径
+     *
+     * @param content      二维码内容
+     * @param imgPath      logo路径
      * @param needCompress 是否压缩logo
      * @return
      * @throws WriterException
      * @throws IOException
      */
     public static BufferedImage createQRCode(String content, String imgPath, boolean needCompress) throws WriterException, IOException {
-        Hashtable<EncodeHintType,Object> hints = new Hashtable<>();
+        Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
         hints.put(EncodeHintType.MARGIN, 2);

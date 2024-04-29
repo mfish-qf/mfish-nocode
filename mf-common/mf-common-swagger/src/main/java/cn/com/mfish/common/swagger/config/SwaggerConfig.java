@@ -39,7 +39,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .components(new Components().addSecuritySchemes(Constants.AUTHENTICATION
                         , new SecurityScheme().name(Constants.AUTHENTICATION)
                                 .in(SecurityScheme.In.HEADER).type(SecurityScheme.Type.HTTP).scheme("Bearer")));
-        if(!StringUtils.isEmpty(swaggerProperties.getPrefix())){
+        if (!StringUtils.isEmpty(swaggerProperties.getPrefix())) {
             api.addServersItem(new Server().url(swaggerProperties.getPrefix()));
         }
         return api;

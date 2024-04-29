@@ -16,6 +16,7 @@ public class RedisConfig {
     /**
      * redis存储session序列化方式使用GenericJackson2JsonRedisSerializer会造成反序列化失败
      * 单独定义template
+     *
      * @param redisConnectionFactory
      * @return
      */

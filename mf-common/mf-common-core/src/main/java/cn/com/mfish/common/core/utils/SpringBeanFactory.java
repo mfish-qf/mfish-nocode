@@ -67,11 +67,12 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
 
     /**
      * 获取远程服务
+     *
      * @param clazz 远程服务类型
-     * @return 远程服务bean
      * @param <T>
+     * @return 远程服务bean
      */
-    public static <T> T  getRemoteService(Class<T> clazz) {
+    public static <T> T getRemoteService(Class<T> clazz) {
         T remoteService;
         //单体服务通过name获取RPC的覆盖服务
         if (ServiceConstants.isBoot(Utils.getServiceType())) {

@@ -24,6 +24,7 @@ public interface DictItemService extends IService<DictItem> {
 
     /**
      * 通过code删除字典项
+     *
      * @param dictCode
      * @return
      */

@@ -44,7 +44,7 @@ public class SsoClientDetailsController {
      * @param reqPage             分页参数
      * @return 返回客户端信息-分页列表
      */
-    @Operation(summary = "客户端信息-分页列表查询", description =  "客户端信息-分页列表查询")
+    @Operation(summary = "客户端信息-分页列表查询", description = "客户端信息-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:client:query")
     public Result<PageResult<SsoClientDetails>> queryPageList(ReqSsoClientDetails reqSsoClientDetails, ReqPage reqPage) {

@@ -14,15 +14,17 @@ public interface CheckCodeService {
 
     /**
      * 创建验证码
+     *
      * @return
      * @throws IOException
      * @throws CaptchaException
      */
-    Result<Map<String,Object>> createCaptcha();
+    Result<Map<String, Object>> createCaptcha();
 
     /**
      * 校验验证码
-     * @param key key
+     *
+     * @param key   key
      * @param value 值
      * @throws CaptchaException
      */

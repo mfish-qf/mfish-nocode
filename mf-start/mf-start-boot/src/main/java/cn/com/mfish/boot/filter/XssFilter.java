@@ -55,7 +55,7 @@ public class XssFilter implements Filter {
 
     public boolean isJsonRequest(HttpServletRequest request) {
         String header = request.getHeader(HttpHeaders.CONTENT_TYPE);
-        if(StringUtils.isEmpty(header)){
+        if (StringUtils.isEmpty(header)) {
             return false;
         }
         return header.startsWith(MediaType.APPLICATION_JSON_VALUE);

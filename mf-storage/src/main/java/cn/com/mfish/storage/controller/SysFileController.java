@@ -42,7 +42,7 @@ public class SysFileController {
      * @param reqSysFile 文件存储请求参数
      * @return 返回文件存储-分页列表
      */
-    @Operation(summary = "文件存储-分页列表查询", description =  "文件存储-分页列表查询")
+    @Operation(summary = "文件存储-分页列表查询", description = "文件存储-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:file:query")
     public Result<PageResult<StorageInfo>> queryPageList(ReqSysFile reqSysFile, ReqPage reqPage) {

@@ -13,6 +13,7 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
 /**
  * redis配置
+ *
  * @author: mfish
  * @date: 2021/8/12 15:11
  */
@@ -22,6 +23,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     /**
      * 通用redisTemplate采用GenericJackson2JsonRedisSerializer序列化value
+     *
      * @param redisConnectionFactory
      * @return
      */
@@ -43,6 +45,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     /**
      * 处理String类型键值对
+     *
      * @param redisConnectionFactory
      * @return
      */
@@ -56,6 +59,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     /**
      * redis存储session序列化方式使用GenericJackson2JsonRedisSerializer会造成反序列化失败
      * 单独定义template
+     *
      * @param redisConnectionFactory
      * @return
      */

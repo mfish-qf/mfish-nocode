@@ -31,6 +31,7 @@ public interface Storage {
 
     /**
      * 获取文件流
+     *
      * @param filePath
      * @return
      */
@@ -38,6 +39,7 @@ public interface Storage {
 
     /**
      * 获取文件
+     *
      * @param filePath
      * @return
      */

@@ -8,6 +8,8 @@ import cn.com.mfish.oauth.entity.RedisQrCode;
  */
 public interface QRCodeService {
     void saveQRCode(RedisQrCode qrCode);
+
     RedisQrCode checkQRCode(String code);
+
     void updateQRCode(RedisQrCode qrCode);
 }
