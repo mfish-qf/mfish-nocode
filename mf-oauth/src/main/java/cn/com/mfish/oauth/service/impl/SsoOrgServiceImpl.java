@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +192,15 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     }
 
     @Override
+    public Result<List<String>> queryOrgIdsById(String tenantId, List<String> ids, TreeDirection direction) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:组织id不允许为空");
+        }
+        List<SsoOrg> list = baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, ids));
+        return getOrgIdsByOrg(tenantId, list, direction);
+    }
+
+    @Override
     public List<UserRole> getOrgRoles(String... orgIds) {
         return baseMapper.getOrgRoles(orgIds);
     }
@@ -216,6 +226,36 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     public PageResult<UserInfo> queryUserByCode(String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return new PageResult<>(baseMapper.queryUserByCode(code, reqOrgUser));
+    }
+
+    @Override
+    public Result<List<String>> getOrgIdsByFixCode(String tenantId, List<String> orgCodes, TreeDirection direction) {
+        List<SsoOrg> list = baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgFixCode, orgCodes));
+        return getOrgIdsByOrg(tenantId, list, direction);
+    }
+
+    private Result<List<String>> getOrgIdsByOrg(String tenantId, List<SsoOrg> list, TreeDirection direction) {
+        //todo tenantId暂时未用到，后续完善
+        switch (direction) {
+            case 向下:
+                return Result.ok(baseMapper.getOrgDownIdsByCode(list.stream().map(SsoOrg::getOrgCode).toList()), "查询下级组织ID成功");
+            case 向上:
+                List<String> listCode = new ArrayList<>();
+                for (SsoOrg org : list) {
+                    listCode.addAll(getUpOrgCodes(org.getOrgCode(), org.getOrgLevel()));
+                }
+                return Result.ok(baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgCode, listCode)).stream().map(SsoOrg::getId).toList(), "查询上级组织ID成功");
+            default:
+                List<String> ids = baseMapper.getOrgDownIdsByCode(list.stream().map(SsoOrg::getOrgCode).toList());
+                List<String> codes = new ArrayList<>();
+                for (SsoOrg org : list) {
+                    codes.addAll(getUpOrgCodes(org.getOrgCode(), org.getOrgLevel() - 1));
+                }
+                if (!codes.isEmpty()) {
+                    ids.addAll(baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgCode, codes)).stream().map(SsoOrg::getId).toList());
+                }
+                return Result.ok(ids, "查询所有组织ID成功");
+        }
     }
 
     List<SsoOrg> queryOrg(SsoOrg org, TreeDirection direction) {
@@ -262,6 +302,21 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
      * @return
      */
     private List<SsoOrg> upOrg(String code, int level) {
+        List<String> orgList = getUpOrgCodes(code, level);
+        if (orgList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgCode, orgList));
+    }
+
+    /**
+     * 获取所有上级编码
+     *
+     * @param code
+     * @param level
+     * @return
+     */
+    private List<String> getUpOrgCodes(String code, int level) {
         List<String> orgList = new ArrayList<>();
         if (level < 1) {
             return new ArrayList<>();
@@ -269,6 +324,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         for (int i = 1; i <= level; i++) {
             orgList.add(code.substring(0, i * 5));
         }
-        return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgCode, orgList));
+        return orgList;
     }
+
 }

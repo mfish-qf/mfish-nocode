@@ -33,4 +33,7 @@ public interface RemoteOrgService {
 
     @GetMapping("/org/user/{code}")
     Result<PageResult<UserInfo>> queryUserByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("code") String code, @RequestParam("account") String account, @RequestParam("nickname") String nickname, @RequestParam("phone") String phone, @SpringQueryMap ReqPage reqPage);
+
+    @GetMapping("/org/ids")
+    Result<List<String>> getOrgIdsByFixCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("tenantId") String tenantId, @RequestParam("codes") String codes, @RequestParam("direction") String direction);
 }

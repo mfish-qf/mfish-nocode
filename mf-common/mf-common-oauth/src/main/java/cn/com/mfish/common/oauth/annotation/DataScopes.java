@@ -1,4 +1,4 @@
-package cn.com.mfish.common.ds.annotation;
+package cn.com.mfish.common.oauth.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

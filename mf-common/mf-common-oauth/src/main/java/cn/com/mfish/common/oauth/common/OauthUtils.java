@@ -1,12 +1,10 @@
 package cn.com.mfish.common.oauth.common;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
-import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.annotation.RequiresRoles;
@@ -35,18 +33,15 @@ import java.util.stream.Collectors;
 public class OauthUtils {
 
     private OauthUtils() {
-
     }
 
+    /**
+     * 获取远程用户接口服务
+     *
+     * @return
+     */
     private static RemoteUserService getRemoteUserService() {
-        RemoteUserService remoteUserService;
-        //单体服务通过name获取RPC的覆盖服务
-        if (ServiceConstants.isBoot(Utils.getServiceType())) {
-            remoteUserService = SpringBeanFactory.getBean(StringUtils.firstLowerCase(RemoteUserService.class.getSimpleName()));
-        } else {
-            remoteUserService = SpringBeanFactory.getBean(RemoteUserService.class);
-        }
-        return remoteUserService;
+        return SpringBeanFactory.getRemoteService(RemoteUserService.class);
     }
 
     /**

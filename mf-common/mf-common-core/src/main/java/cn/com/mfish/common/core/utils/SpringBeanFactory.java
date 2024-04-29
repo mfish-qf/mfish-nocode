@@ -1,5 +1,6 @@
 package cn.com.mfish.common.core.utils;
 
+import cn.com.mfish.common.core.constants.ServiceConstants;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -64,16 +65,20 @@ public final class SpringBeanFactory implements BeanFactoryPostProcessor {
         return beanFactory.getType(name);
     }
 
-//    /**
-//     * 获取FeignClient的bean
-//     *
-//     * @param name
-//     * @param tClass
-//     * @param <T>
-//     * @return
-//     */
-//    public static <T> T getFeignBean(String name, Class<T> tClass) {
-//        FeignContext feignContext = beanFactory.getBean(FeignContext.class);
-//        return feignContext.getInstance(name, tClass);
-//    }
+    /**
+     * 获取远程服务
+     * @param clazz 远程服务类型
+     * @return 远程服务bean
+     * @param <T>
+     */
+    public static <T> T  getRemoteService(Class<T> clazz) {
+        T remoteService;
+        //单体服务通过name获取RPC的覆盖服务
+        if (ServiceConstants.isBoot(Utils.getServiceType())) {
+            remoteService = SpringBeanFactory.getBean(StringUtils.firstLowerCase(clazz.getSimpleName()));
+        } else {
+            remoteService = SpringBeanFactory.getBean(clazz);
+        }
+        return remoteService;
+    }
 }

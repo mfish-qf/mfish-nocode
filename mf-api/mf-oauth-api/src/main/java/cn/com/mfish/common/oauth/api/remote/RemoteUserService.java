@@ -80,4 +80,16 @@ public interface RemoteUserService {
      */
     @GetMapping("/user/orgs/{userId}")
     Result<List<SsoOrg>> getOrgs(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("direction") String direction);
+
+    /**
+     * 获取用户相关组织id
+     *
+     * @param origin    来源
+     * @param userId    用户id
+     * @param tenantId  租户id
+     * @param direction 查询方向
+     * @return
+     */
+    @GetMapping("/orgIds/{userId}")
+    Result<List<String>> getOrgIds(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("tenantId") String tenantId, @RequestParam("direction") String direction);
 }
