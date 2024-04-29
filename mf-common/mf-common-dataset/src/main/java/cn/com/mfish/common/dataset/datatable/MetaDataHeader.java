@@ -84,7 +84,7 @@ public class MetaDataHeader implements Serializable {
         return this.dataType.getSlimType();
     }
 
-    public DataType getFullDataType(){
+    public DataType getFullDataType() {
         return this.dataType;
     }
 

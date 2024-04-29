@@ -26,19 +26,19 @@ public class StorageInfo extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     @Schema(description = "文件的唯一索引")
-	private String fileKey;
+    private String fileKey;
     @Schema(description = "文件名")
-	private String fileName;
+    private String fileName;
     @Schema(description = "文件类型")
-	private String fileType;
+    private String fileType;
     @Schema(description = "文件大小")
-	private Integer fileSize;
+    private Integer fileSize;
     @Schema(description = "文件访问链接")
-	private String fileUrl;
+    private String fileUrl;
     @Schema(description = "存储路径")
-	private String filePath;
+    private String filePath;
     @Schema(description = "是否私密文件 0为公开的  1为私密文件")
-	private Integer isPrivate;
+    private Integer isPrivate;
     @Schema(description = "删除标记(0未删除1删除)")
-	private Integer delFlag;
+    private Integer delFlag;
 }

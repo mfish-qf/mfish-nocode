@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;

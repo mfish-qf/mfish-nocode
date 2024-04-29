@@ -11,6 +11,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 

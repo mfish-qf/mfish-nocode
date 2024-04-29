@@ -18,7 +18,7 @@ public class AllowCodeValidator extends AbstractClientValidator {
         if (!result1.isSuccess()) {
             return result1;
         }
-        if(!result1.getData().getGrantTypes().contains(GrantType.AUTHORIZATION_CODE.toString())){
+        if (!result1.getData().getGrantTypes().contains(GrantType.AUTHORIZATION_CODE.toString())) {
             return result1.setSuccess(false).setMsg("错误:该客户端不支持code请求方式！");
         }
         return result1;

@@ -29,7 +29,7 @@ public class PageResult<T> implements Serializable {
     @Schema(description = "数据结果")
     private List<T> list;
 
-    public PageResult(){
+    public PageResult() {
 
     }
 

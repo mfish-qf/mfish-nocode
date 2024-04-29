@@ -26,17 +26,17 @@ public class CodeBuild extends BaseEntity<Long> {
     @TableId(type = IdType.AUTO)
     private Long id;
     @Schema(description = "数据库连接ID")
-	private String connectId;
+    private String connectId;
     @Schema(description = "表名")
-	private String tableName;
+    private String tableName;
     @Schema(description = "接口路径前缀 例如:/oauth2/user接口前缀为oauth2(不传会使用packageName，最底层包名 例如:cn.com.mfish.sys包会使用sys)")
-	private String apiPrefix;
+    private String apiPrefix;
     @Schema(description = "实体类名(不传会使用表名驼峰化)")
-	private String entityName;
+    private String entityName;
     @Schema(description = "项目包名(不传使用默认包名 cn.com.mfish.web)")
-	private String packageName;
+    private String packageName;
     @Schema(description = "表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")
-	private String tableComment;
+    private String tableComment;
     @Schema(description = "Form查询条件(json串)")
-	private String queryParams;
+    private String queryParams;
 }

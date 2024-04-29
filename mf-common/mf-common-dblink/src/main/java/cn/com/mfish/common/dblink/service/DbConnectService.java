@@ -15,8 +15,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface DbConnectService extends IService<DbConnect> {
     Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage);
+
     Result<DbConnect> insertConnect(DbConnect dbConnect);
+
     Result<DbConnect> updateConnect(DbConnect dbConnect);
+
     Result<Boolean> testConnect(DbConnect dbConnect);
+
     Result<DbConnect> queryById(String id);
 }

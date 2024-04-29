@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,39 +30,39 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractOAuthTokenRequest extends OAuthRequest {
 
-  protected AbstractOAuthTokenRequest(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException {
-    super(request);
-  }
-
-  protected OAuthValidator<HttpServletRequest> initValidator() throws OAuthProblemException, OAuthSystemException {
-    final String requestTypeValue = getParam(OAuth.OAUTH_GRANT_TYPE);
-    if (OAuthUtils.isEmpty(requestTypeValue)) {
-      throw OAuthUtils.handleOAuthProblemException("Missing grant_type parameter value");
+    protected AbstractOAuthTokenRequest(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException {
+        super(request);
     }
-    final Class<? extends OAuthValidator<HttpServletRequest>> clazz = validators.get(requestTypeValue);
-    if (clazz == null) {
-      throw OAuthUtils.handleOAuthProblemException("Invalid grant_type parameter value");
+
+    protected OAuthValidator<HttpServletRequest> initValidator() throws OAuthProblemException, OAuthSystemException {
+        final String requestTypeValue = getParam(OAuth.OAUTH_GRANT_TYPE);
+        if (OAuthUtils.isEmpty(requestTypeValue)) {
+            throw OAuthUtils.handleOAuthProblemException("Missing grant_type parameter value");
+        }
+        final Class<? extends OAuthValidator<HttpServletRequest>> clazz = validators.get(requestTypeValue);
+        if (clazz == null) {
+            throw OAuthUtils.handleOAuthProblemException("Invalid grant_type parameter value");
+        }
+        return OAuthUtils.instantiateClass(clazz);
     }
-    return OAuthUtils.instantiateClass(clazz);
-  }
 
-  public String getPassword() {
-    return getParam(OAuth.OAUTH_PASSWORD);
-  }
+    public String getPassword() {
+        return getParam(OAuth.OAUTH_PASSWORD);
+    }
 
-  public String getUsername() {
-    return getParam(OAuth.OAUTH_USERNAME);
-  }
+    public String getUsername() {
+        return getParam(OAuth.OAUTH_USERNAME);
+    }
 
-  public String getRefreshToken() {
-    return getParam(OAuth.OAUTH_REFRESH_TOKEN);
-  }
+    public String getRefreshToken() {
+        return getParam(OAuth.OAUTH_REFRESH_TOKEN);
+    }
 
-  public String getCode() {
-    return getParam(OAuth.OAUTH_CODE);
-  }
+    public String getCode() {
+        return getParam(OAuth.OAUTH_CODE);
+    }
 
-  public String getGrantType() {
-    return getParam(OAuth.OAUTH_GRANT_TYPE);
-  }
+    public String getGrantType() {
+        return getParam(OAuth.OAUTH_GRANT_TYPE);
+    }
 }

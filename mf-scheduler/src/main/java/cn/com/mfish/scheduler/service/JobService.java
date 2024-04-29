@@ -13,8 +13,12 @@ import org.quartz.SchedulerException;
  */
 public interface JobService extends IService<Job> {
     Result<Job> insertJob(Job job) throws SchedulerException, ClassNotFoundException;
+
     Result<Job> updateJob(Job job) throws SchedulerException, ClassNotFoundException;
+
     Result<Boolean> deleteJob(String jobId) throws SchedulerException;
+
     Result<Boolean> executeJob(Job job);
+
     Result<Boolean> setStatus(Job job) throws SchedulerException, ClassNotFoundException;
 }

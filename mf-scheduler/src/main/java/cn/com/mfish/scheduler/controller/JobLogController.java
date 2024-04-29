@@ -44,7 +44,7 @@ public class JobLogController {
      * @param reqJobLog 任务日志请求参数
      * @return 返回任务日志-分页列表
      */
-    @Operation(summary = "任务日志-分页列表查询", description =  "任务日志-分页列表查询")
+    @Operation(summary = "任务日志-分页列表查询", description = "任务日志-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:jobLog:query")
     public Result<PageResult<JobLog>> queryPageList(ReqJobLog reqJobLog, ReqPage reqPage) {
@@ -92,7 +92,7 @@ public class JobLogController {
     }
 
     @Log(title = "回调设置执行状态", operateType = OperateType.UPDATE)
-    @Operation(summary = "回调设置执行状态", description =  "回调设置执行状态")
+    @Operation(summary = "回调设置执行状态", description = "回调设置执行状态")
     @PutMapping("/callBackStatus")
     public Result<Boolean> callBackStatus(@RequestBody JobLog jobLog) {
         if (!jobLog.getStatus().equals(JobStatus.执行成功.getValue()) && !jobLog.getStatus().equals(JobStatus.执行失败.getValue())) {

@@ -36,42 +36,42 @@ public class SsoTenant extends BaseEntity<String> {
     private Integer tenantType;
     @ExcelProperty("租户名称")
     @Schema(description = "租户名称")
-	private String name;
+    private String name;
     @ExcelProperty("城市")
     @Schema(description = "城市")
-	private String city;
+    private String city;
     @ExcelProperty("省份")
     @Schema(description = "省份")
-	private String province;
+    private String province;
     @ExcelProperty("区县")
     @Schema(description = "区县")
-	private String county;
+    private String county;
     @ExcelProperty("地址")
     @Schema(description = "地址")
-	private String address;
+    private String address;
     @ExcelProperty("公司规模")
     @Schema(description = "公司规模")
-	private String corpSize;
+    private String corpSize;
     @Schema(description = "营业年限")
     private String corpYears;
     @ExcelProperty("所属行业")
     @Schema(description = "所属行业")
-	private String trade;
+    private String trade;
     @ExcelProperty("状态 0正常 1注销")
     @Schema(description = "状态 0正常 1注销")
-	private Integer status;
+    private Integer status;
     @ExcelProperty("logo")
     @Schema(description = "logo")
-	private String logo;
+    private String logo;
     @ExcelProperty("域名")
     @Schema(description = "域名")
-	private String domain;
+    private String domain;
     @ExcelProperty("删除状态(0-正常,1-已删除)")
     @Schema(description = "删除状态(0-正常,1-已删除)")
-	private Integer delFlag;
+    private Integer delFlag;
     @ExcelProperty("用户ID，关联用户为管理员")
     @Schema(description = "用户ID，关联用户为管理员")
-	private String userId;
+    private String userId;
     @ExcelIgnore
     @TableField(exist = false)
     @Schema(description = "角色Id")

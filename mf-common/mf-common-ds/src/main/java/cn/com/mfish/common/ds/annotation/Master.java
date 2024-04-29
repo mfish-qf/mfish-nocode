@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @description: 主库数据源配置注解
  * @date: 2021/11/30 11:42
  */
-@Target({ElementType.TYPE,ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @DS("master")
 public @interface Master {

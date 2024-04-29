@@ -35,7 +35,7 @@ public interface WeChatService {
      * @param nickname
      * @return
      */
-    boolean bindWeChat(String openId, String userId,String nickname);
+    boolean bindWeChat(String openId, String userId, String nickname);
 
     /**
      * 构建微信token

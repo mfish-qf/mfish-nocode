@@ -21,7 +21,7 @@ public class TestParam {
     @Schema(description = "字符参数")
     private String string1;
     @Schema(description = "map参数")
-    private Map<String,String> map1;
+    private Map<String, String> map1;
     @Schema(description = "list参数")
     private List<String> list1;
 }

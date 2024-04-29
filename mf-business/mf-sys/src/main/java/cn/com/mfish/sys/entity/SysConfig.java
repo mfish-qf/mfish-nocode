@@ -26,7 +26,7 @@ public class SysConfig extends BaseEntity<Integer> {
     @TableId(type = IdType.AUTO)
     private Integer id;
     @Schema(description = "用户ID")
-	private String userId;
+    private String userId;
     @Schema(description = "配置信息")
-	private String config;
+    private String config;
 }

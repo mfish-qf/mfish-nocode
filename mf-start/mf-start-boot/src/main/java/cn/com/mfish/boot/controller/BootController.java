@@ -23,13 +23,13 @@ public class BootController {
     @Resource
     CheckCodeService checkCodeService;
 
-    @Operation(summary = "获取验证码", description =  "获取验证码")
+    @Operation(summary = "获取验证码", description = "获取验证码")
     @GetMapping("/captcha")
     public Result<Map<String, Object>> getCaptcha() {
         return checkCodeService.createCaptcha();
     }
 
-    @Operation(summary = "未授权页面", description =  "未授权页面")
+    @Operation(summary = "未授权页面", description = "未授权页面")
     @GetMapping("/404")
     public Result<String> noAuth() {
         return Result.fail("错误:未授权，请联系管理员");

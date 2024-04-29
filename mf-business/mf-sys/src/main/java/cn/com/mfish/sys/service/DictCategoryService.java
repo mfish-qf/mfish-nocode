@@ -22,7 +22,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 分页查询分类树
      *
      * @param reqDictCategory 查询参数
-     * @param reqPage             分页参数
+     * @param reqPage         分页参数
      * @return
      */
     Result<PageResult<DictCategory>> queryCategoryTree(ReqDictCategory reqDictCategory, ReqPage reqPage);
@@ -78,6 +78,7 @@ public interface DictCategoryService extends IService<DictCategory> {
 
     /**
      * 根据分类编码查询分类目录树
+     *
      * @param fixCode
      * @param direction
      * @return
@@ -86,6 +87,7 @@ public interface DictCategoryService extends IService<DictCategory> {
 
     /**
      * 根据分类编码查询分类目录列表
+     *
      * @param fixCode
      * @param direction
      * @return

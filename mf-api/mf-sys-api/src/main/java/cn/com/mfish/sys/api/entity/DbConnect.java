@@ -26,23 +26,23 @@ public class DbConnect extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     @Schema(description = "连接名")
-	private String dbTitle;
+    private String dbTitle;
     @Schema(description = "数据库类型（0 mysql 1 oracle 2 pgsql）")
-	private Integer dbType;
+    private Integer dbType;
     @Schema(description = "连接池类型(Druid,Hikari)")
-	private String poolType;
+    private String poolType;
     @Schema(description = "主机")
-	private String host;
+    private String host;
     @Schema(description = "端口号")
-	private String port;
+    private String port;
     @Schema(description = "数据库名")
-	private String dbName;
+    private String dbName;
     @Schema(description = "数据库登录用户名")
-	private String username;
+    private String username;
     @Schema(description = "数据库登录密码")
-	private String password;
+    private String password;
     @Schema(description = "数据源配置项(JSON格式）")
-	private String options;
+    private String options;
     @Schema(description = "备注")
-	private String remark;
+    private String remark;
 }

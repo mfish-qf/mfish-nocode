@@ -33,5 +33,5 @@ public class RPCConstants {
     /**
      * 验证码校验异常
      */
-    public static final String REQ_CHECK_CAPTCHA_EXCEPTION="req-check-captcha-exception";
+    public static final String REQ_CHECK_CAPTCHA_EXCEPTION = "req-check-captcha-exception";
 }

@@ -51,7 +51,7 @@ public class Code2TokenValidator extends MultipleValidator {
                 return result1;
             }
             String clientId = request.getParameter(OAuth.OAUTH_CLIENT_ID);
-            if(!StringUtils.isEmpty(clientId) && clientId.equals(result1.getData().getClientId())){
+            if (!StringUtils.isEmpty(clientId) && clientId.equals(result1.getData().getClientId())) {
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:获取code和token两次传入的clientId不一致");
@@ -70,7 +70,7 @@ public class Code2TokenValidator extends MultipleValidator {
                 return result1;
             }
             String uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
-            if(!StringUtils.isEmpty(uri) && uri.equals(result1.getData().getRedirectUri())){
+            if (!StringUtils.isEmpty(uri) && uri.equals(result1.getData().getRedirectUri())) {
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:获取code和token两次传入的uri不一致");
