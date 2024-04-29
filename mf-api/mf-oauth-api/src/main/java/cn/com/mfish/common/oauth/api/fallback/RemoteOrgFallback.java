@@ -38,6 +38,11 @@ public class RemoteOrgFallback implements FallbackFactory<RemoteOrgService> {
             public Result<PageResult<UserInfo>> queryUserByCode(String origin, String code, String account, String nickname, String phone, ReqPage reqPage) {
                 return Result.fail("错误:根据编码获取组织下用户失败" + cause.getMessage());
             }
+
+            @Override
+            public Result<List<String>> getOrgIdsByFixCode(String origin, String tenantId, String codes, String direction) {
+                return Result.fail("错误:根据固定编码获取组织id失败" + cause.getMessage());
+            }
         };
     }
 }

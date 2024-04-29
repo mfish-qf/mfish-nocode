@@ -41,4 +41,9 @@ public class BootOrgService implements RemoteOrgService {
                         , new ReqOrgUser().setAccount(account).setNickname(nickname).setPhone(phone), reqPage)
                 , "组织下用户查询成功");
     }
+
+    @Override
+    public Result<List<String>> getOrgIdsByFixCode(String origin, String tenantId, String codes, String direction) {
+        return ssoOrgService.getOrgIdsByFixCode(tenantId, List.of(codes.split(",")), TreeDirection.getDirection(direction));
+    }
 }

@@ -149,7 +149,7 @@ org:
       instanceId: AUTO
     threadPool:
       poolClass: org.quartz.simpl.SimpleThreadPool
-      threadCount: 50
+      threadCount: 10
       threadPriority: 5
     jobStore:
       jdbcClass: org.quartz.impl.jdbcjobstore.JobStoreTX

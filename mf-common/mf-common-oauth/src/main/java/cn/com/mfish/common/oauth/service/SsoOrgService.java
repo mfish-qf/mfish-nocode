@@ -36,6 +36,8 @@ public interface SsoOrgService extends IService<SsoOrg> {
 
     List<SsoOrg> queryOrgById(String id, TreeDirection direction);
 
+    Result<List<String>> queryOrgIdsById(String tenantId, List<String> ids, TreeDirection direction);
+
     List<UserRole> getOrgRoles(String... orgIds);
 
     Result<List<SsoOrg>> queryByIds(String ids);
@@ -43,4 +45,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     boolean isTenantOrg(String orgId, String tenantId);
 
     PageResult<UserInfo> queryUserByCode(String code, ReqOrgUser reqOrgUser, ReqPage reqPage);
+
+    Result<List<String>> getOrgIdsByFixCode(String tenantId, List<String> orgCodes, TreeDirection direction);
 }

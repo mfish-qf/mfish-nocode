@@ -328,13 +328,25 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
+    public Result<List<String>> getOrgIds(String tenantId, String userId, String direction) {
+        if (StringUtils.isEmpty(tenantId)) {
+            userId = AuthInfoUtils.getCurrentTenantId();
+        }
+        if (StringUtils.isEmpty(userId)) {
+            userId = AuthInfoUtils.getCurrentUserId();
+        }
+        SsoUser user = getUserById(userId);
+        return ssoOrgService.queryOrgIdsById(tenantId, user.getOrgIds(), TreeDirection.getDirection(direction));
+    }
+
+    @Override
     public boolean isAccountExist(String account, String userId) {
         return baseMapper.isAccountExist(account, userId) > 0;
     }
 
     @Override
     public int insertUserRole(String userId, List<String> roles) {
-        if (roles == null || roles.size() == 0) {
+        if (roles == null || roles.isEmpty()) {
             return 0;
         }
         int count = baseMapper.insertUserRole(userId, roles);

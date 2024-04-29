@@ -76,11 +76,7 @@ public class AuthInfoUtils {
      * @return
      */
     public static String getCurrentUserId() {
-        String userId = getAttr(RPCConstants.REQ_USER_ID);
-//        if (StringUtils.isEmpty(userId)) {
-//            throw new OAuthValidateException("错误：未获取到当前用户id");
-//        }
-        return userId;
+        return getAttr(RPCConstants.REQ_USER_ID);
     }
 
     /**
