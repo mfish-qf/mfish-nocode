@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GetCodeValidator extends MultipleValidator {
-    public GetCodeValidator(){
+    public GetCodeValidator() {
         this.validateClientList.add(ClientIdExistValidator.class);
         this.validateClientList.add(AllowCodeValidator.class);
         this.validateClientList.add(RedirectUriExistValidator.class);

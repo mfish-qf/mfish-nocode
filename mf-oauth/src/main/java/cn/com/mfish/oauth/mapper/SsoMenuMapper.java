@@ -23,6 +23,7 @@ public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
 
     /**
      * 获取按钮权限用户
+     *
      * @param menuId
      * @return
      */

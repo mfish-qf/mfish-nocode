@@ -29,20 +29,20 @@ public class DictCategory extends BaseTreeEntity<String> {
     private String id;
     @ExcelProperty("父分类id")
     @Schema(description = "父分类id")
-	private String parentId;
+    private String parentId;
     @ExcelProperty("分类编码")
     @Schema(description = "分类编码")
-	private String categoryCode;
+    private String categoryCode;
     @ExcelProperty("分类名称")
     @Schema(description = "分类名称")
-	private String categoryName;
+    private String categoryName;
     @ExcelProperty("分类树编码（系统自动编码）")
     @Schema(description = "分类树编码（系统自动编码）")
-	private String treeCode;
+    private String treeCode;
     @ExcelProperty("分类树层级（自动生成）")
     @Schema(description = "分类树层级（自动生成）")
-	private Short treeLevel;
+    private Short treeLevel;
     @ExcelProperty("排序")
     @Schema(description = "排序")
-	private Integer sort;
+    private Integer sort;
 }

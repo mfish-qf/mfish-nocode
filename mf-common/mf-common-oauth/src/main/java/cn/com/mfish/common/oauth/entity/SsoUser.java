@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  */
 @Schema(description = "用户全部信息")
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 public class SsoUser extends UserInfo {
     @Schema(description = "密码加密盐")

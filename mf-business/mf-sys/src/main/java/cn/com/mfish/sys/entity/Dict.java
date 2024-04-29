@@ -29,14 +29,14 @@ public class Dict extends BaseEntity<String> {
     private String id;
     @ExcelProperty("字典名称")
     @Schema(description = "字典名称")
-	private String dictName;
+    private String dictName;
     @ExcelProperty("字典编码")
     @Schema(description = "字典编码")
-	private String dictCode;
+    private String dictCode;
     @ExcelProperty("状态(0正常 1停用)")
     @Schema(description = "状态(0正常 1停用)")
-	private Integer status;
+    private Integer status;
     @ExcelProperty("备注")
     @Schema(description = "备注")
-	private String remark;
+    private String remark;
 }

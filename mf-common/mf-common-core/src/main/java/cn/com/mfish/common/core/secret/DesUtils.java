@@ -81,8 +81,8 @@ public class DesUtils {
         }
     }
 
-    public static void main(String[] args){
-        String mFish =  encrypt("mfish");
+    public static void main(String[] args) {
+        String mFish = encrypt("mfish");
         System.out.println(mFish);
         System.out.println(decrypt(mFish));
     }

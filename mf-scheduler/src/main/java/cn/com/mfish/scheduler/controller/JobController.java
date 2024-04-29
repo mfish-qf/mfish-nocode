@@ -46,7 +46,7 @@ public class JobController {
      * @param reqJob 定时调度任务请求参数
      * @return 返回定时调度任务-分页列表
      */
-    @Operation(summary = "定时调度任务-分页列表查询", description =  "定时调度任务-分页列表查询")
+    @Operation(summary = "定时调度任务-分页列表查询", description = "定时调度任务-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:job:query")
     public Result<PageResult<Job>> queryPageList(ReqJob reqJob, ReqPage reqPage) {
@@ -95,7 +95,7 @@ public class JobController {
     }
 
     @Log(title = "定时调度任务-设置状态", operateType = OperateType.UPDATE)
-    @Operation(summary = "定时调度任务-设置状态", description =  "定时调度任务-设置状态")
+    @Operation(summary = "定时调度任务-设置状态", description = "定时调度任务-设置状态")
     @PutMapping("/status")
     @RequiresPermissions("sys:job:update")
     public Result<Boolean> setStatus(@RequestBody Job job) throws SchedulerException, ClassNotFoundException {
@@ -103,7 +103,7 @@ public class JobController {
     }
 
     @Log(title = "立即执行", operateType = OperateType.UPDATE)
-    @Operation(summary = "立即执行", description =  "定时调度任务-设置状态")
+    @Operation(summary = "立即执行", description = "定时调度任务-设置状态")
     @PutMapping("/execute")
     @RequiresPermissions("sys:job:execute")
     public Result<Boolean> execute(@RequestBody Job job) {

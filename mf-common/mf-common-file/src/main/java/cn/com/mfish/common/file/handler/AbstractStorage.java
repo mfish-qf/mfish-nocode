@@ -44,7 +44,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     @Override
-    public InputStream getInputStream(String filePath){
+    public InputStream getInputStream(String filePath) {
         try {
             Resource resource = loadAsResource(filePath);
             return resource.getInputStream();
@@ -54,7 +54,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     @Override
-    public File getFile(String filePath){
+    public File getFile(String filePath) {
         Resource resource = loadAsResource(filePath);
         try {
             return resource.getFile();

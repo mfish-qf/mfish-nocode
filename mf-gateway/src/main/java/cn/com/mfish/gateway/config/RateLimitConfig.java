@@ -57,6 +57,7 @@ public class RateLimitConfig {
 
     /**
      * 通过sentinel限流
+     *
      * @return
      */
     @Bean

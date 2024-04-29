@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ public class UserPermissionTempCache extends BaseTempCache<Set<String>> {
 
     /**
      * key [0] userId [1] tenantId
+     *
      * @param key
      * @return
      */

@@ -127,6 +127,7 @@ public class Utils {
 
     /**
      * 获取当前服务类型 是微服务还是单体服务
+     *
      * @return
      */
     public static String getServiceType() {

@@ -42,7 +42,7 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequestMapping("/qrCodeLogin")
-@Tag(name="扫码登录接口")
+@Tag(name = "扫码登录接口")
 public class QRCodeController {
     @Resource
     QRCodeService qrCodeService;

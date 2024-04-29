@@ -220,7 +220,7 @@ public class RedisPrefix {
      * @return
      */
     public static String buildUser2RolesKey(String userId, String tenantId) {
-        if(StringUtils.isEmpty(tenantId)){
+        if (StringUtils.isEmpty(tenantId)) {
             tenantId = "";
         }
         return USER2ROLES + userId + tenantId;
@@ -234,7 +234,7 @@ public class RedisPrefix {
      * @return
      */
     public static String buildUser2PermissionsKey(String userId, String tenantId) {
-        if(StringUtils.isEmpty(tenantId)){
+        if (StringUtils.isEmpty(tenantId)) {
             tenantId = "";
         }
         return USER2PERMISSIONS + userId + tenantId;
@@ -242,6 +242,7 @@ public class RedisPrefix {
 
     /**
      * 构建用户租户Key
+     *
      * @param userId
      * @return
      */

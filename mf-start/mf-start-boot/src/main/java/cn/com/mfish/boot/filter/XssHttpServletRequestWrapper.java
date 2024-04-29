@@ -52,10 +52,12 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
             public boolean isFinished() {
                 return true;
             }
+
             @Override
             public boolean isReady() {
                 return true;
             }
+
             @Override
             public void setReadListener(ReadListener readListener) {
             }

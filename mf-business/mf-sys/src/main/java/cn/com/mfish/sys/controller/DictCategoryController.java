@@ -39,7 +39,7 @@ public class DictCategoryController {
      * 分页列表查询
      *
      * @param reqDictCategory 树形分类请求参数
-     * @param reqPage             分页参数
+     * @param reqPage         分页参数
      * @return 返回树形分类-分页列表
      */
     @Operation(summary = "树形分类-分页列表查询", description = "树形分类-分页列表查询")
@@ -49,7 +49,7 @@ public class DictCategoryController {
         return dictCategoryService.queryCategoryTree(reqDictCategory, reqPage);
     }
 
-    @Operation(summary = "树形分类查询", description =  "树形分类")
+    @Operation(summary = "树形分类查询", description = "树形分类")
     @GetMapping("/tree")
     @RequiresPermissions("sys:dictCategory:query")
     public Result<List<DictCategory>> queryList(ReqDictCategory reqDictCategory) {
@@ -112,7 +112,7 @@ public class DictCategoryController {
         return Result.ok(dictCategory, "树形分类-查询成功!");
     }
 
-    @Operation(summary = "分类树-通过分类编码查询", description =  "分类树-通过分类编码查询")
+    @Operation(summary = "分类树-通过分类编码查询", description = "分类树-通过分类编码查询")
     @GetMapping("/tree/{code}")
     @Parameters({
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
@@ -122,7 +122,7 @@ public class DictCategoryController {
         return Result.ok(list, "分类树-查询成功!");
     }
 
-    @Operation(summary = "分类列表-通过分类编码查询", description =  "分类列表-通过分类编码查询")
+    @Operation(summary = "分类列表-通过分类编码查询", description = "分类列表-通过分类编码查询")
     @GetMapping("/list/{code}")
     @Parameters({
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),

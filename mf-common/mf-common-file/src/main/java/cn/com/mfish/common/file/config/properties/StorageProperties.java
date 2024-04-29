@@ -38,7 +38,7 @@ public class StorageProperties {
     }
 
     @Data
-    public static class QiNiu{
+    public static class QiNiu {
         private String accessKey;
         private String secretKey;
         private String bucket;

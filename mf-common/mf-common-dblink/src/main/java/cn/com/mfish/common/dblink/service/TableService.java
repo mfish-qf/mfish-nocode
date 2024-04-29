@@ -45,12 +45,14 @@ public interface TableService {
 
     /**
      * 获取带头信息数据
+     *
      * @param connectId
      * @param tableName
      * @param reqPage
      * @return
      */
     Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableName, ReqPage reqPage);
+
     /**
      * 获取数据
      *

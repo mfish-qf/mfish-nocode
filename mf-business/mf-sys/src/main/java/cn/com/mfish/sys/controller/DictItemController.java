@@ -48,7 +48,7 @@ public class DictItemController {
      * @param reqDictItem
      * @return
      */
-    @Operation(summary = "字典项-分页列表查询", description =  "字典项-分页列表查询")
+    @Operation(summary = "字典项-分页列表查询", description = "字典项-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:dict:query")
     public Result<PageResult<DictItem>> queryPageList(ReqDictItem reqDictItem, ReqPage reqPage) {
@@ -70,7 +70,7 @@ public class DictItemController {
      * @return
      */
     @Log(title = "字典项-添加", operateType = OperateType.INSERT)
-    @Operation(summary = "字典项-添加", description =  "字典项-添加")
+    @Operation(summary = "字典项-添加", description = "字典项-添加")
     @PostMapping
     @RequiresPermissions("sys:dict:insert")
     public Result<DictItem> add(@RequestBody DictItem dictItem) {
@@ -115,7 +115,7 @@ public class DictItemController {
      * @return
      */
     @Log(title = "字典项-编辑", operateType = OperateType.UPDATE)
-    @Operation(summary = "字典项-编辑", description =  "字典项-编辑")
+    @Operation(summary = "字典项-编辑", description = "字典项-编辑")
     @PutMapping
     @RequiresPermissions("sys:dict:update")
     public Result<DictItem> edit(@RequestBody DictItem dictItem) {
@@ -137,7 +137,7 @@ public class DictItemController {
      * @return
      */
     @Log(title = "字典项-通过id删除", operateType = OperateType.DELETE)
-    @Operation(summary = "字典项-通过id删除", description =  "字典项-通过id删除")
+    @Operation(summary = "字典项-通过id删除", description = "字典项-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:dict:delete")
     public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {

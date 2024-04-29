@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class FieldExpand{
+public class FieldExpand {
     @Schema(description = "字段信息")
     private FieldInfo fieldInfo;
     @Schema(description = "字典组件")
