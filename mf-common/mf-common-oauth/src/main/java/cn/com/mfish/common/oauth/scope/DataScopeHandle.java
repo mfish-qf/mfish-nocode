@@ -1,4 +1,4 @@
-package cn.com.mfish.common.core.scope;
+package cn.com.mfish.common.oauth.scope;
 
 /**
  * @description: 数据范围处理
