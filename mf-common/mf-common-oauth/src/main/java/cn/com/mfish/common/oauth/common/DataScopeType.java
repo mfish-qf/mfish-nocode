@@ -14,6 +14,7 @@ import lombok.Getter;
  */
 @Getter
 public enum DataScopeType {
+    None(-1, null),
     //租户
     Tenant(0, new TenantDataScopeHandle()),
     //用户
