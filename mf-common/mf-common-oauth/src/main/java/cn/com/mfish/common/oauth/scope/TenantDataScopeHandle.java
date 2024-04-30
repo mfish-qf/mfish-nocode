@@ -1,6 +1,5 @@
 package cn.com.mfish.common.oauth.scope;
 
-import cn.com.mfish.common.core.scope.DataScopeHandle;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
