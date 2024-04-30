@@ -2,7 +2,6 @@ package cn.com.mfish.common.oauth.scope;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.scope.DataScopeHandle;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;

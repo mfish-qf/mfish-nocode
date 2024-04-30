@@ -1,6 +1,6 @@
 package cn.com.mfish.common.oauth.common;
 
-import cn.com.mfish.common.core.scope.DataScopeHandle;
+import cn.com.mfish.common.oauth.scope.DataScopeHandle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;

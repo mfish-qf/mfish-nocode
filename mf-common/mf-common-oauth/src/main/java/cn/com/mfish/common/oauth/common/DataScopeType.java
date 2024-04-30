@@ -1,6 +1,6 @@
 package cn.com.mfish.common.oauth.common;
 
-import cn.com.mfish.common.core.scope.DataScopeHandle;
+import cn.com.mfish.common.oauth.scope.DataScopeHandle;
 import cn.com.mfish.common.oauth.scope.OrgDataScopeHandle;
 import cn.com.mfish.common.oauth.scope.RoleDataScopeHandle;
 import cn.com.mfish.common.oauth.scope.TenantDataScopeHandle;
