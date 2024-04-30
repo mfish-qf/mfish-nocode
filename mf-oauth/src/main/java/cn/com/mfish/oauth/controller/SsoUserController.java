@@ -10,14 +10,12 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
-import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
-import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.*;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
@@ -209,7 +207,6 @@ public class SsoUserController {
     @Operation(summary = "用户信息-分页列表查询", description = "用户信息-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:account:query")
-    @DataScope(table = "sso_user",type = DataScopeType.User,fieldName = "id",values = "admin,mfish")
     public Result<PageResult<UserInfo>> queryPageList(ReqSsoUser reqSsoUser, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         List<UserInfo> pageList = ssoUserService.getUserList(reqSsoUser);
