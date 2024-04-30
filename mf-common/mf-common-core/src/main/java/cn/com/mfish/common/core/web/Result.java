@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Data
 public class Result<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     @Schema(description = "是否成功")
     private boolean success = true;
