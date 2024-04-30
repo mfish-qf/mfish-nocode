@@ -283,6 +283,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     @Override
+    public List<String> getUserIdsByAccounts(List<String> accounts) {
+        return baseMapper.getUserIdsByAccounts(accounts);
+    }
+
+    @Override
     public SsoUser getUserById(String userId) {
         return userTempCache.getFromCacheAndDB(userId);
     }

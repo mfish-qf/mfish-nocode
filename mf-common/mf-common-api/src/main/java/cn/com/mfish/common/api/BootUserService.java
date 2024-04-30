@@ -10,9 +10,8 @@ import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.service.SsoUserService;
-import org.springframework.stereotype.Service;
-
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
@@ -69,5 +68,10 @@ public class BootUserService implements RemoteUserService {
     @Override
     public Result<List<String>> getOrgIds(String origin, String userId, String tenantId, String direction) {
         return ssoUserService.getOrgIds(tenantId, userId, direction);
+    }
+
+    @Override
+    public Result<List<String>> getUserIdsByAccounts(String origin, String accounts) {
+        return Result.ok(ssoUserService.getUserIdsByAccounts(List.of(accounts.split(","))), "获取用户id成功");
     }
 }

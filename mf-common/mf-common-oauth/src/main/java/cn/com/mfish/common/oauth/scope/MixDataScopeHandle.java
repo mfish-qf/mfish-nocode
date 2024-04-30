@@ -1,6 +1,8 @@
 package cn.com.mfish.common.oauth.scope;
 
 
+import cn.com.mfish.common.core.scope.DataScopeHandle;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
 import cn.com.mfish.common.oauth.common.DataScopeValue;
 
@@ -29,7 +31,11 @@ public class MixDataScopeHandle {
             }
             StringBuilder sb = new StringBuilder();
             for (DataScopeValue value : entry.getValue()) {
-                sb.append(value.getDataScopeHandle().buildCondition(value.getFieldName(), value.getValues()));
+                DataScopeHandle handle = value.getDataScopeHandle();
+                if (handle == null) {
+                    continue;
+                }
+                sb.append(handle.buildCondition(value.getFieldName(), value.getValues()));
                 sb.append(" and ");
             }
             if (!sb.isEmpty()) {
@@ -70,6 +76,9 @@ public class MixDataScopeHandle {
      * @return
      */
     private static String buildReplaceSql(String table, String condition) {
+        if (StringUtils.isEmpty(condition)) {
+            return table;
+        }
         return "(select * from " + table +
                 " where " +
                 condition +

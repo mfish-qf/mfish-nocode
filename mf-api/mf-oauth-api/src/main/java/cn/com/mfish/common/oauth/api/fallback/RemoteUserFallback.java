@@ -60,6 +60,11 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
             public Result<List<String>> getOrgIds(String origin, String userId, String tenantId, String direction) {
                 return Result.fail("错误:获取用户组织ID失败" + cause.getMessage());
             }
+
+            @Override
+            public Result<List<String>> getUserIdsByAccounts(String origin, String accounts) {
+                return Result.fail("错误:获取用户ID失败" + cause.getMessage());
+            }
         };
     }
 }

@@ -233,4 +233,10 @@
             </if>
         </where>
     </select>
+    <select id="getUserIdsByAccounts" resultType="java.lang.String">
+        select id from sso_user where account in
+        <foreach collection="accounts" item="account" separator="," open="(" close=")">
+            #{account}
+        </foreach>
+    </select>
 </mapper>
