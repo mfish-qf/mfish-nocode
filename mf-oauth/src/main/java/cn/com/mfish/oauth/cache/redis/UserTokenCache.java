@@ -3,14 +3,14 @@ package cn.com.mfish.oauth.cache.redis;
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.redis.common.RedisPrefix;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import jakarta.annotation.Resource;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -92,6 +92,8 @@ public class UserTokenCache {
         delTokenList(deviceId);
         try {
             redisSessionDAO.delete(redisSessionDAO.readSession(deviceId));
+        } catch (UnknownSessionException ex) {
+            log.info("sessionId不存在");
         } catch (Exception ex) {
             log.error("删除session异常", ex);
         }

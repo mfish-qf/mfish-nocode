@@ -183,12 +183,10 @@ public class SsoUserController {
         Object token = OauthUtils.getToken();
         if (token != null) {
             String sId = "";
-            if (token instanceof RedisAccessToken) {
-                RedisAccessToken redisAccessToken = (RedisAccessToken) token;
+            if (token instanceof RedisAccessToken redisAccessToken) {
                 sId = redisAccessToken.getTokenSessionId();
                 userId = redisAccessToken.getUserId();
-            } else if (token instanceof WeChatToken) {
-                WeChatToken weChatToken = (WeChatToken) token;
+            } else if (token instanceof WeChatToken weChatToken) {
                 sId = weChatToken.getOpenid();
                 userId = weChatToken.getUserId();
             }
