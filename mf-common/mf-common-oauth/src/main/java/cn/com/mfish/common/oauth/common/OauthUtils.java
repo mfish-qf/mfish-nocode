@@ -46,6 +46,7 @@ public class OauthUtils {
 
     /**
      * 获取用户信息
+     * 注意：该方法请勿用异步调用
      *
      * @return
      */
@@ -69,7 +70,7 @@ public class OauthUtils {
 
     /**
      * 获取当前用户角色
-     *
+     * 注意：该方法请勿用异步调用
      * @return
      */
     public static List<UserRole> getRoles() {
@@ -101,7 +102,7 @@ public class OauthUtils {
 
     /**
      * 获取当前用户按钮权限
-     *
+     * 注意：该方法请勿用异步调用
      * @return
      */
     public static Set<String> getPermission() {
@@ -114,7 +115,7 @@ public class OauthUtils {
 
     /**
      * 获取租户列表
-     *
+     * 注意：该方法请勿用异步调用
      * @return
      */
     public static List<TenantVo> getTenants() {
@@ -202,7 +203,7 @@ public class OauthUtils {
 
     /**
      * 获取当前token对象
-     *
+     * 注意：该方法请勿用异步调用
      * @return
      */
     public static Object getToken() {
