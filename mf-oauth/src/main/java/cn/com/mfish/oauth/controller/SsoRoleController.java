@@ -11,9 +11,9 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.entity.SsoRole;
+import cn.com.mfish.common.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
-import cn.com.mfish.common.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -177,7 +177,7 @@ public class SsoRoleController {
      * @return
      */
     @Operation(summary = "获取角色id", description = "获取角色id-通过角色编码查询")
-    @GetMapping("/ids/{codes}")
+    @GetMapping("/ids")
     @InnerUser
     @Parameters({
             @Parameter(name = "tenantId", description = "租户ID", required = true),
