@@ -19,6 +19,6 @@ import java.util.List;
 @FeignClient(contextId = "remoteRoleService", value = ServiceConstants.OAUTH_SERVICE, fallbackFactory = RemoteRoleFallback.class)
 public interface RemoteRoleService {
 
-    @GetMapping("/ids/{codes}")
+    @GetMapping("/ids")
     Result<List<String>> getRoleIdsByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("tenantId") String tenantId, @RequestParam("codes") String codes);
 }

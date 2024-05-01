@@ -7,7 +7,6 @@ import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.common.oauth.api.remote.RemoteRoleService;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
 
@@ -30,7 +29,9 @@ public class RoleDataScopeHandle implements DataScopeHandle {
             //未传值时使用当前用户的所有角色id
             values = getCurRoles();
         } else {
-            values = getRoleIdsByCode(values);
+            return fieldName + " in (select id from sso_role where tenant_id = '"
+                    + AuthInfoUtils.getCurrentTenantId() + "' and "
+                    + DataScopeUtils.buildCondition("role_code", values) + ")";
         }
         return DataScopeUtils.buildCondition(fieldName, values);
     }
@@ -47,22 +48,6 @@ public class RoleDataScopeHandle implements DataScopeHandle {
                 throw new MyRuntimeException(result.getMsg());
             }
             return result.getData().stream().map(UserRole::getId).toList().toArray(String[]::new);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new MyRuntimeException(e.getMessage());
-        }
-    }
-
-    private String[] getRoleIdsByCode(final String[] values) {
-        final String tenantId = AuthInfoUtils.getCurrentTenantId();
-        RemoteRoleService remoteRoleService = SpringBeanFactory.getRemoteService(RemoteRoleService.class);
-        //异步调用防止切面主线程使用了PageHelper分页交叉
-        CompletableFuture<Result<List<String>>> future = CompletableFuture.supplyAsync(() -> remoteRoleService.getRoleIdsByCode(RPCConstants.INNER, tenantId, String.join(",", values)));
-        try {
-            Result<List<String>> result = future.get();
-            if (!result.isSuccess()) {
-                throw new MyRuntimeException(result.getMsg());
-            }
-            return result.getData().toArray(new String[0]);
         } catch (InterruptedException | ExecutionException e) {
             throw new MyRuntimeException(e.getMessage());
         }
