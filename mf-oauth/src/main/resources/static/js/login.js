@@ -10,6 +10,7 @@ let app = new Vue({
         userPasswordVisible: false,
         phoneSmsCodeVisible: false,
         qrCodeVisible: false,
+        captchaOnOff: true,
         captchaValue: '',
         captchaKey: '',
         captchaUrl: '',
@@ -86,10 +87,7 @@ let app = new Vue({
             }
         },
         validateUserLogin() {
-            if (!this.validateUserName() || !this.validatePassword() || !this.validateCaptcha()) {
-                return false;
-            }
-            return true
+            return !(!this.validateUserName() || !this.validatePassword() || (this.captchaOnOff && !this.validateCaptcha()));
         },
         validateUserName() {
             if (!this.username) {
@@ -198,6 +196,7 @@ let app = new Vue({
                     if (200 == result.code) {
                         app.captchaUrl = "data:image/jpeg;base64," + result.data.img;
                         app.captchaKey = result.data.captchaKey;
+                        app.captchaOnOff = result.data.captchaOnOff
                     } else {
                         app.showError(result.msg);
                     }
