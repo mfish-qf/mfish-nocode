@@ -86,7 +86,7 @@
                                         </svg>
                                     </span>
                                     </div>
-                                    <div class="input-group mb-1">
+                                    <div class="input-group mb-1" v-if="captchaOnOff">
                                         <div class="form-floating">
                                             <input type="text" class="form-control"
                                                    :class="{'is-invalid':error.captcha.show,'is-valid':isValid}"
@@ -152,7 +152,7 @@
                                         </div>
                                         <span class="btn send-msg" @click="sendMsg" :disabled="codeDisabled"
                                               @mouseover="msgOver" @mouseleave="msgLeave">
-                                        <div v-if="codeDisabled">{{codeButton}}</div>
+                                        <span v-if="codeDisabled">{{codeButton}}</span>
                                         <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                              class="bi bi-envelope" viewBox="0 0 16 16" :fill="sendMsgColor">
                                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
@@ -179,13 +179,13 @@
                                 <div class="qrcode-img mb-3">
                                     <div>
                                         <img class="qrcode" id="qrCode" :src="qrCode" alt="二维码"/>
-                                        <div class="qrcode-status" v-if="scanStatus==3">
+                                        <div class="qrcode-status" v-if="scanStatus===3">
                                             <p>二维码已失效</p>
                                             <button type="button" class="btn btn-primary btn-block"
                                                     @click="refreshQrCode">刷新二维码
                                             </button>
                                         </div>
-                                        <div class="qrcode-status" v-if="scanStatus==1">
+                                        <div class="qrcode-status" v-if="scanStatus===1">
                                             <img src="static/img/success.png" alt="成功"/>
                                             <p>扫描成功</p>
                                             <p>请在手机上确认登录</p>
