@@ -1,11 +1,13 @@
 package cn.com.mfish.gateway.filter;
 
+import cn.com.mfish.common.captcha.common.CaptchaConstant;
 import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
 import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.gateway.common.GatewayUtils;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -15,8 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-
-import jakarta.annotation.Resource;
 
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
@@ -33,8 +33,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @Component
 @Slf4j
 public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
-    private static final String CAPTCHA_VALUE = "captchaValue";
-    private static final String CAPTCHA_KEY = "captchaKey";
 
     enum CheckStatus {
         需要校验,
@@ -69,7 +67,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
                 if (selfCheck == CheckStatus.参数校验 && unMatchParam(map, captchaProperties.getSelfCheckCaptcha())) {
                     return chain.filter(exchange);
                 }
-                checkCodeService.checkCaptcha(map.get(CAPTCHA_VALUE), map.get(CAPTCHA_KEY));
+                checkCodeService.checkCaptcha(map.get(CaptchaConstant.CAPTCHA_VALUE), map.get(CaptchaConstant.CAPTCHA_KEY));
             } catch (CaptchaException e) {
                 //如果需要自身校验，不直接返回校验结果，由网关转发到自身服务处理
                 if (selfCheck != CheckStatus.无需校验) {

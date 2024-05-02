@@ -1,7 +1,13 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.captcha.common.CaptchaConstant;
+import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
+import cn.com.mfish.common.captcha.service.CheckCodeService;
+import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
@@ -49,6 +55,10 @@ public class AuthorizeController {
     LoginService loginService;
     @Resource
     OAuth2Service oAuth2Service;
+    @Resource
+    CheckCodeService checkCodeService;
+    @Resource
+    CaptchaProperties captchaProperties;
 
     @Operation(summary = "认证接口")
     @GetMapping("/authorize")
@@ -61,10 +71,7 @@ public class AuthorizeController {
     })
     public Object getAuthorize(Model model, HttpServletRequest request) {
         String force = request.getParameter(FORCE_LOGIN);
-        boolean forceLogin = false;
-        if (!StringUtils.isEmpty(force) && "1".equals(force)) {
-            forceLogin = true;
-        }
+        boolean forceLogin = !StringUtils.isEmpty(force) && "1".equals(force);
         return authorize(model, request, (m, r) -> loginService.getLogin(m, r), forceLogin);
     }
 
@@ -78,10 +85,21 @@ public class AuthorizeController {
             @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
             @Parameter(name = OAuth.OAUTH_USERNAME, description = "账号，手机，email", required = true),
             @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码", required = true),
-            @Parameter(name = SerConstant.REMEMBER_ME, description = "记住我")
+            @Parameter(name = SerConstant.REMEMBER_ME, description = "记住我"),
+            @Parameter(name = CaptchaConstant.CAPTCHA_KEY, description = "验证码key"),
+            @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值"),
     })
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request) {
+        //单体服务时，自己验证验证码，微服务时由网关验证
+        if (ServiceConstants.isBoot(Utils.getServiceType()) && captchaProperties.getEnabled()) {
+            try {
+                checkCodeService.checkCaptcha(request.getParameter(CaptchaConstant.CAPTCHA_VALUE), request.getParameter(CaptchaConstant.CAPTCHA_KEY));
+            } catch (CaptchaException e) {
+                model.addAttribute(SerConstant.ERROR_MSG, CaptchaException.Info.getExceptionInfo(e.getMessage()).toString());
+                return LOGIN_PATH;
+            }
+        }
         return authorize(model, request, (m, r) -> loginService.postLogin(m, r), false);
     }
 

@@ -1,5 +1,6 @@
 package cn.com.mfish.common.captcha.service.impl;
 
+import cn.com.mfish.common.captcha.common.CaptchaConstant;
 import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
 import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.constants.Constants;
@@ -7,16 +8,18 @@ import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import com.google.code.kaptcha.Producer;
+import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FastByteArrayOutputStream;
 
-import jakarta.annotation.Resource;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,7 +42,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
     public Result<Map<String, Object>> createCaptcha() {
         Result<Map<String, Object>> ajax = Result.ok(new HashMap<>());
         boolean captchaOnOff = captchaProperties.getEnabled();
-        ajax.getData().put("captchaOnOff", captchaOnOff);
+        ajax.getData().put(CaptchaConstant.CHECK_ON_OFF, captchaOnOff);
         if (!captchaOnOff) {
             return ajax;
         }
@@ -64,14 +67,14 @@ public class CheckCodeServiceImpl implements CheckCodeService {
         } catch (IOException e) {
             return Result.fail(e.getMessage());
         }
-        ajax.getData().put("captchaKey", uuid);
+        ajax.getData().put(CaptchaConstant.CAPTCHA_KEY, uuid);
         ajax.getData().put("img", Base64.getEncoder().encodeToString(os.toByteArray()));
         return ajax;
     }
 
     @Override
     public void checkCaptcha(String code, String uuid) {
-        if (StringUtils.isEmpty(code)) {
+        if (code == null || StringUtils.isEmpty(code.trim())) {
             throw new CaptchaException(CaptchaException.Info.NULL.getName());
         }
         if (StringUtils.isEmpty(uuid)) {

@@ -1,7 +1,11 @@
 package cn.com.mfish.oauth.controller;
 
+import cn.com.mfish.common.captcha.common.CaptchaConstant;
+import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
+import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.enums.OperateType;
+import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
@@ -55,6 +59,10 @@ public class AccessTokenController {
     LoginService loginService;
     @Resource
     UserTokenCache userTokenCache;
+    @Resource
+    CheckCodeService checkCodeService;
+    @Resource
+    CaptchaProperties captchaProperties;
 
     @Operation(summary = "token获取")
     @PostMapping(value = "/accessToken")
@@ -137,6 +145,14 @@ public class AccessTokenController {
      * @return
      */
     private RedisAccessToken pwd2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) {
+        //password方式请求时，由服务自己校验验证码
+        if (captchaProperties.getEnabled()) {
+            try {
+                checkCodeService.checkCaptcha(request.getParameter(CaptchaConstant.CAPTCHA_VALUE), request.getParameter(CaptchaConstant.CAPTCHA_KEY));
+            } catch (CaptchaException e) {
+                throw new OAuthValidateException(CaptchaException.Info.getExceptionInfo(e.getMessage()).toString());
+            }
+        }
         Result<String> result = loginService.login(request);
         if (!result.isSuccess()) {
             throw new OAuthValidateException(result.getMsg());

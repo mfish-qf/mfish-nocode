@@ -1,5 +1,7 @@
 package cn.com.mfish.common.core.exception;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ public class CaptchaException extends RuntimeException {
         TIMEOUT("timeout", "错误:验证码已失效"),
         ERROR("error", "错误:验证码不正确");
 
+        @Getter
         private final String name;
         private final String value;
         private static final Map<String, Info> map = new HashMap<>();
@@ -33,10 +36,6 @@ public class CaptchaException extends RuntimeException {
                 return map.get(name);
             }
             return Info.ERROR;
-        }
-
-        public String getName() {
-            return this.name;
         }
 
         @Override

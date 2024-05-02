@@ -145,12 +145,12 @@ public class LoginServiceImpl implements LoginService {
         } catch (IncorrectCredentialsException ex) {
             //错误凭证错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
-            log.info("用户:" + username + "登录客户端:" + "失败" + ex.getMessage());
+            log.info("用户:{}登录客户端:{}凭证错误{}", username, clientId, ex.getMessage(), ex);
             return result;
         } catch (Exception ex) {
             //其他异常错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
-            log.info("用户:" + username + "登录客户端:" + "失败" + ex.getMessage());
+            log.info("用户:{}登录客户端:{}异常{}", username, clientId, ex.getMessage(), ex);
             return result;
         } finally {
             result.setData(token.getUserInfo() != null ? token.getUserInfo().getId() : null);
