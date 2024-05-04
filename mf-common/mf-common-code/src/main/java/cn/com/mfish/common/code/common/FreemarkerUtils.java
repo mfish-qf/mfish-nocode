@@ -155,7 +155,7 @@ public class FreemarkerUtils {
             }
             final String finalFieldName = fieldName;
             Optional<SearchInfo> searchInfo = codeInfo.getSearchList().stream().filter((search) ->
-                            search.getFieldInfo().getFieldName().equals(finalFieldName) && search.getComponent().size() == 2)
+                            search.getFieldInfo().getFieldName().equals(finalFieldName) && search.getComponent() != null && search.getComponent().size() == 2)
                     .findFirst();
             fieldInfo.setFieldName(StringUtils.toCamelCase(fieldName));
             FieldExpand fieldExpand = new FieldExpand().setFieldInfo(fieldInfo);
