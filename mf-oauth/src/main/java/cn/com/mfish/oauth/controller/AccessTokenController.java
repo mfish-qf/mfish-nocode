@@ -76,7 +76,9 @@ public class AccessTokenController {
             @Parameter(name = OAuth.OAUTH_CODE, description = "认证code grant_type=authorization_code时必须"),
             @Parameter(name = OAuth.OAUTH_USERNAME, description = "账号，手机，email grant_type=password时必须"),
             @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码 grant_type=password时必须"),
-            @Parameter(name = OAuth.OAUTH_REFRESH_TOKEN, description = "密码 grant_type=refresh_token时必须")
+            @Parameter(name = OAuth.OAUTH_REFRESH_TOKEN, description = "密码 grant_type=refresh_token时必须"),
+            @Parameter(name = CaptchaConstant.CAPTCHA_KEY, description = "验证码key，password方式需要验证码时传入"),
+            @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值，password方式需要验证码时传入")
     })
     @Log(title = "获取token", operateType = OperateType.LOGIN)
     public Result<AccessToken> token(HttpServletRequest request) throws OAuthProblemException, InvocationTargetException, IllegalAccessException, OAuthSystemException {
@@ -86,20 +88,12 @@ public class AccessTokenController {
             throw new OAuthValidateException(result.getMsg());
         }
         GrantType grantType = GrantType.valueOf(request.getParameter(OAuth.OAUTH_GRANT_TYPE).toUpperCase());
-        RedisAccessToken token;
-        switch (grantType) {
-            case AUTHORIZATION_CODE:
-                token = code2Token(request, tokenRequest);
-                break;
-            case REFRESH_TOKEN:
-                token = refresh2Token(request);
-                break;
-            case PASSWORD:
-                token = pwd2Token(request, tokenRequest);
-                break;
-            default:
-                throw new OAuthValidateException(result.getMsg());
-        }
+        RedisAccessToken token = switch (grantType) {
+            case AUTHORIZATION_CODE -> code2Token(request, tokenRequest);
+            case REFRESH_TOKEN -> refresh2Token(request);
+            case PASSWORD -> pwd2Token(request, tokenRequest);
+            default -> throw new OAuthValidateException(result.getMsg());
+        };
         //缓存用户角色信息
         CompletableFuture.supplyAsync(() -> ssoUserService.getUserInfoAndRoles(token.getUserId(), token.getTenantId()));
         userTokenCache.addUserTokenCache(DeviceType.Web
