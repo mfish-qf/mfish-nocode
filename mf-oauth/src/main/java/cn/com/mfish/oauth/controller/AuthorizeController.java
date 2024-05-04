@@ -86,8 +86,8 @@ public class AuthorizeController {
             @Parameter(name = OAuth.OAUTH_USERNAME, description = "账号，手机，email", required = true),
             @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码", required = true),
             @Parameter(name = SerConstant.REMEMBER_ME, description = "记住我"),
-            @Parameter(name = CaptchaConstant.CAPTCHA_KEY, description = "验证码key"),
-            @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值"),
+            @Parameter(name = CaptchaConstant.CAPTCHA_KEY, description = "验证码key，单实例服务需要验证码时传入"),
+            @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值，单实例服务需要验证码时传入")
     })
     @Log(title = "code认证接口", operateType = OperateType.QUERY)
     public Object authorize(Model model, HttpServletRequest request) {
