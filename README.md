@@ -10,10 +10,13 @@
 [![fork](https://gitee.com/qiufeng9862/mfish-nocode/badge/fork.svg?theme=white)](https://gitee.com/qiufeng9862/mfish-nocode/members)
 
 ## 架构图
+
 ![](https://oscimg.oschina.net/oscnet/up-7cb78605937aa402dbbdc8bdad8c2888b72.png)
 
 ## 项目介绍
-摸鱼低代码平台希望打造一个基于低代码的无代码平台。既能给程序员使用，也能满足非专业人士的需求。
+
+摸鱼低代码平台一个不正经的名字，却是一个很正经的项目。希望打造一个基于低代码的无代码平台。既能给程序员使用，也能满足非专业人士的需求。
+
 * 后端基于SpringBoot3, Spring Cloud Alibaba，实现微服务、单体服务代码一体化架构
 * 前端采用VUE3+AntDesign
 * 注册中心、配置中心采用nacos(作为单体服务时无需使用注册中心)
@@ -22,23 +25,29 @@
 * 支持可视化配置查询API接口，后端自动生成SQL执行
 * 支持注解方式进行数据权限控制，与业务代码完全解耦
 
-
 ## 前端源码地址
+
 [![github](https://img.shields.io/badge/前端地址-github-red.svg)](https://github.com/mfish-qf/mfish-nocode-view)
 [![gitee](https://img.shields.io/badge/前端地址-gitee-lightgrey.svg)](https://gitee.com/qiufeng9862/mfish-nocode-view)
 
 ## 文档地址
+
 + [文档地址](http://www.mfish.com.cn)
 + [在线预览](http://app.mfish.com.cn:11119)
 
 ## 平台交流
 
 ### 微信:
+
 ![微信](https://oscimg.oschina.net/oscnet/up-aaf63a91b96c092ad240b2e9755d926ba62.png)
 
 ### QQ群:
-[![加入QQ群](https://img.shields.io/badge/522792773-blue.svg)](https://jq.qq.com/?_wv=1027&k=0A2bxoZX) 点击链接加入群聊【摸鱼低代码交流群】
+
+[![加入QQ群](https://img.shields.io/badge/522792773-blue.svg)](https://jq.qq.com/?_wv=1027&k=0A2bxoZX)
+点击链接加入群聊【摸鱼低代码交流群】
+
 ## 功能模块
+
 ```
 ├─ChatGpt
 │  ├─聊天
@@ -89,31 +98,35 @@
 
 #### 项目截图
 
-![](https://oscimg.oschina.net/oscnet/up-7b8b53019b36fb12f5a0388491f7cedb06a.png)
-
-![](https://oscimg.oschina.net/oscnet/up-cb060c85cfc867df4ea6c1be4ac65d64d74.png)
-
-![](https://oscimg.oschina.net/oscnet/up-93645a610cf9dd0266580e0870ff497b946.png)
-
-![](https://oscimg.oschina.net/oscnet/up-4f34924c18c4f5df0fb7823feef7431227d.png)
-
-![](https://oscimg.oschina.net/oscnet/up-57d93c91b93340387c44d5d30e984e914d7.png)
-
-![](https://oscimg.oschina.net/oscnet/up-0ff2d7b640896b9a9156af832baebcb313f.png)
-
-![](https://oscimg.oschina.net/oscnet/up-81d9f856cdd794843d172c47874b69ff503.png)
-
-![](https://oscimg.oschina.net/oscnet/up-c26c5a79214ed2e242512d0f5f4accca63b.png)
-
-![](https://oscimg.oschina.net/oscnet/up-36d63fb4e8dd0a0844ff64a8f4c28682296.png)
-
-![](https://oscimg.oschina.net/oscnet/up-434781fa769d2da21e396bfccbbe13c8f15.png)
-
-![](https://oscimg.oschina.net/oscnet/up-7b2eeb5e679f75d889a841de61f9845c026.png)
-
-![](https://oscimg.oschina.net/oscnet/up-c413a81f353a0175bbbd09cc32a7fb8d5bf.png)
+<table>
+    <tr>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-7b8b53019b36fb12f5a0388491f7cedb06a.png" /></td>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-cb060c85cfc867df4ea6c1be4ac65d64d74.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-93645a610cf9dd0266580e0870ff497b946.png" /></td>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-4f34924c18c4f5df0fb7823feef7431227d.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-57d93c91b93340387c44d5d30e984e914d7.png" /></td>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-0ff2d7b640896b9a9156af832baebcb313f.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-81d9f856cdd794843d172c47874b69ff503.png" /></td>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-c26c5a79214ed2e242512d0f5f4accca63b.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-36d63fb4e8dd0a0844ff64a8f4c28682296.png" /></td>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-434781fa769d2da21e396bfccbbe13c8f15.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-7b2eeb5e679f75d889a841de61f9845c026.png" /></td>
+      <td><img src="https://oscimg.oschina.net/oscnet/up-c413a81f353a0175bbbd09cc32a7fb8d5bf.png" /></td>
+    </tr>
+</table>
 
 ![](https://oscimg.oschina.net/oscnet/up-736398ce5030ce21b6dda45ba9f24af4a72.png)
+
 #### 数据库信息
 
 | 文件                 | 描述       |
