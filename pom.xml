@@ -52,7 +52,7 @@
         <qiniu-sdk.version>7.15.0</qiniu-sdk.version>
         <rocketmq.version>2.3.0</rocketmq.version>
         <bcprov.version>1.78</bcprov.version>
-        <oracle.version>23.2.0.0</oracle.version>
+        <oracle.version>23.4.0.24.05</oracle.version>
         <pgsql.version>42.7.3</pgsql.version>
         <easyexcel.version>3.3.4</easyexcel.version>
     </properties>
@@ -315,7 +315,7 @@
             <!-- oracle驱动 -->
             <!--oracle连接驱动-->
             <dependency>
-                <groupId>com.oracle</groupId>
+                <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
                 <version>${oracle.version}</version>
             </dependency>
