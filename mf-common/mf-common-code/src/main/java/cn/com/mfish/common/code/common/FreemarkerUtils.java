@@ -289,7 +289,7 @@ public class FreemarkerUtils {
     public boolean saveCode(ReqCode reqCode) {
         List<CodeVo> list = getCode(reqCode);
         List<CodeVo> listBack = list.stream().filter((codeVo -> codeVo.getPath().startsWith("src/main/java"))).toList();
-        List<CodeVo> listFront = list.stream().filter((codeVo -> codeVo.getPath().startsWith("mfish-nocode-view"))).toList();
+        List<CodeVo> listFront = list.stream().filter((codeVo -> !codeVo.getPath().startsWith("src/main/java"))).toList();
         return saveCode(listBack, backPath) && saveCode(listFront, frontPath);
 
     }
