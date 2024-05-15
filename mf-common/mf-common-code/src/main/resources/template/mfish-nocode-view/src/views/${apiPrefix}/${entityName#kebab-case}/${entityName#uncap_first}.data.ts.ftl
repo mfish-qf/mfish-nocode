@@ -75,6 +75,7 @@ export const ${entityName?uncap_first}FormSchema: FormSchema[] = [
       <#elseif fieldExpands.fieldInfo.dbType =='DATETIME' || fieldExpands.fieldInfo.dbType =='datetime'>
       valueFormat: "YYYY-MM-DD HH:mm:ss",
       format: "YYYY-MM-DD HH:mm:ss",
+      showTime: { format: "HH:mm:ss" },
       </#if>
       getPopupContainer: () => document.body
     },
