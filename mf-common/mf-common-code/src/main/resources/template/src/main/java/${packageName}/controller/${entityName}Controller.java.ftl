@@ -48,7 +48,7 @@ public class ${entityName}Controller {
 	 */
 	@Operation(summary = "${tableInfo.tableComment}-分页列表查询", description = "${tableInfo.tableComment}-分页列表查询")
 	@GetMapping
-    @RequiresPermissions("sys:${entityName?uncap_first}:query")
+    @RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:query")
 	public Result<PageResult<${entityName}>> queryPageList(Req${entityName} req${entityName}, ReqPage reqPage) {
 		return Result.ok(new PageResult<>(queryList(req${entityName}, reqPage)), "${tableInfo.tableComment}-查询成功!");
 	}
@@ -86,7 +86,7 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-添加", operateType = OperateType.INSERT)
 	@Operation(summary = "${tableInfo.tableComment}-添加")
 	@PostMapping
-	@RequiresPermissions("sys:${entityName?uncap_first}:insert")
+	@RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:insert")
 	public Result<${entityName}> add(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.save(${entityName?uncap_first})) {
 			return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-添加成功!");
@@ -103,7 +103,7 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-编辑", operateType = OperateType.UPDATE)
 	@Operation(summary = "${tableInfo.tableComment}-编辑")
 	@PutMapping
-	@RequiresPermissions("sys:${entityName?uncap_first}:update")
+	@RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:update")
 	public Result<${entityName}> edit(@RequestBody ${entityName} ${entityName?uncap_first}) {
 		if (${entityName?uncap_first}Service.updateById(${entityName?uncap_first})) {
 		    return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-编辑成功!");
@@ -120,7 +120,7 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-通过id删除", operateType = OperateType.DELETE)
 	@Operation(summary = "${tableInfo.tableComment}-通过id删除")
 	@DeleteMapping("/{id}")
-	@RequiresPermissions("sys:${entityName?uncap_first}:delete")
+	@RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:delete")
 	public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
 		if (${entityName?uncap_first}Service.removeById(id)) {
 			return Result.ok(true, "${tableInfo.tableComment}-删除成功!");
@@ -137,7 +137,7 @@ public class ${entityName}Controller {
 	@Log(title = "${tableInfo.tableComment}-批量删除", operateType = OperateType.DELETE)
 	@Operation(summary = "${tableInfo.tableComment}-批量删除")
 	@DeleteMapping("/batch/{ids}")
-	@RequiresPermissions("sys:${entityName?uncap_first}:delete")
+	@RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:delete")
 	public Result<Boolean> deleteBatch(@Parameter(name = "ids", description = "唯一性ID") @PathVariable String ids) {
 		if (this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")))) {
 		    return Result.ok(true, "${tableInfo.tableComment}-批量删除成功!");
@@ -153,7 +153,7 @@ public class ${entityName}Controller {
 	 */
 	@Operation(summary = "${tableInfo.tableComment}-通过id查询")
 	@GetMapping("/{id}")
-	@RequiresPermissions("sys:${entityName?uncap_first}:query")
+	@RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:query")
 	public Result<${entityName}> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
 		return Result.ok(${entityName?uncap_first}, "${tableInfo.tableComment}-查询成功!");
@@ -167,7 +167,7 @@ public class ${entityName}Controller {
 	*/
 	@Operation(summary = "导出${tableInfo.tableComment}", description = "导出${tableInfo.tableComment}")
 	@GetMapping("/export")
-	@RequiresPermissions("sys:${entityName?uncap_first}:export")
+	@RequiresPermissions("${apiPrefix}:${entityName?uncap_first}:export")
 	public void export(Req${entityName} req${entityName}, ReqPage reqPage) throws IOException {
 		//swagger调用会用问题，使用postman测试
 		<#if tableInfo.tableComment??>
