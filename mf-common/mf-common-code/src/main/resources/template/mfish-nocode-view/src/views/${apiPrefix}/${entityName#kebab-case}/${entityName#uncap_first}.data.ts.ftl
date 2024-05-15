@@ -69,10 +69,16 @@ export const ${entityName?uncap_first}FormSchema: FormSchema[] = [
   <#elseif fieldExpands.fieldInfo.type=='Date'>
     component: "DatePicker",
     componentProps: {
+      <#if fieldExpands.fieldInfo.dbType =='DATE' || fieldExpands.fieldInfo.dbType =='date'>
       valueFormat: "YYYY-MM-DD",
       format: "YYYY-MM-DD",
+      <#elseif fieldExpands.fieldInfo.dbType =='DATETIME' || fieldExpands.fieldInfo.dbType =='datetime'>
+      valueFormat: "YYYY-MM-DD HH:mm:ss",
+      format: "YYYY-MM-DD HH:mm:ss",
+      showTime: { format: "HH:mm:ss" },
+      </#if>
       getPopupContainer: () => document.body
-    }
+    },
   <#elseif fieldExpands.fieldInfo.type=='Integer'||fieldExpands.fieldInfo.type=='Short'||fieldExpands.fieldInfo.type=='Long'||fieldExpands.fieldInfo.type=='Double'||fieldExpands.fieldInfo.type=='BigDecimal'>
     component: "InputNumber",
   <#else>
