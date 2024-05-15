@@ -2,15 +2,15 @@
  @description: ${tableInfo.tableComment}
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V1.3.0
+ @version: V1.2.0
 -->
 <template>
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate" v-auth="'sys:${entityName?uncap_first}:insert'">新增</a-button>
-        <a-button color="warning" @click="handleExport" v-auth="'sys:${entityName?uncap_first}:export'">导出</a-button>
-        <a-button color="error" @click="handleBatchDelete" v-auth="'sys:${entityName?uncap_first}:delete'">批量删除</a-button>
+        <a-button type="primary" @click="handleCreate" v-auth="'${apiPrefix}:${entityName?uncap_first}:insert'">新增</a-button>
+        <a-button color="warning" @click="handleExport" v-auth="'${apiPrefix}:${entityName?uncap_first}:export'">导出</a-button>
+        <a-button color="error" @click="handleBatchDelete" v-auth="'${apiPrefix}:${entityName?uncap_first}:delete'">批量删除</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -19,7 +19,7 @@
               {
                 icon: 'ant-design:edit-outlined',
                 onClick: handleEdit.bind(null, record),
-                auth: 'sys:${entityName?uncap_first}:update',
+                auth: '${apiPrefix}:${entityName?uncap_first}:update',
                 tooltip: '修改'
               },
               {
@@ -30,7 +30,7 @@
                   placement: 'left',
                   confirm: handleDelete.bind(null, record)
                 },
-                auth: 'sys:${entityName?uncap_first}:delete',
+                auth: '${apiPrefix}:${entityName?uncap_first}:delete',
                 tooltip: '删除'
               }
             ]"
