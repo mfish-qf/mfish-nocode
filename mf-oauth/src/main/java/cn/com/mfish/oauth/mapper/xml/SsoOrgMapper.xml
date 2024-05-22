@@ -131,7 +131,7 @@
         inner JOIN sso_org so on so.id = sou.org_id
         WHERE so.org_code like (select CONCAT(org_code, '%') from sso_org o
         where o.org_fix_code = #{code} and o.status=0 and o.del_flag=0
-        )
+        ) and su.del_flag = 0 and su.status = 0
         <if test="reqOrgUser.nickname != null and reqOrgUser.nickname != ''">
             and su.nickname like CONCAT('%',#{reqOrgUser.nickname},'%')
         </if>
