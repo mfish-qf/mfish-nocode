@@ -172,10 +172,6 @@ public class LoginServiceImpl implements LoginService {
                 log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
                 throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
             }
-            if (SerConstant.AccountState.锁定.getValue() == user.getStatus()) {
-                log.error(userId + SerConstant.ACCOUNT_LOCK_DESCRIPTION);
-                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_LOCK_DESCRIPTION);
-            }
             if (user.getDelFlag().equals(1)) {
                 log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
                 throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
@@ -188,15 +184,15 @@ public class LoginServiceImpl implements LoginService {
             return true;
         }
         if (count >= ERROR_COUNT) {
-            String error = MessageFormat.format("{0},连续输错5次密码，账号锁定"
+            String error = MessageFormat.format("{0},连续输错5次密码，账号禁用"
                     , SerConstant.INVALID_USER_SECRET_DESCRIPTION);
-            user.setStatus(1);
+            user.setStatus(SerConstant.AccountState.禁用.getValue());
             ssoUserService.updateUser(user);
             log.error(userId + error);
             //规定时间内重试ERROR_COUNT次，抛出多次尝试异常
             throw new ExcessiveAttemptsException(error);
         }
-        String error = MessageFormat.format("{0},连续出错{1}次,错误{2}次将被锁定"
+        String error = MessageFormat.format("{0},连续出错{1}次,错误{2}次将被禁用"
                 , SerConstant.INVALID_USER_SECRET_DESCRIPTION, count, ERROR_COUNT);
         log.error(userId + error);
         throw new IncorrectCredentialsException(error);
