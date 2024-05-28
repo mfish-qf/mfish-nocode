@@ -7,7 +7,6 @@ package cn.com.mfish.common.oauth.common;
 public class SerConstant {
     public static final String ACCOUNT_DELETE_DESCRIPTION = "登录失败:该账号已删除，请联系管理员";
     public static final String ACCOUNT_DISABLE_DESCRIPTION = "登录失败:该帐号已禁用，请联系管理员";
-    public static final String ACCOUNT_LOCK_DESCRIPTION = "登录失败:该帐号已锁定，请联系管理员";
     public static final String INVALID_USER_SECRET_DESCRIPTION = "登录失败:错误的帐号或密码";
     public static final String INVALID_PHONE_CODE_DESCRIPTION = "登录失败:错误的验证码";
     public static final String INVALID_USER_ID_DESCRIPTION = "登录失败:错误的用户ID";
@@ -84,8 +83,7 @@ public class SerConstant {
      */
     public enum AccountState {
         正常(0),
-        禁用(1),
-        锁定(2);
+        禁用(1);
 
         private final int value;
 
