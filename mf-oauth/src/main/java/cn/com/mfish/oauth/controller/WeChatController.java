@@ -197,10 +197,9 @@ public class WeChatController {
     @Parameters({
             @Parameter(name = "sessionKey", description = "微信登录返回的sessionKey", required = true),
             @Parameter(name = "nickname", description = "微信昵称"),
-            @Parameter(name = "encryptedData", description = "微信获取手机号数据", required = true),
-            @Parameter(name = "iv", description = "微信获取手机号iv", required = true)
+            @Parameter(name = SerConstant.QR_CODE, description = "微信认证code", required = true)
     })
-    public AccessToken phoneLogin(String sessionKey, String nickname, String encryptedData, String iv) {
+    public AccessToken phoneLogin(String sessionKey, String nickname, String code) throws WxErrorException {
         String openid = loginService.getOpenIdBySessionKey(sessionKey);
         if (StringUtils.isEmpty(openid)) {
             log.error("sessionKey:" + sessionKey + ",手机号绑定失败");
@@ -210,7 +209,7 @@ public class WeChatController {
         if (!StringUtils.isEmpty(userId)) {
             return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, userId));
         }
-        WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNoInfo(sessionKey, encryptedData, iv);
+        WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNumber(code);
         String phone = phoneNoInfo.getPhoneNumber();
         //TODO 此处clientId暂时写死后期可能需要修改
         Result<String> loginResult = loginService.login(phone, sessionKey, SerConstant.LoginType.微信登录, "system", "false");

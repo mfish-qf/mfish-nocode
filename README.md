@@ -25,6 +25,9 @@
 * 支持可视化配置查询API接口，后端自动生成SQL执行
 * 支持注解方式进行数据权限控制，与业务代码完全解耦
 
+## 安全报告
+[![Security Status](https://www.murphysec.com/platform3/v31/badge/1796428877999906816.svg)](https://www.murphysec.com/console/report/1672256253122600960/1796428877999906816)
+
 ## 前端源码地址
 
 [![github](https://img.shields.io/badge/前端地址-github-red.svg)](https://github.com/mfish-qf/mfish-nocode-view)
