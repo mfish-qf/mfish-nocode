@@ -26,7 +26,7 @@
 * 支持注解方式进行数据权限控制，与业务代码完全解耦
 
 ## 安全报告
-[![Security Status](https://www.murphysec.com/platform3/v31/badge/1796386008383746048.svg)](https://www.murphysec.com/console/report/1672256253122600960/1796386008383746048)
+[![Security Status](https://www.murphysec.com/platform3/v31/badge/1796428877999906816.svg)](https://www.murphysec.com/console/report/1672256253122600960/1796428877999906816)
 
 ## 前端源码地址
 
