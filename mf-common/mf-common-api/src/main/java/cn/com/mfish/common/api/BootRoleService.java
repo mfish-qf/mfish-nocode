@@ -6,6 +6,7 @@ import cn.com.mfish.common.oauth.service.SsoRoleService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,5 +22,10 @@ public class BootRoleService implements RemoteRoleService {
     @Override
     public Result<List<String>> getRoleIdsByCode(String origin, String tenantId, String codes) {
         return ssoRoleService.getRoleIdsByCode(tenantId, List.of(codes.split(",")));
+    }
+
+    @Override
+    public Result<List<String>> getRoleUsers(String origin, String tenantId, String codes) {
+        return ssoRoleService.getRoleUsers(tenantId, Arrays.asList(codes.split(",")));
     }
 }
