@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -180,10 +181,27 @@ public class SsoRoleController {
     @GetMapping("/ids")
     @InnerUser
     @Parameters({
-            @Parameter(name = "tenantId", description = "租户ID", required = true),
+            @Parameter(name = "tenantId", description = "租户ID"),
             @Parameter(name = "codes", description = "角色编码", required = true)
     })
     public Result<List<String>> getRoleIdsByCode(String tenantId, String codes) {
+        if (StringUtils.isEmpty(tenantId)) {
+            tenantId = AuthInfoUtils.getCurrentTenantId();
+        }
         return ssoRoleService.getRoleIdsByCode(tenantId, List.of(codes.split(",")));
+    }
+
+    @Operation(summary = "获取角色编码获取角色下所有用户id", description = "获取角色编码获取角色下所有用户id")
+    @GetMapping("/users")
+    @InnerUser
+    @Parameters({
+            @Parameter(name = "tenantId", description = "租户ID"),
+            @Parameter(name = "codes", description = "角色编码", required = true)
+    })
+    public Result<List<String>> getRoleUsers(String tenantId, String codes) {
+        if (StringUtils.isEmpty(tenantId)) {
+            tenantId = AuthInfoUtils.getCurrentTenantId();
+        }
+        return ssoRoleService.getRoleUsers(tenantId, Arrays.asList(codes.split(",")));
     }
 }

@@ -26,4 +26,13 @@ public interface SsoRoleService extends IService<SsoRole> {
     boolean isTenantRole(String roleId, String tenantId);
 
     Result<List<String>> getRoleIdsByCode(String tenantId, List<String> roleCodes);
+
+    /**
+     * 通过角色编码获取角色下所有用户
+     *
+     * @param tenantId 租户id
+     * @param roleCodes 角色编码
+     * @return 用户id列表
+     */
+    Result<List<String>> getRoleUsers(String tenantId, List<String> roleCodes);
 }

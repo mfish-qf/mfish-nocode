@@ -21,4 +21,7 @@ public interface RemoteRoleService {
 
     @GetMapping("/ids")
     Result<List<String>> getRoleIdsByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("tenantId") String tenantId, @RequestParam("codes") String codes);
+
+    @GetMapping("/users")
+    Result<List<String>> getRoleUsers(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("tenantId") String tenantId, @RequestParam("codes") String codes);
 }
