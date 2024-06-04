@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -96,7 +97,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
      */
     private void removeRoleCache(String roleId) {
         //查询角色对应的用户并删除角色权限缓存
-        List<String> list = baseMapper.getRoleUser(roleId);
+        List<String> list = baseMapper.getRoleUsers(Collections.singletonList(roleId), true);
         clearCache.removeUserAuthCache(list);
     }
 
@@ -127,5 +128,15 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     @Override
     public Result<List<String>> getRoleIdsByCode(String tenantId, List<String> roleCodes) {
         return Result.ok(baseMapper.getRoleIdsByCode(tenantId, roleCodes), "通过角色编码获取角色ID成功");
+    }
+
+    @Override
+    public Result<List<String>> getRoleUsers(String tenantId, List<String> roleCodes) {
+        List<String> roleIds = baseMapper.getRoleIdsByCode(tenantId, roleCodes);
+        List<String> list = baseMapper.getRoleUsers(roleIds, false);
+        if (list.isEmpty()) {
+            return Result.fail("错误：未获取到用户");
+        }
+        return Result.ok(list, "获取用户成功");
     }
 }

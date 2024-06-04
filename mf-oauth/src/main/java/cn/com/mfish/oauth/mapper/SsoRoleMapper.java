@@ -25,10 +25,11 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
     /**
      * 获取角色下所有的用户
      *
-     * @param roleId
+     * @param roleIds        角色id列表
+     * @param containInvalid 是否包含失效用户 true包含 false不包含
      * @return
      */
-    List<String> getRoleUser(String roleId);
+    List<String> getRoleUsers(@Param("roleIds") List<String> roleIds, @Param("containInvalid") boolean containInvalid);
 
     @Select("select menu_id from sso_role_menu where role_id=#{roleId}")
     List<String> getRoleMenus(String roleId);
