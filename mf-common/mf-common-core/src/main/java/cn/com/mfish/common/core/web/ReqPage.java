@@ -16,7 +16,6 @@ import java.io.Serializable;
 public class ReqPage implements Serializable {
 
     public ReqPage() {
-        this(null, null);
     }
 
     public ReqPage(Integer pageNum, Integer pageSize) {
