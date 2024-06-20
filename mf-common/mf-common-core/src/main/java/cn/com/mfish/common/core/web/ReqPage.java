@@ -14,6 +14,17 @@ import java.io.Serializable;
 @Getter
 @Schema(description = "分页请求")
 public class ReqPage implements Serializable {
+
+    public ReqPage() {
+        this(null, null);
+    }
+
+    public ReqPage(Integer pageNum, Integer pageSize) {
+        this.pageNum = pageNum;
+        this.pageSize = pageSize;
+
+    }
+
     @Schema(description = "第几页(默认值:1)")
     private Integer pageNum = 1;
     @Schema(description = "每页条数(默认值:10)")

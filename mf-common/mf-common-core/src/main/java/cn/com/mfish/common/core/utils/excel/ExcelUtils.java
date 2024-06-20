@@ -94,6 +94,7 @@ public class ExcelUtils {
 
     /**
      * 模板文件本地写入
+     * 注意：如果导出报create workbook failure可能是由于文件模板为xls格式，请先另存为xlsx类型
      *
      * @param templatePath 文件模板路径
      * @param filePath     文件路径（不包含名称）
@@ -108,6 +109,7 @@ public class ExcelUtils {
 
     /**
      * 模板文件流写入
+     * 注意：如果导出报create workbook failure可能是由于文件模板为xls格式，请先另存为xlsx类型
      *
      * @param templatePath 文件模板路径
      * @param outputStream 文件流
@@ -121,6 +123,7 @@ public class ExcelUtils {
 
     /**
      * 模板文件写入
+     * 注意：如果导出报create workbook failure可能是由于文件模板为xls格式，请先另存为xlsx类型
      *
      * @param excelWriter excel写入
      * @param map         数据
@@ -146,6 +149,7 @@ public class ExcelUtils {
 
     /**
      * 模板文件web中的写入
+     * 注意：如果导出报create workbook failure可能是由于文件模板为xls格式，请先另存为xlsx类型
      *
      * @param templatePath 模板路径
      * @param fileName     文件名称（不包含后缀默认为xlsx）
