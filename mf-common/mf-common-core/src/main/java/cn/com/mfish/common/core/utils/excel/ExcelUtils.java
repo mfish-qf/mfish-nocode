@@ -8,17 +8,20 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.fill.FillConfig;
+import com.alibaba.excel.write.metadata.fill.FillWrapper;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.alibaba.fastjson2.JSON;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -28,6 +31,8 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public class ExcelUtils {
+    private static final String SUFFIX = ".xlsx";
+
     private ExcelUtils() {
     }
 
@@ -63,7 +68,7 @@ public class ExcelUtils {
             } else {
                 fileName = FileUtils.encodeFileName(fileName);
             }
-            response.setHeader("Content-disposition", "attachment;filename*=utf-8'zh_cn'" + fileName + ".xlsx");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8'zh_cn'" + fileName + SUFFIX);
             if (list == null || list.isEmpty()) {
                 if (cls != null) {
                     list = new ArrayList<>();
@@ -78,6 +83,93 @@ public class ExcelUtils {
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                     .autoCloseStream(Boolean.FALSE).sheet("sheet1")
                     .doWrite(list);
+        } catch (Exception e) {
+            // 重置response
+            response.reset();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().println(JSON.toJSONString(Result.fail(null, "错误:下载文件失败")));
+        }
+    }
+
+    /**
+     * 模板文件本地写入
+     *
+     * @param templatePath 文件模板路径
+     * @param filePath     文件路径（不包含名称）
+     * @param fileName     文件名称（不包含后缀默认为xlsx）
+     * @param map          数据
+     * @throws IOException
+     */
+    public static void write(String templatePath, String fileName, String filePath, Map<String, Object> map) throws IOException {
+        ExcelWriter excelWriter = EasyExcel.write(filePath + "/" + fileName + SUFFIX).withTemplate(new ClassPathResource(templatePath).getInputStream()).build();
+        write(excelWriter, map);
+    }
+
+    /**
+     * 模板文件流写入
+     *
+     * @param templatePath 文件模板路径
+     * @param outputStream 文件流
+     * @param map          数据
+     * @throws IOException
+     */
+    public static void write(String templatePath, OutputStream outputStream, Map<String, Object> map) throws IOException {
+        ExcelWriter excelWriter = EasyExcel.write(outputStream).withTemplate(new ClassPathResource(templatePath).getInputStream()).build();
+        write(excelWriter, map);
+    }
+
+    /**
+     * 模板文件写入
+     *
+     * @param excelWriter excel写入
+     * @param map         数据
+     */
+    public static void write(ExcelWriter excelWriter, Map<String, Object> map) {
+        WriteSheet writeSheet = EasyExcel.writerSheet().build();
+        // 这里注意 入参用了forceNewRow 代表在写入list的时候不管list下面有没有空行 都会创建一行，然后下面的数据往后移动。默认 是false，会直接使用下一行，如果没有则创建。
+        // forceNewRow 如果设置了true,有个缺点 就是他会把所有的数据都放到内存了，所以慎用
+        // 简单的说 如果你的模板有list,且list不是最后一行，下面还有数据需要填充 就必须设置 forceNewRow=true 但是这个就会把所有数据放到内存 会很耗内存
+        // 如果数据量大 list不是最后一行 参照下一个
+        FillConfig fillConfig = FillConfig.builder().forceNewRow(Boolean.TRUE).build();
+        try {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (entry.getValue() instanceof List) {
+                    excelWriter.fill(new FillWrapper(entry.getKey(), (List) entry.getValue()), fillConfig, writeSheet);
+                }
+            }
+            excelWriter.fill(map, writeSheet);
+        } finally {
+            excelWriter.finish();
+        }
+    }
+
+    /**
+     * 模板文件web中的写入
+     *
+     * @param templatePath 模板路径
+     * @param fileName     文件名称（不包含后缀默认为xlsx）
+     * @param map          数据
+     * @throws IOException
+     */
+    public static void write(String templatePath, String fileName, Map<String, Object> map) throws IOException {
+        if (StringUtils.isEmpty(fileName)) {
+            int index = templatePath.replace("\\", "/").lastIndexOf("/");
+            if (index > 0) {
+                fileName = FileUtils.encodeFileName(templatePath.substring(index + 1));
+            } else {
+                fileName = "export";
+            }
+        } else {
+            fileName = FileUtils.encodeFileName(fileName);
+        }
+        HttpServletResponse response = ServletUtils.getResponse();
+        try {
+            assert response != null;
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8'zh_cn'" + fileName + SUFFIX);
+            write(templatePath, response.getOutputStream(), map);
         } catch (Exception e) {
             // 重置response
             response.reset();
