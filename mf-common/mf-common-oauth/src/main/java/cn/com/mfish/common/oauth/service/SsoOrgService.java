@@ -47,4 +47,6 @@ public interface SsoOrgService extends IService<SsoOrg> {
     PageResult<UserInfo> queryUserByCode(String code, ReqOrgUser reqOrgUser, ReqPage reqPage);
 
     Result<List<String>> getOrgIdsByFixCode(String tenantId, List<String> orgCodes, TreeDirection direction);
+
+    Result<List<String>> getOrgIdsById(String tenantId, List<String> orgIds, TreeDirection direction);
 }

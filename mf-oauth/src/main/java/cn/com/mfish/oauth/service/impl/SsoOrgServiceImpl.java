@@ -230,7 +230,22 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public Result<List<String>> getOrgIdsByFixCode(String tenantId, List<String> orgCodes, TreeDirection direction) {
+        if (orgCodes == null || orgCodes.isEmpty()) {
+            return Result.fail("错误：组织编码不允许为空");
+        }
         List<SsoOrg> list = baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getOrgFixCode, orgCodes));
+        return getOrgIdsByOrg(tenantId, list, direction);
+    }
+
+    @Override
+    public Result<List<String>> getOrgIdsById(String tenantId, List<String> orgIds, TreeDirection direction) {
+        if (orgIds == null || orgIds.isEmpty()) {
+            return Result.fail("错误：组织id不允许为空");
+        }
+        List<SsoOrg> list = baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, orgIds));
+        if (list == null || list.isEmpty()) {
+            return Result.fail(null, "错误：未获取到组织信息");
+        }
         return getOrgIdsByOrg(tenantId, list, direction);
     }
 
