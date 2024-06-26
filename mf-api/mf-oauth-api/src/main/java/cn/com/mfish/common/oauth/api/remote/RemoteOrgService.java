@@ -36,4 +36,7 @@ public interface RemoteOrgService {
 
     @GetMapping("/org/ids")
     Result<List<String>> getOrgIdsByFixCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("tenantId") String tenantId, @RequestParam("codes") String codes, @RequestParam("direction") String direction);
+
+    @GetMapping("/org/ids/byId")
+    Result<List<String>> getOrgIdsById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("tenantId") String tenantId, @RequestParam("orgIds") String orgIds, @RequestParam("direction") String direction);
 }

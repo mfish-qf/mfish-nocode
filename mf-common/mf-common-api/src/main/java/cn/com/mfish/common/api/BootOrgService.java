@@ -46,4 +46,9 @@ public class BootOrgService implements RemoteOrgService {
     public Result<List<String>> getOrgIdsByFixCode(String origin, String tenantId, String codes, String direction) {
         return ssoOrgService.getOrgIdsByFixCode(tenantId, List.of(codes.split(",")), TreeDirection.getDirection(direction));
     }
+
+    @Override
+    public Result<List<String>> getOrgIdsById(String origin, String tenantId, String orgIds, String direction) {
+        return ssoOrgService.getOrgIdsById(tenantId, List.of(orgIds.split(",")), TreeDirection.getDirection(direction));
+    }
 }

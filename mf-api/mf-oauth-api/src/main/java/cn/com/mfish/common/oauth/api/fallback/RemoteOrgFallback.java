@@ -41,7 +41,12 @@ public class RemoteOrgFallback implements FallbackFactory<RemoteOrgService> {
 
             @Override
             public Result<List<String>> getOrgIdsByFixCode(String origin, String tenantId, String codes, String direction) {
-                return Result.fail("错误:根据固定编码获取组织id失败" + cause.getMessage());
+                return Result.fail("错误:根据固定编码获取各级组织id失败" + cause.getMessage());
+            }
+
+            @Override
+            public Result<List<String>> getOrgIdsById(String origin, String tenantId, String orgIds, String direction) {
+                return Result.fail("错误:根据组织id获取各级组织id失败" + cause.getMessage());
             }
         };
     }
