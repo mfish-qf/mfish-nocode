@@ -154,20 +154,25 @@ public class SsoOrgController {
         return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage), "组织下用户查询成功");
     }
 
-    /**
-     * 获取组织id-通过组织编码查询
-     *
-     * @param codes 组织编码，多个逗号分隔
-     * @return
-     */
-    @Operation(summary = "获取组织id", description = "获取组织id-通过组织编码查询")
+    @Operation(summary = "根据组织固定编码获取各级组织id", description = "获取各级组织id-通过组织编码查询")
     @GetMapping("/ids")
     @Parameters({
             @Parameter(name = "tenantId", description = "租户ID"),
-            @Parameter(name = "codes", description = "组织固定编码", required = true),
+            @Parameter(name = "codes", description = "组织固定编码,多个逗号隔开", required = true),
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
     })
     public Result<List<String>> getOrgIdsByFixCode(String tenantId, String codes, String direction) {
         return ssoOrgService.getOrgIdsByFixCode(tenantId, List.of(codes.split(",")), TreeDirection.getDirection(direction));
+    }
+
+    @Operation(summary = "根据当前组织id获取各级组织id", description = "获取各级组织id-通过组织id查询")
+    @GetMapping("/ids/byId")
+    @Parameters({
+            @Parameter(name = "tenantId", description = "租户ID"),
+            @Parameter(name = "orgIds", description = "组织Id，多个逗号隔开", required = true),
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
+    })
+    public Result<List<String>> getOrgIdsById(String tenantId, String orgIds, String direction) {
+        return ssoOrgService.getOrgIdsById(tenantId, List.of(orgIds.split(",")), TreeDirection.getDirection(direction));
     }
 }

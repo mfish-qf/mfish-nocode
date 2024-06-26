@@ -10,8 +10,9 @@ import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.service.SsoUserService;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Resource;
 
 import java.util.List;
 import java.util.Set;
