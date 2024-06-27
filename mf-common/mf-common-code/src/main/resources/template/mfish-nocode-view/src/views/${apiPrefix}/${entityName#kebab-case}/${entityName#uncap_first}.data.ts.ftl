@@ -43,7 +43,7 @@ export const searchFormSchema: FormSchema[] = [
     <#else>
     component: "Input",
     </#if>
-    colProps: { lg: 4, md: 5 }
+    colProps: { xl: 6, md: 8 }
   },
 </#list>
 ];
