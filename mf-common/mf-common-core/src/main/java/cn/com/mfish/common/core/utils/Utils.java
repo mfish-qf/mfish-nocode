@@ -62,7 +62,7 @@ public class Utils {
      * @throws Exception
      */
     public static <T> T mapToBean(Map map, Class<T> beanClass) throws Exception {
-        T object = beanClass.newInstance();
+        T object = beanClass.getDeclaredConstructor().newInstance();
         Field[] fields = object.getClass().getDeclaredFields();
         for (Field field : fields) {
             int mod = field.getModifiers();
