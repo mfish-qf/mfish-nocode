@@ -26,6 +26,7 @@ public class TreeUtils {
      * @param <T>   树类型
      * @param <P>   id类型
      */
+    @SuppressWarnings("unchecked")
     public static <T extends BaseTreeEntity<P>, P> void buildTree(P pId, List<T> items, List<T> trees, Class<T> cls) {
         if (items == null || items.isEmpty()) {
             return;
