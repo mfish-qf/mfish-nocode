@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.entity.BaseTreeEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class TreeUtils {
                 continue;
             }
             try {
-                T parent = cls.newInstance();
+                T parent = cls.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(item, parent);
                 trees.add(parent);
                 List<BaseTreeEntity<P>> child = new ArrayList<>();
@@ -50,6 +51,8 @@ public class TreeUtils {
                 String error = "错误:构建树实例化出错";
                 log.error(error, e);
                 throw new MyRuntimeException(error);
+            } catch (InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
             }
         }
     }

@@ -18,6 +18,7 @@ import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.text.ParseException;
@@ -90,12 +91,12 @@ public class BaseQuery {
      * @throws InstantiationException 反射异常
      * @throws IllegalAccessException 反射异常
      */
-    private <T> Page<T> changeT(final ResultSet rs, Class<T> cls) throws SQLException, InstantiationException, IllegalAccessException {
+    private <T> Page<T> changeT(final ResultSet rs, Class<T> cls) throws SQLException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         final ResultSetMetaData metaData = rs.getMetaData();
         List<Field> fields = Utils.getAllFields(cls);
         Page<T> list = new Page<>();
         while (rs.next()) {
-            T t = cls.newInstance();
+            T t = cls.getDeclaredConstructor().newInstance();
             for (Field field : fields) {
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String columnName = StringUtils.toCamelCase(metaData.getColumnLabel(i));
