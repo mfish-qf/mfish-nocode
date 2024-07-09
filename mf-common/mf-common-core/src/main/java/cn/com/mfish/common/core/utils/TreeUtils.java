@@ -47,12 +47,11 @@ public class TreeUtils {
                 if (child.isEmpty()) {
                     parent.setChildren(null);
                 }
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 String error = "错误:构建树实例化出错";
                 log.error(error, e);
                 throw new MyRuntimeException(error);
-            } catch (InvocationTargetException | NoSuchMethodException e) {
-                throw new RuntimeException(e);
             }
         }
     }
