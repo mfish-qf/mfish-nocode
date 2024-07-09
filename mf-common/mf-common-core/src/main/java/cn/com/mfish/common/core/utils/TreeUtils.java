@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.entity.BaseTreeEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class TreeUtils {
      * @param <T>   树类型
      * @param <P>   id类型
      */
+    @SuppressWarnings("unchecked")
     public static <T extends BaseTreeEntity<P>, P> void buildTree(P pId, List<T> items, List<T> trees, Class<T> cls) {
         if (items == null || items.isEmpty()) {
             return;
@@ -34,7 +36,7 @@ public class TreeUtils {
                 continue;
             }
             try {
-                T parent = cls.newInstance();
+                T parent = cls.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(item, parent);
                 trees.add(parent);
                 List<BaseTreeEntity<P>> child = new ArrayList<>();
@@ -46,7 +48,8 @@ public class TreeUtils {
                 if (child.isEmpty()) {
                     parent.setChildren(null);
                 }
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 String error = "错误:构建树实例化出错";
                 log.error(error, e);
                 throw new MyRuntimeException(error);

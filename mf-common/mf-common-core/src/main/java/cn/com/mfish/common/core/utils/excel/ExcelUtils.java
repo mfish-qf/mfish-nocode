@@ -74,7 +74,7 @@ public class ExcelUtils {
             if (list == null || list.isEmpty()) {
                 if (cls != null) {
                     list = new ArrayList<>();
-                    list.add(cls.newInstance());
+                    list.add(cls.getDeclaredConstructor().newInstance());
                 } else {
                     IOUtils.write(new byte[]{}, response.getOutputStream());
                     return;
