@@ -381,7 +381,7 @@ public class SsoTenantController {
         if (result.isSuccess()) {
             return Result.ok(ssoRoleService.getRoleMenus(roleId), "查询租户菜单成功");
         }
-        return Result.fail(new ArrayList<>(), "错误:查询租户菜单ID失败");
+        return Result.fail(new ArrayList<>(), result.getMsg());
     }
 
     @Operation(summary = "获取用户菜单树")
@@ -454,10 +454,10 @@ public class SsoTenantController {
      * @return
      */
     private Result<Boolean> verifyRole(String id) {
-        Result<Boolean> result = verifyTenant();
-        if (!result.isSuccess()) {
-            return result;
-        }
+//        Result<Boolean> result = verifyTenant();
+//        if (!result.isSuccess()) {
+//            return result;
+//        }
         String tenantId = AuthInfoUtils.getCurrentTenantId();
         if (!StringUtils.isEmpty(id) && !ssoRoleService.isTenantRole(id, tenantId)) {
             return Result.fail(false, "错误:不允许操作非自己租户下的角色");
