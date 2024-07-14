@@ -128,12 +128,18 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         if (StringUtils.isEmpty(ssoTenant.getName())) {
             throw new MyRuntimeException("错误:租户名称不允许为空");
         }
+        if (StringUtils.isEmpty(ssoTenant.getUserId())) {
+            throw new MyRuntimeException("错误:租户管理员不允许为空");
+        }
         return true;
     }
 
     @Override
     @Transactional
     public Result<SsoTenant> updateTenant(SsoTenant ssoTenant) {
+        if (!validateTenant(ssoTenant)) {
+            return Result.fail(ssoTenant, "错误:校验租户信息失败");
+        }
         SsoTenant oldTenant = baseMapper.selectById(ssoTenant.getId());
         if (baseMapper.updateById(ssoTenant) <= 0) {
             return Result.fail(ssoTenant, "错误:租户信息-更新失败!");
