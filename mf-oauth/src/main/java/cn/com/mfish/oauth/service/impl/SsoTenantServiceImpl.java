@@ -128,6 +128,9 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         if (StringUtils.isEmpty(ssoTenant.getName())) {
             throw new MyRuntimeException("错误:租户名称不允许为空");
         }
+        if (StringUtils.isEmpty(ssoTenant.getUserId())) {
+            throw new MyRuntimeException("错误:租户管理员不允许为空");
+        }
         return true;
     }
 
