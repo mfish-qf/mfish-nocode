@@ -68,11 +68,11 @@ public class AccessTokenController {
     @PostMapping(value = "/accessToken")
     @Parameters({
             @Parameter(name = OAuth.HeaderType.CONTENT_TYPE, description = "请求类型,必须使用application/x-www-form-urlencoded类型", required = true, in = ParameterIn.HEADER),
-            @Parameter(name = OAuth.OAUTH_GRANT_TYPE, description = "token获取类型", required = true),
-            @Parameter(name = OAuth.OAUTH_CLIENT_ID, description = "客户端ID", required = true),
-            @Parameter(name = OAuth.OAUTH_CLIENT_SECRET, description = "客户端密钥", required = true),
+            @Parameter(name = OAuth.OAUTH_GRANT_TYPE, description = "token获取类型(authorization_code,password,refresh_token)", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_ID, description = "客户端ID 系统默认system", required = true),
+            @Parameter(name = OAuth.OAUTH_CLIENT_SECRET, description = "客户端密钥 系统默认system", required = true),
             @Parameter(name = OAuth.OAUTH_REDIRECT_URI, description = "回调地址", required = true),
-            @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
+            @Parameter(name = OAuth.OAUTH_STATE, description = "状态 非必传"),
             @Parameter(name = OAuth.OAUTH_CODE, description = "认证code grant_type=authorization_code时必须"),
             @Parameter(name = OAuth.OAUTH_USERNAME, description = "账号，手机，email grant_type=password时必须"),
             @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码 grant_type=password时必须"),
