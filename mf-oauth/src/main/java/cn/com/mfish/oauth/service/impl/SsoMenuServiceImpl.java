@@ -5,19 +5,18 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.oauth.cache.common.ClearCache;
-import cn.com.mfish.common.oauth.api.entity.SsoMenu;
-import cn.com.mfish.oauth.mapper.SsoMenuMapper;
 import cn.com.mfish.common.oauth.req.ReqSsoMenu;
 import cn.com.mfish.common.oauth.service.SsoMenuService;
+import cn.com.mfish.oauth.cache.common.ClearCache;
+import cn.com.mfish.oauth.mapper.SsoMenuMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,8 +164,9 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
     }
 
     @Override
-    public Result<Boolean> routeExist(String routePath) {
-        if (baseMapper.exists(new LambdaQueryWrapper<SsoMenu>().eq(SsoMenu::getRoutePath, routePath))) {
+    public Result<Boolean> routeExist(String routePath, String parentId) {
+        if (baseMapper.exists(new LambdaQueryWrapper<SsoMenu>().eq(SsoMenu::getRoutePath, routePath)
+                .eq(SsoMenu::getParentId, parentId))) {
             return Result.ok(true, "路由地址已存在");
         }
         return Result.fail(false, "路由地址不存在");
