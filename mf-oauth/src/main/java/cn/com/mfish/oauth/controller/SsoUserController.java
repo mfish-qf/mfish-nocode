@@ -126,6 +126,12 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserByIdNoPwd(id));
     }
 
+    @Operation(summary = "根据账号获取用户信息")
+    @GetMapping("/info/{account}")
+    public Result<UserInfo> getUserByAccount(@Parameter(name = "account", description = "帐号名称") @PathVariable String account) {
+        return Result.ok(ssoUserService.getUserByAccountNoPwd(account));
+    }
+
     @Operation(summary = "修改密码")
     @PutMapping("/pwd")
     @Log(title = "修改密码", operateType = OperateType.UPDATE)

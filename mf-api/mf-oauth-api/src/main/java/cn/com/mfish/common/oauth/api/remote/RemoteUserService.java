@@ -36,8 +36,23 @@ public interface RemoteUserService {
     @GetMapping("/user/info")
     Result<UserInfoVo> getUserInfo(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
 
+    /**
+     * 根据id获取用户信息（不包括密码）
+     * @param origin
+     * @param id
+     * @return
+     */
     @GetMapping("/user/{id}")
     Result<UserInfo> getUserById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
+
+    /**
+     * 根据账号获取用户信息（不包括密码）
+     * @param origin
+     * @param account
+     * @return
+     */
+    @GetMapping("/user/info/{account}")
+    Result<UserInfo> getUserByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("account") String account);
 
     /**
      * 获取用户角色
