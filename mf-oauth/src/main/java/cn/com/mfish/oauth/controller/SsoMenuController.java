@@ -118,7 +118,7 @@ public class SsoMenuController {
     @GetMapping("/routeExist")
     @InnerUser
     @Parameter(name = "路由地址", required = true)
-    public Result<Boolean> routeExist(@RequestParam String routePath) {
-        return ssoMenuService.routeExist(routePath);
+    public Result<Boolean> routeExist(@RequestParam String routePath, @RequestParam String parentId) {
+        return ssoMenuService.routeExist(routePath, parentId);
     }
 }

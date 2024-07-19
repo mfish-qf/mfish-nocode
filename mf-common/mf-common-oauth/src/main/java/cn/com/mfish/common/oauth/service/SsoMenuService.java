@@ -24,5 +24,5 @@ public interface SsoMenuService extends IService<SsoMenu> {
 
     Result<Boolean> deleteMenu(String menuId);
 
-    Result<Boolean> routeExist(String routePath);
+    Result<Boolean> routeExist(String routePath, String parentId);
 }
