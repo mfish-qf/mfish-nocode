@@ -4,7 +4,6 @@ import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -45,9 +44,15 @@ public class UserInfo extends BaseEntity<String> {
     @Schema(description = "备注")
     private String remark;
     @TableField(exist = false)
-    @Schema(description = "组织ID")
+    @Schema(description = "组织ID列表")
     private List<String> orgIds;
+    @TableField(exist = false)
+    @Schema(description="组织名称列表")
+    private List<String> orgNames;
     @TableField(exist = false)
     @Schema(description = "角色ID列表")
     private List<String> roleIds;
+    @TableField(exist = false)
+    @Schema(description = "角色名称列表")
+    private List<String> roleNames;
 }
