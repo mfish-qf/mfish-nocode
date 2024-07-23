@@ -1,9 +1,11 @@
 package cn.com.mfish.common.core.utils.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.metadata.CellExtra;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.alibaba.fastjson2.JSON;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -16,14 +18,19 @@ import java.util.List;
 @Slf4j
 public class UploadDataListener<T> implements ReadListener<T> {
     /**
-     * 每隔5条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收
+     * 每隔10条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收
      */
     private int BATCH_COUNT = 10;
+
     private final List<T> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
     /**
      * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
      */
     private final UploadDAO<T> uploadDAO;
+    /**
+     * 额外属性
+     */
+    private final ExtraProp extraProp = new ExtraProp();
 
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
@@ -65,8 +72,25 @@ public class UploadDataListener<T> implements ReadListener<T> {
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         // 这里也要保存数据，确保最后遗留的数据也存储到数据库
+        extraProp.isEnd = true;
         saveData();
         log.info("所有数据解析完成！");
+    }
+
+    @Override
+    public void extra(CellExtra extra, AnalysisContext context) {
+        switch (extra.getType()) {
+            case COMMENT:
+                extraProp.setCommentExtra(extra);
+                break;
+            case HYPERLINK:
+                extraProp.setLinkExtra(extra);
+                break;
+            case MERGE:
+                extraProp.setMergeExtra(extra);
+                break;
+            default:
+        }
     }
 
     /**
@@ -74,7 +98,25 @@ public class UploadDataListener<T> implements ReadListener<T> {
      */
     private void saveData() {
         log.info("{}条数据，开始存储数据库！", cachedDataList.size());
-        uploadDAO.save(cachedDataList);
+        uploadDAO.save(cachedDataList, extraProp);
+        extraProp.batch++;
         log.info("存储数据库成功！");
+    }
+
+    @Data
+    public static class ExtraProp {
+        /**
+         * 当前保存批次号
+         */
+        private int batch = 1;
+        private boolean isEnd = false;
+        /**
+         * todo 注意注意
+         * 使用extra属性时，batchCount要设置到Integer.MAX_VALUE
+         * 因为easyexcel extra方式是读取完所有数据后才会调用，需要保证excel全部读取完成，此时批量入库失效
+         */
+        private CellExtra mergeExtra;
+        private CellExtra linkExtra;
+        private CellExtra commentExtra;
     }
 }

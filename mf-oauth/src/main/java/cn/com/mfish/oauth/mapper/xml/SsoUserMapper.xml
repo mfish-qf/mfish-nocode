@@ -109,13 +109,21 @@
     <resultMap id="userMap" type="cn.com.mfish.common.oauth.api.entity.UserInfo">
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+        <result property="roleNames" column="roleNames"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
         <result property="orgIds" column="orgIds"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+        <result property="orgNames" column="orgNames"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <resultMap id="ssoUserMap" type="cn.com.mfish.common.oauth.entity.SsoUser">
         <result property="roleIds" column="roleIds"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+        <result property="roleNames" column="roleNames"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
         <result property="orgIds" column="orgIds"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+        <result property="orgNames" column="orgNames"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <sql id="selectUser">
@@ -123,7 +131,8 @@
         ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
         ,u.create_time,u.update_by,u.update_time
          , GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
-        from (select u.*, ou.org_id, ur.role_id
+        ,GROUP_CONCAT(DISTINCT role_name) roleNames, GROUP_CONCAT(DISTINCT org_name) orgNames
+        from (select u.*, ou.org_id, ur.role_id,o.org_name,r.role_name
         from sso_user u
         left join sso_org_user ou on ou.user_id = u.id
         <choose>
@@ -139,7 +148,7 @@
         left join sso_user_role ur on u.id = ur.user_id
         left join sso_role r on r.id = ur.role_id and r.del_flag = 0 and r.status = 0
         union
-        select u.*, ou.org_id, sor.role_id
+        select u.*, ou.org_id, sor.role_id,o.org_name,r.role_name
         from sso_user u
         join sso_org_user ou on ou.user_id = u.id
         join sso_org o on o.id = ou.org_id
