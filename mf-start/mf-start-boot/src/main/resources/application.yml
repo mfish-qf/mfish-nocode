@@ -135,7 +135,7 @@ storage:
     endpoint: oss-cn-hangzhou.aliyuncs.com
     accessKeyId: LTAI5***********FsgT
     accessKeySecret: ZtZGF***************JADjS2f
-    bucketName: landwise
+    bucketName: mfish
   qiniu:
     domain: http://cdn.mfish.com.cn
     accessKey: cHlX4*******************cdsexgvP

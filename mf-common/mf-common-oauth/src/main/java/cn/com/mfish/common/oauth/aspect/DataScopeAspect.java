@@ -36,7 +36,7 @@ public class DataScopeAspect {
         List<DataScope> list = new ArrayList<>();
         if (method.isAnnotationPresent(DataScopes.class)) {
             DataScopes dataScopes = method.getAnnotation(DataScopes.class);
-            list.addAll(Arrays.stream(dataScopes.value()).toList());
+            list.addAll(Arrays.asList(dataScopes.value()));
         } else {
             list.add(method.getAnnotation(DataScope.class));
         }
