@@ -2,7 +2,6 @@ package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.dataset.enums.TargetType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
@@ -72,14 +71,7 @@ public class MetaDataHeader implements Serializable {
         return this;
     }
 
-    @JsonIgnore
-    public MetaDataHeader setDataType(DataType dataType) {
-        this.dataType = dataType;
-        return this;
-    }
-
-    @JsonIgnore
-    public MetaDataHeader setDataType(DataType.SlimType slimType) {
+    public MetaDataHeader setSlimType(DataType.SlimType slimType) {
         this.dataType = DataType.forType(slimType);
         return this;
     }
