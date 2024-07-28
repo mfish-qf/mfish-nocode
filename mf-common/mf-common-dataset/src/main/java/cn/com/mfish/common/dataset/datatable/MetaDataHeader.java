@@ -81,6 +81,9 @@ public class MetaDataHeader implements Serializable {
     }
 
     public DataType.SlimType getDataType() {
+        if(this.dataType == null){
+            return null;
+        }
         return this.dataType.getSlimType();
     }
 
