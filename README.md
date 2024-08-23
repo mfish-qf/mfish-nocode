@@ -26,6 +26,7 @@
 * 支持注解方式进行数据权限控制，与业务代码完全解耦
 
 ## 安全报告
+
 [![Security Status](https://www.murphysec.com/platform3/v31/badge/1796428877999906816.svg)](https://www.murphysec.com/console/report/1672256253122600960/1796428877999906816)
 
 ## 前端源码地址
@@ -103,32 +104,38 @@
 
 <table>
     <tr>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-7b8b53019b36fb12f5a0388491f7cedb06a.png" /></td>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-cb060c85cfc867df4ea6c1be4ac65d64d74.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/login.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/menu.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-93645a610cf9dd0266580e0870ff497b946.png" /></td>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-4f34924c18c4f5df0fb7823feef7431227d.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/api.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/flow.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-57d93c91b93340387c44d5d30e984e914d7.png" /></td>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-0ff2d7b640896b9a9156af832baebcb313f.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/datasource.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/codebuild.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-81d9f856cdd794843d172c47874b69ff503.png" /></td>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-c26c5a79214ed2e242512d0f5f4accca63b.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/org.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/role.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-36d63fb4e8dd0a0844ff64a8f4c28682296.png" /></td>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-434781fa769d2da21e396bfccbbe13c8f15.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/dict.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/category.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-7b2eeb5e679f75d889a841de61f9845c026.png" /></td>
-      <td><img src="https://oscimg.oschina.net/oscnet/up-c413a81f353a0175bbbd09cc32a7fb8d5bf.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/account.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/tenant.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://mfish-pic.pages.dev/schedule.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/monitor.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://mfish-pic.pages.dev/file.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/log.png" /></td>
     </tr>
 </table>
-
-![](https://oscimg.oschina.net/oscnet/up-736398ce5030ce21b6dda45ba9f24af4a72.png)
 
 #### 数据库信息
 
