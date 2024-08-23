@@ -4,6 +4,8 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.entity.SysConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @description: 界面配置
  * @author: mfish
@@ -11,7 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version: V1.3.0
  */
 public interface SysConfigService extends IService<SysConfig> {
-    SysConfig querySysConfig(String userId);
+    List<SysConfig> querySysConfig(String userId);
+
+    SysConfig querySysConfig(String userId, Integer type);
 
     Result<SysConfig> saveSysConfig(SysConfig sysConfig);
 }
