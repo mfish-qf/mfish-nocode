@@ -36,17 +36,13 @@ CREATE TABLE `sys_config`  (
                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一ID',
                                `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户ID',
                                `config` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '配置信息',
+                               `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '配置类型(0 样式配置 1表格配置)',
                                `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
                                `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
                                `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
                                `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
                                PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统皮肤及配置' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of sys_config
--- ----------------------------
-INSERT INTO `sys_config` VALUES (1, '1', '{\"showSettingButton\":true,\"showDarkModeToggle\":false,\"settingButtonPosition\":\"auto\",\"permissionCacheType\":0,\"sessionTimeoutProcessing\":0,\"themeColor\":\"#ee4f12\",\"grayMode\":false,\"colorWeak\":false,\"fullContent\":false,\"contentMode\":\"full\",\"showLogo\":true,\"showFooter\":false,\"headerSetting\":{\"bgColor\":\"#ffffff\",\"fixed\":true,\"show\":true,\"theme\":\"light\",\"useLockPage\":true,\"showFullScreen\":true,\"showDoc\":true,\"showNotice\":true,\"showSearch\":true},\"menuSetting\":{\"bgColor\":\"#001529\",\"fixed\":true,\"collapsed\":false,\"siderHidden\":false,\"collapsedShowTitle\":false,\"canDrag\":false,\"show\":true,\"hidden\":false,\"menuWidth\":210,\"mode\":\"inline\",\"type\":\"sidebar\",\"theme\":\"dark\",\"topMenuAlign\":\"center\",\"trigger\":\"HEADER\",\"accordion\":true,\"closeMixSidebarOnChange\":false,\"mixSideTrigger\":\"click\",\"mixSideFixed\":false,\"split\":false},\"multiTabsSetting\":{\"cache\":false,\"show\":true,\"canDrag\":true,\"showQuick\":true,\"showRedo\":true,\"showFold\":true},\"transitionSetting\":{\"enable\":true,\"basicTransition\":\"fade-slide\",\"openPageLoading\":true,\"openNProgress\":false},\"openKeepAlive\":true,\"lockTime\":0,\"showBreadCrumb\":true,\"showBreadCrumbIcon\":true,\"useErrorHandle\":false,\"useOpenBackTop\":true,\"canEmbedIFramePage\":true,\"closeMessageOnSwitch\":true,\"removeAllHttpPending\":false}', 'admin', '2023-03-07 17:45:01', 'admin', '2023-05-22 15:49:16');
 
 -- ----------------------------
 -- Table structure for sys_db_connect
