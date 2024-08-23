@@ -5,8 +5,8 @@ import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
-import cn.com.mfish.oauth.config.properties.ShiroAccessProperties;
 import cn.com.mfish.oauth.config.properties.ShiroProperties;
+import cn.com.mfish.oauth.config.properties.ShiroWhitesProperties;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
@@ -48,7 +48,7 @@ import java.util.Map;
 public class ShiroConfig {
 
     @Autowired
-    private ShiroAccessProperties shiroAccessProperties;
+    private ShiroWhitesProperties shiroWhitesProperties;
 
 
     /**
@@ -71,7 +71,7 @@ public class ShiroConfig {
             Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
             // 配置不会被拦截的链接 顺序判断
             // 设置免认证 url （可匿名访问）
-            shiroAccessProperties.getAnonUrls().forEach(url -> filterChainDefinitionMap.put(url, "anon"));
+            shiroWhitesProperties.getWhites().forEach(url -> filterChainDefinitionMap.put(url, "anon"));
             //过滤链定义从上向下顺序执行，一般将/**放在最为下边
             filterChainDefinitionMap.put("/**", "token");
             shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
