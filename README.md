@@ -152,6 +152,12 @@
 如果使用微服务需要导入mf_config.sql、mf_oauth.sql
 、mf_system.sql、mf_scheduler.sql四个数据库
 ```
+#### 单实例启动
+* 初始化SQL脚本 mfish-nocode.sql
+* 在目录mf-start/mf-start-boot中找到MfNoCodeStart启动
+
+#### 微服务启动
+* 请查看 https://www.mfish.com.cn
 
 #### swagger访问地址
 

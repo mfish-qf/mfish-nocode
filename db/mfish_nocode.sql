@@ -983,6 +983,7 @@ CREATE TABLE `sys_config`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一ID',
   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户ID',
   `config` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '配置信息',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '配置类型(0 样式配置 1表格配置)',
   `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',

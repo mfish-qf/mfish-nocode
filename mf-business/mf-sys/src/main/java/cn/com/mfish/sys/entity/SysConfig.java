@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,4 +28,6 @@ public class SysConfig extends BaseEntity<Integer> {
     private String userId;
     @Schema(description = "配置信息")
     private String config;
+    @Schema(description = "配置类型 0 样式风格 1表格配置")
+    private Integer type;
 }
