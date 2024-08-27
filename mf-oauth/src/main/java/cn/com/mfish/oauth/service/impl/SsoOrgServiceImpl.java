@@ -27,6 +27,7 @@ import jakarta.annotation.Resource;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -219,7 +220,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             return Result.fail(null, "错误:id不允许为空");
         }
         String[] idList = ids.split(",");
-        return Result.ok(baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, idList)), "组织结构表-查询成功!");
+        return Result.ok(baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().in(SsoOrg::getId, Arrays.asList(idList))), "组织结构表-查询成功!");
     }
 
     @Override

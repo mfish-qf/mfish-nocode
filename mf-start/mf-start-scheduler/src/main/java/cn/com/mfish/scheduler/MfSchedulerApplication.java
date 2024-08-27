@@ -1,6 +1,6 @@
 package cn.com.mfish.scheduler;
 
-import cn.com.mfish.common.web.annotation.AutoWeb;
+import cn.com.mfish.common.cloud.annotation.AutoCloud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author: mfish
  * @date: 2023/2/3 15:15
  */
-@AutoWeb
+@AutoCloud
 @Slf4j
 @EnableScheduling
 public class MfSchedulerApplication {

@@ -108,8 +108,7 @@ public class DictCategoryController {
     @GetMapping("/{id}")
     @RequiresPermissions("sys:dictCategory:query")
     public Result<DictCategory> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
-        DictCategory dictCategory = dictCategoryService.getById(id);
-        return Result.ok(dictCategory, "树形分类-查询成功!");
+        return Result.ok(dictCategoryService.getById(id), "树形分类-查询成功!");
     }
 
     @Operation(summary = "分类树-通过分类编码查询", description = "分类树-通过分类编码查询")
@@ -118,8 +117,7 @@ public class DictCategoryController {
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
     })
     public Result<List<DictCategory>> queryTreeByCode(@Parameter(name = "code", description = "分类") @PathVariable String code, @RequestParam String direction) {
-        List<DictCategory> list = dictCategoryService.queryCategoryTreeByCode(code, TreeDirection.getDirection(direction));
-        return Result.ok(list, "分类树-查询成功!");
+        return Result.ok(dictCategoryService.queryCategoryTreeByCode(code, TreeDirection.getDirection(direction)), "分类树-查询成功!");
     }
 
     @Operation(summary = "分类列表-通过分类编码查询", description = "分类列表-通过分类编码查询")
@@ -128,15 +126,24 @@ public class DictCategoryController {
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
     })
     public Result<List<DictCategory>> queryListByCode(@Parameter(name = "code", description = "分类") @PathVariable String code, @RequestParam String direction) {
-        List<DictCategory> list = dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction));
-        return Result.ok(list, "分类列表-查询成功!");
+        return Result.ok(dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction)), "分类列表-查询成功!");
     }
 
     @Operation(summary = "分类-通过编码查询")
     @GetMapping("/one/{code}")
     public Result<DictCategory> queryOneByCode(@Parameter(name = "code", description = "唯一性ID") @PathVariable String code) {
-        DictCategory materialCategory = dictCategoryService.getOne(new LambdaQueryWrapper<DictCategory>()
-                .eq(DictCategory::getCategoryCode, code));
-        return Result.ok(materialCategory, "物料分类-查询成功!");
+        return Result.ok(dictCategoryService.getOne(new LambdaQueryWrapper<DictCategory>()
+                .eq(DictCategory::getCategoryCode, code)), "物料分类-查询成功!");
+    }
+
+    @Operation(summary = "判断分类id是否在指定固定编码分类范围中")
+    @GetMapping("/include")
+    @Parameters({
+            @Parameter(name = "categoryId", description = "分类id", required = true),
+            @Parameter(name = "fixCode", description = "固定编码", required = true),
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
+    })
+    public Result<Boolean> includeCategory(String categoryId, String fixCode, String direction) {
+        return Result.ok(dictCategoryService.includeCategory(categoryId, fixCode, TreeDirection.getDirection(direction)));
     }
 }

@@ -1,6 +1,6 @@
 package cn.com.mfish.sys;
 
-import cn.com.mfish.common.web.annotation.AutoWeb;
+import cn.com.mfish.common.cloud.annotation.AutoCloud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
@@ -11,7 +11,7 @@ import org.springframework.boot.SpringApplication;
  */
 
 @Slf4j
-@AutoWeb
+@AutoCloud
 public class MfSysApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfSysApplication.class, args);

@@ -1,6 +1,6 @@
 package cn.com.mfish.web;
 
-import cn.com.mfish.common.web.annotation.AutoWeb;
+import cn.com.mfish.common.cloud.annotation.AutoCloud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
@@ -10,7 +10,7 @@ import org.springframework.boot.SpringApplication;
  * @date: 2022/12/16 10:01
  */
 @Slf4j
-@AutoWeb
+@AutoCloud
 public class MfWebApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfWebApplication.class, args);

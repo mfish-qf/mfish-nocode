@@ -1,0 +1,2 @@
+cn.com.mfish.common.cloud.config.FeignConfig
+cn.com.mfish.common.cloud.interceptor.BearerTokenInterceptor

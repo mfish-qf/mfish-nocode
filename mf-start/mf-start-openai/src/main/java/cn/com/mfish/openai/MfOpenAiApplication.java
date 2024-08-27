@@ -1,6 +1,6 @@
 package cn.com.mfish.openai;
 
-import cn.com.mfish.common.web.annotation.AutoWeb;
+import cn.com.mfish.common.cloud.annotation.AutoCloud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
@@ -9,7 +9,7 @@ import org.springframework.boot.SpringApplication;
  * @author: mfish
  * @date: 2023/2/8
  */
-@AutoWeb
+@AutoCloud
 @Slf4j
 public class MfOpenAiApplication {
     public static void main(String[] args) {

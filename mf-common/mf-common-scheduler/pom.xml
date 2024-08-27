@@ -16,11 +16,6 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-spring-boot-starter</artifactId>
-            <version>${rocketmq.version}</version>
-        </dependency>
         <!-- SpringBoot Boot Redis -->
         <dependency>
             <groupId>cn.com.mfish</groupId>

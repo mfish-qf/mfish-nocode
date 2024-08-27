@@ -1,4 +1,4 @@
-package cn.com.mfish.common.web.interceptor;
+package cn.com.mfish.common.cloud.interceptor;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
