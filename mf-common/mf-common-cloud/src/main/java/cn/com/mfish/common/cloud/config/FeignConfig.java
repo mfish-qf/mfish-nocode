@@ -1,4 +1,4 @@
-package cn.com.mfish.common.web.config;
+package cn.com.mfish.common.cloud.config;
 
 import feign.Contract;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;

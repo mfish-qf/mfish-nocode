@@ -39,11 +39,11 @@ public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
     public Result<T> validate(String accessToken) {
         T token;
         if (StringUtils.isEmpty(accessToken)) {
-            Result.fail("错误:令牌token不允许为空");
+            Result.fail("错误:令牌Token不允许为空");
         }
         token = (T) tokenService.getToken(accessToken);
         if (token == null) {
-            return Result.fail("错误:token不存在或已过期");
+            return Result.fail("错误:登陆已过期或令牌不存在");
         }
         return Result.ok(token);
     }

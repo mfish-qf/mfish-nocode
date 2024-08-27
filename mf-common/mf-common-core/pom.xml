@@ -12,20 +12,13 @@
     <description>摸鱼通用核心模块</description>
 
     <dependencies>
-        <!-- Spring Context Support -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-context-support</artifactId>-->
-<!--        </dependency>-->
-        <!-- SpringCloud Openfeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
-        <!-- SpringCloud Loadbalancer -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-loadbalancer</artifactId>
+            <artifactId>spring-cloud-context</artifactId>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>

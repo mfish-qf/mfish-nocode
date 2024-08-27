@@ -2,8 +2,7 @@ package cn.com.mfish.common.dataset.datatable;
 
 import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.dataset.enums.TargetType;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
@@ -14,8 +13,6 @@ import java.util.Objects;
  * @author: mfish
  * @date: 2023/3/20
  */
-@Data
-@Accessors(chain = true)
 public class MetaDataHeader implements Serializable {
     public MetaDataHeader() {
 
@@ -30,24 +27,29 @@ public class MetaDataHeader implements Serializable {
         this.comment = comment;
     }
 
+
     /**
      * 列名(必须唯一)
      * 通过字段自动生成列名或用户更改的别名
      */
+    @Getter
     private String colName;
     /**
      * 字段名称 对应数据库中字段
      */
+    @Getter
     private String fieldName;
 
     /**
      * 中文描述
      */
+    @Getter
     private String comment;
 
     /**
      * 运算式子 运算指标设置该属性 主要用于显示
      */
+    @Getter
     private String expression;
 
     /**
@@ -58,11 +60,13 @@ public class MetaDataHeader implements Serializable {
     /**
      * 字段所属 表别名 原生查询不赋值
      */
+    @Getter
     private String tableAlias;
 
     /**
      * 指标类型
      */
+    @Getter
     private TargetType targetType;
 
 
@@ -85,6 +89,36 @@ public class MetaDataHeader implements Serializable {
 
     public DataType getFullDataType() {
         return this.dataType;
+    }
+
+    public MetaDataHeader setColName(String colName) {
+        this.colName = colName;
+        return this;
+    }
+
+    public MetaDataHeader setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+        return this;
+    }
+
+    public MetaDataHeader setComment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    public MetaDataHeader setExpression(String expression) {
+        this.expression = expression;
+        return this;
+    }
+
+    public MetaDataHeader setTargetType(TargetType targetType) {
+        this.targetType = targetType;
+        return this;
+    }
+
+    public MetaDataHeader setTableAlias(String tableAlias) {
+        this.tableAlias = tableAlias;
+        return this;
     }
 
     @Override

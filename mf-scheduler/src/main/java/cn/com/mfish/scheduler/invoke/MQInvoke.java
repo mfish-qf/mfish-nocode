@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.scheduler.config.properties.ProductProperties;
 import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
+//import org.apache.rocketmq.spring.core.RocketMQTemplate;
 
 import java.util.List;
 
@@ -25,8 +25,10 @@ public class MQInvoke implements BaseInvoke {
      */
     @Override
     public <T> Object run(JobLog jobLog, List<T> params) {
-        RocketMQTemplate rocketMQTemplate = SpringBeanFactory.getBean(RocketMQTemplate.class);
-        ProductProperties productProperties = SpringBeanFactory.getBean(ProductProperties.class);
-        return rocketMQTemplate.syncSend(productProperties.getTopic(), jobLog);
+        //todo 需要使用消息调度时打开，同时打开pom.xml中的rocketmq-spring-boot-starter
+//        RocketMQTemplate rocketMQTemplate = SpringBeanFactory.getBean(RocketMQTemplate.class);
+//        ProductProperties productProperties = SpringBeanFactory.getBean(ProductProperties.class);
+//        return rocketMQTemplate.syncSend(productProperties.getTopic(), jobLog);
+        return null;
     }
 }

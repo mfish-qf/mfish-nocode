@@ -9,30 +9,30 @@ import cn.com.mfish.common.core.utils.excel.ExcelUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.oauth.annotation.DataScope;
-import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.SsoRole;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.req.ReqSsoMenu;
 import cn.com.mfish.common.oauth.req.ReqSsoOrg;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoMenuService;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
+import cn.com.mfish.common.oauth.service.SsoRoleService;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.common.ClearCache;
-import cn.com.mfish.common.oauth.entity.SsoRole;
 import cn.com.mfish.oauth.entity.UserOrg;
 import cn.com.mfish.oauth.req.ReqSsoRole;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.common.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.service.SsoTenantService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -290,9 +290,9 @@ public class SsoTenantController {
      * @return
      */
     private Result<Boolean> verifyTenant() {
-        if (!ssoTenantService.isTenantMaster(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId())) {
-            return Result.fail(false, "错误:只允许管理员操作");
-        }
+//        if (!ssoTenantService.isTenantMaster(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId())) {
+//            return Result.fail(false, "错误:只允许管理员操作");
+//        }
         return Result.ok();
     }
 
@@ -454,10 +454,10 @@ public class SsoTenantController {
      * @return
      */
     private Result<Boolean> verifyRole(String id) {
-//        Result<Boolean> result = verifyTenant();
-//        if (!result.isSuccess()) {
-//            return result;
-//        }
+        Result<Boolean> result = verifyTenant();
+        if (!result.isSuccess()) {
+            return result;
+        }
         String tenantId = AuthInfoUtils.getCurrentTenantId();
         if (!StringUtils.isEmpty(id) && !ssoRoleService.isTenantRole(id, tenantId)) {
             return Result.fail(false, "错误:不允许操作非自己租户下的角色");

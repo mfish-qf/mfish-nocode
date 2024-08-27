@@ -1,13 +1,13 @@
 package cn.com.mfish.gateway.filter;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
-import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.gateway.common.GatewayUtils;
+import cn.com.mfish.gateway.common.ServletUtils;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

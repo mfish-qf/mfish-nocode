@@ -93,4 +93,14 @@ public interface DictCategoryService extends IService<DictCategory> {
      * @return
      */
     List<DictCategory> queryCategoryListByCode(String fixCode, TreeDirection direction);
+
+    /**
+     * 判断分类id是否归属于固定编码分类
+     *
+     * @param categoryId 分类id
+     * @param fixCode   固定编码
+     * @param direction  检索方向
+     * @return 归属分类信息
+     */
+    boolean includeCategory(String categoryId, String fixCode, TreeDirection direction);
 }

@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth;
 
-import cn.com.mfish.common.web.annotation.AutoWeb;
+import cn.com.mfish.common.cloud.annotation.AutoCloud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 
@@ -10,7 +10,7 @@ import org.springframework.boot.SpringApplication;
  * @date: 2021/11/15 15:05
  */
 @Slf4j
-@AutoWeb
+@AutoCloud
 public class MfOauthApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfOauthApplication.class, args);
