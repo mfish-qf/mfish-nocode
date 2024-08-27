@@ -358,6 +358,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-cloud</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-scheduler</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
@@ -467,18 +472,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
                     <parameters>true</parameters>
-                    <basedir/>
-                    <buildDirectory/>
-                    <mainOutputDirectory/>
-                    <outputDirectory/>
-                    <projectArtifact/>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.4.0</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
@@ -486,6 +488,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
                 <configuration>
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>ico</nonFilteredFileExtension>
@@ -498,11 +501,9 @@
                         <nonFilteredFileExtension>xls</nonFilteredFileExtension>
                         <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
-                    <outputDirectory/>
                 </configuration>
             </plugin>
         </plugins>
-
         <resources>
             <!-- 防止src/main/java中的mapper xml配置不被放到target目录下 -->
             <resource>

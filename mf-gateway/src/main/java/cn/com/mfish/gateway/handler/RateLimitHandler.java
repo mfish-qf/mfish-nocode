@@ -1,6 +1,6 @@
 package cn.com.mfish.gateway.handler;
 
-import cn.com.mfish.common.core.utils.ServletUtils;
+import cn.com.mfish.gateway.common.ServletUtils;
 import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.GatewayCallbackManager;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import org.springframework.web.server.ServerWebExchange;

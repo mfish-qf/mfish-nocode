@@ -1,6 +1,6 @@
 package cn.com.mfish.gateway.handler;
 
-import cn.com.mfish.common.core.utils.ServletUtils;
+import cn.com.mfish.gateway.common.ServletUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;

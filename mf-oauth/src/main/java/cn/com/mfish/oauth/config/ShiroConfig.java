@@ -1,12 +1,13 @@
 package cn.com.mfish.oauth.config;
 
 import cn.com.mfish.common.core.constants.ServiceConstants;
+import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
-import cn.com.mfish.oauth.config.properties.ShiroProperties;
 import cn.com.mfish.oauth.config.properties.ShiroWhitesProperties;
+import cn.com.mfish.oauth.config.properties.ShiroProperties;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
@@ -29,7 +30,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,10 +47,6 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    @Autowired
-    private ShiroWhitesProperties shiroWhitesProperties;
-
-
     /**
      * 设置shiro拦截器
      *
@@ -63,6 +59,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //单体服务走shiro拦截 微服务网关拦截
         if (ServiceConstants.isBoot(Utils.getServiceType())) {
+            ShiroWhitesProperties shiroWhitesProperties = SpringBeanFactory.getBean(ShiroWhitesProperties.class);
             //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
             Map<String, Filter> filterMap = new HashMap<>(1);
             filterMap.put("token", new TokenFilter());

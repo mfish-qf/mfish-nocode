@@ -20,9 +20,7 @@
         <module>mf-common-oauth</module>
         <module>mf-common-ds</module>
         <module>mf-common-log</module>
-        <module>mf-common-web</module>
         <module>mf-common-scheduler</module>
-        <module>mf-common-app</module>
         <module>mf-common-dblink</module>
         <module>mf-common-file</module>
         <module>mf-common-dataset</module>
@@ -30,6 +28,9 @@
         <module>mf-common-code</module>
         <module>mf-common-api</module>
         <module>mf-common-sys</module>
+        <module>mf-common-web</module>
+        <module>mf-common-app</module>
+        <module>mf-common-cloud</module>
     </modules>
 
 </project>

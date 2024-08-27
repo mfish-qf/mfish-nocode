@@ -182,6 +182,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
 
     }
 
+    @Override
+    public boolean includeCategory(String categoryId, String fixCode, TreeDirection direction) {
+        List<DictCategory> list = queryCategoryListByCode(fixCode, direction);
+        return list.stream().anyMatch((item) -> item.getId().equals(categoryId));
+    }
+
     private List<DictCategory> queryCategory(DictCategory category, TreeDirection direction) {
         if (category == null) {
             return new ArrayList<>();

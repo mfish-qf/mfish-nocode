@@ -8,8 +8,9 @@ import cn.com.mfish.sys.entity.SysConfig;
 import cn.com.mfish.sys.mapper.SysConfigMapper;
 import cn.com.mfish.sys.service.SysConfigService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.List;
 

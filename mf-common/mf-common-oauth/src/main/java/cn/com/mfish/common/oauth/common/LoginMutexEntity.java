@@ -14,9 +14,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class LoginMutexEntity {
     @Schema(description = "设备类型")
-    DeviceType deviceType;
+    private DeviceType deviceType;
     @Schema(description = "设备ID web端为sessionid app端为认证app的mac地址 微信为openid")
-    String deviceId;
+    private String deviceId;
     @Schema(description = "用户id")
-    String userId;
+    private String userId;
 }
