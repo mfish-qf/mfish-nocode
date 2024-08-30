@@ -13,13 +13,14 @@ import java.text.MessageFormat;
  */
 public abstract class AbstractDBDialect implements DBDialect {
     /**
-     * mysql pg通用 jdbc
+     * 构建 JDBC URL 用于连接 MySQL 或 PostgreSQL 数据库
+     * 该方法专注于组装特定格式的 JDBC URL，确保兼容性和可配置性
      *
-     * @param host   地址
-     * @param port   端口
-     * @param dbName 数据库名称
-     * @param head   头部标签
-     * @return
+     * @param host   数据库服务器地址
+     * @param port   服务器端口
+     * @param dbName 要连接的数据库名称
+     * @param head   JDBC URL 的头部，区别 MySQL 和 PostgreSQL 的标识
+     * @return 组装完成的 JDBC URL
      */
     protected String getJdbc(String host, String port, String dbName, String head) {
         dbName = !StringUtils.isEmpty(dbName) ? "/" + dbName : "";
@@ -27,12 +28,14 @@ public abstract class AbstractDBDialect implements DBDialect {
     }
 
     /**
-     * mysql pg通用查询条件
+     * 构建MySQL和PostgreSQL通用的查询条件
+     * 该方法旨在为给定的SQL查询动态添加表名和数据库名作为查询条件
+     * 它还负责生成与数据库方案匹配的参数，考虑大小写的情况
      *
-     * @param sql       sql
-     * @param dbName    数据库名称
-     * @param tableName 表名称
-     * @return
+     * @param sql       初始SQL查询字符串该查询通常不包含具体的表名或数据库名条件
+     * @param dbName    数据库名称非空时，将被用作查询条件的一部分
+     * @param tableName 表名称非空时，将被用作查询条件的一部分
+     * @return BoundSql对象，其中包含经过条件补充的SQL查询语句及相关的参数
      */
     protected BoundSql buildCondition(String sql, String dbName, String tableName) {
         BoundSql boundSql = new BoundSql();

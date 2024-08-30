@@ -32,10 +32,10 @@ public class QRCodeUtils {
     /**
      * 创建二维码
      *
-     * @param content 二维码内容
-     * @return
-     * @throws WriterException
-     * @throws IOException
+     * @param content 二维码内容这是要在二维码中编码的信息或数据
+     * @return 返回生成的二维码图像，该图像包含二维码内容和logo
+     * @throws WriterException 如果二维码创建失败，可能是由于内容格式错误或不被支持等原因
+     * @throws IOException 如果读取logo图像失败或写入二维码图像到输出流失败
      */
     public static BufferedImage createQRCode(String content) throws WriterException, IOException {
         return createQRCode(content, null, false);
@@ -43,12 +43,14 @@ public class QRCodeUtils {
 
     /**
      * 创建带logo二维码(默认压缩logo)
+     * 此方法用于生成一个包含特定内容和带有特定logo的二维码图像它接受二维码的内容和logo的路径作为参数，
+     * 并默认压缩logo后再将其添加到二维码上
      *
-     * @param content 二维码内容
-     * @param imgPath logo路径
-     * @return
-     * @throws WriterException
-     * @throws IOException
+     * @param content 二维码内容这是要在二维码中编码的信息或数据
+     * @param imgPath logo路径指定logo图像的位置，以便将其加入到二维码中
+     * @return 返回生成的二维码图像，该图像包含二维码内容和logo
+     * @throws WriterException 如果二维码创建失败，可能是由于内容格式错误或不被支持等原因
+     * @throws IOException 如果读取logo图像失败或写入二维码图像到输出流失败
      */
     public static BufferedImage createQRCode(String content, String imgPath) throws WriterException, IOException {
         return createQRCode(content, imgPath, true);
@@ -60,9 +62,9 @@ public class QRCodeUtils {
      * @param content      二维码内容
      * @param imgPath      logo路径
      * @param needCompress 是否压缩logo
-     * @return
-     * @throws WriterException
-     * @throws IOException
+     * @return 返回生成的二维码图像，该图像包含二维码内容和logo
+     * @throws WriterException 如果二维码创建失败，可能是由于内容格式错误或不被支持等原因
+     * @throws IOException 如果读取logo图像失败或写入二维码图像到输出流失败
      */
     public static BufferedImage createQRCode(String content, String imgPath, boolean needCompress) throws WriterException, IOException {
         Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
@@ -89,10 +91,10 @@ public class QRCodeUtils {
     /**
      * 在生成的二维码中插入logo
      *
-     * @param source
-     * @param imgPath
-     * @param needCompress
-     * @throws Exception
+     * @param source           二维码图片对象
+     * @param imgPath          logo图片的路径
+     * @param needCompress     是否需要压缩logo
+     * @throws IOException     操作文件或读取图片时可能抛出的异常
      */
     private static void insertLogo(BufferedImage source, String imgPath, boolean needCompress) throws IOException {
         ClassPathResource cpr = new ClassPathResource(imgPath);

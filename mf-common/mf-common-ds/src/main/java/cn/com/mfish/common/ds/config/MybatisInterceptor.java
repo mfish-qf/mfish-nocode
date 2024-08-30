@@ -66,14 +66,17 @@ public class MybatisInterceptor implements Interceptor {
 
     /**
      * 获取请求参数
+     * 该方法旨在从MyBatis的调用对象中提取参数，参数可能为单个对象、Map或List类型
+     * 如果参数是Map类型且包含特定键（如"et", "param1", "list"），则优先返回这些键对应的值
+     * 如果参数是BaseEntity的实例，则将其封装为List返回
+     * 如果参数直接是一个List，或者符合特定条件的Map或对象，则直接返回该参数
      *
-     * @param invocation
-     * @return
+     * @param invocation 当前的调用对象，包含了执行方法所需的所有参数
+     * @return 可能是封装了参数的List，也可能是null，具体取决于输入参数的类型和内容
      */
     private List<?> getParameter(Invocation invocation) {
         Object parameter = invocation.getArgs()[1];
-        if (parameter instanceof MapperMethod.ParamMap) {
-            MapperMethod.ParamMap<?> p = (MapperMethod.ParamMap<?>) parameter;
+        if (parameter instanceof MapperMethod.ParamMap<?> p) {
             if (p.containsKey("et")) {
                 parameter = p.get("et");
             } else if (p.containsKey("param1")) {

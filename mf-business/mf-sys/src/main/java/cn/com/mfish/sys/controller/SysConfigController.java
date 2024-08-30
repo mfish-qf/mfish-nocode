@@ -20,7 +20,7 @@ import java.util.List;
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Slf4j
 @Tag(name = "界面配置")
@@ -69,7 +69,7 @@ public class SysConfigController {
     @Log(title = "界面配置-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "界面配置-通过id删除")
     @DeleteMapping("/{type}")
-    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable Integer type) {
+    public Result<Boolean> delete(@Parameter(name = "type", description = "配置类型") @PathVariable Integer type) {
         if (sysConfigService.remove(new LambdaQueryWrapper<SysConfig>().eq(SysConfig::getUserId, AuthInfoUtils.getCurrentUserId())
                 .eq(SysConfig::getType, type))) {
             return Result.ok(true, "界面配置-删除成功!");

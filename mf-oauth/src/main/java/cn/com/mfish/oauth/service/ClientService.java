@@ -10,8 +10,8 @@ public interface ClientService {
     /**
      * 根据客户端ID获取客户端信息
      *
-     * @param clientId
-     * @return
+     * @param clientId 客户端id
+     * @return 返回客户端信息
      */
     OAuthClient getClientById(String clientId);
 }

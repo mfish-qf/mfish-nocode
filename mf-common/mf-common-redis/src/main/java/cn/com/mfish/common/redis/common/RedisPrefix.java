@@ -54,8 +54,8 @@ public class RedisPrefix {
     /**
      * 构建交换code
      *
-     * @param code
-     * @return
+     * @param code 编码
+     * @return 返回
      */
     public static String buildAuthCodeKey(String code) {
         return AUTH_CODE + code;
@@ -64,8 +64,8 @@ public class RedisPrefix {
     /**
      * 构建访问token
      *
-     * @param token
-     * @return
+     * @param token 凭证
+     * @return 返回
      */
     public static String buildAccessTokenKey(String token) {
         return ACCESS_TOKEN + token;
@@ -74,8 +74,8 @@ public class RedisPrefix {
     /**
      * 构建刷新token
      *
-     * @param token
-     * @return
+     * @param token 凭证
+     * @return 返回
      */
     public static String buildRefreshTokenKey(String token) {
         return REFRESH_TOKEN + token;
@@ -85,7 +85,7 @@ public class RedisPrefix {
      * 构建用户密码key
      *
      * @param userId 用户唯一ID
-     * @return
+     * @return 返回
      */
     public static String buildUserPasswordKey(String userId) {
         return USER2SECRET + userId;
@@ -94,8 +94,8 @@ public class RedisPrefix {
     /**
      * 构建账号到用户ID对应转换key
      *
-     * @param account
-     * @return
+     * @param account 账号
+     * @return 返回
      */
     public static String buildAccount2IdKey(String account) {
         return ACCOUNT2ID + account;
@@ -105,7 +105,7 @@ public class RedisPrefix {
      * 构建用户详情key
      *
      * @param userId 用户唯一ID
-     * @return
+     * @return 返回
      */
     public static String buildUserDetailKey(String userId) {
         return USER2DETAIL + userId;
@@ -114,8 +114,8 @@ public class RedisPrefix {
     /**
      * 在请求KEY增加计数前缀
      *
-     * @param key
-     * @return
+     * @param key key
+     * @return 返回
      */
     public static String buildAtomicCountKey(String key) {
         return ATOMIC_COUNT + key;
@@ -124,8 +124,8 @@ public class RedisPrefix {
     /**
      * 构建登录计数键
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 返回
      */
     public static String buildLoginCountKey(String userId) {
         return LOGIN_COUNT + userId;
@@ -135,7 +135,7 @@ public class RedisPrefix {
      * 构建客户端键
      *
      * @param clientId 客户端ID
-     * @return
+     * @return 返回
      */
     public static String buildClientKey(String clientId) {
         return OAUTH_CLIENT + clientId;
@@ -144,9 +144,9 @@ public class RedisPrefix {
     /**
      * 构建用户查找当前登录设备键
      *
-     * @param userId
-     * @param deviceType
-     * @return
+     * @param userId 用户id
+     * @param deviceType 设备类型
+     * @return 返回
      */
     public static String buildUser2DeviceKey(String userId, DeviceType deviceType) {
         return USER2DEVICE_ID + deviceType.toString() + userId;
@@ -155,8 +155,8 @@ public class RedisPrefix {
     /**
      * 构建设备查找相关token信息键
      *
-     * @param deviceId
-     * @return
+     * @param deviceId 设备id
+     * @return 返回
      */
     public static String buildDevice2TokenKey(String deviceId) {
         return DEVICE2TOKEN + deviceId;
@@ -165,8 +165,8 @@ public class RedisPrefix {
     /**
      * 构建短信验证码缓存key
      *
-     * @param phone
-     * @return
+     * @param phone 手机号
+     * @return 返回
      */
     public static String buildSMSCodeKey(String phone) {
         return SMS_CODE + phone;
@@ -175,8 +175,8 @@ public class RedisPrefix {
     /**
      * 构建短信验证码倒计时key
      *
-     * @param phone
-     * @return
+     * @param phone 手机号
+     * @return 返回
      */
     public static String buildSMSCodeTimeKey(String phone) {
         return SMS_CODE_TIME + phone;
@@ -185,8 +185,8 @@ public class RedisPrefix {
     /**
      * 构建微信openId查找用户id的key
      *
-     * @param openId
-     * @return
+     * @param openId openId
+     * @return 返回
      */
     public static String buildOpenId2userIdKey(String openId) {
         return OPENID2USER_ID + openId;
@@ -195,8 +195,8 @@ public class RedisPrefix {
     /**
      * 构建二维码key
      *
-     * @param code
-     * @return
+     * @param code 编码
+     * @return 返回
      */
     public static String buildQrCodeKey(String code) {
         return QR_CODE + code;
@@ -205,8 +205,8 @@ public class RedisPrefix {
     /**
      * 构建微信sessionKey临时缓存标签
      *
-     * @param sessionKey
-     * @return
+     * @param sessionKey sessionKey
+     * @return 返回
      */
     public static String buildSessionKey(String sessionKey) {
         return SESSION_KEY + sessionKey;
@@ -215,9 +215,9 @@ public class RedisPrefix {
     /**
      * 构建用户角色key
      *
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param userId 用户id
+     * @param tenantId 租户id
+     * @return 返回
      */
     public static String buildUser2RolesKey(String userId, String tenantId) {
         if (StringUtils.isEmpty(tenantId)) {
@@ -229,9 +229,9 @@ public class RedisPrefix {
     /**
      * 构建用户权限key
      *
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param userId 用户id
+     * @param tenantId 租户id
+     * @return 返回
      */
     public static String buildUser2PermissionsKey(String userId, String tenantId) {
         if (StringUtils.isEmpty(tenantId)) {
@@ -243,8 +243,8 @@ public class RedisPrefix {
     /**
      * 构建用户租户Key
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 返回
      */
     public static String buildUser2TenantsKey(String userId) {
         return USER2TENANTS + userId;
@@ -253,8 +253,8 @@ public class RedisPrefix {
     /**
      * 构建字典项Key
      *
-     * @param dictCode
-     * @return
+     * @param dictCode 字典编码
+     * @return 返回
      */
     public static String buildCode2DictItemKey(String dictCode) {
         return CODE2DICT_ITEM + dictCode;

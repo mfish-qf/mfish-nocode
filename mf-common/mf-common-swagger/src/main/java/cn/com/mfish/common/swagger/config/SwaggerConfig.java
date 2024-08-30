@@ -24,10 +24,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableConfigurationProperties(SwaggerProperties.class)
 public class SwaggerConfig implements WebMvcConfigurer {
     /**
-     * swagger接口设置
+     * 配置Swagger接口文档的详细信息
      *
-     * @param swaggerProperties swagger属性
-     * @return
+     * @param swaggerProperties 包含Swagger相关配置的属性对象
+     * @return 返回配置好的OpenAPI对象
      */
     @Bean
     public OpenAPI openAPIBean(SwaggerProperties swaggerProperties) {
@@ -49,7 +49,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
      * 接口信息
      *
      * @param swaggerProperties swagger属性
-     * @return
+     * @return 返回接口信息
      */
     private Info apiInfo(SwaggerProperties swaggerProperties) {
         return new Info()

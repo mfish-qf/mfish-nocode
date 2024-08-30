@@ -22,7 +22,7 @@ import java.util.List;
  * @Description: 菜单表
  * @Author: mfish
  * @date: 2022-09-21
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Slf4j
 @Tag(name = "菜单表")
@@ -35,8 +35,8 @@ public class SsoMenuController {
     /**
      * 分页列表查询
      *
-     * @param reqSsoMenu
-     * @return
+     * @param reqSsoMenu 请求参数
+     * @return 菜单列表
      */
     @Operation(summary = "菜单表-分页列表查询", description = "菜单表-分页列表查询")
     @GetMapping
@@ -57,12 +57,6 @@ public class SsoMenuController {
         return ssoMenuService.queryMenuTree(new ReqSsoMenu().setNoButton(true), AuthInfoUtils.getCurrentUserId());
     }
 
-    /**
-     * 添加
-     *
-     * @param ssoMenu
-     * @return
-     */
     @Log(title = "菜单表-添加", operateType = OperateType.INSERT)
     @Operation(summary = "菜单表-添加", description = "菜单表-添加")
     @PostMapping
@@ -71,12 +65,6 @@ public class SsoMenuController {
         return ssoMenuService.insertMenu(ssoMenu);
     }
 
-    /**
-     * 编辑
-     *
-     * @param ssoMenu
-     * @return
-     */
     @Log(title = "菜单表-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "菜单表-编辑", description = "菜单表-编辑")
     @PutMapping
@@ -85,13 +73,6 @@ public class SsoMenuController {
         return ssoMenuService.updateMenu(ssoMenu);
     }
 
-
-    /**
-     * 通过id删除
-     *
-     * @param id
-     * @return
-     */
     @Log(title = "菜单表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "菜单表-通过id删除", description = "菜单表-通过id删除")
     @DeleteMapping("/{id}")
@@ -100,12 +81,6 @@ public class SsoMenuController {
         return ssoMenuService.deleteMenu(id);
     }
 
-    /**
-     * 通过id查询
-     *
-     * @param id
-     * @return
-     */
     @Operation(summary = "菜单表-通过id查询", description = "菜单表-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:menu:query")

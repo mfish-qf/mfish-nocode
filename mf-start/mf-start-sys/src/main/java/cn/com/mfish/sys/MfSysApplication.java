@@ -15,7 +15,12 @@ import org.springframework.boot.SpringApplication;
 public class MfSysApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfSysApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼系统业务中心启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼系统业务中心启动成功-----------------------
+                \t""");
     }
 }

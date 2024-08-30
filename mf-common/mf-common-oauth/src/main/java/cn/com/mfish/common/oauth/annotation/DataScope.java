@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 /**
  * @description: 数据范围
  * 使用方法如下：通过在查询方法上增加@DataScope注解进行数据权限控制
- *     @DataScopes({
- *             @DataScope(table = "mf_api_folder", type = DataScopeType.Tenant),
- *             @DataScope(table = "mf_api", type = DataScopeType.Tenant)
+ *     *@DataScopes({
+ *             *@DataScope(table = "mf_api_folder", type = DataScopeType.Tenant),
+ *             *@DataScope(table = "mf_api", type = DataScopeType.Tenant)
  *     })
  * @author: mfish
  * @date: 2024/4/25

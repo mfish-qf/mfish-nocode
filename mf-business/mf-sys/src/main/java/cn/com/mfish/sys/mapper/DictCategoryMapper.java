@@ -11,7 +11,7 @@ import java.util.List;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 public interface DictCategoryMapper extends BaseMapper<DictCategory> {
     int insertCategory(DictCategory dictCategory);
@@ -25,7 +25,7 @@ public interface DictCategoryMapper extends BaseMapper<DictCategory> {
      *
      * @param reqDictCategory 过滤参数
      * @param levels          所有父级等级
-     * @return
+     * @return 返回1级分类列表
      */
     List<DictCategory> queryOneLevelCategory(@Param("reqDictCategory") ReqDictCategory reqDictCategory, @Param("levels") List<Integer> levels);
 
@@ -33,7 +33,7 @@ public interface DictCategoryMapper extends BaseMapper<DictCategory> {
      * 查询子分类包含自己
      *
      * @param list treeCode列表
-     * @return
+     * @return 返回子分类列表
      */
     List<DictCategory> queryChildCategory(@Param("reqDictCategory") ReqDictCategory reqDictCategory, @Param("levels") List<Integer> levels, @Param("list") List<String> list);
 }

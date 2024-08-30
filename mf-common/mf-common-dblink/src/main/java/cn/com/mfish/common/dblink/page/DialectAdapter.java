@@ -17,7 +17,7 @@ import java.util.Map;
  * @date: 2023/3/21 23:03
  */
 public class DialectAdapter {
-    private static Map<DBType, Class<? extends Dialect>> dialectAliasMap = new HashMap<>();
+    private static final Map<DBType, Class<? extends Dialect>> dialectAliasMap = new HashMap<>();
 
     public static void registerDialectAlias(DBType dbType, Class<? extends Dialect> property) {
         dialectAliasMap.put(dbType, property);
@@ -29,12 +29,12 @@ public class DialectAdapter {
         registerDialectAlias(DBType.postgre, PostgreDialect.class);
     }
 
-    private ThreadLocal<AbstractDialect> dialectThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<AbstractDialect> dialectThreadLocal = new ThreadLocal<>();
 
     /**
      * 初始化代理
      *
-     * @param dataSourceOptions
+     * @param dataSourceOptions 数据源配置选项
      */
     public void initDelegateDialect(DataSourceOptions<?> dataSourceOptions) {
         dialectThreadLocal.set(initDialect(dataSourceOptions));
@@ -46,11 +46,13 @@ public class DialectAdapter {
     }
 
     /**
-     * 反射类
+     * 根据数据库类型解析方言类
+     * <p>
+     * 本方法通过查找方言别名映射来确定与指定数据库类型对应的方言类。如果找到了对应的类，则返回该类；
+     * 如果没有找到，则返回null。
      *
-     * @param dbType
-     * @return
-     * @throws Exception
+     * @param dbType 数据库类型，用于确定所需的方言类
+     * @return 返回找到的方言类，如果没有找到，则返回null
      */
     private Class<? extends Dialect> resolveDialectClass(DBType dbType) {
         if (dialectAliasMap.containsKey(dbType)) {
@@ -65,6 +67,7 @@ public class DialectAdapter {
      *
      * @param dataSourceOptions 数据源配置
      */
+    @SuppressWarnings("all")
     private AbstractDialect initDialect(DataSourceOptions<?> dataSourceOptions) {
         AbstractDialect dialect;
         try {

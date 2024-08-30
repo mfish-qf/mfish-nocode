@@ -32,7 +32,7 @@ import java.util.List;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Slf4j
 @Tag(name = "组织结构表")
@@ -42,13 +42,6 @@ public class SsoOrgController {
     @Resource
     private SsoOrgService ssoOrgService;
 
-    /**
-     * 分页列表查询
-     *
-     * @param reqSsoOrg
-     * @param reqPage
-     * @return
-     */
     @Operation(summary = "组织结构表-分页列表查询", description = "组织结构表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:org:query")
@@ -83,12 +76,6 @@ public class SsoOrgController {
         return Result.ok(ssoOrgService.getOrgRoles(orgIds.split(",")), "组织角色-查询成功!");
     }
 
-    /**
-     * 添加
-     *
-     * @param ssoOrg 组织
-     * @return
-     */
     @Log(title = "组织结构表-添加", operateType = OperateType.INSERT)
     @Operation(summary = "组织结构表-添加", description = "组织结构表-添加")
     @PostMapping
@@ -97,12 +84,6 @@ public class SsoOrgController {
         return ssoOrgService.insertOrg(ssoOrg);
     }
 
-    /**
-     * 编辑
-     *
-     * @param ssoOrg 组织
-     * @return
-     */
     @Log(title = "组织结构表-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "组织结构表-编辑", description = "组织结构表-编辑")
     @PutMapping
@@ -111,12 +92,6 @@ public class SsoOrgController {
         return ssoOrgService.updateOrg(ssoOrg);
     }
 
-    /**
-     * 通过id删除
-     *
-     * @param id
-     * @return
-     */
     @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "组织结构表-通过id删除", description = "组织结构表-通过id删除")
     @DeleteMapping("/{id}")
@@ -125,12 +100,6 @@ public class SsoOrgController {
         return ssoOrgService.removeOrg(id);
     }
 
-    /**
-     * 通过id查询
-     *
-     * @param ids 多个ID逗号分隔
-     * @return
-     */
     @Operation(summary = "组织结构表-通过id查询", description = "组织结构表-通过id查询")
     @GetMapping("/{ids}")
     @RequiresPermissions("sys:org:query")

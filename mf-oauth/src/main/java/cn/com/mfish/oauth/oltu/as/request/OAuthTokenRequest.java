@@ -37,7 +37,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * OAuth Token request.
  * <p/>
  * IMPORTANT: This OAuthTokenRequest assumes that a token request requires client authentication.
- * Please see section 3.2.1 of the OAuth Specification: http://tools.ietf.org/html/rfc6749#section-3.2.1
+ * Please see section 3.2.1 of the OAuth Specification: <a href="http://tools.ietf.org/html/rfc6749#section-3.2.1">...</a>
  */
 public class OAuthTokenRequest extends AbstractOAuthTokenRequest {
 

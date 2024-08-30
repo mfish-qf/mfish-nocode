@@ -24,5 +24,4 @@ public interface OAuth2Service {
 
     RedisAccessToken refresh2Token(RedisAccessToken token);
 
-
 }

@@ -90,7 +90,7 @@ public class SsoUserController {
     /**
      * 获取当前用户租户列表
      *
-     * @return
+     * @return 返回当前用户租户列表
      */
     @Operation(summary = "获取当前用户租户列表", description = "获取当前用户租户列表")
     @GetMapping("/tenants")
@@ -204,9 +204,9 @@ public class SsoUserController {
     /**
      * 分页列表查询
      *
-     * @param reqSsoUser
-     * @param reqPage
-     * @return
+     * @param reqSsoUser 请求参数
+     * @param reqPage 翻页参数
+     * @return 返回结果
      */
     @Operation(summary = "用户信息-分页列表查询", description = "用户信息-分页列表查询")
     @GetMapping
@@ -238,8 +238,8 @@ public class SsoUserController {
     /**
      * 编辑
      *
-     * @param ssoUser
-     * @return
+     * @param ssoUser 请求对象
+     * @return 返回结果
      */
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "用户信息-编辑", description = "用户信息-编辑")
@@ -262,8 +262,8 @@ public class SsoUserController {
     /**
      * 通过id删除
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回结果
      */
     @Log(title = "用户信息-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "用户信息-通过id删除", description = "用户信息-通过id删除")

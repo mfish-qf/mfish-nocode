@@ -20,9 +20,9 @@ public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
     /**
      * 校验不同类型request中包含的token信息是否正确
      *
-     * @param request
-     * @param <R>
-     * @return
+     * @param request 请求参数
+     * @param <R>     泛型
+     * @return 返回校验结果
      */
     public <R> Result<T> validateT(R request) {
         String accessToken = AuthInfoUtils.getAccessToken(request);
@@ -33,9 +33,10 @@ public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
     /**
      * 已获取到token，直接校验
      *
-     * @param accessToken
-     * @return
+     * @param accessToken token
+     * @return 返回校验结果
      */
+    @SuppressWarnings("unchecked")
     public Result<T> validate(String accessToken) {
         T token;
         if (StringUtils.isEmpty(accessToken)) {

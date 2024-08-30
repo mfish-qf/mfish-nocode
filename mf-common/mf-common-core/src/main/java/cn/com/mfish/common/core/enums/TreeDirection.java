@@ -22,9 +22,11 @@ public enum TreeDirection {
 
     /**
      * 获取属性检索方向
+     * 根据传入的字符串值，匹配并返回对应的TreeDirection枚举值如果传入的字符串与任何TreeDirection枚举值都不匹配，
+     * 则返回默认值TreeDirection.双向
      *
-     * @param value
-     * @return
+     * @param value 需要检索的属性值，用于匹配TreeDirection枚举值
+     * @return 匹配的TreeDirection枚举值，如果没有匹配项，则返回TreeDirection.双向
      */
     public static TreeDirection getDirection(String value) {
         for (TreeDirection direction : TreeDirection.values()) {

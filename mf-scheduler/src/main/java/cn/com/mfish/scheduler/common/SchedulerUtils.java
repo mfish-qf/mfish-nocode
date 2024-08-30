@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,27 +22,26 @@ public class SchedulerUtils {
     /**
      * 创建调度任务，同时创建触发器和任务
      *
-     * @param scheduler
-     * @param job
+     * @param scheduler 调度器实例
+     * @param job       作业信息
      */
-    public static void createScheduler(Scheduler scheduler, Job job, JobSubscribe jobSubscribe, boolean cover) throws SchedulerException, ClassNotFoundException {
+    public static void createScheduler(Scheduler scheduler, Job job, JobSubscribe jobSubscribe, boolean cover) throws SchedulerException {
         createScheduler(scheduler, job, Collections.singletonList(jobSubscribe), cover);
     }
 
     /**
      * 批量创建调度策略
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribeList
-     * @param cover
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
+     * @param scheduler        调度器实例
+     * @param job              作业信息
+     * @param jobSubscribeList 订阅策略列表
+     * @param cover            是否覆盖现有策略
+     * @throws SchedulerException     如果调度操作失败
      */
-    public static void createScheduler(Scheduler scheduler, Job job, List<JobSubscribe> jobSubscribeList, boolean cover) throws SchedulerException, ClassNotFoundException {
+    public static void createScheduler(Scheduler scheduler, Job job, List<JobSubscribe> jobSubscribeList, boolean cover) throws SchedulerException {
         JobMeta jobMeta = createJob(scheduler, job, cover);
         if (jobSubscribeList == null || jobSubscribeList.isEmpty()) {
-            log.warn(MessageFormat.format("警告:未创建订阅策略!任务:{0}", job.getId()));
+            log.warn("警告:未创建订阅策略!任务:{}", job.getId());
             return;
         }
         for (JobSubscribe subscribe : jobSubscribeList) {
@@ -57,16 +55,14 @@ public class SchedulerUtils {
     }
 
     /**
-     * 创建任务
+     * 创建调度任务
      *
-     * @param scheduler
-     * @param job
-     * @param cover
-     * @return
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
+     * @param scheduler 调度器实例
+     * @param job       作业信息
+     * @param cover     是否覆盖现有策略
+     * @throws SchedulerException     如果调度操作失败
      */
-    public static JobMeta createJob(Scheduler scheduler, Job job, boolean cover) throws SchedulerException, ClassNotFoundException {
+    public static JobMeta createJob(Scheduler scheduler, Job job, boolean cover) throws SchedulerException {
         JobMeta jobMeta = JobUtils.buildJobDetailMeta(job);
         JobUtils.createJob(scheduler, jobMeta, cover);
         return jobMeta;
@@ -76,10 +72,9 @@ public class SchedulerUtils {
     /**
      * 批量删除触发策略
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribeList
-     * @throws SchedulerException
+     * @param scheduler 调度器实例
+     * @param job       作业信息
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void removeTrigger(Scheduler scheduler, Job job, List<JobSubscribe> jobSubscribeList) throws SchedulerException {
         for (JobSubscribe subscribe : jobSubscribeList) {
@@ -90,10 +85,10 @@ public class SchedulerUtils {
     /**
      * 删除触发策略
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribe
-     * @throws SchedulerException
+     * @param scheduler    调度器实例
+     * @param job          作业信息
+     * @param jobSubscribe 订阅策略
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void removeTrigger(Scheduler scheduler, Job job, JobSubscribe jobSubscribe) throws SchedulerException {
         TriggerUtils.remove(scheduler, TriggerUtils.buildTriggerMeta(job, jobSubscribe));
@@ -102,11 +97,10 @@ public class SchedulerUtils {
     /**
      * 恢复任务
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribe
-     * @return
-     * @throws SchedulerException
+     * @param scheduler    调度器实例
+     * @param job          作业信息
+     * @param jobSubscribe 订阅策略
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void resume(Scheduler scheduler, Job job, JobSubscribe jobSubscribe) throws SchedulerException {
         //如果状态为停用不恢复
@@ -119,10 +113,10 @@ public class SchedulerUtils {
     /**
      * 批量恢复任务
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribeList
-     * @throws SchedulerException
+     * @param scheduler        调度器实例
+     * @param job              作业信息
+     * @param jobSubscribeList 订阅策略列表
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void resume(Scheduler scheduler, Job job, List<JobSubscribe> jobSubscribeList) throws SchedulerException {
         for (JobSubscribe subscribe : jobSubscribeList) {
@@ -133,10 +127,10 @@ public class SchedulerUtils {
     /**
      * 批量暂停任务
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribeList
-     * @throws SchedulerException
+     * @param scheduler        调度器实例
+     * @param job              作业信息
+     * @param jobSubscribeList 订阅策略列表
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void pause(Scheduler scheduler, Job job, List<JobSubscribe> jobSubscribeList) throws SchedulerException {
         for (JobSubscribe subscribe : jobSubscribeList) {
@@ -147,10 +141,10 @@ public class SchedulerUtils {
     /**
      * 暂停任务
      *
-     * @param scheduler
-     * @param job
-     * @param jobSubscribe
-     * @throws SchedulerException
+     * @param scheduler    调度器实例
+     * @param job          作业信息
+     * @param jobSubscribe 订阅策略
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void pause(Scheduler scheduler, Job job, JobSubscribe jobSubscribe) throws SchedulerException {
         TriggerUtils.pause(scheduler, TriggerUtils.buildTriggerMeta(job, jobSubscribe));

@@ -19,8 +19,8 @@ public class ClientServiceImpl implements ClientService {
     /**
      * 根据客户端id从缓存和数据库中获取客户端信息
      *
-     * @param clientId
-     * @return
+     * @param clientId 客户端id
+     * @return 返回客户端信息
      */
     @Override
     public OAuthClient getClientById(String clientId) {

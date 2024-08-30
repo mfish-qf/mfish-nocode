@@ -48,6 +48,7 @@ public class PoolManager {
     /**
      * 连接池连接状态检测
      */
+    @SuppressWarnings("all")
     private static void poolCheck() {
         new Thread(() -> {
             Map<String, Integer> map = new HashMap<>();
@@ -101,8 +102,10 @@ public class PoolManager {
 
     /**
      * 清理无用连接池
+     * 该方法用于清理指定键的连接池，以释放资源
+     * 当某个连接池不再需要时，通过此方法将其关闭并从映射中移除，避免资源泄漏
      *
-     * @param key
+     * @param key 连接池的唯一标识键，用于定位特定的连接池
      */
     private static void clearPool(String key) {
         poolMap.get(key).close();
@@ -110,12 +113,14 @@ public class PoolManager {
     }
 
     /**
-     * 获取连接
+     * 获取数据库连接。如果使用连接池，将从连接池中获取连接；如果不使用连接池，将直接创建连接。
      *
-     * @param options
-     * @param timeout
-     * @return
+     * @param options  数据源配置选项，包含连接池类型、JDBC URL、用户名和密码等。
+     * @param timeout  获取连接的超时时间。
+     * @return 数据库连接。
+     * @throws SQLException 如果获取连接过程中出现错误。
      */
+    @SuppressWarnings("all")
     public static Connection getConnection(final DataSourceOptions options, long timeout) throws SQLException {
         PoolType poolType = options.getPoolType();
         //不是用连接池时，不加入到池缓存中
@@ -152,10 +157,15 @@ public class PoolManager {
 
     /**
      * 获取数据连接
+     * <p>
+     * 本方法通过传入的数据库源配置选项来建立一个新的数据库连接
+     * 主要用于需要临时配置数据库连接参数的场景，而非固定使用预配置的连接池
      *
-     * @param options
-     * @return
+     * @param options 数据源配置选项，包含了建立连接必须的数据库信息，如URL、用户名、密码等
+     * @return 建立的数据库连接对象，供后续进行数据库操作使用
+     * @throws SQLException 如果连接建立过程中出现错误，将抛出此异常
      */
+    @SuppressWarnings("rawtypes")
     public static Connection getConnection(final DataSourceOptions options) throws SQLException {
         return getConnection(options, TIMEOUT);
     }

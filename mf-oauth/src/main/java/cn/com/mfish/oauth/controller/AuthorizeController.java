@@ -109,7 +109,7 @@ public class AuthorizeController {
      * @param model    model信息
      * @param request  请求
      * @param function 处理方法get post
-     * @return
+     * @return 登录结果
      */
     private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function, boolean forceLogin) {
         OAuthAuthzRequest oauthRequest;

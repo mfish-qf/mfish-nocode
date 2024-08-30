@@ -53,10 +53,7 @@ public enum DataType {
      */
     private final String dataType;
     /**
-     * -- GETTER --
      * 获取精简类型
-     *
-     * @return
      */
     @Getter
     private final SlimType slimType;
@@ -68,9 +65,7 @@ public enum DataType {
 
     private static final Map<String, DataType> typeMap = new HashMap<>();
 
-    /**
-     * 数据库数据类型转换java类型(部分类型不完全准确)
-     */
+    //数据库数据类型转换java类型(部分类型不完全准确)
     static {
         for (DataType con : DataType.values()) {
             typeMap.put(con.dataType, con);
@@ -143,7 +138,7 @@ public enum DataType {
      * 根据值获取操作条件
      *
      * @param type 类型
-     * @return
+     * @return 返回类型
      */
     public static DataType forType(String type) {
         type = type.toUpperCase(Locale.ROOT);
@@ -170,7 +165,7 @@ public enum DataType {
      * 根据值获取精简数据类型
      *
      * @param type 类型
-     * @return
+     * @return 返回类型
      */
     public static SlimType forSlimType(String type) {
         return forType(type).slimType;

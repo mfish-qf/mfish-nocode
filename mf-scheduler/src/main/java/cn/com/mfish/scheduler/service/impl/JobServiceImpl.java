@@ -30,7 +30,7 @@ import java.util.List;
  * @description: 定时调度任务
  * @author: mfish
  * @date: 2023-02-03
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Service
 public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobService {
@@ -47,12 +47,10 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     /**
      * 定时同步调度策略(测试时放开使用)
      *
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
      */
 //    @Scheduled(cron = "0 0 1 * * ? *")
 //    @PostConstruct
-    public void initJob() throws SchedulerException, ClassNotFoundException {
+    public void initJob() throws SchedulerException {
         Scheduler scheduler = mfSchedulerFactoryBean.getScheduler();
         scheduler.clear();
         List<Job> list = baseMapper.selectList(Wrappers.emptyWrapper());
@@ -65,7 +63,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
 
     @Override
     @Transactional
-    public Result<Job> insertJob(Job job) throws SchedulerException, ClassNotFoundException {
+    public Result<Job> insertJob(Job job) throws SchedulerException {
         Result<Job> result = verifyJob(job);
         if (!result.isSuccess()) {
             return result;
@@ -78,7 +76,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
 
     @Override
     @Transactional
-    public Result<Job> updateJob(Job job) throws SchedulerException, ClassNotFoundException {
+    public Result<Job> updateJob(Job job) throws SchedulerException {
         Result<Job> result = verifyJob(job);
         if (!result.isSuccess()) {
             return result;
@@ -92,8 +90,8 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     /**
      * 校验任务
      *
-     * @param job
-     * @return
+     * @param job 任务
+     * @return 返回结果
      */
     private Result<Job> verifyJob(Job job) {
         try {
@@ -123,13 +121,15 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
 
     /**
      * 更新调度策略
+     * <p>
+     * 本方法首先删除现有的触发器，然后插入新的触发器以更新调度策略
+     * 这种方式确保了调度策略的及时更新和一致性
      *
-     * @param job
-     * @return
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
+     * @param job 作业对象，包含作业和触发器的详细信息
+     * @return 返回作业的执行结果
+     * @throws SchedulerException 如果调度操作失败，抛出调度异常
      */
-    private Result<Job> updateTrigger(Job job) throws SchedulerException, ClassNotFoundException {
+    private Result<Job> updateTrigger(Job job) throws SchedulerException {
         deleteTrigger(job);
         return insertTrigger(job);
     }
@@ -137,12 +137,11 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     /**
      * 插入触发策略
      *
-     * @param job
-     * @return
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
+     * @param job 作业对象，包含作业和触发器的详细信息
+     * @return 返回作业的执行结果
+     * @throws SchedulerException 如果调度操作失败，抛出调度异常
      */
-    public Result<Job> insertTrigger(Job job) throws SchedulerException, ClassNotFoundException {
+    public Result<Job> insertTrigger(Job job) throws SchedulerException {
         List<JobSubscribe> list = job.getSubscribes();
         if (list != null && !list.isEmpty()) {
             for (JobSubscribe jobSubscribe : list) {
@@ -161,8 +160,8 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     /**
      * 删除触发策略
      *
-     * @param job
-     * @throws SchedulerException
+     * @param job 作业对象，包含作业和触发器的详细信息
+     * @throws SchedulerException 如果调度操作失败，抛出调度异常
      */
     private void deleteTrigger(Job job) throws SchedulerException {
         List<JobSubscribe> subscribes = jobSubscribeService.getSubscribesByJobId(job.getId());

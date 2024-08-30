@@ -104,10 +104,12 @@ public class AccessTokenController {
 
     /**
      * 通过code换取token
+     * 此方法首先验证授权码的合法性，验证通过后，使用授权码获取访问令牌
      *
-     * @param request
-     * @param tokenRequest
-     * @return
+     * @param request HTTP请求对象，用于验证授权码
+     * @param tokenRequest 包含授权码等信息的OAuth令牌请求对象
+     * @return 返回一个RedisAccessToken对象，包含用户访问系统所需的令牌信息
+     * @throws OAuthValidateException 如果授权码验证失败，抛出此异常，包含验证失败的原因
      */
     private RedisAccessToken code2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) {
         Result<AuthorizationCode> result = code2TokenValidator.validateCode(request, null);
@@ -120,8 +122,8 @@ public class AccessTokenController {
     /**
      * 通过refreshtoken获取token
      *
-     * @param request
-     * @return
+     * @param request HTTP请求对象，用于验证授权码
+     * @return 返回一个RedisAccessToken对象，包含用户访问系统所需的令牌信息
      */
     private RedisAccessToken refresh2Token(HttpServletRequest request) {
         Result<RedisAccessToken> result = refresh2TokenValidator.validateToken(request, null);
@@ -134,9 +136,9 @@ public class AccessTokenController {
     /**
      * 用户名密码直接登录获取token
      *
-     * @param request
-     * @param tokenRequest
-     * @return
+     * @param request HTTP请求对象，用于验证授权码
+     * @param tokenRequest 包含授权码等信息的OAuth令牌请求对象
+     * @return 返回一个RedisAccessToken对象，包含用户访问系统所需的令牌信息
      */
     private RedisAccessToken pwd2Token(HttpServletRequest request, OAuthTokenRequest tokenRequest) {
         //password方式请求时，由服务自己校验验证码

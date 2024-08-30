@@ -18,7 +18,7 @@ public class PasswordHelper {
     /**
      * 生成hash盐
      *
-     * @return
+     * @return 盐值
      */
     public static String buildSalt() {
         return new SecureRandomNumberGenerator().nextBytes().toHex();
@@ -27,10 +27,10 @@ public class PasswordHelper {
     /**
      * 密码通过shiro配置的加密模式和hash次数进行加密
      *
-     * @param userId
-     * @param password
-     * @param salt
-     * @return
+     * @param userId 用户id
+     * @param password 密码
+     * @param salt 盐
+     * @return 加密后的密码
      */
     public String encryptPassword(String userId, String password, String salt) {
         if (StringUtils.isEmpty(password)) {

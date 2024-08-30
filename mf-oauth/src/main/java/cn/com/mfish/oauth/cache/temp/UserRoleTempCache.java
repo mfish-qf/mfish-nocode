@@ -23,8 +23,8 @@ public class UserRoleTempCache extends BaseTempCache<List<UserRole>> {
     /**
      * key [0] userId [1] tenantId
      *
-     * @param key
-     * @return
+     * @param key key
+     * @return key
      */
     @Override
     protected String buildKey(String... key) {
@@ -34,8 +34,8 @@ public class UserRoleTempCache extends BaseTempCache<List<UserRole>> {
     /**
      * key [0] userId [1] tenantId
      *
-     * @param key
-     * @return
+     * @param key key
+     * @return 数据
      */
     @Override
     protected List<UserRole> getFromDB(String... key) {

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Service
 @Slf4j
@@ -98,8 +98,8 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     /**
      * 设置租户组织用户信息
      *
-     * @param org
-     * @param userId
+     * @param org    组织
+     * @param userId 用户id
      */
     private void setOrgLeader(SsoOrg org, String userId) {
         if (StringUtils.isEmpty(userId)) {
@@ -122,7 +122,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
      * 校验租户信息
      *
      * @param ssoTenant 租户信息
-     * @return
+     * @return 返回是否通过校验
      */
     private boolean validateTenant(SsoTenant ssoTenant) {
         if (StringUtils.isEmpty(ssoTenant.getName())) {

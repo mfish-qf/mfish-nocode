@@ -10,7 +10,6 @@ import java.util.List;
  * @description: shiro白名单地址配置，用于配置不需要拦截的 url
  * @author: zibo
  * @date: 2024/3/22 14:52
- * @slogan: 慢慢学，不要停。
  */
 @Data
 @Configuration

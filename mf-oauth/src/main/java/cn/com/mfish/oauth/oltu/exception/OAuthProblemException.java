@@ -23,22 +23,32 @@ package cn.com.mfish.oauth.oltu.exception;
 
 
 import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class OAuthProblemException extends Exception {
 
-    private String error;
+    @Getter
+    private final String error;
+    @Getter
     private String description;
+    @Getter
     private String uri;
+    @Getter
     private String state;
+    @Getter
     private String scope;
+    @Setter
+    @Getter
     private String redirectUri;
 
     private int responseStatus;
 
-    private Map<String, String> parameters = new HashMap<String, String>();
+    @Getter
+    private final Map<String, String> parameters = new HashMap<>();
 
     protected OAuthProblemException(String error) {
         this(error, "");
@@ -89,44 +99,12 @@ public class OAuthProblemException extends Exception {
         return this;
     }
 
-    public String getError() {
-        return error;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
     public int getResponseStatus() {
         return responseStatus == 0 ? 400 : responseStatus;
     }
 
     public String get(String name) {
         return parameters.get(name);
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
-    public String getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(String redirectUri) {
-        this.redirectUri = redirectUri;
     }
 
     @Override

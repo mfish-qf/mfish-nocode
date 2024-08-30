@@ -1,6 +1,7 @@
 package cn.com.mfish.gateway.filter;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
@@ -28,7 +29,7 @@ public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config
     }
 
     @Data
-    static class Config {
+    public static class Config {
         private Integer order;
     }
 
@@ -47,7 +48,7 @@ public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             // GET DELETE 不过滤
             HttpMethod method = exchange.getRequest().getMethod();
-            if (method == null || method == HttpMethod.GET || method == HttpMethod.DELETE) {
+            if (method == HttpMethod.GET || method == HttpMethod.DELETE) {
                 return chain.filter(exchange);
             }
             return DataBufferUtils.join(exchange.getRequest().getBody()).map(dataBuffer -> {
@@ -58,6 +59,7 @@ public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config
             }).defaultIfEmpty(new byte[0]).flatMap(bytes -> {
                 DataBufferFactory dataBufferFactory = exchange.getResponse().bufferFactory();
                 ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                    @NotNull
                     @Override
                     public Flux<DataBuffer> getBody() {
                         if (bytes.length > 0) {

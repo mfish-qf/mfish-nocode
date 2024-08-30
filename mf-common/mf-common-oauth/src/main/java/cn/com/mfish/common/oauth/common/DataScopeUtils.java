@@ -64,9 +64,9 @@ public class DataScopeUtils {
     /**
      * 分解SQL
      *
-     * @param sql
-     * @param tableName
-     * @return
+     * @param sql      需要分解的SQL语句
+     * @param tableName 数据库表名
+     * @return 返回分解后的SQL列表
      */
     public static List<SqlSplit> splitSql(String sql, String tableName) {
         List<SqlSplit> list = new ArrayList<>();

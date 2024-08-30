@@ -10,7 +10,7 @@ import java.util.List;
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 public interface SysConfigService extends IService<SysConfig> {
     List<SysConfig> querySysConfig(String userId);

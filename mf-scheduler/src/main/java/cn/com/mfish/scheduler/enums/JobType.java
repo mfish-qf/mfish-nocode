@@ -33,8 +33,8 @@ public enum JobType {
     /**
      * 获取任务类型
      *
-     * @param value
-     * @return
+     * @param value 任务类型
+     * @return 返回任务类型
      */
     public static JobType getJobType(Integer value) {
         for (JobType type : JobType.values()) {
@@ -48,8 +48,8 @@ public enum JobType {
     /**
      * 获取任务处理方法
      *
-     * @param value
-     * @return
+     * @param value 任务类型
+     * @return 基础调用方法
      */
     public static BaseInvoke getJob(Integer value) {
         if (map.containsKey(value)) {

@@ -10,7 +10,7 @@ import java.util.List;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 public interface SsoRoleService extends IService<SsoRole> {
     Result<SsoRole> insertRole(SsoRole ssoRole);
@@ -35,4 +35,6 @@ public interface SsoRoleService extends IService<SsoRole> {
      * @return 用户id列表
      */
     Result<List<String>> getRoleUsers(String tenantId, List<String> roleCodes);
+
+    Result<List<SsoRole>> queryByIds(String ids);
 }

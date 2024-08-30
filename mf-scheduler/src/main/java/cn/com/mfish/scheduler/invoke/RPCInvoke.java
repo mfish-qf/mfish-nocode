@@ -19,9 +19,9 @@ public class RPCInvoke implements BaseInvoke {
     /**
      * RPC调度尽量不要调用时间过长的任务，一般用于服务之间简单通知
      *
-     * @param jobLog
-     * @param params
-     * @return
+     * @param jobLog 任务日志
+     * @param params 请求参数
+     * @return 返回结果
      */
     @Override
     public <T> Object run(JobLog jobLog, List<T> params) {

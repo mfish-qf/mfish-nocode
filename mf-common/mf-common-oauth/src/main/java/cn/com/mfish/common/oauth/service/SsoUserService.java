@@ -47,9 +47,9 @@ public interface SsoUserService extends IService<SsoUser> {
     /**
      * 通过用户ID获取按钮权限
      *
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param userId 用户id
+     * @param tenantId 租户id
+     * @return 返回权限集合
      */
     Set<String> getUserPermissions(String userId, String tenantId);
 
@@ -64,25 +64,25 @@ public interface SsoUserService extends IService<SsoUser> {
      *
      * @param account 帐号
      * @param userId  如果存在userId，排除当前userId
-     * @return
+     * @return true存在，false不存在
      */
     boolean isAccountExist(String account, String userId);
 
     /**
      * 插入用户角色关系
      *
-     * @param userId
-     * @param roles
-     * @return
+     * @param userId 用户id
+     * @param roles 角色id集合
+     * @return 插入数量
      */
     int insertUserRole(String userId, List<String> roles);
 
     /**
      * 插入用户组织关系
      *
-     * @param userId
-     * @param orgList
-     * @return
+     * @param userId 用户id
+     * @param orgList 组织id集合
+     * @return 返回插入数量
      */
     int insertUserOrg(String userId, List<String> orgList);
 
@@ -99,15 +99,15 @@ public interface SsoUserService extends IService<SsoUser> {
     /**
      * 获取在线用户
      *
-     * @return
+     * @return 返回在线用户
      */
     PageResult<OnlineUser> getOnlineUser(ReqPage reqPage);
 
     /**
      * 解密token
      *
-     * @param sid
-     * @return
+     * @param sid sid
+     * @return 返回解密后的sid
      */
     String decryptSid(String sid);
 }

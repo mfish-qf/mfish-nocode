@@ -34,9 +34,10 @@ public class PageResult<T> implements Serializable {
     }
 
     /**
-     * 通过pageHelper中的pageInfo进行包装
+     * 通过PageHelper中的PageInfo进行数据封装
+     * 此构造函数使用PageInfo来分页和封装传递的列表数据，并将其赋值给当前PageResult对象的相应属性
      *
-     * @param list
+     * @param list 需要进行分页处理的列表数据
      */
     public PageResult(List<T> list) {
         PageInfo<T> pageInfo = new PageInfo<>(list);
@@ -50,10 +51,10 @@ public class PageResult<T> implements Serializable {
     /**
      * 外部计算直接包装分页
      *
-     * @param list
-     * @param pageNum
-     * @param pageSize
-     * @param total
+     * @param list    数据列表
+     * @param pageNum 当前页码
+     * @param pageSize 每页显示数量
+     * @param total   数据总记录数
      */
     public PageResult(List<T> list, int pageNum, int pageSize, long total) {
         int pages = (int) (total / pageSize);

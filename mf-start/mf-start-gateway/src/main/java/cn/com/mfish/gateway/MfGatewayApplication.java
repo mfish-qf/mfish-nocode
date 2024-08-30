@@ -16,7 +16,12 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class MfGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(cn.com.mfish.gateway.MfGatewayApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼网关服务启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼网关服务启动成功-----------------------
+                \t""");
     }
 }

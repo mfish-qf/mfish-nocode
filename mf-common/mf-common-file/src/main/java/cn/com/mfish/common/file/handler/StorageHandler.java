@@ -36,7 +36,7 @@ public class StorageHandler {
      * @param fileName      文件名称
      * @param path          业务路径
      * @param isPrivate     是否私有
-     * @return
+     * @return 返回存储信息对象，包含文件的详细存储信息
      */
     public StorageInfo store(InputStream inputStream, long contentLength, String contentType, String fileName, String path, Integer isPrivate) {
         if (path.startsWith("/")) {
@@ -67,12 +67,16 @@ public class StorageHandler {
     /**
      * 获取文件
      *
-     * @param key      文件key
-     * @param fileName 文件名称
-     * @param filePath 文件路径
-     * @param fileType 文件类型
-     * @param size     文件大小
-     * @return
+     * @param key      文件key，用于唯一标识文件
+     * @param fileName 文件名称，用于设置下载时的文件名
+     * @param filePath 文件路径，结合文件key定位文件位置
+     * @param fileType 文件类型，用于设置响应的内容类型
+     * @param size     文件大小，用于设置响应的内容长度
+     * @return ResponseEntity对象，包含文件资源和所有HTTP响应信息
+     * <p>
+     * 本方法根据给定的文件元数据，如文件key、文件路径等信息，尝试加载文件并返回一个包含文件资源和HTTP响应信息的对象。
+     * 如果文件不存在，返回一个404 Not Found响应；如果文件存在，则构建响应实体，设置内容类型、内容长度和内容处置等HTTP头信息，
+     * 以实现文件的在线查看或强制下载。
      */
     public ResponseEntity<org.springframework.core.io.Resource> fetch(String key, String fileName, String filePath, String fileType, Integer size) {
         org.springframework.core.io.Resource file = loadAsResource(buildFilePath(filePath, key));
@@ -107,12 +111,13 @@ public class StorageHandler {
     }
 
     /**
-     * 构建文件key
+     * 构建文件的唯一键名
+     * 根据原始文件名、唯一标识符和内容类型来生成一个唯一的键名，用于在存储或检索文件时使用
      *
-     * @param originalFilename
-     * @param id
-     * @param contentType
-     * @return
+     * @param originalFilename 文件的原始名称，用于提取文件扩展名
+     * @param id 唯一标识符，用于生成键名的主要部分
+     * @param contentType 文件的内容类型，用于确定文件的默认扩展名
+     * @return 返回生成的唯一文件键名
      */
     public String buildKey(String originalFilename, String id, String contentType) {
         int index = originalFilename.lastIndexOf('.');
@@ -129,10 +134,18 @@ public class StorageHandler {
 
     /**
      * 获取文件流
+     * <p>
+     * 本方法根据文件路径和键值对生成文件的输入流，以便于文件的读取或处理
+     * 它封装了通过指定路径获取输入流的逻辑，提供了更高级别的抽象
+     * </p>
      *
      * @param filePath 文件路径
+     *                文件在文件系统中的路径，用于定位文件位置
      * @param key      文件key
+     *                 用于生成完整文件路径的键值，可能结合filePath形成唯一的文件标识
      * @return
+     *         返回文件对应的输入流，以便调用者可以读取文件内容
+     *         如果文件不存在或无法访问，将返回null
      */
     public InputStream getInputStream(String filePath, String key) {
         return storage.getInputStream(buildFilePath(filePath, key));
@@ -145,9 +158,9 @@ public class StorageHandler {
     /**
      * 构建文件访问链接
      *
-     * @param filePath
-     * @param isPrivate
-     * @return
+     * @param filePath 文件的路径，用于识别特定文件
+     * @param isPrivate 是否私有访问的标志，决定生成的链接类型
+     * @return 返回生成的文件访问链接
      */
     public String buildFileUrl(String filePath, Integer isPrivate) {
         return storage.buildUrl(filePath, isPrivate);

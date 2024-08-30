@@ -18,6 +18,7 @@ public class RedisCacheManager implements CacheManager {
     private RedisCache cache;
 
     @Override
+    @SuppressWarnings("unchecked")
     public Cache<String, Object> getCache(String name) throws CacheException {
         return cache;
     }

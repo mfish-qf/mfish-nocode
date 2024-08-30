@@ -22,9 +22,8 @@ public class AiOperator {
     /**
      * 请求数据
      *
-     * @param ask_string
-     * @return
-     * @throws IllegalAccessException
+     * @param ask_string 数据
+     * @return 返回
      */
     public static Result<String> answerMyQuestion(String url, String token, String ask_string) throws IOException {
         Completion openAi = new Completion();

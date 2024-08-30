@@ -76,7 +76,7 @@ public abstract class BaseRealm extends AuthorizingRealm {
      * 构建新用户 只适用于短信登录和微信登录
      *
      * @param phone 手机号
-     * @return
+     * @return 新用户
      */
     private SsoUser buildUser(String phone) {
         if (StringUtils.isEmpty(phone)) {

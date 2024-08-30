@@ -24,7 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     /**
      * 单体服务增加入口地址映射，与微服务地址同步
      *
-     * @param configurer
+     * @param configurer 配置
      */
     @Override
     public void configurePathMatch(@NotNull PathMatchConfigurer configurer) {

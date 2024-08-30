@@ -14,7 +14,12 @@ import org.springframework.boot.SpringApplication;
 public class MfOpenAiApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfOpenAiApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼聊天机器人启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼聊天机器人启动成功-----------------------
+                \t""");
     }
 }

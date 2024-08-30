@@ -32,9 +32,9 @@ public class Refresh2TokenValidator extends MultipleValidator {
     /**
      * token 参数相关的组合校验
      *
-     * @param request
-     * @param result
-     * @return
+     * @param request HTTP请求对象，用于获取授权码
+     * @param result 前一次校验结果对象，如果为null，则需要在方法内部新建
+     * @return 返回封装了AuthorizationCode的Result对象，如果授权码无效，则返回错误信息
      */
     public Result<RedisAccessToken> validateToken(HttpServletRequest request, Result<RedisAccessToken> result) {
         return validate(request, result, validateTokenList);
@@ -44,7 +44,7 @@ public class Refresh2TokenValidator extends MultipleValidator {
      * 校验refreshToken与之前获取token时传入的clientId是否一致
      */
     @Component
-    public class ClientIdEqualValidator extends AbstractRefreshTokenValidator {
+    public static class ClientIdEqualValidator extends AbstractRefreshTokenValidator {
         @Override
         public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
             Result<RedisAccessToken> result1 = getRefreshToken(request, result);
@@ -63,7 +63,7 @@ public class Refresh2TokenValidator extends MultipleValidator {
      * 校验refreshToken与之前获取token时传入的clientSecret是否一致
      */
     @Component
-    public class ClientSecretEqualValidator extends AbstractRefreshTokenValidator {
+    public static class ClientSecretEqualValidator extends AbstractRefreshTokenValidator {
         @Override
         public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
             Result<RedisAccessToken> result1 = getRefreshToken(request, result);
@@ -82,7 +82,7 @@ public class Refresh2TokenValidator extends MultipleValidator {
      * 校验refreshToken与之前获取token时传入的uri是否一致
      */
     @Component
-    public class UriEqualValidator extends AbstractRefreshTokenValidator {
+    public static class UriEqualValidator extends AbstractRefreshTokenValidator {
         @Override
         public Result<RedisAccessToken> validate(HttpServletRequest request, Result<RedisAccessToken> result) {
             Result<RedisAccessToken> result1 = getRefreshToken(request, result);
