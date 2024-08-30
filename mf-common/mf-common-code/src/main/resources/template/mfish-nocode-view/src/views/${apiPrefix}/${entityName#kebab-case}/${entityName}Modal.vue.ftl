@@ -2,7 +2,7 @@
  @description: ${tableInfo.tableComment}
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V1.3.0
+ @version: V1.3.1
 -->
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
@@ -11,10 +11,10 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref } from "vue";
-  import { BasicForm, useForm } from "/@/components/general/Form/index";
+  import { BasicForm, useForm } from "@/components/general/Form/index";
   import { ${entityName?uncap_first}FormSchema } from "./${entityName?uncap_first}.data";
-  import { BasicModal, useModalInner } from "/@/components/general/Modal";
-  import { insert${entityName}, update${entityName} } from "/@/api/${apiPrefix}/${entityName}";
+  import { BasicModal, useModalInner } from "@/components/general/Modal";
+  import { insert${entityName}, update${entityName} } from "@/api/${apiPrefix}/${entityName}";
 
   defineOptions({ name: "${entityName}Modal" });
   const emit = defineEmits(["success", "register"]);

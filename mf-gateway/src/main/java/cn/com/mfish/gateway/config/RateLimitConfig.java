@@ -9,6 +9,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 /**
  * @author: mfish
  * @description: 限流配置
@@ -19,12 +21,12 @@ public class RateLimitConfig {
     /**
      * ip限流
      *
-     * @return
+     * @return 返回ip限流
      */
     @Bean
     @Primary
     public KeyResolver ipKeyResolver() {
-        return exchange -> Mono.just(exchange.getRequest().getRemoteAddress().getHostString());
+        return exchange -> Mono.just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getHostString());
     }
 
     /**
@@ -38,7 +40,7 @@ public class RateLimitConfig {
     /**
      * 用户限流
      *
-     * @return
+     * @return 返回用户限流
      */
     @Bean
     KeyResolver userKeyResolver() {
@@ -48,7 +50,7 @@ public class RateLimitConfig {
     /**
      * 接口限流
      *
-     * @return
+     * @return 返回接口限流
      */
     @Bean
     KeyResolver apiKeyResolver() {
@@ -58,7 +60,7 @@ public class RateLimitConfig {
     /**
      * 通过sentinel限流
      *
-     * @return
+     * @return 返回sentinel限流
      */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)

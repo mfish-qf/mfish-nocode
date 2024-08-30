@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @description: 系统日志
  * @author: mfish
  * @date: 2023-01-08
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Slf4j
 @Tag(name = "系统日志")
@@ -64,8 +64,8 @@ public class SysLogController {
     /**
      * 添加
      *
-     * @param sysLog
-     * @return
+     * @param sysLog 日志
+     * @return 返回添加结果
      */
     @Operation(summary = "系统日志-添加", description = "系统日志-添加")
     @PostMapping
@@ -77,8 +77,8 @@ public class SysLogController {
     /**
      * 编辑
      *
-     * @param sysLog
-     * @return
+     * @param sysLog 日志
+     * @return 返回编辑结果
      */
     @Log(title = "系统日志-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "系统日志-编辑", description = "系统日志-编辑")
@@ -93,8 +93,8 @@ public class SysLogController {
     /**
      * 通过id删除
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回删除结果
      */
     @Log(title = "系统日志-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "系统日志-通过id删除", description = "系统日志-通过id删除")
@@ -110,8 +110,8 @@ public class SysLogController {
     /**
      * 批量删除
      *
-     * @param ids
-     * @return
+     * @param ids id集合
+     * @return 返回删除结果
      */
     @Log(title = "系统日志-批量删除", operateType = OperateType.DELETE)
     @Operation(summary = "系统日志-批量删除", description = "系统日志-批量删除")
@@ -127,8 +127,8 @@ public class SysLogController {
     /**
      * 通过id查询
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回查询结果
      */
     @Operation(summary = "系统日志-通过id查询", description = "系统日志-通过id查询")
     @GetMapping("/{id}")

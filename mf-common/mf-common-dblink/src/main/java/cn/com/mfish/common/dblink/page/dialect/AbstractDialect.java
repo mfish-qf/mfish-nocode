@@ -89,6 +89,7 @@ public abstract class AbstractDialect implements Dialect {
     protected abstract BoundSql getPageSql(BoundSql boundSql, Page<?> page);
 
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public <T extends Collection> T afterPage(T dataTable) {
         Page<?> page = getLocalPage();
         if (page == null) {

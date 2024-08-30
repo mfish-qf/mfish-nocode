@@ -31,9 +31,9 @@ public class Code2TokenValidator extends MultipleValidator {
     /**
      * code参数相关多个校验组合
      *
-     * @param request
-     * @param result
-     * @return
+     * @param request HTTP请求对象，用于获取授权码
+     * @param result 前一次校验结果对象，如果为null，则需要在方法内部新建
+     * @return 返回封装了AuthorizationCode的Result对象，如果授权码无效，则返回错误信息
      */
     public Result<AuthorizationCode> validateCode(HttpServletRequest request, Result<AuthorizationCode> result) {
         return validate(request, result, validateCodeList);

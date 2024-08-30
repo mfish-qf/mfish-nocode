@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Service
 public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, DictCategory> implements DictCategoryService {
@@ -146,7 +146,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         }
         list.set(0, category);
         //父节点发生变化，重新生成序列
-        baseMapper.deleteBatchIds(list.stream().map(DictCategory::getId).collect(Collectors.toList()));
+        baseMapper.deleteByIds(list.stream().map(DictCategory::getId).collect(Collectors.toList()));
         for (DictCategory dictCategory : list) {
             if (baseMapper.insertCategory(dictCategory) <= 0) {
                 throw new MyRuntimeException("错误:更新分类失败");
@@ -214,7 +214,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
      * 向下查询分类
      *
      * @param treeCode 树编码
-     * @return
+     * @return 返回分类列表
      */
     private List<DictCategory> downCategory(String treeCode) {
         return baseMapper.selectList(new LambdaQueryWrapper<DictCategory>().likeRight(DictCategory::getTreeCode, treeCode).orderByAsc(DictCategory::getTreeLevel, DictCategory::getSort));
@@ -225,7 +225,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
      *
      * @param treeCode 树编码
      * @param level    等级
-     * @return
+     * @return 返回分类列表
      */
     private List<DictCategory> upCategory(String treeCode, int level) {
         List<String> list = new ArrayList<>();

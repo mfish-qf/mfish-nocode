@@ -29,7 +29,7 @@ public abstract class AbstractStorage implements Storage {
      *
      * @param filePath  文件全路径
      * @param isPrivate 是否私有
-     * @return
+     * @return 返回文件访问路径
      */
     @Override
     public String buildUrl(String filePath, Integer isPrivate) {

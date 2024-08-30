@@ -54,7 +54,7 @@ public class TableServiceImpl implements TableService {
         if (list == null || list.isEmpty()) {
             return null;
         }
-        return list.get(0);
+        return list.getFirst();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class TableServiceImpl implements TableService {
      *
      * @param connectId 连接ID
      * @param sql       sql语句
-     * @return
+     * @return 返回结果
      */
     private MetaDataTable query(String connectId, String sql, ReqPage reqPage) {
         DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
@@ -129,7 +129,7 @@ public class TableServiceImpl implements TableService {
      *
      * @param connectId 连接ID
      * @param tableName 表名
-     * @return
+     * @return 返回数据集列头
      */
     @Override
     public List<MetaDataHeader> getDataHeaders(String connectId, String tableName, ReqPage reqPage) {

@@ -29,8 +29,8 @@ public class RedisCache implements Cache<String, Object> {
     /**
      * 获取当前Key
      *
-     * @param k
-     * @return
+     * @param k key
+     * @return 返回key
      */
     private String getKey(String k) {
         return this.keyPrefix + ":" + (k == null ? "*" : k);

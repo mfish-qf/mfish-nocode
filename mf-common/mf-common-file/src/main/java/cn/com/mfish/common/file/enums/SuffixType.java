@@ -1,5 +1,7 @@
 package cn.com.mfish.common.file.enums;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ public enum SuffixType {
     PPT("application/vnd.ms-powerpoint", ".ppt"),
     PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", ".pptx");
     private final String value;
+    @Getter
     private final String key;
     private static final Map<String, SuffixType> typeMap = new HashMap<>();
 
@@ -51,7 +54,4 @@ public enum SuffixType {
         return SuffixType.UNKNOWN;
     }
 
-    public String getKey() {
-        return key;
-    }
 }

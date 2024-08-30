@@ -6,6 +6,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 通过fastjson序列化redis存储
@@ -15,9 +16,9 @@ import java.nio.charset.Charset;
  */
 public class FastJson2RedisSerializer<T> implements RedisSerializer<T> {
 
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
     public FastJson2RedisSerializer(Class<T> clazz) {
         super();

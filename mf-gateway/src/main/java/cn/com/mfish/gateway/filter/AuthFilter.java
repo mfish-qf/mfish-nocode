@@ -61,9 +61,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     /**
      * 默认token处理
      *
-     * @param accessToken
-     * @param mutate
-     * @return
+     * @param accessToken token信息
+     * @param mutate      请求对象
      */
     private void defaultTokenDeal(RedisAccessToken accessToken, ServerHttpRequest.Builder mutate) {
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_TENANT_ID, accessToken.getTenantId());
@@ -74,9 +73,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     /**
      * 微信token处理
      *
-     * @param weChatToken
-     * @param mutate
-     * @return
+     * @param weChatToken 微信token信息
+     * @param mutate      请求对象
      */
     private void weChatTokenDeal(WeChatToken weChatToken, ServerHttpRequest.Builder mutate) {
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_TENANT_ID, weChatToken.getTenantId());

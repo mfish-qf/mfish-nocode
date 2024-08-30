@@ -83,8 +83,8 @@ public class QRCodeController {
     /**
      * 保存二维码
      *
-     * @param code
-     * @return
+     * @param code code
+     * @return 二维码对象
      */
     private RedisQrCode saveQRCode(String code) {
         RedisQrCode qrCode = new RedisQrCode();
@@ -95,11 +95,14 @@ public class QRCodeController {
     }
 
     /**
-     * 构建返回code
+     * 构建返回的二维码图像
+     * <p>
+     * 本方法用于生成二维码图像的响应数据，它将二维码内容编码为Base64字符串，
+     * 并封装其他相关信息如状态和代码本身
      *
-     * @param qrCode
-     * @param byteArrayOutputStream
-     * @return
+     * @param qrCode           二维码对象，包含二维码的内容和状态
+     * @param byteArrayOutputStream 用于输出二维码图像的字节流，此处将被转换为Base64字符串
+     * @return QRCodeImg       返回一个二维码图像对象，包含图像的Base64字符串、二维码代码和状态
      */
     private QRCodeImg buildResponseCode(QRCode qrCode, ByteArrayOutputStream byteArrayOutputStream) {
         QRCodeImg qrCodeImg = new QRCodeImg();
@@ -156,10 +159,10 @@ public class QRCodeController {
     /**
      * 扫码登录操作
      *
-     * @param request
-     * @param origStatus
-     * @param destStatus
-     * @return
+     * @param request 入参，用于获取扫码相关信息
+     * @param origStatus 当前二维码状态
+     * @param destStatus 目标二维码状态
+     * @return 返回操作结果，包括一个随机生成的密钥
      */
     private Result<String> qrCodeOperator(HttpServletRequest request, SerConstant.ScanStatus origStatus, SerConstant.ScanStatus destStatus) {
         Result<WeChatToken> result = weChatTokenValidator.validate(request);

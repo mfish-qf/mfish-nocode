@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author: mfish
@@ -70,12 +71,12 @@ public class WeChatServiceImpl implements WeChatService {
         List<TenantVo> tenants = ssoUserService.getUserTenants(userId);
         if (tenants != null && !tenants.isEmpty()) {
             //设置第一个为默认登录租户
-            weChatToken.setTenantId(tenants.get(0).getId());
+            weChatToken.setTenantId(tenants.getFirst().getId());
         }
         weChatToken.setAccount(user.getAccount());
         weChatToken.setExpires_in(tokenExpire);
         weChatToken.setReTokenExpire(reTokenExpire);
-        weChatToken.setIp(Utils.getRemoteIP(ServletUtils.getRequest()));
+        weChatToken.setIp(Utils.getRemoteIP(Objects.requireNonNull(ServletUtils.getRequest())));
         weChatTokenService.setToken(weChatToken);
         weChatTokenService.setRefreshToken(weChatToken);
         return weChatToken;

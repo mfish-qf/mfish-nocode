@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Service
 @Slf4j
@@ -92,7 +92,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
             }
             list.set(0, ssoOrg);
             //父节点发生变化，重新生成序列
-            baseMapper.deleteBatchIds(list.stream().map(SsoOrg::getId).collect(Collectors.toList()));
+            baseMapper.deleteByIds(list.stream().map(SsoOrg::getId).collect(Collectors.toList()));
             for (SsoOrg org : list) {
                 if (baseMapper.insertOrg(org) <= 0) {
                     throw new MyRuntimeException("错误:更新组织失败");
@@ -102,7 +102,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         if (success) {
             if (ssoOrg.getRoleIds() != null) {
-                log.info(MessageFormat.format("删除组织角色数量:{0}条", baseMapper.deleteOrgRole(ssoOrg.getId())));
+                log.info("删除组织角色数量:{}条", baseMapper.deleteOrgRole(ssoOrg.getId()));
                 insertOrgRole(ssoOrg.getId(), ssoOrg.getRoleIds());
             }
             CompletableFuture.runAsync(() -> removeUserAuthCache(ssoOrg.getId()));
@@ -304,7 +304,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
      * 向下查询组织
      *
      * @param code 固定编码
-     * @return
+     * @return 返回组织列表
      */
     private List<SsoOrg> downOrg(String code) {
         return baseMapper.selectList(new LambdaQueryWrapper<SsoOrg>().likeRight(SsoOrg::getOrgCode, code).eq(SsoOrg::getDelFlag, 0).orderByAsc(SsoOrg::getOrgSort));
@@ -315,7 +315,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
      *
      * @param code  固定编码
      * @param level 等级
-     * @return
+     * @return 返回组织列表
      */
     private List<SsoOrg> upOrg(String code, int level) {
         List<String> orgList = getUpOrgCodes(code, level);
@@ -328,9 +328,9 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     /**
      * 获取所有上级编码
      *
-     * @param code
-     * @param level
-     * @return
+     * @param code 固定编码
+     * @param level 等级
+     * @return 返回上级编码列表
      */
     private List<String> getUpOrgCodes(String code, int level) {
         List<String> orgList = new ArrayList<>();

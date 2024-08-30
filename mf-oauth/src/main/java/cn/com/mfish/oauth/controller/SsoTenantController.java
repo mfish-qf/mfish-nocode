@@ -52,7 +52,7 @@ import java.util.List;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Slf4j
 @Tag(name = "租户信息表")
@@ -179,7 +179,7 @@ public class SsoTenantController {
      *
      * @param reqSsoTenant 租户信息表请求参数
      * @param reqPage      分页参数
-     * @throws IOException
+     * @throws IOException 异常
      */
     @Operation(summary = "导出租户信息表", description = "导出租户信息表")
     @GetMapping("/export")
@@ -193,7 +193,7 @@ public class SsoTenantController {
      * 租户切换
      *
      * @param tenantId 租户ID
-     * @return
+     * @return 返回切换结果
      */
     @Operation(summary = "切换租户")
     @PutMapping("/change/{tenantId}")
@@ -206,26 +206,28 @@ public class SsoTenantController {
             return Result.fail(tenantId, "错误:该用户不属于此租户");
         }
         Object token = OauthUtils.getToken();
-        if (token == null) {
-            return Result.fail(tenantId, "错误:未找到token");
-        }
-        if (token instanceof RedisAccessToken) {
-            RedisAccessToken rat = (RedisAccessToken) token;
-            if (tenantId.equals(rat.getTenantId())) {
+        switch (token) {
+            case null -> {
+                return Result.fail(tenantId, "错误:未找到token");
+            }
+            case RedisAccessToken rat -> {
+                if (tenantId.equals(rat.getTenantId())) {
+                    return Result.ok(tenantId, "切换租户成功");
+                }
+                rat.setTenantId(tenantId);
+                OauthUtils.setToken(rat.getAccessToken(), rat);
                 return Result.ok(tenantId, "切换租户成功");
             }
-            rat.setTenantId(tenantId);
-            OauthUtils.setToken(rat.getAccessToken(), rat);
-            return Result.ok(tenantId, "切换租户成功");
-        }
-        if (token instanceof WeChatToken) {
-            WeChatToken wct = (WeChatToken) token;
-            if (tenantId.equals(wct.getTenantId())) {
+            case WeChatToken wct -> {
+                if (tenantId.equals(wct.getTenantId())) {
+                    return Result.ok(tenantId, "切换租户成功");
+                }
+                wct.setTenantId(tenantId);
+                OauthUtils.setToken(wct.getAccess_token(), token);
                 return Result.ok(tenantId, "切换租户成功");
             }
-            wct.setTenantId(tenantId);
-            OauthUtils.setToken(((WeChatToken) token).getAccess_token(), token);
-            return Result.ok(tenantId, "切换租户成功");
+            default -> {
+            }
         }
         return Result.fail(tenantId, "错误:未找到token");
     }
@@ -233,8 +235,8 @@ public class SsoTenantController {
     /**
      * 查询租户组织树
      *
-     * @param reqSsoOrg
-     * @return
+     * @param reqSsoOrg 请求参数
+     * @return 返回结果
      */
     @Operation(summary = "获取租户组织树")
     @GetMapping("/org")
@@ -249,8 +251,8 @@ public class SsoTenantController {
     /**
      * 租户组织结构添加
      *
-     * @param ssoOrg
-     * @return
+     * @param ssoOrg 请求参数
+     * @return 返回结果
      */
     @Log(title = "租户组织结构-添加", operateType = OperateType.INSERT)
     @Operation(summary = "租户组织结构-添加", description = "租户组织结构-添加")
@@ -268,8 +270,8 @@ public class SsoTenantController {
     /**
      * 租户组织结构编辑
      *
-     * @param ssoOrg
-     * @return
+     * @param ssoOrg 请求参数
+     * @return 返回结果
      */
     @Log(title = "租户组织结构-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "租户组织结构-编辑", description = "租户组织结构-编辑")
@@ -287,7 +289,7 @@ public class SsoTenantController {
     /**
      * 租户是否管理员
      *
-     * @return
+     * @return 返回结果
      */
     private Result<Boolean> verifyTenant() {
 //        if (!ssoTenantService.isTenantMaster(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId())) {
@@ -300,7 +302,7 @@ public class SsoTenantController {
      * 校验租户组织
      *
      * @param id 组织ID
-     * @return
+     * @return 返回结果
      */
     private Result<Boolean> verifyOrg(String id) {
         Result<Boolean> result = verifyTenant();
@@ -317,7 +319,7 @@ public class SsoTenantController {
     /**
      * 设置父组织
      *
-     * @param ssoOrg
+     * @param ssoOrg 请求参数
      */
     private void setParentOrg(SsoOrg ssoOrg) {
         String tenantId = AuthInfoUtils.getCurrentTenantId();
@@ -334,8 +336,8 @@ public class SsoTenantController {
     /**
      * 通过id删除组织
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回结果
      */
     @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "组织结构表-通过id删除", description = "组织结构表-通过id删除")
@@ -352,9 +354,9 @@ public class SsoTenantController {
     /**
      * 查询租户角色列表
      *
-     * @param reqSsoRole
-     * @param reqPage
-     * @return
+     * @param reqSsoRole 请求参数
+     * @param reqPage 翻页参数
+     * @return 返回结果
      */
     @Operation(summary = "租户角色信息-分页列表查询", description = "租户角色信息-分页列表查询")
     @GetMapping("/role")
@@ -394,8 +396,8 @@ public class SsoTenantController {
     /**
      * 租户角色信息添加
      *
-     * @param ssoRole
-     * @return
+     * @param ssoRole 请求参数
+     * @return 返回结果
      */
     @Log(title = "租户角色信息-添加", operateType = OperateType.INSERT)
     @Operation(summary = "角色信息表-添加", description = "租户角色信息-添加")
@@ -413,8 +415,8 @@ public class SsoTenantController {
     /**
      * 租户角色信息编辑
      *
-     * @param ssoRole
-     * @return
+     * @param ssoRole 请求参数
+     * @return 返回结果
      */
     @Log(title = "租户角色信息-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "角色信息表-编辑", description = "租户角色信息-编辑")
@@ -450,8 +452,8 @@ public class SsoTenantController {
     /**
      * 校验租户角色
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 校验结果
      */
     private Result<Boolean> verifyRole(String id) {
         Result<Boolean> result = verifyTenant();

@@ -16,7 +16,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class MfSchedulerApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfSchedulerApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼调度中心启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼调度中心启动成功-----------------------
+                \t""");
     }
 }

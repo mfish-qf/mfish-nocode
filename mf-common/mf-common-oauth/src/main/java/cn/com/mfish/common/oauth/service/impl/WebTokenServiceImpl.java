@@ -44,6 +44,9 @@ public class WebTokenServiceImpl implements TokenService<RedisAccessToken> {
     public void updateRefreshToken(RedisAccessToken token) {
         String key = RedisPrefix.buildRefreshTokenKey(token.getRefreshToken());
         Long expire = redisTemplate.getExpire(key);
+        if (expire == null) {
+            expire = token.getReTokenExpire();
+        }
         redisTemplate.opsForValue().set(key, token, expire, TimeUnit.SECONDS);
     }
 

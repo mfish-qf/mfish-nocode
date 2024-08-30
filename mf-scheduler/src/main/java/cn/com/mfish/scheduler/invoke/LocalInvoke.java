@@ -20,7 +20,7 @@ public class LocalInvoke implements BaseInvoke {
     public <T> Object run(JobLog jobLog, List<T> params) {
         try {
             Object obj = InvokeUtils.invokeMethod(jobLog.getClassName(), jobLog.getMethodName(), params);
-            log.info("返回结果:" + obj);
+            log.info("返回结果:{}", obj);
             return obj;
         } catch (InvocationTargetException e) {
             log.error("错误:任务执行异常", e);

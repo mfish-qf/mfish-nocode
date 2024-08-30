@@ -1,7 +1,8 @@
 package cn.com.mfish.common.oauth.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -10,6 +11,8 @@ import java.io.Serializable;
  * @date: 2020/2/17 15:09
  */
 @Schema(description = "返回accessToken信息")
+@Data
+@Accessors(chain = true)
 public class AccessToken implements Serializable {
     @Schema(description = "token值")
     private String access_token;
@@ -21,34 +24,7 @@ public class AccessToken implements Serializable {
     public AccessToken() {
     }
 
-    public AccessToken(AccessToken token) {
-        this.setAccess_token(token.getAccess_token()).setRefresh_token(token.getRefresh_token()).setExpires_in(token.getExpires_in());
-    }
-
-    public String getAccess_token() {
-        return access_token;
-    }
-
-    public AccessToken setAccess_token(String access_token) {
-        this.access_token = access_token;
-        return this;
-    }
-
-    public String getRefresh_token() {
-        return refresh_token;
-    }
-
-    public AccessToken setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
-        return this;
-    }
-
-    public Long getExpires_in() {
-        return expires_in;
-    }
-
-    public AccessToken setExpires_in(Long expires_in) {
-        this.expires_in = expires_in;
-        return this;
+    public AccessToken(String token, String refreshToken, Long expiresIn) {
+        this.setAccess_token(token).setRefresh_token(refreshToken).setExpires_in(expiresIn);
     }
 }

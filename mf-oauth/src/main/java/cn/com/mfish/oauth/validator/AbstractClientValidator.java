@@ -21,9 +21,9 @@ public abstract class AbstractClientValidator implements IBaseValidator<OAuthCli
      * 获取客户端信息
      * 如果参数中已传入客户端信息直接返回，如果未传入从redis或数据库中获取
      *
-     * @param request
-     * @param result
-     * @return
+     * @param request 请求
+     * @param result 上次校验结果
+     * @return 返回客户端信息
      */
     public Result<OAuthClient> getOAuthClient(HttpServletRequest request, Result<OAuthClient> result) {
         OAuthClient client;

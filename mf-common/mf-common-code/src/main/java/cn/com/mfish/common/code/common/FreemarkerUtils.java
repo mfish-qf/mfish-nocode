@@ -59,9 +59,12 @@ public class FreemarkerUtils {
 
     /**
      * 初始化请求参数
+     * 该方法用于在请求处理前初始化请求参数，确保所有必要的参数都已正确设置
+     * 特别地，该方法会检查一些参数是否为空，如果为空则设置默认值，如果格式不正确则抛出异常
+     * 此外，该方法还会根据参数的特定规则修改参数值，例如将下划线命名转换为驼峰命名
      *
-     * @param reqCode
-     * @return
+     * @param reqCode 请求参数对象，包含数据库连接ID、表名、包名、接口前缀、实体类名和表注释等信息
+     * @throws MyRuntimeException 如果关键参数为空或格式不正确，则抛出运行时异常
      */
     public void initReqCode(ReqCode reqCode) {
         if (StringUtils.isEmpty(reqCode.getConnectId())) {
@@ -107,7 +110,7 @@ public class FreemarkerUtils {
             if (result.getData() == null || result.getData().getList() == null || result.getData().getList().isEmpty()) {
                 throw new MyRuntimeException("错误:未获取到表信息");
             }
-            TableInfo tableInfo = result.getData().getList().get(0);
+            TableInfo tableInfo = result.getData().getList().getFirst();
             if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableComment())) {
                 reqCode.setTableComment(tableInfo.getTableComment());
             }
@@ -117,8 +120,9 @@ public class FreemarkerUtils {
     /**
      * 获取代码
      *
-     * @param reqCode
-     * @return
+     * @param reqCode 请求参数，用于指定需要生成代码的配置信息
+     * @return 返回生成的代码列表
+     * @throws MyRuntimeException 如果获取字段信息失败或未获取到字段信息，则抛出运行时异常
      */
     public List<CodeVo> getCode(ReqCode reqCode) {
         initReqCode(reqCode);
@@ -177,7 +181,7 @@ public class FreemarkerUtils {
         }
         for (ReqSearch reqSearch : list) {
             Optional<FieldInfo> optional = fields.stream().filter((field) -> field.getFieldName().equals(reqSearch.getField())).findFirst();
-            if (Optional.empty().equals(optional)) {
+            if (Optional.empty().equals(optional) || optional.isEmpty()) {
                 continue;
             }
             SearchInfo searchInfo = new SearchInfo();
@@ -194,7 +198,7 @@ public class FreemarkerUtils {
      * 获取生成的代码并返回前端
      *
      * @param codeInfo 代码参数信息
-     * @return
+     * @return 返回生成的代码列表
      */
     public List<CodeVo> getCode(CodeInfo codeInfo) {
         List<CodeVo> list = new ArrayList<>();
@@ -219,8 +223,8 @@ public class FreemarkerUtils {
     /**
      * 构建正则替换Map
      *
-     * @param codeInfo
-     * @return
+     * @param codeInfo 编码信息
+     * @return 返回构建的正则替换Map
      */
     private Map<String, String> buildRegexMap(CodeInfo codeInfo) {
         Map<String, String> map = new HashMap<>();
@@ -236,9 +240,11 @@ public class FreemarkerUtils {
 
     /**
      * 参数替换
+     * 根据提供的映射表，对字符串中的变量进行替换
      *
-     * @param key
-     * @return
+     * @param key 待处理的原始字符串，可能包含待替换的变量
+     * @param mapValue 包含变量和其对应值的映射表
+     * @return 替换变量后的字符串
      */
     private String replaceVariable(String key, Map<String, String> mapValue) {
         for (Map.Entry<String, String> kv : mapValue.entrySet()) {
@@ -262,10 +268,11 @@ public class FreemarkerUtils {
 
     /**
      * 模版代码构建
+     * 本函数通过Freemarker模版引擎，将给定的模版和数据信息结合，生成最终的代码文本
      *
-     * @param template
-     * @param codeInfo
-     * @return
+     * @param template 模版文件路径，用于指定生成代码所需的模版
+     * @param codeInfo CodeInfo对象，包含生成代码所需的数据和信息
+     * @return 返回生成的代码文本字符串
      */
     public String buildCode(String template, CodeInfo codeInfo) {
         StringWriter stringWriter = new StringWriter();
@@ -274,7 +281,7 @@ public class FreemarkerUtils {
             temp.process(codeInfo, out);
             out.flush();
         } catch (IOException | TemplateException e) {
-            log.error("生成代码异常:" + e.getMessage(), e);
+            log.error("生成代码异常:{}", e.getMessage(), e);
             throw new MyRuntimeException(e);
         }
         return stringWriter.toString();
@@ -283,8 +290,8 @@ public class FreemarkerUtils {
     /**
      * 保存代码
      *
-     * @param reqCode 代码参数
-     * @return
+     * @param reqCode 代码参数，包含待保存代码的信息
+     * @return 保存操作是否成功
      */
     public boolean saveCode(ReqCode reqCode) {
         List<CodeVo> list = getCode(reqCode);
@@ -297,8 +304,9 @@ public class FreemarkerUtils {
     /**
      * 保存代码到本地
      *
-     * @param list
-     * @return
+     * @param list 代码列表，包含要保存的代码信息
+     * @param savePath 保存路径，用于指定代码保存的位置
+     * @return boolean 表示保存是否成功
      */
     public boolean saveCode(List<CodeVo> list, String savePath) {
         savePath = savePath.replace("\\", "/");
@@ -323,8 +331,12 @@ public class FreemarkerUtils {
     /**
      * 下载代码
      *
-     * @param reqCode 请求参数
-     * @return
+     * @param reqCode 请求参数，用于指定下载代码的条件
+     * @return 返回一个字节数组，包含压缩后的代码
+     * <p>
+     * 该方法根据请求参数从指定位置获取代码文件，将这些代码文件打包成一个压缩文件（.zip格式）并返回。
+     * 使用 ByteArrayOutputStream 和 ZipOutputStream 来创建压缩文件流，遍历代码文件列表，将每个文件
+     * 的内容写入到压缩流中。完成后，关闭所有流并返回压缩文件的字节数组表示。
      */
     public byte[] downloadCode(ReqCode reqCode) {
         List<CodeVo> list = getCode(reqCode);

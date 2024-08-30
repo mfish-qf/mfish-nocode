@@ -45,7 +45,7 @@ public class AuthInfoUtils {
      * 或者token放到head中 以Authorization=Bearer******方式传入
      *
      * @param t 请求类型
-     * @return
+     * @return 返回token
      */
     public static <T> String getAccessToken(T t) {
         // 头部的Authorization值以Bearer开头
@@ -64,7 +64,7 @@ public class AuthInfoUtils {
     /**
      * 获取当前accessToken
      *
-     * @return
+     * @return 返回token
      */
     public static String getAccessToken() {
         return getAccessToken(ServletUtils.getRequest());
@@ -73,7 +73,7 @@ public class AuthInfoUtils {
     /**
      * 获取当前用户ID(该方法要在主线程运行)
      *
-     * @return
+     * @return 返回用户ID
      */
     public static String getCurrentUserId() {
         return getAttr(RPCConstants.REQ_USER_ID);
@@ -82,7 +82,7 @@ public class AuthInfoUtils {
     /**
      * 获取当前帐号(该方法要在主线程运行)
      *
-     * @return
+     * @return 返回帐号
      */
     public static String getCurrentAccount() {
         return getAttr(RPCConstants.REQ_ACCOUNT);
@@ -91,7 +91,7 @@ public class AuthInfoUtils {
     /**
      * 获取当前租户ID(该方法要在主线程运行)
      *
-     * @return
+     * @return 返回租户ID
      */
     public static String getCurrentTenantId() {
         String tenantId = getAttr(RPCConstants.REQ_TENANT_ID);
@@ -106,8 +106,8 @@ public class AuthInfoUtils {
      * 微服务架构用户属性放在header中传递
      * 单实例架构用户属性放在attribute中传递
      *
-     * @param attr
-     * @return
+     * @param attr 属性名称，用于查找header和attribute
+     * @return 返回属性值，如果找不到则返回null
      */
     private static String getAttr(String attr) {
         String value = ServletUtils.getHeader(attr);
@@ -124,7 +124,7 @@ public class AuthInfoUtils {
     /**
      * 是否超户
      *
-     * @return
+     * @return 是否
      */
     public static boolean isSuper() {
         return isSuper(getCurrentUserId());
@@ -133,8 +133,8 @@ public class AuthInfoUtils {
     /**
      * 是否超户
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 是否
      */
     public static boolean isSuper(String userId) {
         return SUPER_ACCOUNT_ID.equals(userId);
@@ -143,8 +143,8 @@ public class AuthInfoUtils {
     /**
      * 判断角色是否超户角色
      *
-     * @param roleId
-     * @return
+     * @param roleId 角色id
+     * @return 是否
      */
     public static boolean isSuperRole(String roleId) {
         return SUPER_ROLE_ID.equals(roleId);
@@ -153,8 +153,8 @@ public class AuthInfoUtils {
     /**
      * 判断是否系统默认租户
      *
-     * @param tenantId
-     * @return
+     * @param tenantId 租户id
+     * @return 是否
      */
     public static boolean isSuperTenant(String tenantId) {
         return SUPER_TENANT_ID.equals(tenantId);
@@ -163,8 +163,8 @@ public class AuthInfoUtils {
     /**
      * 判断角色组中是否包含超户角色
      *
-     * @param roleIds
-     * @return
+     * @param roleIds 角色id组
+     * @return 是否
      */
     public static boolean isContainSuperAdmin(List<String> roleIds) {
         if (roleIds == null) {

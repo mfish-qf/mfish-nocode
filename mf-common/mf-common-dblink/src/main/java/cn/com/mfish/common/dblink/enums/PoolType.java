@@ -23,9 +23,11 @@ public enum PoolType {
 
     /**
      * 获取连接池类型
+     * <p>
+     * 根据输入的字符串值，返回对应的连接池类型枚举值如果找不到匹配的值，则返回NoPool（无连接池）
      *
-     * @param value
-     * @return
+     * @param value 表示连接池类型的字符串值
+     * @return 对应的连接池类型枚举值，如果没有匹配则返回NoPool
      */
     public static PoolType getPoolType(String value) {
         for (PoolType type : PoolType.values()) {
@@ -39,17 +41,14 @@ public enum PoolType {
     /**
      * 创建连接池
      *
-     * @return
+     * @return 返回一个连接池实例，类型根据当前配置决定
      */
     public PoolWrapper<?> createPool() {
-        switch (this) {
-            case Druid:
-                return new DruidPool();
-            case Hikari:
-                return new HikariPool();
-            default:
-                return new NoPool();
-        }
+        return switch (this) {
+            case Druid -> new DruidPool();
+            case Hikari -> new HikariPool();
+            default -> new NoPool();
+        };
     }
 
 }

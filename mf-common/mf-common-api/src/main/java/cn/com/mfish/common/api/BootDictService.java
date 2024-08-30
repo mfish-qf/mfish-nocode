@@ -15,6 +15,7 @@ import java.util.List;
  * @author: mfish
  * @date: 2024/4/16
  */
+@SuppressWarnings("rawtypes")
 @Service("remoteDictService")
 public class BootDictService implements RemoteDictService {
 

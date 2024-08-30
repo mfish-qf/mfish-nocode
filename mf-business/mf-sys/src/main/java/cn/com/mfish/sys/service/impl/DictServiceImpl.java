@@ -21,9 +21,10 @@ import java.util.List;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Service
+@SuppressWarnings({"rawtypes"})
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
 
     @Resource
@@ -37,7 +38,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         List<DictItem> list = dictItemService.getDictItems(new ReqDictItem().setDictId(dict.getId()));
         String orgCode = null;
         if (!list.isEmpty()) {
-            orgCode = list.get(0).getDictCode();
+            orgCode = list.getFirst().getDictCode();
         }
         if (orgCode != null && !orgCode.equals(dict.getDictCode())) {
             for (DictItem<?> item : list) {

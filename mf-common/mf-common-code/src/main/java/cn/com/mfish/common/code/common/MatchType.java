@@ -13,7 +13,7 @@ public enum MatchType {
     串式("kebab-case"),
     下划线("under-case");
 
-    String matchType;
+    final String matchType;
 
     MatchType(String type) {
         this.matchType = type;
@@ -36,18 +36,14 @@ public enum MatchType {
      * 处理参数值
      *
      * @param value 值
-     * @return
+     * @return 处理后的值
      */
     public String dealVariable(String value) {
-        switch (getMatchType(matchType)) {
-            case 首字母小写:
-                return StringUtils.firstLowerCase(value);
-            case 下划线:
-                return StringUtils.toUnderCase(value);
-            case 串式:
-                return StringUtils.toKebabCase(value);
-            default:
-                return value;
-        }
+        return switch (getMatchType(matchType)) {
+            case 首字母小写 -> StringUtils.firstLowerCase(value);
+            case 下划线 -> StringUtils.toUnderCase(value);
+            case 串式 -> StringUtils.toKebabCase(value);
+            default -> value;
+        };
     }
 }

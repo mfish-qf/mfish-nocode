@@ -27,7 +27,7 @@ import java.util.List;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Slf4j
 @Tag(name = "字典")
@@ -40,8 +40,8 @@ public class DictController {
     /**
      * 分页列表查询
      *
-     * @param reqDict
-     * @return
+     * @param reqDict 请求参数
+     * @return 返回字典-分页列表
      */
     @Operation(summary = "字典-分页列表查询", description = "字典-分页列表查询")
     @GetMapping
@@ -53,9 +53,9 @@ public class DictController {
     /**
      * 获取列表
      *
-     * @param reqDict
-     * @param reqPage
-     * @return
+     * @param reqDict 请求参数
+     * @param reqPage 分页参数
+     * @return 返回列表
      */
 
     private List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
@@ -71,8 +71,8 @@ public class DictController {
     /**
      * 添加
      *
-     * @param dict
-     * @return
+     * @param dict 字典
+     * @return 返回字典-添加结果
      */
     @Log(title = "字典-添加", operateType = OperateType.INSERT)
     @Operation(summary = "字典-添加", description = "字典-添加")
@@ -92,8 +92,8 @@ public class DictController {
     /**
      * 编辑
      *
-     * @param dict
-     * @return
+     * @param dict 字典
+     * @return 返回字典-编辑结果
      */
     @Log(title = "字典-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "字典-编辑", description = "字典-编辑")
@@ -110,8 +110,8 @@ public class DictController {
     /**
      * 字典入参校验
      *
-     * @param dict
-     * @return
+     * @param dict 字典
+     * @return 返回校验结果
      */
     private Result<Dict> verifyDict(Dict dict) {
         if (StringUtils.isEmpty(dict.getDictCode())) {
@@ -129,8 +129,8 @@ public class DictController {
     /**
      * 通过id删除
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回字典-通过id删除结果
      */
     @Log(title = "字典-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "字典-通过id删除", description = "字典-通过id删除")
@@ -143,8 +143,8 @@ public class DictController {
     /**
      * 通过id查询
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回字典-通过id查询结果
      */
     @Operation(summary = "字典-通过id查询", description = "字典-通过id查询")
     @GetMapping("/{id}")
@@ -157,9 +157,9 @@ public class DictController {
     /**
      * 导出
      *
-     * @param reqDict
-     * @param reqPage
-     * @throws IOException
+     * @param reqDict 请求参数
+     * @param reqPage 分页参数
+     * @throws IOException 异常信息
      */
     @Operation(summary = "导出字典", description = "导出字典")
     @GetMapping("/export")

@@ -17,6 +17,7 @@ import java.util.List;
  * @author: mfish
  * @date: 2023/5/18 18:15
  */
+@SuppressWarnings("rawtypes")
 @FeignClient(contextId = "remoteDictService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteDictFallback.class)
 public interface RemoteDictService {
     @GetMapping("/dictItem/{dictCode}")

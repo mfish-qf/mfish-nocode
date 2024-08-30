@@ -1,8 +1,6 @@
 package cn.com.mfish.common.log.service;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
-import cn.com.mfish.common.core.constants.ServiceConstants;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.SysLog;
 import cn.com.mfish.sys.api.remote.RemoteLogService;

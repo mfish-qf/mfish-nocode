@@ -92,7 +92,6 @@ public class ZipUtils {
      * @param name       压缩后的名称
      * @param keepDir    是否保留原来的目录结构,true:保留目录结构;
      *                   false:所有文件跑到压缩包根目录下(注意：不保留目录结构可能会出现同名文件,会压缩失败)
-     * @throws Exception
      */
     private static void compress(File sourceFile, ZipOutputStream zos, String name,
                                  boolean keepDir) throws IOException {
@@ -109,6 +108,7 @@ public class ZipUtils {
                 zos.closeEntry();
                 return;
             } catch (IOException ex) {
+                log.error(ex.getMessage());
                 throw ex;
             }
         }

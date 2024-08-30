@@ -23,8 +23,8 @@ public class TriggerUtils {
     /**
      * 获取触发器key
      *
-     * @param triggerMeta
-     * @return
+     * @param triggerMeta 触发器信息
+     * @return 返回触发器键
      */
     private static TriggerKey getTriggerKey(TriggerMeta triggerMeta) {
         return TriggerKey.triggerKey(triggerMeta.getName(), triggerMeta.getGroup());
@@ -37,7 +37,7 @@ public class TriggerUtils {
      * @param triggerMeta 触发器信息
      * @param jobMeta     任务信息
      * @param cover       是否覆盖
-     * @throws SchedulerException
+     * @throws SchedulerException 如果调度操作失败
      */
     public static void createTrigger(Scheduler scheduler, TriggerMeta triggerMeta, JobMeta jobMeta, boolean cover) throws SchedulerException {
         //获得触发器键
@@ -77,8 +77,8 @@ public class TriggerUtils {
     /**
      * 获取调度策略
      *
-     * @param triggerMeta
-     * @return
+     * @param triggerMeta 触发器信息
+     * @return 返回策略
      */
     private static ScheduleBuilder<?> getScheduleBuilder(TriggerMeta triggerMeta) {
         if (SINGLE_TRIGGER.equals(triggerMeta.getCron())) {
@@ -108,11 +108,11 @@ public class TriggerUtils {
     /**
      * 为job添加触发器
      *
-     * @param scheduler
-     * @param triggerKey
-     * @param jobKey
-     * @param trigger
-     * @throws SchedulerException
+     * @param scheduler 调度器实例，用于操作调度功能
+     * @param triggerKey 触发器的键，唯一标识一个触发器
+     * @param jobKey 任务的键，唯一标识一个任务
+     * @param trigger 待添加或更新的触发器实例
+     * @throws SchedulerException 如果操作失败，抛出调度异常
      */
     private static void scheduleJob(Scheduler scheduler, TriggerKey triggerKey, JobKey jobKey, Trigger trigger) throws SchedulerException {
         // 判断trigger是否存在
@@ -136,10 +136,10 @@ public class TriggerUtils {
     /**
      * 暂停触发器
      *
-     * @param scheduler
-     * @param triggerMeta
-     * @return
-     * @throws SchedulerException
+     * @param scheduler 调度器实例，用于操作调度功能
+     * @param triggerMeta 触发器信息
+     * @return 返回是否暂停成功
+     * @throws SchedulerException 如果操作失败，抛出调度异常
      */
     public static boolean pause(Scheduler scheduler, TriggerMeta triggerMeta) throws SchedulerException {
         return operate(scheduler, triggerMeta, (triggerKey) -> {
@@ -155,10 +155,10 @@ public class TriggerUtils {
     /**
      * 恢复触发器
      *
-     * @param scheduler
-     * @param triggerMeta
-     * @return
-     * @throws SchedulerException
+     * @param scheduler 调度器实例，用于操作调度功能
+     * @param triggerMeta 触发器信息
+     * @return 返回是否恢复成功
+     * @throws SchedulerException 如果操作失败，抛出调度异常
      */
     public static boolean resume(Scheduler scheduler, TriggerMeta triggerMeta) throws SchedulerException {
         return operate(scheduler, triggerMeta, (triggerKey) -> {
@@ -174,10 +174,10 @@ public class TriggerUtils {
     /**
      * 移除触发器
      *
-     * @param scheduler
-     * @param triggerMeta
-     * @return
-     * @throws SchedulerException
+     * @param scheduler 调度器实例，用于操作调度功能
+     * @param triggerMeta 触发器信息
+     * @return 返回是否移除成功
+     * @throws SchedulerException 如果操作失败，抛出调度异常
      */
     public static boolean remove(Scheduler scheduler, TriggerMeta triggerMeta) throws SchedulerException {
         return operate(scheduler, triggerMeta, (triggerKey) -> {
@@ -192,9 +192,9 @@ public class TriggerUtils {
     /**
      * 操作触发器
      *
-     * @param scheduler
-     * @param triggerMeta
-     * @throws SchedulerException
+     * @param scheduler 调度器实例，用于操作调度功能
+     * @param triggerMeta 触发器信息
+     * @throws SchedulerException 如果操作失败，抛出调度异常
      */
     private static boolean operate(Scheduler scheduler, TriggerMeta triggerMeta, Function<TriggerKey, Boolean> function) throws SchedulerException {
         // 获得triggerKey
@@ -202,15 +202,15 @@ public class TriggerUtils {
         if (scheduler.checkExists(triggerKey)) {
             return function.apply(triggerKey);
         }
-        log.warn("triggerKey:" + triggerKey + "不存在");
+        log.warn("triggerKey:{}不存在", triggerKey);
         return false;
     }
 
     /**
      * 构建触发器元数据
      *
-     * @param job
-     * @return
+     * @param job 任务
+     * @return 返回触发器元数据
      */
     public static TriggerMeta buildTriggerMeta(Job job, JobSubscribe jobSubscribe) {
         TriggerMeta triggerMeta = new TriggerMeta();

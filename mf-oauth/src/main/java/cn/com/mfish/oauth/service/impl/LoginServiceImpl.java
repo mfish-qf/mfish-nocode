@@ -71,10 +71,13 @@ public class LoginServiceImpl implements LoginService {
 
     /**
      * 请求code参数校验
+     * <p>
+     * 本方法主要用于校验授权码（code）的有效性通过HTTP请求参数进行校验如果校验失败，
+     * 会将错误信息添加到模型中并返回false否则，返回true表示校验成功
      *
-     * @param model
-     * @param request
-     * @return
+     * @param model 用于存储属性值，在发生错误时用于存储错误信息
+     * @param request HTTP请求对象，用于获取请求参数
+     * @return boolean 校验是否成功
      */
     private boolean validateCode(Model model, HttpServletRequest request) {
         Result<OAuthClient> result = getCodeValidator.validateClient(request, null);
@@ -88,9 +91,9 @@ public class LoginServiceImpl implements LoginService {
     /**
      * web请求登录 构建model返回值
      *
-     * @param model
-     * @param request
-     * @return
+     * @param model 用于存储属性值，在发生错误时用于存储错误信息
+     * @param request HTTP请求对象，用于获取请求参数
+     * @return boolean 校验是否成功
      */
     public boolean login(Model model, HttpServletRequest request) {
         Result<String> result = login(request);
@@ -103,8 +106,8 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 登录用户验证逻辑
      *
-     * @param request
-     * @return
+     * @param request HTTP请求对象，用于获取请求参数
+     * @return 返回登陆结果
      */
     @Override
     public Result<String> login(HttpServletRequest request) {
@@ -121,10 +124,10 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 登录用户验证逻辑
      *
-     * @param username
-     * @param password
-     * @param loginType
-     * @return
+     * @param username 账号
+     * @param password 密码
+     * @param loginType 登陆类型
+     * @return 返回登陆结果
      */
     public Result<String> login(String username, String password, SerConstant.LoginType loginType, String clientId, String rememberMe) {
         boolean remember = false;
@@ -163,17 +166,17 @@ public class LoginServiceImpl implements LoginService {
     public boolean retryLimit(String userId, boolean matches) {
         SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
-            log.error(userId + SerConstant.INVALID_USER_ID_DESCRIPTION);
+            log.error("{}" + SerConstant.INVALID_USER_ID_DESCRIPTION, userId);
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
         }
         //超户不允许禁用、锁定、删除
         if (!AuthInfoUtils.isSuper(userId)) {
             if (SerConstant.AccountState.禁用.getValue() == user.getStatus()) {
-                log.error(userId + SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
+                log.error("{}" + SerConstant.ACCOUNT_DISABLE_DESCRIPTION, userId);
                 throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
             }
             if (user.getDelFlag().equals(1)) {
-                log.error(userId + SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+                log.error("{}" + SerConstant.ACCOUNT_DELETE_DESCRIPTION, userId);
                 throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
             }
         }
@@ -188,13 +191,13 @@ public class LoginServiceImpl implements LoginService {
                     , SerConstant.INVALID_USER_SECRET_DESCRIPTION);
             user.setStatus(SerConstant.AccountState.禁用.getValue());
             ssoUserService.updateUser(user);
-            log.error(userId + error);
+            log.error("{}{}", userId, error);
             //规定时间内重试ERROR_COUNT次，抛出多次尝试异常
             throw new ExcessiveAttemptsException(error);
         }
         String error = MessageFormat.format("{0},连续出错{1}次,错误{2}次将被禁用"
                 , SerConstant.INVALID_USER_SECRET_DESCRIPTION, count, ERROR_COUNT);
-        log.error(userId + error);
+        log.error("{}{}", userId, error);
         throw new IncorrectCredentialsException(error);
     }
 
@@ -246,8 +249,8 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 获取30分钟内登录次数
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 次数
      */
     public int getLoginCount(String userId) {
         RedisAtomicLong ral = new RedisAtomicLong(RedisPrefix.buildLoginCountKey(userId)
@@ -263,7 +266,7 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 移除登录次数
      *
-     * @param userId
+     * @param userId 用户id
      */
     public void removeLoginCount(String userId) {
         redisTemplate.delete(RedisPrefix.buildLoginCountKey(userId));

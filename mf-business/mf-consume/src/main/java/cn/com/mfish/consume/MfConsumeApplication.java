@@ -14,7 +14,12 @@ import org.springframework.boot.SpringApplication;
 public class MfConsumeApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfConsumeApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼调度中心消费端测试样例启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼调度中心消费端测试样例启动成功-----------------------
+                \t""");
     }
 }

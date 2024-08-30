@@ -3,7 +3,6 @@ package cn.com.mfish.common.captcha.service;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.web.Result;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -15,9 +14,7 @@ public interface CheckCodeService {
     /**
      * 创建验证码
      *
-     * @return
-     * @throws IOException
-     * @throws CaptchaException
+     * @return Map
      */
     Result<Map<String, Object>> createCaptcha();
 
@@ -26,7 +23,7 @@ public interface CheckCodeService {
      *
      * @param key   key
      * @param value 值
-     * @throws CaptchaException
+     * @throws CaptchaException 异常
      */
     void checkCaptcha(String key, String value) throws CaptchaException;
 }

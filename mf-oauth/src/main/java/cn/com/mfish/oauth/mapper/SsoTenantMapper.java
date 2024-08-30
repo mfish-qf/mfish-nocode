@@ -13,7 +13,7 @@ import java.util.List;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     List<TenantVo> queryList(@Param("reqSsoTenant") ReqSsoTenant reqSsoTenant);
@@ -23,9 +23,9 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     /**
      * 是否租户管理员
      *
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param userId 用户id
+     * @param tenantId 租户id
+     * @return 是否管理员
      */
     @Select("select count(0) from sso_tenant where user_id = #{userId} and id = #{tenantId}")
     int isTenantMaster(@Param("userId") String userId, @Param("tenantId") String tenantId);
@@ -33,9 +33,9 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     /**
      * 是否租户默认组织管理员
      *
-     * @param userId
-     * @param orgId
-     * @return
+     * @param userId 用户id
+     * @param orgId 组织id
+     * @return 是否管理员
      */
     int isTenantMasterOrg(@Param("userId") String userId, @Param("orgId") String orgId);
 
@@ -45,15 +45,15 @@ public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
      * 根据组织ID获取组织所属租户
      *
      * @param orgIds 组织ID
-     * @return
+     * @return 租户列表
      */
     List<SsoTenant> getTenantByOrgId(@Param("orgIds") String... orgIds);
 
     /**
      * 通过角色编码获取拥有该角色的租户
      *
-     * @param roleCode
-     * @return
+     * @param roleCode 角色编码
+     * @return 租户列表
      */
     List<TenantVo> getTenantByRoleCode(String roleCode);
 }

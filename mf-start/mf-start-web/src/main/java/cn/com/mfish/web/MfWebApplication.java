@@ -14,7 +14,12 @@ import org.springframework.boot.SpringApplication;
 public class MfWebApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfWebApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼其他web业务服务启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼其他web业务服务启动成功-----------------------
+                \t""");
     }
 }

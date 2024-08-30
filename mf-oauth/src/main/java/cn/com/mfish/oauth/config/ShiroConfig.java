@@ -17,6 +17,7 @@ import cn.com.mfish.oauth.realm.PhoneSmsRealm;
 import cn.com.mfish.oauth.realm.QRCodeRealm;
 import cn.com.mfish.oauth.realm.UserPasswordRealm;
 import jakarta.servlet.Filter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.lang.codec.Base64;
@@ -45,13 +46,14 @@ import java.util.Map;
  * @date: 2020/2/10 18:05
  */
 @Configuration
+@Slf4j
 public class ShiroConfig {
 
     /**
      * 设置shiro拦截器
      *
-     * @param securityManager
-     * @return
+     * @param securityManager securityManager
+     * @return 返回shiro过滤工厂
      */
     @Bean
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
@@ -87,7 +89,7 @@ public class ShiroConfig {
      * 需要配置两个bean(DefaultAdvisorAutoProxyCreator(可选) 和 AuthorizationAttributeSourceAdvisor)实现此功能。
      * Spring Boot系列安全框架Apache Shiro基本功能
      *
-     * @return
+     * @return DefaultAdvisorAutoProxyCreator
      */
     @Bean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
@@ -122,7 +124,7 @@ public class ShiroConfig {
     /**
      * 认证使用
      *
-     * @return
+     * @return hash
      */
     @Bean
     public HashedCredentialsMatcher myHashedCredentialsMatcher() {
@@ -132,7 +134,7 @@ public class ShiroConfig {
     /**
      * 修改密码使用
      *
-     * @return
+     * @return hash
      */
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
@@ -143,7 +145,7 @@ public class ShiroConfig {
      * 凭证匹配器加密规则 采用2次MD5加密
      * 密码校验交给Shiro的SimpleAuthenticationInfo进行处理了
      *
-     * @return
+     * @return hash
      */
     private <T extends HashedCredentialsMatcher> HashedCredentialsMatcher createHashedCredentialsMatcher(T t) {
         t.setHashAlgorithmName(ShiroProperties.algorithmName);
@@ -165,7 +167,7 @@ public class ShiroConfig {
     /**
      * 用户密码登录方式初始化
      *
-     * @return
+     * @return realm
      */
     @Bean
     public UserPasswordRealm userPasswordRealm() {
@@ -203,10 +205,11 @@ public class ShiroConfig {
     }
 
     /**
-     * session管理设置 采用redis进行session管理
+     * 配置session管理器，使用Redis进行session存储
+     * 该配置对于实现session的集中式管理至关重要，尤其是对于需要进行会话持久化和集群支持的场景
      *
-     * @param redisSessionDAO
-     * @return
+     * @param redisSessionDAO 会话数据访问对象，负责会话数据与Redis之间的交互
+     * @return DefaultWebSessionManager 返回配置好的session管理器实例
      */
     @Bean(name = "sessionManager")
     public DefaultWebSessionManager sessionManager(RedisSessionDAO redisSessionDAO) {
@@ -228,9 +231,10 @@ public class ShiroConfig {
     }
 
     /**
-     * cookie管理器;
+     * 配置并返回一个CookieRememberMeManager实例，用于管理remember-me功能的cookie
+     * Remember-me功能允许用户在关闭浏览器后仍保持登录状态，系统通过cookie来识别用户
      *
-     * @return
+     * @return 配置好的CookieRememberMeManager实例
      */
     @Bean
     public CookieRememberMeManager cookieRememberMeManager() {
@@ -263,7 +267,7 @@ public class ShiroConfig {
         try {
             keygen = KeyGenerator.getInstance("AES");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         assert keygen != null;
         SecretKey deskey = keygen.generateKey();

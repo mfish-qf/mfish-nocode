@@ -15,7 +15,14 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <TableAction
-                  :actions="[
+            :actions="[
+              {
+                icon: 'ant-design:info-circle-outlined',
+                onClick: handleQuery.bind(null, record),
+                auth: '${apiPrefix}:${entityName?uncap_first}:query',
+                color: 'success',
+                tooltip: '查看'
+              },
               {
                 icon: 'ant-design:edit-outlined',
                 onClick: handleEdit.bind(null, record),
@@ -41,7 +48,7 @@
             <#list search.component as com>
               <#if com_index == 1>
         <template v-if="column.key === '${search.fieldInfo.fieldName}'">
-          <dict-tag code="${com}" :value="record.${search.fieldInfo.fieldName}" />
+          <DictTag code="${com}" :value="record.${search.fieldInfo.fieldName}" />
         </template>
               </#if>
             </#list>
@@ -50,24 +57,25 @@
       </template>
     </BasicTable>
     <${entityName}Modal @register="registerModal" @success="handleSuccess" />
+    <${entityName}ViewModal @register="registerViewModal" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from "/@/components/general/Table";
-  import { deleteBatch${entityName}, delete${entityName}, export${entityName}, get${entityName}List } from "/@/api/${apiPrefix}/${entityName}";
-  import { useModal } from "/@/components/general/Modal";
+  import { BasicTable, useTable, TableAction } from "@/components/general/Table";
+  import { deleteBatch${entityName}, delete${entityName}, export${entityName}, get${entityName}List } from "@/api/${apiPrefix}/${entityName}";
+  import { useModal } from "@/components/general/Modal";
   import ${entityName}Modal from "./${entityName}Modal.vue";
+  import ${entityName}ViewModal from "./${entityName}ViewModal.vue";
   import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
-  import { ${entityName} } from "/@/api/${apiPrefix}/model/${entityName}Model";
-  import { TableProps } from "ant-design-vue";
+  import { ${entityName} } from "@/api/${apiPrefix}/model/${entityName}Model";
   import { ref } from "vue";
-  import { useMessage } from "/@/hooks/web/UseMessage";
+  import { useMessage } from "@/hooks/web/UseMessage";
   <#assign dictIndex = 0>
   <#list searchList as search>
   <#if search.component??>
   <#list search.component as com>
   <#if com_index == 1&&dictIndex==0>
-  import DictTag from "/@/components/general/DictTag/DictTag.vue";
+  import DictTag from "@/components/general/DictTag/DictTag.vue";
   <#assign dictIndex = 1>
   </#if>
   </#list>
@@ -76,12 +84,8 @@
 
   defineOptions({ name: "${entityName}Management" });
   const [registerModal, { openModal }] = useModal();
-  const selectedRowKeys = ref<string[]>([]);
-  const rowSelection: TableProps["rowSelection"] = {
-    onChange: (rowKeys: string[]) => {
-      selectedRowKeys.value = rowKeys;
-    }
-  };
+  const [registerViewModal, { openModal: openViewModal }] = useModal();
+  const selectedRowKeys = ref<any[]>([]);
   const [registerTable, { reload, getForm }] = useTable({
     title: "${tableInfo.tableComment}列表",
     api: get${entityName}List,
@@ -97,9 +101,13 @@
     showTableSetting: true,
     bordered: true,
     showIndexColumn: false,
-    rowSelection: rowSelection,
+    rowSelection: {
+      onChange: (rowKeys: any[]) => {
+        selectedRowKeys.value = rowKeys;
+      }
+    },
     actionColumn: {
-      width: 80,
+      width: 120,
       title: "操作",
       dataIndex: "action"
     }
@@ -122,6 +130,14 @@
   }
 
   /**
+   * 查看
+   * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
+   */
+  function handleQuery(${entityName?uncap_first}: ${entityName}) {
+    openViewModal(true, { record: ${entityName?uncap_first} });
+  }
+
+  /**
    * 修改
    * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
    */
@@ -137,7 +153,7 @@
    * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
    */
   function handleDelete(${entityName?uncap_first}: ${entityName}) {
-    if(${entityName?uncap_first}.id){
+    if (${entityName?uncap_first}.id) {
       delete${entityName}(${entityName?uncap_first}.id).then(() => {
         handleSuccess();
       });

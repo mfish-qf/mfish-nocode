@@ -11,9 +11,9 @@ import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.entity.SsoRole;
+import cn.com.mfish.common.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoRole;
-import cn.com.mfish.common.oauth.service.SsoRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Slf4j
 @Tag(name = "角色信息表")
@@ -45,13 +45,6 @@ public class SsoRoleController {
     @Resource
     SsoTenantMapper ssoTenantMapper;
 
-    /**
-     * 分页列表查询
-     *
-     * @param reqSsoRole
-     * @param reqPage
-     * @return
-     */
     @Operation(summary = "角色信息表-分页列表查询", description = "角色信息表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:role:query")
@@ -100,12 +93,6 @@ public class SsoRoleController {
         return wrapper;
     }
 
-    /**
-     * 添加
-     *
-     * @param ssoRole
-     * @return
-     */
     @Log(title = "角色信息表-添加", operateType = OperateType.INSERT)
     @Operation(summary = "角色信息表-添加", description = "角色信息表-添加")
     @PostMapping
@@ -115,12 +102,6 @@ public class SsoRoleController {
         return ssoRoleService.insertRole(ssoRole);
     }
 
-    /**
-     * 编辑
-     *
-     * @param ssoRole
-     * @return
-     */
     @Log(title = "角色信息表-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "角色信息表-编辑", description = "角色信息表-编辑")
     @PutMapping
@@ -140,12 +121,6 @@ public class SsoRoleController {
         return Result.fail(false, "错误:角色信息表-设置状态失败!");
     }
 
-    /**
-     * 通过id删除
-     *
-     * @param id
-     * @return
-     */
     @Log(title = "角色信息表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "角色信息表-通过id删除", description = "角色信息表-通过id删除")
     @DeleteMapping("/{id}")
@@ -157,26 +132,13 @@ public class SsoRoleController {
         return ssoRoleService.deleteRole(id);
     }
 
-    /**
-     * 通过id查询
-     *
-     * @param id
-     * @return
-     */
     @Operation(summary = "角色信息表-通过id查询", description = "角色信息表-通过id查询")
-    @GetMapping("/{id}")
+    @GetMapping("/{ids}")
     @RequiresPermissions("sys:role:query")
-    public Result<SsoRole> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
-        SsoRole ssoRole = ssoRoleService.getById(id);
-        return Result.ok(ssoRole, "角色信息表-查询成功!");
+    public Result<List<SsoRole>> queryByIds(@Parameter(name = "ids", description = "唯一性ID") @PathVariable String ids) {
+        return ssoRoleService.queryByIds(ids);
     }
 
-    /**
-     * 获取角色id-通过角色编码查询
-     *
-     * @param codes 角色编码，多个逗号分隔
-     * @return
-     */
     @Operation(summary = "获取角色id", description = "获取角色id-通过角色编码查询")
     @GetMapping("/ids")
     @InnerUser

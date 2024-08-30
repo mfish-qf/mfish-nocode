@@ -2,7 +2,6 @@ package cn.com.mfish.common.dblink.page;
 
 import cn.com.mfish.common.dblink.entity.QueryParam;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 

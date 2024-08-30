@@ -49,8 +49,8 @@ public class LocalStorage extends AbstractStorage {
     /**
      * 获取本地路径，补充本地目录信息
      *
-     * @param filePath
-     * @return
+     * @param filePath 传入的文件路径
+     * @return 补充后的完整文件路径
      */
     public String getFilePath(String filePath) {
         return this.storagePath + "/" + filePath;
