@@ -15,7 +15,7 @@ public class DataSetUtils {
      * 从列头信息中选择列名 当列名
      *
      * @param col 列
-     * @return
+     * @return 返回列名
      */
     public static String chooseColName(MetaDataHeader col) {
         //表达式为空时 返回别名
@@ -40,8 +40,9 @@ public class DataSetUtils {
      * @param i       从0开始循环
      * @param colName 列名称
      * @param set     从外将别名加入set
-     * @return
+     * @return 返回生成列名
      */
+    @SuppressWarnings("all")
     public static String calcColName(int i, String colName, Set<String> set) {
         while (true) {
             if (!set.contains(colName)) {

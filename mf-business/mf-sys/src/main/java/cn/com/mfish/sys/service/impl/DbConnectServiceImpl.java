@@ -26,7 +26,7 @@ import java.util.List;
  * @description: 数据库连接
  * @author: mfish
  * @date: 2023-03-13
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Service
 @RefreshScope
@@ -93,8 +93,8 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
     /**
      * 通过ID查询数据库配置
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回数据
      */
     public Result<DbConnect> queryById(String id) {
         DbConnect dbConnect = baseMapper.selectById(id);

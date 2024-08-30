@@ -83,17 +83,19 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
     /**
      * 获取请求中的参数串
      *
-     * @param serverHttpRequest
-     * @return
+     * @param serverHttpRequest 请求
+     * @return 请求参数
      */
     private String resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
         // 获取请求体
         Flux<DataBuffer> body = serverHttpRequest.getBody();
         AtomicReference<String> bodyRef = new AtomicReference<>();
         body.subscribe(buffer -> {
-            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.asByteBuffer());
-            DataBufferUtils.release(buffer);
-            bodyRef.set(charBuffer.toString());
+            try (DataBuffer.ByteBufferIterator iterator = buffer.readableByteBuffers()) {
+                CharBuffer charBuffer = StandardCharsets.UTF_8.decode(iterator.next());
+                DataBufferUtils.release(buffer);
+                bodyRef.set(charBuffer.toString());
+            }
         });
         return bodyRef.get();
     }
@@ -101,9 +103,9 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
     /**
      * 判断地址是否匹配，匹配则需要校验
      *
-     * @param path
-     * @param checkList
-     * @return
+     * @param path      地址
+     * @param checkList 检测列表
+     * @return 返回状态
      */
     private CheckStatus isMatch(String path, String[] checkList) {
         for (String cPath : checkList) {
@@ -122,7 +124,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
      *
      * @param map       参数
      * @param checkList 检测列表
-     * @return
+     * @return 返回状态
      */
     private boolean unMatchParam(Map<String, String> map, String[] checkList) {
         List<Boolean> matchList = new ArrayList<>();
@@ -155,8 +157,8 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
     /**
      * 获取参数map
      *
-     * @param param
-     * @return
+     * @param param 参数
+     * @return 返回参数
      */
     private Map<String, String> getParamMap(String param) {
         String[] params = param.split("&");

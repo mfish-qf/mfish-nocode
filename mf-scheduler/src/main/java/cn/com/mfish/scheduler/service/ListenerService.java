@@ -38,7 +38,7 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
         log.setJobName(trigger.getJobKey().getName());
         log.setJobGroup(trigger.getJobKey().getGroup());
         log.setThreadGroupName(Thread.currentThread().getThreadGroup().getName());
-        log.setThreadId(Long.toString(Thread.currentThread().getId()));
+        log.setThreadId(Long.toString(Thread.currentThread().threadId()));
         log.setThreadName(Thread.currentThread().getName());
         log.setThreadPriority(Long.toString(Thread.currentThread().getPriority()));
         log.setCreateDate(new Date());
@@ -48,8 +48,8 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 准备触发
      *
-     * @param context
-     * @throws SchedulerException
+     * @param context 任务执行的上下文环境，包含任务执行所需的相关信息
+     * @throws SchedulerException 如果保存日志操作失败，可能会抛出调度异常
      */
     public void saveTriggerFired(JobExecutionContext context) throws SchedulerException {
         if (!this.schedulerProperties.isLogFlag()) {
@@ -60,10 +60,11 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
 
     /**
      * 判断是否否决
+     * 本方法用于处理任务执行的否决逻辑，当任务执行被否决时，根据配置决定是否记录日志
      *
-     * @param context
-     * @return
-     * @throws SchedulerException
+     * @param context 任务执行的上下文环境，包含任务执行所需的相关信息
+     * @return 固定返回false，表示否决当前的任务执行
+     * @throws SchedulerException 如果保存日志操作失败，可能会抛出调度异常
      */
     public boolean saveVetoJobExecution(JobExecutionContext context) throws SchedulerException {
         if (this.schedulerProperties.isLogFlag()) {
@@ -75,8 +76,8 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 准备执行作业
      *
-     * @param context
-     * @throws SchedulerException
+     * @param context 任务执行的上下文环境，包含任务执行所需的相关信息
+     * @throws SchedulerException 如果保存日志操作失败，可能会抛出调度异常
      */
     public void saveJobToBeExecuted(JobExecutionContext context) throws SchedulerException {
         if (this.schedulerProperties.isLogFlag()) {
@@ -87,8 +88,8 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 作业执行被否决
      *
-     * @param context
-     * @throws SchedulerException
+     * @param context 任务执行的上下文环境，包含任务执行所需的相关信息
+     * @throws SchedulerException 如果保存日志操作失败，可能会抛出调度异常
      */
     public void saveJobExecutionVetoed(JobExecutionContext context) throws SchedulerException {
         if (this.schedulerProperties.isLogFlag()) {
@@ -100,9 +101,8 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 作业执行完毕
      *
-     * @param context
-     * @param jobException
-     * @throws SchedulerException
+     * @param context 任务执行的上下文环境，包含任务执行所需的相关信息
+     * @throws SchedulerException 如果保存日志操作失败，可能会抛出调度异常
      */
     public void saveJobWasExecuted(JobExecutionContext context, JobExecutionException jobException)
             throws SchedulerException {
@@ -127,10 +127,11 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 触发完成
      *
-     * @param context
-     * @param triggerInstructionCode
-     * @throws SchedulerException
+     * @param context 上下文对象，包含执行相关的信息
+     * @param triggerInstructionCode 触发器的执行指令代码
+     * @throws SchedulerException 如果保存过程中发生异常，则抛出调度异常
      */
+    @SuppressWarnings("unchecked")
     public void saveTriggerComplete(JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) throws SchedulerException {
         if (!this.schedulerProperties.isLogFlag()) {
             return;
@@ -154,11 +155,11 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 构造调度日志
      *
-     * @param context
-     * @param status
-     * @param result
-     * @param exceptionDetail
-     * @throws SchedulerException
+     * @param context         调度执行上下文，包含调度任务和触发器的相关信息
+     * @param status          调度任务的状态
+     * @param result          调度任务的结果
+     * @param exceptionDetail 异常详情，如果调度过程中出现异常，则记录异常信息
+     * @throws SchedulerException 如果保存日志过程中发生错误，则抛出调度器异常
      */
     private void save(JobExecutionContext context, String status, String result, String exceptionDetail) throws SchedulerException {
         // 获得计划任务实例
@@ -179,7 +180,7 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
         log.setJobGroup(context.getJobDetail().getKey().getGroup());
         log.setJobClass(context.getJobDetail().getJobClass().getName());
         log.setThreadGroupName(Thread.currentThread().getThreadGroup().getName());
-        log.setThreadId(Long.toString(Thread.currentThread().getId()));
+        log.setThreadId(Long.toString(Thread.currentThread().threadId()));
         log.setThreadName(Thread.currentThread().getName());
         log.setThreadPriority(Long.toString(Thread.currentThread().getPriority()));
         log.setScheduledId(s.getSchedulerInstanceId());

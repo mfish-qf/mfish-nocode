@@ -24,9 +24,12 @@ public class JobUtils {
 
     /**
      * 获取任务key
+     * <p>
+     * 根据提供的JobMeta对象，构建并返回一个JobKey实例该JobKey实例唯一标识了一个任务
+     * </p>
      *
-     * @param jobMeta
-     * @return
+     * @param jobMeta 任务元数据，包含了构建JobKey所需的信息，如任务名和任务组
+     * @return 返回根据jobMeta参数构建的JobKey实例
      */
     public static JobKey getJobKey(JobMeta jobMeta) {
         return JobKey.jobKey(jobMeta.getName(), jobMeta.getGroup());
@@ -35,13 +38,12 @@ public class JobUtils {
     /**
      * 创建任务
      *
-     * @param scheduler
-     * @param jobMeta
-     * @param cover
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
+     * @param scheduler Scheduler实例，用于操作任务调度
+     * @param jobMeta   任务元数据，包含任务的各种配置信息
+     * @param cover     是否覆盖现有任务的标志
+     * @throws SchedulerException 如果调度操作失败
      */
-    public static void createJob(Scheduler scheduler, JobMeta jobMeta, boolean cover) throws SchedulerException, ClassNotFoundException {
+    public static void createJob(Scheduler scheduler, JobMeta jobMeta, boolean cover) throws SchedulerException {
         // 设置jobKey
         JobKey jobKey = new JobKey(jobMeta.getName(), jobMeta.getGroup());
         //判断job是否存在
@@ -70,9 +72,13 @@ public class JobUtils {
 
     /**
      * 获取任务执行类
+     * <p>
+     * 根据是否允许并发，返回不同的任务执行类。如果允许并发，返回GeneralJobExecute.class；
+     * 如果不允许并发，返回DisallowConcurrentJobExecute.class。这种设计是为了在任务执行时，
+     * 能够根据任务的并发需求，选择合适的执行类，以确保任务的正确执行。
      *
-     * @param allowConcurrent
-     * @return
+     * @param allowConcurrent 是否允许并发执行
+     * @return 返回对应的任务执行类
      */
     public static Class<? extends QuartzJobBean> getJobClass(boolean allowConcurrent) {
         return allowConcurrent ? GeneralJobExecute.class : DisallowConcurrentJobExecute.class;
@@ -81,8 +87,8 @@ public class JobUtils {
     /**
      * 构建任务元数据
      *
-     * @param job
-     * @return
+     * @param job 任务
+     * @return 任务元数据，包含任务的各种配置信息
      */
     public static JobMeta buildJobDetailMeta(Job job) {
         JobMeta jobDetailMeta = new JobMeta();

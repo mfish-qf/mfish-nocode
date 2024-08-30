@@ -45,6 +45,9 @@ public class WeChatTokenServiceImpl implements TokenService<WeChatToken> {
     public void updateRefreshToken(WeChatToken token) {
         String key = RedisPrefix.buildRefreshTokenKey(token.getRefresh_token());
         Long expire = redisTemplate.getExpire(key);
+        if (expire == null) {
+            expire = token.getReTokenExpire();
+        }
         redisTemplate.opsForValue().set(key, token, expire, TimeUnit.SECONDS);
     }
 

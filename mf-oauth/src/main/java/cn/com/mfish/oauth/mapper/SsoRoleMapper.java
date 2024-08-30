@@ -12,7 +12,7 @@ import java.util.List;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 public interface SsoRoleMapper extends BaseMapper<SsoRole> {
     int insertRoleMenus(@Param("roleId") String roleId, @Param("menuList") List<String> menuList);
@@ -27,7 +27,7 @@ public interface SsoRoleMapper extends BaseMapper<SsoRole> {
      *
      * @param roleIds        角色id列表
      * @param containInvalid 是否包含失效用户 true包含 false不包含
-     * @return
+     * @return 用户id列表
      */
     List<String> getRoleUsers(@Param("roleIds") List<String> roleIds, @Param("containInvalid") boolean containInvalid);
 

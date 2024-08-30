@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 public interface DictService extends IService<Dict> {
     Result<Dict> updateDict(Dict dict);
@@ -16,17 +16,17 @@ public interface DictService extends IService<Dict> {
     /**
      * 字典编码是否存在
      *
-     * @param id
-     * @param dictCode
-     * @return
+     * @param id id
+     * @param dictCode 字典编码
+     * @return 返回是否存在
      */
     boolean isDictCodeExist(String id, String dictCode);
 
     /**
      * 删除字典
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回删除结果
      */
     Result<Boolean> deleteDict(String id);
 }

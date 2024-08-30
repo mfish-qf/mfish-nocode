@@ -34,12 +34,14 @@ public class InvokeUtils {
     /**
      * 反射调用方法
      *
-     * @param className
-     * @param methodName
-     * @param params
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
+     * @param className 类名，用于获取对应的Bean实例
+     * @param methodName 方法名，指定要调用的方法
+     * @param params 方法参数列表，可能影响方法的执行结果
+     * @return 调用方法后的返回值，类型依赖于被调用的方法
+     * @throws NoSuchMethodException 当找不到指定的方法时抛出
+     * @throws InvocationTargetException 调用方法时，如果方法抛出异常，则包装在该异常中抛出
+     * @throws IllegalAccessException 如果访问方法时存在访问限制，则抛出
+     * @throws ClassNotFoundException 如果类名找不到对应的类时抛出
      */
     public static <T> Object invokeMethod(String className, String methodName, List<T> params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         //本地方法直接通过类名无法获取到需要class.forName转换
@@ -50,14 +52,14 @@ public class InvokeUtils {
     /**
      * 调用 Feign方法
      *
-     * @param className
-     * @param methodName
-     * @param params
-     * @return
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
+     * @param className 类名，用于获取对应的Bean实例
+     * @param methodName 方法名，指定要调用的方法
+     * @param params 方法参数列表，可能影响方法的执行结果
+     * @return 调用方法后的返回值，类型依赖于被调用的方法
+     * @throws NoSuchMethodException 当找不到指定的方法时抛出
+     * @throws InvocationTargetException 调用方法时，如果方法抛出异常，则包装在该异常中抛出
+     * @throws IllegalAccessException 如果访问方法时存在访问限制，则抛出
+     * @throws ClassNotFoundException 如果类名找不到对应的类时抛出
      */
     public static <T> Object invokeFeignMethod(String className, String methodName, List<T> params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         //Feign方法直接通过类名能够获取到
@@ -68,14 +70,14 @@ public class InvokeUtils {
     /**
      * 通用调用方法
      *
-     * @param bean
-     * @param methodName
-     * @param params
-     * @return
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
+     * @param bean Bean实例
+     * @param methodName 方法名，指定要调用的方法
+     * @param params 方法参数列表，可能影响方法的执行结果
+     * @return 调用方法后的返回值，类型依赖于被调用的方法
+     * @throws NoSuchMethodException 当找不到指定的方法时抛出
+     * @throws InvocationTargetException 调用方法时，如果方法抛出异常，则包装在该异常中抛出
+     * @throws IllegalAccessException 如果访问方法时存在访问限制，则抛出
+     * @throws ClassNotFoundException 如果类名找不到对应的类时抛出
      */
     public static <T> Object invokeMethod(Object bean, String methodName, List<T> params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         if (params != null && !params.isEmpty()) {
@@ -83,8 +85,7 @@ public class InvokeUtils {
             List<Object> listValues = new ArrayList<>();
             for (T param : params) {
                 //支持invokeParams数组形式参数和简单类型普通数组形式参数，类似["aaaa",1,2L]
-                if (param instanceof InvokeParams) {
-                    InvokeParams iParam = (InvokeParams) param;
+                if (param instanceof InvokeParams iParam) {
                     //如果为设置类型，直接根据值获取类型。复杂类型不准确
                     if (StringUtils.isEmpty(iParam.getType())) {
                         listTypes.add(iParam.getValue().getClass());
@@ -111,8 +112,8 @@ public class InvokeUtils {
     /**
      * 调用参数转换成对象
      *
-     * @param params
-     * @return
+     * @param params 参数
+     * @return 返回转换后的参数对象
      */
     public static List<?> strParams2Obj(String params) {
         List<?> list = null;

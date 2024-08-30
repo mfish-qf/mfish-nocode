@@ -17,7 +17,7 @@ import java.util.List;
  * @description: 定时调度任务
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Data
 @TableName("qrtz_job")

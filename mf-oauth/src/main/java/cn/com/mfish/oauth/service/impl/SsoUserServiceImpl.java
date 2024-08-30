@@ -80,9 +80,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     /**
      * 修改用户密码
      *
-     * @param userId
-     * @param newPwd
-     * @return
+     * @param userId 用户id
+     * @param newPwd 新密码
+     * @return 返回结果
      */
     @Override
     public Result<Boolean> changePassword(String userId, String oldPwd, String newPwd) {
@@ -136,8 +136,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
      * 密码校验 密码长度必须8~16位
      * 密码必须由数字、字母、特殊字符组合
      *
-     * @param password
-     * @return
+     * @param password 密码
+     * @return 返回结果
      */
     private Result<Boolean> verifyPassword(String password) {
         if (StringUtils.isEmpty(password)) {
@@ -156,15 +156,16 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
      * 设置旧密码 将最后一次密码添加到最近密码列表中，密码逗号隔开
      * 只存储最近5次密码
      *
-     * @param oldPwd
-     * @param pwd
-     * @return
+     * @param oldPwd 旧密码
+     * @param pwd 密码
+     * @return 返回密码
+     *
      */
     private String setOldPwd(String oldPwd, String pwd) {
         String[] pwds = StringUtils.isEmpty(oldPwd) ? new String[0] : oldPwd.split(",");
         List<String> list = new ArrayList<>(Arrays.asList(pwds));
         if (list.size() >= 5) {
-            list.remove(0);
+            list.removeFirst();
         }
         if (!StringUtils.isEmpty(pwd)) {
             list.add(pwd);
@@ -208,7 +209,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Transactional
     public Result<SsoUser> updateUser(SsoUser user) {
         validateUser(user, "修改");
-        //帐号名称密码不在此处更新
+        //账号名称密码不在此处更新
         String account = user.getAccount();
         user.setAccount(null);
         user.setPassword(null);
@@ -216,11 +217,11 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (res > 0) {
             user.setAccount(account);
             if (null != user.getOrgIds()) {
-                log.info(MessageFormat.format("删除用户组织数量:{0}条", baseMapper.deleteUserOrg(user.getId(), null)));
+                log.info("删除用户组织数量:{}条", baseMapper.deleteUserOrg(user.getId(), null));
                 insertUserOrg(user.getId(), user.getOrgIds());
             }
             if (null != user.getRoleIds()) {
-                log.info(MessageFormat.format("删除用户角色数量:{0}条", baseMapper.deleteUserRole(user.getId())));
+                log.info("删除用户角色数量:{}条", baseMapper.deleteUserRole(user.getId()));
                 insertUserRole(user.getId(), user.getRoleIds());
             }
             //移除缓存下次登录时会自动拉取
@@ -268,10 +269,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         ssoUser.setDelFlag(1).setId(id);
         if (baseMapper.updateById(ssoUser) == 1) {
             CompletableFuture.runAsync(() -> clearCache.removeUserCache(id));
-            log.info(MessageFormat.format("删除用户成功,用户ID:{0}", id));
+            log.info("删除用户成功,用户ID:{}", id);
             return true;
         }
-        log.error(MessageFormat.format("删除用户失败,用户ID:{0}", id));
+        log.error("删除用户失败,用户ID:{}", id);
         return false;
     }
 
@@ -421,7 +422,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     /**
      * 获取在线用户
      *
-     * @return
+     * @return 返回在线用户列表
      */
     @Override
     public PageResult<OnlineUser> getOnlineUser(ReqPage reqPage) {
@@ -438,7 +439,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
                 List<Object> tokens = redisTemplate.opsForList().range(key, 0, -1);
                 //只显示一个token的登录时间
                 if (tokens != null && !tokens.isEmpty()) {
-                    Object token = OauthUtils.getToken(tokens.get(0).toString());
+                    Object token = OauthUtils.getToken(tokens.getFirst().toString());
                     OnlineUser user = null;
                     if (token instanceof RedisAccessToken) {
                         user = buildOnlineUser((RedisAccessToken) token, key.replace(RedisPrefix.DEVICE2TOKEN, ""));
@@ -446,7 +447,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
                         user = buildOnlineUser((WeChatToken) token, key.replace(RedisPrefix.DEVICE2TOKEN, ""));
                     }
                     if (user != null) {
-                        Long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.get(0).toString()));
+                        Long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.getFirst().toString()));
                         if (expire != null) {
                             user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
                             user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));

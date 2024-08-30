@@ -21,14 +21,11 @@ public class MetaDataCell implements Comparable<MetaDataCell> {
 
     @Override
     public int compareTo(@NotNull MetaDataCell cell) {
-        switch (cell.getHeader().getDataType()) {
-            case NUMBER:
-                return DataUtils.numCompare(this.getValue(), cell.getValue());
-            case DATE:
-                return DataUtils.dateCompare(this.getValue(), cell.getValue());
-            case STRING:
-                return DataUtils.strCompare(this.getValue(), cell.getValue());
-        }
-        return 0;
+        return switch (cell.getHeader().getDataType()) {
+            case NUMBER -> DataUtils.numCompare(this.getValue(), cell.getValue());
+            case DATE -> DataUtils.dateCompare(this.getValue(), cell.getValue());
+            case STRING -> DataUtils.strCompare(this.getValue(), cell.getValue());
+            default -> 0;
+        };
     }
 }

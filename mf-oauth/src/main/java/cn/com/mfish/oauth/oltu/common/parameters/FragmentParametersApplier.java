@@ -23,13 +23,12 @@ package cn.com.mfish.oauth.oltu.common.parameters;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.OAuthMessage;
 import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
-import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
 
 import java.util.Map;
 
 public class FragmentParametersApplier implements OAuthParametersApplier {
 
-    public OAuthMessage applyOAuthParameters(OAuthMessage message, Map<String, Object> params) throws OAuthSystemException {
+    public OAuthMessage applyOAuthParameters(OAuthMessage message, Map<String, Object> params) {
 
         String messageUrl = message.getLocationUri();
         if (messageUrl != null) {

@@ -29,9 +29,9 @@ public class SM2Utils {
     /**
      * 生成 SM2 公私钥对
      *
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidAlgorithmParameterException
+     * @return KeyPair 生成的密钥对
+     * @throws NoSuchAlgorithmException 当算法不可用时抛出此异常
+     * @throws InvalidAlgorithmParameterException 当算法参数无效时抛出此异常
      */
     public static KeyPair geneSM2KeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         final ECGenParameterSpec sm2Spec = new ECGenParameterSpec("sm2p256v1");
@@ -40,20 +40,19 @@ public class SM2Utils {
         // 使用SM2参数初始化生成器
         kpg.initialize(sm2Spec);
         // 获取密钥对
-        KeyPair keyPair = kpg.generateKeyPair();
-        return keyPair;
+        return kpg.generateKeyPair();
     }
 
     /**
      * 获取私钥（16进制字符串，头部不带00长度共64）
      *
      * @param privateKey 私钥
-     * @return
+     * @return 返回
      */
     public static String getPriKeyHexString(PrivateKey privateKey) {
         BCECPrivateKey s = (BCECPrivateKey) privateKey;
         String priKeyHexString = Hex.toHexString(s.getD().toByteArray());
-        if (null != priKeyHexString && priKeyHexString.length() == 66 && "00".equals(priKeyHexString.substring(0, 2))) {
+        if (priKeyHexString.length() == 66 && "00".equals(priKeyHexString.substring(0, 2))) {
             return priKeyHexString.substring(2);
         }
         return priKeyHexString;
@@ -62,8 +61,8 @@ public class SM2Utils {
     /**
      * 获取公钥（16进制字符串，头部带04长度共130）
      *
-     * @param publicKey
-     * @return
+     * @param publicKey 公钥
+     * @return 返回
      */
     public static String getPubKeyHexString(PublicKey publicKey) {
         BCECPublicKey p = (BCECPublicKey) publicKey;
@@ -75,7 +74,7 @@ public class SM2Utils {
      *
      * @param publicKey 公钥
      * @param data      明文数据
-     * @return
+     * @return 返回
      */
     public static String encrypt(PublicKey publicKey, String data) {
         BCECPublicKey p = (BCECPublicKey) publicKey;
@@ -87,7 +86,7 @@ public class SM2Utils {
      *
      * @param privateKey 私钥（16进制字符串）
      * @param cipherData 密文数据
-     * @return
+     * @return 返回
      */
     public static String decrypt(PrivateKey privateKey, String cipherData) {
         BCECPrivateKey s = (BCECPrivateKey) privateKey;
@@ -99,7 +98,7 @@ public class SM2Utils {
      *
      * @param pubKeyHexString 公钥（16进制字符串）
      * @param data            明文数据
-     * @return
+     * @return 返回
      */
     public static String encrypt(String pubKeyHexString, String data) {
         // 获取一条SM2曲线参数
@@ -121,6 +120,7 @@ public class SM2Utils {
         } catch (Exception e) {
             log.error("SM2加密时出现异常:" + e.getMessage(), e);
         }
+        assert arrayOfBytes != null;
         return Hex.toHexString(arrayOfBytes);
     }
 
@@ -129,7 +129,7 @@ public class SM2Utils {
      *
      * @param priKeyHexString 私钥（16进制字符串）
      * @param cipherData      密文数据
-     * @return
+     * @return 返回
      */
     public static String decrypt(String priKeyHexString, String cipherData) {
         // 使用BC库加解密时密文以04开头，传入的密文前面没有04则补上

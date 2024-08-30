@@ -32,9 +32,13 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
 
     /**
      * 增加列
+     * <p>
+     * 本方法用于向数据集元数据中添加一个新地列定义。它首先计算出一个唯一的列名，
+     * 确保该列名未被使用。如果计算出的列名为空，则抛出异常，表示列名生成失败。
+     * 如果计算出的列名与原始列名不一致，说明原始列名已存在，因此更新原始列名
+     * 为新的唯一列名。最后，将列名与列的元数据添加到数据集中。
      *
-     * @param header
-     * @return 返回列名
+     * @param header 列的元数据信息，包含列的初始名称和其他列属性
      */
     public void addColumn(MetaDataHeader header) {
         String colName = DataSetUtils.calcColName(0, DataSetUtils.chooseColName(header), this.keySet());
@@ -51,7 +55,8 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
      * 通过列名获取列头
      *
      * @param colName 列名
-     * @return
+     * @return 返回对应的列头信息，如果不存在则抛出异常
+     * @throws MyRuntimeException 如果给定的列名不存在于当前映射中，则抛出此异常
      */
     public MetaDataHeader getColHeader(String colName) {
         if (this.containsKey(colName)) {
@@ -64,7 +69,8 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
      * 根据索引获取列头
      *
      * @param index 列索引
-     * @return
+     * @return 返回指定索引的列头信息
+     * @throws MyRuntimeException 如果索引超出范围或未找到对应的列头，则抛出自定义运行时异常
      */
     public MetaDataHeader getColHeader(int index) {
         Iterator<Map.Entry<String, MetaDataHeader>> iterator = this.entrySet().iterator();
@@ -81,6 +87,7 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
         throw new MyRuntimeException(Constant.NotFoundException);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o) {
         if (this == o) {

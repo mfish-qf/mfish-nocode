@@ -14,7 +14,7 @@ import java.util.List;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 public interface DictCategoryService extends IService<DictCategory> {
 
@@ -23,7 +23,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      *
      * @param reqDictCategory 查询参数
      * @param reqPage         分页参数
-     * @return
+     * @return 返回结果
      */
     Result<PageResult<DictCategory>> queryCategoryTree(ReqDictCategory reqDictCategory, ReqPage reqPage);
 
@@ -31,7 +31,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 查询分类树
      *
      * @param reqDictCategory 查询参数
-     * @return
+     * @return 返回结果
      */
     Result<List<DictCategory>> queryCategoryTree(ReqDictCategory reqDictCategory);
 
@@ -39,7 +39,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 查询分类
      *
      * @param reqDictCategory 查询参数
-     * @return
+     * @return 返回结果
      */
     List<DictCategory> queryCategory(ReqDictCategory reqDictCategory);
 
@@ -47,7 +47,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 分页查询一级分类
      *
      * @param reqDictCategory 查询参数
-     * @return
+     * @return 返回结果
      */
     PageResult<DictCategory> queryOneLevelCategory(ReqDictCategory reqDictCategory, ReqPage reqPage);
 
@@ -56,7 +56,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 插入分类
      *
      * @param category 分类
-     * @return
+     * @return 返回结果
      */
     Result<DictCategory> insertCategory(DictCategory category);
 
@@ -64,7 +64,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 删除分类
      *
      * @param categoryId 分类id
-     * @return
+     * @return 返回结果
      */
     Result<Boolean> deleteCategory(String categoryId);
 
@@ -72,25 +72,25 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 修改分类
      *
      * @param category 分类
-     * @return
+     * @return 返回结果
      */
     Result<DictCategory> updateCategory(DictCategory category);
 
     /**
      * 根据分类编码查询分类目录树
      *
-     * @param fixCode
-     * @param direction
-     * @return
+     * @param fixCode 固定编码
+     * @param direction 查询方向
+     * @return 返回目录列表
      */
     List<DictCategory> queryCategoryTreeByCode(String fixCode, TreeDirection direction);
 
     /**
      * 根据分类编码查询分类目录列表
      *
-     * @param fixCode
-     * @param direction
-     * @return
+     * @param fixCode 固定编码
+     * @param direction 查询方向
+     * @return 返回目录列表
      */
     List<DictCategory> queryCategoryListByCode(String fixCode, TreeDirection direction);
 
@@ -98,7 +98,7 @@ public interface DictCategoryService extends IService<DictCategory> {
      * 判断分类id是否归属于固定编码分类
      *
      * @param categoryId 分类id
-     * @param fixCode   固定编码
+     * @param fixCode    固定编码
      * @param direction  检索方向
      * @return 归属分类信息
      */

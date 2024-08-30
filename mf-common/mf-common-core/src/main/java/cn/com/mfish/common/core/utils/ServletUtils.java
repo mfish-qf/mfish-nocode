@@ -7,10 +7,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: mfish
@@ -22,7 +19,7 @@ public class ServletUtils {
      * 获取String参数
      */
     public static String getParameter(String name) {
-        return getRequest().getParameter(name);
+        return Objects.requireNonNull(getRequest()).getParameter(name);
     }
 
     /**
@@ -30,7 +27,7 @@ public class ServletUtils {
      */
     public static HttpServletRequest getRequest() {
         try {
-            return getRequestAttributes().getRequest();
+            return Objects.requireNonNull(getRequestAttributes()).getRequest();
         } catch (Exception e) {
             return null;
         }
@@ -38,9 +35,10 @@ public class ServletUtils {
 
     /**
      * 获取header信息
+     * 该方法用于从HTTP请求中提取指定的header信息
      *
-     * @param header
-     * @return
+     * @param header 指定的header名称，不能为空
+     * @return 返回与header名称相对应的header值如果请求对象为null或指定的header不存在，则返回null
      */
     public static String getHeader(String header) {
         HttpServletRequest request = getRequest();
@@ -52,9 +50,13 @@ public class ServletUtils {
 
     /**
      * 获取请求属性
+     * <p>
+     * 本方法旨在从HTTP请求中获取特定的属性值通过提供属性名称，它首先确保有一个有效的请求对象存在
+     * 如果请求对象不存在，方法直接返回null表明在没有有效请求的情况下，无法获取属性
+     * 当请求对象存在时，方法则根据提供的属性名从请求中提取相应的属性值
      *
-     * @param attr
-     * @return
+     * @param attr 请求属性的名称，用于标识所需的属性
+     * @return 如果请求存在且指定的属性存在，则返回该属性值；否则返回null
      */
     public static Object getAttribute(String attr) {
         HttpServletRequest request = getRequest();
@@ -69,7 +71,7 @@ public class ServletUtils {
      */
     public static HttpServletResponse getResponse() {
         try {
-            return getRequestAttributes().getResponse();
+            return Objects.requireNonNull(getRequestAttributes()).getResponse();
         } catch (Exception e) {
             return null;
         }
@@ -79,7 +81,7 @@ public class ServletUtils {
      * 获取session
      */
     public static HttpSession getSession() {
-        return getRequest().getSession();
+        return Objects.requireNonNull(getRequest()).getSession();
     }
 
     public static ServletRequestAttributes getRequestAttributes() {

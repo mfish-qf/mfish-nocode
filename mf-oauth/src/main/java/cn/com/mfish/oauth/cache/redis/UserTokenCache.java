@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.cache.redis;
 
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.oauth.common.LoginMutexEntity;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import jakarta.annotation.Resource;
@@ -101,11 +102,14 @@ public class UserTokenCache {
 
     /**
      * 设置用户设备以及相关token信息
+     * <p>
+     * 此方法主要用于更新用户设备信息和与之关联的认证令牌它接受设备类型、设备ID、用户ID和令牌作为参数，
+     * 首先调用setUserDevice方法更新或设置用户设备信息，然后调用setToken方法更新该设备的认证令牌
      *
-     * @param deviceType
-     * @param userId
-     * @param deviceId
-     * @param token
+     * @param deviceType 设备类型，指明了用户所使用的设备类型，如移动设备、桌面设备等
+     * @param deviceId 设备的唯一标识符，用于区分不同的设备
+     * @param userId 用户的唯一标识符，用于区分不同的用户
+     * @param token 认证令牌，用于设备在系统中的认证和通信
      */
     private void setUserDevice(DeviceType deviceType, String deviceId, String userId, String token) {
         setUserDevice(deviceType, deviceId, userId);
@@ -116,9 +120,9 @@ public class UserTokenCache {
      * 设置当前用户设备
      * 当用户关闭浏览器重新登录会重新设置该信息
      *
-     * @param deviceType
-     * @param userId
-     * @param deviceId
+     * @param deviceType 设备类型，指明了用户所使用的设备类型，如移动设备、桌面设备等
+     * @param deviceId 设备的唯一标识符，用于区分不同的设备
+     * @param userId 用户的唯一标识符，用于区分不同的用户
      */
     private void setUserDevice(DeviceType deviceType, String deviceId, String userId) {
         //如果当前用户为空则不设置该属性
@@ -131,9 +135,9 @@ public class UserTokenCache {
     /**
      * 获取用户设备id
      *
-     * @param deviceType
-     * @param userId
-     * @return
+     * @param deviceType 设备类型，指明了用户所使用的设备类型，如移动设备、桌面设备等
+     * @param userId 用户的唯一标识符，用于区分不同的用户
+     * @return 用户设备id
      */
     private String getUserDevice(DeviceType deviceType, String userId) {
         if (StringUtils.isEmpty(userId)) {
@@ -145,8 +149,8 @@ public class UserTokenCache {
     /**
      * 一个设备可能对应多个token  存储token列表信息
      *
-     * @param deviceId
-     * @param token
+     * @param deviceId 设备的唯一标识符，用于区分不同的设备
+     * @param token 令牌
      */
     private void setToken(String deviceId, String token) {
         redisTemplate.opsForList().leftPush(RedisPrefix.buildDevice2TokenKey(deviceId), token);
@@ -156,7 +160,7 @@ public class UserTokenCache {
     /**
      * 删除token列表
      *
-     * @param deviceId
+     * @param deviceId 设备的唯一标识符，用于区分不同的设备
      */
     private void delTokenList(String deviceId) {
         List<Object> list = redisTemplate.opsForList().range(RedisPrefix.buildDevice2TokenKey(deviceId), 0, -1);
@@ -164,7 +168,10 @@ public class UserTokenCache {
             return;
         }
         for (Object obj : list) {
-            OauthUtils.delTokenAndRefreshToken(obj.toString());
+            LoginMutexEntity entity = OauthUtils.delTokenAndRefreshToken(obj.toString());
+            if (entity != null) {
+                log.info(entity.toString());
+            }
         }
         redisTemplate.delete(RedisPrefix.buildDevice2TokenKey(deviceId));
     }

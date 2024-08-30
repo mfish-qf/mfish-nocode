@@ -1,10 +1,10 @@
-import { BaseEntity, PageResult, ReqPage } from "/@/api/model/BaseModel";
+import { BaseEntity, PageResult, ReqPage } from "@/api/model/BaseModel";
 
 /**
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 export interface ${entityName} extends BaseEntity<<#if tableInfo.idType==''||tableInfo.idType=='String'>string<#else>number</#if>> {
 <#list tableInfo.columns as fieldInfo>

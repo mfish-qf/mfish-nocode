@@ -27,7 +27,7 @@ import java.util.List;
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Service
 public class JobSubscribeServiceImpl extends ServiceImpl<JobSubscribeMapper, JobSubscribe> implements JobSubscribeService {
@@ -89,8 +89,11 @@ public class JobSubscribeServiceImpl extends ServiceImpl<JobSubscribeMapper, Job
     public Result<Boolean> setStatus(JobSubscribe jobSubscribe) throws SchedulerException {
         if (baseMapper.updateById(new JobSubscribe().setId(jobSubscribe.getId()).setStatus(jobSubscribe.getStatus())) == 1) {
             JobSubscribe subscribe = baseMapper.selectById(jobSubscribe.getId());
+            if (subscribe == null) {
+                throw new MyRuntimeException("错误:修改状态失败-未获取到订阅信息");
+            }
             Job job = jobMapper.selectById(subscribe.getJobId());
-            if (subscribe == null || job == null) {
+            if (job == null) {
                 throw new MyRuntimeException("错误:修改状态失败-未获取到策略");
             }
             if (jobSubscribe.getStatus() == 1) {

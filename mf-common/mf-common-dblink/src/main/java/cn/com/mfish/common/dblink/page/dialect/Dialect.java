@@ -23,7 +23,7 @@ public interface Dialect {
     /**
      * 执行分页前，返回 true 会进行 count 查询，false 会继续下面的 beforePage 判断
      *
-     * @return
+     * @return 是否执行 count
      */
     boolean beforeCount();
 
@@ -31,7 +31,7 @@ public interface Dialect {
      * 生成 count 查询 sql
      *
      * @param boundSql 绑定 SQL 对象
-     * @return
+     * @return 返回SQL
      */
     String getCountSql(BoundSql boundSql);
 
@@ -46,7 +46,7 @@ public interface Dialect {
     /**
      * 执行分页前，返回 true 会进行分页查询，false 会返回默认查询结果
      *
-     * @return
+     * @return 是否执行分页查询
      */
     boolean beforePage();
 
@@ -54,7 +54,7 @@ public interface Dialect {
      * 生成分页查询 sql
      *
      * @param boundSql 绑定 SQL 对象
-     * @return
+     * @return 返回SQL
      */
     BoundSql getPageSql(BoundSql boundSql);
 
@@ -62,8 +62,9 @@ public interface Dialect {
      * 分页查询后，处理分页结果，拦截器中直接 return 该方法的返回值
      *
      * @param pageList 分页查询结果
-     * @return
+     * @return 返回结果
      */
+    @SuppressWarnings("rawtypes")
     <T extends Collection> T afterPage(T pageList);
 
     /**

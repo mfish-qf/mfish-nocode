@@ -38,7 +38,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
      * 参数支持普通对象数组类型 例如:["****",11] 和 invokeParams对象数组类型
      * 例如：[{"type":"java.lang.String","value":"inner"},{"type":"cn.com.mfish.sys.api.entity.SysLog","value":{"title":"aaaa"}}]
      *
-     * @param context
+     * @param context 任务上下文
      */
     @Override
     protected void executeInternal(JobExecutionContext context) {
@@ -74,8 +74,7 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
     /**
      * 任务开始执行
      *
-     * @param job
-     * @return
+     * @param job 任务
      */
     private static void beginExecute(Job job, String subscribeId) {
         JobLog jobLog = new JobLog().setId(Utils.uuid32())

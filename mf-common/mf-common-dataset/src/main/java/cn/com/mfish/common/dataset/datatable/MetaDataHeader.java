@@ -142,7 +142,7 @@ public class MetaDataHeader implements Serializable {
     /**
      * 拷贝一个头
      *
-     * @return
+     * @return 列头
      */
     public MetaDataHeader copy() {
         MetaDataHeader newHeader = new MetaDataHeader();

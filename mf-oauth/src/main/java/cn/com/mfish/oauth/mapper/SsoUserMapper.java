@@ -22,33 +22,33 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     /**
      * 根据账号查询用户信息 账号为account,phone,email,userId任意一种
      *
-     * @param account
-     * @return
+     * @param account 账号
+     * @return 用户信息
      */
     SsoUser getUserByAccount(@Param("account") String account);
 
     /**
      * 通过ID获取用户
      *
-     * @param userId
-     * @return
+     * @param userId 用户ID
+     * @return 用户信息
      */
     SsoUser getUserById(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
     /**
      * 通过用户ID获取用户角色
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 用户角色列表
      */
     List<UserRole> getUserRoles(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
     /**
      * 通过用户ID获取按钮权限
      *
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param userId 用户id
+     * @param tenantId 租户id
+     * @return 按钮权限列表
      */
     List<String> getUserPermissions(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
@@ -58,18 +58,18 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     /**
      * 根据微信openId获取用户id
      *
-     * @param openid
-     * @return
+     * @param openid 微信openid
+     * @return 用户id
      */
     @Select("select id from sso_user where openid=#{openId}")
     String getUserIdByOpenId(String openid);
 
     /**
-     * 判断帐号是否存在（帐号可以是邮箱、用户名、手机号）
+     * 判断帐号是否存在（账号可以是邮箱、用户名、手机号）
      *
-     * @param account
+     * @param account 账号
      * @param userId  排除自己
-     * @return
+     * @return 存在返回1，不存在返回0
      */
     Integer isAccountExist(@Param("account") String account, @Param("userId") String userId);
 
@@ -82,7 +82,7 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      *
      * @param userId 用户ID
      * @param roles  角色编码列表
-     * @return
+     * @return 影响行数
      */
     int insertUserRoleByRoleCode(@Param("userId") String userId, @Param("roles") List<String> roles);
 

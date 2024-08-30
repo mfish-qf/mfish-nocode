@@ -26,7 +26,7 @@ public class IDBuild {
      * 生成序列ID
      *
      * @param prefix ID前缀
-     * @return
+     * @return 返回ID
      */
     public static String getID(String prefix) {
         String id = prefix + new Date().getTime();
@@ -36,8 +36,8 @@ public class IDBuild {
     /**
      * 通过redis获取并发后缀编码
      *
-     * @param key
-     * @return
+     * @param key 序列key
+     * @return 返回后缀
      */
     private static String getSuffix(String key) {
         return getSequence(key).toString();
@@ -46,8 +46,8 @@ public class IDBuild {
     /**
      * 同一时间点请求序列递增，过期时间30秒
      *
-     * @param key
-     * @return
+     * @param key 序列key
+     * @return 返回序列
      */
     private static Long getSequence(String key) {
         RedisAtomicLong counter = new RedisAtomicLong(key, Objects.requireNonNull(redisTemplate.getConnectionFactory()));

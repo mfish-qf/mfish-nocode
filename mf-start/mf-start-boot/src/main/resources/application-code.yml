@@ -10,12 +10,13 @@ code:
       - src/main/java/${packageName}/service/impl/${entityName}ServiceImpl.java.ftl
       - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName#uncap_first}.data.ts.ftl
       - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName}Modal.vue.ftl
+      - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/${entityName}ViewModal.vue.ftl
       - mfish-nocode-view/src/views/${apiPrefix}/${entityName#kebab-case}/index.vue.ftl
       - mfish-nocode-view/src/api/${apiPrefix}/model/${entityName}Model.ts.ftl
       - mfish-nocode-view/src/api/${apiPrefix}/${entityName}.ts.ftl
     path: template
   savePath:
     #前端地址
-    front: E:/webcode
+    front: E:/javacode/mfish-nocode-pro
     #后端地址（需要指定到具体模块路径）
-    back: E:/javacode/mfish-nocode/mf-business/mf-sys
+    back: E:/javacode/mfish-nocode-pro/mf-business/mf-nocode

@@ -29,13 +29,11 @@ public enum FilterCondition {
     /**
      * 获取值
      *
-     * @return
      */
     private final String value;
     /**
      * 普通值条件
      *
-     * @return
      */
     private final String condition;
     /**
@@ -61,8 +59,8 @@ public enum FilterCondition {
     /**
      * 根据值获取操作条件
      *
-     * @param value
-     * @return
+     * @param value 操作条件的字符串表示
+     * @return 对应的操作条件，如果找不到则返回错误
      */
     public static FilterCondition forCondition(String value) {
         if (conditionMap.containsKey(value)) {

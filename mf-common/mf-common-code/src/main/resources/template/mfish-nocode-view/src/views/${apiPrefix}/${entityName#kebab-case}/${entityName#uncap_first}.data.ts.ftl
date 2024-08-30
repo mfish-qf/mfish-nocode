@@ -1,11 +1,13 @@
-import { BasicColumn } from "/@/components/general/Table";
-import { FormSchema } from "/@/components/general/Table";
+import { BasicColumn } from "@/components/general/Table";
+import { FormSchema } from "@/components/general/Table";
+import { DescItem } from "@/components/general/Description";
 <#assign dictIndex = 0>
 <#list searchList as search>
 <#if search.component??>
 <#list search.component as com>
 <#if com_index == 1&&dictIndex==0>
-import { getDictProps } from "/@/utils/DictUtils";
+import { buildDictTag, getDictProps } from "@/utils/DictUtils";
+import { h } from "vue";
 <#assign dictIndex = 1>
 </#if>
 </#list>
@@ -16,7 +18,7 @@ import { getDictProps } from "/@/utils/DictUtils";
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 export const columns: BasicColumn[] = [
 <#list tableInfo.columns as fieldInfo>
@@ -90,3 +92,30 @@ export const ${entityName?uncap_first}FormSchema: FormSchema[] = [
   },
 </#list>
 ];
+
+export class ${entityName}Desc {
+  viewSchema: DescItem[] = [
+    {
+      label: "id",
+      field: "id",
+      show: () => false
+    },
+<#list tableInfo.fieldExpands as fieldExpands>
+    {
+    <#if fieldExpands.dictComponent??>
+    <#list fieldExpands.dictComponent as com>
+    <#if com_index == 0>
+    <#elseif com_index == 1>
+      render: (val) => {
+        if (val === undefined) return;
+        return buildDictTag("${com}", val);
+      },
+    </#if>
+    </#list>
+    </#if>
+      field: "${fieldExpands.fieldInfo.fieldName}",
+      label: "${fieldExpands.fieldInfo.comment}"
+    },
+</#list>
+  ]
+}

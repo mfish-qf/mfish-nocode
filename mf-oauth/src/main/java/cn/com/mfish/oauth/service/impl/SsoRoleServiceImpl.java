@@ -7,6 +7,7 @@ import cn.com.mfish.common.oauth.entity.SsoRole;
 import cn.com.mfish.common.oauth.service.SsoRoleService;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.mapper.SsoRoleMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Service
 @Slf4j
@@ -93,7 +95,7 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     /**
      * 移除角色相关缓存
      *
-     * @param roleId
+     * @param roleId 角色id
      */
     private void removeRoleCache(String roleId) {
         //查询角色对应的用户并删除角色权限缓存
@@ -104,8 +106,8 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
     /**
      * 判断roleCode是否存在
      *
-     * @param roleCode
-     * @return
+     * @param roleCode 角色编码
+     * @return 返回是否存在
      */
     @Override
     public boolean roleCodeExist(String roleId, String tenantId, String roleCode) {
@@ -138,5 +140,14 @@ public class SsoRoleServiceImpl extends ServiceImpl<SsoRoleMapper, SsoRole> impl
             return Result.fail("错误：未获取到用户");
         }
         return Result.ok(list, "获取用户成功");
+    }
+
+    @Override
+    public Result<List<SsoRole>> queryByIds(String ids) {
+        if (StringUtils.isEmpty(ids)) {
+            return Result.fail(null, "错误:id不允许为空");
+        }
+        String[] idList = ids.split(",");
+        return Result.ok(baseMapper.selectList(new LambdaQueryWrapper<SsoRole>().in(SsoRole::getId, Arrays.asList(idList))), "角色列表-查询成功!");
     }
 }

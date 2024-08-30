@@ -34,7 +34,7 @@ public class ClearCache {
     /**
      * 移除用户相关缓存
      *
-     * @param userId
+     * @param userId 用户id
      */
     public void removeUserCache(String userId) {
         userTempCache.removeOneCache(userId);
@@ -45,7 +45,7 @@ public class ClearCache {
     /**
      * 移除用户角色，权限相关缓存
      *
-     * @param userIds
+     * @param userIds 用户id
      */
     public void removeUserAuthCache(List<String> userIds) {
         if (userIds == null || userIds.isEmpty()) {

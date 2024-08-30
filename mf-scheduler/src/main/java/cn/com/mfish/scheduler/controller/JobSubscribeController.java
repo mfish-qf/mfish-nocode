@@ -19,14 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.3.0
+ * @version: V1.3.1
  */
 @Slf4j
 @Tag(name = "任务订阅表")
@@ -96,7 +95,7 @@ public class JobSubscribeController {
     @Operation(summary = "设置订阅状态", description = "设置订阅状态")
     @PutMapping("/status")
     @RequiresPermissions("sys:job:update")
-    public Result<Boolean> setStatus(@RequestBody JobSubscribe jobSubscribe) throws SchedulerException, ClassNotFoundException {
+    public Result<Boolean> setStatus(@RequestBody JobSubscribe jobSubscribe) throws SchedulerException {
         return jobSubscribeService.setStatus(jobSubscribe);
     }
 

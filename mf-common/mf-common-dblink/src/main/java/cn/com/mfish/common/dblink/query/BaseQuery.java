@@ -49,14 +49,14 @@ public class BaseQuery {
      * 查询数据
      *
      * @param boundSql sql包装类
-     * @return
+     * @return 结果
      */
     public MetaDataTable query(BoundSql boundSql) {
         return query(boundSql, rs -> {
             try {
                 return getMetaDataTable(rs, getColHeaders(rs.getMetaData()));
             } catch (SQLException e) {
-                log.error(String.format("获取metaData异常:%s，Msg:%s", boundSql.getSql(), e));
+                log.error("获取metaData异常:{}", boundSql.getSql(), e);
                 throw new MyRuntimeException(e);
             }
         });
@@ -65,16 +65,16 @@ public class BaseQuery {
     /**
      * 查询泛型结果
      *
-     * @param boundSql
-     * @param <T>
-     * @return
+     * @param boundSql sql包装类
+     * @param <T>      泛型
+     * @return 返回结果
      */
     public <T> Page<T> query(BoundSql boundSql, Class<T> cls) {
         return query(boundSql, rs -> {
             try {
                 return changeT(rs, cls);
             } catch (Exception e) {
-                log.error(String.format("获取metaData异常:%s，Msg:%s", boundSql.getSql(), e));
+                log.error("获取metaData异常:{}", boundSql.getSql(), e);
                 throw new MyRuntimeException(e);
             }
         });
@@ -86,7 +86,7 @@ public class BaseQuery {
      * @param rs  结果
      * @param cls 类型
      * @param <T> 泛型
-     * @return
+     * @return 返回结果
      * @throws SQLException           sql异常
      * @throws InstantiationException 反射异常
      * @throws IllegalAccessException 反射异常
@@ -151,8 +151,9 @@ public class BaseQuery {
      * @param boundSql sql包装类
      * @param function 结果处理函数
      * @param <R>      返回结果类型
-     * @return
+     * @return 返回结果
      */
+    @SuppressWarnings("all")
     protected <R> R query(BoundSql boundSql, Function<ResultSet, R> function) {
         ResultSet rs = null;
         PreparedStatement stmt = null;
@@ -164,15 +165,14 @@ public class BaseQuery {
                     setParams(stmt, i, boundSql);
                 }
             }
-            log.info("执行查询:" + boundSql.getSql());
-            log.info("参数:" + boundSql.getParams());
+            log.info("执行查询:{},参数:{}", boundSql.getSql(), boundSql.getParams());
             long start = System.currentTimeMillis();
             rs = stmt.executeQuery();
             long end = System.currentTimeMillis();
-            log.info("查询SQL耗时:" + (end - start));
+            log.info("查询SQL耗时:{}", end - start);
             return function.apply(rs);
         } catch (ParseException | SQLException ex) {
-            log.error(String.format("执行SQL:%s，Msg:%s", boundSql.getSql(), ex));
+            log.error("执行SQL:{}", boundSql.getSql(), ex);
             throw new MyRuntimeException(ex);
         } finally {
             PoolManager.release();
@@ -214,15 +214,15 @@ public class BaseQuery {
     /**
      * 获取列头
      *
-     * @param boundSql
-     * @return
+     * @param boundSql sql包装
+     * @return 返回列头
      */
     public MetaDataHeaders getColHeaders(BoundSql boundSql) {
         return query(boundSql, (rs) -> {
             try {
                 return getColHeaders(rs.getMetaData());
             } catch (SQLException e) {
-                log.error(String.format("获取metaData异常:%s，Msg:%s", boundSql.getSql(), e));
+                log.error("获取metaData异常:{}", boundSql.getSql(), e);
                 throw new MyRuntimeException(e);
             }
         });
@@ -232,7 +232,7 @@ public class BaseQuery {
      * 获取元数据表头
      *
      * @param rsMataData 数据库元数据
-     * @return
+     * @return 返回表头
      */
     private MetaDataHeaders getColHeaders(final ResultSetMetaData rsMataData) {
         try {
@@ -256,7 +256,7 @@ public class BaseQuery {
             }
             return headers;
         } catch (SQLException ex) {
-            log.error("获取列失败" + ex.getMessage(), ex);
+            log.error("获取列失败{}", ex.getMessage(), ex);
         }
         return null;
     }
@@ -266,8 +266,8 @@ public class BaseQuery {
      *
      * @param rs      结果
      * @param headers 表头
-     * @return
-     * @throws SQLException
+     * @return 返回元数据表格
+     * @throws SQLException 异常
      */
     protected MetaDataTable getMetaDataTable(final ResultSet rs, final MetaDataHeaders headers) throws SQLException {
         final MetaDataTable table = new MetaDataTable(headers);
@@ -293,7 +293,7 @@ public class BaseQuery {
             table.add(row);
         }
         long end = System.currentTimeMillis();
-        log.info("组合table耗时:" + (end - start));
+        log.info("组合table耗时:{}", end - start);
         return table;
     }
 
@@ -302,7 +302,7 @@ public class BaseQuery {
      *
      * @param columnTypeName 列类型名称
      * @param value          查询值
-     * @return
+     * @return 返回格式化后的值
      */
     public Object formatValue(String columnTypeName, Object value) {
         if (value == null) {
@@ -334,7 +334,7 @@ public class BaseQuery {
     /**
      * 获取连接
      *
-     * @return
+     * @return 返回连接
      * @throws SQLException sql异常
      */
     public Connection getConnect() throws SQLException {

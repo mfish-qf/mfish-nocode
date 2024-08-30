@@ -23,7 +23,7 @@ public class WebRequest {
         if (t instanceof ServerHttpRequest) {
             List<String> list = ((ServerHttpRequest) t).getQueryParams().get(var1);
             if (list != null && !list.isEmpty()) {
-                return list.get(0);
+                return list.getFirst();
             }
         }
         return null;

@@ -69,8 +69,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     /**
      * 构建设置code,token公共属性
      *
-     * @param request
-     * @return
+     * @param request 请求参数
+     * @return code对象
      */
     private AuthorizationCode setProperty(OAuthRequest request) {
         AuthorizationCode code = new AuthorizationCode();
@@ -85,7 +85,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         List<TenantVo> tenants = ssoUserService.getUserTenants(code.getUserId());
         if (tenants != null && !tenants.isEmpty()) {
             //设置第一个为默认登录租户
-            code.setTenantId(tenants.get(0).getId());
+            code.setTenantId(tenants.getFirst().getId());
         }
         code.setAccount(user.getAccount());
         code.setCodeSessionId(subject.getSession().getId().toString());
@@ -113,8 +113,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     /**
      * password方式登录 直接构造token
      *
-     * @param oAuthTokenRequest
-     * @return
+     * @param oAuthTokenRequest 请求
+     * @return token对象
      */
     @Override
     public RedisAccessToken buildToken(OAuthTokenRequest oAuthTokenRequest) {

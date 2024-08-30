@@ -16,7 +16,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MfMonitorApplication {
     public static void main(String[] args) {
         SpringApplication.run(MfMonitorApplication.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼监控中心启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼监控中心启动成功-----------------------
+                \t""");
     }
 }

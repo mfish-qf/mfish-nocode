@@ -70,7 +70,8 @@ public class WeChatController {
         String openid = session.getOpenid();
         String userId = weChatService.getUserIdByOpenId(openid);
         if (!StringUtils.isEmpty(userId)) {
-            AccessToken token = new AccessToken(weChatService.buildWeChatToken(openid, session.getSessionKey(), userId));
+            WeChatToken weChatToken = weChatService.buildWeChatToken(openid, session.getSessionKey(), userId);
+            AccessToken token = new AccessToken(weChatToken.getAccess_token(), weChatToken.getRefresh_token(), weChatToken.getExpires_in());
             userTokenCache.addUserTokenCache(DeviceType.WX, openid, userId, token.getAccess_token());
             return token;
         }
@@ -82,7 +83,7 @@ public class WeChatController {
      * 获取微信session
      *
      * @param code 微信认证code
-     * @return
+     * @return 返回微信session
      */
     private WxMaJscode2SessionResult getSession(String code) {
         if (StringUtils.isEmpty(code)) {
@@ -161,8 +162,8 @@ public class WeChatController {
         String openid = session.getOpenid();
         String userId = weChatService.getUserIdByOpenId(openid);
         if (!StringUtils.isEmpty(userId)) {
-            return new AccessToken(weChatService
-                    .buildWeChatToken(openid, session.getSessionKey(), userId));
+            WeChatToken weChatToken = weChatService.buildWeChatToken(openid, session.getSessionKey(), userId);
+            return new AccessToken(weChatToken.getAccess_token(), weChatToken.getRefresh_token(), weChatToken.getExpires_in());
         }
         //TODO 此处clientId暂时写死后期可能需要修改
         Result<String> loginResult = loginService.login(phone, password, SerConstant.LoginType.短信登录, "system", "false");
@@ -170,8 +171,9 @@ public class WeChatController {
             nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
-            AccessToken token = new AccessToken(weChatService
-                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getData()));
+            WeChatToken weChatToken = weChatService
+                    .buildWeChatToken(openid, session.getSessionKey(), loginResult.getData());
+            AccessToken token = new AccessToken(weChatToken.getAccess_token(), weChatToken.getRefresh_token(), weChatToken.getExpires_in());
             userTokenCache.addUserTokenCache(DeviceType.WX, openid, loginResult.getData(), token.getAccess_token());
             return token;
         }
@@ -207,7 +209,8 @@ public class WeChatController {
         }
         String userId = weChatService.getUserIdByOpenId(openid);
         if (!StringUtils.isEmpty(userId)) {
-            return new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, userId));
+            WeChatToken weChatToken = weChatService.buildWeChatToken(openid, sessionKey, userId);
+            return new AccessToken(weChatToken.getAccess_token(), weChatToken.getRefresh_token(), weChatToken.getExpires_in());
         }
         WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNumber(code);
         String phone = phoneNoInfo.getPhoneNumber();
@@ -217,7 +220,8 @@ public class WeChatController {
             nickname = Utils.phoneMasking(phone);
         }
         if (loginResult.isSuccess() && weChatService.bindWeChat(openid, loginResult.getData(), nickname)) {
-            AccessToken token = new AccessToken(weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData()));
+            WeChatToken weChatToken = weChatService.buildWeChatToken(openid, sessionKey, loginResult.getData());
+            AccessToken token = new AccessToken(weChatToken.getAccess_token(), weChatToken.getRefresh_token(), weChatToken.getExpires_in());
             userTokenCache.addUserTokenCache(DeviceType.WX, openid, loginResult.getData(), token.getAccess_token());
             return token;
         }

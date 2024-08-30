@@ -26,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author: mfish
@@ -42,7 +43,7 @@ public class LogAspect {
 
     @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String origin = request.getHeader(RPCConstants.REQ_ORIGIN);
         if (!StringUtils.isEmpty(origin) && origin.equals(RPCConstants.INNER)) {
             //内部请求不记入日志
@@ -74,36 +75,35 @@ public class LogAspect {
     }
 
     /**
-     * 获取请求参数
+     * 获取请求参数并格式化为字符串
      *
-     * @param paramsArray 获取请求参数
-     * @return
+     * @param paramsArray 请求参数数组，包含可能的各种类型参数
+     * @return 格式化后的参数字符串，如果没有参数则返回空字符串
      */
     private String getParams(Object[] paramsArray) {
-        String params = "";
+        StringBuilder params = new StringBuilder();
         if (paramsArray != null) {
             for (Object obj : paramsArray) {
-                if (null == obj || obj instanceof Map && ((Map) obj).isEmpty() || obj instanceof HttpServletResponse) {
+                if (null == obj || obj instanceof Map && ((Map<?, ?>) obj).isEmpty() || obj instanceof HttpServletResponse) {
                     continue;
                 }
                 if (obj instanceof String) {
-                    params += "," + obj;
+                    params.append(",").append(obj);
                     continue;
                 }
-                if (obj instanceof HttpServletRequest) {
-                    HttpServletRequest request = (HttpServletRequest) obj;
+                if (obj instanceof HttpServletRequest request) {
                     obj = request.getParameterMap();
                 }
                 try {
-                    params += "," + JSON.toJSONString(obj);
+                    params.append(",").append(JSON.toJSONString(obj));
                 } catch (Exception ex) {
                     log.error("参数转json出错", ex);
-                    params += obj.toString();
+                    params.append(obj.toString());
                 }
             }
         }
-        if (StringUtils.isEmpty(params)) {
-            return params;
+        if (StringUtils.isEmpty(params.toString())) {
+            return params.toString();
         }
         return params.substring(1);
     }

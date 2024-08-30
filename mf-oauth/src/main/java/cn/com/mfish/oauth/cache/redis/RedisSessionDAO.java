@@ -69,7 +69,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
     /**
      * 保存session
      *
-     * @param session
+     * @param session session
      */
     private void saveSession(Session session) {
         if (session == null || session.getId() == null) {
@@ -85,8 +85,8 @@ public class RedisSessionDAO extends AbstractSessionDAO {
     /**
      * 获取当前Key
      *
-     * @param key
-     * @return
+     * @param key key
+     * @return key
      */
     private String getKey(Object key) {
         return this.keyPrefix + ":" + (key == null ? "*" : key);

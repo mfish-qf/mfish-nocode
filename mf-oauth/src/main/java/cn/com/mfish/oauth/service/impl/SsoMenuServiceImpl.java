@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Service
 public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> implements SsoMenuService {
@@ -105,7 +105,7 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
             }
             list.set(0, ssoMenu);
             //父节点发生变化，重新生成序列
-            baseMapper.deleteBatchIds(list.stream().map(SsoMenu::getId).collect(Collectors.toList()));
+            baseMapper.deleteByIds(list.stream().map(SsoMenu::getId).collect(Collectors.toList()));
             for (SsoMenu menu : list) {
                 if (baseMapper.insertMenu(menu) <= 0) {
                     throw new MyRuntimeException("错误:更新菜单失败");

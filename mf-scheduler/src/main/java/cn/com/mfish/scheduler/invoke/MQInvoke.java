@@ -1,10 +1,7 @@
 package cn.com.mfish.scheduler.invoke;
 
-import cn.com.mfish.common.core.utils.SpringBeanFactory;
-import cn.com.mfish.common.scheduler.config.properties.ProductProperties;
 import cn.com.mfish.common.scheduler.api.entity.JobLog;
 import lombok.extern.slf4j.Slf4j;
-//import org.apache.rocketmq.spring.core.RocketMQTemplate;
 
 import java.util.List;
 
@@ -19,9 +16,9 @@ public class MQInvoke implements BaseInvoke {
     /**
      * 消息推送调度
      *
-     * @param jobLog
-     * @param params
-     * @return
+     * @param jobLog 任务日志
+     * @param params 请求参数
+     * @return 返回结果
      */
     @Override
     public <T> Object run(JobLog jobLog, List<T> params) {

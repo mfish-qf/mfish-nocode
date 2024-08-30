@@ -12,7 +12,7 @@ import java.util.List;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
     int insertMenu(SsoMenu ssoMenu);
@@ -24,8 +24,8 @@ public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
     /**
      * 获取按钮权限用户
      *
-     * @param menuId
-     * @return
+     * @param menuId 菜单ID
+     * @return 用户ID集合
      */
     List<String> queryMenuUser(@Param("menuId") String menuId);
 

@@ -18,10 +18,12 @@ public class MixDataScopeHandle {
 
     /**
      * 转换为数据权限SQL
+     * 该方法主要用于根据提供的数据权限信息，动态修改SQL查询语句，以实现数据权限的控制
+     * 它会检查每个提供的数据权限字段，并在原始SQL语句中加入相应的限制条件，以确保数据查询符合权限设置
      *
-     * @param oriSql
-     * @param map
-     * @return
+     * @param oriSql 原始SQL语句
+     * @param map 包含数据权限信息的映射，键为字段名，值为该字段的数据权限值列表
+     * @return 修改后的SQL语句
      */
     public static String sqlChange(String oriSql, Map<String, List<DataScopeValue>> map) {
         for (Map.Entry<String, List<DataScopeValue>> entry : map.entrySet()) {
@@ -48,10 +50,10 @@ public class MixDataScopeHandle {
     /**
      * 转换为数据权限SQL
      *
-     * @param sql
-     * @param table
-     * @param condition
-     * @return
+     * @param sql 原始SQL语句
+     * @param table 表名
+     * @param condition 数据权限条件
+     * @return 转换后的SQL语句
      */
     private static String sqlChange(String sql, String table, String condition) {
         List<DataScopeUtils.SqlSplit> list = DataScopeUtils.splitSql(sql, table);
@@ -70,9 +72,9 @@ public class MixDataScopeHandle {
     /**
      * 构建替换SQL
      *
-     * @param table
-     * @param condition
-     * @return
+     * @param table 表名
+     * @param condition 数据权限条件
+     * @return 替换后的SQL
      */
     private static String buildReplaceSql(String table, String condition) {
         if (StringUtils.isEmpty(condition)) {

@@ -14,7 +14,12 @@ import org.springframework.boot.SpringApplication;
 public class MfNoCodeStart {
     public static void main(String[] args) {
         SpringApplication.run(MfNoCodeStart.class, args);
-        log.info("\n\t----------------------------------------------------------\n\t" +
-                "\n\t--------------------摸鱼低代码平台启动成功-----------------------\n\t");
+        log.info("""
+                
+                \t----------------------------------------------------------
+                \t\
+                
+                \t--------------------摸鱼低代码平台启动成功-----------------------
+                \t""");
     }
 }

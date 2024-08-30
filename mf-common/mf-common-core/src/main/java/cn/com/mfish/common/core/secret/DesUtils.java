@@ -36,10 +36,10 @@ public class DesUtils {
     }
 
 
-    /***
+    /**
      * 获取加密的信息
-     * @param str
-     * @return
+     * @param str 待加密的字符串
+     * @return 加密后的字符串
      */
     public static String encrypt(String str) {
         //基于BASE64编码，接收byte[]并转换成String
@@ -62,8 +62,8 @@ public class DesUtils {
 
     /***
      * 获取解密之后的信息
-     * @param str
-     * @return
+     * @param str 需要解密的字符串
+     * @return 解密后的字符串
      */
     public static String decrypt(String str) {
         try {

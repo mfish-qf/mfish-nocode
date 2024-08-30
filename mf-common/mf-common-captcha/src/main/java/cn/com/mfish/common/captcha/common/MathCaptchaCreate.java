@@ -19,7 +19,7 @@ public class MathCaptchaCreate extends DefaultTextCreator {
         int y = random.nextInt(10);
         StringBuilder sb;
         int seed = (int) Math.round(Math.random() * 2);
-        Integer result;
+        int result;
         switch (seed) {
             case 0:
                 sb = createFormula(NUMBERS[x], "*", NUMBERS[y]);
@@ -48,7 +48,7 @@ public class MathCaptchaCreate extends DefaultTextCreator {
                 result = x + y;
                 break;
         }
-        sb.append("=?#" + result);
+        sb.append("=?#").append(result);
         return sb.toString();
     }
 

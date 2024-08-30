@@ -81,7 +81,7 @@ public class ExcelUtils {
                 }
             }
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), list.get(0).getClass())
+            EasyExcel.write(response.getOutputStream(), list.getFirst().getClass())
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                     .autoCloseStream(Boolean.FALSE).sheet("sheet1")
                     .doWrite(list);
@@ -102,7 +102,6 @@ public class ExcelUtils {
      * @param filePath     文件路径（不包含名称）
      * @param fileName     文件名称（不包含后缀默认为xlsx）
      * @param map          数据
-     * @throws IOException
      */
     public static void write(String templatePath, String fileName, String filePath, Map<String, Object> map) throws IOException {
         ExcelWriter excelWriter = EasyExcel.write(filePath + "/" + fileName + SUFFIX).withTemplate(new ClassPathResource(templatePath).getInputStream()).build();
@@ -116,7 +115,6 @@ public class ExcelUtils {
      * @param templatePath 文件模板路径
      * @param outputStream 文件流
      * @param map          数据
-     * @throws IOException
      */
     public static void write(String templatePath, OutputStream outputStream, Map<String, Object> map) throws IOException {
         ExcelWriter excelWriter = EasyExcel.write(outputStream).withTemplate(new ClassPathResource(templatePath).getInputStream()).build();
@@ -140,7 +138,7 @@ public class ExcelUtils {
         try {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 if (entry.getValue() instanceof List) {
-                    excelWriter.fill(new FillWrapper(entry.getKey(), (List) entry.getValue()), fillConfig, writeSheet);
+                    excelWriter.fill(new FillWrapper(entry.getKey(), (List<?>) entry.getValue()), fillConfig, writeSheet);
                 }
             }
             excelWriter.fill(map, writeSheet);
@@ -156,7 +154,6 @@ public class ExcelUtils {
      * @param templatePath 模板路径
      * @param fileName     文件名称（不包含后缀默认为xlsx）
      * @param map          数据
-     * @throws IOException
      */
     public static void write(String templatePath, String fileName, Map<String, Object> map) throws IOException {
         if (StringUtils.isEmpty(fileName)) {
@@ -189,7 +186,7 @@ public class ExcelUtils {
      * 读取excel头
      *
      * @param filePath 文件路径
-     * @return
+     * @return 包含excel头信息的LinkedHashMap，键为列索引，值为列头名称
      */
     public static LinkedHashMap<Integer, String> readHeader(String filePath) {
         File file = new File(filePath);
@@ -200,7 +197,7 @@ public class ExcelUtils {
      * 读取excel头
      *
      * @param file 文件
-     * @return
+     * @return 包含excel头信息的LinkedHashMap，键为列索引，值为列名
      */
     public static LinkedHashMap<Integer, String> readHeader(File file) {
         FileInputStream inputStream;
@@ -217,7 +214,7 @@ public class ExcelUtils {
      * 读取excel头
      *
      * @param stream 文件流
-     * @return
+     * @return 包含excel头信息的LinkedHashMap，键为列索引，值为列名
      */
     public static LinkedHashMap<Integer, String> readHeader(InputStream stream) {
         try {
@@ -240,7 +237,7 @@ public class ExcelUtils {
      *
      * @param filePath 文件路径
      * @param reqPage  分页
-     * @return
+     * @return 翻页数据
      */
     public static PageResult<Map<String, String>> read(String filePath, ReqPage reqPage) {
         File file = new File(filePath);
@@ -252,7 +249,7 @@ public class ExcelUtils {
      *
      * @param file    文件
      * @param reqPage 分页
-     * @return
+     * @return 返回分页数据
      */
     public static PageResult<Map<String, String>> read(File file, ReqPage reqPage) {
         FileInputStream inputStream;
@@ -270,7 +267,7 @@ public class ExcelUtils {
      *
      * @param stream  文件流
      * @param reqPage 分页
-     * @return
+     * @return 返回分页数据
      */
     public static PageResult<Map<String, String>> read(InputStream stream, ReqPage reqPage) {
         try {
@@ -293,7 +290,7 @@ public class ExcelUtils {
      * 通用读取excel数据（excel必须一行为行头）
      *
      * @param filePath 文件路径
-     * @return
+     * @return 返回
      */
     public static List<Map<String, String>> read(String filePath) {
         File file = new File(filePath);
@@ -304,7 +301,7 @@ public class ExcelUtils {
      * 通用读取excel数据（excel必须一行为行头）
      *
      * @param file 文件
-     * @return
+     * @return 返回
      */
     public static List<Map<String, String>> read(File file) {
         FileInputStream inputStream;
@@ -321,7 +318,7 @@ public class ExcelUtils {
      * 通用读取excel数据（excel必须一行为行头）
      *
      * @param stream 文件流
-     * @return
+     * @return 返回
      */
     public static List<Map<String, String>> read(InputStream stream) {
         try {

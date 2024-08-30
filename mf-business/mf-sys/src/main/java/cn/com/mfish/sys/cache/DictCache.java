@@ -20,6 +20,7 @@ import java.util.List;
  */
 @Component
 @Slf4j
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DictCache extends BaseTempCache<List<DictItem>> {
     @Resource
     DictItemMapper dictItemMapper;

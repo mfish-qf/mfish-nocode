@@ -24,6 +24,7 @@ import java.util.function.Function;
  * @author: mfish
  * @date: 2023/3/21 22:58
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class QueryHandler {
     static final MfPageHelper pageHelper = new MfPageHelper();
 
@@ -32,7 +33,7 @@ public class QueryHandler {
      *
      * @param dataSourceOptions 连接属性
      * @param strSql            无参数sql
-     * @return
+     * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql) {
         return query(dataSourceOptions, strSql, null, null);
@@ -44,7 +45,7 @@ public class QueryHandler {
      * @param dataSourceOptions 连接属性
      * @param strSql            sql
      * @param params            参数
-     * @return
+     * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params) {
         return query(dataSourceOptions, new BoundSql(strSql, params), null);
@@ -57,7 +58,7 @@ public class QueryHandler {
      * @param dataSourceOptions 连接属性
      * @param strSql            无参sql
      * @param rowBounds         分页参数
-     * @return
+     * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, RowBounds rowBounds) {
         return query(dataSourceOptions, strSql, null, rowBounds);
@@ -71,7 +72,7 @@ public class QueryHandler {
      * @param strSql            sql
      * @param params            参数列表
      * @param rowBounds         分页参数
-     * @return
+     * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, RowBounds rowBounds) {
         return query(dataSourceOptions, new BoundSql(strSql, params), rowBounds);
@@ -82,7 +83,7 @@ public class QueryHandler {
      *
      * @param dataSourceOptions 连接属性
      * @param boundSql          sql包装类
-     * @return
+     * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql) {
         return query(dataSourceOptions, boundSql, null);
@@ -93,7 +94,7 @@ public class QueryHandler {
      *
      * @param dataSourceOptions 连接属性
      * @param strSql            无参数sql
-     * @return
+     * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, Class<T> cls) {
         return queryT(dataSourceOptions, strSql, null, null, cls);
@@ -105,7 +106,7 @@ public class QueryHandler {
      * @param dataSourceOptions 连接属性
      * @param strSql            sql
      * @param params            参数
-     * @return
+     * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, Class<T> cls) {
         return queryT(dataSourceOptions, new BoundSql(strSql, params), null, cls);
@@ -118,7 +119,7 @@ public class QueryHandler {
      * @param dataSourceOptions 连接属性
      * @param strSql            无参sql
      * @param rowBounds         分页参数
-     * @return
+     * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, RowBounds rowBounds, Class<T> cls) {
         return queryT(dataSourceOptions, strSql, null, rowBounds, cls);
@@ -132,7 +133,7 @@ public class QueryHandler {
      * @param strSql            sql
      * @param params            参数列表
      * @param rowBounds         分页参数
-     * @return
+     * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, RowBounds rowBounds, Class<T> cls) {
         return queryT(dataSourceOptions, new BoundSql(strSql, params), rowBounds, cls);
@@ -143,7 +144,7 @@ public class QueryHandler {
      *
      * @param dataSourceOptions 连接属性
      * @param boundSql          sql包装类
-     * @return
+     * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, Class<T> cls) {
         return queryT(dataSourceOptions, boundSql, null, cls);
@@ -157,7 +158,7 @@ public class QueryHandler {
          * 计数完成后处理
          *
          * @param <R> 类型
-         * @return
+         * @return 返回完成后处理
          */
         <R extends Page> R afterQuery();
 
@@ -166,7 +167,7 @@ public class QueryHandler {
          *
          * @param boundSql sql包装
          * @param <R>      类型
-         * @return
+         * @return 返回结果集
          */
         <R extends Page> R pQuery(BoundSql boundSql);
 
@@ -175,7 +176,7 @@ public class QueryHandler {
          *
          * @param boundSql sql包装
          * @param <R>      类型
-         * @return
+         * @return 返回结果集
          */
         <R extends Page> R dQuery(BoundSql boundSql);
     }
@@ -184,10 +185,10 @@ public class QueryHandler {
      * 查询数据通过RowBounds进行分页
      * 如果存在MfPageHelper.start优先使用MfPageHelper.start分页
      *
-     * @param dataSourceOptions
-     * @param boundSql
-     * @param rowBounds
-     * @return
+     * @param dataSourceOptions 连接属性
+     * @param boundSql          sql包装类
+     * @param rowBounds         分页参数
+     * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, RowBounds rowBounds, Class<T> cls) {
         return query(dataSourceOptions, boundSql, rowBounds, new PageHandler() {
@@ -212,10 +213,10 @@ public class QueryHandler {
      * 查询数据通过RowBounds进行分页
      * 如果存在MfPageHelper.start优先使用MfPageHelper.start分页
      *
-     * @param dataSourceOptions
-     * @param boundSql
-     * @param rowBounds
-     * @return
+     * @param dataSourceOptions 连接属性
+     * @param boundSql          sql包装类
+     * @param rowBounds         分页参数
+     * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, RowBounds rowBounds) {
         return query(dataSourceOptions, boundSql, rowBounds, new PageHandler() {
@@ -231,7 +232,7 @@ public class QueryHandler {
 
             /**
              * 总数为0，需要返回列头信息，所以也做了一次查询
-             * @return
+             * @return 返回结果集
              */
             @Override
             public MetaDataTable afterQuery() {
@@ -242,7 +243,7 @@ public class QueryHandler {
 
     private static <R extends Page> R query(DataSourceOptions<?> dataSourceOptions, BoundSql boundSql, RowBounds rowBounds, PageHandler pageHandler) {
         try {
-            R resultList = null;
+            R resultList;
             //调用方法判断是否需要进行分页，如果不需要，直接返回结果
             if (!pageHelper.skip(dataSourceOptions, rowBounds)) {
                 //判断是否需要进行 count 查询
@@ -268,8 +269,8 @@ public class QueryHandler {
     /**
      * 计数查询
      *
-     * @param boundSql
-     * @return
+     * @param boundSql 包装sql
+     * @return 返回计数
      */
     private static Long countQuery(BoundSql boundSql) {
         //调用方言获取 count sql
@@ -277,7 +278,7 @@ public class QueryHandler {
         BoundSql boundCount = new BoundSql(countSql, boundSql.getParams());
         //执行 count 查询
         MetaDataTable countResultList = pageHelper.query(boundCount);
-        MetaDataRow row = countResultList.get(0);
+        MetaDataRow row = countResultList.getFirst();
         return returnCount(row);
     }
 
@@ -286,7 +287,7 @@ public class QueryHandler {
      * 处理返回计数
      *
      * @param row 行数据
-     * @return
+     * @return 返回计数
      */
     private static Long returnCount(MetaDataRow row) {
         if (row.containsColumn("COUNT")) {
@@ -305,7 +306,7 @@ public class QueryHandler {
      * 查询某页数据
      *
      * @param boundSql 包装SQL
-     * @return
+     * @return 返回结果集
      */
     private static MetaDataTable pageQuery(BoundSql boundSql) {
         return pageQuery(boundSql, pageHelper::query);
@@ -317,7 +318,7 @@ public class QueryHandler {
      * @param boundSql 包装SQL
      * @param cls      类型
      * @param <T>      反射类型
-     * @return
+     * @return 返回结果集
      */
     private static <T> Page<T> pageQuery(BoundSql boundSql, Class<T> cls) {
         return pageQuery(boundSql, boundSql1 -> pageHelper.query(boundSql1, cls));
@@ -338,7 +339,7 @@ public class QueryHandler {
      * 数据库连接转配置信息
      *
      * @param dbConnect 数据库连接信息
-     * @return
+     * @return 返回数据库连接信息
      */
     public static DataSourceOptions<?> buildDataSourceOptions(DbConnect dbConnect, String privateKey) {
         String pwd = SM2Utils.decrypt(privateKey, dbConnect.getPassword());

@@ -1,7 +1,5 @@
 package cn.com.mfish.common.redis.config;
 
-import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -18,14 +16,15 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
  * @date: 2021/8/12 15:11
  */
 @Configuration
-@EnableCaching
-public class RedisConfig extends CachingConfigurerSupport {
+public class RedisConfig {
 
     /**
-     * 通用redisTemplate采用GenericJackson2JsonRedisSerializer序列化value
+     * 配置RedisTemplate，用于序列化和反序列化Redis中的数据。
+     * 该方法特别定义了如何通过GenericJackson2JsonRedisSerializer来序列化value，
+     * 以及通过StringRedisSerializer来序列化key，以适应Redis的数据存储需求。
      *
-     * @param redisConnectionFactory
-     * @return
+     * @param redisConnectionFactory 用于建立Redis连接的工厂，由Spring框架注入
+     * @return 配置好的RedisTemplate实例，能够处理自定义序列化和反序列化逻辑
      */
     @Bean(name = "redisTemplate")
     public RedisTemplate<String, Object> redisTemplate(@Lazy RedisConnectionFactory redisConnectionFactory) {
@@ -46,8 +45,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     /**
      * 处理String类型键值对
      *
-     * @param redisConnectionFactory
-     * @return
+     * @param redisConnectionFactory 用于建立Redis连接的工厂，由Spring框架注入
+     * @return 配置好的RedisTemplate实例，能够处理自定义序列化和反序列化逻辑
      */
     @Bean(name = "stringRedisTemplate")
     public StringRedisTemplate stringRedisTemplate(@Lazy RedisConnectionFactory redisConnectionFactory) {
@@ -60,8 +59,8 @@ public class RedisConfig extends CachingConfigurerSupport {
      * redis存储session序列化方式使用GenericJackson2JsonRedisSerializer会造成反序列化失败
      * 单独定义template
      *
-     * @param redisConnectionFactory
-     * @return
+     * @param redisConnectionFactory redis连接工厂
+     * @return redisTemplate
      */
     @Bean(name = "sessionRedisTemplate")
     public RedisTemplate<String, Object> sessionRedisTemplate(@Lazy RedisConnectionFactory redisConnectionFactory) {

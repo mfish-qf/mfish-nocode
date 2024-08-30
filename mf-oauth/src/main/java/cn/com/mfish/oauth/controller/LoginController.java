@@ -37,7 +37,7 @@ public class LoginController {
     /**
      * 短信发送接口（没有短信网关，短信代码需自己实现）
      *
-     * @return
+     * @return 返回验证码
      */
     @Operation(summary = "发送短信")
     @PostMapping("/sendMsg")

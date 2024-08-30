@@ -71,7 +71,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * 新增多行
      *
      * @param rows 行列表
-     * @return
+     * @return 是否
      */
     @Override
     public boolean addAll(Collection<? extends MetaDataRow> rows) {
@@ -86,7 +86,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      *
      * @param index 索引
      * @param rows  行列表
-     * @return
+     * @return 是否
      */
     @Override
     public boolean addAll(int index, Collection<? extends MetaDataRow> rows) {
@@ -110,7 +110,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
     /**
      * 增加列
      *
-     * @param columns
+     * @param columns 列
      */
     public void addColumn(MetaDataHeaders columns) {
         for (MetaDataHeader header : columns.values()) {
@@ -150,7 +150,6 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * 表格删除一列
      *
      * @param colName 列名
-     * @return
      */
     public void removeColumn(String colName) {
         this.headers.remove(colName);
@@ -195,7 +194,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
         if (list.isEmpty()) {
             throw new MyRuntimeException(Constant.NotFoundException);
         }
-        MetaDataHeader header = list.get(0).getHeader();
+        MetaDataHeader header = list.getFirst().getHeader();
         addColumn(header);
         for (int i = 0; i < this.size(); i++) {
             this.get(i).addColumn(header, list.get(i).getValue());
@@ -205,7 +204,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
     /**
      * 获取所有列
      *
-     * @return
+     * @return 列头
      */
     public MetaDataHeaders getColHeaders() {
         return headers;
@@ -215,7 +214,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * 判断是否包含列
      *
      * @param colName 列名
-     * @return
+     * @return 是否
      */
     public boolean containColumn(String colName) {
         if (headers == null || headers.isEmpty()) {
@@ -227,8 +226,8 @@ public class MetaDataTable extends Page<MetaDataRow> {
     /**
      * 根据列索引获取列
      *
-     * @param index
-     * @return
+     * @param index 索引
+     * @return 列头
      */
     public MetaDataHeader getColHeader(int index) {
         if (headers == null || headers.isEmpty()) {
@@ -241,7 +240,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      * 根据列名称获取
      *
      * @param colName 列别名
-     * @return
+     * @return 列头
      */
     public MetaDataHeader getColHeader(String colName) {
         if (containColumn(colName)) {
@@ -255,7 +254,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      *
      * @param rowIndex 行索引
      * @param colName  列名称
-     * @return
+     * @return 返回
      */
     public Object getCellValue(int rowIndex, String colName) {
         MetaDataRow biMetaDataRow = this.get(rowIndex);
@@ -270,7 +269,7 @@ public class MetaDataTable extends Page<MetaDataRow> {
      *
      * @param rowIndex 行索引
      * @param colIndex 列索引
-     * @return
+     * @return 返回
      */
     public Object getCellValue(int rowIndex, int colIndex) {
         MetaDataRow biMetaDataRow = this.get(rowIndex);

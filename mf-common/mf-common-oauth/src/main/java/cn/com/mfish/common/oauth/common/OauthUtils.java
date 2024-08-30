@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  * @description: OAUTH工具方法
  * @date: 2022/12/6 17:23
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class OauthUtils {
 
     private OauthUtils() {
@@ -38,7 +39,7 @@ public class OauthUtils {
     /**
      * 获取远程用户接口服务
      *
-     * @return
+     * @return 返回远程用户接口服务
      */
     private static RemoteUserService getRemoteUserService() {
         return SpringBeanFactory.getRemoteService(RemoteUserService.class);
@@ -48,7 +49,7 @@ public class OauthUtils {
      * 获取用户信息
      * 注意：该方法请勿用异步调用
      *
-     * @return
+     * @return 返回用户信息
      */
     public static UserInfo getUser() {
         Result<UserInfo> result = getRemoteUserService().getUserById(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
@@ -61,7 +62,7 @@ public class OauthUtils {
     /**
      * 生成6位数验证码
      *
-     * @return
+     * @return 返回验证码
      */
     public static String buildCode() throws NoSuchAlgorithmException {
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -71,7 +72,7 @@ public class OauthUtils {
     /**
      * 获取当前用户角色
      * 注意：该方法请勿用异步调用
-     * @return
+     * @return 返回用户角色
      */
     public static List<UserRole> getRoles() {
         Result<List<UserRole>> result = getRemoteUserService().getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
@@ -85,7 +86,7 @@ public class OauthUtils {
      * 校验角色
      *
      * @param requiresRoles 角色限制
-     * @return
+     * @return 返回是否通过校验
      */
     public static boolean checkRoles(RequiresRoles requiresRoles) {
         List<UserRole> list = getRoles();
@@ -103,7 +104,7 @@ public class OauthUtils {
     /**
      * 获取当前用户按钮权限
      * 注意：该方法请勿用异步调用
-     * @return
+     * @return 返回用户按钮权限
      */
     public static Set<String> getPermission() {
         Result<Set<String>> result = getRemoteUserService().getPermissions(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
@@ -116,7 +117,7 @@ public class OauthUtils {
     /**
      * 获取租户列表
      * 注意：该方法请勿用异步调用
-     * @return
+     * @return 返回租户列表
      */
     public static List<TenantVo> getTenants() {
         Result<List<TenantVo>> result = getRemoteUserService().getTenants(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId());
@@ -130,7 +131,7 @@ public class OauthUtils {
      * 校验权限
      *
      * @param requiresPermissions 权限限制
-     * @return
+     * @return 返回是否通过校验
      */
     public static boolean checkPermission(RequiresPermissions requiresPermissions) {
         Set<String> set = getPermission();
@@ -144,10 +145,10 @@ public class OauthUtils {
     /**
      * 校验结果
      *
-     * @param logical
-     * @param values
-     * @param set
-     * @return
+     * @param logical 组合逻辑
+     * @param values 需要校验的权限
+     * @param set 所有权限
+     * @return 返回校验结果
      */
     private static boolean checkValue(Logical logical, String[] values, Set<String> set) {
         //未设置权限值，校验通过
@@ -180,8 +181,8 @@ public class OauthUtils {
     /**
      * 根据token获取tokenService
      *
-     * @param token
-     * @return
+     * @param token token
+     * @return 返回tokenService
      */
     public static TokenService getTokenService(String token) {
         if (!StringUtils.isEmpty(token) && token.startsWith(SerConstant.WX_PREFIX)) {
@@ -194,8 +195,8 @@ public class OauthUtils {
     /**
      * 设置token
      *
-     * @param tokenId
-     * @param token
+     * @param tokenId tokenID
+     * @param token token
      */
     public static void setToken(String tokenId, Object token) {
         getTokenService(tokenId).setToken(token);
@@ -204,7 +205,7 @@ public class OauthUtils {
     /**
      * 获取当前token对象
      * 注意：该方法请勿用异步调用
-     * @return
+     * @return 返回token对象
      */
     public static Object getToken() {
         String token = AuthInfoUtils.getAccessToken();
@@ -217,8 +218,8 @@ public class OauthUtils {
     /**
      * 获取token获取token对象
      *
-     * @param token
-     * @return
+     * @param token token
+     * @return 返回token对象
      */
     public static Object getToken(String token) {
         return getToken(getTokenService(token), token);
@@ -231,7 +232,7 @@ public class OauthUtils {
     /**
      * 删除token
      *
-     * @param token
+     * @param token token
      */
     public static void delToken(String token) {
         delToken(getTokenService(token), token);
@@ -244,7 +245,7 @@ public class OauthUtils {
     /**
      * 删除refreshToken
      *
-     * @param refreshToken
+     * @param refreshToken refreshToken
      */
     public static void delRefreshToken(String refreshToken) {
         delRefreshToken(getTokenService(refreshToken), refreshToken);
@@ -267,12 +268,10 @@ public class OauthUtils {
             return null;
         }
         delToken(tokenService, token);
-        if (accessToken instanceof RedisAccessToken) {
-            RedisAccessToken redisAccessToken = (RedisAccessToken) accessToken;
+        if (accessToken instanceof RedisAccessToken redisAccessToken) {
             delRefreshToken(tokenService, redisAccessToken.getRefreshToken());
             return new LoginMutexEntity().setDeviceId(redisAccessToken.getTokenSessionId()).setDeviceType(DeviceType.Web).setUserId(redisAccessToken.getUserId());
-        } else if (accessToken instanceof WeChatToken) {
-            WeChatToken weChatToken = (WeChatToken) accessToken;
+        } else if (accessToken instanceof WeChatToken weChatToken) {
             delRefreshToken(tokenService, weChatToken.getRefresh_token());
             return new LoginMutexEntity().setDeviceId(weChatToken.getOpenid()).setDeviceType(DeviceType.WX).setUserId(weChatToken.getUserId());
         }

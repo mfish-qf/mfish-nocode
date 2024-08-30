@@ -38,7 +38,7 @@ public class OAuthResponse implements OAuthMessage {
     protected String uri;
     protected String body;
 
-    protected Map<String, String> headers = new HashMap<String, String>();
+    protected Map<String, String> headers = new HashMap<>();
 
     protected OAuthResponse(String uri, int responseStatus) {
         this.uri = uri;
@@ -92,7 +92,7 @@ public class OAuthResponse implements OAuthMessage {
     public static class OAuthResponseBuilder {
 
         protected OAuthParametersApplier applier;
-        protected Map<String, Object> parameters = new HashMap<String, Object>();
+        protected Map<String, Object> parameters = new HashMap<>();
         protected int responseCode;
         protected String location;
 

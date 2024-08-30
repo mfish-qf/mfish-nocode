@@ -28,12 +28,13 @@ import java.util.List;
  * @Description: 字典项
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.3.0
+ * @Version: V1.3.1
  */
 @Slf4j
 @Tag(name = "字典项")
 @RestController
 @RequestMapping("/dictItem")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DictItemController {
     @Resource
     private DictItemService dictItemService;
@@ -45,8 +46,8 @@ public class DictItemController {
     /**
      * 分页列表查询
      *
-     * @param reqDictItem
-     * @return
+     * @param reqDictItem 请求参数
+     * @return 返回字典项-分页列表
      */
     @Operation(summary = "字典项-分页列表查询", description = "字典项-分页列表查询")
     @GetMapping
@@ -57,6 +58,7 @@ public class DictItemController {
     }
 
     @Operation(summary = "根据字典编码获取字典项(值根据类型设置进行转换)")
+    @SuppressWarnings("rawtypes")
     @GetMapping("/{dictCode}")
     public Result<List<DictItem>> queryByCode(@Parameter(name = "dictCode", description = "字典编码") @PathVariable String dictCode) {
         return dictItemService.queryByCode(dictCode);
@@ -66,8 +68,8 @@ public class DictItemController {
     /**
      * 添加
      *
-     * @param dictItem
-     * @return
+     * @param dictItem 字典项
+     * @return 返回字典项
      */
     @Log(title = "字典项-添加", operateType = OperateType.INSERT)
     @Operation(summary = "字典项-添加", description = "字典项-添加")
@@ -92,8 +94,8 @@ public class DictItemController {
     /**
      * 字典入参校验
      *
-     * @param dictItem
-     * @return
+     * @param dictItem 字典项
+     * @return 返回校验结果
      */
     private Result<DictItem> verifyDict(DictItem dictItem) {
         if (StringUtils.isEmpty(dictItem.getDictCode())) {
@@ -111,8 +113,8 @@ public class DictItemController {
     /**
      * 编辑
      *
-     * @param dictItem
-     * @return
+     * @param dictItem 字典项
+     * @return 返回字典项
      */
     @Log(title = "字典项-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "字典项-编辑", description = "字典项-编辑")
@@ -133,8 +135,8 @@ public class DictItemController {
     /**
      * 通过id删除
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 返回字典项-通过id删除结果
      */
     @Log(title = "字典项-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "字典项-通过id删除", description = "字典项-通过id删除")
