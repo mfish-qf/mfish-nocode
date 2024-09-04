@@ -6317,5 +6317,7 @@ INSERT INTO `demo_data_scope` VALUES (21, '4b423f7b1ac0ed0b46a8e5ec3389ac14', '1
 INSERT INTO `demo_data_scope` VALUES (22, '4b423f7b1ac0ed0b46a8e5ec3389ac14', 'a480b6861ca4a44631af794a99e77265', NULL, '租户下的管理', '', NULL, '', NULL);
 INSERT INTO `demo_data_scope` VALUES (23, '1', '1', NULL, '租户下超级管理员', '', NULL, '', NULL);
 INSERT INTO `demo_data_scope` VALUES (24, '1', 'a480b6861ca4a44631af794a99e77265', NULL, '租户下超级管理员', '', NULL, '', NULL);
+INSERT INTO `demo_data_scope` VALUES (25, '351591b8df6f3eed5d1c613aac6c5bc8', 'a480b6861ca4a44631af794a99e77265', NULL, '租户下XXX管理员', '', NULL, '', NULL);
+
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -96,7 +96,7 @@ public class DemoDataScopeController {
     @Operation(summary = "查询角色编码为manage或superAdmin数据", description = "查询角色编码为manage或superAdmin数据")
     @GetMapping("/fixRole")
     @RequiresPermissions("demo:demoDataScope:query")
-    @DataScope(table = "demo_data_scope", type = DataScopeType.Role, values = {"manage", "superAdmin"})
+    @DataScope(table = "demo_data_scope", type = DataScopeType.Role, values = {"manage", "superAdmin", "xxxgly"})
     public Result<PageResult<DemoDataScope>> fixRole(ReqDemoDataScope reqDemoDataScope, ReqPage reqPage) {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询角色编码为manage或superAdmin数据成功!");
     }
@@ -106,7 +106,7 @@ public class DemoDataScopeController {
     @RequiresPermissions("demo:demoDataScope:query")
     @DataScopes({
             @DataScope(table = "demo_data_scope", type = DataScopeType.Tenant),
-            @DataScope(table = "demo_data_scope", type = DataScopeType.Role, values = {"manage", "superAdmin"})
+            @DataScope(table = "demo_data_scope", type = DataScopeType.Role, values = {"manage", "superAdmin", "xxxgly"})
     })
     public Result<PageResult<DemoDataScope>> mixScope(ReqDemoDataScope reqDemoDataScope, ReqPage reqPage) {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询当前租户下角色编码为manage或superAdmin数据成功!");

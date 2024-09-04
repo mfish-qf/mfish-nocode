@@ -160,7 +160,7 @@ public class DataScopeUtils {
             throw new MyRuntimeException("错误：未传入条件字段名称");
         }
         if (values == null || values.length == 0) {
-            throw new MyRuntimeException("错误：未传入条件值");
+            return "1<>1";
         }
         StringBuilder sb = new StringBuilder();
         sb.append(fieldName);
