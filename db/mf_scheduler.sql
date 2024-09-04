@@ -1,3 +1,6 @@
+/**
+  调度策略相关表，使用系统提供调度服务需要用到相关表（采用微服务启动，需要创建该库）
+ */
 DROP DATABASE IF EXISTS `mf_scheduler`;
 CREATE DATABASE  `mf_scheduler` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 SET NAMES utf8mb4;

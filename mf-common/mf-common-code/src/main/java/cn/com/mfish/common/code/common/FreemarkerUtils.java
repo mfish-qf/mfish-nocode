@@ -74,7 +74,7 @@ public class FreemarkerUtils {
             throw new MyRuntimeException("错误:表名不允许为空");
         }
         if (StringUtils.isEmpty(reqCode.getPackageName())) {
-            reqCode.setPackageName("cn.com.mfish.web");
+            reqCode.setPackageName("cn.com.mfish.sys");
         } else if (!StringUtils.isMatch("^([A-Za-z]{1}[A-Za-z\\d_]*\\.?)+[A-Za-z][A-Za-z\\d_]*$", reqCode.getPackageName())) {
             throw new MyRuntimeException("错误:包名格式不规范");
         }

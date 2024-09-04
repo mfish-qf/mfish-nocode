@@ -21,7 +21,7 @@ spring:
         server-addr: @nacos.server-addr@
       config:
         # 配置中心地址
-        server-addr:  @nacos.server-addr@
+        server-addr: @nacos.server-addr@
         # 配置文件格式
         file-extension: yml
         # 共享配置

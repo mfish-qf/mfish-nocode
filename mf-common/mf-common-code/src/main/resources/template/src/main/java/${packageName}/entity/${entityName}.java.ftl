@@ -34,18 +34,19 @@ import java.math.BigDecimal;
 @Data
 @TableName("${tableInfo.tableName}")
 @EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
 @Schema(description = "${tableInfo.tableName}对象 ${tableInfo.tableComment}")
 public class ${entityName} extends BaseEntity<<#if tableInfo.idType==''>String<#else>${tableInfo.idType}</#if>> {
     <#if tableInfo.idType=='String'>
     @ExcelProperty("唯一ID")
     @Schema(description = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)
+    @Accessors(chain = true)
     private ${tableInfo.idType} id;
     <#elseif tableInfo.idType!=''>
     @ExcelProperty("唯一ID")
     @Schema(description = "唯一ID")
     @TableId(type = IdType.AUTO)
+    @Accessors(chain = true)
     private ${tableInfo.idType} id;
     </#if>
     <#list tableInfo.columns as fieldInfo>
