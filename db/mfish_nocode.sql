@@ -1,3 +1,6 @@
+/**
+  单实例启动需要初始化的表（如果采用单实例启动，只需要创建这个数据库，其他微服务相关数据库无需创建）
+ */
 DROP DATABASE IF EXISTS `mfish_nocode`;
 CREATE DATABASE  `mfish_nocode` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 SET NAMES utf8mb4;
@@ -427,7 +430,7 @@ INSERT INTO `sso_menu` VALUES ('234dc900ad6502579a51784f9ddb05d5', '76f68d05f505
 INSERT INTO `sso_menu` VALUES ('6a38a3847b66cc690c3a2eacedb4e81f', '76f68d05f5054818762718ee85d6d0fe', '000010000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:workbench:update', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 17:15:10', '', NULL);
 INSERT INTO `sso_menu` VALUES ('7e87849f80699ad24292fd9908f5aeb8', '76f68d05f5054818762718ee85d6d0fe', '000010000100004', 3, '删除', '#', 4, 2, '', NULL, 'sys:workbench:delete', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 17:15:10', 'admin', '2023-03-10 17:15:39');
 INSERT INTO `sso_menu` VALUES ('2a4e024fdc76063da32926c63ca9ead2', '', '00002', 1, '系统管理', 'ant-design:setting-outlined', 3, 0, '/system', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:59:57', 'admin', '2023-09-01 15:13:58');
-INSERT INTO `sso_menu` VALUES ('a988f38821885f8f8aaffa49d681aaac', '2a4e024fdc76063da32926c63ca9ead2', '0000200001', 2, '菜单管理', 'ion:ios-menu', 1, 1, '/menu', '/sys/menu/index.vue', '', 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:02:02', 'admin', '2022-12-14 14:25:17');
+INSERT INTO `sso_menu` VALUES ('a988f38821885f8f8aaffa49d681aaac', '2a4e024fdc76063da32926c63ca9ead2', '0000200001', 2, '菜单管理', 'ion:ios-menu', 1, 1, '/menu', '/sys/menu/index.vue', '', 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:02:02', 'admin', '2024-08-21 18:26:59');
 INSERT INTO `sso_menu` VALUES ('75882dc140444e061741fbd9f026dd2b', 'a988f38821885f8f8aaffa49d681aaac', '000020000100001', 3, '查询', '#', 1, 2, '', NULL, 'sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:04:16', 'admin', '2022-11-30 16:59:33');
 INSERT INTO `sso_menu` VALUES ('967795af502129d318899a60716da84f', 'a988f38821885f8f8aaffa49d681aaac', '000020000100002', 3, '新增', '#', 2, 2, '', NULL, 'sys:menu:insert,sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:04:45', 'admin', '2022-12-20 11:30:37');
 INSERT INTO `sso_menu` VALUES ('6fd5cdaf86772d4db0587f3b9281f99b', 'a988f38821885f8f8aaffa49d681aaac', '000020000100003', 3, '修改', '#', 3, 2, '', NULL, 'sys:menu:update,sys:menu:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-08 17:05:12', 'admin', '2022-12-20 11:33:37');
@@ -447,7 +450,7 @@ INSERT INTO `sso_menu` VALUES ('f4a0ed4ca7a609aa8268399bdffcecfb', '0f5a85a6fd5b
 INSERT INTO `sso_menu` VALUES ('fb5dac5b0b9b610ed1e996108d6445b0', '0f5a85a6fd5bdc9df26b826eec3c17f1', '000020000400002', 3, '新增', '#', 2, 2, '', NULL, 'sys:role:insert,sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:54:39', 'admin', '2022-12-20 11:46:05');
 INSERT INTO `sso_menu` VALUES ('9b9139c09668bb22888201b7e8a812c4', '0f5a85a6fd5bdc9df26b826eec3c17f1', '000020000400003', 3, '修改', '#', 3, 2, '', NULL, 'sys:role:update,sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 17:58:08', 'admin', '2022-12-20 11:46:23');
 INSERT INTO `sso_menu` VALUES ('c487023e85c9aaf5510a03e8017b768c', '0f5a85a6fd5bdc9df26b826eec3c17f1', '000020000400004', 3, '删除', '#', 4, 2, '', NULL, 'sys:role:delete,sys:role:query', 0, 1, NULL, NULL, '', 'admin', '2022-11-30 18:02:10', 'admin', '2022-12-20 11:46:13');
-INSERT INTO `sso_menu` VALUES ('c9eb585420911ee18335d935d3872934', '2a4e024fdc76063da32926c63ca9ead2', '0000200005', 2, '字典管理', 'ion:ios-list', 5, 1, '/dict', '/sys/dict/index.vue', NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-30 18:08:11', 'admin', '2022-12-14 14:26:05');
+INSERT INTO `sso_menu` VALUES ('c9eb585420911ee18335d935d3872934', '2a4e024fdc76063da32926c63ca9ead2', '0000200005', 2, '字典管理', 'ion:ios-list', 5, 1, '/dict', '/sys/dict/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-11-30 18:08:11', 'admin', '2024-08-21 15:32:19');
 INSERT INTO `sso_menu` VALUES ('80526081fb00ce5dbe629ef358231909', 'c9eb585420911ee18335d935d3872934', '000020000500001', 3, '查询', '#', 1, 2, '', NULL, 'sys:dict:query', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 10:00:35', '', NULL);
 INSERT INTO `sso_menu` VALUES ('f634ba1d6d840fb1f945b4f811dd928d', 'c9eb585420911ee18335d935d3872934', '000020000500002', 3, '新增', '#', 2, 2, '', NULL, 'sys:dict:insert,sys:dict:query', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 10:01:26', '', NULL);
 INSERT INTO `sso_menu` VALUES ('ce71591e16d47d6b4ff1d52c2bb83ae7', 'c9eb585420911ee18335d935d3872934', '000020000500003', 3, '修改', '#', 3, 2, '', NULL, 'sys:dict:update,sys:dict:query', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 10:01:46', '', NULL);
@@ -486,14 +489,9 @@ INSERT INTO `sso_menu` VALUES ('5c723efc132b50c0284d79eaafed5a0f', '6e491486dc4c
 INSERT INTO `sso_menu` VALUES ('0526179a70fca38a69dd709dec2f1a81', '6e491486dc4cb475e4bd037d06ab2801', '0000300004', 2, 'Vben文档', 'ion:social-vimeo-outline', 5, 1, '/vben', 'https://doc.vvbin.cn/guide/introduction.html', NULL, 0, 1, NULL, 1, '', 'admin', '2022-12-15 09:14:09', 'admin', '2023-03-09 10:36:52');
 INSERT INTO `sso_menu` VALUES ('fa2211276b7b84a141667ec9ea8d33a4', '6e491486dc4cb475e4bd037d06ab2801', '0000300005', 2, 'Gitee地址', 'simple-icons:gitee', 3, 1, '/gitee', 'https://gitee.com/qiufeng9862/mfish-nocode', NULL, 1, 1, NULL, 0, '', 'admin', '2023-03-09 10:36:36', '', NULL);
 INSERT INTO `sso_menu` VALUES ('ee34f5aec6a2220f57fa151a147ede3c', '6e491486dc4cb475e4bd037d06ab2801', '0000300006', 2, '开发文档', 'ion:fish-outline', 0, 1, '/mfish', 'https://www.mfish.com.cn', NULL, 0, 1, NULL, 1, '', 'admin', '2023-04-30 11:33:21', '', NULL);
-INSERT INTO `sso_menu` VALUES ('4527c6c05549e3594f135ac056faaece', '', '00004', 1, '引导页', 'ant-design:format-painter-outlined', 19, 1, '/setup', '/demo/setup/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-11-08 17:11:09', 'test', '2023-03-10 11:24:41');
-INSERT INTO `sso_menu` VALUES ('9c6f4eff70d7b2048f63adf229c5d30d', '', '00006', 1, '多级目录', 'ion:folder-open-outline', 8, 0, '/level', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:03:01', 'admin', '2023-09-01 15:14:30');
-INSERT INTO `sso_menu` VALUES ('5b543a83371c766788047a1a1907cffd', '9c6f4eff70d7b2048f63adf229c5d30d', '0000600001', 2, '目录1', 'ion:folder-open-outline', 1, 0, '/menu1', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:03:39', 'admin', '2023-03-10 17:14:41');
-INSERT INTO `sso_menu` VALUES ('8ad60664c7060f811559bde09a79dae5', '5b543a83371c766788047a1a1907cffd', '000060000100001', 3, '目录2', 'ion:folder-open-outline', 1, 0, '/menu2', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-12-14 17:04:20', 'admin', '2023-01-03 20:27:11');
-INSERT INTO `sso_menu` VALUES ('bcd18784374699438a215a9ab1e9b351', '8ad60664c7060f811559bde09a79dae5', '00006000010000100001', 4, '多级菜单', 'ant-design:appstore-outlined', 1, 1, '/menu3', '/demo/level/LevelMenu.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2022-12-14 17:05:12', 'admin', '2023-04-20 18:11:25');
 INSERT INTO `sso_menu` VALUES ('0aa9f017545ec947a075f76e34c075c0', '', '00007', 1, '系统监控', 'ion:fitness-outline', 7, 0, '/monitor', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-01-27 13:55:58', 'admin', '2023-09-01 15:14:23');
 INSERT INTO `sso_menu` VALUES ('e159379c94b8fcc58ebc38cf8b322772', '0aa9f017545ec947a075f76e34c075c0', '0000700001', 2, '监控中心', 'ion:fitness-sharp', 1, 1, '/center', 'http://localhost:9223', NULL, 0, 1, NULL, 0, '', 'admin', '2023-01-27 13:56:32', 'admin', '2024-02-19 22:46:14');
-INSERT INTO `sso_menu` VALUES ('bea31d33d125895a9eaa827863341a91', '', '00008', 1, 'ChatGpt', 'ion:chatbox-ellipses-outline', 9, 0, '/chat', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-02-08 16:45:13', 'admin', '2023-07-28 09:52:53');
+INSERT INTO `sso_menu` VALUES ('bea31d33d125895a9eaa827863341a91', '', '00008', 1, 'ChatGpt', 'ion:chatbox-ellipses-outline', 18, 0, '/chat', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-02-08 16:45:13', 'admin', '2024-09-02 09:43:14');
 INSERT INTO `sso_menu` VALUES ('08a567f09c8d90660c23f2b432e0e1d9', 'bea31d33d125895a9eaa827863341a91', '0000800001', 2, '聊天', 'ion:chatbubbles-outline', 1, 1, '/ai', '/chat/ai/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-02-08 16:46:12', 'admin', '2023-02-08 17:20:37');
 INSERT INTO `sso_menu` VALUES ('ca0a3c9ae9cd551ee4e1b727861b7c78', '', '00009', 1, '任务调度', 'ion:calendar-outline', 6, 0, '/scheduler', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-02-14 17:13:20', 'admin', '2023-09-01 15:14:15');
 INSERT INTO `sso_menu` VALUES ('9d5397b6ddb4d194a95b05f42b80445b', 'ca0a3c9ae9cd551ee4e1b727861b7c78', '0000900001', 2, '任务管理', 'ion:caret-forward-circle-outline', 1, 1, '/job', '/scheduler/job/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-03-10 17:11:24', '', NULL);
@@ -505,10 +503,10 @@ INSERT INTO `sso_menu` VALUES ('c36420436629884000e73b158166f260', '9d5397b6ddb4
 INSERT INTO `sso_menu` VALUES ('a43c057f48b54c9038719179cf9e284d', 'ca0a3c9ae9cd551ee4e1b727861b7c78', '0000900002', 2, '任务日志', 'ion:ios-paper-outline', 2, 1, '/jobLog', '/scheduler/job-log/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-03-10 17:11:32', 'admin', '2023-04-11 22:24:06');
 INSERT INTO `sso_menu` VALUES ('1e1b7d50ab93ffdeca33fe5b7006eb01', 'a43c057f48b54c9038719179cf9e284d', '000090000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:jobLog:query', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 17:11:32', '', NULL);
 INSERT INTO `sso_menu` VALUES ('e1996e92ac6cf37c0c2e40825a7af472', 'a43c057f48b54c9038719179cf9e284d', '000090000200002', 3, '删除', '#', 2, 2, '', NULL, 'sys:jobLog:delete,sys:jobLog:query', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 17:11:32', '', NULL);
-INSERT INTO `sso_menu` VALUES ('4bfec85ae3174915cd2a3e8ddd822220', '', '00010', 1, '关于', 'simple-icons:aboutdotme', 21, 1, '/about', '/sys/about/index.vue', NULL, 0, 1, NULL, 0, '', 'admin', '2023-03-10 17:25:30', '', NULL);
-INSERT INTO `sso_menu` VALUES ('70943d8248fd8f77ade038d9afa0bf33', '', '00011', 1, '低代码', 'ant-design:code-outlined', 2, 0, '/low-code', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-03-29 10:26:55', 'admin', '2023-09-01 15:13:44');
+INSERT INTO `sso_menu` VALUES ('4bfec85ae3174915cd2a3e8ddd822220', '', '00010', 1, '关于', 'simple-icons:aboutdotme', 19, 1, '/about', '/sys/about/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-03-10 17:25:30', 'admin', '2024-09-03 21:23:21');
+INSERT INTO `sso_menu` VALUES ('70943d8248fd8f77ade038d9afa0bf33', '', '00011', 1, '低代码', 'ant-design:code-outlined', 2, 0, '/low-code', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2023-03-29 10:26:55', 'admin', '2024-04-16 17:48:08');
 INSERT INTO `sso_menu` VALUES ('a606083b203d32915c4d0e649c7b7c6b', '70943d8248fd8f77ade038d9afa0bf33', '0001100001', 2, '代码生成', 'ion:code-slash-outline', 4, 1, '/code-build', '/sys/code-build/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-04-11 22:19:43', 'admin', '2024-01-09 11:47:36');
-INSERT INTO `sso_menu` VALUES ('85cd52250e435c555622c268262f4c02', 'a606083b203d32915c4d0e649c7b7c6b', '000110000100001', 3, '查询', '#', 1, 2, '', NULL, 'sys:codeBuild:query', 0, 1, NULL, NULL, '', 'mfish', '2023-07-11 09:56:58', '', NULL);
+INSERT INTO `sso_menu` VALUES ('85cd52250e435c555622c268262f4c02', 'a606083b203d32915c4d0e649c7b7c6b', '000110000100001', 3, '查询', '#', 1, 2, '', NULL, 'sys:codeBuild:query,sys:dict:query', 0, 1, NULL, NULL, '', 'mfish', '2023-07-11 09:56:58', 'admin', '2024-04-20 21:14:03');
 INSERT INTO `sso_menu` VALUES ('8360ab9544a00dc7d9f15594dd69e2ff', 'a606083b203d32915c4d0e649c7b7c6b', '000110000100002', 3, '新增', '#', 2, 2, '', NULL, 'sys:codeBuild:query,sys:codeBuild:insert', 0, 1, NULL, NULL, '', 'mfish', '2023-07-11 09:57:12', '', NULL);
 INSERT INTO `sso_menu` VALUES ('6cedf51376c8998eb49e280cdba6c533', 'a606083b203d32915c4d0e649c7b7c6b', '000110000100003', 3, '删除', '#', 3, 2, '', NULL, 'sys:codeBuild:query,sys:codeBuild:delete', 0, 1, NULL, NULL, '', 'mfish', '2023-07-11 09:57:45', '', NULL);
 INSERT INTO `sso_menu` VALUES ('6aee07bfe60f4ee4021bfce397a8f4df', '70943d8248fd8f77ade038d9afa0bf33', '0001100003', 2, '数据源', 'ant-design:database-outlined', 3, 1, '/database', '/sys/database/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-07-25 17:49:02', 'admin', '2024-01-09 11:47:32');
@@ -545,6 +543,18 @@ INSERT INTO `sso_menu` VALUES ('7b5fc202b06024a9e3920bc57820a954', '40bf4846599b
 INSERT INTO `sso_menu` VALUES ('494d219f20ef782becd6b75c899ba4b5', '7b5fc202b06024a9e3920bc57820a954', '000120000600001', 3, '查询', '#', 1, 2, '', NULL, 'sys:tenantUser:query', 0, 1, NULL, NULL, '', 'admin', '2024-04-09 03:23:19', '', NULL);
 INSERT INTO `sso_menu` VALUES ('ac7eb51ce5e700aa268464b9fd052624', '7b5fc202b06024a9e3920bc57820a954', '000120000600002', 3, '新增', '#', 2, 2, '', NULL, 'sys:tenantUser:query,sys:tenantUser:insert', 0, 1, NULL, NULL, '', 'admin', '2024-04-09 03:24:27', '', NULL);
 INSERT INTO `sso_menu` VALUES ('b8d42dd7c44f8bfba043ec2641aa0442', '7b5fc202b06024a9e3920bc57820a954', '000120000600003', 3, '删除', '#', 3, 2, '', NULL, 'sys:tenantUser:query,sys:tenantUser:delete', 0, 1, NULL, NULL, '', 'admin', '2024-04-09 03:25:08', '', NULL);
+INSERT INTO `sso_menu` VALUES ('53e8eaceee36c1d54e43319fdd60811b', '', '00013', 1, '使用样例', 'ant-design:read-outlined', 8, 0, '/demo', NULL, NULL, 0, 1, NULL, 1, '', 'mfish', '2024-09-02 09:41:55', 'admin', '2024-09-02 16:06:00');
+INSERT INTO `sso_menu` VALUES ('9c6f4eff70d7b2048f63adf229c5d30d', '53e8eaceee36c1d54e43319fdd60811b', '0001300002', 2, '多级目录', 'ion:folder-open-outline', 1, 0, '/level', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:06:17', 'admin', '2024-09-02 16:06:25');
+INSERT INTO `sso_menu` VALUES ('5b543a83371c766788047a1a1907cffd', '9c6f4eff70d7b2048f63adf229c5d30d', '000130000200001', 3, '目录1', 'ion:folder-open-outline', 1, 0, '/menu1', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:06:17', '', NULL);
+INSERT INTO `sso_menu` VALUES ('bcd18784374699438a215a9ab1e9b351', '5b543a83371c766788047a1a1907cffd', '00013000020000100002', 4, '多级菜单', 'ant-design:appstore-outlined', 1, 1, '/menu3', '/demo/level/LevelMenu.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-03 21:57:58', '', NULL);
+INSERT INTO `sso_menu` VALUES ('e862cd0f17439fe26950e5ecb9492cc2', '53e8eaceee36c1d54e43319fdd60811b', '0001300003', 2, '导入导出', 'ant-design:bars-outlined', 2, 1, '/demo-import-export', '/demo/demo-import-export/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-02 16:29:26');
+INSERT INTO `sso_menu` VALUES ('6858a7df953aa4a3bbab3bd77e03b1fb', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300001', 3, '查询', '#', 1, 2, '', NULL, 'demo:demoImportExport:query', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', '', NULL);
+INSERT INTO `sso_menu` VALUES ('37603c7afb87a9d94d03b06730cb0d29', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300002', 3, '导入', '#', 2, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:import', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-03 23:10:01');
+INSERT INTO `sso_menu` VALUES ('ec07264b984c531ee729eda12ada4c49', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300003', 3, '导出', '#', 3, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:export', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-03 23:10:15');
+INSERT INTO `sso_menu` VALUES ('bff2e13c8ef26ffc98cb4941b2390316', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300004', 3, '删除', '#', 4, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:delete', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', '', NULL);
+INSERT INTO `sso_menu` VALUES ('1eb28fcc2c9e009ddf9accec8be4665d', '53e8eaceee36c1d54e43319fdd60811b', '0001300004', 2, '数据权限', 'ant-design:filter-outlined', 3, 1, '/demo-data-scope', '/demo/demo-data-scope/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-04 17:29:18', 'admin', '2024-09-04 21:44:29');
+INSERT INTO `sso_menu` VALUES ('0744327e98f399788bb030efb1c0b637', '1eb28fcc2c9e009ddf9accec8be4665d', '000130000400001', 3, '查询', '#', 1, 2, '', NULL, 'demo:demoDataScope:query', 0, 1, NULL, NULL, '', 'admin', '2024-09-04 17:29:18', '', NULL);
+
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -735,12 +745,14 @@ INSERT INTO `sso_role_menu` VALUES ('4063404b06e967bcf619bf86e7fe6359', '7e69041
 INSERT INTO `sso_role_menu` VALUES ('4063404b06e967bcf619bf86e7fe6359', 'e159379c94b8fcc58ebc38cf8b322772');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '01ee419d3dcc28acf1920428391720b7');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0526179a70fca38a69dd709dec2f1a81');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0744327e98f399788bb030efb1c0b637');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '08a567f09c8d90660c23f2b432e0e1d9');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0aa9f017545ec947a075f76e34c075c0');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '101cb161536a5a80731a4d6db0b5eeac');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1a0aee8380c525e7c4802b1c4d587fa8');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1ce2ac44228e37c063e9cd55ed8f0a49');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1e1b7d50ab93ffdeca33fe5b7006eb01');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1eb28fcc2c9e009ddf9accec8be4665d');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '204217f09c1206f9d5b9725c1e05604a');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '234dc900ad6502579a51784f9ddb05d5');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '238132a09b6f761374dfd205b6388245');
@@ -750,13 +762,13 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '268d140
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '285bb37f32e878e24d5a22445c1bc5af');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '292791abfbf63b35ad9ce510c0a5823e');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '369de1bef8d1e964414f25ec6d3156bc');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '37603c7afb87a9d94d03b06730cb0d29');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '3a74d165bcd286f102e10a1be8c23eef');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '3a92fd411f0a70bf477e6dc354f4e29e');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '3c4b2d0f7558d7f45a29fd9c6a7edea7');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '40bf4846599bf8dbd307f77bf51a7dad');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '43f57faab0a1d54cc5130d8a3cc9594a');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '442f89857faa6bc929ef4f422b8c4b99');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '4527c6c05549e3594f135ac056faaece');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '494d219f20ef782becd6b75c899ba4b5');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '4bfec85ae3174915cd2a3e8ddd822220');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '4cabb05e97ea7a738a2f7ce3c9d224d8');
@@ -764,6 +776,7 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '4d1e926
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '503e3ac379a2e17e99105b77a727e6db');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '520873645d565776988d81481d8b0d26');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5271166ced06a95d787dc049d3f19bd2');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '53e8eaceee36c1d54e43319fdd60811b');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '573c955ed2c2ffdea2654487cdfdc520');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '58c1fc9fde9ad2a37fa366a9a91f094d');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5ad16d38964bf541b6417b07ddf33d9b');
@@ -772,6 +785,7 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5c723ef
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5d9ff19ac80d4899ea469e4d4b9a6aeb');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '60efb66a88ab33b339718eb0d052a033');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '67dfbce31013ada62800425f72997962');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6858a7df953aa4a3bbab3bd77e03b1fb');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6a38a3847b66cc690c3a2eacedb4e81f');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6ac6bc8054107436e24356e3466f00db');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6cedf51376c8998eb49e280cdba6c533');
@@ -791,7 +805,6 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '8052608
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '81ecfe903cb3116f00c367678059c87c');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '8360ab9544a00dc7d9f15594dd69e2ff');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '85cd52250e435c555622c268262f4c02');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '8ad60664c7060f811559bde09a79dae5');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '93190e5d426f69cd2712aac373542698');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '967795af502129d318899a60716da84f');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '9a293c164762776e0a876323a3363dec');
@@ -812,6 +825,7 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'bb26a48
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'bcd18784374699438a215a9ab1e9b351');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'bea31d33d125895a9eaa827863341a91');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'bf2e6661d9a4d115f018ffd4ff202d92');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'bff2e13c8ef26ffc98cb4941b2390316');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'c331e32be60017fc936703d3da235ddb');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'c36420436629884000e73b158166f260');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'c52a49da263d57d2c89edcbc9ca70a0a');
@@ -822,7 +836,10 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'cfbdf3c
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'd9832cd3aefbb5f99267edb995ff8c75');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e159379c94b8fcc58ebc38cf8b322772');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e1996e92ac6cf37c0c2e40825a7af472');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e862cd0f17439fe26950e5ecb9492cc2');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e909edc44910691dedc2c5338ec0e603');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'eb5f513d5430597d3ea312e1bf760b23');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ec07264b984c531ee729eda12ada4c49');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'eda0153e492e86ade2fe6702d267fef3');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ee34f5aec6a2220f57fa151a147ede3c');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'eeda5a7b6e2868e5e25a1e794d5786db');
@@ -965,7 +982,7 @@ CREATE TABLE `sys_code_build`  (
   `table_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '表名',
   `api_prefix` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '接口路径前缀 例如:/oauth2/user接口前缀为oauth2(不传会使用packageName，最底层包名 例如:cn.com.mfish.sys包会使用sys)',
   `entity_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '实体类名(不传会使用表名驼峰化)',
-  `package_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '项目包名(不传使用默认包名 cn.com.mfish.web)',
+  `package_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '项目包名(不传使用默认包名 cn.com.mfish.sys)',
   `table_comment` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)',
   `query_params` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'Form查询条件(json串)',
   `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
@@ -1021,17 +1038,17 @@ CREATE TABLE `sys_db_connect`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict`;
 CREATE TABLE `sys_dict`  (
-  `id` varchar(36) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一ID',
-  `dict_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典名称',
-  `dict_code` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '字典编码',
-  `status` int(1) NULL DEFAULT 0 COMMENT '状态(0正常 1停用)',
-  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`, `dict_code`) USING BTREE,
-  UNIQUE INDEX `dict_code_index`(`dict_code`) USING BTREE
+                             `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                             `dict_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '字典名称',
+                             `dict_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典编码',
+                             `status` int NULL DEFAULT 0 COMMENT '状态(0正常 1停用)',
+                             `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                             `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
+                             `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                             `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
+                             `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                             PRIMARY KEY (`id`, `dict_code`) USING BTREE,
+                             UNIQUE INDEX `dict_code_index`(`dict_code`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -1040,6 +1057,7 @@ CREATE TABLE `sys_dict`  (
 INSERT INTO `sys_dict` VALUES ('06907475960c4f544ccbe7f883b9387a', '租户状态', 'tenant_corp_status', 0, '租户状态', 'admin', '2023-06-13 17:33:43', '', NULL);
 INSERT INTO `sys_dict` VALUES ('0bb92966ec419ed35b9cb46979867e69', '时区', 'sys_time_zone', 0, '所在时区', 'admin', '2023-02-21 18:05:37', 'admin', '2023-02-21 18:16:33');
 INSERT INTO `sys_dict` VALUES ('193585c2417cfb3e4865501c2e608602', '数据库类型', 'sys_db_type', 0, '支持的数据库类型', 'admin', '2023-01-03 11:45:12', 'admin', '2023-01-03 11:46:12');
+INSERT INTO `sys_dict` VALUES ('24f5894e66ca34b9d4aafa2604c94091', '支付类型', 'mall_pay_type', 0, NULL, 'admin', '2024-04-20 18:17:29', 'admin', '2024-04-20 18:17:29');
 INSERT INTO `sys_dict` VALUES ('2627066fc33d283c7a1ca4123a31be2d', '请求来源', 'sys_req_source', 0, '请求来源信息', 'admin', '2023-02-02 11:40:32', '', NULL);
 INSERT INTO `sys_dict` VALUES ('2fceca32c5098a60071574c61e0327fa', '调度任务状态', 'sys_job_status', 0, '任务执行状态', 'admin', '2023-02-28 16:57:48', '', NULL);
 INSERT INTO `sys_dict` VALUES ('3be670398cf94f18c2631ab4df1e714e', '租户类型', 'tenant_corp_type', 0, '租户类型', 'admin', '2023-06-13 17:36:15', '', NULL);
@@ -1054,7 +1072,9 @@ INSERT INTO `sys_dict` VALUES ('8a992d89a43f27fa2dbdf75871bd7e74', '所属行业
 INSERT INTO `sys_dict` VALUES ('9bb402e2c751b3bf9358ef9acb3caf49', '调度任务', 'sys_job_type', 0, '调度任务类型', 'admin', '2023-02-21 10:44:15', 'admin', '2023-03-13 11:06:05');
 INSERT INTO `sys_dict` VALUES ('ad7336dda270e6430565b313a741ffb7', '用户性别', 'sys_user_sex', 0, '用户性别字典', 'admin', '2023-01-04 16:08:35', 'admin', '2023-01-05 14:47:40');
 INSERT INTO `sys_dict` VALUES ('c352267b4ec618c1745bdda85f12402e', '组件类型', 'vue_com_type', 0, '前端VUE组件类型', 'admin', '2024-04-19 14:11:33', 'admin', '2024-04-19 14:11:33');
+INSERT INTO `sys_dict` VALUES ('c64a91de3cff06e70128938d7cfc2af4', '配送方式', 'mall_delivery_type', 0, NULL, 'admin', '2024-04-20 18:18:52', 'admin', '2024-04-20 18:18:52');
 INSERT INTO `sys_dict` VALUES ('c694f0f6feba27026044839b77d24caa', '日志操作', 'sys_log_type', 0, '日志操作类型', 'admin', '2023-01-09 11:27:05', 'admin', '2023-03-13 11:06:13');
+INSERT INTO `sys_dict` VALUES ('d2d1bfb80a89199abdedae4874311b69', '订单状态', 'mall_order_status', 0, NULL, 'admin', '2024-04-20 18:11:02', 'admin', '2024-04-20 18:11:02');
 INSERT INTO `sys_dict` VALUES ('d42259143fdd344b439fe39d3fffdefe', '企业规模', 'tenant_corp_size', 0, '企业公司规模', 'admin', '2023-06-13 17:10:14', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict` VALUES ('d42d4e365a7b3d43f8c5cf37a523dbd5', 'Druid连接池配置', 'db_pool_druid', 0, 'Druid连接池相关配置项', 'admin', '2023-03-13 11:24:35', '', NULL);
 INSERT INTO `sys_dict` VALUES ('dce08f2d436e6582ec58301a76fe11fa', '任务过期策略', 'sys_job_misfire', 0, '任务过期处理策略 1立即处理一次 2放弃处理', 'admin', '2023-02-21 11:22:32', 'admin', '2023-02-21 18:07:12');
@@ -1065,22 +1085,22 @@ INSERT INTO `sys_dict` VALUES ('e8e6e4c3f8e2fb775d6d083883e41839', '代码生成
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_item`;
 CREATE TABLE `sys_dict_item`  (
-  `id` varchar(36) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一ID',
-  `dict_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典ID',
-  `dict_code` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '字典编码',
-  `dict_label` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典标签',
-  `dict_value` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典键值',
-  `value_type` tinyint(1) NULL DEFAULT 0 COMMENT '值类型(0字符 1数字 2布尔)',
-  `dict_sort` int(11) NULL DEFAULT 0 COMMENT '字典排序',
-  `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '配色(用于前端显示)',
-  `status` int(1) NULL DEFAULT 0 COMMENT '状态(0正常 1停用)',
-  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `dict_code_index`(`dict_code`) USING BTREE
+                                  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                  `dict_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典ID',
+                                  `dict_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典编码',
+                                  `dict_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '字典标签',
+                                  `dict_value` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '字典键值',
+                                  `value_type` tinyint(1) NULL DEFAULT 0 COMMENT '值类型(0字符 1数字 2布尔)',
+                                  `dict_sort` int NULL DEFAULT 0 COMMENT '字典排序',
+                                  `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '配色(用于前端显示)',
+                                  `status` int NULL DEFAULT 0 COMMENT '状态(0正常 1停用)',
+                                  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                                  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
+                                  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
+                                  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                  PRIMARY KEY (`id`) USING BTREE,
+                                  INDEX `dict_code_index`(`dict_code`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -1106,10 +1126,12 @@ INSERT INTO `sys_dict_item` VALUES ('24e063bd1bd5e0dd6c433682c277d42e', 'dce08f2
 INSERT INTO `sys_dict_item` VALUES ('261b1fdc50de63e495cdb757b6d430e2', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '删除', '删除', 0, 5, 'red', 0, NULL, 'admin', '2023-01-09 11:28:05', 'admin', '2023-01-09 15:23:00');
 INSERT INTO `sys_dict_item` VALUES ('294a4554e02894c7dfe306df3051a03e', 'dce08f2d436e6582ec58301a76fe11fa', 'sys_job_misfire', '立即执行', '1', 1, 1, 'green', 0, '判断为过期后立即执行一次', 'admin', '2023-02-21 11:23:27', 'admin', '2023-02-21 18:07:12');
 INSERT INTO `sys_dict_item` VALUES ('29cc4901b0f367b8f0f42582ae64c4c3', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'initialSize', '2', 1, 1, NULL, 0, '初始连接数', 'admin', '2023-03-13 11:25:14', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('2a0c3b13464ea03b8b9c3a9d07295dde', 'c64a91de3cff06e70128938d7cfc2af4', 'mall_delivery_type', '配送点', '0', 1, 0, 'green', 0, NULL, 'admin', '2024-04-20 18:19:18', 'admin', '2024-04-20 18:19:43');
 INSERT INTO `sys_dict_item` VALUES ('2adbaf3195bbab50fbd100ed6185e513', '2627066fc33d283c7a1ca4123a31be2d', 'sys_req_source', '后台用户', '1', 1, 1, 'blue', 0, '后台用户', 'admin', '2023-02-02 11:41:19', 'admin', '2023-02-21 18:00:23');
 INSERT INTO `sys_dict_item` VALUES ('31552cd65ae98d64265506ef05b00907', '4cc4c6a6c90c5534d11ae9d2db12902f', 'sys_db_pool', 'Hikari', 'db_pool_hikari', 0, 2, 'green', 0, 'spring默认连接池', 'admin', '2023-03-13 11:11:24', 'admin', '2023-03-17 10:20:23');
 INSERT INTO `sys_dict_item` VALUES ('317328ed4f375a6591283f10e0e1cec6', '0bb92966ec419ed35b9cb46979867e69', 'sys_time_zone', '美国/纽约', 'America/New_York', 0, 5, '', 0, '', 'admin', '2023-02-21 18:11:07', 'admin', '2023-02-21 18:16:33');
 INSERT INTO `sys_dict_item` VALUES ('32438cecdad31c99e71000e3097d266f', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'maxActive', '10', 1, 3, NULL, 0, '最大连接池数', 'admin', '2023-03-13 11:25:47', 'admin', '2023-03-17 16:27:50');
+INSERT INTO `sys_dict_item` VALUES ('327e9856baf76954f9a968c7ccc0eb02', 'c64a91de3cff06e70128938d7cfc2af4', 'mall_delivery_type', '物流', '2', 1, 2, 'cyan', 0, '', 'admin', '2024-04-20 18:20:00', 'admin', '2024-04-20 18:20:00');
 INSERT INTO `sys_dict_item` VALUES ('32a0802dae2dfb32857efed0f4a6663f', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '执行成功', '3', 1, 4, 'green', 0, '执行成功', 'admin', '2023-03-01 17:59:34', 'admin', '2023-03-01 18:00:11');
 INSERT INTO `sys_dict_item` VALUES ('34b308bff053bbff3f82554565e0f8f8', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'maxPoolPreparedStatementPerConnectionSize', '20', 1, 12, '', 0, '游标缓存大小', 'admin', '2023-03-13 11:30:31', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('3cd57f7e97d9bde410da9f2199dc35c5', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '调度成功', '1', 1, 2, 'green', 0, NULL, 'admin', '2023-02-28 16:58:32', 'admin', '2023-03-01 17:59:00');
@@ -1123,6 +1145,7 @@ INSERT INTO `sys_dict_item` VALUES ('4795a7072f4213eeeee4d8bca2531dc8', 'e8e6e4c
 INSERT INTO `sys_dict_item` VALUES ('4a84be1783171797e3cf1712f014b461', '0bb92966ec419ed35b9cb46979867e69', 'sys_time_zone', '中国/上海', 'Asia/Shanghai', 0, 1, NULL, 0, NULL, 'admin', '2023-02-21 18:05:55', 'admin', '2023-02-21 18:16:33');
 INSERT INTO `sys_dict_item` VALUES ('4f9003f0afecb5a68b22f05d1e1ea0e7', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'testOnReturn', 'false', 2, 10, '', 0, '归还连接时是否会进行检查，检查不通过，销毁', 'admin', '2023-03-13 11:28:34', 'admin', '2023-03-14 19:44:29');
 INSERT INTO `sys_dict_item` VALUES ('515e0a34aec2beea8733d83083c53ea5', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '开始', '0', 1, 1, 'blue', 0, NULL, 'admin', '2023-02-28 16:58:12', 'admin', '2023-02-28 17:04:30');
+INSERT INTO `sys_dict_item` VALUES ('52789011153ea396227659c1bc18d594', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '已废弃', '4', 1, 5, '#FF4D4F', 0, '', 'admin', '2024-04-20 18:13:34', 'admin', '2024-04-20 18:16:58');
 INSERT INTO `sys_dict_item` VALUES ('577d84183407984f104f3b71509623b8', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'testWhileIdle', 'true', 2, 8, NULL, 0, '当应用向连接池申请连接，并且testOnBorrow为false时，连接池将会判断连接是否处于空闲状态，如果是，则验证这条连接是否可用。', 'admin', '2023-03-13 11:27:33', 'admin', '2023-03-14 19:41:17');
 INSERT INTO `sys_dict_item` VALUES ('5bfc739984836091b77b298d9a605181', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'DELETE', 'DELETE', 0, 4, 'red', 0, '删除', 'admin', '2023-01-09 16:13:42', 'admin', '2023-02-21 18:02:06');
 INSERT INTO `sys_dict_item` VALUES ('5c24ec491e462910d3123ac7efffdac2', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '登录', '登录', 0, 9, 'orange', 0, NULL, 'admin', '2023-01-09 11:28:39', 'admin', '2023-01-09 15:23:43');
@@ -1139,6 +1162,7 @@ INSERT INTO `sys_dict_item` VALUES ('731a23dbfd6ec285c9c81ab2a29b43b1', 'c694f0f
 INSERT INTO `sys_dict_item` VALUES ('738f704265393a8ac4cb5c536a5bc6e4', '4cc4c6a6c90c5534d11ae9d2db12902f', 'sys_db_pool', '无连接池', 'db_no_pool', 0, 1, 'red', 0, '不使用连接池', 'admin', '2023-03-13 11:12:14', 'admin', '2023-03-17 10:20:17');
 INSERT INTO `sys_dict_item` VALUES ('750f4ff9eb1bdce42b04690d0abd929d', '81e4b91e932f0a671021a7eca2f665b9', 'sys_login_mode', '浏览器', '0', 1, 1, 'blue', 0, 'web浏览器登录', 'admin', '2023-03-09 14:49:31', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('75d8887dbeb5a0ca4d20ea445139e97a', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '导入', '导入', 0, 7, '#2db7f5', 0, NULL, 'admin', '2023-01-09 11:28:23', 'admin', '2023-01-09 15:25:53');
+INSERT INTO `sys_dict_item` VALUES ('77a3eb2b9e104aded10cd904bd7a6de9', 'c64a91de3cff06e70128938d7cfc2af4', 'mall_delivery_type', '自提', '1', 1, 1, 'blue', 0, NULL, 'admin', '2024-04-20 18:19:38', 'admin', '2024-04-20 18:19:38');
 INSERT INTO `sys_dict_item` VALUES ('83bb1fc1addafe499342df7033c957ce', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'minIdle', '1', 1, 2, NULL, 0, '最小连接池数', 'admin', '2023-03-13 11:25:31', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('86353dd3e85438e846b704c3af0e7726', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'minimumIdle', '2', 1, 1, NULL, 0, '连接池中允许的最小连接数最小连接数', 'admin', '2023-03-13 11:19:29', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('873f7ffd87720589519d1aded006d13f', '06907475960c4f544ccbe7f883b9387a', 'tenant_corp_status', '注销', '1', 1, 2, 'red', 0, NULL, 'admin', '2023-06-13 17:34:43', 'admin', '2023-06-13 17:37:10');
@@ -1155,10 +1179,14 @@ INSERT INTO `sys_dict_item` VALUES ('a1e906c9654de787edafbd05a147eed3', '9bb402e
 INSERT INTO `sys_dict_item` VALUES ('a3095db9883574674d2f9fb366f10f52', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'connectionTestQuery', 'SELECT 1', 0, 7, '', 0, '数据库连接测试语句', 'admin', '2023-03-13 11:23:36', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('a8061138a5828b8fe18d302475928f2b', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'timeBetweenEvictionRunsMillis', '60000', 1, 5, NULL, 0, '配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒', 'admin', '2023-03-13 11:26:27', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('acbac95a5e0990f96ae6308ff68d693c', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'refresh_token', 'refresh_token', 0, 3, 'cyan', 0, 'refresh_token刷新token方式', 'admin', '2023-05-16 21:51:01', 'admin', '2023-05-18 10:20:18');
+INSERT INTO `sys_dict_item` VALUES ('ad248d1177e8e8ff9c775a0f2757dfec', '24f5894e66ca34b9d4aafa2604c94091', 'mall_pay_type', '微信', '1', 1, 2, '#52C41A', 0, '', 'admin', '2024-04-20 18:18:13', 'admin', '2024-04-20 18:18:24');
+INSERT INTO `sys_dict_item` VALUES ('afe58b597c6c86edb328ab47e334d329', '24f5894e66ca34b9d4aafa2604c94091', 'mall_pay_type', '支付宝', '0', 1, 1, '#1677FF', 0, NULL, 'admin', '2024-04-20 18:17:50', 'admin', '2024-04-20 18:18:01');
+INSERT INTO `sys_dict_item` VALUES ('b875ec52ef28c8e1c787e0b71a4c3b0f', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '已完成', '3', 1, 4, '#52C41A', 0, '', 'admin', '2024-04-20 18:13:09', 'admin', '2024-04-20 18:16:18');
 INSERT INTO `sys_dict_item` VALUES ('be3c4fd10bb7a6691ca9cc2dc55c038d', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'connectionProperties', 'druid.stat.mergeSql=false;druid.stat.slowSqlMillis=5000', 0, 14, '', 0, '打开mergeSql功能；慢SQL记录', 'admin', '2023-03-13 11:32:33', 'admin', '2023-03-13 11:32:58');
 INSERT INTO `sys_dict_item` VALUES ('bf8ded2aadd49b2822ce6799070f8164', '81e4b91e932f0a671021a7eca2f665b9', 'sys_login_mode', '微信', '1', 1, 2, 'green', 0, '微信小程序登录', 'admin', '2023-03-09 14:49:57', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('bfc4e183ac3bd15a3cbc9b5cd5116763', '2627066fc33d283c7a1ca4123a31be2d', 'sys_req_source', '手机用户', '2', 1, 2, 'pink', 0, '手机用户', 'admin', '2023-02-02 11:41:49', 'admin', '2023-02-21 18:00:26');
 INSERT INTO `sys_dict_item` VALUES ('c1135debd21467001fd69c21df6c6c10', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'connectionTimeout', '30000', 0, 6, '', 0, '待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException', 'admin', '2023-03-13 11:23:15', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('c1770d660a44ff2275615a8a329ee6db', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '已支付', '1', 1, 2, '#ECC12B', 0, NULL, 'admin', '2024-04-20 18:12:07', 'admin', '2024-04-20 18:16:50');
 INSERT INTO `sys_dict_item` VALUES ('c9ff23502c59bff661479755f842105b', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'maximumPoolSize', '10', 1, 2, NULL, 0, '最大连接数，包括闲置和使用中的连接， 如果maxPoolSize小于1，则会被重置，当minIdle0则重置为minIdle的值', 'admin', '2023-03-13 11:20:24', 'admin', '2023-03-17 16:44:36');
 INSERT INTO `sys_dict_item` VALUES ('ce8059c1fb3b533339f6bdccc17e0046', 'ad7336dda270e6430565b313a741ffb7', 'sys_user_sex', '男', '1', 1, 1, 'green', 0, '男性', 'admin', '2023-01-04 17:31:35', 'admin', '2023-01-09 16:09:49');
 INSERT INTO `sys_dict_item` VALUES ('cf2899ae2d41fd29b5cef8de005098e7', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'PUT', 'PUT', 0, 3, 'purple', 0, '修改', 'admin', '2023-01-09 16:12:11', 'admin', '2023-02-21 18:02:03');
@@ -1168,6 +1196,7 @@ INSERT INTO `sys_dict_item` VALUES ('d563a2b3f99baff573193c81a96bacf6', 'd42d4e3
 INSERT INTO `sys_dict_item` VALUES ('d781dcc93f41b65dd5f44bb48a69a57c', '55ccc731fe3958c4afca60cbd852a55f', 'tenant_corp_years', '五年以内', '5', 0, 2, NULL, 0, NULL, 'admin', '2023-06-13 17:21:00', 'admin', '2023-06-13 17:31:57');
 INSERT INTO `sys_dict_item` VALUES ('d82a25d50542f74cd2fef5cc7f04e9aa', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '高级功能', 'advance_op', 0, 4, NULL, 0, NULL, 'admin', '2023-12-24 16:40:20', 'admin', '2023-12-24 16:40:20');
 INSERT INTO `sys_dict_item` VALUES ('df72218dba18e67c91dc2e12493b15ed', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'poolPreparedStatements', 'true', 2, 11, '', 0, '是否缓存游标', 'admin', '2023-03-13 11:30:08', 'admin', '2023-03-14 20:26:08');
+INSERT INTO `sys_dict_item` VALUES ('e18da53336b068c23d1b144e38d122b2', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '待支付', '0', 1, 1, '#8F8F8F', 0, NULL, 'admin', '2024-04-20 18:11:43', 'admin', '2024-04-20 18:15:52');
 INSERT INTO `sys_dict_item` VALUES ('e1ce7b2d2de8f28789a30cce64ebd5d3', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '100到300人', 's', 0, 2, NULL, 0, NULL, 'admin', '2023-06-13 17:11:27', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('e27a2f5ecad5a50a7d788756da095245', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'minEvictableIdleTimeMillis', '300000', 1, 6, NULL, 0, '配置一个连接在池中最小生存的时间，单位是毫秒', 'admin', '2023-03-13 11:26:48', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('e27c1ecf50054eb7e0263d3b9580f469', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '日期处理', 'date_op', 0, 3, '', 0, '', 'admin', '2023-10-27 09:19:16', 'admin', '2023-10-27 14:22:00');
@@ -1178,6 +1207,7 @@ INSERT INTO `sys_dict_item` VALUES ('ec9cfc538a91de2f61829e61064d636b', 'ad7336d
 INSERT INTO `sys_dict_item` VALUES ('f12c3e6c95f16dfd35e80c8c7101504e', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'idleTimeout', '60000', 1, 4, '', 0, '一个连接idle状态的最大时长（毫秒），超时则被释放（retired）', 'admin', '2023-03-13 11:21:46', 'admin', '2023-03-13 11:22:47');
 INSERT INTO `sys_dict_item` VALUES ('f3b5faffba629cc8e07e5d57d76e4e49', '55ccc731fe3958c4afca60cbd852a55f', 'tenant_corp_years', '十年以内', '10', 0, 3, '', 0, '', 'admin', '2023-06-13 17:21:32', 'admin', '2023-06-13 17:32:00');
 INSERT INTO `sys_dict_item` VALUES ('f442a8f38c5ce32b6b05c640cc3ecc2b', 'e8e6e4c3f8e2fb775d6d083883e41839', 'sys_code_condition', '包含', 'like', 0, 2, NULL, 0, NULL, 'admin', '2023-05-10 16:12:34', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('f485da6d28850874150e6bda1d565907', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '已发货', '2', 0, 3, '#1677FF', 0, NULL, 'admin', '2024-04-20 18:12:35', 'admin', '2024-04-20 18:16:36');
 INSERT INTO `sys_dict_item` VALUES ('f84c6e754d183f40a4b1d7a5b72371c7', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'password', 'password', 0, 2, 'blue', 0, '帐号密码认证方式', 'admin', '2023-05-16 21:50:40', 'admin', '2023-05-18 10:20:12');
 INSERT INTO `sys_dict_item` VALUES ('f88a8a4a391e3ae455ba6d8157f22260', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'POST', 'POST', 0, 2, 'blue', 0, '新增', 'admin', '2023-01-09 16:12:41', 'admin', '2023-02-21 18:02:00');
 INSERT INTO `sys_dict_item` VALUES ('fae13a8680a44565b4ffab652c7c9d6b', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '字符处理', 'char_op', 0, 1, NULL, 0, NULL, 'admin', '2023-10-27 09:12:06', 'admin', '2023-10-27 14:21:43');

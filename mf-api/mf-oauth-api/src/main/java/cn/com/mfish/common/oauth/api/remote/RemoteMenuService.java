@@ -18,6 +18,6 @@ public interface RemoteMenuService {
     @PostMapping("/menu")
     Result<SsoMenu> add(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody SsoMenu ssoMenu);
 
-    @GetMapping("/routeExist")
+    @GetMapping("/menu/routeExist")
     Result<Boolean> routeExist(@RequestParam("routePath") String routePath, @RequestParam("parentId") String parentId);
 }

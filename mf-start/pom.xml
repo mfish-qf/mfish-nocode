@@ -18,7 +18,7 @@
         <module>mf-start-scheduler</module>
         <module>mf-start-storage</module>
         <module>mf-start-gateway</module>
-        <module>mf-start-web</module>
+        <module>mf-start-demo</module>
         <module>mf-start-openai</module>
     </modules>
     <properties>

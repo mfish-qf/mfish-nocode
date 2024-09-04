@@ -8,9 +8,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate" v-auth="'${apiPrefix}:${entityName?uncap_first}:insert'">新增</a-button>
-        <a-button color="warning" @click="handleExport" v-auth="'${apiPrefix}:${entityName?uncap_first}:export'">导出</a-button>
-        <a-button color="error" @click="handleBatchDelete" v-auth="'${apiPrefix}:${entityName?uncap_first}:delete'">批量删除</a-button>
+        <AButton type="primary" @click="handleCreate" v-auth="'${apiPrefix}:${entityName?uncap_first}:insert'">新增</AButton>
+        <AButton color="warning" @click="handleExport" v-auth="'${apiPrefix}:${entityName?uncap_first}:export'">导出</AButton>
+        <AButton color="error" @click="handleBatchDelete" v-auth="'${apiPrefix}:${entityName?uncap_first}:delete'">批量删除</AButton>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -70,6 +70,7 @@
   import { ${entityName} } from "@/api/${apiPrefix}/model/${entityName}Model";
   import { ref } from "vue";
   import { useMessage } from "@/hooks/web/UseMessage";
+  import AButton from "@/components/general/Button/src/BasicButton.vue";
   <#assign dictIndex = 0>
   <#list searchList as search>
   <#if search.component??>

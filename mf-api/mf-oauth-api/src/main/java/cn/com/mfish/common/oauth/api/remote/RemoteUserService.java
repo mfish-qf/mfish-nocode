@@ -105,7 +105,7 @@ public interface RemoteUserService {
      * @param direction 查询方向
      * @return
      */
-    @GetMapping("/orgIds/{userId}")
+    @GetMapping("/user/orgIds/{userId}")
     Result<List<String>> getOrgIds(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("tenantId") String tenantId, @RequestParam("direction") String direction);
 
     /**
@@ -114,6 +114,6 @@ public interface RemoteUserService {
      * @param accounts 账号 多个逗号分割
      * @return
      */
-    @GetMapping("/userId/{account}")
+    @GetMapping("/user/userId/{account}")
     Result<List<String>> getUserIdsByAccounts(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String accounts);
 }

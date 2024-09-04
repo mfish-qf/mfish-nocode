@@ -1,3 +1,4 @@
 cn.com.mfish.common.oauth.api.fallback.RemoteUserFallback
 cn.com.mfish.common.oauth.api.fallback.RemoteOrgFallback
+cn.com.mfish.common.oauth.api.fallback.RemoteRoleFallback
 cn.com.mfish.common.oauth.api.fallback.RemoteMenuFallback
