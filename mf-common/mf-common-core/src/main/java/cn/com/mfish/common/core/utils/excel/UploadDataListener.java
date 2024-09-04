@@ -41,10 +41,21 @@ public class UploadDataListener<T> implements ReadListener<T> {
         this.uploadDAO = uploadDAO;
     }
 
+    /**
+     * 构造一个 UploadDataListener 实例。
+     * <p>
+     * 此构造函数主要用于使用必要的 UploadDAO 实例和批量处理计数初始化 UploadDataListener。
+     * UploadDAO 实例用于与指定数据类型的访问层进行交互。
+     * 批量处理计数用于确定批量处理操作中每次处理的数据项数量。
+     *
+     * @param uploadDAO  用于数据操作的 UploadDAO 实例，特定于数据类型 T。
+     * @param batchCount 批量处理计数，一个正整数，表示批量大小。
+     */
     public UploadDataListener(UploadDAO<T> uploadDAO, int batchCount) {
         this.uploadDAO = uploadDAO;
         this.BATCH_COUNT = batchCount;
     }
+
 
     /**
      * 这个每一条数据解析都会来调用

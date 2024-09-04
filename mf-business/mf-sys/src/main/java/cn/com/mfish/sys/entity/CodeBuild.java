@@ -33,7 +33,7 @@ public class CodeBuild extends BaseEntity<Long> {
     private String apiPrefix;
     @Schema(description = "实体类名(不传会使用表名驼峰化)")
     private String entityName;
-    @Schema(description = "项目包名(不传使用默认包名 cn.com.mfish.web)")
+    @Schema(description = "项目包名(不传使用默认包名 cn.com.mfish.sys)")
     private String packageName;
     @Schema(description = "表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")
     private String tableComment;

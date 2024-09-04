@@ -2,6 +2,7 @@ package cn.com.mfish.common.oauth.common;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  * @description: OAUTH工具方法
  * @date: 2022/12/6 17:23
  */
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class OauthUtils {
 
     private OauthUtils() {
@@ -72,6 +73,7 @@ public class OauthUtils {
     /**
      * 获取当前用户角色
      * 注意：该方法请勿用异步调用
+     *
      * @return 返回用户角色
      */
     public static List<UserRole> getRoles() {
@@ -104,6 +106,7 @@ public class OauthUtils {
     /**
      * 获取当前用户按钮权限
      * 注意：该方法请勿用异步调用
+     *
      * @return 返回用户按钮权限
      */
     public static Set<String> getPermission() {
@@ -117,6 +120,7 @@ public class OauthUtils {
     /**
      * 获取租户列表
      * 注意：该方法请勿用异步调用
+     *
      * @return 返回租户列表
      */
     public static List<TenantVo> getTenants() {
@@ -125,6 +129,39 @@ public class OauthUtils {
             return null;
         }
         return result.getData();
+    }
+
+    /**
+     * 获取当前租户的信息
+     *
+     * 本函数的目的是根据当前的token来确定并返回当前租户的详细信息
+     * 它首先检查是否存在有效的token，如果不存在，则抛出异常
+     * 如果token存在，它进一步判断token的类型（RedisAccessToken或WeChatToken）
+     * 根据token类型提取出当前租户的ID，然后从所有租户列表中匹配该租户信息
+     * 如果找不到匹配的租户，或者用户不属于该租户，则抛出异常
+     * 最后，返回匹配到的租户信息
+     *
+     * @return TenantVo 当前租户的信息，如果找不到则返回null
+     * @throws MyRuntimeException 如果未获取到token信息，或者找不到当前租户，或者用户不属于此租户
+     */
+    public static TenantVo getCurrentTenant() {
+        Object token = getToken();
+        if (token == null) {
+            throw new MyRuntimeException("错误：未获取到token信息");
+        }
+        String tenantId;
+        if (token instanceof RedisAccessToken redisAccessToken) {
+            tenantId = redisAccessToken.getTenantId();
+        } else if (token instanceof WeChatToken weChatToken) {
+            tenantId = weChatToken.getTenantId();
+        } else {
+            throw new MyRuntimeException("错误：未找到当前租户");
+        }
+        List<TenantVo> list = getTenants();
+        if (list == null) {
+            throw new MyRuntimeException("错误：未获取到账号租户列表");
+        }
+        return list.stream().filter(tenantVo -> tenantVo.getId().equals(tenantId)).findFirst().orElse(null);
     }
 
     /**
@@ -146,8 +183,8 @@ public class OauthUtils {
      * 校验结果
      *
      * @param logical 组合逻辑
-     * @param values 需要校验的权限
-     * @param set 所有权限
+     * @param values  需要校验的权限
+     * @param set     所有权限
      * @return 返回校验结果
      */
     private static boolean checkValue(Logical logical, String[] values, Set<String> set) {
@@ -196,7 +233,7 @@ public class OauthUtils {
      * 设置token
      *
      * @param tokenId tokenID
-     * @param token token
+     * @param token   token
      */
     public static void setToken(String tokenId, Object token) {
         getTokenService(tokenId).setToken(token);
@@ -205,6 +242,7 @@ public class OauthUtils {
     /**
      * 获取当前token对象
      * 注意：该方法请勿用异步调用
+     *
      * @return 返回token对象
      */
     public static Object getToken() {

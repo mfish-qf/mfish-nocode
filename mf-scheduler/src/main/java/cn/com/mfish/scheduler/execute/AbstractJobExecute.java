@@ -88,7 +88,8 @@ public abstract class AbstractJobExecute extends QuartzJobBean {
                 .setParams(job.getParams())
                 .setStatus(JobStatus.开始.getValue())
                 .setLogType(job.getLogType());
-        jobLog.setCreateBy(OPERATOR).setCreateTime(new Date());
+        jobLog.setCreateBy(OPERATOR);
+        jobLog.setCreateTime(new Date());
         log.info(MessageFormat.format("任务:{0}-执行状态:{1}-任务ID:{2}-订阅ID:{3}", jobLog.getJobName(), jobLog.getStatus(), jobLog.getId(), jobLog.getSubscribeId()));
         threadLocal.set(jobLog);
         if (1 == jobLog.getLogType()) {

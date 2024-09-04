@@ -136,8 +136,9 @@ public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> impl
                 return Result.fail("错误:上级菜单选择不正确");
             }
         }
-        if (baseMapper.exists(new LambdaQueryWrapper<SsoMenu>()
+        if (!StringUtils.isEmpty(ssoMenu.getRoutePath()) && baseMapper.exists(new LambdaQueryWrapper<SsoMenu>()
                 .eq(SsoMenu::getRoutePath, ssoMenu.getRoutePath())
+                .eq(SsoMenu::getParentId, ssoMenu.getParentId())
                 .ne(!StringUtils.isEmpty(ssoMenu.getId()), SsoMenu::getId, ssoMenu.getId()))) {
             return Result.fail("错误：路由地址已存在");
         }

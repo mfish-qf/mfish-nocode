@@ -4,7 +4,6 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,11 +16,11 @@ import java.util.Date;
  * @date: 2022/11/11 17:31
  */
 @Data
-@Accessors(chain = true)
 @Schema(description = "基础对象")
 public class BaseEntity<T> {
     @ExcelIgnore
     @Schema(description = "ID")
+    @Accessors(chain = true)
     private T id;
     @ExcelProperty("创建用户")
     @Schema(description = "创建用户")

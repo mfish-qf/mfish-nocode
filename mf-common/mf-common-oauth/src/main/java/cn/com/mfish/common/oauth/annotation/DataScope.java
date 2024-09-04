@@ -47,9 +47,9 @@ public @interface DataScope {
 
     /**
      * 字段值 多个值之间是or条件（不填各权限控制使用默认值，传入优先使用传入值。例如：租户使用当前租户）
-     * 用户：传账号名称 例如:admin,mfish
-     * 角色：传入角色固定编码 例如:superAdmin,manage
-     * 组织:传入组织固定编码 例如:admin
+     * 用户：传账号名称 例如:values={"admin","mfish"}
+     * 角色：传入角色固定编码 例如:values={"superAdmin","manage"}
+     * 组织:传入组织固定编码 例如:values="admin"
      * 租户:直接传入id（注意:::考虑到租户一般情况下都是查询当前租户数据，所以该值并未过多实现）
      *
      * @return 字段值

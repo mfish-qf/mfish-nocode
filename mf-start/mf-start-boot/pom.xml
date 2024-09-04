@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-web</artifactId>
+            <artifactId>mf-demo</artifactId>
             <version>${mfish.version}</version>
         </dependency>
         <dependency>

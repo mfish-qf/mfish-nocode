@@ -57,3 +57,5 @@
 /mf-common/mf-common-sys/target/
 /mf-start/mf-start-boot/logs/
 /mf-common/mf-common-cloud/target/
+/mf-start/mf-start-demo/target/
+/mf-business/mf-demo/target/
