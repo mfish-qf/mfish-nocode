@@ -1,4 +1,4 @@
-package cn.com.mfish.openai.config;
+package cn.com.mfish.demo.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

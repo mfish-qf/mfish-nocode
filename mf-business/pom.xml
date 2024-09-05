@@ -14,7 +14,6 @@
     <modules>
         <module>mf-demo</module>
         <module>mf-sys</module>
-        <module>mf-openai</module>
         <module>mf-consume</module>
     </modules>
 
