@@ -1,10 +1,10 @@
-package cn.com.mfish.openai.controller;
+package cn.com.mfish.demo.controller;
 
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.openai.common.AiOperator;
-import cn.com.mfish.openai.config.OpenAiConfig;
-import cn.com.mfish.openai.entity.CompletionResult;
-import cn.com.mfish.openai.entity.Question;
+import cn.com.mfish.demo.common.AiOperator;
+import cn.com.mfish.demo.config.OpenAiConfig;
+import cn.com.mfish.demo.entity.CompletionResult;
+import cn.com.mfish.demo.entity.Question;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;

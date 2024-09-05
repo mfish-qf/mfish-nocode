@@ -1,8 +1,8 @@
-package cn.com.mfish.openai.common;
+package cn.com.mfish.demo.common;
 
 import cn.com.mfish.common.core.utils.http.OkHttpUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.openai.entity.Completion;
+import cn.com.mfish.demo.entity.Completion;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 

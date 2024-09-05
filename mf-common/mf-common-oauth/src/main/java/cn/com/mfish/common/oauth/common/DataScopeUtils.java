@@ -150,10 +150,12 @@ public class DataScopeUtils {
 
     /**
      * 构建查询条件
+     * 根据字段名和值数组构建SQL查询条件字符串
      *
-     * @param fieldName
-     * @param values
-     * @return
+     * @param fieldName 字段名，用于指定查询条件的目标字段
+     * @param values 值数组，包含一个或多个字段值，用于构建查询条件
+     * @return 返回构建的查询条件字符串如果values为空或null，则返回"1<>1"，表示一个永远不满足的条件
+     * @throws MyRuntimeException 如果fieldName为空或null，则抛出MyRuntimeException，提示未传入条件字段名称
      */
     public static String buildCondition(String fieldName, String[] values) {
         if (StringUtils.isEmpty(fieldName)) {
