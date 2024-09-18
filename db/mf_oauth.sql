@@ -67,7 +67,7 @@ CREATE TABLE `sso_menu`  (
 -- ----------------------------
 -- Records of sso_menu
 -- ----------------------------
-INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:53:57', 'admin', '2024-04-03 10:19:09');
+INSERT INTO `sso_menu` VALUES ('503e3ac379a2e17e99105b77a727e6db', '', '00001', 1, '驾驶舱', 'ant-design:appstore-outlined', 1, 0, '/dashboard', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2022-11-08 16:53:57', 'admin', '2024-09-03 21:52:16');
 INSERT INTO `sso_menu` VALUES ('76f68d05f5054818762718ee85d6d0fe', '503e3ac379a2e17e99105b77a727e6db', '0000100001', 2, '工作台', 'ant-design:calendar-outlined', 1, 1, '/workbench', '/dashboard/workbench/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2023-03-10 17:15:10', 'test', '2023-06-23 20:12:21');
 INSERT INTO `sso_menu` VALUES ('268d140daddc00dc77823c7d7c2025fb', '76f68d05f5054818762718ee85d6d0fe', '000010000100001', 3, '查询', '#', 1, 2, '', NULL, 'sys:workbench:query', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 17:15:10', 'admin', '2024-04-03 10:19:23');
 INSERT INTO `sso_menu` VALUES ('234dc900ad6502579a51784f9ddb05d5', '76f68d05f5054818762718ee85d6d0fe', '000010000100002', 3, '新增', '#', 2, 2, '', NULL, 'sys:workbench:insert', 0, 1, NULL, NULL, '', 'admin', '2023-03-10 17:15:10', '', NULL);
@@ -128,7 +128,7 @@ INSERT INTO `sso_menu` VALUES ('43f57faab0a1d54cc5130d8a3cc9594a', 'f16ec999ec44
 INSERT INTO `sso_menu` VALUES ('f4a9dee8dbff56cd15ffafa815c84a27', 'f16ec999ec440bee68dd4e01a650fd54', '000020001400004', 3, '删除', '#', 4, 2, '', NULL, 'sys:dictCategory:query,sys:dictCategory:delete', 0, 1, NULL, NULL, '', 'admin', '2024-03-14 14:24:57', '', NULL);
 INSERT INTO `sso_menu` VALUES ('6e491486dc4cb475e4bd037d06ab2801', '', '00003', 1, '项目文档', 'ion:book-outline', 5, 0, '/doc', NULL, NULL, 1, 1, NULL, NULL, '', 'admin', '2022-11-08 17:08:24', 'admin', '2023-02-14 17:13:51');
 INSERT INTO `sso_menu` VALUES ('1a0aee8380c525e7c4802b1c4d587fa8', '6e491486dc4cb475e4bd037d06ab2801', '0000300001', 2, '接口文档', 'simple-icons:swagger', 1, 1, '/swagger', 'http://app.mfish.com.cn:11116/swagger-ui/index.html', NULL, 0, 1, NULL, 0, '', 'admin', '2022-12-14 10:25:31', 'admin', '2023-09-01 14:58:24');
-INSERT INTO `sso_menu` VALUES ('1ce2ac44228e37c063e9cd55ed8f0a49', '6e491486dc4cb475e4bd037d06ab2801', '0000300002', 2, 'GitHub地址', 'ion:logo-github', 2, 1, '/git', 'https://github.com/mfish-qf/mfish-nocode', NULL, 1, 1, NULL, 1, '', 'admin', '2022-12-14 15:27:03', 'admin', '2023-04-30 11:34:12');
+INSERT INTO `sso_menu` VALUES ('1ce2ac44228e37c063e9cd55ed8f0a49', '6e491486dc4cb475e4bd037d06ab2801', '0000300002', 2, 'GitHub地址', 'ion:logo-github', 2, 1, '/git', 'https://github.com/mfish-qf/mfish-nocode', NULL, 1, 1, NULL, 1, '', 'admin', '2022-12-14 15:27:03', 'admin', '2024-09-05 18:17:06');
 INSERT INTO `sso_menu` VALUES ('5c723efc132b50c0284d79eaafed5a0f', '6e491486dc4cb475e4bd037d06ab2801', '0000300003', 2, 'AntDesign文档', 'ion:social-angular-outline', 4, 1, '/ant', 'https://www.antdv.com/docs/vue/introduce-cn/', NULL, 1, 1, NULL, 1, '', 'admin', '2022-12-14 15:38:22', 'admin', '2023-11-20 15:43:46');
 INSERT INTO `sso_menu` VALUES ('0526179a70fca38a69dd709dec2f1a81', '6e491486dc4cb475e4bd037d06ab2801', '0000300004', 2, 'Vben文档', 'ion:social-vimeo-outline', 5, 1, '/vben', 'https://doc.vvbin.cn/guide/introduction.html', NULL, 0, 1, NULL, 1, '', 'admin', '2022-12-15 09:14:09', 'admin', '2023-03-09 10:36:52');
 INSERT INTO `sso_menu` VALUES ('fa2211276b7b84a141667ec9ea8d33a4', '6e491486dc4cb475e4bd037d06ab2801', '0000300005', 2, 'Gitee地址', 'simple-icons:gitee', 3, 1, '/gitee', 'https://gitee.com/qiufeng9862/mfish-nocode', NULL, 1, 1, NULL, 0, '', 'admin', '2023-03-09 10:36:36', '', NULL);
@@ -188,14 +188,21 @@ INSERT INTO `sso_menu` VALUES ('53e8eaceee36c1d54e43319fdd60811b', '', '00013', 
 INSERT INTO `sso_menu` VALUES ('9c6f4eff70d7b2048f63adf229c5d30d', '53e8eaceee36c1d54e43319fdd60811b', '0001300002', 2, '多级目录', 'ion:folder-open-outline', 4, 0, '/level', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:06:17', 'admin', '2024-09-05 10:12:16');
 INSERT INTO `sso_menu` VALUES ('5b543a83371c766788047a1a1907cffd', '9c6f4eff70d7b2048f63adf229c5d30d', '000130000200001', 3, '目录1', 'ion:folder-open-outline', 1, 0, '/menu1', NULL, NULL, 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:06:17', '', NULL);
 INSERT INTO `sso_menu` VALUES ('bcd18784374699438a215a9ab1e9b351', '5b543a83371c766788047a1a1907cffd', '00013000020000100002', 4, '多级菜单', 'ant-design:appstore-outlined', 1, 1, '/menu3', '/demo/level/LevelMenu.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-03 21:57:58', '', NULL);
-INSERT INTO `sso_menu` VALUES ('e862cd0f17439fe26950e5ecb9492cc2', '53e8eaceee36c1d54e43319fdd60811b', '0001300003', 2, '导入导出', 'ant-design:export-outlined', 2, 1, '/demo-import-export', '/demo/demo-import-export/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-04 21:44:55');
+INSERT INTO `sso_menu` VALUES ('e862cd0f17439fe26950e5ecb9492cc2', '53e8eaceee36c1d54e43319fdd60811b', '0001300003', 2, '导入导出', 'ant-design:export-outlined', 3, 1, '/demo-import-export', '/demo/demo-import-export/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-09 21:12:38');
 INSERT INTO `sso_menu` VALUES ('6858a7df953aa4a3bbab3bd77e03b1fb', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300001', 3, '查询', '#', 1, 2, '', NULL, 'demo:demoImportExport:query', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', '', NULL);
 INSERT INTO `sso_menu` VALUES ('37603c7afb87a9d94d03b06730cb0d29', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300002', 3, '导入', '#', 2, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:import', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-03 23:10:01');
 INSERT INTO `sso_menu` VALUES ('ec07264b984c531ee729eda12ada4c49', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300003', 3, '导出', '#', 3, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:export', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', 'admin', '2024-09-03 23:10:15');
 INSERT INTO `sso_menu` VALUES ('bff2e13c8ef26ffc98cb4941b2390316', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300004', 3, '删除', '#', 4, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:delete', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', '', NULL);
-INSERT INTO `sso_menu` VALUES ('1eb28fcc2c9e009ddf9accec8be4665d', '53e8eaceee36c1d54e43319fdd60811b', '0001300004', 2, '数据权限', 'ant-design:filter-outlined', 3, 1, '/demo-data-scope', '/demo/demo-data-scope/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-04 17:29:18', 'admin', '2024-09-04 21:44:29');
+INSERT INTO `sso_menu` VALUES ('1eb28fcc2c9e009ddf9accec8be4665d', '53e8eaceee36c1d54e43319fdd60811b', '0001300004', 2, '数据权限', 'ant-design:filter-outlined', 10, 1, '/demo-data-scope', '/demo/demo-data-scope/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-04 17:29:18', 'admin', '2024-09-09 21:12:50');
 INSERT INTO `sso_menu` VALUES ('0744327e98f399788bb030efb1c0b637', '1eb28fcc2c9e009ddf9accec8be4665d', '000130000400001', 3, '查询', '#', 1, 2, '', NULL, 'demo:demoDataScope:query', 0, 1, NULL, NULL, '', 'admin', '2024-09-04 17:29:18', '', NULL);
 INSERT INTO `sso_menu` VALUES ('08a567f09c8d90660c23f2b432e0e1d9', '53e8eaceee36c1d54e43319fdd60811b', '0001300005', 2, 'ChatGpt', 'ion:chatbubbles-outline', 1, 1, '/ai', '/demo/ai/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-05 10:12:02', 'admin', '2024-09-05 10:12:40');
+INSERT INTO `sso_menu` VALUES ('5a5a25e8923ace2700133ab997af0e80', '53e8eaceee36c1d54e43319fdd60811b', '0001300006', 2, '上传下载', 'ant-design:cloud-upload-outlined', 2, 1, '/demo-up-down', '/demo/demo-up-down/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-08 21:20:18', 'admin', '2024-09-08 21:20:41');
+INSERT INTO `sso_menu` VALUES ('0913e14334f59671ae6abfdfce5e0559', '5a5a25e8923ace2700133ab997af0e80', '000130000600001', 3, '上传', '#', 1, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:update', 0, 1, NULL, 1, '', 'admin', '2024-09-09 21:59:21', 'admin', '2024-09-09 21:59:35');
+INSERT INTO `sso_menu` VALUES ('23f38246b88faf0826c17d57c0d846af', '53e8eaceee36c1d54e43319fdd60811b', '0001300007', 2, '主子表', 'ant-design:table-outlined', 5, 1, '/demo-order', '/demo/demo-order/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-13 14:22:11', 'admin', '2024-09-13 14:43:25');
+INSERT INTO `sso_menu` VALUES ('ec812dc5df8d93e478bd22a04d3db770', '23f38246b88faf0826c17d57c0d846af', '000130000700001', 3, '查询', '#', 1, 2, '', NULL, 'demo:demoOrder:query', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
+INSERT INTO `sso_menu` VALUES ('2bf2996b88ae8cd70e91685e5e95d4f7', '23f38246b88faf0826c17d57c0d846af', '000130000700002', 3, '新增', '#', 2, 2, '', NULL, 'demo:demoOrder:query,demo:demoOrder:insert', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
+INSERT INTO `sso_menu` VALUES ('f193aa905e7aceb1e4b0187d8b63339f', '23f38246b88faf0826c17d57c0d846af', '000130000700003', 3, '修改', '#', 3, 2, '', NULL, 'demo:demoOrder:query,demo:demoOrder:update', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
+INSERT INTO `sso_menu` VALUES ('250f8038be816e61956c792fc9ddc2c6', '23f38246b88faf0826c17d57c0d846af', '000130000700004', 3, '删除', '#', 4, 2, '', NULL, 'demo:demoOrder:query,demo:demoOrder:delete', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -384,10 +391,10 @@ INSERT INTO `sso_role_menu` VALUES ('4063404b06e967bcf619bf86e7fe6359', '0aa9f01
 INSERT INTO `sso_role_menu` VALUES ('4063404b06e967bcf619bf86e7fe6359', '6d71e92a5a3712acbcfcc58f65b93f4f');
 INSERT INTO `sso_role_menu` VALUES ('4063404b06e967bcf619bf86e7fe6359', '7e690410346c4d3a1610d85e8c9f906b');
 INSERT INTO `sso_role_menu` VALUES ('4063404b06e967bcf619bf86e7fe6359', 'e159379c94b8fcc58ebc38cf8b322772');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '01ee419d3dcc28acf1920428391720b7');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0526179a70fca38a69dd709dec2f1a81');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0744327e98f399788bb030efb1c0b637');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '08a567f09c8d90660c23f2b432e0e1d9');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0913e14334f59671ae6abfdfce5e0559');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '0aa9f017545ec947a075f76e34c075c0');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '101cb161536a5a80731a4d6db0b5eeac');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1a0aee8380c525e7c4802b1c4d587fa8');
@@ -397,43 +404,41 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1eb28fc
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '204217f09c1206f9d5b9725c1e05604a');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '234dc900ad6502579a51784f9ddb05d5');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '238132a09b6f761374dfd205b6388245');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '23f38246b88faf0826c17d57c0d846af');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '250f8038be816e61956c792fc9ddc2c6');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '25a5783ea03e26d7844b9b7370576236');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '2628fb3c4166d6469f06fcea9b9c0c55');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '268d140daddc00dc77823c7d7c2025fb');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '285bb37f32e878e24d5a22445c1bc5af');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '292791abfbf63b35ad9ce510c0a5823e');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '2bf2996b88ae8cd70e91685e5e95d4f7');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '369de1bef8d1e964414f25ec6d3156bc');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '37603c7afb87a9d94d03b06730cb0d29');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '3a74d165bcd286f102e10a1be8c23eef');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '3a92fd411f0a70bf477e6dc354f4e29e');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '3c4b2d0f7558d7f45a29fd9c6a7edea7');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '40bf4846599bf8dbd307f77bf51a7dad');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '43f57faab0a1d54cc5130d8a3cc9594a');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '442f89857faa6bc929ef4f422b8c4b99');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '494d219f20ef782becd6b75c899ba4b5');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '4cabb05e97ea7a738a2f7ce3c9d224d8');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '4d1e926fd6767a786b1cab58e3bc5624');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '503e3ac379a2e17e99105b77a727e6db');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '520873645d565776988d81481d8b0d26');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5271166ced06a95d787dc049d3f19bd2');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '53e8eaceee36c1d54e43319fdd60811b');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '573c955ed2c2ffdea2654487cdfdc520');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '58c1fc9fde9ad2a37fa366a9a91f094d');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5a5a25e8923ace2700133ab997af0e80');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5ad16d38964bf541b6417b07ddf33d9b');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5b543a83371c766788047a1a1907cffd');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5c723efc132b50c0284d79eaafed5a0f');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '5d9ff19ac80d4899ea469e4d4b9a6aeb');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '60efb66a88ab33b339718eb0d052a033');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '67dfbce31013ada62800425f72997962');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6858a7df953aa4a3bbab3bd77e03b1fb');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6a38a3847b66cc690c3a2eacedb4e81f');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6ac6bc8054107436e24356e3466f00db');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6cedf51376c8998eb49e280cdba6c533');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6d71e92a5a3712acbcfcc58f65b93f4f');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6e02e0e621140968dc62a2ce3dfa198d');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '6e491486dc4cb475e4bd037d06ab2801');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '731738ed9bbd2e36456b790dfadcb84e');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '74ce27a1e94091da2efa714e32680e7a');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '75882dc140444e061741fbd9f026dd2b');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '76f149981f1c86fce81f2f4cdb9674b9');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '76f68d05f5054818762718ee85d6d0fe');
@@ -447,14 +452,11 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '8360ab9
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '85cd52250e435c555622c268262f4c02');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '93190e5d426f69cd2712aac373542698');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '967795af502129d318899a60716da84f');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '9a293c164762776e0a876323a3363dec');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '9c6f4eff70d7b2048f63adf229c5d30d');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '9d5397b6ddb4d194a95b05f42b80445b');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '9f46c219e3fc35b1c2ef3a95438b16bf');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'a43c057f48b54c9038719179cf9e284d');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'a455186424982517f128da41f2c159d9');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'a606083b203d32915c4d0e649c7b7c6b');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'a7145a05342033be0caa4a8f1e262f8a');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ac7eb51ce5e700aa268464b9fd052624');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ad2ab62e13c7750dcb5b41b00cbdcf66');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'afbf598d2290b24a5e87e7547c05515d');
@@ -471,17 +473,17 @@ INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'c52a49d
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ca0a3c9ae9cd551ee4e1b727861b7c78');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ce1a05cdedf2d0684574a30dd3ed14f9');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'cea175c6cef1506173dcc579fe42572c');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'cfbdf3ce5297cebf806ac116fc239558');
-INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'd9832cd3aefbb5f99267edb995ff8c75');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e159379c94b8fcc58ebc38cf8b322772');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e1996e92ac6cf37c0c2e40825a7af472');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e862cd0f17439fe26950e5ecb9492cc2');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'e909edc44910691dedc2c5338ec0e603');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'eb5f513d5430597d3ea312e1bf760b23');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ec07264b984c531ee729eda12ada4c49');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ec812dc5df8d93e478bd22a04d3db770');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'eda0153e492e86ade2fe6702d267fef3');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'ee34f5aec6a2220f57fa151a147ede3c');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'eeda5a7b6e2868e5e25a1e794d5786db');
+INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'f193aa905e7aceb1e4b0187d8b63339f');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'f4a0ed4ca7a609aa8268399bdffcecfb');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'f634ba1d6d840fb1f945b4f811dd928d');
 INSERT INTO `sso_role_menu` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', 'f87d8b297eb3650834048dba7c8d2d89');
