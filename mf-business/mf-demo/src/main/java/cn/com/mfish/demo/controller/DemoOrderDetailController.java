@@ -46,7 +46,7 @@ public class DemoOrderDetailController {
 	 */
 	@Operation(summary = "销售订单明细-分页列表查询", description = "销售订单明细-分页列表查询")
 	@GetMapping
-    @RequiresPermissions("demo:demoOrderDetail:query")
+    @RequiresPermissions("demo:demoOrder:query")
 	public Result<PageResult<DemoOrderDetail>> queryPageList(ReqDemoOrderDetail reqDemoOrderDetail, ReqPage reqPage) {
 		return Result.ok(new PageResult<>(queryList(reqDemoOrderDetail, reqPage)), "销售订单明细-查询成功!");
 	}
@@ -76,7 +76,7 @@ public class DemoOrderDetailController {
 	@Log(title = "销售订单明细-添加", operateType = OperateType.INSERT)
 	@Operation(summary = "销售订单明细-添加")
 	@PostMapping
-	@RequiresPermissions("demo:demoOrderDetail:insert")
+	@RequiresPermissions("demo:demoOrder:insert")
 	public Result<DemoOrderDetail> add(@RequestBody DemoOrderDetail demoOrderDetail) {
 		if (demoOrderDetailService.save(demoOrderDetail)) {
 			return Result.ok(demoOrderDetail, "销售订单明细-添加成功!");
@@ -93,7 +93,7 @@ public class DemoOrderDetailController {
 	@Log(title = "销售订单明细-编辑", operateType = OperateType.UPDATE)
 	@Operation(summary = "销售订单明细-编辑")
 	@PutMapping
-	@RequiresPermissions("demo:demoOrderDetail:update")
+	@RequiresPermissions("demo:demoOrder:update")
 	public Result<DemoOrderDetail> edit(@RequestBody DemoOrderDetail demoOrderDetail) {
 		if (demoOrderDetailService.updateById(demoOrderDetail)) {
 		    return Result.ok(demoOrderDetail, "销售订单明细-编辑成功!");
@@ -110,7 +110,7 @@ public class DemoOrderDetailController {
 	@Log(title = "销售订单明细-通过id删除", operateType = OperateType.DELETE)
 	@Operation(summary = "销售订单明细-通过id删除")
 	@DeleteMapping("/{id}")
-	@RequiresPermissions("demo:demoOrderDetail:delete")
+	@RequiresPermissions("demo:demoOrder:delete")
 	public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
 		if (demoOrderDetailService.removeById(id)) {
 			return Result.ok(true, "销售订单明细-删除成功!");
@@ -127,7 +127,7 @@ public class DemoOrderDetailController {
 	@Log(title = "销售订单明细-批量删除", operateType = OperateType.DELETE)
 	@Operation(summary = "销售订单明细-批量删除")
 	@DeleteMapping("/batch/{ids}")
-	@RequiresPermissions("demo:demoOrderDetail:delete")
+	@RequiresPermissions("demo:demoOrder:delete")
 	public Result<Boolean> deleteBatch(@Parameter(name = "ids", description = "唯一性ID") @PathVariable String ids) {
 		if (this.demoOrderDetailService.removeByIds(Arrays.asList(ids.split(",")))) {
 		    return Result.ok(true, "销售订单明细-批量删除成功!");
@@ -143,7 +143,7 @@ public class DemoOrderDetailController {
 	 */
 	@Operation(summary = "销售订单明细-通过id查询")
 	@GetMapping("/{id}")
-	@RequiresPermissions("demo:demoOrderDetail:query")
+	@RequiresPermissions("demo:demoOrder:query")
 	public Result<DemoOrderDetail> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
 		DemoOrderDetail demoOrderDetail = demoOrderDetailService.getById(id);
 		return Result.ok(demoOrderDetail, "销售订单明细-查询成功!");
@@ -157,7 +157,7 @@ public class DemoOrderDetailController {
 	*/
 	@Operation(summary = "导出销售订单明细", description = "导出销售订单明细")
 	@GetMapping("/export")
-	@RequiresPermissions("demo:demoOrderDetail:export")
+	@RequiresPermissions("demo:demoOrder:export")
 	public void export(ReqDemoOrderDetail reqDemoOrderDetail, ReqPage reqPage) throws IOException {
 		//swagger调用会用问题，使用postman测试
 		ExcelUtils.write("DemoOrderDetail", queryList(reqDemoOrderDetail, reqPage));

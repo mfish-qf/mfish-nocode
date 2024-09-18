@@ -1,7 +1,7 @@
 package cn.com.mfish.demo.mapper;
 
+import cn.com.mfish.common.ds.mapper.BatchBaseMapper;
 import cn.com.mfish.demo.entity.DemoOrderDetail;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * @description: 销售订单明细
@@ -9,6 +9,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @date: 2024-09-02
  * @version: V1.3.1
  */
-public interface DemoOrderDetailMapper extends BaseMapper<DemoOrderDetail> {
+public interface DemoOrderDetailMapper extends BatchBaseMapper<DemoOrderDetail> {
 
 }

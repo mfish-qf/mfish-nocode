@@ -37,10 +37,10 @@
       }).then();
     }
   });
-  const getTitle = computed(() => (!unref(isUpdate) ? "新增${tableInfo.tableComment}" : "编辑${tableInfo.tableComment}"));
+  const getTitle = computed(() => (unref(isUpdate) ? "编辑${tableInfo.tableComment}" : "新增${tableInfo.tableComment}"));
 
   async function handleSubmit() {
-    let values = await validate();
+    const values = await validate();
     setModalProps({ confirmLoading: true });
     if (unref(isUpdate)) {
       save${entityName}(update${entityName}, values);

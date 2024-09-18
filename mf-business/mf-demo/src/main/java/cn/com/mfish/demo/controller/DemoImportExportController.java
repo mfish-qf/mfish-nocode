@@ -203,7 +203,7 @@ public class DemoImportExportController {
 
     @Operation(summary = "通用模板导入", description = "通用模板导入")
     @PostMapping("/import")
-    @RequiresPermissions({"demo:demoImportExport:insert", "demo:demoImportExport:update"})
+    @RequiresPermissions("demo:demoImportExport:import")
     public Result<Boolean> generalImport(MultipartFile file) throws IOException {
         //todo 注意excel对象头部不要添加@Accessors(chain = true)注解，会造成excel数据读取为空
         EasyExcel.read(file.getInputStream(), DemoImportExport.class, new UploadDataListener<DemoImportExport>((list, extraProp) -> {
