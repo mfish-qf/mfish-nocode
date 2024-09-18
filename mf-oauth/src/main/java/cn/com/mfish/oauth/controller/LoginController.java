@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -66,5 +67,16 @@ public class LoginController {
         loginService.sendMsg(phone, code);
         //测试环境返回生成验证码值,生产环境需要隐藏短信码返回值
         return Result.ok(code, "生成成功");
+    }
+
+    /**
+     * 微服务方法启动时，checkAliveServer接口会被定时调用，
+     * 暂时不知道是什么服务在调用该接口，所以写一个404页面返回
+     * 防止接口请求异常
+     * @return 返回404页面进行响应
+     */
+    @GetMapping("/checkAliveServer")
+    public Object checkAliveServer() {
+        return "404";
     }
 }

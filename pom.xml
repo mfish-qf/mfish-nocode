@@ -45,14 +45,14 @@
         <fastjson.version>2.0.52</fastjson.version>
         <zxing.version>3.5.3</zxing.version>
         <shiro.version>2.0.1</shiro.version>
-        <wechat.version>4.6.3.B</wechat.version>
+        <wechat.version>4.6.5.B</wechat.version>
         <aliyun-oss.version>3.18.1</aliyun-oss.version>
         <qiniu-sdk.version>7.15.1</qiniu-sdk.version>
         <rocketmq.version>2.3.1</rocketmq.version>
         <bcprov.version>1.78.1</bcprov.version>
         <oracle.version>23.5.0.24.07</oracle.version>
-        <pgsql.version>42.7.3</pgsql.version>
-        <easyexcel.version>4.0.2</easyexcel.version>
+        <pgsql.version>42.7.4</pgsql.version>
+        <easyexcel.version>4.0.3</easyexcel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -143,11 +143,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-spring</artifactId>
-                <version>${mybatis-spring.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
@@ -162,6 +157,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
             </dependency>
             <!-- Swagger 依赖配置 -->
             <dependency>

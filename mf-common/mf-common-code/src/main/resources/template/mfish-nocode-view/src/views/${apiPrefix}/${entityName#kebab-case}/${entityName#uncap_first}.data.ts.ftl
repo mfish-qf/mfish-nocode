@@ -7,7 +7,6 @@ import { DescItem } from "@/components/general/Description";
 <#list search.component as com>
 <#if com_index == 1&&dictIndex==0>
 import { buildDictTag, getDictProps } from "@/utils/DictUtils";
-import { h } from "vue";
 <#assign dictIndex = 1>
 </#if>
 </#list>
@@ -21,10 +20,19 @@ import { h } from "vue";
  * @version: V1.3.1
  */
 export const columns: BasicColumn[] = [
-<#list tableInfo.columns as fieldInfo>
+<#list tableInfo.fieldExpands as fieldExpands>
   {
-    title: "${fieldInfo.comment}",
-    dataIndex: "${fieldInfo.fieldName}",
+  <#if fieldExpands.dictComponent??>
+  <#list fieldExpands.dictComponent as com>
+  <#if com_index == 1>
+    customRender: ({ record }) => {
+      return buildDictTag("${com}", record.${fieldExpands.fieldInfo.fieldName});
+    },
+  </#if>
+  </#list>
+  </#if>
+    title: "${fieldExpands.fieldInfo.comment}",
+    dataIndex: "${fieldExpands.fieldInfo.fieldName}",
     width: 120
   },
 </#list>

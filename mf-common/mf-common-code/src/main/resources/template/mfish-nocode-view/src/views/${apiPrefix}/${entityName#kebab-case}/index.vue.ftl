@@ -2,7 +2,7 @@
  @description: ${tableInfo.tableComment}
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V1.2.0
+ @version: V1.3.1
 -->
 <template>
   <div>
@@ -43,17 +43,6 @@
             ]"
           />
         </template>
-        <#list searchList as search>
-          <#if search.component??>
-            <#list search.component as com>
-              <#if com_index == 1>
-        <template v-if="column.key === '${search.fieldInfo.fieldName}'">
-          <DictTag code="${com}" :value="record.${search.fieldInfo.fieldName}" />
-        </template>
-              </#if>
-            </#list>
-          </#if>
-        </#list>
       </template>
     </BasicTable>
     <${entityName}Modal @register="registerModal" @success="handleSuccess" />
@@ -71,17 +60,6 @@
   import { ref } from "vue";
   import { useMessage } from "@/hooks/web/UseMessage";
   import AButton from "@/components/general/Button/src/BasicButton.vue";
-  <#assign dictIndex = 0>
-  <#list searchList as search>
-  <#if search.component??>
-  <#list search.component as com>
-  <#if com_index == 1&&dictIndex==0>
-  import DictTag from "@/components/general/DictTag/DictTag.vue";
-  <#assign dictIndex = 1>
-  </#if>
-  </#list>
-  </#if>
-  </#list>
 
   defineOptions({ name: "${entityName}Management" });
   const [registerModal, { openModal }] = useModal();
@@ -163,7 +141,6 @@
 
   /**
    * 批量删除
-   * @param ${entityName?uncap_first} ${tableInfo.tableComment}对象
    */
   function handleBatchDelete() {
     if (selectedRowKeys.value.length > 0) {
