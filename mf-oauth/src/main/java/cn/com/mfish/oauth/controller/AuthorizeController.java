@@ -89,7 +89,7 @@ public class AuthorizeController {
             @Parameter(name = CaptchaConstant.CAPTCHA_KEY, description = "验证码key，单实例服务需要验证码时传入"),
             @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值，单实例服务需要验证码时传入")
     })
-    @Log(title = "code认证接口", operateType = OperateType.QUERY)
+    @Log(title = "code认证接口", operateType = OperateType.LOGIN)
     public Object authorize(Model model, HttpServletRequest request) {
         //单体服务时，自己验证验证码，微服务时由网关验证
         if (ServiceConstants.isBoot(Utils.getServiceType()) && captchaProperties.getEnabled()) {

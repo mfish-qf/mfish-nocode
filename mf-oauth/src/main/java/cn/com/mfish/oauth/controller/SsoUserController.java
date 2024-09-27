@@ -53,14 +53,12 @@ public class SsoUserController {
 
     @Operation(summary = "获取用户、权限相关信息")
     @GetMapping("/info")
-    @Log(title = "获取用户、权限相关信息", operateType = OperateType.QUERY)
     public Result<UserInfoVo> getUserInfo() {
         return Result.ok(ssoUserService.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
     }
 
     @Operation(summary = "获取用户权限")
     @GetMapping("/permissions")
-    @Log(title = "获取用户权限", operateType = OperateType.QUERY)
     @Parameters({
             @Parameter(name = "userId", description = "用户ID"),
             @Parameter(name = "tenantId", description = "租户ID")
@@ -75,7 +73,6 @@ public class SsoUserController {
 
     @Operation(summary = "获取用户角色")
     @GetMapping("/roles")
-    @Log(title = "获取用户角色", operateType = OperateType.QUERY)
     @Parameters({
             @Parameter(name = "userId", description = "用户ID"),
             @Parameter(name = "tenantId", description = "租户ID")
@@ -162,7 +159,7 @@ public class SsoUserController {
     }
 
     @Operation(summary = "用户登出", description = "用户登出--该方法只适用于web前端登录的用户登出")
-    @GetMapping("/revoke")
+    @DeleteMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
         Subject subject = SecurityUtils.getSubject();
@@ -296,7 +293,7 @@ public class SsoUserController {
     }
 
     @Operation(summary = "踢出指定用户")
-    @GetMapping("/revoke/{sid}")
+    @DeleteMapping("/revoke/{sid}")
     @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
     @RequiresPermissions("sys:online:revoke")
     public Result<Boolean> revokeUser(@Parameter(name = "sid", description = "指定用户的sessionId") @PathVariable String sid) {
