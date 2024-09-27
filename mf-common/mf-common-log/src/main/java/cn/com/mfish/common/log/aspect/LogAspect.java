@@ -46,7 +46,7 @@ public class LogAspect {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String origin = request.getHeader(RPCConstants.REQ_ORIGIN);
         if (!StringUtils.isEmpty(origin) && origin.equals(RPCConstants.INNER)) {
-            //内部请求不记入日志
+            //内部请求不记录日志
             return;
         }
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -129,10 +129,14 @@ public class LogAspect {
         if (sysLog == null) {
             return;
         }
-        sysLog.setCreateBy(AuthInfoUtils.getCurrentAccount());
-        sysLog.setCreateTime(new Date());
-        sysLog.setOperStatus(state);
-        sysLog.setRemark(remark);
-        asyncSaveLog.saveLog(sysLog);
+        try {
+            sysLog.setCreateBy(AuthInfoUtils.getCurrentAccount());
+            sysLog.setCreateTime(new Date());
+            sysLog.setOperStatus(state);
+            sysLog.setRemark(remark);
+            asyncSaveLog.saveLog(sysLog);
+        } finally {
+            logThreadLocal.remove();
+        }
     }
 }
