@@ -8,25 +8,23 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.service.SsoOrgService;
+import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.cache.temp.UserTenantTempCache;
-import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.mapper.SsoTenantMapper;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
-import cn.com.mfish.common.oauth.service.SsoOrgService;
 import cn.com.mfish.oauth.service.SsoTenantService;
-import cn.com.mfish.common.oauth.service.SsoUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
-
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -165,7 +163,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             throw new MyRuntimeException("错误:组织信息-更新失败");
         }
         if (ssoTenant.getRoleIds() != null) {
-            log.info(MessageFormat.format("删除组织角色数量:{0}条", ssoOrgService.deleteOrgRole(oldOrg.getId())));
+            log.info("删除组织角色数量:{}条", ssoOrgService.deleteOrgRole(oldOrg.getId()));
             ssoOrgService.insertOrgRole(org.getId(), ssoTenant.getRoleIds());
         }
 
