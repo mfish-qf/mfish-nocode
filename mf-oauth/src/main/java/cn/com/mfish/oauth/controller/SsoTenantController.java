@@ -141,6 +141,8 @@ public class SsoTenantController {
     @PutMapping("/me")
     public Result<SsoTenant> editMe(@RequestBody SsoTenant ssoTenant) {
         if (ssoTenantService.isTenantMaster(ssoTenant.getUserId(), ssoTenant.getId())) {
+            //管理员不允许设置角色
+            ssoTenant.setRoleIds(null);
             return ssoTenantService.updateTenant(ssoTenant);
         }
         return Result.fail(ssoTenant, "错误:只允许管理员修改");
@@ -355,7 +357,7 @@ public class SsoTenantController {
      * 查询租户角色列表
      *
      * @param reqSsoRole 请求参数
-     * @param reqPage 翻页参数
+     * @param reqPage    翻页参数
      * @return 返回结果
      */
     @Operation(summary = "租户角色信息-分页列表查询", description = "租户角色信息-分页列表查询")

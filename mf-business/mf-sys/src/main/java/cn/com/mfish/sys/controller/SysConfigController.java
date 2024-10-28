@@ -53,7 +53,6 @@ public class SysConfigController {
      * @param sysConfig 界面配置对象
      * @return 返回界面配置-添加结果
      */
-    @Log(title = "界面配置-保存", operateType = OperateType.INSERT)
     @Operation(summary = "界面配置-保存")
     @PostMapping
     public Result<SysConfig> save(@RequestBody SysConfig sysConfig) {

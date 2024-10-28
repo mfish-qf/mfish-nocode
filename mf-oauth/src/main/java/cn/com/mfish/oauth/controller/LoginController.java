@@ -2,10 +2,13 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.OauthUtils;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.service.SsoUserService;
+import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.NoSuchAlgorithmException;
@@ -73,10 +77,22 @@ public class LoginController {
      * 微服务方法启动时，checkAliveServer接口会被定时调用，
      * 暂时不知道是什么服务在调用该接口，所以写一个404页面返回
      * 防止接口请求异常
+     *
      * @return 返回404页面进行响应
      */
     @GetMapping("/checkAliveServer")
     public Object checkAliveServer() {
         return "404";
+    }
+
+    @PostMapping("/unLock")
+    @ResponseBody
+    @Parameters({
+            @Parameter(name = OAuth.OAUTH_USERNAME, description = "用户名", required = true),
+            @Parameter(name = OAuth.OAUTH_PASSWORD, description = "密码", required = true),
+            @Parameter(name = SerConstant.CLIENT_ID, description = "客户端ID", required = true)
+    })
+    public Result<String> unLock(@RequestParam(OAuth.OAUTH_USERNAME) String username, @RequestParam(OAuth.OAUTH_PASSWORD) String password, @RequestParam(SerConstant.CLIENT_ID) String clientId) {
+        return loginService.login(username, password, SerConstant.LoginType.密码登录, clientId, "true");
     }
 }
