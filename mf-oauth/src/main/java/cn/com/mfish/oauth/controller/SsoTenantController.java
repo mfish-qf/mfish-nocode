@@ -283,6 +283,11 @@ public class SsoTenantController {
         Result<Boolean> result = verifyOrg(ssoOrg.getId());
         if (result.isSuccess()) {
             setParentOrg(ssoOrg);
+            //父节点为空的是租户，租户不允许修改自己的角色，防止越权修改
+            //租户角色统一由系统管理员设置或修改
+            if(StringUtils.isEmpty(ssoOrg.getParentId())){
+                ssoOrg.setRoleIds(null);
+            }
             return ssoOrgService.updateOrg(ssoOrg);
         }
         return Result.fail(ssoOrg, result.getMsg());
