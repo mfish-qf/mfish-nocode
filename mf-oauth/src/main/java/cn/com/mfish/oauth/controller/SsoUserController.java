@@ -132,6 +132,7 @@ public class SsoUserController {
     @Operation(summary = "修改密码")
     @PutMapping("/pwd")
     @Log(title = "修改密码", operateType = OperateType.UPDATE)
+    @RequiresPermissions("sys:password:update")
     public Result<Boolean> changePassword(@RequestBody ReqChangePwd reqChangePwd) {
         if (StringUtils.isEmpty(reqChangePwd.getUserId())) {
             Result.fail(false, "错误:用户ID不允许为空");
