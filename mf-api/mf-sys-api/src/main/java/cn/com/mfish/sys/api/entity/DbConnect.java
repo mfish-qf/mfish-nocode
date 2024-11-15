@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -25,6 +24,8 @@ public class DbConnect extends BaseEntity<String> {
     @Schema(description = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
+    @Schema(description = "租户ID")
+    private String tenantId;
     @Schema(description = "连接名")
     private String dbTitle;
     @Schema(description = "数据库类型（0 mysql 1 oracle 2 pgsql）")
