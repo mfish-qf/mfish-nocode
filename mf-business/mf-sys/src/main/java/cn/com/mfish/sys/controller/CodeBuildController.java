@@ -6,8 +6,10 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.api.entity.SsoMenu;
+import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.sys.entity.CodeBuild;
 import cn.com.mfish.sys.req.ReqCodeBuild;
 import cn.com.mfish.sys.req.ReqMenuCreate;
@@ -84,6 +86,7 @@ public class CodeBuildController {
     @Operation(summary = "查看代码")
     @GetMapping("/view/{id}")
     @RequiresPermissions("sys:codeBuild:query")
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
     public Result<List<CodeVo>> query(@PathVariable Long id) {
         return codeBuildService.getCode(id);
     }
@@ -92,6 +95,7 @@ public class CodeBuildController {
     @Operation(summary = "下载代码")
     @GetMapping("/download/{id}")
     @RequiresPermissions("sys:codeBuild:query")
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
     public void downloadCode(@PathVariable Long id, HttpServletResponse response) throws IOException {
         codeBuildService.downloadCode(id, response);
     }

@@ -39,6 +39,8 @@ public class DictItem<T> extends BaseEntity<String> {
     private Integer dictSort;
     @Schema(description = "字典显示颜色")
     private String color;
+    @Schema(description = "图标")
+    private String icon;
     @Schema(description = "状态(0正常 1停用)")
     private Integer status;
     @Schema(description = "备注")

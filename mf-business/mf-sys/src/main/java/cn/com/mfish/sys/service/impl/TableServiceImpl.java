@@ -94,7 +94,7 @@ public class TableServiceImpl implements TableService {
     private DataSourceOptions<?> buildDBQuery(String connectId) {
         Result<DbConnect> result = dbConnectService.queryById(connectId);
         if (!result.isSuccess()) {
-            throw new MyRuntimeException("错误:获取数据库连接出错");
+            throw new MyRuntimeException("错误：数据库连接不正确或无权限访问");
         }
         DbConnect dbConnect = result.getData();
         return QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
