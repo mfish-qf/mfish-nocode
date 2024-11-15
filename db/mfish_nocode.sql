@@ -389,7 +389,7 @@ CREATE TABLE `sso_client_details`  (
 -- ----------------------------
 -- Records of sso_client_details
 -- ----------------------------
-INSERT INTO `sso_client_details` VALUES ('1', 'system', '系统', NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://localhost:5186/oauth2.*,http://localhost:5281/oauth2.*,http://localhost:11119/oauth2.*', NULL, 1, NULL, NULL, 'admin', '2023-10-13 16:02:05', 0);
+INSERT INTO `sso_client_details` VALUES ('1', 'system', '系统', NULL, 'system', 'all', 'authorization_code,password,refresh_token', 'http://localhost:\\d+/oauth2.*', NULL, 1, NULL, NULL, 'admin', '2023-10-13 16:02:05', 0);
 
 -- ----------------------------
 -- Table structure for sso_menu
