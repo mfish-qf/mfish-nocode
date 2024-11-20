@@ -39,6 +39,7 @@
         <jsqlparser.version>5.0</jsqlparser.version>
         <druid.version>1.2.23</druid.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
+        <commons.io.version>2.18.0</commons.io.version>
         <commons.text.version>1.12.0</commons.text.version>
         <freemarker.version>2.3.33</freemarker.version>
         <fastjson.version>2.0.53</fastjson.version>
@@ -51,7 +52,7 @@
         <bcprov.version>1.79</bcprov.version>
         <oracle.version>23.5.0.24.07</oracle.version>
         <pgsql.version>42.7.4</pgsql.version>
-        <easyexcel.version>4.0.2</easyexcel.version>
+        <easyexcel.version>4.0.3</easyexcel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -186,6 +187,12 @@
                         <artifactId>junit</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <!-- io常用工具类 -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
