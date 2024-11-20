@@ -51,7 +51,7 @@
         <bcprov.version>1.79</bcprov.version>
         <oracle.version>23.5.0.24.07</oracle.version>
         <pgsql.version>42.7.4</pgsql.version>
-        <easyexcel.version>4.0.3</easyexcel.version>
+        <easyexcel.version>4.0.2</easyexcel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
