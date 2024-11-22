@@ -23,9 +23,10 @@ public class RemoteMenuFallback implements FallbackFactory<RemoteMenuService> {
             }
 
             @Override
-            public Result<Boolean> routeExist(String routePath, String parentId) {
+            public Result<Boolean> routeExist(String origin, String routePath, String parentId) {
                 return Result.fail("错误:路由判断失败" + cause.getMessage());
             }
+            
         };
     }
 }

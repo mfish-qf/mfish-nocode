@@ -1,11 +1,11 @@
-package cn.com.mfish.sys.service;
+package cn.com.mfish.common.sys.service;
 
 import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.sys.entity.DictCategory;
-import cn.com.mfish.sys.req.ReqDictCategory;
+import cn.com.mfish.common.sys.req.ReqDictCategory;
+import cn.com.mfish.sys.api.entity.DictCategory;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -93,6 +93,24 @@ public interface DictCategoryService extends IService<DictCategory> {
      * @return 返回目录列表
      */
     List<DictCategory> queryCategoryListByCode(String fixCode, TreeDirection direction);
+
+      /**
+     * 根据分类id查询分类目录树
+     *
+     * @param id 唯一id
+     * @param direction 查询方向
+     * @return 返回目录列表
+     */
+    List<DictCategory> queryCategoryTreeById(String id, TreeDirection direction);
+
+    /**
+     * 根据分类id查询分类目录列表
+     *
+     * @param id 唯一id
+     * @param direction 查询方向
+     * @return 返回目录列表
+     */
+    List<DictCategory> queryCategoryListById(String id, TreeDirection direction);
 
     /**
      * 判断分类id是否归属于固定编码分类

@@ -119,7 +119,7 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         ReqCode reqCode = buildReqCode(reqMenuCreate.getId());
         freemarkerUtils.initReqCode(reqCode);
         String routePath = "/" + StringUtils.toKebabCase(reqCode.getEntityName());
-        if (remoteMenuService.routeExist(routePath, reqMenuCreate.getParentId()).getData()) {
+        if (remoteMenuService.routeExist(RPCConstants.INNER, routePath, reqMenuCreate.getParentId()).getData()) {
             return Result.fail(null, "错误：菜单路由已存在，请勿重复操作");
         }
         SsoMenu ssoMenu = new SsoMenu();

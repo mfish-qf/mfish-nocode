@@ -1,3 +1,4 @@
 cn.com.mfish.sys.api.fallback.RemoteLogFallback
 cn.com.mfish.sys.api.fallback.RemoteDbConnectFallback
 cn.com.mfish.sys.api.fallback.RemoteDictFallback
+cn.com.mfish.sys.api.fallback.RemoteDictCategoryFallback

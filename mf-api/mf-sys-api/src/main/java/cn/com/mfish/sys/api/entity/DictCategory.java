@@ -1,4 +1,4 @@
-package cn.com.mfish.sys.entity;
+package cn.com.mfish.sys.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseTreeEntity;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -42,7 +42,14 @@ public class DictCategory extends BaseTreeEntity<String> {
     @ExcelProperty("分类树层级（自动生成）")
     @Schema(description = "分类树层级（自动生成）")
     private Short treeLevel;
+    @ExcelProperty("图标")
+    @Schema(description = "图标")
+    private String icon;
+    @ExcelProperty("备注")
+    @Schema(description = "备注")
+    private String remark;
     @ExcelProperty("排序")
     @Schema(description = "排序")
     private Integer sort;
+
 }
