@@ -147,6 +147,7 @@ public class MetaDataHeader implements Serializable {
     public MetaDataHeader copy() {
         MetaDataHeader newHeader = new MetaDataHeader();
         BeanUtils.copyProperties(this, newHeader);
+        newHeader.setDataType(this.getFullDataType().getValue());
         return newHeader;
     }
 }

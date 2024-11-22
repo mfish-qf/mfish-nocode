@@ -7,9 +7,9 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.sys.entity.DictCategory;
-import cn.com.mfish.sys.req.ReqDictCategory;
-import cn.com.mfish.sys.service.DictCategoryService;
+import cn.com.mfish.sys.api.entity.DictCategory;
+import cn.com.mfish.common.sys.req.ReqDictCategory;
+import cn.com.mfish.common.sys.service.DictCategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +19,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -101,14 +102,14 @@ public class DictCategoryController {
     /**
      * 通过id查询
      *
-     * @param id 唯一ID
+     * @param ids 唯一ID
      * @return 返回树形分类对象
      */
-    @Operation(summary = "树形分类-通过id查询")
-    @GetMapping("/{id}")
+    @Operation(summary = "树形分类-通过id查询（多个逗号分割）")
+    @GetMapping("/{ids}")
     @RequiresPermissions("sys:dictCategory:query")
-    public Result<DictCategory> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
-        return Result.ok(dictCategoryService.getById(id), "树形分类-查询成功!");
+    public Result<List<DictCategory>> queryByIds(@Parameter(name = "ids", description = "唯一性ID，多个逗号分割") @PathVariable String ids) {
+        return Result.ok(dictCategoryService.listByIds(Arrays.asList(ids.split(","))), "树形分类-查询成功!");
     }
 
     @Operation(summary = "分类树-通过分类编码查询", description = "分类树-通过分类编码查询")
@@ -127,6 +128,24 @@ public class DictCategoryController {
     })
     public Result<List<DictCategory>> queryListByCode(@Parameter(name = "code", description = "分类") @PathVariable String code, @RequestParam String direction) {
         return Result.ok(dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction)), "分类列表-查询成功!");
+    }
+
+    @Operation(summary = "分类树-通过分类id查询", description = "分类树-通过分类id查询")
+    @GetMapping("/tree/id/{id}")
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
+    })
+    public Result<List<DictCategory>> queryTreeById(@Parameter(name = "id", description = "唯一id") @PathVariable String id, @RequestParam String direction) {
+        return Result.ok(dictCategoryService.queryCategoryTreeById(id, TreeDirection.getDirection(direction)), "分类树-查询成功!");
+    }
+
+    @Operation(summary = "分类列表-通过分类id查询", description = "分类列表-通过分类id查询")
+    @GetMapping("/list/id/{id}")
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
+    })
+    public Result<List<DictCategory>> queryListById(@Parameter(name = "id", description = "唯一id") @PathVariable String id, @RequestParam String direction) {
+        return Result.ok(dictCategoryService.queryCategoryListById(id, TreeDirection.getDirection(direction)), "分类列表-查询成功!");
     }
 
     @Operation(summary = "分类-通过编码查询")

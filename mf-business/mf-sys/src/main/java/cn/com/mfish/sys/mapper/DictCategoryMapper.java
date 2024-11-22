@@ -1,7 +1,7 @@
 package cn.com.mfish.sys.mapper;
 
-import cn.com.mfish.sys.entity.DictCategory;
-import cn.com.mfish.sys.req.ReqDictCategory;
+import cn.com.mfish.sys.api.entity.DictCategory;
+import cn.com.mfish.common.sys.req.ReqDictCategory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

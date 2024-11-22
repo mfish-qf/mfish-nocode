@@ -33,7 +33,6 @@
         <swagger.doc.version>2.6.0</swagger.doc.version>
         <swagger.core.version>2.2.25</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <mybatis-spring.version>3.0.4</mybatis-spring.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
         <pagehelper.boot.version>2.1.0</pagehelper.boot.version>
         <jsqlparser.version>5.0</jsqlparser.version>
@@ -128,17 +127,12 @@
             <!-- Mybatis 依赖配置 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.github.jsqlparser</groupId>
                         <artifactId>jsqlparser</artifactId>
-                    </exclusion>
-                    <!-- 不兼容最新版cloud 排除单独引用 后期mybatis plus升级到3.0.3以后可移除-->
-                    <exclusion>
-                        <groupId>org.mybatis</groupId>
-                        <artifactId>mybatis-spring</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -154,9 +148,9 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-spring</artifactId>
-                <version>${mybatis-spring.version}</version>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-core</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- Swagger 依赖配置 -->
             <dependency>
@@ -467,6 +461,8 @@
                 <version>3.13.0</version>
                 <configuration>
                     <parameters>true</parameters>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
             <plugin>

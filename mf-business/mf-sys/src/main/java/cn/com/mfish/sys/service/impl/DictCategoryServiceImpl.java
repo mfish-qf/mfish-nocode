@@ -7,10 +7,10 @@ import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.sys.entity.DictCategory;
+import cn.com.mfish.sys.api.entity.DictCategory;
 import cn.com.mfish.sys.mapper.DictCategoryMapper;
-import cn.com.mfish.sys.req.ReqDictCategory;
-import cn.com.mfish.sys.service.DictCategoryService;
+import cn.com.mfish.common.sys.req.ReqDictCategory;
+import cn.com.mfish.common.sys.service.DictCategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -138,6 +138,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
             if (baseMapper.updateById(category) <= 0) {
                 throw new MyRuntimeException("错误:更新分类失败");
             }
+            return Result.ok(category, "分类-更新成功!");
         }
         List<DictCategory> list = baseMapper.selectList(new LambdaQueryWrapper<DictCategory>()
                 .likeRight(DictCategory::getTreeCode, oldCategory.getTreeCode()).orderByAsc(DictCategory::getTreeCode));
@@ -162,14 +163,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
             throw new MyRuntimeException("错误:固定编码不允许为空");
         }
         DictCategory category = baseMapper.selectOne(new LambdaQueryWrapper<DictCategory>().eq(DictCategory::getCategoryCode, fixCode));
-        List<DictCategory> categoryList = queryCategory(category, direction);
-        List<DictCategory> categoryTree = new ArrayList<>();
-        if (direction.equals(TreeDirection.向下)) {
-            TreeUtils.buildTree(category.getParentId(), categoryList, categoryTree, DictCategory.class);
-        } else {
-            TreeUtils.buildTree("", categoryList, categoryTree, DictCategory.class);
-        }
-        return categoryTree;
+        return queryCategoryTree(category, direction);
     }
 
     @Override
@@ -183,9 +177,41 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
     }
 
     @Override
+    public List<DictCategory> queryCategoryTreeById(String id, TreeDirection direction) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:id不允许为空");
+        }
+        DictCategory category = baseMapper.selectOne(new LambdaQueryWrapper<DictCategory>().eq(DictCategory::getId, id));
+        return queryCategoryTree(category, direction);
+    }
+
+    @Override
+    public List<DictCategory> queryCategoryListById(String id, TreeDirection direction) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:id不允许为空");
+        }
+        DictCategory category = baseMapper.selectOne(new LambdaQueryWrapper<DictCategory>().eq(DictCategory::getId, id));
+        return queryCategory(category, direction);
+    }
+
+    @Override
     public boolean includeCategory(String categoryId, String fixCode, TreeDirection direction) {
         List<DictCategory> list = queryCategoryListByCode(fixCode, direction);
         return list.stream().anyMatch((item) -> item.getId().equals(categoryId));
+    }
+
+    private List<DictCategory> queryCategoryTree(DictCategory category, TreeDirection direction) {
+        if (category == null) {
+            return new ArrayList<>();
+        }
+        List<DictCategory> categoryList = queryCategory(category, direction);
+        List<DictCategory> categoryTree = new ArrayList<>();
+        if (direction.equals(TreeDirection.向下)) {
+            TreeUtils.buildTree(category.getParentId(), categoryList, categoryTree, DictCategory.class);
+        } else {
+            TreeUtils.buildTree("", categoryList, categoryTree, DictCategory.class);
+        }
+        return categoryTree;
     }
 
     private List<DictCategory> queryCategory(DictCategory category, TreeDirection direction) {
