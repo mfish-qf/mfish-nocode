@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.enums;
 
 import cn.com.mfish.common.core.constants.DataConstant;
+import cn.com.mfish.common.core.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
@@ -141,9 +142,11 @@ public enum DataType {
      * @return 返回类型
      */
     public static DataType forType(String type) {
-        type = type.toUpperCase(Locale.ROOT);
-        if (typeMap.containsKey(type)) {
-            return typeMap.get(type);
+        if (!StringUtils.isEmpty(type)) {
+            type = type.toUpperCase(Locale.ROOT);
+            if (typeMap.containsKey(type)) {
+                return typeMap.get(type);
+            }
         }
         return DataType.UNKNOWN;
     }

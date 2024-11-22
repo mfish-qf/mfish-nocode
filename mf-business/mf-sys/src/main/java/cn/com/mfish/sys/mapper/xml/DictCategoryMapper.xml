@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.com.mfish.sys.mapper.DictCategoryMapper">
-    <insert id="insertCategory" parameterType="cn.com.mfish.sys.entity.DictCategory">
+    <insert id="insertCategory" parameterType="cn.com.mfish.sys.api.entity.DictCategory">
         insert into sys_dict_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id, parent_id, tree_code, tree_level,
             <if test="categoryName != null">category_name,</if>
             <if test="categoryCode != null">category_code,</if>
+            <if test="icon != null">icon,</if>
+            <if test="remark != null">remark,</if>
             <if test="sort != null">sort,</if>
             create_by, create_time
         </trim>
@@ -19,6 +21,8 @@
             lvl,
             <if test="categoryName != null">#{categoryName},</if>
             <if test="categoryCode != null">#{categoryCode},</if>
+            <if test="icon != null">#{icon},</if>
+            <if test="remark != null">#{remark},</if>
             <if test="sort != null">#{sort},</if>
             #{createBy}, now()
         </trim>
@@ -35,7 +39,7 @@
             <include refid="reqCondition"/>
         </where>
     </select>
-    <select id="queryOneLevelCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
+    <select id="queryOneLevelCategory" resultType="cn.com.mfish.sys.api.entity.DictCategory">
         select * from (<include refid="queryCategorySql"/>) a where a.tree_level = 1
         order by tree_level,sort,tree_code
     </select>
@@ -60,10 +64,10 @@
         </if>
         order by tree_level,sort,tree_code
     </sql>
-    <select id="queryCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
+    <select id="queryCategory" resultType="cn.com.mfish.sys.api.entity.DictCategory">
         <include refid="queryCategorySql" />
     </select>
-    <select id="queryChildCategory" resultType="cn.com.mfish.sys.entity.DictCategory">
+    <select id="queryChildCategory" resultType="cn.com.mfish.sys.api.entity.DictCategory">
         SELECT * FROM (<include refid="queryCategorySql" />) a
         <where>
             <foreach collection="list" item="value">

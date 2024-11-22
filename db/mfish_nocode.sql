@@ -1268,35 +1268,51 @@ CREATE TABLE `sys_storage`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_category`;
 CREATE TABLE `sys_dict_category`  (
-                                      `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-                                      `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父分类id',
-                                      `category_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类编码',
-                                      `category_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类名称',
-                                      `tree_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类树编码（系统自动编码）',
-                                      `tree_level` tinyint(6) NOT NULL COMMENT '分类树层级（自动生成）',
-                                      `sort` int(11) NULL DEFAULT 0 COMMENT '排序',
-                                      `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
-                                      `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-                                      `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
-                                      `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-                                      PRIMARY KEY (`id`) USING BTREE,
-                                      INDEX `tree_code_index`(`tree_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '树形分类字典' ROW_FORMAT = Dynamic;
+  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父分类id',
+  `category_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类编码',
+  `category_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类名称',
+  `tree_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类树编码（系统自动编码）',
+  `tree_level` tinyint NOT NULL COMMENT '分类树层级（自动生成）',
+  `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `sort` int NULL DEFAULT 0 COMMENT '排序',
+  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `tree_code_index`(`tree_code`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '树形分类字典' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_dict_category
 -- ----------------------------
-INSERT INTO `sys_dict_category` VALUES ('063eafb8b1b481c1f2f99799ebc7ada7', '26c427a7125dd186ddc238647a7f4ba1', '', '苹果笔记本', '0000100003', 2, 3, 'admin', '2024-03-14 14:36:17', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('0e55dc203886fbce5cdb0dd3ba2023b3', '26c427a7125dd186ddc238647a7f4ba1', '', '联想笔记本', '0000100006', 2, 4, 'admin', '2024-03-14 14:36:43', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('2207ba37d3071c1e87a344c3f61a5155', '926abe03a1935946b43fdcc031c9d3c8', '', '小米', '0000200006', 2, 1, 'admin', '2024-03-14 14:38:19', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('26c427a7125dd186ddc238647a7f4ba1', '', 'notebook', '笔记本', '00001', 1, 0, 'admin', '2024-03-14 14:35:15', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('47eba0ed867cba5909503642bf10f2b4', '26c427a7125dd186ddc238647a7f4ba1', '', '华为笔记本', '0000100005', 2, 1, 'admin', '2024-03-14 14:36:31', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('6577e71c515e8014297ac7a9b2fb17af', '926abe03a1935946b43fdcc031c9d3c8', 'iPhone', '苹果', '0000200007', 2, 2, 'admin', '2024-03-14 14:38:23', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('90329d2cd947b18ef46a02509873f81c', '926abe03a1935946b43fdcc031c9d3c8', '', 'vivio', '0000200008', 2, 4, 'admin', '2024-03-14 14:38:36', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('926abe03a1935946b43fdcc031c9d3c8', '', 'phone', '手机', '00002', 1, 1, 'admin', '2024-03-14 14:36:08', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('964b67d7277654e21a7e3b03e1363300', '926abe03a1935946b43fdcc031c9d3c8', '', '华为', '0000200005', 2, 0, 'admin', '2024-03-14 14:38:15', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('af9d4abecbd728a49170f8f8ac46dfff', '26c427a7125dd186ddc238647a7f4ba1', 'mi', '小米笔记本', '0000100007', 2, 2, 'admin', '2024-03-14 14:36:59', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('d90b48828eaeda14e1ec6daca7fb20e7', '926abe03a1935946b43fdcc031c9d3c8', '', 'oppo', '0000200009', 2, 5, 'admin', '2024-03-14 14:38:48', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('063eafb8b1b481c1f2f99799ebc7ada7', '26c427a7125dd186ddc238647a7f4ba1', '', '苹果笔记本', '0000100004', 2, 'ant-design:apple-outlined', NULL, 3, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('0e55dc203886fbce5cdb0dd3ba2023b3', '26c427a7125dd186ddc238647a7f4ba1', '', '联想笔记本', '0000100002', 2, NULL, NULL, 4, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('2207ba37d3071c1e87a344c3f61a5155', '926abe03a1935946b43fdcc031c9d3c8', '', '小米', '0000200006', 2, NULL, NULL, 1, 'admin', '2024-03-14 14:38:19', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('26c427a7125dd186ddc238647a7f4ba1', '', 'notebook', '笔记本', '00001', 1, NULL, NULL, 0, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('47eba0ed867cba5909503642bf10f2b4', '26c427a7125dd186ddc238647a7f4ba1', '', '华为笔记本', '0000100001', 2, NULL, NULL, 1, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('4d544061656fca47a6dca3896a9f94fb', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '文本', '0000400002', 2, 'ant-design:file-text-outlined', NULL, 1, 'admin', '2024-11-18 17:14:45', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('57edf426cf8dcab91f92667b0fd8376b', '4d544061656fca47a6dca3896a9f94fb', NULL, '所有', '000040000200001', 3, 'ant-design:file-text-outlined', NULL, 0, 'admin', '2024-11-18 17:18:33', 'admin', '2024-11-18 17:39:08');
+INSERT INTO `sys_dict_category` VALUES ('6577e71c515e8014297ac7a9b2fb17af', '926abe03a1935946b43fdcc031c9d3c8', 'iPhone', '苹果', '0000200007', 2, NULL, NULL, 2, 'admin', '2024-03-14 14:38:23', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('6fab782d03d564025274e46a8ec63668', '4d544061656fca47a6dca3896a9f94fb', NULL, '标签', '000040000200002', 3, 'ant-design:tag-outlined', '', 1, 'admin', '2024-11-18 17:38:23', 'admin', '2024-11-18 17:38:31');
+INSERT INTO `sys_dict_category` VALUES ('90329d2cd947b18ef46a02509873f81c', '926abe03a1935946b43fdcc031c9d3c8', '', 'vivio', '0000200008', 2, NULL, NULL, 4, 'admin', '2024-03-14 14:38:36', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('926abe03a1935946b43fdcc031c9d3c8', '', 'phone', '手机', '00002', 1, NULL, NULL, 1, 'admin', '2024-03-14 14:36:08', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('964b67d7277654e21a7e3b03e1363300', '926abe03a1935946b43fdcc031c9d3c8', '', '华为', '0000200005', 2, NULL, NULL, 0, 'admin', '2024-03-14 14:38:15', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('9790b4ccb2e28f0d54c3aaa528ca3fea', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '饼状图', '000040000100004', 3, 'ant-design:pie-chart-outlined', NULL, 3, 'admin', '2024-11-19 16:57:06', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('aa4c61f29c59e7c982ec2255a7ab6316', '4d544061656fca47a6dca3896a9f94fb', NULL, '日期', '000040000200003', 3, 'ant-design:calendar-outlined', NULL, 2, 'admin', '2024-11-18 17:40:55', 'admin', '2024-11-18 17:41:01');
+INSERT INTO `sys_dict_category` VALUES ('af9d4abecbd728a49170f8f8ac46dfff', '26c427a7125dd186ddc238647a7f4ba1', 'mi', '小米笔记本', '0000100003', 2, NULL, NULL, 2, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('afe955d350d5ac5ef541f145ffa7706f', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '折线图', '000040000100003', 3, 'ant-design:line-chart-outlined', NULL, 2, 'admin', '2024-11-19 16:56:46', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('b8726bb3b3323e3ed4039322d34dae7c', 'da6694b2d969e270122ad2ee1847ba5d', '', '图表', '0000400001', 2, 'ant-design:bar-chart-outlined', NULL, 0, 'admin', '2024-11-18 16:46:37', 'admin', '2024-11-18 17:14:52');
+INSERT INTO `sys_dict_category` VALUES ('c6b295bc5369e7dd9a620c1cabcabd8d', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '所有', '000040000400001', 3, 'carbon:color-palette', NULL, 0, 'admin', '2024-11-18 17:44:51', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('d90b48828eaeda14e1ec6daca7fb20e7', '926abe03a1935946b43fdcc031c9d3c8', '', 'oppo', '0000200009', 2, NULL, NULL, 5, 'admin', '2024-03-14 14:38:48', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('da6694b2d969e270122ad2ee1847ba5d', '', 'screen_charts_type', '大屏组件', '00004', 1, 'ant-design:fund-projection-screen-outlined', NULL, 2, 'admin', '2024-11-18 16:15:02', 'admin', '2024-11-18 23:19:49');
+INSERT INTO `sys_dict_category` VALUES ('ec135d3194956f5f98141c997c2e0ab1', 'b8726bb3b3323e3ed4039322d34dae7c', '', '所有', '000040000100001', 3, 'ant-design:bar-chart-outlined', NULL, 0, 'admin', '2024-11-18 17:43:50', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('eeaab687ec80b493ab4725977ea975b9', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '列表', '0000400003', 2, 'ant-design:unordered-list-outlined', NULL, 2, 'admin', '2024-11-18 17:15:20', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('f80fb0216a6e083a896655efb37af1da', 'eeaab687ec80b493ab4725977ea975b9', NULL, '所有', '000040000300001', 3, 'ant-design:unordered-list-outlined', NULL, 0, 'admin', '2024-11-18 17:44:31', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('fafa6224eb9d3ebe49fe21a20171b05d', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '柱状图', '000040000100002', 3, 'ant-design:bar-chart-outlined', NULL, 1, 'admin', '2024-11-19 16:54:26', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('fe72c08cf082f8f1c6efef9d28119c45', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '装饰', '0000400004', 2, 'carbon:color-palette', NULL, 3, 'admin', '2024-11-18 17:15:41', 'admin', '2024-11-18 17:15:52');
 
 -- ----------------------------
 -- Table structure for demo_data_scope

@@ -23,7 +23,8 @@ public class BootMenuService implements RemoteMenuService {
     }
 
     @Override
-    public Result<Boolean> routeExist(String routePath, String parentId) {
+    public Result<Boolean> routeExist(String origin, String routePath, String parentId) {
         return ssoMenuService.routeExist(routePath, parentId);
     }
+
 }

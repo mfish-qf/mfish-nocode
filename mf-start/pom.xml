@@ -19,6 +19,7 @@
         <module>mf-start-storage</module>
         <module>mf-start-gateway</module>
         <module>mf-start-demo</module>
+        <module>mf-start-nocode</module>
     </modules>
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
