@@ -27,10 +27,14 @@ public class MetaDataHeader implements Serializable {
         this.comment = comment;
     }
 
-
+    /**
+     * 用户重命名
+     */
+    @Getter
+    private String rename;
     /**
      * 列名(必须唯一)
-     * 通过字段自动生成列名或用户更改的别名
+     * 通过字段自动生成列名
      */
     @Getter
     private String colName;
@@ -91,6 +95,11 @@ public class MetaDataHeader implements Serializable {
         return this.dataType;
     }
 
+    public MetaDataHeader setRename(String rename) {
+        this.rename = rename;
+        return this;
+    }
+
     public MetaDataHeader setColName(String colName) {
         this.colName = colName;
         return this;
@@ -130,7 +139,8 @@ public class MetaDataHeader implements Serializable {
             return false;
         }
         MetaDataHeader that = (MetaDataHeader) o;
-        return Objects.equals(colName, that.colName)
+        return Objects.equals(rename, that.rename)
+                && Objects.equals(colName, that.colName)
                 && Objects.equals(fieldName, that.fieldName)
                 && Objects.equals(expression, that.expression)
                 && Objects.equals(comment, that.comment)
