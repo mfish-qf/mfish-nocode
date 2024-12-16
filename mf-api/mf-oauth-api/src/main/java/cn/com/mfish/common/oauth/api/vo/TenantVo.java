@@ -1,7 +1,7 @@
 package cn.com.mfish.common.oauth.api.vo;
 
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
-import com.alibaba.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import lombok.Data;

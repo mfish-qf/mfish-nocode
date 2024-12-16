@@ -16,7 +16,7 @@ import cn.com.mfish.demo.entity.DemoOrderDetail;
 import cn.com.mfish.demo.req.ReqDemoImportExport;
 import cn.com.mfish.demo.service.DemoImportExportService;
 import cn.com.mfish.demo.service.DemoOrderDetailService;
-import com.alibaba.excel.EasyExcel;
+import cn.idev.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
