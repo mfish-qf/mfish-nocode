@@ -1,7 +1,7 @@
 package cn.com.mfish.common.core.entity;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.ExcelIgnore;
+import cn.idev.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

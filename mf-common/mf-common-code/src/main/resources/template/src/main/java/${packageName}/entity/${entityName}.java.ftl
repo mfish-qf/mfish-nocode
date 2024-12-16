@@ -1,7 +1,7 @@
 package ${packageName}.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
-import com.alibaba.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

@@ -1,7 +1,7 @@
 package cn.com.mfish.common.core.utils.excel;
 
-import com.alibaba.excel.context.AnalysisContext;
-import com.alibaba.excel.event.AnalysisEventListener;
+import cn.idev.excel.context.AnalysisContext;
+import cn.idev.excel.event.AnalysisEventListener;
 
 import java.util.Map;
 import java.util.function.Consumer;
