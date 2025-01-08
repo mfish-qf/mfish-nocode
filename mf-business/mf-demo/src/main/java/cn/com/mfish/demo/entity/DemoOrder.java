@@ -62,7 +62,7 @@ public class DemoOrder extends BaseEntity<String> {
 	private String tradeNo;
     @ExcelProperty("支付类型")
     @Schema(description = "支付类型")
-	private Short payType;
+	private Integer payType;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ExcelProperty("支付时间")

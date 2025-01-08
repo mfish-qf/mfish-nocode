@@ -19,7 +19,7 @@ public class ReqDemoOrder {
     @Schema(description = "订单状态")
     private Short orderStatus;
     @Schema(description = "支付类型")
-    private Short payType;
+    private String payType;
     @Schema(description = "配送方式")
     private Short deliveryType;
 }
