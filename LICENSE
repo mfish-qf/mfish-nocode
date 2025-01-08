@@ -188,6 +188,10 @@
 
    Copyright (c) 2021 <a href="http://www.mfish.com.cn">mfish-nocode 摸鱼低代码平台</a> All rights reserved.
 
+   However, the components related to "large screen, self-service API"
+   are commercial products that are only available for authorized users to use.
+   For detailed usage information, please refer to the private repository.
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
