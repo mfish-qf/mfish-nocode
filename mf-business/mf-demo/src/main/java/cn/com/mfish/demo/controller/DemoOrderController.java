@@ -59,11 +59,15 @@ public class DemoOrderController {
      * @return 返回销售订单-分页列表
      */
     private List<DemoOrder> queryList(ReqDemoOrder reqDemoOrder, ReqPage reqPage) {
+        Object[] payType = null;
+        if (!StringUtils.isEmpty(reqDemoOrder.getPayType())) {
+            payType = reqDemoOrder.getPayType().split(",");
+        }
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<DemoOrder> lambdaQueryWrapper = new LambdaQueryWrapper<DemoOrder>()
                 .like(!StringUtils.isEmpty(reqDemoOrder.getUserName()), DemoOrder::getUserName, reqDemoOrder.getUserName())
                 .eq(null != reqDemoOrder.getOrderStatus(), DemoOrder::getOrderStatus, reqDemoOrder.getOrderStatus())
-                .eq(null != reqDemoOrder.getPayType(), DemoOrder::getPayType, reqDemoOrder.getPayType())
+                .in(null != payType, DemoOrder::getPayType, payType)
                 .eq(null != reqDemoOrder.getDeliveryType(), DemoOrder::getDeliveryType, reqDemoOrder.getDeliveryType());
         return demoOrderService.list(lambdaQueryWrapper);
     }
