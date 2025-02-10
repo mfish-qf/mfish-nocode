@@ -18,6 +18,13 @@ public class TenantDataScopeHandle implements DataScopeHandle {
         if (values == null || values.length == 0) {
             //未传值时使用当前租户id
             values = new String[]{AuthInfoUtils.getCurrentTenantId()};
+        } else {
+            // 如果值为空置为当前租户id
+            for (int i = 0; i < values.length; i++) {
+                if (StringUtils.isEmpty(values[i])) {
+                    values[i] = AuthInfoUtils.getCurrentTenantId();
+                }
+            }
         }
         return DataScopeUtils.buildCondition(fieldName, values);
     }

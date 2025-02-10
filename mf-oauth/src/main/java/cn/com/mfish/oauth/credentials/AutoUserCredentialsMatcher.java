@@ -1,13 +1,9 @@
 package cn.com.mfish.oauth.credentials;
 
-import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.oauth.common.SerConstant;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.oauth.entity.SsoUser;
-import cn.com.mfish.common.oauth.service.SsoUserService;
-import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
-
+import cn.com.mfish.oauth.service.SsoTenantService;
 import jakarta.annotation.Resource;
+import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 
 /**
  * 不存在的用户自动创建用户
@@ -17,14 +13,11 @@ import jakarta.annotation.Resource;
  */
 public class AutoUserCredentialsMatcher extends SimpleCredentialsMatcher {
     @Resource
-    SsoUserService ssoUserService;
+    SsoTenantService ssoTenantService;
 
     protected void insertNewUser(boolean newUser, SsoUser user) {
         if (newUser) {
-            Result<SsoUser> result = ssoUserService.insertUser(user);
-            if (!result.isSuccess()) {
-                throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
-            }
+            ssoTenantService.createTenantUser(user);
         }
     }
 }

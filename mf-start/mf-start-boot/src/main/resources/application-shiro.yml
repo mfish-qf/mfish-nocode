@@ -9,6 +9,8 @@ security:
       - "/oauth2/qrCodeLogin/**"
       - "/oauth2/wx/bind/**"
       - "/oauth2/static/**"
+      - "/oauth2/gitee/**"
+      - "/oauth2/github/**"
       - "/captcha"
       - "/storage/file/*.*"
       - "/css/**"

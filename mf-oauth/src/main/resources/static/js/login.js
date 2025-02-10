@@ -70,11 +70,7 @@ let app = new Vue({
     methods: {
         screenChange() {
             const clientWidth = document.body.clientWidth
-            if (clientWidth > 425) {
-                this.showLeft = true;
-            } else {
-                this.showLeft = false;
-            }
+            this.showLeft = clientWidth > 425;
             return clientWidth;
         },
         login() {
@@ -133,10 +129,8 @@ let app = new Vue({
             }
         },
         validateSmsLogin() {
-            if (!this.validatePhone() || !this.validateCode()) {
-                return false
-            }
-            return true;
+            return !(!this.validatePhone() || !this.validateCode());
+
         },
         validatePhone() {
             if (!this.phone) {
@@ -171,7 +165,7 @@ let app = new Vue({
                     dataType: "json",
                     success: function (result) {
                         let time = 60;
-                        if (200 == result.code) {
+                        if (200 === result.code) {
                             //测试环境将验证码返回，生成环境删除此方法
                             app.codeValue = result.data;
                         } else {
@@ -193,7 +187,7 @@ let app = new Vue({
                 url: "/captcha",
                 type: "get",
                 success: function (result) {
-                    if (200 == result.code) {
+                    if (200 === result.code) {
                         app.captchaUrl = "data:image/jpeg;base64," + result.data.img;
                         app.captchaKey = result.data.captchaKey;
                         app.captchaOnOff = result.data.captchaOnOff
@@ -208,7 +202,7 @@ let app = new Vue({
                 url: "qrCodeLogin/build",
                 type: "get",
                 success: function (result) {
-                    if (result != null && 200 == result.code) {
+                    if (result != null && 200 === result.code) {
                         app.qrCode = result.data.img;
                         app.scanStatus = scanStatus.未扫描
                         app.qrCodeDesc = "打开小程序扫码";
@@ -353,6 +347,36 @@ let app = new Vue({
             } else {
                 this.passwordType = 'password'
             }
+        },
+        giteeLogin() {
+            $.ajax({
+                url: "/oauth2/gitee/url",
+                type: "get",
+                success: function (result) {
+                    if (200 === result.code) {
+                        debugger
+                        window.location.href = result.data;
+                    } else {
+                        app.showError(result.msg);
+                    }
+                }
+            });
+
+        },
+        githubLogin() {
+            $.ajax({
+                url: "/oauth2/github/url",
+                type: "get",
+                success: function (result) {
+                    if (200 === result.code) {
+                        debugger
+                        window.location.href = result.data;
+                    } else {
+                        app.showError(result.msg);
+                    }
+                }
+            });
+
         }
     },
 });

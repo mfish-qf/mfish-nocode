@@ -25,6 +25,7 @@ import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.cache.temp.*;
 import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
@@ -157,9 +158,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
      * 只存储最近5次密码
      *
      * @param oldPwd 旧密码
-     * @param pwd 密码
+     * @param pwd    密码
      * @return 返回密码
-     *
      */
     private String setOldPwd(String oldPwd, String pwd) {
         String[] pwds = StringUtils.isEmpty(oldPwd) ? new String[0] : oldPwd.split(",");
@@ -213,6 +213,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         String account = user.getAccount();
         user.setAccount(null);
         user.setPassword(null);
+        user.setGitee(null);
+        user.setGithub(null);
         int res = baseMapper.updateById(user);
         if (res > 0) {
             user.setAccount(account);
@@ -281,6 +283,16 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     public SsoUser getUserByAccount(String account) {
         String userId = account2IdTempCache.getFromCacheAndDB(account);
         return getUserById(userId);
+    }
+
+    @Override
+    public SsoUser getUserByGitee(String gitee) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<SsoUser>().eq(SsoUser::getGitee, gitee));
+    }
+
+    @Override
+    public SsoUser getUserByGithub(String github) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<SsoUser>().eq(SsoUser::getGithub, github));
     }
 
     @Override
@@ -447,12 +459,10 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
                         user = buildOnlineUser((WeChatToken) token, key.replace(RedisPrefix.DEVICE2TOKEN, ""));
                     }
                     if (user != null) {
-                        Long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.getFirst().toString()));
-                        if (expire != null) {
-                            user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
-                            user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));
-                            list.add(user);
-                        }
+                        long expire = redisTemplate.getExpire(RedisPrefix.buildAccessTokenKey(tokens.getFirst().toString()));
+                        user.setLoginTime(new Date(System.currentTimeMillis() - (tokenExpire - expire) * 1000));
+                        user.setExpire(new Date(System.currentTimeMillis() + expire * 1000));
+                        list.add(user);
                     }
                 }
             } else {

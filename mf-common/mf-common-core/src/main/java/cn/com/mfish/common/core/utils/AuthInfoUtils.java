@@ -24,6 +24,11 @@ public class AuthInfoUtils {
      * 超户角色ID
      */
     public static final String SUPER_ROLE_ID = "1";
+
+    /**
+     * 个人角色ID 三方账号注册默认赋个人角色
+     */
+    public static final String PERSON_ROLE_ID = "0";
     /**
      * 超户角色编码
      */

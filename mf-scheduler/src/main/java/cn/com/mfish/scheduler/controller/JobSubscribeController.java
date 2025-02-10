@@ -25,7 +25,7 @@ import java.util.List;
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 @Slf4j
 @Tag(name = "任务订阅表")

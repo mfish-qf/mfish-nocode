@@ -2,7 +2,7 @@
 
 [![文档地址](https://img.shields.io/badge/docs-%E6%96%87%E6%A1%A3%E5%9C%B0%E5%9D%80-green)](http://www.mfish.com.cn)
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.1-brightgreen.svg)](https://github.com/mfish-qf/mfish-nocode/releases/tag/v1.3.0)
+[![Version](https://img.shields.io/badge/version-1.3.2-brightgreen.svg)](https://github.com/mfish-qf/mfish-nocode/releases/tag/v1.3.0)
 
 [![GitHub stars](https://img.shields.io/github/stars/mfish-qf/mfish-nocode.svg?style=social&label=Stars)](https://github.com/mfish-qf/mfish-nocode)
 [![GitHub forks](https://img.shields.io/github/forks/mfish-qf/mfish-nocode.svg?style=social&label=Fork)](https://github.com/mfish-qf/mfish-nocode)

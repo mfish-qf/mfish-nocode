@@ -1,5 +1,7 @@
 package cn.com.mfish.common.oauth.common;
 
+import lombok.Getter;
+
 /**
  * @author: mfish
  * @date: 2020/2/10 19:32
@@ -11,7 +13,7 @@ public class SerConstant {
     public static final String INVALID_PHONE_CODE_DESCRIPTION = "登录失败:错误的验证码";
     public static final String INVALID_USER_ID_DESCRIPTION = "登录失败:错误的用户ID";
     public static final String INVALID_WX_ID_DESCRIPTION = "登录失败:错误的微信ID";
-    public static final String INVALID_NEW_USER_DESCRIPTION = "登录失败:插入新用户失败";
+    public static final String INVALID_NEW_USER_DESCRIPTION = "登录失败:创建新用户失败";
     public static final String REMEMBER_ME = "rememberMe";
     public static final String CLIENT_ID = "client_id";
     public static final String LOGIN_TYPE = "loginType";
@@ -39,9 +41,15 @@ public class SerConstant {
         // 微信确认登录
         微信登录("weChat_recognition", 4),
         // 人脸识别登录
-        人脸识别("face_recognition", 5);
+        人脸识别("face_recognition", 5),
+        //通过gitee账号认证登录
+        Gitee("gitee", 6),
+        //通过github账号认证登录
+        Github("github", 7);
+
 
         private final String loginType;
+        @Getter
         private final int index;
 
         LoginType(String type, int index) {
@@ -72,15 +80,12 @@ public class SerConstant {
             return LoginType.密码登录;
         }
 
-        public int getIndex() {
-            return index;
-        }
-
     }
 
     /**
      * 账号状态
      */
+    @Getter
     public enum AccountState {
         正常(0),
         禁用(1);
@@ -96,9 +101,6 @@ public class SerConstant {
             return this.name();
         }
 
-        public int getValue() {
-            return value;
-        }
     }
 
     /**

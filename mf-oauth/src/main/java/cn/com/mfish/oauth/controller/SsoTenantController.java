@@ -52,7 +52,7 @@ import java.util.List;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 @Slf4j
 @Tag(name = "租户信息表")
@@ -251,6 +251,20 @@ public class SsoTenantController {
     }
 
     /**
+     * 获取租户组织
+     *
+     * @param ids 组织ID
+     * @return 返回结果
+     */
+    @Operation(summary = "租户组织结构表-通过id查询", description = "租户组织结构表-通过id查询")
+    @GetMapping("/org/{ids}")
+    @RequiresPermissions("sys:tenantOrg:query")
+    @DataScope(table = "sso_org", type = DataScopeType.Tenant)
+    public Result<List<SsoOrg>> queryByIds(@Parameter(name = "ids", description = "唯一性ID") @PathVariable("ids") String ids) {
+        return ssoOrgService.queryByIds(ids);
+    }
+
+    /**
      * 租户组织结构添加
      *
      * @param ssoOrg 请求参数
@@ -285,7 +299,7 @@ public class SsoTenantController {
             setParentOrg(ssoOrg);
             //父节点为空的是租户，租户不允许修改自己的角色和状态，防止越权修改
             //租户角色统一由系统管理员设置或修改
-            if(StringUtils.isEmpty(ssoOrg.getParentId())){
+            if (StringUtils.isEmpty(ssoOrg.getParentId())) {
                 ssoOrg.setStatus(null);
                 ssoOrg.setRoleIds(null);
             }
@@ -375,12 +389,26 @@ public class SsoTenantController {
         return Result.ok(new PageResult<>(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
-    @Operation(summary = "角色信息表-列表查询", description = "角色信息表-列表查询")
+    @Operation(summary = "租户角色信息表-列表查询", description = "租户角色信息表-列表查询")
     @GetMapping("/role/all")
     @RequiresPermissions("sys:tenantRole:query")
     @DataScope(table = "sso_role", type = DataScopeType.Tenant)
     public Result<List<SsoRole>> queryRoleList(ReqSsoRole reqSsoRole) {
         return Result.ok(ssoRoleService.list(SsoRoleController.buildCondition(reqSsoRole)), "角色信息表-查询成功!");
+    }
+
+    /**
+     * 查询当前租户和超级租户角色列表，因为父租户的角色来源于超级租户，所以允许查询超级租户角色
+     *
+     * @param ids 角色ID
+     * @return 返回结果
+     */
+    @Operation(summary = "租户角色信息表-通过id查询", description = "租户角色信息表-通过id查询")
+    @GetMapping("/role/{ids}")
+    @RequiresPermissions("sys:tenantRole:query")
+    @DataScope(table = "sso_role", type = DataScopeType.Tenant, values = {"", AuthInfoUtils.SUPER_TENANT_ID})
+    public Result<List<SsoRole>> queryRoleByIds(@Parameter(name = "ids", description = "唯一性ID") @PathVariable String ids) {
+        return ssoRoleService.queryByIds(ids);
     }
 
     @Operation(summary = "获取租户角色下的菜单ID")
