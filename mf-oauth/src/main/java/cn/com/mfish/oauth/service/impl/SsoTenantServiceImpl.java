@@ -1,6 +1,7 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.ReqPage;
@@ -8,6 +9,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
 import cn.com.mfish.common.oauth.service.SsoUserService;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 @Service
 @Slf4j
@@ -68,7 +70,6 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         }
         if (validateTenant(ssoTenant) && baseMapper.insert(ssoTenant) > 0) {
             SsoOrg org = new SsoOrg();
-            org.setTenantId(AuthInfoUtils.getCurrentTenantId());
             org.setOrgName(ssoTenant.getName());
             org.setTenantId(ssoTenant.getId());
             //组织状态与租户状态同步
@@ -216,5 +217,28 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     @Override
     public List<TenantVo> getTenantByRoleCode(String roleCode) {
         return baseMapper.getTenantByRoleCode(roleCode);
+    }
+
+    @Override
+    @Transactional
+    public void createTenantUser(SsoUser ssoUser) {
+        Result<SsoUser> result = ssoUserService.insertUser(ssoUser);
+        if (!result.isSuccess()) {
+            throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
+        }
+        SsoTenant ssoTenant = new SsoTenant();
+        ssoTenant.setUserId(ssoUser.getId());
+        String name = ssoUser.getNickname();
+        if (StringUtils.isEmpty(name)) {
+            name = ssoUser.getAccount();
+        }
+        ssoTenant.setName(name);
+        ssoTenant.setStatus(0);
+        ssoTenant.setTenantType(0);
+        ssoTenant.setRoleIds(List.of(AuthInfoUtils.PERSON_ROLE_ID));
+        Result<SsoTenant> result1 = insertTenant(ssoTenant);
+        if (!result1.isSuccess()) {
+            throw new OAuthValidateException("错误：创建新租户失败");
+        }
     }
 }

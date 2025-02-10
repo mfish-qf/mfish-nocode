@@ -24,4 +24,8 @@ public class SsoUser extends UserInfo {
     private String oldPassword;
     @Schema(description = "微信openid")
     private String openid;
+    @Schema(description = "gitee账号")
+    private String gitee;
+    @Schema(description = "github账号")
+    private String github;
 }

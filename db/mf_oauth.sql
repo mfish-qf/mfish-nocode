@@ -305,6 +305,7 @@ CREATE TABLE `sso_role`  (
 -- ----------------------------
 -- Records of sso_role
 -- ----------------------------
+INSERT INTO `sso_role` VALUES ('0', '1', '个人', 'person', NULL, 0, NULL, 0, 'admin', '2023-07-19 15:26:04', '', NULL);
 INSERT INTO `sso_role` VALUES ('1', '1', '超级管理员', 'superAdmin', 1, 0, '超级管理员', 0, 'admin', '2022-09-19 10:21:49', 'mfish', '2023-07-04 11:22:32');
 INSERT INTO `sso_role` VALUES ('210297727b74ecb505c1b4d97f76daee', '1', '测试', 'test', 3, 0, '测试角色', 0, 'admin', '2022-11-29 18:37:32', 'mfish', '2023-07-05 11:13:10');
 INSERT INTO `sso_role` VALUES ('351591b8df6f3eed5d1c613aac6c5bc8', 'a480b6861ca4a44631af794a99e77265', 'XXX管理员', 'xxxgly', 1, 0, NULL, 0, 'mfish', '2023-06-28 11:22:07', '', NULL);
@@ -313,7 +314,6 @@ INSERT INTO `sso_role` VALUES ('4b423f7b1ac0ed0b46a8e5ec3389ac14', '1', '管理'
 INSERT INTO `sso_role` VALUES ('67e95f5e81b8da9a8f70db7540b7409d', '1', '运维', 'operate', 4, 0, '运维角色', 0, 'admin', '2022-11-30 16:18:51', 'mfish', '2023-07-04 17:25:48');
 INSERT INTO `sso_role` VALUES ('86ec59a2a3261fd6ba4098da034965ad', 'a480b6861ca4a44631af794a99e77265', 'XXX开发', 'xxxkf', 3, 0, NULL, 0, 'mfish', '2023-06-28 11:23:10', 'mfish', '2023-09-14 16:08:27');
 INSERT INTO `sso_role` VALUES ('a787082d9b7c177439a114995e4caff1', '1', '开发', 'develop', 5, 0, '开发角色', 0, 'admin', '2023-06-28 11:54:49', 'mfish', '2023-07-31 15:16:31');
-INSERT INTO `sso_role` VALUES ('e77a579aaf0844ba493cde1811b137a9', '1', '个人', 'person', NULL, 0, NULL, 0, 'admin', '2023-07-19 15:26:04', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_role_menu
@@ -581,6 +581,8 @@ CREATE TABLE `sso_user`  (
                              `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记(0未删除1删除)',
                              `salt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '盐',
                              `openid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信唯一id',
+                             `gitee` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'gitee账号',
+                             `github` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'github账号',
                              `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
                              `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
                              `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
@@ -595,9 +597,9 @@ CREATE TABLE `sso_user`  (
 -- ----------------------------
 -- Records of sso_user
 -- ----------------------------
-INSERT INTO `sso_user` VALUES ('1', 'admin', '18900000001', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '', '管理员', '77f39fdc429142bf9b2b1fff631098ef.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2023-06-28 13:05:17');
-INSERT INTO `sso_user` VALUES ('bd54e030ae204be8b77e36cf48583f35', 'xzh', '18911111111', 'liudehua@qq.com', 'b16e23b22364b73715fe678b8493a250', NULL, '新租户', '08170556fd804908812a2768380896e3.png', NULL, NULL, 1, 0, 0, '57c61f5a32e75728843b7f6d0cf38cb1', NULL, NULL, 'mfish', '2023-07-04 10:06:06', 'admin', '2023-07-19 15:26:17');
-INSERT INTO `sso_user` VALUES ('c51fde3955594074bb4db31e654a4483', 'mfish', '18900000002', 'mfish2@qq.com', '997ba196adf807d32b030d2ee8e242f9', NULL, '摸鱼', NULL, '', '2023-06-28', 1, 0, 0, '2833ba3ab03c7fb357cf5d71676146e8', NULL, '', 'admin', '2023-06-28 11:14:45', 'mfish', '2023-07-25 11:35:25');
+INSERT INTO `sso_user` VALUES ('1', 'admin', '18900000001', 'mfish@qq.com', '22d374999f108f1573aad145657ed698', '59a95bba2326ae3d8ac106c5b4b878bb,4fbc6a94d1a2b011c75b2131e15d804b,11417affd06d7fcac06ebfed5c5db529,bfb6e947f7c42a4310adc670e4a9dbd8,5917114d326346f25b8c8d92b6146b14', '管理员', '77f39fdc429142bf9b2b1fff631098ef.png', '02512345678', '1984-08-08', 1, 0, 0, '452187570f682f2ddb35a216fd32460d', 'olbL54qA8qAccFNtModx6dM-Ha6w', NULL, NULL, '超级管理员', '', '2017-04-10 15:21:38', 'admin', '2024-10-31 21:36:49');
+INSERT INTO `sso_user` VALUES ('bd54e030ae204be8b77e36cf48583f35', 'xzh', '18911111111', 'liudehua@qq.com', 'b16e23b22364b73715fe678b8493a250', NULL, '新租户', '08170556fd804908812a2768380896e3.png', NULL, NULL, 1, 0, 0, '57c61f5a32e75728843b7f6d0cf38cb1', NULL, NULL, NULL, NULL, 'mfish', '2023-07-04 10:06:06', 'admin', '2024-04-20 21:03:42');
+INSERT INTO `sso_user` VALUES ('c51fde3955594074bb4db31e654a4483', 'mfish', '18900000002', 'mfish2@qq.com', '997ba196adf807d32b030d2ee8e242f9', '6005f46907b74937313bb9a160be19cb,4fb38998631db300c31f4fff5e19fd6d,ad2671b4ae7c57182cb0378b58c6d122,6a4bee1d4715fb50761e05a6a8c6667e,ff596b034c5929a131c18cf2c124ccbf', '摸鱼', NULL, '', '2023-06-28', 1, 0, 0, '2833ba3ab03c7fb357cf5d71676146e8', NULL, NULL, NULL, '', 'admin', '2023-06-28 11:14:45', 'mfish', '2024-10-31 22:08:04');
 
 -- ----------------------------
 -- Table structure for sso_user_role

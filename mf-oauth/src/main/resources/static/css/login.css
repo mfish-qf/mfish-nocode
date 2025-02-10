@@ -214,6 +214,18 @@ html, body {
     text-align: center;
 }
 
+.login-divider {
+    display: flex;
+    align-items: center;
+
+    color: #6c6c6c;
+}
+.other-login{
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
 @media screen and (max-width: 540px) {
     .login .logo {
         margin: 20px 0 0 20px;

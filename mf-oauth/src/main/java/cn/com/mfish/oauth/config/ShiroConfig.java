@@ -6,16 +6,14 @@ import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.oauth.cache.redis.RedisCacheManager;
 import cn.com.mfish.oauth.cache.redis.RedisSessionDAO;
-import cn.com.mfish.oauth.config.properties.ShiroWhitesProperties;
 import cn.com.mfish.oauth.config.properties.ShiroProperties;
+import cn.com.mfish.oauth.config.properties.ShiroWhitesProperties;
 import cn.com.mfish.oauth.credentials.MyHashedCredentialsMatcher;
+import cn.com.mfish.oauth.credentials.OtherCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.QRCodeCredentialsMatcher;
 import cn.com.mfish.oauth.credentials.SmsCredentialsMatcher;
 import cn.com.mfish.oauth.filter.TokenFilter;
-import cn.com.mfish.oauth.realm.MultipleRealm;
-import cn.com.mfish.oauth.realm.PhoneSmsRealm;
-import cn.com.mfish.oauth.realm.QRCodeRealm;
-import cn.com.mfish.oauth.realm.UserPasswordRealm;
+import cn.com.mfish.oauth.realm.*;
 import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -164,6 +162,10 @@ public class ShiroConfig {
         return new QRCodeCredentialsMatcher();
     }
 
+    @Bean
+    public OtherCredentialsMatcher otherCredentialsMatcher() {
+        return new OtherCredentialsMatcher();
+    }
     /**
      * 用户密码登录方式初始化
      *
@@ -194,12 +196,22 @@ public class ShiroConfig {
     }
 
     @Bean
+    public GitRealm gitRealm() {
+        GitRealm gitRealm = new GitRealm();
+        gitRealm.setCredentialsMatcher(otherCredentialsMatcher());
+        gitRealm.setCachingEnabled(false);
+        return gitRealm;
+    }
+
+    @Bean
     public MultipleRealm multipleRealm() {
         MultipleRealm multipleRealm = new MultipleRealm();
         Map<SerConstant.LoginType, AuthorizingRealm> map = new HashMap<>();
         map.put(SerConstant.LoginType.密码登录, userPasswordRealm());
         map.put(SerConstant.LoginType.扫码登录, qrCodeRealm());
         map.put(SerConstant.LoginType.短信登录, phoneSmsRealm());
+        map.put(SerConstant.LoginType.Gitee, gitRealm());
+        map.put(SerConstant.LoginType.Github, gitRealm());
         multipleRealm.setMyRealms(map);
         return multipleRealm;
     }

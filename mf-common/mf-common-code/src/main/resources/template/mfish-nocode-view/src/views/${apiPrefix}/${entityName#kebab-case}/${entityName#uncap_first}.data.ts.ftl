@@ -17,7 +17,7 @@ import { buildDictTag, getDictProps } from "@/utils/DictUtils";
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 export const columns: BasicColumn[] = [
 <#list tableInfo.fieldExpands as fieldExpands>
