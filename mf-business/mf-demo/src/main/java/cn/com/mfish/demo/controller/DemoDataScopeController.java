@@ -25,7 +25,7 @@ import java.util.List;
  * @description: demo_data_scope
  * @author: mfish
  * @date: 2024-09-04
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 @Slf4j
 @Tag(name = "数据权限样例")

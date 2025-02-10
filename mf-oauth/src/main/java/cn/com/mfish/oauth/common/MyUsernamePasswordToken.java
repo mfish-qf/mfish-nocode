@@ -17,7 +17,7 @@ public class MyUsernamePasswordToken extends UsernamePasswordToken {
     @Getter
     private SsoUser userInfo;
     //是否新用户
-    private boolean isNew;
+    private boolean isNew = false;
 
     //登录类型
     @Getter

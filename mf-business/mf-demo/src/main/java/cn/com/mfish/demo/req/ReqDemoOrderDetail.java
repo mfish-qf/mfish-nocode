@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
  * @description: 销售订单明细
  * @author: mfish
  * @date: 2024-09-02
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 @Data
 @Accessors(chain = true)

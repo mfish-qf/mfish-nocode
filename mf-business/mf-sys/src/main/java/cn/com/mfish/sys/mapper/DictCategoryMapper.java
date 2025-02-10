@@ -11,7 +11,7 @@ import java.util.List;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 public interface DictCategoryMapper extends BaseMapper<DictCategory> {
     int insertCategory(DictCategory dictCategory);

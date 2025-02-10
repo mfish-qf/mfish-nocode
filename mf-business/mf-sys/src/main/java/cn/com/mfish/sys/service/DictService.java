@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.3.1
+ * @Version: V1.3.2
  */
 public interface DictService extends IService<Dict> {
     Result<Dict> updateDict(Dict dict);

@@ -268,7 +268,7 @@ public class SsoUserController {
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:account:delete")
     public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
-        if ("1".equals(id)) {
+        if (AuthInfoUtils.SUPER_ACCOUNT_ID.equals(id)) {
             return Result.fail(false, "错误:admin帐号不允许删除!");
         }
         if (ssoUserService.removeUser(id)) {

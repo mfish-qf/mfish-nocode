@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 @Data
 @Accessors(chain = true)

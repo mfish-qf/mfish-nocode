@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @description: demo_data_scope
  * @author: mfish
  * @date: 2024-09-04
- * @version: V1.3.1
+ * @version: V1.3.2
  */
 public interface DemoDataScopeService extends IService<DemoDataScope> {
 

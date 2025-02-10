@@ -32,6 +32,9 @@ public interface SsoUserService extends IService<SsoUser> {
 
     SsoUser getUserByAccount(String account);
 
+    SsoUser getUserByGitee(String gitee);
+    SsoUser getUserByGithub(String github);
+
     UserInfo getUserByAccountNoPwd(String account);
 
     List<String> getUserIdsByAccounts(List<String> accounts);
@@ -110,4 +113,5 @@ public interface SsoUserService extends IService<SsoUser> {
      * @return 返回解密后的sid
      */
     String decryptSid(String sid);
+
 }
