@@ -66,7 +66,7 @@ public class GiteeController {
         }
         result = loginService.login(result.getData(), token, SerConstant.LoginType.Gitee, "system", "false");
         if (!result.isSuccess()) {
-            return Result.fail("错误：登录失败");
+            return Result.fail(result.getMsg());
         }
         return Result.ok(0, "登录成功");
 

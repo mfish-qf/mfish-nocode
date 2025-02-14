@@ -1,21 +1,24 @@
 package cn.com.mfish.common.dblink.query;
 
+import cn.com.mfish.common.core.constants.DataConstant;
 import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.DataUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
-import cn.com.mfish.common.core.utils.DataUtils;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeaders;
 import cn.com.mfish.common.dataset.datatable.MetaDataRow;
 import cn.com.mfish.common.dataset.datatable.MetaDataTable;
 import cn.com.mfish.common.dataset.enums.TargetType;
-import cn.com.mfish.common.core.constants.DataConstant;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.manger.PoolManager;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
+import oracle.sql.TIMESTAMP;
+import oracle.sql.TIMESTAMPTZ;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -54,7 +57,7 @@ public class BaseQuery {
     public MetaDataTable query(BoundSql boundSql) {
         return query(boundSql, rs -> {
             try {
-                return getMetaDataTable(rs, getColHeaders(rs.getMetaData()));
+                return getMetaDataTable(rs, getColHeaders(rs.getMetaData()), boundSql.getDbType());
             } catch (SQLException e) {
                 log.error("获取metaData异常:{}", boundSql.getSql(), e);
                 throw new MyRuntimeException(e);
@@ -269,7 +272,7 @@ public class BaseQuery {
      * @return 返回元数据表格
      * @throws SQLException 异常
      */
-    protected MetaDataTable getMetaDataTable(final ResultSet rs, final MetaDataHeaders headers) throws SQLException {
+    protected MetaDataTable getMetaDataTable(final ResultSet rs, final MetaDataHeaders headers, DBType dbType) throws SQLException {
         final MetaDataTable table = new MetaDataTable(headers);
         long start = System.currentTimeMillis();
         while (rs.next()) {
@@ -279,10 +282,17 @@ public class BaseQuery {
             while (iterator.hasNext()) {
                 String type = rs.getMetaData().getColumnTypeName(i).toUpperCase(Locale.ROOT);
                 Object value = formatValue(type, rs.getObject(i));
+                //MetaDataTable返回类型为日期时，强制格式为字符类型
                 if (value instanceof java.util.Date) {
-                    //MetaDataTable返回类型日期强制格式为 yyyy-MM-dd HH:mm:ss
-                    if (type.equals(DataConstant.DataType.DATE)) {
-                        value = new SimpleDateFormat("yyyy-MM-dd").format(value);
+                    //oracle没有dateTime,time等类型不进行转换
+                    if (dbType != DBType.oracle) {
+                        if (type.equals(DataConstant.DataType.DATE)) {
+                            value = new SimpleDateFormat("yyyy-MM-dd").format(value);
+                        } else if (type.equals(DataConstant.DataType.TIME) || type.equals(DataConstant.DataType.TIMETZ)) {
+                            value = new SimpleDateFormat("HH:mm:ss").format(value);
+                        } else {
+                            value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
+                        }
                     } else {
                         value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
                     }
@@ -304,7 +314,7 @@ public class BaseQuery {
      * @param value          查询值
      * @return 返回格式化后的值
      */
-    public Object formatValue(String columnTypeName, Object value) {
+    public Object formatValue(String columnTypeName, Object value) throws SQLException {
         if (value == null) {
             return null;
         }
@@ -319,13 +329,10 @@ public class BaseQuery {
             //LocalDateTime 转成Date类型
             value = value instanceof LocalDateTime ? Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant()) : value;
         } else if (columnTypeName.contains(DataConstant.DataType.TIMESTAMP)) {
-            String time = value.toString();
-            if (!StringUtils.isEmpty(time)) {
-                try {
-                    value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time.substring(0, time.length() - 2));
-                } catch (ParseException e) {
-                    log.error("错误:日期转换异常");
-                }
+            if (value instanceof TIMESTAMPTZ) {
+                value = Date.from(((TIMESTAMPTZ) value).toLocalDateTime().atZone(ZoneId.systemDefault()).toInstant());
+            } else if (value instanceof TIMESTAMP) {
+                value = Date.from(((TIMESTAMP) value).toLocalDateTime().atZone(ZoneId.systemDefault()).toInstant());
             }
         }
         return value;

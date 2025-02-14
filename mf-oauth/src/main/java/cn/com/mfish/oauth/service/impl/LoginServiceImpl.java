@@ -75,7 +75,7 @@ public class LoginServiceImpl implements LoginService {
      * 本方法主要用于校验授权码（code）的有效性通过HTTP请求参数进行校验如果校验失败，
      * 会将错误信息添加到模型中并返回false否则，返回true表示校验成功
      *
-     * @param model 用于存储属性值，在发生错误时用于存储错误信息
+     * @param model   用于存储属性值，在发生错误时用于存储错误信息
      * @param request HTTP请求对象，用于获取请求参数
      * @return boolean 校验是否成功
      */
@@ -91,7 +91,7 @@ public class LoginServiceImpl implements LoginService {
     /**
      * web请求登录 构建model返回值
      *
-     * @param model 用于存储属性值，在发生错误时用于存储错误信息
+     * @param model   用于存储属性值，在发生错误时用于存储错误信息
      * @param request HTTP请求对象，用于获取请求参数
      * @return boolean 校验是否成功
      */
@@ -124,8 +124,8 @@ public class LoginServiceImpl implements LoginService {
     /**
      * 登录用户验证逻辑
      *
-     * @param username 账号
-     * @param password 密码
+     * @param username  账号
+     * @param password  密码
      * @param loginType 登陆类型
      * @return 返回登陆结果
      */

@@ -57,7 +57,7 @@ public class GitRealm extends AuthorizingRealm {
         if (null != user) return user;
         user = ssoUserService.getUserByAccount(username);
         String account;
-        if (user == null) {
+        if (user == null && StringUtils.isMatch("^[a-zA-Z0-9]+$", username)) {
             account = username;
         } else {
             account = IDBuild.getID("G");
@@ -65,7 +65,11 @@ public class GitRealm extends AuthorizingRealm {
         SsoUser userInfo = new SsoUser();
         userInfo.setId(Utils.uuid32());
         userInfo.setAccount(account);
-        userInfo.setGitee(username);
+        if (myToken.getLoginType() == SerConstant.LoginType.Github) {
+            userInfo.setGithub(username);
+        } else {
+            userInfo.setGitee(username);
+        }
         userInfo.setNickname(json.getString("name"));
         userInfo.setEmail(json.getString("email"));
         userInfo.setHeadImgUrl(json.getString("avatar_url"));
