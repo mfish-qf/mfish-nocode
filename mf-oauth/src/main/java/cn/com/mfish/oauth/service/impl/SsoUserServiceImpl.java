@@ -239,7 +239,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
      * @param user    用户
      * @param operate 操作
      */
-    private void validateUser(SsoUser user, String operate) {
+    @Override
+    public void validateUser(SsoUser user, String operate) {
         if (isAccountExist(user.getAccount(), user.getId())) {
             throw new MyRuntimeException("错误:帐号已存在-" + operate + "失败!");
         }

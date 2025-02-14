@@ -18,6 +18,7 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -217,7 +218,7 @@ public class OkHttpUtils {
      * @return 构建好的OkHttpClient实例
      */
     private static OkHttpClient buildOkHttpClient(String url, TimeOut timeOut) {
-        OkHttpClient.Builder clientBuilder = new OkHttpClient().newBuilder();
+        OkHttpClient.Builder clientBuilder = new OkHttpClient().newBuilder().protocols(List.of(Protocol.HTTP_1_1));
         if (timeOut != null) {
             clientBuilder.connectTimeout(timeOut.getConnectTimeOut(), timeOut.getTimeUnit())
                     .readTimeout(timeOut.getReadTimeOut(), timeOut.getTimeUnit())

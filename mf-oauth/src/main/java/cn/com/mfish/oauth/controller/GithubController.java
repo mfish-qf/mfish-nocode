@@ -52,7 +52,7 @@ public class GithubController {
         param.put("redirect_uri", redirectUri);
         Map<String, String> header = new HashMap<>();
         header.put("Accept", "application/json");
-        Result<String> result = OkHttpUtils.postJson("https://github.com/login/oauth/access_token", JSON.toJSONString(param));
+        Result<String> result = OkHttpUtils.postJson("https://github.com/login/oauth/access_token", JSON.toJSONString(param), header);
         JSONObject jsonObject;
         if (!result.isSuccess()) {
             return Result.fail("错误：请求github token失败");
@@ -67,7 +67,7 @@ public class GithubController {
         }
         result = loginService.login(result.getData(), token, SerConstant.LoginType.Github, "system", "false");
         if (!result.isSuccess()) {
-            return Result.fail("错误：登录失败");
+            return Result.fail(result.getMsg());
         }
         return Result.ok(0, "登录成功");
 

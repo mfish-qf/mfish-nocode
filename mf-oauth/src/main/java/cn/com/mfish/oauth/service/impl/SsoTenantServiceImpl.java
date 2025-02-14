@@ -1,7 +1,6 @@
 package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.ReqPage;
@@ -9,7 +8,6 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
-import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
 import cn.com.mfish.common.oauth.service.SsoUserService;
@@ -24,6 +22,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -220,11 +219,17 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void createTenantUser(SsoUser ssoUser) {
-        Result<SsoUser> result = ssoUserService.insertUser(ssoUser);
+        Result<SsoUser> result;
+        try {
+            result = ssoUserService.insertUser(ssoUser);
+        } catch (MyRuntimeException ex) {
+            //包装成shiro异常,便于shiro统一处理
+            throw new IncorrectCredentialsException(ex.getMessage());
+        }
         if (!result.isSuccess()) {
-            throw new OAuthValidateException(SerConstant.INVALID_NEW_USER_DESCRIPTION);
+            throw new IncorrectCredentialsException(result.getMsg());
         }
         SsoTenant ssoTenant = new SsoTenant();
         ssoTenant.setUserId(ssoUser.getId());
@@ -236,9 +241,14 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         ssoTenant.setStatus(0);
         ssoTenant.setTenantType(0);
         ssoTenant.setRoleIds(List.of(AuthInfoUtils.PERSON_ROLE_ID));
-        Result<SsoTenant> result1 = insertTenant(ssoTenant);
+        Result<SsoTenant> result1;
+        try {
+            result1 = insertTenant(ssoTenant);
+        } catch (MyRuntimeException ex) {
+            throw new IncorrectCredentialsException(ex.getMessage());
+        }
         if (!result1.isSuccess()) {
-            throw new OAuthValidateException("错误：创建新租户失败");
+            throw new IncorrectCredentialsException("错误：创建新租户失败");
         }
     }
 }

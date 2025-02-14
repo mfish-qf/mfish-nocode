@@ -60,6 +60,7 @@ public class DataConstant {
         public static final String NUMBER = "NUMBER";
         public static final String DATETIME = "DATETIME";
         public static final String TIME = "TIME";
+        public static final String TIMETZ = "TIMETZ";
         public static final String TIMESTAMP = "TIMESTAMP";
         public static final String DATETIMEOFFSET = "DATETIMEOFFSET";
         public static final String DATE = "DATE";

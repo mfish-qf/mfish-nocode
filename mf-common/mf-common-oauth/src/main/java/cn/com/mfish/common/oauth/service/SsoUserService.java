@@ -28,11 +28,14 @@ public interface SsoUserService extends IService<SsoUser> {
 
     Result<SsoUser> updateUser(SsoUser user);
 
+    void validateUser(SsoUser user, String operate);
+
     boolean removeUser(String id);
 
     SsoUser getUserByAccount(String account);
 
     SsoUser getUserByGitee(String gitee);
+
     SsoUser getUserByGithub(String github);
 
     UserInfo getUserByAccountNoPwd(String account);
