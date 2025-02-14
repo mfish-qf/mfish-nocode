@@ -48,7 +48,7 @@ public class QueryHandler {
      * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params) {
-        return query(dataSourceOptions, new BoundSql(strSql, params), null);
+        return query(dataSourceOptions, new BoundSql(dataSourceOptions.getDbType(), strSql, params), null);
     }
 
     /**
@@ -75,7 +75,7 @@ public class QueryHandler {
      * @return 返回结果集
      */
     public static MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, RowBounds rowBounds) {
-        return query(dataSourceOptions, new BoundSql(strSql, params), rowBounds);
+        return query(dataSourceOptions, new BoundSql(dataSourceOptions.getDbType(), strSql, params), rowBounds);
     }
 
     /**
@@ -109,7 +109,7 @@ public class QueryHandler {
      * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, Class<T> cls) {
-        return queryT(dataSourceOptions, new BoundSql(strSql, params), null, cls);
+        return queryT(dataSourceOptions, new BoundSql(dataSourceOptions.getDbType(), strSql, params), null, cls);
     }
 
     /**
@@ -136,7 +136,7 @@ public class QueryHandler {
      * @return 返回翻页结果集
      */
     public static <T> Page<T> queryT(DataSourceOptions<?> dataSourceOptions, String strSql, List<QueryParam> params, RowBounds rowBounds, Class<T> cls) {
-        return queryT(dataSourceOptions, new BoundSql(strSql, params), rowBounds, cls);
+        return queryT(dataSourceOptions, new BoundSql(dataSourceOptions.getDbType(), strSql, params), rowBounds, cls);
     }
 
     /**

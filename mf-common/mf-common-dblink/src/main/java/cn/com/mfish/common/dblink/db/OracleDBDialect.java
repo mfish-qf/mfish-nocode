@@ -2,6 +2,7 @@ package cn.com.mfish.common.dblink.db;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.dblink.entity.QueryParam;
+import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 
 import java.util.Locale;
@@ -56,6 +57,7 @@ public class OracleDBDialect implements DBDialect {
 
     private BoundSql buildCondition(String sql, String tableName) {
         BoundSql boundSql = new BoundSql();
+        boundSql.setDbType(DBType.oracle);
         if (!StringUtils.isEmpty(tableName)) {
             //这里虽然匹配大小写，但是建议oracle表名视图都创建大写名称，避免数据查询时无法查到
             sql += " and (a.TABLE_NAME = ? or a.TABLE_NAME = ?)";

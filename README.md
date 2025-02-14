@@ -11,7 +11,7 @@
 
 ## 架构图
 
-![](https://oscimg.oschina.net/oscnet/up-7cb78605937aa402dbbdc8bdad8c2888b72.png)
+![](https://mfish-pic.pages.dev/frame.png)
 
 ## 项目介绍
 
@@ -68,7 +68,7 @@
 │  ├─数据源
 │  ├─代码生成
 │  ├─自助API
-│  └─自助大屏(开发中...)
+│  └─自助大屏
 ├─系统管理
 │  ├─菜单管理
 │  ├─组织管理
@@ -113,6 +113,10 @@
     <tr>
       <td><img src="https://mfish-pic.pages.dev/login.png" /></td>
       <td><img src="https://mfish-pic.pages.dev/menu.png" /></td>
+    </tr>
+    <tr>
+      <td><img src="https://mfish-pic.pages.dev/screen.png" /></td>
+      <td><img src="https://mfish-pic.pages.dev/screenConfig.png" /></td>
     </tr>
     <tr>
       <td><img src="https://mfish-pic.pages.dev/api.png" /></td>

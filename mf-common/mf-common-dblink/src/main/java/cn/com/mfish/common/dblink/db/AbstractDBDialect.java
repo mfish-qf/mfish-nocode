@@ -2,6 +2,7 @@ package cn.com.mfish.common.dblink.db;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.dblink.entity.QueryParam;
+import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 
 import java.text.MessageFormat;
@@ -39,6 +40,7 @@ public abstract class AbstractDBDialect implements DBDialect {
      */
     protected BoundSql buildCondition(String sql, String dbName, String tableName) {
         BoundSql boundSql = new BoundSql();
+        boundSql.setDbType(DBType.mysql);
         if (!StringUtils.isEmpty(tableName)) {
             sql += " and (table_name = ? or table_name = ?) ";
             boundSql.getParams().add(new QueryParam().setValue(tableName.toUpperCase()));

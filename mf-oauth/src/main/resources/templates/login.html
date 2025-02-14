@@ -47,6 +47,7 @@
                     <div class="card fat">
                         <div class="card-body">
                             <h4 class="card-title mb-3">{{loginTypeName}}登录</h4>
+                            <h6 style="color: red">演示环境，请使用最下方gitee账号一键登录</h6>
                             <div v-show="userPasswordVisible">
                                 <form id="login" method="POST" class="enter-x">
                                     <div class="form-floating mb-3">
@@ -173,7 +174,7 @@
                             <div v-show="qrCodeVisible" class="enter-x">
                                 <form id="qrCodeLogin" method="post">
                                     <input type="hidden" v-model="qrCodeName" name="username"/>
-                                    <input type="hiddean" v-model="qrCodeSecret" name="password"/>
+                                    <input type="hidden" v-model="qrCodeSecret" name="password"/>
                                     <input type="hidden" v-model="loginType" name="loginType"/>
                                 </form>
                                 <div class="qrcode-img mb-3">
