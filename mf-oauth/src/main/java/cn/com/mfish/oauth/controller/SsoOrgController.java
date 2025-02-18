@@ -15,8 +15,6 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.req.ReqOrgUser;
 import cn.com.mfish.common.oauth.req.ReqSsoOrg;
 import cn.com.mfish.common.oauth.service.SsoOrgService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -46,15 +44,7 @@ public class SsoOrgController {
     @GetMapping
     @RequiresPermissions("sys:org:query")
     public Result<PageResult<SsoOrg>> queryPageList(ReqSsoOrg reqSsoOrg, ReqPage reqPage) {
-        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        return Result.ok(new PageResult<>(ssoOrgService.list(new LambdaQueryWrapper<SsoOrg>()
-                .eq(SsoOrg::getDelFlag, 0)
-                .like(!StringUtils.isEmpty(reqSsoOrg.getOrgName()), SsoOrg::getOrgName, reqSsoOrg.getOrgName())
-                .eq(!StringUtils.isEmpty(reqSsoOrg.getTenantId()), SsoOrg::getTenantId, reqSsoOrg.getTenantId())
-                .like(!StringUtils.isEmpty(reqSsoOrg.getLeader()), SsoOrg::getLeader, reqSsoOrg.getLeader())
-                .like(!StringUtils.isEmpty(reqSsoOrg.getPhone()), SsoOrg::getPhone, reqSsoOrg.getPhone())
-                .eq(reqSsoOrg.getStatus() != null, SsoOrg::getStatus, reqSsoOrg.getStatus())
-        )), "组织结构表-查询成功!");
+        return ssoOrgService.queryOrg(reqSsoOrg, reqPage);
     }
 
     @Operation(summary = "获取组织结构")
@@ -64,6 +54,22 @@ public class SsoOrgController {
         List<SsoOrg> orgList = new ArrayList<>();
         TreeUtils.buildTree("", list, orgList, SsoOrg.class);
         return Result.ok(orgList, "组织结构表-查询成功!");
+    }
+
+    @Operation(summary = "获取组织结构")
+    @GetMapping("/tree/{ids}")
+    @Parameters({
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
+    })
+    public Result<List<SsoOrg>> queryOrgTreeById(@PathVariable("ids") String ids, String direction) {
+        if (StringUtils.isEmpty(ids)) {
+            return Result.fail(new ArrayList<>(), "错误:组织ID不允许为空");
+        }
+        List<SsoOrg> list = new ArrayList<>();
+        for (String orgId : ids.split(",")) {
+            list.addAll(ssoOrgService.queryOrgById(orgId, TreeDirection.getDirection(direction)));
+        }
+        return Result.ok(list, "组织结构表-查询成功!");
     }
 
     @Operation(summary = "获取组织的角色")

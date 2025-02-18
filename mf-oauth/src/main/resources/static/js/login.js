@@ -354,7 +354,6 @@ let app = new Vue({
                 type: "get",
                 success: function (result) {
                     if (200 === result.code) {
-                        debugger
                         window.location.href = result.data;
                     } else {
                         app.showError(result.msg);
@@ -369,7 +368,6 @@ let app = new Vue({
                 type: "get",
                 success: function (result) {
                     if (200 === result.code) {
-                        debugger
                         window.location.href = result.data;
                     } else {
                         app.showError(result.msg);

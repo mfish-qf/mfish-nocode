@@ -19,11 +19,10 @@ import cn.com.mfish.oauth.mapper.SsoOrgMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.Resource;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -143,6 +142,26 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
 
     @Override
     public List<SsoOrg> queryOrg(ReqSsoOrg reqSsoOrg) {
+        List<Integer> list = buildParentLevel(reqSsoOrg);
+        return baseMapper.queryOrg(reqSsoOrg, list);
+    }
+
+    @Override
+    public Result<PageResult<SsoOrg>> queryOrg(ReqSsoOrg reqSsoOrg, ReqPage reqPage) {
+        List<Integer> list = buildParentLevel(reqSsoOrg);
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        PageResult<SsoOrg> result = new PageResult<>(baseMapper.queryOneLevelOrg(reqSsoOrg, list));
+        if (!result.getList().isEmpty()) {
+            List<SsoOrg> orgList = baseMapper.queryChildOrg(reqSsoOrg, list, result.getList().stream().map(SsoOrg::getOrgCode).collect(Collectors.toList()));
+            List<SsoOrg> orgTree = new ArrayList<>();
+            TreeUtils.buildTree("", orgList, orgTree, SsoOrg.class);
+            return Result.ok(new PageResult<>(orgTree, result.getPageNum(), result.getPageSize(), result.getTotal()), "组织树-查询成功!");
+        }
+        return Result.ok(result, "组织树-查询成功!");
+    }
+
+    private List<Integer> buildParentLevel(ReqSsoOrg reqSsoOrg) {
+        //查询满足条件的父级节点等级
         Integer level = baseMapper.queryMaxOrgLevel(reqSsoOrg);
         List<Integer> list = new ArrayList<>();
         if (level != null) {
@@ -150,7 +169,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
                 list.add(i);
             }
         }
-        return baseMapper.queryOrg(reqSsoOrg, list);
+        return list;
     }
 
     @Override
@@ -328,7 +347,7 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     /**
      * 获取所有上级编码
      *
-     * @param code 固定编码
+     * @param code  固定编码
      * @param level 等级
      * @return 返回上级编码列表
      */
