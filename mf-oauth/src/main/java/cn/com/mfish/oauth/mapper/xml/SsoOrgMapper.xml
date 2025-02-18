@@ -37,7 +37,12 @@
         sso_org on id = #{parentId}) t
     </insert>
     <sql id="reqCondition">
-        <if test="reqSsoOrg.orgName != null">and org_name like concat('%',#{reqSsoOrg.orgName},'%')</if>
+        <if test="reqSsoOrg.orgName!=null">
+            and
+            <foreach collection="reqSsoOrg.orgName.split(',')" item="name" separator="or" open="(" close=")">
+                 org_name like concat('%',#{name},'%')
+            </foreach>
+        </if>
         <if test="reqSsoOrg.leader != null">and leader like concat('%',#{reqSsoOrg.leader},'%')</if>
         <if test="reqSsoOrg.phone != null">and phone like concat('%',#{reqSsoOrg.phone},'%')</if>
         <if test="reqSsoOrg.status!=null">and status = #{reqSsoOrg.status}</if>
@@ -61,7 +66,7 @@
             tenant_id = #{reqSsoOrg.tenantId})) sso_org
         </if>
     </sql>
-    <select id="queryOrg" resultMap="orgMap">
+    <sql id="queryOrgSql">
         select o.id,o.parent_id,o.tenant_id,o.org_fix_code,o.org_code,o.org_level,o.org_name,o.org_sort,o.leader
         ,o.phone,o.email,o.remark,o.status,o.del_flag,o.create_by,o.create_time,o.update_by,o.update_time
         , GROUP_CONCAT(DISTINCT r.id) roleIds from (
@@ -87,7 +92,23 @@
         left join sso_role r on sor.role_id = r.id and r.del_flag = 0
         group by o.id,o.parent_id,o.tenant_id,o.org_fix_code,o.org_code,o.org_level,o.org_name,o.org_sort,o.leader
         ,o.phone,o.email,o.remark,o.status,o.del_flag,o.create_by,o.create_time,o.update_by,o.update_time
-        order by o.org_sort
+        order by o.org_level,o.org_sort,o.org_code
+    </sql>
+    <select id="queryOrg" resultMap="orgMap">
+        <include refid="queryOrgSql"/>
+    </select>
+    <select id="queryOneLevelOrg" resultMap="orgMap">
+        select * from (<include refid="queryOrgSql"/>) a where a.org_level = 1
+        order by org_level,org_sort,org_code
+    </select>
+    <select id="queryChildOrg" resultMap="orgMap">
+        SELECT * FROM (<include refid="queryOrgSql" />) a
+        <where>
+            <foreach collection="list" item="value">
+                or org_code like concat(#{value},'%')
+            </foreach>
+        </where>
+        order by org_level,org_sort,org_code
     </select>
     <select id="orgFixCodeExist" resultType="int">
         select count(0) from sso_org
