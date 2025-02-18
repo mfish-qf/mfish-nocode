@@ -26,6 +26,8 @@ public interface SsoOrgService extends IService<SsoOrg> {
 
     List<SsoOrg> queryOrg(ReqSsoOrg reqSsoOrg);
 
+    Result<PageResult<SsoOrg>> queryOrg(ReqSsoOrg reqSsoOrg, ReqPage reqPage);
+
     Result<Boolean> removeOrg(String id);
 
     int insertOrgRole(String orgId, List<String> roles);

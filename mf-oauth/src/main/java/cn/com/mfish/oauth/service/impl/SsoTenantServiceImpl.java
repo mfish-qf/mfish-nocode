@@ -241,6 +241,7 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         ssoTenant.setStatus(0);
         ssoTenant.setTenantType(0);
         ssoTenant.setRoleIds(List.of(AuthInfoUtils.PERSON_ROLE_ID));
+        ssoTenant.setLogo(ssoUser.getHeadImgUrl());
         Result<SsoTenant> result1;
         try {
             result1 = insertTenant(ssoTenant);
