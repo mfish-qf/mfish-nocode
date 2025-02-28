@@ -1,6 +1,7 @@
 package cn.com.mfish.common.oauth.scope;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
 import cn.com.mfish.common.oauth.common.DataScopeValue;
@@ -20,10 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @description: 查询拦截器
@@ -55,8 +53,14 @@ public class SelectInterceptor implements Interceptor {
         BoundSql boundSql = statementHandler.getBoundSql();
         String oriSql = boundSql.getSql();
         try {
-            Map<String, List<DataScopeValue>> map = buildParamsMap(scopes);
-            oriSql = MixDataScopeHandle.sqlChange(oriSql, map);
+            Map<String, List<String>> ignoreMap = buildIgnoreMap(scopes);
+            // 如果存在忽略条件，以忽略条件为准，其他数据权限全部失效
+            if (!ignoreMap.isEmpty()) {
+                oriSql = MixDataScopeHandle.ignoreSqlChange(oriSql, ignoreMap);
+            } else {
+                Map<String, List<DataScopeValue>> map = buildParamsMap(scopes);
+                oriSql = MixDataScopeHandle.sqlChange(oriSql, map);
+            }
             Field field = boundSql.getClass().getDeclaredField("sql");
             field.setAccessible(true);
             field.set(boundSql, oriSql);
@@ -77,8 +81,35 @@ public class SelectInterceptor implements Interceptor {
             } else {
                 list = new ArrayList<>();
             }
-            list.add(new DataScopeValue().setDataScopeHandle(scope.type().getHandle()).setFieldName(scope.fieldName()).setValues(scope.values()));
+            list.add(new DataScopeValue().setDataScopeHandle(scope.type().getHandle())
+                    .setFieldName(scope.fieldName())
+                    .setValues(scope.values())
+                    .setExcludes(scope.excludes()));
             map.put(tableName, list);
+        }
+        return map;
+    }
+
+    private Map<String, List<String>> buildIgnoreMap(List<DataScope> scopes) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (DataScope scope : scopes) {
+            if (scope.ignores() == null || scope.ignores().length == 0) {
+                continue;
+            }
+            String tableName = scope.table();
+            List<String> list;
+            if (map.containsKey(tableName)) {
+                list = map.get(tableName);
+            } else {
+                list = new ArrayList<>();
+            }
+            String ignore = DataScopeUtils.buildIgnores(scope.ignores());
+            if (!StringUtils.isEmpty(ignore)) {
+                list.add(ignore);
+            }
+            if (!list.isEmpty()) {
+                map.put(tableName, list);
+            }
         }
         return map;
     }

@@ -59,6 +59,9 @@ public class GithubController {
         }
         jsonObject = JSON.parseObject(result.getData());
         String token = jsonObject.getString("access_token");
+        if (!isStarred(token)) {
+            return Result.ok(1, "警告：未关注github仓库");
+        }
         header.clear();
         header.put("Authorization", "Bearer " + token);
         result = OkHttpUtils.get("https://api.github.com/user", header);
@@ -80,4 +83,25 @@ public class GithubController {
                 + "&redirect_uri=" + redirectUri + "&response_type=code", "获取地址成功");
     }
 
+    /**
+     * 判断是否关注仓库
+     *
+     * @param token 请求token
+     * @return 是否
+     */
+    private boolean isStarred(String token) {
+        Map<String, String> header = new HashMap<>();
+        header.put("Authorization", "Bearer " + token);
+        try {
+            OkHttpUtils.get("https://api.github.com/user/starred/mfish-qf/mfish-nocode", header);
+            return true;
+        } catch (Exception ignored) {
+        }
+        try {
+            OkHttpUtils.get("https://api.github.com/user/starred/mfish-qf/mfish-nocode-view", header);
+            return true;
+        } catch (Exception ignored) {
+        }
+        return false;
+    }
 }

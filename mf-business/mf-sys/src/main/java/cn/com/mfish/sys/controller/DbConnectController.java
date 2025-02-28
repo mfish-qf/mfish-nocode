@@ -58,7 +58,7 @@ public class DbConnectController {
     @Operation(summary = "数据库连接-分页列表查询", description = "数据库连接-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:database:query")
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
         return dbConnectService.queryPageList(reqDbConnect, reqPage);
     }
@@ -70,7 +70,7 @@ public class DbConnectController {
             @Parameter(name = "connectId", description = "数据库ID", required = true),
             @Parameter(name = "tableName", description = "表名")
     })
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
     }
@@ -80,7 +80,7 @@ public class DbConnectController {
     @Parameters({
             @Parameter(name = "parentId", description = "父节点ID 为空时查询数据库列表 有值时查询库下面的表列表")
     })
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<List<DBTreeNode>> getDBTree(@RequestParam(name = "parentId", required = false) String parentId) {
         List<DBTreeNode> treeNodes = new ArrayList<>();
         if (StringUtils.isEmpty(parentId)) {
@@ -105,7 +105,7 @@ public class DbConnectController {
             @Parameter(name = "connectId", description = "数据库ID", required = true),
             @Parameter(name = "tableName", description = "表名")
     })
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取字段列表成功");
     }
@@ -116,7 +116,7 @@ public class DbConnectController {
             @Parameter(name = "connectId", description = "数据库ID", required = true),
             @Parameter(name = "tableName", description = "表名")
     })
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         return tableService.getHeaderDataTable(connectId, tableName, reqPage);
     }
@@ -127,7 +127,7 @@ public class DbConnectController {
             @Parameter(name = "connectId", description = "数据库ID", required = true),
             @Parameter(name = "tableName", description = "表名")
     })
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
         List<MetaDataHeader> headers = tableService.getDataHeaders(connectId, tableName, reqPage);
         return Result.ok(headers, "获取表列头成功");
@@ -194,7 +194,7 @@ public class DbConnectController {
     @Operation(summary = "数据库连接-通过id查询(接口只允许内部访问)")
     @GetMapping("/{id}")
     @InnerUser
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<DbConnect> queryById(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return dbConnectService.queryById(id);
     }
@@ -207,8 +207,8 @@ public class DbConnectController {
         return dbConnectService.testConnect(dbConnect);
     }
 
-    private void verifyTenantId(String id){
-        if(!dbConnectService.exists(new LambdaQueryWrapper<DbConnect>().eq(DbConnect::getId,id))){
+    private void verifyTenantId(String id) {
+        if (!dbConnectService.exists(new LambdaQueryWrapper<DbConnect>().eq(DbConnect::getId, id))) {
             throw new MyRuntimeException("错误：数据库连接不存在或无权限!");
         }
     }
