@@ -55,4 +55,21 @@ public @interface DataScope {
      * @return 字段值
      */
     String[] values() default {};
+
+    /**
+     * 排除条件 满足排除条件的数据不会被过滤，即会被查询出来 如果是多个条件，多个条件的数据都会被查询出来（不传时不做排除）
+     * 例如:exclude={"isPublic=1"}
+     * 如果排除值为变量采用#{XXX}格式，例如exclude={"isPublic=#{XXX}"}
+     * 变量值可以通过ServletRequest.getParameter中获取，如果变量值为空，则不进行过滤
+     * @return 排除条件
+     */
+    String[] excludes() default {};
+
+    /**
+     * 忽略条件（特殊处理，优先级最高） 当前表满足忽略条件时，优先使用忽略条件设置的条件进行过滤
+     * 只要一个数据范围中存在忽略条件，其他所有数据范围条件失效
+     * 变量值可以通过ServletRequest.getParameter中获取，如果变量值为空，则不使用忽略条件
+     * @return 跳过条件
+     */
+    String[] ignores() default {};
 }

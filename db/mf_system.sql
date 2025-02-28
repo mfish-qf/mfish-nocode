@@ -53,7 +53,7 @@ CREATE TABLE `sys_config`  (
 DROP TABLE IF EXISTS `sys_db_connect`;
 CREATE TABLE `sys_db_connect`  (
                                    `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '库信息id',
-                                   `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '租户ID',
+                                   `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
                                    `db_title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据库标题',
                                    `db_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据库名',
                                    `db_type` tinyint(1) NULL DEFAULT NULL COMMENT '数据库类型（0 mysql 1 oracle 2 pgsql）',
@@ -63,6 +63,7 @@ CREATE TABLE `sys_db_connect`  (
                                    `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据库登录用户名',
                                    `password` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据库登录密码',
                                    `options` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据源配置项(JSON格式）',
+                                   `is_public` tinyint(1) NULL DEFAULT 0 COMMENT '是否公开连接 0为私有的  1公开的',
                                    `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
                                    `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建人',
                                    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
