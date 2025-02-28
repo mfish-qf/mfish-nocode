@@ -6,5 +6,5 @@ package cn.com.mfish.common.oauth.scope;
  * @date: 2024/4/26
  */
 public interface DataScopeHandle {
-    String buildCondition(String fieldName, String[] values);
+    String buildCondition(String fieldName, String[] values, String[] excludes);
 }

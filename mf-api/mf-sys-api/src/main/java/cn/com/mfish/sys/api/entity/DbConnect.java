@@ -44,6 +44,8 @@ public class DbConnect extends BaseEntity<String> {
     private String password;
     @Schema(description = "数据源配置项(JSON格式）")
     private String options;
+    @Schema(description = "是否公共（0 否 1 是）")
+    private Integer isPublic;
     @Schema(description = "备注")
     private String remark;
 }

@@ -22,7 +22,7 @@ public class MixDataScopeHandle {
      * 它会检查每个提供的数据权限字段，并在原始SQL语句中加入相应的限制条件，以确保数据查询符合权限设置
      *
      * @param oriSql 原始SQL语句
-     * @param map 包含数据权限信息的映射，键为字段名，值为该字段的数据权限值列表
+     * @param map    包含数据权限信息的映射，键为字段名，值为该字段的数据权限值列表
      * @return 修改后的SQL语句
      */
     public static String sqlChange(String oriSql, Map<String, List<DataScopeValue>> map) {
@@ -36,7 +36,7 @@ public class MixDataScopeHandle {
                 if (handle == null) {
                     continue;
                 }
-                sb.append(handle.buildCondition(value.getFieldName(), value.getValues()));
+                sb.append(handle.buildCondition(value.getFieldName(), value.getValues(), value.getExcludes()));
                 sb.append(" and ");
             }
             if (!sb.isEmpty()) {
@@ -47,11 +47,22 @@ public class MixDataScopeHandle {
         return oriSql;
     }
 
+    public static String ignoreSqlChange(String oriSql, Map<String, List<String>> ignoreMap) {
+        for (Map.Entry<String, List<String>> entry : ignoreMap.entrySet()) {
+            if (!oriSql.toLowerCase().contains(entry.getKey())) {
+                continue;
+            }
+            String condition = String.join(" and ", entry.getValue());
+            oriSql = sqlChange(oriSql, entry.getKey(), condition);
+        }
+        return oriSql;
+    }
+
     /**
      * 转换为数据权限SQL
      *
-     * @param sql 原始SQL语句
-     * @param table 表名
+     * @param sql       原始SQL语句
+     * @param table     表名
      * @param condition 数据权限条件
      * @return 转换后的SQL语句
      */
@@ -72,7 +83,7 @@ public class MixDataScopeHandle {
     /**
      * 构建替换SQL
      *
-     * @param table 表名
+     * @param table     表名
      * @param condition 数据权限条件
      * @return 替换后的SQL
      */

@@ -26,21 +26,21 @@ public class RoleDataScopeHandle implements DataScopeHandle {
     private static final String DEFAULT_FIELD = "role_id";
 
     @Override
-    public String buildCondition(String fieldName, String[] values) {
+    public String buildCondition(String fieldName, String[] values, String[] excludes) {
         fieldName = StringUtils.isEmpty(fieldName) ? DEFAULT_FIELD : fieldName;
         if (values == null || values.length == 0) {
             //未传值时使用当前用户的所有角色id
             values = getCurRoles();
         } else {
             //如果是单实例直接拼接减少查询次数
-            if(ServiceConstants.isBoot(Utils.getServiceType())){
+            if (ServiceConstants.isBoot(Utils.getServiceType())) {
                 return fieldName + " in (select id from sso_role where tenant_id = '"
                         + AuthInfoUtils.getCurrentTenantId() + "' and "
-                        + DataScopeUtils.buildCondition("role_code", values) + ")";
+                        + DataScopeUtils.buildCondition("role_code", values, excludes) + ")";
             }
             values = getRoleIdsByCode(values);
         }
-        return DataScopeUtils.buildCondition(fieldName, values);
+        return DataScopeUtils.buildCondition(fieldName, values, excludes);
     }
 
     private String[] getCurRoles() {

@@ -1,16 +1,16 @@
 package cn.com.mfish.common.oauth.common;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.oauth.annotation.DataScope;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -64,7 +64,7 @@ public class DataScopeUtils {
     /**
      * 分解SQL
      *
-     * @param sql      需要分解的SQL语句
+     * @param sql       需要分解的SQL语句
      * @param tableName 数据库表名
      * @return 返回分解后的SQL列表
      */
@@ -153,11 +153,14 @@ public class DataScopeUtils {
      * 根据字段名和值数组构建SQL查询条件字符串
      *
      * @param fieldName 字段名，用于指定查询条件的目标字段
-     * @param values 值数组，包含一个或多个字段值，用于构建查询条件
+     * @param values    值数组，包含一个或多个字段值，用于构建查询条件
+     * @param excludes  排除条件数组，包含一个或多个排除条件，用于构建查询条件
+     *                  排除条件的格式应为一个字符串，例如"id <> 1"，用于排除特定的值
+     *                  如果排除值为变量采用#{XXX}格式，例如id <> #{XXX}
      * @return 返回构建的查询条件字符串如果values为空或null，则返回"1<>1"，表示一个永远不满足的条件
      * @throws MyRuntimeException 如果fieldName为空或null，则抛出MyRuntimeException，提示未传入条件字段名称
      */
-    public static String buildCondition(String fieldName, String[] values) {
+    public static String buildCondition(String fieldName, String[] values, String[] excludes) {
         if (StringUtils.isEmpty(fieldName)) {
             throw new MyRuntimeException("错误：未传入条件字段名称");
         }
@@ -175,6 +178,59 @@ public class DataScopeUtils {
             sb.append(values[0]);
             sb.append("'");
         }
+        if (excludes != null && excludes.length > 0) {
+            for (String exclude : excludes) {
+                String condition = replaceVariable(exclude);
+                if (StringUtils.isEmpty(condition)) {
+                    continue;
+                }
+                sb.append(" or ").append(condition);
+            }
+            return "(" + sb + ")";
+        }
         return sb.toString();
+    }
+
+    /**
+     * 构建忽略条件
+     *
+     * @param ignores 忽略条件
+     * @return 返回构建的忽略条件
+     */
+    public static String buildIgnores(String[] ignores) {
+        List<String> list = new ArrayList<>();
+        if (ignores != null && ignores.length > 0) {
+            for (String ignore : ignores) {
+                String condition = replaceVariable(ignore);
+                if (StringUtils.isEmpty(condition)) {
+                    continue;
+                }
+                list.add(condition);
+            }
+            String ignore = String.join(" or ", list);
+            if (list.size() > 1) {
+                return "(" + ignore + ")";
+            }
+            return ignore;
+        }
+        return "";
+    }
+
+    private static String replaceVariable(String exclude) {
+        String regex = "#\\{(?<param>.*?)}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(exclude);
+        while (matcher.find()) {
+            String value = matcher.group("param");
+            if (StringUtils.isEmpty(value)) {
+                continue;
+            }
+            String param = ServletUtils.getParameter(value);
+            if (StringUtils.isEmpty(param)) {
+                return "";
+            }
+            exclude = exclude.replaceAll(regex, "'" + param + "'");
+        }
+        return exclude;
     }
 }

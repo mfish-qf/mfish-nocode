@@ -24,7 +24,7 @@ public class OrgDataScopeHandle implements DataScopeHandle {
     private static final String DEFAULT_FIELD = "org_id";
 
     @Override
-    public String buildCondition(String fieldName, String[] values) {
+    public String buildCondition(String fieldName, String[] values, String[] excludes) {
         fieldName = StringUtils.isEmpty(fieldName) ? DEFAULT_FIELD : fieldName;
         if (values == null || values.length == 0) {
             //未传值时使用当前用户的所有角色id
@@ -32,7 +32,7 @@ public class OrgDataScopeHandle implements DataScopeHandle {
         } else {
             values = getOrgIdsByCode(values);
         }
-        return DataScopeUtils.buildCondition(fieldName, values);
+        return DataScopeUtils.buildCondition(fieldName, values, excludes);
     }
 
     private String[] getCurOrgs() {

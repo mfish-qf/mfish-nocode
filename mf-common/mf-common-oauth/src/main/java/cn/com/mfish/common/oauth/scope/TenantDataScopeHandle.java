@@ -13,7 +13,7 @@ public class TenantDataScopeHandle implements DataScopeHandle {
     private static final String DEFAULT_FIELD = "tenant_id";
 
     @Override
-    public String buildCondition(String fieldName, String[] values) {
+    public String buildCondition(String fieldName, String[] values, String[] excludes) {
         fieldName = StringUtils.isEmpty(fieldName) ? DEFAULT_FIELD : fieldName;
         if (values == null || values.length == 0) {
             //未传值时使用当前租户id
@@ -26,6 +26,6 @@ public class TenantDataScopeHandle implements DataScopeHandle {
                 }
             }
         }
-        return DataScopeUtils.buildCondition(fieldName, values);
+        return DataScopeUtils.buildCondition(fieldName, values, excludes);
     }
 }
