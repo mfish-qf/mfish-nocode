@@ -23,7 +23,7 @@ public interface TableService {
      * @param tableName 表名
      * @return 返回字段列表
      */
-    List<FieldInfo> getFieldList(String connectId, String tableName, ReqPage reqPage);
+    List<FieldInfo> getFieldList(String connectId, String tableSchema, String tableName, ReqPage reqPage);
 
     /**
      * 获取表信息
@@ -32,7 +32,7 @@ public interface TableService {
      * @param tableName 表名
      * @return 返回表信息
      */
-    TableInfo getTableInfo(String connectId, String tableName, ReqPage reqPage);
+    TableInfo getTableInfo(String connectId, String tableSchema, String tableName, ReqPage reqPage);
 
     /**
      * 获取表列表
@@ -41,17 +41,17 @@ public interface TableService {
      * @param tableName 表名
      * @return 返回表列表
      */
-    List<TableInfo> getTableList(String connectId, String tableName, ReqPage reqPage);
+    List<TableInfo> getTableList(String connectId, String tableSchema, String tableName, ReqPage reqPage);
 
     /**
      * 获取带头信息数据
      *
      * @param connectId 数据库连接ID
      * @param tableName 表名
-     * @param reqPage 翻页参数
+     * @param reqPage   翻页参数
      * @return 返回头信息数据
      */
-    Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableName, ReqPage reqPage);
+    Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableSchema, String tableName, ReqPage reqPage);
 
     /**
      * 获取数据
@@ -60,7 +60,7 @@ public interface TableService {
      * @param tableName 表名
      * @return 返回数据
      */
-    MetaDataTable getDataTable(String connectId, String tableName, ReqPage reqPage);
+    MetaDataTable getDataTable(String connectId, String tableSchema, String tableName, ReqPage reqPage);
 
     /**
      * 获取字段
@@ -70,5 +70,5 @@ public interface TableService {
      * @param reqPage   分页
      * @return 返回字段
      */
-    List<MetaDataHeader> getDataHeaders(String connectId, String tableName, ReqPage reqPage);
+    List<MetaDataHeader> getDataHeaders(String connectId, String tableSchema, String tableName, ReqPage reqPage);
 }

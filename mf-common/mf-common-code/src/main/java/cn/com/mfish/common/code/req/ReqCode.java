@@ -16,6 +16,8 @@ import java.util.List;
 public class ReqCode {
     @Schema(description = "数据库连接ID(必传 通过数据库列表接口查询)")
     private String connectId;
+    @Schema(description = "表前缀(不传使用空字符串)")
+    private String tableSchema;
     @Schema(description = "表名(必传)")
     private String tableName;
     @Schema(description = "表描述(不传会获取数据库表中的中文描述，如果也为空则使用表名)")

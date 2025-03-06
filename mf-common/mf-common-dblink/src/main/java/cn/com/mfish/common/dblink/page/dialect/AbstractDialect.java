@@ -69,7 +69,7 @@ public abstract class AbstractDialect implements Dialect {
     public String getSimpleCountSql(final String sql, String name) {
         return "SELECT COUNT(" +
                 name +
-                ") FROM ( \n" +
+                ") COUNT FROM ( \n" +
                 sql +
                 "\n ) TMP_COUNT";
     }

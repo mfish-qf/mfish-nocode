@@ -34,11 +34,11 @@ public abstract class AbstractDBDialect implements DBDialect {
      * 它还负责生成与数据库方案匹配的参数，考虑大小写的情况
      *
      * @param sql       初始SQL查询字符串该查询通常不包含具体的表名或数据库名条件
-     * @param dbName    数据库名称非空时，将被用作查询条件的一部分
+     * @param tableSchema    表前缀非空时，将被用作查询条件的一部分
      * @param tableName 表名称非空时，将被用作查询条件的一部分
      * @return BoundSql对象，其中包含经过条件补充的SQL查询语句及相关的参数
      */
-    protected BoundSql buildCondition(String sql, String dbName, String tableName) {
+    protected BoundSql buildCondition(String sql, String tableSchema, String tableName) {
         BoundSql boundSql = new BoundSql();
         boundSql.setDbType(DBType.mysql);
         if (!StringUtils.isEmpty(tableName)) {
@@ -46,10 +46,10 @@ public abstract class AbstractDBDialect implements DBDialect {
             boundSql.getParams().add(new QueryParam().setValue(tableName.toUpperCase()));
             boundSql.getParams().add(new QueryParam().setValue(tableName.toLowerCase()));
         }
-        if (!StringUtils.isEmpty(dbName)) {
+        if (!StringUtils.isEmpty(tableSchema)) {
             sql += " and (table_schema = ? or table_schema = ?)";
-            boundSql.getParams().add(new QueryParam().setValue(dbName.toUpperCase()));
-            boundSql.getParams().add(new QueryParam().setValue(dbName.toLowerCase()));
+            boundSql.getParams().add(new QueryParam().setValue(tableSchema.toUpperCase()));
+            boundSql.getParams().add(new QueryParam().setValue(tableSchema.toLowerCase()));
         }
         return boundSql.setSql(sql);
     }
