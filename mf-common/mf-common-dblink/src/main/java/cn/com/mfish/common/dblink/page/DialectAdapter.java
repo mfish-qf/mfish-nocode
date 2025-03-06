@@ -27,6 +27,7 @@ public class DialectAdapter {
         registerDialectAlias(DBType.mysql, MysqlDialect.class);
         registerDialectAlias(DBType.oracle, OracleDialect.class);
         registerDialectAlias(DBType.postgre, PostgreDialect.class);
+        registerDialectAlias(DBType.sqlserver2012, SqlServer2012Dialect.class);
     }
 
     private final ThreadLocal<AbstractDialect> dialectThreadLocal = new ThreadLocal<>();

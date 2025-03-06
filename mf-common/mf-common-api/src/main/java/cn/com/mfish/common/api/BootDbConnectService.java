@@ -41,22 +41,22 @@ public class BootDbConnectService implements RemoteDbConnectService {
     }
 
     @Override
-    public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableName, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
+    public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
+        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableSchema, tableName, reqPage)), "获取表列表成功");
     }
 
     @Override
-    public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableName, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取字段列表成功");
+    public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
+        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableSchema, tableName, reqPage)), "获取字段列表成功");
     }
 
     @Override
-    public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableName, ReqPage reqPage) {
-        return tableService.getHeaderDataTable(connectId, tableName, reqPage);
+    public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
+        return tableService.getHeaderDataTable(connectId, tableSchema, tableName, reqPage);
     }
 
     @Override
-    public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableName, ReqPage reqPage) {
-        return Result.ok(tableService.getDataHeaders(connectId, tableName, reqPage), "获取表列头成功");
+    public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
+        return Result.ok(tableService.getDataHeaders(connectId, tableSchema, tableName, reqPage), "获取表列头成功");
     }
 }

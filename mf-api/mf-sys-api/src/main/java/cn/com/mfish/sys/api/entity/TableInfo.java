@@ -23,7 +23,7 @@ public class TableInfo implements Serializable {
     private String tableName;
     @Schema(description = "表描述信息")
     private String tableComment;
-    @Schema(description = "库")
+    @Schema(description = "表空间")
     private String tableSchema;
     @Schema(description = "表类型 0表 1视图")
     private Integer tableType;

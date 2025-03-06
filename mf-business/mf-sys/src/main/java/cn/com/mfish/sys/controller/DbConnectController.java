@@ -68,11 +68,12 @@ public class DbConnectController {
     @RequiresPermissions("sys:database:query")
     @Parameters({
             @Parameter(name = "connectId", description = "数据库ID", required = true),
+            @Parameter(name = "tableSchema", description = "表前缀"),
             @Parameter(name = "tableName", description = "表名")
     })
     @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
-    public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableName, reqPage)), "获取表列表成功");
+    public Result<PageResult<TableInfo>> getTableList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableSchema", required = false) String tableSchema, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableSchema, tableName, reqPage)), "获取表列表成功");
     }
 
     @Operation(summary = "获取数据库树形结构信息-只能分层查询")
@@ -90,10 +91,11 @@ public class DbConnectController {
             }
             return Result.ok(treeNodes, "查询数据库列表成功");
         }
-        List<TableInfo> list = tableService.getTableList(parentId, null, null);
+        List<TableInfo> list = tableService.getTableList(parentId, null, null, null);
         for (TableInfo tableInfo : list) {
-            String comment = StringUtils.isEmpty(tableInfo.getTableComment()) ? tableInfo.getTableName() : tableInfo.getTableName() + "[" + tableInfo.getTableComment() + "]";
-            treeNodes.add(new DBTreeNode().setCode(tableInfo.getTableName()).setType(1).setLabel(comment));
+            String name = tableInfo.getTableSchema() + "." + tableInfo.getTableName();
+            String comment = StringUtils.isEmpty(tableInfo.getTableComment()) ? name : name + "[" + tableInfo.getTableComment() + "]";
+            treeNodes.add(new DBTreeNode().setCode(name).setType(1).setLabel(comment));
         }
         return Result.ok(treeNodes, "查询标列表成功");
     }
@@ -103,33 +105,36 @@ public class DbConnectController {
     @RequiresPermissions("sys:database:query")
     @Parameters({
             @Parameter(name = "connectId", description = "数据库ID", required = true),
+            @Parameter(name = "tableSchema", description = "表前缀"),
             @Parameter(name = "tableName", description = "表名")
     })
     @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
-    public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableName, reqPage)), "获取字段列表成功");
+    public Result<PageResult<FieldInfo>> getFieldList(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableSchema", required = false) String tableSchema, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableSchema, tableName, reqPage)), "获取字段列表成功");
     }
 
     @Operation(summary = "获取表数据")
     @GetMapping("/data")
     @Parameters({
             @Parameter(name = "connectId", description = "数据库ID", required = true),
+            @Parameter(name = "tableSchema", description = "表前缀"),
             @Parameter(name = "tableName", description = "表名")
     })
     @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
-    public Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        return tableService.getHeaderDataTable(connectId, tableName, reqPage);
+    public Result<MetaHeaderDataTable> getDataTable(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableSchema", required = false) String tableSchema, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        return tableService.getHeaderDataTable(connectId, tableSchema, tableName, reqPage);
     }
 
     @Operation(summary = "获取表列头信息")
     @GetMapping("/headers")
     @Parameters({
             @Parameter(name = "connectId", description = "数据库ID", required = true),
+            @Parameter(name = "tableSchema", description = "表前缀"),
             @Parameter(name = "tableName", description = "表名")
     })
     @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
-    public Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
-        List<MetaDataHeader> headers = tableService.getDataHeaders(connectId, tableName, reqPage);
+    public Result<List<MetaDataHeader>> getDataHeaders(@RequestParam(name = "connectId") String connectId, @RequestParam(name = "tableSchema", required = false) String tableSchema, @RequestParam(name = "tableName", required = false) String tableName, ReqPage reqPage) {
+        List<MetaDataHeader> headers = tableService.getDataHeaders(connectId, tableSchema, tableName, reqPage);
         return Result.ok(headers, "获取表列头成功");
     }
 

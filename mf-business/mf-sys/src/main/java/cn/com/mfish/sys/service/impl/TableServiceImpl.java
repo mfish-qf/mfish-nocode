@@ -42,15 +42,15 @@ public class TableServiceImpl implements TableService {
     private String privateKey;
 
     @Override
-    public List<FieldInfo> getFieldList(String connectId, String tableName, ReqPage reqPage) {
+    public List<FieldInfo> getFieldList(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
-        return queryT(connectId, FieldInfo.class, (build, dbName) -> build.getColumns(dbName, tableName), reqPage);
+        return queryT(connectId, FieldInfo.class, (build, dbName) -> build.getColumns(dbName, tableSchema, tableName), reqPage);
     }
 
     @Override
-    public TableInfo getTableInfo(String connectId, String tableName, ReqPage reqPage) {
+    public TableInfo getTableInfo(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
-        List<TableInfo> list = getTableList(connectId, tableName, reqPage);
+        List<TableInfo> list = getTableList(connectId, tableSchema, tableName, reqPage);
         if (list == null || list.isEmpty()) {
             return null;
         }
@@ -58,22 +58,26 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
-    public List<TableInfo> getTableList(String connectId, String tableName, ReqPage reqPage) {
+    public List<TableInfo> getTableList(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
-        return queryT(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableName), reqPage);
+        return queryT(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableSchema, tableName), reqPage);
     }
 
     @Override
-    public Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableName, ReqPage reqPage) {
+    public Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
-        MetaDataTable table = getDataTable(connectId, tableName, reqPage);
+        MetaDataTable table = getDataTable(connectId, tableSchema, tableName, reqPage);
         return Result.ok(new MetaHeaderDataTable(table), "获取表数据成功");
     }
 
     @Override
-    public MetaDataTable getDataTable(String connectId, String tableName, ReqPage reqPage) {
+    public MetaDataTable getDataTable(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
-        return query(connectId, "select * from " + tableName, reqPage);
+        if (StringUtils.isEmpty(tableSchema)) {
+            return query(connectId, "select * from " + tableName, reqPage);
+        }
+        return query(connectId, "select * from " + tableSchema + "." + tableName, reqPage);
+
     }
 
     private void verifyTableName(String tableName) {
@@ -86,7 +90,7 @@ public class TableServiceImpl implements TableService {
         if (tableName.length() > 128) {
             throw new MyRuntimeException("错误：表名称太长");
         }
-        if (!StringUtils.isMatch("^[a-zA-Z0-9_\\.\\-]+$", tableName)) {
+        if (!StringUtils.isMatch("^[\\u4e00-\\u9fa5a-zA-Z0-9_\\.\\-]+$", tableName)) {
             throw new MyRuntimeException("错误：表名不允许包含特殊字符");
         }
     }
@@ -132,8 +136,8 @@ public class TableServiceImpl implements TableService {
      * @return 返回数据集列头
      */
     @Override
-    public List<MetaDataHeader> getDataHeaders(String connectId, String tableName, ReqPage reqPage) {
-        List<FieldInfo> list = getFieldList(connectId, tableName, reqPage);
+    public List<MetaDataHeader> getDataHeaders(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
+        List<FieldInfo> list = getFieldList(connectId, tableSchema, tableName, reqPage);
         List<MetaDataHeader> headers = new ArrayList<>();
         if (list == null || list.isEmpty()) {
             return headers;

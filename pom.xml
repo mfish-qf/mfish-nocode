@@ -51,6 +51,7 @@
         <bcprov.version>1.79</bcprov.version>
         <oracle.version>23.5.0.24.07</oracle.version>
         <pgsql.version>42.7.4</pgsql.version>
+        <mssql.version>12.8.1.jre11</mssql.version>
         <fastexcel.version>1.1.0</fastexcel.version>
     </properties>
     <dependencyManagement>
@@ -300,6 +301,11 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${pgsql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${mssql.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
