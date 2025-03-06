@@ -1,5 +1,6 @@
 package cn.com.mfish.common.dblink.db;
 
+import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 
 /**
@@ -14,7 +15,7 @@ public class PostgreDBDialect extends AbstractDBDialect {
     }
 
     @Override
-    public BoundSql getColumns(String dbName, String tableName) {
+    public BoundSql getColumns(String dbName, String tableSchema, String tableName) {
         String strSql = """
                 SELECT A.attname AS FIELD_NAME,
                 T.typname AS db_type,
@@ -31,11 +32,13 @@ public class PostgreDBDialect extends AbstractDBDialect {
                 LEFT JOIN pg_description d ON d.objoid = A.attrelid
                 AND d.objsubid = A.attnum where 1=1""";
         //pg数据库table_schema是单独定义的schema不是数据库名称，此处暂时不传。参数预留
-        return buildCondition(strSql, "", tableName);
+        BoundSql boundSql = buildCondition(strSql, tableSchema, tableName);
+        boundSql.setDbType(DBType.postgre);
+        return boundSql;
     }
 
     @Override
-    public BoundSql getTableInfo(String dbName, String tableName) {
+    public BoundSql getTableInfo(String dbName, String tableSchema, String tableName) {
         String strSql = """
                 SELECT
                 d.table_name,
@@ -50,6 +53,8 @@ public class PostgreDBDialect extends AbstractDBDialect {
                 AND ( c.relkind = 'r' OR c.relkind = 'v' )
                 AND c.relname = d.TABLE_NAME""";
         //pg数据库table_schema是单独定义的schema不是数据库名称，此处暂时不传。参数预留
-        return buildCondition(strSql, "", tableName);
+        BoundSql boundSql = buildCondition(strSql, tableSchema, tableName);
+        boundSql.setDbType(DBType.postgre);
+        return boundSql;
     }
 }

@@ -22,6 +22,7 @@ public class DBAdapter {
         dialectMap.put(DBType.mysql, new MysqlDBDialect());
         dialectMap.put(DBType.postgre, new PostgreDBDialect());
         dialectMap.put(DBType.oracle, new OracleDBDialect());
+        dialectMap.put(DBType.sqlserver2012, new SqlServerDBDialect());
     }
 
     /**

@@ -19,7 +19,7 @@ public class OracleDBDialect implements DBDialect {
     }
 
     @Override
-    public BoundSql getColumns(String dbName, String tableName) {
+    public BoundSql getColumns(String dbName, String tableSchema, String tableName) {
         String sql = """
                  select a.COLUMN_NAME as "field_name",
                       a.DATA_TYPE as "db_type",
@@ -45,13 +45,13 @@ public class OracleDBDialect implements DBDialect {
     }
 
     @Override
-    public BoundSql getTableInfo(String dbName, String tableName) {
+    public BoundSql getTableInfo(String dbName, String tableSchema, String tableName) {
         String sql = """
                 select u.table_name, u.comments table_comment, a.owner table_schema,DECODE(u.table_type,'VIEW', 1, 0) table_type
                  from user_tab_comments u
                  inner join all_tab_comments a
                  on u.table_name = a.table_name
-                 where 1 = 1""";
+                 where u.table_name not like 'BIN$%'""";
         return buildCondition(sql, tableName);
     }
 

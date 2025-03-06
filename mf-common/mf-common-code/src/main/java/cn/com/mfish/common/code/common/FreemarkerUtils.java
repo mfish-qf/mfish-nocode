@@ -103,7 +103,7 @@ public class FreemarkerUtils {
         }
         if (StringUtils.isEmpty(reqCode.getTableComment())) {
             reqCode.setTableComment(reqCode.getTableName());
-            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(RPCConstants.INNER, reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+            Result<PageResult<TableInfo>> result = remoteDbConnectService.getTableList(RPCConstants.INNER, reqCode.getConnectId(), reqCode.getTableSchema(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
             if (!result.isSuccess()) {
                 throw new MyRuntimeException(result.getMsg());
             }
@@ -130,7 +130,7 @@ public class FreemarkerUtils {
         codeInfo.setPackageName(reqCode.getPackageName());
         codeInfo.setEntityName(reqCode.getEntityName());
         codeInfo.setApiPrefix(reqCode.getApiPrefix());
-        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(RPCConstants.INNER, reqCode.getConnectId(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
+        Result<PageResult<FieldInfo>> result = remoteDbConnectService.getFieldList(RPCConstants.INNER, reqCode.getConnectId(), reqCode.getTableSchema(), reqCode.getTableName(), new ReqPage().setPageNum(1).setPageSize(10000));
         if (!result.isSuccess()) {
             throw new MyRuntimeException(result.getMsg());
         }
@@ -242,7 +242,7 @@ public class FreemarkerUtils {
      * 参数替换
      * 根据提供的映射表，对字符串中的变量进行替换
      *
-     * @param key 待处理的原始字符串，可能包含待替换的变量
+     * @param key      待处理的原始字符串，可能包含待替换的变量
      * @param mapValue 包含变量和其对应值的映射表
      * @return 替换变量后的字符串
      */
@@ -304,7 +304,7 @@ public class FreemarkerUtils {
     /**
      * 保存代码到本地
      *
-     * @param list 代码列表，包含要保存的代码信息
+     * @param list     代码列表，包含要保存的代码信息
      * @param savePath 保存路径，用于指定代码保存的位置
      * @return boolean 表示保存是否成功
      */

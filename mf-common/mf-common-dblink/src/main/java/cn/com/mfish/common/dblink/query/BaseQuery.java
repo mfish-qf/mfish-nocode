@@ -20,6 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import oracle.sql.TIMESTAMP;
 import oracle.sql.TIMESTAMPTZ;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -321,6 +324,8 @@ public class BaseQuery {
         columnTypeName = columnTypeName.toUpperCase(Locale.ROOT);
         if (columnTypeName.contains(DataConstant.DataType.BINARY) || columnTypeName.contains(DataConstant.DataType.BLOB)) {
             value = new String((byte[]) value);
+        } else if (columnTypeName.contains(DataConstant.DataType.CLOB) || columnTypeName.contains(DataConstant.DataType.NCLOB)) {
+            value = clobToString((Clob) value);
         } else if (columnTypeName.contains(DataConstant.DataType.GEOMETRY)) {
             value = value.toString();
         } else if (columnTypeName.contains(DataConstant.DataType.BIT)) {
@@ -336,6 +341,22 @@ public class BaseQuery {
             }
         }
         return value;
+    }
+
+    private static String clobToString(Clob clob) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (Reader reader = clob.getCharacterStream();
+             StringWriter writer = new StringWriter()) {
+            char[] buffer = new char[1024];
+            int bytesRead;
+            while ((bytesRead = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, bytesRead);
+            }
+            stringBuilder.append(writer.toString());
+        } catch (SQLException | IOException e) {
+            log.error("nclob数据类型转换异常", e);
+        }
+        return stringBuilder.toString();
     }
 
     /**

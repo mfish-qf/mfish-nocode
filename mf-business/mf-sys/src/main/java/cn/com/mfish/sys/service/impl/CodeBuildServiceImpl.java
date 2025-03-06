@@ -108,6 +108,12 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         CodeBuild codeBuild = baseMapper.selectById(id);
         ReqCode reqCode = new ReqCode();
         BeanUtils.copyProperties(codeBuild, reqCode);
+        String[] tableName = codeBuild.getTableName().split("\\.");
+        //如果表名包含前缀，拆分
+        if (tableName.length > 1) {
+            reqCode.setTableSchema(tableName[0]);
+            reqCode.setTableName(tableName[1]);
+        }
         if (!StringUtils.isEmpty(codeBuild.getQueryParams())) {
             reqCode.setSearches(JSON.parseArray(codeBuild.getQueryParams(), ReqSearch.class));
         }

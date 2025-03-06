@@ -8,7 +8,8 @@ package cn.com.mfish.common.dblink.enums;
 public enum DBType {
     mysql(0),
     postgre(1),
-    oracle(2);
+    oracle(2),
+    sqlserver2012(3);
 
     private final int value;
 
@@ -45,6 +46,7 @@ public enum DBType {
         return switch (this) {
             case oracle -> "oracle.jdbc.OracleDriver";
             case postgre -> "org.postgresql.Driver";
+            case sqlserver2012 -> "com.microsoft.sqlserver.jdbc.SQLServerDriver";
             default -> "com.mysql.cj.jdbc.Driver";
         };
     }

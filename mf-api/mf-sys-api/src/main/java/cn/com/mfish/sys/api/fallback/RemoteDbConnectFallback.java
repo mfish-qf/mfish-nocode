@@ -39,22 +39,22 @@ public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectS
             }
 
             @Override
-            public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableName, ReqPage reqPage) {
+            public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询数据库表列表出错");
             }
 
             @Override
-            public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableName, ReqPage reqPage) {
+            public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询表字段列表出错");
             }
 
             @Override
-            public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableName, ReqPage reqPage) {
+            public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:查询表数据失败");
             }
 
             @Override
-            public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableName, ReqPage reqPage) {
+            public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
                 return Result.fail("错误:获取表列头失败");
             }
         };
