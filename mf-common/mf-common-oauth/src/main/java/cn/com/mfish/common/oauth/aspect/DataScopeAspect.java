@@ -1,6 +1,7 @@
 package cn.com.mfish.common.oauth.aspect;
 
 import cn.com.mfish.common.core.annotation.GlobalException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.annotation.DataScopes;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
@@ -31,6 +32,10 @@ public class DataScopeAspect {
 
     @Before("@annotation(cn.com.mfish.common.oauth.annotation.DataScopes)||@annotation(cn.com.mfish.common.oauth.annotation.DataScope)")
     public void doBefore(JoinPoint joinPoint) {
+        // 内部Feign请求不进行数据权限限制
+        if (AuthInfoUtils.isInnerRequest()) {
+            return;
+        }
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         List<DataScope> list = new ArrayList<>();
