@@ -7,7 +7,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
-import cn.com.mfish.oauth.common.QRCodeUtils;
+import cn.com.mfish.common.core.utils.QRCodeUtils;
 import cn.com.mfish.oauth.entity.QRCode;
 import cn.com.mfish.oauth.entity.QRCodeImg;
 import cn.com.mfish.oauth.entity.RedisQrCode;

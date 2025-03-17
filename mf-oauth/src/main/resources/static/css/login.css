@@ -165,8 +165,10 @@ html, body {
 }
 
 .login .qrcode-img .qrcode {
-    border-color: transparent;
+    margin: 8px;
+    padding: 12px;
     box-shadow: 0 0 8px #c6c4ce;
+    border-radius: 8px;
     width: 240px;
     height: 240px;
 }
