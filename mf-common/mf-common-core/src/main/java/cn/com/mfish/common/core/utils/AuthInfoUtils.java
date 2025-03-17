@@ -2,8 +2,10 @@ package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.http.WebRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -176,5 +178,19 @@ public class AuthInfoUtils {
             return false;
         }
         return roleIds.stream().anyMatch(AuthInfoUtils::isSuperRole);
+    }
+
+    /**
+     * 是否内部请求
+     *
+     * @return 是否
+     */
+    public static boolean isInnerRequest() {
+        HttpServletRequest request = ServletUtils.getRequest();
+        if (request == null) {
+            throw new MyRuntimeException("错误:未获取到请求信息");
+        }
+        String source = request.getHeader(RPCConstants.REQ_ORIGIN);
+        return !StringUtils.isEmpty(source) && source.equals(RPCConstants.INNER);
     }
 }
