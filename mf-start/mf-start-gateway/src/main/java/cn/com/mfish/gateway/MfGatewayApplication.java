@@ -1,10 +1,12 @@
 package cn.com.mfish.gateway;
 
+import cn.com.mfish.common.core.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author: mfish
@@ -15,13 +17,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 public class MfGatewayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(cn.com.mfish.gateway.MfGatewayApplication.class, args);
-        log.info("""
-                
-                \t----------------------------------------------------------
-                \t\
-                
-                \t--------------------摸鱼网关服务启动成功-----------------------
-                \t""");
+        ConfigurableApplicationContext application = SpringApplication.run(cn.com.mfish.gateway.MfGatewayApplication.class, args);
+        Utils.printServerRun(application);
     }
 }

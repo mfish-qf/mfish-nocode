@@ -1,8 +1,10 @@
 package cn.com.mfish.scheduler;
 
 import cn.com.mfish.common.cloud.annotation.AutoCloud;
+import cn.com.mfish.common.core.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -15,13 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class MfSchedulerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MfSchedulerApplication.class, args);
-        log.info("""
-                
-                \t----------------------------------------------------------
-                \t\
-                
-                \t--------------------摸鱼调度中心启动成功-----------------------
-                \t""");
+        ConfigurableApplicationContext application = SpringApplication.run(MfSchedulerApplication.class, args);
+        Utils.printServerRun(application);
     }
 }
