@@ -2,10 +2,15 @@ package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.config.ServiceProperties;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -13,6 +18,7 @@ import java.util.*;
  * @description: 通用方法
  * @date: 2022/11/4 15:38
  */
+@Slf4j
 public class Utils {
 
     /**
@@ -135,6 +141,15 @@ public class Utils {
         return ip;
     }
 
+    public static String getHostIp() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            log.error(e.getMessage(), e);
+        }
+        return "127.0.0.1";
+    }
+
     /**
      * 获取当前服务类型 是微服务还是单体服务
      *
@@ -143,5 +158,20 @@ public class Utils {
     public static String getServiceType() {
         ServiceProperties properties = SpringBeanFactory.getBean(ServiceProperties.class);
         return StringUtils.isEmpty(properties.getType()) ? "cloud" : properties.getType();
+    }
+
+    public static void printServerRun(ConfigurableApplicationContext application) {
+        Environment env = application.getEnvironment();
+        String ip = getHostIp();
+        String port = env.getProperty("server.port");
+        String title = env.getProperty("swagger.title");
+        log.info("\n\t"
+                + "\n\t-------------------------------------------------------------"
+                + "\n\t"
+                + "\n\t--------------------" + title + "启动成功-----------------------"
+                + "\n\t"
+                + "\n\tswagger地址:\thttp://" + ip + ":" + port + "/swagger-ui/index.html"
+                + "\n\t"
+        );
     }
 }

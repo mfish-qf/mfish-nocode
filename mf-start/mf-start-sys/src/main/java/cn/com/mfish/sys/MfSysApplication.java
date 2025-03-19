@@ -1,8 +1,10 @@
 package cn.com.mfish.sys;
 
 import cn.com.mfish.common.cloud.annotation.AutoCloud;
+import cn.com.mfish.common.core.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author: mfish
@@ -14,13 +16,7 @@ import org.springframework.boot.SpringApplication;
 @AutoCloud
 public class MfSysApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MfSysApplication.class, args);
-        log.info("""
-                
-                \t----------------------------------------------------------
-                \t\
-                
-                \t--------------------摸鱼系统业务中心启动成功-----------------------
-                \t""");
+        ConfigurableApplicationContext application = SpringApplication.run(MfSysApplication.class, args);
+        Utils.printServerRun(application);
     }
 }
