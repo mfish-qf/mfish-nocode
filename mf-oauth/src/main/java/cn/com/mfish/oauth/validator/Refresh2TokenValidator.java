@@ -33,7 +33,7 @@ public class Refresh2TokenValidator extends MultipleValidator {
      * token 参数相关的组合校验
      *
      * @param request HTTP请求对象，用于获取授权码
-     * @param result 前一次校验结果对象，如果为null，则需要在方法内部新建
+     * @param result  前一次校验结果对象，如果为null，则需要在方法内部新建
      * @return 返回封装了AuthorizationCode的Result对象，如果授权码无效，则返回错误信息
      */
     public Result<RedisAccessToken> validateToken(HttpServletRequest request, Result<RedisAccessToken> result) {
@@ -89,8 +89,18 @@ public class Refresh2TokenValidator extends MultipleValidator {
             if (!result1.isSuccess()) {
                 return result1;
             }
+            String uri1 = result1.getData().getRedirectUri();
+            //判断uri是否一致，过滤掉参数
+            int index1 = uri1.indexOf("?");
+            if (index1 > 0) {
+                uri1 = uri1.substring(0, index1);
+            }
             String uri = request.getParameter(OAuth.OAUTH_REDIRECT_URI);
-            if (!StringUtils.isEmpty(uri) && uri.equals(result1.getData().getRedirectUri())) {
+            int index2 = uri.indexOf("?");
+            if (index2 > 0) {
+                uri = uri.substring(0, index2);
+            }
+            if (!StringUtils.isEmpty(uri) && uri1.equals(uri)) {
                 return result1;
             }
             return result1.setSuccess(false).setMsg("错误:token和refreshToken两次传入的uri不一致");

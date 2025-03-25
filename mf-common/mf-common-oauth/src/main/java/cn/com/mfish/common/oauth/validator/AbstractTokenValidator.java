@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.service.TokenService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 
 /**
  * @description: 抽象token校验
@@ -44,7 +45,7 @@ public abstract class AbstractTokenValidator<T> implements IBaseValidator<T> {
         }
         token = (T) tokenService.getToken(accessToken);
         if (token == null) {
-            return Result.fail("错误:登陆已过期或令牌不存在");
+            return Result.fail(HttpStatus.UNAUTHORIZED.value(), "错误:登陆已过期或令牌不存在");
         }
         return Result.ok(token);
     }
