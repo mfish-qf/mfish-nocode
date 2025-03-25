@@ -143,10 +143,12 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     @Override
     public RedisAccessToken refresh2Token(RedisAccessToken token) {
         webTokenService.delToken(token.getAccessToken());
+        webTokenService.delRefreshToken(token.getRefreshToken());
         token.setAccessToken(Utils.uuid32());
+        token.setRefreshToken(Utils.uuid32());
         token.setIp(Utils.getRemoteIP(Objects.requireNonNull(ServletUtils.getRequest())));
         webTokenService.setToken(token);
-        webTokenService.updateRefreshToken(token);
+        webTokenService.setRefreshToken(token);
         return token;
     }
 
