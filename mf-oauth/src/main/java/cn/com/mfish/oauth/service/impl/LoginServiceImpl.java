@@ -8,6 +8,7 @@ import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
+import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.oltu.common.OAuth;
@@ -43,6 +44,8 @@ public class LoginServiceImpl implements LoginService {
     RedisTemplate<String, Object> redisTemplate;
     @Resource
     GetCodeValidator getCodeValidator;
+    @Resource
+    UserTempCache userTempCache;
     //允许连续出错时间间隔的最大错误数
     final static int ERROR_COUNT = 5;
     //允许连续出错的时间间隔 单位:分钟  30分钟内不允许连续出错5次
@@ -169,7 +172,7 @@ public class LoginServiceImpl implements LoginService {
             log.error("{}" + SerConstant.INVALID_USER_ID_DESCRIPTION, userId);
             throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
         }
-        //超户不允许禁用、锁定、删除
+        //超户不允许禁用、删除
         if (!AuthInfoUtils.isSuper(userId)) {
             if (SerConstant.AccountState.禁用.getValue() == user.getStatus()) {
                 log.error("{}" + SerConstant.ACCOUNT_DISABLE_DESCRIPTION, userId);
@@ -187,15 +190,17 @@ public class LoginServiceImpl implements LoginService {
             return true;
         }
         if (count >= ERROR_COUNT) {
-            String error = MessageFormat.format("{0},连续输错5次密码，账号禁用"
-                    , SerConstant.INVALID_USER_SECRET_DESCRIPTION);
+            String error = MessageFormat.format("{0}，连续输错{1}次密码，5分钟内禁用登录"
+                    , SerConstant.INVALID_USER_SECRET_DESCRIPTION, ERROR_COUNT);
+            //更新用户缓存状态，并设置缓存时间为5分钟禁用
             user.setStatus(SerConstant.AccountState.禁用.getValue());
-            ssoUserService.updateUser(user);
+            userTempCache.updateCacheInfo(user, 5, TimeUnit.MINUTES, user.getId());
+            userTempCache.setTimeIncrease(false);
             log.error("{}{}", userId, error);
             //规定时间内重试ERROR_COUNT次，抛出多次尝试异常
             throw new ExcessiveAttemptsException(error);
         }
-        String error = MessageFormat.format("{0},连续出错{1}次,错误{2}次将被禁用"
+        String error = MessageFormat.format("{0}，密码错误{1}次，{2}次后禁用登录"
                 , SerConstant.INVALID_USER_SECRET_DESCRIPTION, count, ERROR_COUNT);
         log.error("{}{}", userId, error);
         throw new IncorrectCredentialsException(error);
