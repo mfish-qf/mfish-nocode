@@ -248,4 +248,10 @@
             #{account}
         </foreach>
     </select>
+    <select id="getUsersByAccounts" resultType="cn.com.mfish.common.oauth.api.entity.UserInfo">
+        select * from sso_user where account in
+        <foreach collection="accounts" item="account" separator="," open="(" close=")">
+            #{account}
+        </foreach>
+    </select>
 </mapper>

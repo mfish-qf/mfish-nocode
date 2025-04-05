@@ -308,4 +308,11 @@ public class SsoUserController {
     public Result<List<String>> getUserIdByAccount(@Parameter(name = "accounts", description = "帐号名称") @PathVariable String accounts) {
         return Result.ok(ssoUserService.getUserIdsByAccounts(List.of(accounts.split(","))), "获取用户id成功");
     }
+
+    @Operation(summary = "根据账号获取简单用户信息(内部接口)")
+    @GetMapping("/users/{accounts}")
+    @InnerUser
+    public Result<List<UserInfo>> getUsersByAccount(@Parameter(name = "accounts", description = "帐号名称") @PathVariable String accounts) {
+        return Result.ok(ssoUserService.getUsersByAccounts(List.of(accounts.split(","))), "获取用户信息成功");
+    }
 }

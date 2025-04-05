@@ -2,11 +2,12 @@ package cn.com.mfish.common.redis.temp;
 
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.common.redis.config.CacheProperties;
-import jakarta.annotation.Resource;
 import lombok.Data;
 import lombok.Setter;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+
+import jakarta.annotation.Resource;
 
 import java.util.List;
 import java.util.Objects;

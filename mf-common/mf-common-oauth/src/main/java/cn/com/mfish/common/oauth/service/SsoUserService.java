@@ -42,6 +42,8 @@ public interface SsoUserService extends IService<SsoUser> {
 
     List<String> getUserIdsByAccounts(List<String> accounts);
 
+    List<UserInfo> getUsersByAccounts(List<String> accounts);
+
     SsoUser getUserById(String userId);
 
     UserInfo getUserByIdNoPwd(String userId);
