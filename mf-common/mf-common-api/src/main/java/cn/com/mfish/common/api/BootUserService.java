@@ -80,4 +80,9 @@ public class BootUserService implements RemoteUserService {
     public Result<List<String>> getUserIdsByAccounts(String origin, String accounts) {
         return Result.ok(ssoUserService.getUserIdsByAccounts(List.of(accounts.split(","))), "获取用户id成功");
     }
+
+    @Override
+    public Result<List<UserInfo>> getUsersByAccount(String origin, String accounts) {
+        return Result.ok(ssoUserService.getUsersByAccounts(List.of(accounts.split(","))), "获取用户信息成功");
+    }
 }

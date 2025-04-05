@@ -29,27 +29,29 @@ public interface RemoteUserService {
     /**
      * 根据token获取用户信息
      *
-     * @param token
-     * @param origin
-     * @return
+     * @param token  token
+     * @param origin 来源
+     * @return 用户信息
      */
     @GetMapping("/user/info")
     Result<UserInfoVo> getUserInfo(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestHeader(Constants.AUTHENTICATION) String token);
 
     /**
      * 根据id获取用户信息（不包括密码）
-     * @param origin
-     * @param id
-     * @return
+     *
+     * @param origin 来源
+     * @param id     用户id
+     * @return 用户信息
      */
     @GetMapping("/user/{id}")
     Result<UserInfo> getUserById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
 
     /**
      * 根据账号获取用户信息（不包括密码）
-     * @param origin
-     * @param account
-     * @return
+     *
+     * @param origin  来源
+     * @param account 账号
+     * @return 用户信息
      */
     @GetMapping("/user/info/{account}")
     Result<UserInfo> getUserByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("account") String account);
@@ -57,10 +59,10 @@ public interface RemoteUserService {
     /**
      * 获取用户角色
      *
-     * @param origin
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param origin   来源
+     * @param userId   用户id
+     * @param tenantId 租户id
+     * @return 用户角色列表
      */
     @GetMapping("/user/roles")
     Result<List<UserRole>> getRoles(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("tenantId") String tenantId);
@@ -68,10 +70,10 @@ public interface RemoteUserService {
     /**
      * 获取用户权限
      *
-     * @param origin
-     * @param userId
-     * @param tenantId
-     * @return
+     * @param origin   来源
+     * @param userId   用户id
+     * @param tenantId 租户id
+     * @return 返回权限集合
      */
     @GetMapping("/user/permissions")
     Result<Set<String>> getPermissions(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId, @RequestParam("tenantId") String tenantId);
@@ -79,9 +81,9 @@ public interface RemoteUserService {
     /**
      * 获取当前租户列表
      *
-     * @param origin
-     * @param userId
-     * @return
+     * @param origin 来源
+     * @param userId 用户id
+     * @return 租户列表
      */
     @GetMapping("/user/tenants")
     Result<List<TenantVo>> getTenants(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("userId") String userId);
@@ -89,9 +91,10 @@ public interface RemoteUserService {
     /**
      * 获取用户组织
      *
-     * @param userId
-     * @param direction
-     * @return
+     * @param origin    来源
+     * @param userId    用户id
+     * @param direction 查询方向
+     * @return 用户组织列表
      */
     @GetMapping("/user/orgs/{userId}")
     Result<List<SsoOrg>> getOrgs(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("direction") String direction);
@@ -103,17 +106,28 @@ public interface RemoteUserService {
      * @param userId    用户id
      * @param tenantId  租户id
      * @param direction 查询方向
-     * @return
+     * @return 组织id列表
      */
     @GetMapping("/user/orgIds/{userId}")
     Result<List<String>> getOrgIds(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("tenantId") String tenantId, @RequestParam("direction") String direction);
 
     /**
      * 根据账号获取用户id
-     * @param origin 来源
+     *
+     * @param origin   来源
      * @param accounts 账号 多个逗号分割
-     * @return
+     * @return 返回用户id列表
      */
-    @GetMapping("/user/userId/{account}")
-    Result<List<String>> getUserIdsByAccounts(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String accounts);
+    @GetMapping("/user/userId/{accounts}")
+    Result<List<String>> getUserIdsByAccounts(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("accounts") String accounts);
+
+    /**
+     * 根据账号获取用户信息
+     *
+     * @param origin   来源
+     * @param accounts 账号 多个逗号分割
+     * @return 返回用户信息列表
+     */
+    @GetMapping("/user/users/{accounts}")
+    Result<List<UserInfo>> getUsersByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("accounts") String accounts);
 }
