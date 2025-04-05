@@ -98,4 +98,6 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     List<SimpleUserInfo> searchUserList(@Param("condition") String condition);
 
     List<String> getUserIdsByAccounts(@Param("accounts") List<String> accounts);
+
+    List<UserInfo> getUsersByAccounts(@Param("accounts") List<String> accounts);
 }

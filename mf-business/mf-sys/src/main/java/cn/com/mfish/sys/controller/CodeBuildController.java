@@ -86,7 +86,7 @@ public class CodeBuildController {
     @Operation(summary = "查看代码")
     @GetMapping("/view/{id}")
     @RequiresPermissions("sys:codeBuild:query")
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public Result<List<CodeVo>> query(@PathVariable Long id) {
         return codeBuildService.getCode(id);
     }
@@ -95,7 +95,7 @@ public class CodeBuildController {
     @Operation(summary = "下载代码")
     @GetMapping("/download/{id}")
     @RequiresPermissions("sys:codeBuild:query")
-    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant)
+    @DataScope(table = "sys_db_connect", type = DataScopeType.Tenant, excludes = "is_public=1")
     public void downloadCode(@PathVariable Long id, HttpServletResponse response) throws IOException {
         codeBuildService.downloadCode(id, response);
     }
