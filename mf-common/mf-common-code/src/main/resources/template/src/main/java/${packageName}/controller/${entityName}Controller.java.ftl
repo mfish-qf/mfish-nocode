@@ -29,7 +29,7 @@ import java.util.List;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.2
+ * @version: V2.0.0
  */
 @Slf4j
 @Tag(name = "${tableInfo.tableComment}")

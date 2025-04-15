@@ -24,7 +24,7 @@ public class SwaggerProperties {
     private String termsOfServiceUrl = "";
     private String license = "";
     private String licenseUrl = "";
-    private String version = "版本号:V1.3.2";
+    private String version = "版本号:V2.0.0";
     private MyContact contact;
     //请求地址前缀
     private String prefix;

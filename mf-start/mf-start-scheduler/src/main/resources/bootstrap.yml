@@ -1,5 +1,5 @@
 mfish:
-  version: 1.3.2
+  version: 2.0.0
 # Tomcat
 server:
   port: 9224

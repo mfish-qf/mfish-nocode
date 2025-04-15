@@ -19,7 +19,7 @@ import java.util.Date;
  * @description: 销售订单明细
  * @author: mfish
  * @date: 2024-09-02
- * @version: V1.3.2
+ * @version: V2.0.0
  */
 @Data
 @TableName("demo_order_detail")
