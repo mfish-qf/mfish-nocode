@@ -2,7 +2,7 @@
  @description: ${tableInfo.tableComment}
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V1.3.2
+ @version: V2.0.0
 -->
 <template>
   <div>
@@ -50,16 +50,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from "@/components/general/Table";
+  import { BasicTable, useTable, TableAction } from "@mfish/core/components/Table";
+  import { useModal } from "@mfish/core/components/Modal";
+  import { Button as AButton } from "@mfish/core/components/Button";
   import { deleteBatch${entityName}, delete${entityName}, export${entityName}, get${entityName}List } from "@/api/${apiPrefix}/${entityName}";
-  import { useModal } from "@/components/general/Modal";
   import ${entityName}Modal from "./${entityName}Modal.vue";
   import ${entityName}ViewModal from "./${entityName}ViewModal.vue";
   import { columns, searchFormSchema } from "./${entityName?uncap_first}.data";
   import { ${entityName} } from "@/api/${apiPrefix}/model/${entityName}Model";
   import { ref } from "vue";
-  import { useMessage } from "@/hooks/web/UseMessage";
-  import AButton from "@/components/general/Button/src/BasicButton.vue";
+  import { useMessage } from "@mfish/core/hooks";
+
 
   defineOptions({ name: "${entityName}Management" });
   const [registerModal, { openModal }] = useModal();

@@ -560,6 +560,22 @@ INSERT INTO `sso_menu` VALUES ('ec812dc5df8d93e478bd22a04d3db770', '23f38246b88f
 INSERT INTO `sso_menu` VALUES ('2bf2996b88ae8cd70e91685e5e95d4f7', '23f38246b88faf0826c17d57c0d846af', '000130000700002', 3, '新增', '#', 2, 2, '', NULL, 'demo:demoOrder:query,demo:demoOrder:insert', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
 INSERT INTO `sso_menu` VALUES ('f193aa905e7aceb1e4b0187d8b63339f', '23f38246b88faf0826c17d57c0d846af', '000130000700003', 3, '修改', '#', 3, 2, '', NULL, 'demo:demoOrder:query,demo:demoOrder:update', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
 INSERT INTO `sso_menu` VALUES ('250f8038be816e61956c792fc9ddc2c6', '23f38246b88faf0826c17d57c0d846af', '000130000700004', 3, '删除', '#', 4, 2, '', NULL, 'demo:demoOrder:query,demo:demoOrder:delete', 0, 1, NULL, NULL, '', 'admin', '2024-09-13 14:22:11', '', NULL);
+INSERT INTO `sso_menu` VALUES ('baba7ecb504201d257ad7672de945b00', 'e909edc44910691dedc2c5338ec0e603', '000110000500006', 3, '发布', '#', 6, 2, '', NULL, 'sys:screen:release', 0, 1, NULL, 1, '', 'mfish', '2025-03-29 10:17:16', '', NULL);
+INSERT INTO `sso_menu` VALUES ('779ad52f29818635098d05686185dd04', 'e909edc44910691dedc2c5338ec0e603', '000110000500005', 3, '分享', '#', 5, 2, '', NULL, 'sys:screen:query,sys:screen:share', 0, 1, NULL, 1, '', 'admin', '2025-03-04 00:10:41', 'admin', '2025-03-04 00:10:56');
+INSERT INTO `sso_menu` VALUES ('2fe640a53e74186e5fd331e61ff19d0c', '4c44aafc06c373138638a7e17262225e', '000110000700001', 3, '查询', '#', 1, 2, '', NULL, 'nocode:formulaInfo:query', 0, 1, NULL, NULL, '', 'admin', '2025-02-11 10:01:46', '', NULL);
+INSERT INTO `sso_menu` VALUES ('4c44aafc06c373138638a7e17262225e', '70943d8248fd8f77ade038d9afa0bf33', '0001100007', 2, '公式信息', 'ant-design:function-outlined', 6, 1, '/formula-info', '/nocode/formula-info/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2025-02-11 10:01:46', 'admin', '2025-02-11 10:24:34');
+INSERT INTO `sso_menu` VALUES ('8859ae33d914338e58580f0b50004d87', '4c44aafc06c373138638a7e17262225e', '000110000700003', 3, '修改', '#', 3, 2, '', NULL, 'nocode:formulaInfo:query,nocode:formulaInfo:update', 0, 1, NULL, NULL, '', 'admin', '2025-02-11 10:01:46', '', NULL);
+INSERT INTO `sso_menu` VALUES ('e3e24beb16f0781eb5d31e65c7530343', '4c44aafc06c373138638a7e17262225e', '000110000700004', 3, '删除', '#', 4, 2, '', NULL, 'nocode:formulaInfo:query,nocode:formulaInfo:delete', 0, 1, NULL, NULL, '', 'admin', '2025-02-11 10:01:46', '', NULL);
+INSERT INTO `sso_menu` VALUES ('e5a70ba05bd4794a9633ad48a4ee0592', '4c44aafc06c373138638a7e17262225e', '000110000700002', 3, '新增', '#', 2, 2, '', NULL, 'nocode:formulaInfo:query,nocode:formulaInfo:insert', 0, 1, NULL, NULL, '', 'admin', '2025-02-11 10:01:46', '', NULL);
+INSERT INTO `sso_menu` VALUES ('c30a1aacfae8f52e5db5ae0f81d3500a', 'e909edc44910691dedc2c5338ec0e603', '000110000500004', 3, '删除', '#', 4, 2, '', NULL, 'sys:screen:query,sys:screen:delete', 0, 1, NULL, 1, '', 'admin', '2024-12-25 11:34:09', '', NULL);
+INSERT INTO `sso_menu` VALUES ('477eeed64a179632778ebd589c2d6430', 'e909edc44910691dedc2c5338ec0e603', '000110000500003', 3, '修改', '#', 3, 2, '', NULL, 'sys:screen:query,sys:screen:update', 0, 1, NULL, 1, '', 'admin', '2024-12-25 11:33:46', '', NULL);
+INSERT INTO `sso_menu` VALUES ('866615fb9f44c80a49368a6dab3106bc', 'e909edc44910691dedc2c5338ec0e603', '000110000500002', 3, '新增', '#', 2, 2, '', NULL, 'sys:screen:query,sys:screen:insert', 0, 1, NULL, 1, '', 'admin', '2024-12-25 11:33:22', '', NULL);
+INSERT INTO `sso_menu` VALUES ('d7586cc31860b54919c6f616fb070217', 'e909edc44910691dedc2c5338ec0e603', '000110000500001', 3, '查询', '#', 1, 2, '', NULL, 'sys:screen:query', 0, 1, NULL, 1, '', 'admin', '2024-12-25 11:33:03', '', NULL);
+INSERT INTO `sso_menu` VALUES ('06d7451a8e2ed7ccdf6f3eb248d40798', '29db2a54d3226d1ec2f90c6498033c99', '000110000600004', 3, '删除', '#', 4, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:delete', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
+INSERT INTO `sso_menu` VALUES ('29db2a54d3226d1ec2f90c6498033c99', '70943d8248fd8f77ade038d9afa0bf33', '0001100006', 2, '组件管理', 'ant-design:product-outlined', 5, 1, '/screen-charts', '/nocode/screen-charts/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-11-19 09:27:16', 'admin', '2024-11-19 09:29:09');
+INSERT INTO `sso_menu` VALUES ('312d2bc9ac4f1a7d2f2b5a61fa59ff64', '29db2a54d3226d1ec2f90c6498033c99', '000110000600003', 3, '修改', '#', 3, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:update', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
+INSERT INTO `sso_menu` VALUES ('77c042434b5bebf53cd89afbd04ca28a', '29db2a54d3226d1ec2f90c6498033c99', '000110000600001', 3, '查询', '#', 1, 2, '', NULL, 'nocode:screenCharts:query', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
+INSERT INTO `sso_menu` VALUES ('d4257d0d8d32697a82718a312e51fcda', '29db2a54d3226d1ec2f90c6498033c99', '000110000600002', 3, '新增', '#', 2, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:insert', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -1082,6 +1098,7 @@ INSERT INTO `sys_dict` VALUES ('d42259143fdd344b439fe39d3fffdefe', '企业规模
 INSERT INTO `sys_dict` VALUES ('d42d4e365a7b3d43f8c5cf37a523dbd5', 'Druid连接池配置', 'db_pool_druid', 0, 'Druid连接池相关配置项', 'admin', '2023-03-13 11:24:35', '', NULL);
 INSERT INTO `sys_dict` VALUES ('dce08f2d436e6582ec58301a76fe11fa', '任务过期策略', 'sys_job_misfire', 0, '任务过期处理策略 1立即处理一次 2放弃处理', 'admin', '2023-02-21 11:22:32', 'admin', '2023-02-21 18:07:12');
 INSERT INTO `sys_dict` VALUES ('e8e6e4c3f8e2fb775d6d083883e41839', '代码生成查询条件', 'sys_code_condition', 0, '代码生成的查询条件', 'admin', '2023-05-10 16:11:44', '', NULL);
+INSERT INTO `sys_dict` VALUES ('fb787f5398a1ad30463d4c6a263d3b89', 'API数据来源', 'api_data_source', 0, 'API数据来源', 'admin', '2024-09-25 14:23:14', 'admin', '2024-09-25 14:23:14');
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -1110,7 +1127,7 @@ CREATE TABLE `sys_dict_item`  (
 -- ----------------------------
 -- Records of sys_dict_item
 -- ----------------------------
-INSERT INTO `sys_dict_item` VALUES ('026de48a5c41ce981d0f941b510120b0', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '数字运算', 'num_op', 0, 2, NULL, '', 0, '', 'admin', '2023-10-27 09:17:47', 'admin', '2023-10-27 14:21:53');
+INSERT INTO `sys_dict_item` VALUES ('026de48a5c41ce981d0f941b510120b0', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '数字运算', 'num_op', 0, 2, NULL, 'green', 0, '', 'admin', '2023-10-27 09:17:47', 'admin', '2023-10-27 14:21:53');
 INSERT INTO `sys_dict_item` VALUES ('027eb9340eafdcf78cc9b96cc211b6b3', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'maxEvictableIdleTimeMillis', '900000', 1, 7, NULL, NULL, 0, '配置一个连接在池中最大生存的时间，单位是毫秒', 'admin', '2023-03-13 11:27:11', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('0475df296a072fdb2584162443049aef', 'c352267b4ec618c1745bdda85f12402e', 'vue_com_type', '下拉选择框', 'ApiSelect', 0, 3, NULL, NULL, 0, NULL, 'admin', '2024-04-19 14:13:55', 'admin', '2024-04-19 14:14:58');
 INSERT INTO `sys_dict_item` VALUES ('0625b88c24a5cd98e045a58679370249', 'c694f0f6feba27026044839b77d24caa', 'sys_log_type', '新增', '新增', 0, 3, NULL, 'blue', 0, NULL, 'admin', '2023-01-09 11:27:52', 'admin', '2023-01-09 16:11:41');
@@ -1198,12 +1215,12 @@ INSERT INTO `sys_dict_item` VALUES ('d48596048bd2bd62c5844e4bc5d70208', 'd42d4e3
 INSERT INTO `sys_dict_item` VALUES ('d53cec8854c1a92c33059caffcb6af00', '5ed7c51e261ce27109e5f4948d40d6e2', 'db_pool_hikari', 'maxLifetime', '300000', 1, 5, NULL, '', 0, '一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired）； 缺省:30分钟，建议设置比数据库超时时长少30秒', 'admin', '2023-03-13 11:22:15', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('d563a2b3f99baff573193c81a96bacf6', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'filters', 'stat,wall', 0, 13, NULL, '', 0, '配置监控统计拦截的filters，去掉后监控界面sql无法统计，\'wall\'用于防火墙', 'admin', '2023-03-13 11:31:47', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('d781dcc93f41b65dd5f44bb48a69a57c', '55ccc731fe3958c4afca60cbd852a55f', 'tenant_corp_years', '五年以内', '5', 0, 2, NULL, NULL, 0, NULL, 'admin', '2023-06-13 17:21:00', 'admin', '2023-06-13 17:31:57');
-INSERT INTO `sys_dict_item` VALUES ('d82a25d50542f74cd2fef5cc7f04e9aa', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '高级功能', 'advance_op', 0, 4, NULL, NULL, 0, NULL, 'admin', '2023-12-24 16:40:20', 'admin', '2023-12-24 16:40:20');
+INSERT INTO `sys_dict_item` VALUES ('d82a25d50542f74cd2fef5cc7f04e9aa', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '高级功能', 'advance_op', 0, 4, NULL, 'red', 0, NULL, 'admin', '2023-12-24 16:40:20', 'admin', '2023-12-24 16:40:20');
 INSERT INTO `sys_dict_item` VALUES ('df72218dba18e67c91dc2e12493b15ed', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'poolPreparedStatements', 'true', 2, 11, NULL, '', 0, '是否缓存游标', 'admin', '2023-03-13 11:30:08', 'admin', '2023-03-14 20:26:08');
 INSERT INTO `sys_dict_item` VALUES ('e18da53336b068c23d1b144e38d122b2', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '待支付', '0', 1, 1, NULL, '#8F8F8F', 0, NULL, 'admin', '2024-04-20 18:11:43', 'admin', '2024-04-20 18:15:52');
 INSERT INTO `sys_dict_item` VALUES ('e1ce7b2d2de8f28789a30cce64ebd5d3', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '100到300人', 's', 0, 2, NULL, NULL, 0, NULL, 'admin', '2023-06-13 17:11:27', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('e27a2f5ecad5a50a7d788756da095245', 'd42d4e365a7b3d43f8c5cf37a523dbd5', 'db_pool_druid', 'minEvictableIdleTimeMillis', '300000', 1, 6, NULL, NULL, 0, '配置一个连接在池中最小生存的时间，单位是毫秒', 'admin', '2023-03-13 11:26:48', '', NULL);
-INSERT INTO `sys_dict_item` VALUES ('e27c1ecf50054eb7e0263d3b9580f469', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '日期处理', 'date_op', 0, 3, NULL, '', 0, '', 'admin', '2023-10-27 09:19:16', 'admin', '2023-10-27 14:22:00');
+INSERT INTO `sys_dict_item` VALUES ('e27c1ecf50054eb7e0263d3b9580f469', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '日期处理', 'date_op', 0, 3, NULL, 'cyan', 0, '', 'admin', '2023-10-27 09:19:16', 'admin', '2023-10-27 14:22:00');
 INSERT INTO `sys_dict_item` VALUES ('e3431f70eafa566d0aa0ced7a9b11552', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '300到500人', 'm', 0, 3, NULL, '', 0, '', 'admin', '2023-06-13 17:11:48', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('e534f060f0969be49a93254796a2a24b', 'd42259143fdd344b439fe39d3fffdefe', 'tenant_corp_size', '100人以下', 'xs', 0, 1, NULL, NULL, 0, NULL, 'admin', '2023-06-13 17:10:45', 'admin', '2023-06-13 17:29:14');
 INSERT INTO `sys_dict_item` VALUES ('eadbf511b6dfe30b72c4fcad6f10680c', '2fceca32c5098a60071574c61e0327fa', 'sys_job_status', '执行失败', '4', 0, 5, NULL, 'red', 0, '异步执行失败', 'admin', '2023-03-01 18:00:03', '', NULL);
@@ -1214,7 +1231,11 @@ INSERT INTO `sys_dict_item` VALUES ('f442a8f38c5ce32b6b05c640cc3ecc2b', 'e8e6e4c
 INSERT INTO `sys_dict_item` VALUES ('f485da6d28850874150e6bda1d565907', 'd2d1bfb80a89199abdedae4874311b69', 'mall_order_status', '已发货', '2', 0, 3, NULL, '#1677FF', 0, NULL, 'admin', '2024-04-20 18:12:35', 'admin', '2024-04-20 18:16:36');
 INSERT INTO `sys_dict_item` VALUES ('f84c6e754d183f40a4b1d7a5b72371c7', '75ce8aab0fca2be5183770260d145c17', 'sso_grant_type', 'password', 'password', 0, 2, NULL, 'blue', 0, '帐号密码认证方式', 'admin', '2023-05-16 21:50:40', 'admin', '2023-05-18 10:20:12');
 INSERT INTO `sys_dict_item` VALUES ('f88a8a4a391e3ae455ba6d8157f22260', '5665dd400700ebea77fcc6f8e39fc355', 'sys_req_type', 'POST', 'POST', 0, 2, NULL, 'blue', 0, '新增', 'admin', '2023-01-09 16:12:41', 'admin', '2023-02-21 18:02:00');
-INSERT INTO `sys_dict_item` VALUES ('fae13a8680a44565b4ffab652c7c9d6b', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '字符处理', 'char_op', 0, 1, NULL, NULL, 0, NULL, 'admin', '2023-10-27 09:12:06', 'admin', '2023-10-27 14:21:43');
+INSERT INTO `sys_dict_item` VALUES ('fae13a8680a44565b4ffab652c7c9d6b', '6ddca50d9ddad44806ef18c3bf4721c9', 'nc_formula_type', '字符处理', 'char_op', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2023-10-27 09:12:06', 'admin', '2023-10-27 14:21:43');
+INSERT INTO `sys_dict_item` VALUES ('606ed66c01af90f6474ccc761f4493e4', '980f701247526a1468f88122c687bee2', 'api_data_source', 'API', '2', 1, 2, 'ant-design:api-outlined', 'cyan', 0, NULL, 'admin', '2024-09-25 09:49:51', 'admin', '2024-11-15 17:15:25');
+INSERT INTO `sys_dict_item` VALUES ('b6764e7cc7fe5e95bc4273dd0209403d', '980f701247526a1468f88122c687bee2', 'api_data_source', '文件', '1', 1, 1, 'ant-design:file-outlined', 'green', 0, NULL, 'admin', '2024-09-25 09:49:19', 'admin', '2024-11-15 17:14:47');
+INSERT INTO `sys_dict_item` VALUES ('36280b43c3262c240a058256d8656af3', '980f701247526a1468f88122c687bee2', 'api_data_source', '数据库', '0', 1, 0, 'ant-design:database-outlined', 'blue', 0, NULL, 'admin', '2024-09-25 09:48:41', 'admin', '2024-11-15 17:14:56');
+INSERT INTO `sys_dict_item` VALUES ('beec834fab73cd52190de4e07d1d9e84', '980f701247526a1468f88122c687bee2', 'api_data_source', '文件夹', '-1', 1, -1, 'ant-design:folder-outlined', 'primary', 0, NULL, 'admin', '2024-09-25 09:48:20', 'admin', '2024-11-15 17:15:10');
 
 -- ----------------------------
 -- Table structure for sys_log
@@ -1271,51 +1292,79 @@ CREATE TABLE `sys_storage`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_category`;
 CREATE TABLE `sys_dict_category`  (
-  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-  `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父分类id',
-  `category_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类编码',
-  `category_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类名称',
-  `tree_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类树编码（系统自动编码）',
-  `tree_level` tinyint NOT NULL COMMENT '分类树层级（自动生成）',
-  `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `sort` int NULL DEFAULT 0 COMMENT '排序',
-  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `tree_code_index`(`tree_code`) USING BTREE
+                                      `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+                                      `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父分类id',
+                                      `category_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类编码',
+                                      `category_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类名称',
+                                      `tree_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '分类树编码（系统自动编码）',
+                                      `tree_level` tinyint NOT NULL COMMENT '分类树层级（自动生成）',
+                                      `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标',
+                                      `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+                                      `sort` int NULL DEFAULT 0 COMMENT '排序',
+                                      `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建用户',
+                                      `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                      `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新用户',
+                                      `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                      PRIMARY KEY (`id`) USING BTREE,
+                                      INDEX `tree_code_index`(`tree_code`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '树形分类字典' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_dict_category
 -- ----------------------------
+INSERT INTO `sys_dict_category` VALUES ('00491f886354990b6aef2e7a41f397ba', 'fe72c08cf082f8f1c6efef9d28119c45', '', '图片', '000040000400004', 3, 'ant-design:picture-outlined', NULL, 4, 'admin', '2025-01-23 20:51:41', 'admin', '2025-01-25 11:38:42');
 INSERT INTO `sys_dict_category` VALUES ('063eafb8b1b481c1f2f99799ebc7ada7', '26c427a7125dd186ddc238647a7f4ba1', '', '苹果笔记本', '0000100004', 2, 'ant-design:apple-outlined', NULL, 3, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('065b8cc29c9a64cb9ef4bd57880c2469', '9f2aec31293bbb9294db416e42f168b5', NULL, '其他', '000050000300005', 3, NULL, NULL, 5, 'admin', '2025-03-19 15:41:29', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('0e55dc203886fbce5cdb0dd3ba2023b3', '26c427a7125dd186ddc238647a7f4ba1', '', '联想笔记本', '0000100002', 2, NULL, NULL, 4, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('0f4fea537f02a09bd8ef5f0ca8be49ad', '', 'screen_resource', '资源中心', '00005', 1, '', NULL, 3, 'admin', '2025-03-19 15:33:37', 'admin', '2025-03-19 21:51:21');
+INSERT INTO `sys_dict_category` VALUES ('117acb01c6b53d0c39b94c00eb1d8e6d', '540d7a7ef84835275e227c6f0ec44dcf', NULL, '组件样式', '000050000200002', 3, '', NULL, 1, 'admin', '2025-03-19 15:40:18', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('1a6da2aa81926ce2621ef58de2bae5ae', '540d7a7ef84835275e227c6f0ec44dcf', NULL, '其他', '000050000200003', 3, '', NULL, 3, 'admin', '2025-03-19 15:40:35', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('2207ba37d3071c1e87a344c3f61a5155', '926abe03a1935946b43fdcc031c9d3c8', '', '小米', '0000200006', 2, NULL, NULL, 1, 'admin', '2024-03-14 14:38:19', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('26c427a7125dd186ddc238647a7f4ba1', '', 'notebook', '笔记本', '00001', 1, NULL, NULL, 0, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('27c665c8c4c8a1ca378b8c2342e75cf6', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '地图', '000040000100007', 3, 'carbon:map', NULL, 5, 'admin', '2025-01-31 21:38:34', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('3055c9e5ce00720bbba2e7a423eeeaa3', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '其他', '000040000100005', 3, 'ant-design:dot-chart-outlined', NULL, 6, 'admin', '2025-01-10 14:51:24', 'admin', '2025-01-31 21:38:41');
+INSERT INTO `sys_dict_category` VALUES ('43a3d5cc5f41ec7de8b494f6c98adf16', 'a1c2ae510d0676d51b4313591d0d3c97', NULL, '数据运营', '000050000100004', 3, NULL, NULL, 4, 'admin', '2025-03-19 15:37:06', 'admin', '2025-03-19 15:37:23');
 INSERT INTO `sys_dict_category` VALUES ('47eba0ed867cba5909503642bf10f2b4', '26c427a7125dd186ddc238647a7f4ba1', '', '华为笔记本', '0000100001', 2, NULL, NULL, 1, 'admin', '2024-11-18 16:29:44', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('4a012bfdcac45a75617c03b9fd0d6b2c', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '标头', '000040000400005', 3, 'carbon:open-panel-top', NULL, 3, 'admin', '2025-01-25 11:38:37', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('4d544061656fca47a6dca3896a9f94fb', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '文本', '0000400002', 2, 'ant-design:file-text-outlined', NULL, 1, 'admin', '2024-11-18 17:14:45', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('57edf426cf8dcab91f92667b0fd8376b', '4d544061656fca47a6dca3896a9f94fb', NULL, '所有', '000040000200001', 3, 'ant-design:file-text-outlined', NULL, 0, 'admin', '2024-11-18 17:18:33', 'admin', '2024-11-18 17:39:08');
+INSERT INTO `sys_dict_category` VALUES ('540d7a7ef84835275e227c6f0ec44dcf', '0f4fea537f02a09bd8ef5f0ca8be49ad', 'mf_screen_demo', '大屏样例', '0000500002', 2, 'ant-design:crown-outlined', NULL, 2, 'admin', '2025-03-19 15:34:32', 'admin', '2025-03-26 18:04:55');
+INSERT INTO `sys_dict_category` VALUES ('57edf426cf8dcab91f92667b0fd8376b', '4d544061656fca47a6dca3896a9f94fb', NULL, '所有', '000040000200001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2024-11-18 17:18:33', 'admin', '2024-11-27 21:21:28');
+INSERT INTO `sys_dict_category` VALUES ('58e6efc0b6a6441cf0a8081520085ccd', 'a1c2ae510d0676d51b4313591d0d3c97', NULL, '官方', '000050000100002', 3, NULL, NULL, 2, 'admin', '2025-03-19 15:36:21', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('6577e71c515e8014297ac7a9b2fb17af', '926abe03a1935946b43fdcc031c9d3c8', 'iPhone', '苹果', '0000200007', 2, NULL, NULL, 2, 'admin', '2024-03-14 14:38:23', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('688f4f25303f6ce601c99cc30db7dd5b', 'aaf0612479eaffe56b8c3b2af7d3cb8f', NULL, '选项', '000040000500002', 3, 'ant-design:select-outlined', NULL, 1, 'admin', '2025-03-17 15:23:28', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('69d2a8f8396fb6866be7e5e97de0e908', '9f2aec31293bbb9294db416e42f168b5', NULL, '行业', '000050000300002', 3, NULL, NULL, 2, 'admin', '2025-03-19 15:40:59', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('6fab782d03d564025274e46a8ec63668', '4d544061656fca47a6dca3896a9f94fb', NULL, '标签', '000040000200002', 3, 'ant-design:tag-outlined', '', 1, 'admin', '2024-11-18 17:38:23', 'admin', '2024-11-18 17:38:31');
+INSERT INTO `sys_dict_category` VALUES ('862f955f4ba4cb11266a22d8ef023913', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '装饰', '000040000400003', 3, 'ant-design:skin-outlined', NULL, 2, 'admin', '2024-12-27 22:24:24', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('8fcbb99d3e9550f5e9d30dd592a67352', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '占比图', '000040000100006', 3, 'carbon:chart-ring', NULL, 4, 'admin', '2025-01-14 17:31:09', 'admin', '2025-01-14 17:31:20');
 INSERT INTO `sys_dict_category` VALUES ('90329d2cd947b18ef46a02509873f81c', '926abe03a1935946b43fdcc031c9d3c8', '', 'vivio', '0000200008', 2, NULL, NULL, 4, 'admin', '2024-03-14 14:38:36', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('91d27de57bc24cec5369fb3ef0dd689f', '9f2aec31293bbb9294db416e42f168b5', NULL, '动画', '000050000300004', 3, NULL, NULL, 4, 'admin', '2025-03-19 15:41:23', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('926abe03a1935946b43fdcc031c9d3c8', '', 'phone', '手机', '00002', 1, NULL, NULL, 1, 'admin', '2024-03-14 14:36:08', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('964b67d7277654e21a7e3b03e1363300', '926abe03a1935946b43fdcc031c9d3c8', '', '华为', '0000200005', 2, NULL, NULL, 0, 'admin', '2024-03-14 14:38:15', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('9790b4ccb2e28f0d54c3aaa528ca3fea', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '饼状图', '000040000100004', 3, 'ant-design:pie-chart-outlined', NULL, 3, 'admin', '2024-11-19 16:57:06', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('9978cc20d5be070bcc8b6fdd6d78de5f', 'a1c2ae510d0676d51b4313591d0d3c97', NULL, '行业', '000050000100003', 3, NULL, NULL, 3, 'admin', '2025-03-19 15:36:38', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('9f2aec31293bbb9294db416e42f168b5', '0f4fea537f02a09bd8ef5f0ca8be49ad', 'mf_screen_pic', '图片资源', '0000500003', 2, 'ant-design:picture-outlined', NULL, 3, 'admin', '2025-03-19 15:34:51', 'admin', '2025-03-26 18:05:25');
+INSERT INTO `sys_dict_category` VALUES ('a1c2ae510d0676d51b4313591d0d3c97', '0f4fea537f02a09bd8ef5f0ca8be49ad', 'mf_screen_template', '大屏模板', '0000500001', 2, 'ant-design:fund-projection-screen-outlined', NULL, 1, 'admin', '2025-03-19 15:34:14', 'admin', '2025-03-26 18:03:35');
+INSERT INTO `sys_dict_category` VALUES ('a2579f2c7edd39f2b7e6758886b97c92', 'a1c2ae510d0676d51b4313591d0d3c97', NULL, '推荐', '000050000100001', 3, '', NULL, 1, 'admin', '2025-03-19 15:36:02', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('aa4c61f29c59e7c982ec2255a7ab6316', '4d544061656fca47a6dca3896a9f94fb', NULL, '日期', '000040000200003', 3, 'ant-design:calendar-outlined', NULL, 2, 'admin', '2024-11-18 17:40:55', 'admin', '2024-11-18 17:41:01');
+INSERT INTO `sys_dict_category` VALUES ('aaf0612479eaffe56b8c3b2af7d3cb8f', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '交互', '0000400005', 2, 'ant-design:star-outlined', NULL, 5, 'admin', '2025-03-17 12:52:19', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('af9d4abecbd728a49170f8f8ac46dfff', '26c427a7125dd186ddc238647a7f4ba1', 'mi', '小米笔记本', '0000100003', 2, NULL, NULL, 2, 'admin', '2024-11-18 16:29:44', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('afe955d350d5ac5ef541f145ffa7706f', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '折线图', '000040000100003', 3, 'ant-design:line-chart-outlined', NULL, 2, 'admin', '2024-11-19 16:56:46', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('b0def7750854c7fbf3469c9e4a1be303', '9f2aec31293bbb9294db416e42f168b5', NULL, '推荐', '000050000300001', 3, NULL, NULL, 1, 'admin', '2025-03-19 15:40:52', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('b5af416292a8659fcd2bc8d58164bf32', 'eeaab687ec80b493ab4725977ea975b9', NULL, '表格', '000040000300002', 3, 'ant-design:table-outlined', NULL, 1, 'admin', '2025-01-21 14:54:57', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('b8726bb3b3323e3ed4039322d34dae7c', 'da6694b2d969e270122ad2ee1847ba5d', '', '图表', '0000400001', 2, 'ant-design:bar-chart-outlined', NULL, 0, 'admin', '2024-11-18 16:46:37', 'admin', '2024-11-18 17:14:52');
-INSERT INTO `sys_dict_category` VALUES ('c6b295bc5369e7dd9a620c1cabcabd8d', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '所有', '000040000400001', 3, 'carbon:color-palette', NULL, 0, 'admin', '2024-11-18 17:44:51', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('c3d80728225d9b7662ac1d18383d20a1', 'a1c2ae510d0676d51b4313591d0d3c97', NULL, '其他', '000050000100005', 3, '', NULL, 5, 'admin', '2025-03-19 15:37:43', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('c6b295bc5369e7dd9a620c1cabcabd8d', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '所有', '000040000400001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2024-11-18 17:44:51', 'admin', '2024-11-27 21:21:41');
 INSERT INTO `sys_dict_category` VALUES ('d90b48828eaeda14e1ec6daca7fb20e7', '926abe03a1935946b43fdcc031c9d3c8', '', 'oppo', '0000200009', 2, NULL, NULL, 5, 'admin', '2024-03-14 14:38:48', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('d994104c1bfd6b4f7fa68d1cf8e72672', '540d7a7ef84835275e227c6f0ec44dcf', NULL, '联动交互', '000050000200001', 3, NULL, NULL, 2, 'admin', '2025-03-19 15:38:46', 'admin', '2025-03-19 15:40:24');
 INSERT INTO `sys_dict_category` VALUES ('da6694b2d969e270122ad2ee1847ba5d', '', 'screen_charts_type', '大屏组件', '00004', 1, 'ant-design:fund-projection-screen-outlined', NULL, 2, 'admin', '2024-11-18 16:15:02', 'admin', '2024-11-18 23:19:49');
-INSERT INTO `sys_dict_category` VALUES ('ec135d3194956f5f98141c997c2e0ab1', 'b8726bb3b3323e3ed4039322d34dae7c', '', '所有', '000040000100001', 3, 'ant-design:bar-chart-outlined', NULL, 0, 'admin', '2024-11-18 17:43:50', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('db50e28e60b924b850f637eb0a286a69', '9f2aec31293bbb9294db416e42f168b5', NULL, '小图标', '000050000300003', 3, NULL, NULL, 3, 'admin', '2025-03-19 15:41:09', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('ec135d3194956f5f98141c997c2e0ab1', 'b8726bb3b3323e3ed4039322d34dae7c', '', '所有', '000040000100001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2024-11-18 17:43:50', 'admin', '2024-11-27 21:21:18');
 INSERT INTO `sys_dict_category` VALUES ('eeaab687ec80b493ab4725977ea975b9', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '列表', '0000400003', 2, 'ant-design:unordered-list-outlined', NULL, 2, 'admin', '2024-11-18 17:15:20', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('f80fb0216a6e083a896655efb37af1da', 'eeaab687ec80b493ab4725977ea975b9', NULL, '所有', '000040000300001', 3, 'ant-design:unordered-list-outlined', NULL, 0, 'admin', '2024-11-18 17:44:31', NULL, NULL);
-INSERT INTO `sys_dict_category` VALUES ('fafa6224eb9d3ebe49fe21a20171b05d', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '柱状图', '000040000100002', 3, 'ant-design:bar-chart-outlined', NULL, 1, 'admin', '2024-11-19 16:54:26', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('f80fb0216a6e083a896655efb37af1da', 'eeaab687ec80b493ab4725977ea975b9', NULL, '所有', '000040000300001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2024-11-18 17:44:31', 'admin', '2024-11-27 21:21:35');
+INSERT INTO `sys_dict_category` VALUES ('fafa6224eb9d3ebe49fe21a20171b05d', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '柱状图', '000040000100002', 3, 'ant-design:bar-chart-outlined', NULL, 1, 'admin', '2024-11-19 16:54:26', 'admin', '2024-11-28 11:23:28');
+INSERT INTO `sys_dict_category` VALUES ('fb8d6852d275309854125a152f56e40b', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '边框', '000040000400002', 3, 'ant-design:border-outlined', NULL, 1, 'admin', '2024-12-27 14:26:03', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('fe72c08cf082f8f1c6efef9d28119c45', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '装饰', '0000400004', 2, 'carbon:color-palette', NULL, 3, 'admin', '2024-11-18 17:15:41', 'admin', '2024-11-18 17:15:52');
+INSERT INTO `sys_dict_category` VALUES ('ff8792113848c4a2b03ea98d78381d7a', 'aaf0612479eaffe56b8c3b2af7d3cb8f', NULL, '所有', '000040000500001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2025-03-17 14:42:03', 'admin', '2025-03-17 14:42:19');
 
 -- ----------------------------
 -- Table structure for demo_data_scope
@@ -1558,5 +1607,366 @@ INSERT INTO `demo_order_detail` VALUES ('e319c6ae4efd11eb820300163e11f4a0', 'O16
 INSERT INTO `demo_order_detail` VALUES ('e319c6b94efd11eb820300163e11f4a0', 'O16098137908580001', '【8折】皇冠丹麦曲奇饼干特别礼盒装 1.01kg/盒', 'https://www.ecishan.com.cn/storage/file16087791143760001.png', 126.60, 126.60, 2, NULL, NULL, 0.00, 253.20, 0.00, '', NULL, '', NULL);
 INSERT INTO `demo_order_detail` VALUES ('f36c3a074b0911eb820300163e11f4a0', 'O16093791675560001', '雕牌超效加酶无磷洗衣粉2.68千克/袋', 'https://www.ecishan.com.cn/storage/714991-1.png', 24.30, 24.30, 2, NULL, NULL, 0.00, 48.60, 0.00, '', NULL, '', NULL);
 INSERT INTO `demo_order_detail` VALUES ('f36c3a2f4b0911eb820300163e11f4a0', 'O16093791675560001', '福临门苏软香 10kg/袋', 'https://www.ecishan.com.cn/storage/file16049116832980001.png', 59.90, 59.90, 2, NULL, NULL, 0.00, 119.80, 0.00, '', NULL, '', NULL);
+
+-- ----------------------------
+-- Table structure for mf_api
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_api`;
+CREATE TABLE `mf_api`  (
+                           `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                           `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'API名称',
+                           `folder_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录id',
+                           `source_id` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据来源id',
+                           `source_type` tinyint(1) NULL DEFAULT NULL COMMENT '数据来源类型 0 数据库 1文件 2API接口',
+                           `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '描述',
+                           `source_sql` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据源SQL（原生查询方式存储）',
+                           `param_flag` tinyint(1) NULL DEFAULT NULL COMMENT '参数标签 0无参 1有参数',
+                           `config` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'API配置信息',
+                           `rename_config` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '重命名配置',
+                           `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标签 0未删除 1已删除',
+                           `query_type` tinyint(1) NULL DEFAULT NULL COMMENT '查询类型 0 自定义查询 1原生SQL查询',
+                           `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                           `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                           `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                           `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                           `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                           PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '自定义API' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_api_folder
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_api_folder`;
+CREATE TABLE `mf_api_folder`  (
+                                  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                  `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父节点',
+                                  `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                                  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录名称',
+                                  `folder_sort` int NULL DEFAULT NULL COMMENT '文件夹排序',
+                                  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标签',
+                                  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                                  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                                  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'API目录' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_api_params
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_api_params`;
+CREATE TABLE `mf_api_params`  (
+                                  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                  `api_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '接口ID',
+                                  `name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '参数名称',
+                                  `default_value` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '默认值',
+                                  `is_use` tinyint(1) NULL DEFAULT NULL COMMENT '是否使用',
+                                  `remark` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '参数描述',
+                                  `required` tinyint(1) NULL DEFAULT NULL COMMENT '是否必须 0否 1是',
+                                  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                                  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                                  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'API请求参数' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_file
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_file`;
+CREATE TABLE `mf_file`  (
+                            `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                            `folder_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录id',
+                            `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                            `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件名',
+                            `file_size` int NULL DEFAULT NULL COMMENT '文件大小',
+                            `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记(0未删除1删除)',
+                            `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
+                            `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                            `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
+                            `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                            PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件数据源表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for mf_file_folder
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_file_folder`;
+CREATE TABLE `mf_file_folder`  (
+                                   `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                   `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父节点',
+                                   `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                                   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录名称',
+                                   `folder_sort` int NULL DEFAULT NULL COMMENT '文件夹排序',
+                                   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标签',
+                                   `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                                   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                   `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                                   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文件目录' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for mf_formula_info
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_formula_info`;
+CREATE TABLE `mf_formula_info`  (
+                                    `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一id',
+                                    `category_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录id',
+                                    `en_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '公式名称',
+                                    `cn_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '公式中文名称',
+                                    `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '公式总体描述',
+                                    `param_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '参数描述',
+                                    `return_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '返回结果描述',
+                                    `target_object` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '公式对应类',
+                                    `target_param` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '公式参数',
+                                    `return_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '返回值类型',
+                                    `display` tinyint(1) NULL DEFAULT 1 COMMENT '是否显示 1显示 0不显示',
+                                    `sort` int NULL DEFAULT NULL COMMENT '排序',
+                                    `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                                    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                    `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                                    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '公式信息' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mf_formula_info
+-- ----------------------------
+INSERT INTO `mf_formula_info` VALUES ('1', 'char_op', 'str_constant', '字符常量', '增加一个自定义的字符常量', '[\"字符：自定义的字符串\"]', '自定义的字符串', 'MFishStrConstant', '[{\"name\":\"字符\",\"paramType\":\"string\",\"comType\":\"string\",\"value\":\"\"}]', 'string', 1, 1, '', NULL, 'admin', '2025-02-11 23:31:06');
+INSERT INTO `mf_formula_info` VALUES ('10', 'num_op', 'round', '小数四舍五入', '对数字进行指定小数位数进行四舍五入', '[\"数字：需要四舍五入的字段或数字\",\"精度：四舍五入后保留几位小数，正数为小数点之后，负数为小数点以前\"]', '四舍五入的结果', 'MFishRound', '[{\"name\":\"数字\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"精度\",\"paramType\":\"number\",\"comType\":\"number\",\"value\":\"\"}]', 'number', 1, 2, '', NULL, 'admin', '2025-02-11 23:01:08');
+INSERT INTO `mf_formula_info` VALUES ('11', 'num_op', 'abs', '获取绝对值', '获取数字的绝对值', '[\"字段：需要计算绝对值的字段\"]', '绝对值', 'MFishABS', '[{\"name\":\"字段\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 3, '', NULL, 'admin', '2025-02-11 23:01:30');
+INSERT INTO `mf_formula_info` VALUES ('12', 'num_op', 'ceil', '向上取整', '对数字进行向上取整', '[\"字段：需要计算向上取整的字段\"]', '向上取整后的值', 'MFishCeil', '[{\"name\":\"字段\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 4, '', NULL, 'admin', '2025-02-11 23:01:48');
+INSERT INTO `mf_formula_info` VALUES ('13', 'num_op', 'exp', 'e的指定数量次方', '计算 e 提升到指定数量的次方', '[\"指定数量：需要计算e的指定数量的次方\"]', '返回 e 提升到指定数量的次方', 'MFishExp', '[{\"name\":\"指定数量\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 9, '', NULL, 'admin', '2025-02-11 23:02:32');
+INSERT INTO `mf_formula_info` VALUES ('14', 'num_op', 'floor', '向下取整', '对数字进行向下取整', '[\"字段：需要计算向下取整的字段\"]', '向下取整后的值', 'MFishFloor', '[{\"name\":\"字段\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 5, '', NULL, 'admin', '2025-02-11 23:01:56');
+INSERT INTO `mf_formula_info` VALUES ('15', 'num_op', 'log', '计算对数', '返回数字的自然对数，或数字的对数到指定的基数', '[\"对数的基：对数的基,若为空则以e为基\",\"字段：需要计算对数的字段\"]', '对数', 'MFishLog', '[{\"name\":\"对数的基\",\"paramType\":\"number\",\"comType\":\"number\",\"value\":\"\"},{\"name\":\"字段\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 10, '', NULL, 'admin', '2025-02-11 23:02:36');
+INSERT INTO `mf_formula_info` VALUES ('16', 'char_op', 'lower', '大写转小写', '将字符转化为小写', '[\"字符：需要转小写的字段\"]', '小写字符', 'MFishLower', '[{\"name\":\"字符\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 10, '', NULL, 'admin', '2025-02-11 23:00:19');
+INSERT INTO `mf_formula_info` VALUES ('17', 'char_op', 'upper', '小写转大写', '将字段转化为大写', '[\"字段：需要转大写的字段\"]', '大写', 'MFishUpper', '[{\"name\":\"字段\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 11, '', NULL, 'admin', '2025-02-11 23:00:23');
+INSERT INTO `mf_formula_info` VALUES ('18', 'num_op', 'power', '数值的x次方', '计算数值的X次方，X为指定数字', '[\"基数：数字的值\",\"指数：数字的幂\"]', '指数', 'MFishPower', '[{\"name\":\"基数\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"指数\",\"paramType\":\"number\",\"comType\":\"number\",\"value\":\"\"}]', 'number', 1, 11, '', NULL, 'admin', '2025-02-11 23:02:41');
+INSERT INTO `mf_formula_info` VALUES ('19', 'num_op', 'sqrt', '开方', '计算指定数字的开方后的值', '[\"数字：需要开方的数字或字段\"]', '开方后的结果', 'MFishSqrt', '[{\"name\":\"数字\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 12, '', NULL, 'admin', '2025-02-11 23:02:45');
+INSERT INTO `mf_formula_info` VALUES ('2', 'num_op', 'num_constant', '数字常量', '返回一个自定义的数字常量', '[\"数字：自定义的数字\"]', '自定义的数字', 'MFishNumConstant', '[{\"name\":\"数字\",\"paramType\":\"number\",\"comType\":\"number\",\"value\":\"\"}]', 'number', 1, 1, '', NULL, 'admin', '2025-02-11 23:00:34');
+INSERT INTO `mf_formula_info` VALUES ('20', 'char_op', 'concat', '字符连接', '连接多个字段或常量的值', '[\"字符：需要连接的字符\"]', '连接后的结果', 'MFishConcat', '[{\"name\":\"字符\",\"paramType\":\"list[string]\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 6, '', NULL, 'admin', '2025-02-11 23:31:39');
+INSERT INTO `mf_formula_info` VALUES ('21', 'num_op', 'greatest', '返回参数列表的最大值', '获取多个列的数据中最大值', '[\"字段：需要比较大小的字段\"]', '指定的多个列中的最大值', 'MFishGreatest', '[{\"name\":\"字段\",\"paramType\":\"list[number]\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 8, '', NULL, 'admin', '2025-02-11 23:02:27');
+INSERT INTO `mf_formula_info` VALUES ('22', 'num_op', 'least', '返回参数列表的最小值', '获取多个列的数据中最小值', '[\"字段：需要比较大小的字段\"]', '指定的多个列中的最小值', 'MFishLeast', '[{\"name\":\"字段\",\"paramType\":\"list[number]\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 7, '', NULL, 'admin', '2025-02-11 23:01:18');
+INSERT INTO `mf_formula_info` VALUES ('23', 'date_op', 'now_time', '获取当前时间', '获取制定格式的当前时间', '[\"格式：需要获取的日期格式\"]', '制定格式的当前时间字符串', 'MFishNowTime', '[{\"name\":\"格式\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{dateTimeFormatPattern}\"}]', 'string', 1, 2, '', NULL, 'admin', '2025-02-11 23:35:18');
+INSERT INTO `mf_formula_info` VALUES ('24', 'num_op', 'num2char', '数字转字符', '数字转字符', '[\"字段：需要数字转字符的字段\"]', '指定的数字列转换成字符列', 'MFishNum2Char', '[{\"name\":\"字段\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 6, '', NULL, 'admin', '2025-02-11 23:02:16');
+INSERT INTO `mf_formula_info` VALUES ('25', 'char_op', 'char2num', '字符转数字', '字符转数字', '[\"字符：需要转换为数字类型的字符\"]', '指定的字符列转换成数字列', 'MFishChar2Num', '[{\"name\":\"字符\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 12, '', NULL, 'admin', '2025-02-11 23:00:27');
+INSERT INTO `mf_formula_info` VALUES ('3', 'char_op', 'substr', '截取字段', '截取字段', '[\"字段：为列名或字符串\",\"起始位置：起始位置从1开始\",\"截取长度：截取字符长度\"]', '截取后的结果', 'MFishSubStr', '[{\"name\":\"字段\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"起始位置\",\"paramType\":\"number\",\"comType\":\"number\",\"value\":\"\"},{\"name\":\"截取长度\",\"paramType\":\"number\",\"comType\":\"number\",\"value\":\"\"}]', 'string', 1, 2, '', NULL, 'admin', '2025-02-11 23:31:22');
+INSERT INTO `mf_formula_info` VALUES ('30', 'advance_op', 'if', '条件判断', '如果条件为TRUE则返回值，条件为FALSE则返回另一个值', '[\"比较值1：比较条件左边的值\",\"比较条件：两个值进行比较的条件\",\"比较值2：比较条件右边的值（比较条件为空或不为空时该值失效）\",\"满足值：条件满足时显示的值\",\"不满足值：条件不满足时显示的值\"]', '比较之后显示的值', 'MFishIf', '[{\"name\":\"比较值1\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"比较条件\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{operator}\"},{\"name\":\"比较值2\",\"paramType\":\"number\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"满足值\",\"paramType\":\"string\",\"comType\":\"string\",\"value\":\"\"},{\"name\":\"不满足值\",\"paramType\":\"string\",\"comType\":\"string\",\"value\":\"\"}]', 'string', 1, 1, '', NULL, 'admin', '2025-02-11 23:40:48');
+INSERT INTO `mf_formula_info` VALUES ('31', 'char_op', 'field_get', '获取字段', '字段', '[\"字段：需要显示的字段\"]', '指定的字段列', 'MFishFieldGet', '[{\"name\":\"字段\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 3, '', NULL, 'admin', '2025-02-11 23:31:29');
+INSERT INTO `mf_formula_info` VALUES ('4', 'char_op', 'length', '获取字段长度', '获取指定字段长度', '[\"字段：需要计算长度的字段\"]', '字符串长度', 'MFishLength', '[{\"name\":\"字段\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 4, '', NULL, 'admin', '2025-02-11 23:31:34');
+INSERT INTO `mf_formula_info` VALUES ('5', 'date_op', 'time_convert', '时间转换', '将时间以不同类型展示', '[\"时间：需要时间转换的字段\",\"类型：时间类型\"]', '时间转换后的结果', 'MFishTimeConvert', '[{\"name\":\"字段\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"时间类型\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{timeType}\"}]', 'string', 1, 1, '', NULL, 'admin', '2025-02-11 23:35:15');
+INSERT INTO `mf_formula_info` VALUES ('6', 'char_op', 'trim', '去除左右两边字符串', '去除字段左右两边指定字符串', '[\"条件：选择去除的边 both两边,leading左边,trailing右边,空则去除两边空格\",\"移除字符：需要移除的字符串\",\"字段：需要去除指定字符串的字段\"]', '去除字符串后的结果', 'MFishTrim', '[{\"name\":\"条件\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{condition}\"},{\"name\":\"移除字符\",\"paramType\":\"string\",\"comType\":\"string\",\"value\":\"\"},{\"name\":\"字段\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 5, '', NULL, 'admin', '2025-02-11 23:31:53');
+INSERT INTO `mf_formula_info` VALUES ('7', 'char_op', 'ltrim', '删除字符串左边空格', '删除字符串左边空格', '[\"字符：需要去除左边空格的字符\"]', '去除左空格后的结果', 'MFishLTrim', '[{\"name\":\"字符\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'string', 1, 7, '', NULL, 'admin', '2025-02-11 23:32:02');
+INSERT INTO `mf_formula_info` VALUES ('8', 'char_op', 'rtrim', '删除字符串右边空格', '删除字符串右边空格', '[\"字符：需要去除右边空格的字符\"]', '去除右空格后的结果', 'MFishRTrim', '[{\"name\": \"字符\",\"paramType\":\"string\",\"comType\": \"list\",\"value\": \"@{fieldName}\"}]', 'string', 1, 8, '', NULL, '', NULL);
+INSERT INTO `mf_formula_info` VALUES ('9', 'char_op', 'replace', '替换指定的字符串', '将字段中的指定字符串替换成其他字符串', '[\"原字符串：需要替换字符的原字符串\",\"被替换字符串：原字符串中需要被替换的字符串\",\"替换字符串：被替换后的字符串\"]', '替换后的字符串', 'MFishReplace', '[{\"name\": \"原字符串\",\"paramType\":\"string\",\"comType\": \"list\",\"value\": \"@{fieldName}\"},{\"name\": \"被替换字符串\",\"paramType\":\"string\",\"comType\": \"string\",\"value\": \"\"},{\"name\": \"替换字符串\",\"paramType\":\"string\",\"comType\":\"string\",\"value\": \"\"}]', 'string', 1, 9, '', NULL, '', NULL);
+INSERT INTO `mf_formula_info` VALUES ('a4ed59c802606b0b79cb2d07ba037f4b', 'date_op', 'datediff', '获取日期间隔', '获取两个日期之前的天数（开始日期小于结束日期时为负数）', '[\"开始日期：开始日期，格式yyyy-MM-dd HH:mm:ss\",\"结束日期：结束日期，格式yyyy-MM-dd HH:mm:ss\"]', '日期间隔天数', NULL, '[{\"name\":\"开始日期\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"},{\"name\":\"结束日期\",\"paramType\":\"string\",\"comType\":\"list\",\"value\":\"@{fieldName}\"}]', 'number', 1, 3, 'admin', '2025-02-11 15:32:47', 'admin', '2025-02-11 23:41:55');
+
+-- ----------------------------
+-- Table structure for mf_screen
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen`;
+CREATE TABLE `mf_screen`  (
+                              `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '大屏唯一id',
+                              `folder_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录id',
+                              `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                              `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
+                              `thumbnail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '大屏缩略图片Key',
+                              `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '描述',
+                              `canvas_config` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '画布配置',
+                              `contains` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '大屏组件容器配置-位置信息(json方式存储)',
+                              `share_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分享token',
+                              `share_end_time` datetime NULL DEFAULT NULL COMMENT '分享结束时间',
+                              `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记（0正常 1删除）',
+                              `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                              `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                              `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                              `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '我的大屏信息' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_charts
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_charts`;
+CREATE TABLE `mf_screen_charts`  (
+                                     `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一id',
+                                     `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组件名称',
+                                     `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '所属分类（关联树形分类标screen_charts_type）',
+                                     `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组件类型（用于创建组件）',
+                                     `pic_key` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图片KEY',
+                                     `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标',
+                                     `chart_sort` int NULL DEFAULT NULL COMMENT '排序',
+                                     `del_flag` tinyint(1) NULL DEFAULT NULL COMMENT '删除标记',
+                                     `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
+                                     `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                     `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
+                                     `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组件基础信息' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mf_screen_charts
+-- ----------------------------
+INSERT INTO `mf_screen_charts` VALUES ('0217ac88565425f92096dc7138da118d', '折线堆叠图', 'afe955d350d5ac5ef541f145ffa7706f', 'MfLineStack', '9cc9a476f5ab40c2a3adfa058725b942.png', 'ant-design:line-chart-outlined', 4, NULL, 'admin', '2025-01-09 09:58:42', 'admin', '2025-03-07 11:54:50');
+INSERT INTO `mf_screen_charts` VALUES ('067fc3b3686c79e3e8da6e0bd3eef261', '边框20', 'fb8d6852d275309854125a152f56e40b', 'MfBorder20', '215f01b567604507ba82a2db775e5aa4.png', 'ant-design:border-outlined', 20, NULL, 'admin', '2025-01-24 17:09:29', 'admin', '2025-03-07 12:03:13');
+INSERT INTO `mf_screen_charts` VALUES ('074710f47f9fa4333ee479ac971a4b18', '标签选项', '688f4f25303f6ce601c99cc30db7dd5b', 'MfSegmented', '33f2a53f8ee54748b6f1c6e1507229fb.png', 'ant-design:select-outlined', 1, NULL, 'admin', '2025-03-17 15:24:50', 'admin', '2025-03-17 23:51:03');
+INSERT INTO `mf_screen_charts` VALUES ('09c55daf8c0fade9dba7f1b6d0084f72', '标头2', '4a012bfdcac45a75617c03b9fd0d6b2c', 'MfHeader2', 'ed7bbdd231b04b98833fdaabda4731d8.png', 'carbon:open-panel-top', 2, NULL, 'admin', '2025-01-25 13:12:19', 'admin', '2025-03-07 11:57:40');
+INSERT INTO `mf_screen_charts` VALUES ('0bd1545369c287336d3d4c27e80880b2', '圆形雷达图', '3055c9e5ce00720bbba2e7a423eeeaa3', 'MfRadarCircle', '7ff6e866f4af4a5dab7c4e2a8dfd61d2.png', 'ant-design:radar-chart-outlined', 3, NULL, 'admin', '2025-01-10 23:03:55', 'admin', '2025-03-07 11:53:04');
+INSERT INTO `mf_screen_charts` VALUES ('109f453e507fd725275790426e966fa1', '普通标签', '6fab782d03d564025274e46a8ec63668', 'MfTag', 'd909cfda85ea4978b5a8075092ed2603.png', 'ant-design:tag-outlined', 1, NULL, 'admin', '2024-11-19 10:41:16', 'admin', '2025-03-07 11:56:24');
+INSERT INTO `mf_screen_charts` VALUES ('167a0549cd9e6d7e9b3bc0be0d5648cf', '柱状图', 'fafa6224eb9d3ebe49fe21a20171b05d', 'MfBar', 'd3c4f94e9c2244b098b95cc233419626.png', 'ant-design:bar-chart-outlined', 1, NULL, 'admin', '2024-11-19 16:53:47', 'admin', '2025-03-07 12:05:34');
+INSERT INTO `mf_screen_charts` VALUES ('1b162361b30689a1cfcf27b43e041749', '边框19', 'fb8d6852d275309854125a152f56e40b', 'MfBorder19', '4f2a831d03c14e35a47f9a1b64ae454b.png', 'ant-design:border-outlined', 19, NULL, 'admin', '2025-01-24 17:09:18', 'admin', '2025-03-07 12:03:05');
+INSERT INTO `mf_screen_charts` VALUES ('25ae605d0ca38418dca22ad5b5b6e5a3', '边框15', 'fb8d6852d275309854125a152f56e40b', 'MfBorder15', '3cecf03270884610afcffd2947a1ed66.png', 'ant-design:border-outlined', 15, NULL, 'admin', '2025-01-24 17:08:06', 'admin', '2025-03-07 12:02:39');
+INSERT INTO `mf_screen_charts` VALUES ('27c284198b6a7f1209b8ba3e47536ac7', '数字液晶屏', '6fab782d03d564025274e46a8ec63668', 'MfDigits', 'bb1b90e27aee466d9f48e409a37e9c60.png', 'ant-design:field-number-outlined', 3, NULL, 'admin', '2025-01-13 11:10:39', 'admin', '2025-03-07 11:56:40');
+INSERT INTO `mf_screen_charts` VALUES ('28c94dee47465fe101cf4d370e76c367', '飞线图', '27c665c8c4c8a1ca378b8c2342e75cf6', 'MfMapLine', '5f5951114ddf4118b04857fc886ca8e6.gif', 'carbon:map', 1, NULL, 'admin', '2025-01-26 23:28:30', 'admin', '2025-03-07 11:52:30');
+INSERT INTO `mf_screen_charts` VALUES ('2ac89a75bae7941480d5a8c6ccf94f17', '雷达图', '3055c9e5ce00720bbba2e7a423eeeaa3', 'MfRadar', '1f99666fd066426fba8df78e3f462517.png', 'ant-design:radar-chart-outlined', 2, NULL, 'admin', '2025-01-10 15:35:54', 'admin', '2025-03-07 11:52:58');
+INSERT INTO `mf_screen_charts` VALUES ('2e4e4f2bd1fca9ffbf6e8cb27ddec074', '边框1', 'fb8d6852d275309854125a152f56e40b', 'MfBorder1', 'a6e5768e301f41a3996cef51061403ca.gif', 'ant-design:border-outlined', 1, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:00:40');
+INSERT INTO `mf_screen_charts` VALUES ('32bea5d0030fe6421407296914e45d6f', '标头5', '4a012bfdcac45a75617c03b9fd0d6b2c', 'MfHeader5', 'be104c62da6744c594bb887279b5c938.png', 'carbon:open-panel-top', 5, NULL, 'admin', '2025-01-25 22:05:21', 'admin', '2025-03-07 11:58:28');
+INSERT INTO `mf_screen_charts` VALUES ('3f03caa4237bd3d6b6c196dddf67ce90', '标头1', '4a012bfdcac45a75617c03b9fd0d6b2c', 'MfHeader1', 'deffbd4dca264d93a8c409e09d160b36.png', 'carbon:open-panel-top', 1, NULL, 'admin', '2025-01-25 11:39:32', 'admin', '2025-03-07 11:57:31');
+INSERT INTO `mf_screen_charts` VALUES ('4bd3f9978e1b37db20c6efb0708430e8', '柱状堆叠图', 'fafa6224eb9d3ebe49fe21a20171b05d', 'MfBarStack', '4d8a041a57074d9d9de1ed69e649788c.png', 'ant-design:bar-chart-outlined', 3, NULL, 'admin', '2025-01-08 15:23:47', 'admin', '2025-03-07 11:55:57');
+INSERT INTO `mf_screen_charts` VALUES ('53addf58156af61aad51620ebae425b4', '标头6', '4a012bfdcac45a75617c03b9fd0d6b2c', 'MfHeader6', '44cd6ad4ec524e10b0ea3051e6806555.png', 'carbon:open-panel-top', 6, NULL, 'admin', '2025-01-25 22:05:36', 'admin', '2025-03-07 11:58:36');
+INSERT INTO `mf_screen_charts` VALUES ('5c2f9ef1244732e64efee8c7f8feaa9b', '3D飞线图', '27c665c8c4c8a1ca378b8c2342e75cf6', 'MfMapLine3D', 'f0c6f7af407d4e03a99c82fa0bf032e1.gif', 'carbon:map', 2, NULL, 'admin', '2025-01-29 22:59:18', 'admin', '2025-04-14 23:53:05');
+INSERT INTO `mf_screen_charts` VALUES ('612bf4c8a5efa599c94662c6aae2c925', '标头3', '4a012bfdcac45a75617c03b9fd0d6b2c', 'MfHeader3', '99f0c0299ead472893ff0847d2f71498.png', 'carbon:open-panel-top', 3, NULL, 'admin', '2025-01-25 13:32:54', 'admin', '2025-03-07 11:57:50');
+INSERT INTO `mf_screen_charts` VALUES ('631f1eb885251bda05d193c5d1246ee0', '平滑折线图', 'afe955d350d5ac5ef541f145ffa7706f', 'MfLineSmooth', '2832f4c03d0243898d1b060fddad1ff6.png', 'ant-design:line-chart-outlined', 2, NULL, 'admin', '2025-01-08 12:25:09', 'admin', '2025-03-07 11:54:34');
+INSERT INTO `mf_screen_charts` VALUES ('64c16f7b88d7691ce6285e39fc29aa50', '边框22', 'fb8d6852d275309854125a152f56e40b', 'MfBorder22', 'bdae320bc978404bbd20754498add4fe.png', 'ant-design:border-outlined', 22, NULL, 'admin', '2025-01-24 17:09:56', 'admin', '2025-03-07 12:03:27');
+INSERT INTO `mf_screen_charts` VALUES ('74e749a05ce7da2003d021b4bdcb4762', '条形图', 'fafa6224eb9d3ebe49fe21a20171b05d', 'MfBarHorizontal', '0305185977d745c48786b311177f5f06.png', 'ant-design:bars-outlined', 2, NULL, 'admin', '2025-01-06 17:40:21', 'admin', '2025-03-07 11:55:51');
+INSERT INTO `mf_screen_charts` VALUES ('75a5511ab31aa66db386a4c6916e5f0b', '饼状图', '9790b4ccb2e28f0d54c3aaa528ca3fea', 'MfPie', '30532a0099b2444c838acbe1b25e5a5a.png', 'ant-design:pie-chart-outlined', 1, NULL, 'admin', '2024-11-19 16:58:42', 'admin', '2025-03-07 11:53:38');
+INSERT INTO `mf_screen_charts` VALUES ('79fa654f78f84ecf24900daf3d602b1e', '环形图', '9790b4ccb2e28f0d54c3aaa528ca3fea', 'MfPieCircular', 'eb6d4ceedc61442e8d6678e649d1d5df.png', 'ant-design:pie-chart-outlined', 2, NULL, 'admin', '2025-01-08 20:43:03', 'admin', '2025-03-07 11:53:44');
+INSERT INTO `mf_screen_charts` VALUES ('7e2ba0b33a2a2cbdda6b5bb00a9d51cc', '玫瑰图', '9790b4ccb2e28f0d54c3aaa528ca3fea', 'MfPieRose', '463cf1f93390472e8af2f3721710f483.png', 'ant-design:pie-chart-outlined', 3, NULL, 'admin', '2025-01-08 20:33:43', 'admin', '2025-03-07 11:54:25');
+INSERT INTO `mf_screen_charts` VALUES ('8277aec293e04b61e1c438775d6f4638', '折线图', 'afe955d350d5ac5ef541f145ffa7706f', 'MfLine', 'ed31d5a315c64c8bba47285288ec5f1d.png', 'ant-design:line-chart-outlined', 1, NULL, 'admin', '2024-11-19 16:58:18', 'admin', '2025-03-07 11:54:16');
+INSERT INTO `mf_screen_charts` VALUES ('8ae2d15251ac3f27a481d9125bfca22e', '散点图', '3055c9e5ce00720bbba2e7a423eeeaa3', 'MfScatter', '92c1974d930145258308d063069bb2e9.png', 'ant-design:dot-chart-outlined', 1, NULL, 'admin', '2025-01-10 10:36:02', 'admin', '2025-03-07 11:52:52');
+INSERT INTO `mf_screen_charts` VALUES ('8fa9b01c997857433b274b38beea3ee0', '边框17', 'fb8d6852d275309854125a152f56e40b', 'MfBorder17', '594e55ae822047d0ab9e3efe2f4440cd.png', 'ant-design:border-outlined', 17, NULL, 'admin', '2025-01-24 17:08:42', 'admin', '2025-03-07 12:02:53');
+INSERT INTO `mf_screen_charts` VALUES ('97c8d5db2ceea7b59166ae89d8abecc8', '环形占比图', '8fcbb99d3e9550f5e9d30dd592a67352', 'MfWheel', 'd2b5ef51d32e4691a6df762837035d41.png', 'ant-design:pie-chart-outlined', 1, NULL, 'admin', '2025-01-14 10:13:06', 'admin', '2025-03-07 11:53:21');
+INSERT INTO `mf_screen_charts` VALUES ('9ce666cb7016b37c39295ba808512a29', '边框14', 'fb8d6852d275309854125a152f56e40b', 'MfBorder14', '2279cd951b274ef0b054cedb7704cfbd.png', 'ant-design:border-outlined', 14, NULL, 'admin', '2025-01-24 17:07:29', 'admin', '2025-03-07 12:02:32');
+INSERT INTO `mf_screen_charts` VALUES ('a4877e2f8a1499569af1ffd985674dd7', '条形占比图', '8fcbb99d3e9550f5e9d30dd592a67352', 'MfTireMarks', 'e509d6c4fe2b45a3b20b3a4d6008d16d.png', 'ant-design:box-plot-outlined', 2, NULL, 'admin', '2025-01-14 17:32:47', 'admin', '2025-03-07 11:53:29');
+INSERT INTO `mf_screen_charts` VALUES ('a5b987add5a1bbae0cac6666519de77d', '边框16', 'fb8d6852d275309854125a152f56e40b', 'MfBorder16', 'cb68e96249d94c39b49b34cf9942ad7f.png', 'ant-design:border-outlined', 16, NULL, 'admin', '2025-01-24 17:08:26', 'admin', '2025-03-07 12:02:46');
+INSERT INTO `mf_screen_charts` VALUES ('ad0dc6146147b0ba7a1f1cfbc5a92399', '半环形图', '9790b4ccb2e28f0d54c3aaa528ca3fea', 'MfPieHalf', '0b3d6d68a1be406c9fd635a5ad508394.png', 'ant-design:pie-chart-outlined', 4, NULL, 'admin', '2025-01-08 21:05:04', 'admin', '2025-03-07 11:53:53');
+INSERT INTO `mf_screen_charts` VALUES ('bc09e7e612fba98581e9f31d2037aa80', '动态数据标签', '6fab782d03d564025274e46a8ec63668', 'MfDataTag', 'dcfaf3b3e9ef4363ad530e5e35fe2a1b.png', 'ant-design:tag-twotone', 2, NULL, 'admin', '2024-12-06 22:25:59', 'admin', '2025-03-07 11:56:31');
+INSERT INTO `mf_screen_charts` VALUES ('cc896edeba2020e266454d0689c0f9ff', '面积图', 'afe955d350d5ac5ef541f145ffa7706f', 'MfLineArea', '12b20f74e09043b5947b35c3739114ea.png', 'ant-design:area-chart-outlined', 3, NULL, 'admin', '2025-01-08 15:15:51', 'admin', '2025-03-07 11:54:42');
+INSERT INTO `mf_screen_charts` VALUES ('d0f1966383aff7f970caa1016bfda275', '面积堆叠图', 'afe955d350d5ac5ef541f145ffa7706f', 'MfLineAreaStack', '19c3c415e8454078a21106ec4bf98381.png', 'ant-design:line-chart-outlined', 5, NULL, 'admin', '2025-01-09 10:11:24', 'admin', '2025-03-07 11:55:02');
+INSERT INTO `mf_screen_charts` VALUES ('d471e414a5de4140d59d64afcaf0c722', '正负条形图', 'fafa6224eb9d3ebe49fe21a20171b05d', 'MfBarPlusMinus', 'f4e2a327d252488b98e92752ff5e0790.png', 'ant-design:bar-chart-outlined', 5, NULL, 'admin', '2025-01-09 11:37:37', 'admin', '2025-03-07 11:56:10');
+INSERT INTO `mf_screen_charts` VALUES ('d560a2366a1e7d39b5db2127ef08bb6f', '标头4', '4a012bfdcac45a75617c03b9fd0d6b2c', 'MfHeader4', 'ace51978716c42f3a5858267407e3027.png', 'carbon:open-panel-top', 4, NULL, 'admin', '2025-01-25 21:29:24', 'admin', '2025-03-07 11:58:19');
+INSERT INTO `mf_screen_charts` VALUES ('e19f6a61c43711efa95fb03cdc9cfd05', '边框2', 'fb8d6852d275309854125a152f56e40b', 'MfBorder2', 'ad15a0185a2f471fbc1f0c2e5a9fa7b2.png', 'ant-design:border-outlined', 2, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:00:52');
+INSERT INTO `mf_screen_charts` VALUES ('e1a049adc43711efa95fb03cdc9cfd05', '边框3', 'fb8d6852d275309854125a152f56e40b', 'MfBorder3', 'c22c7f948e9f4f6a8d794a9e887353b8.png', 'ant-design:border-outlined', 3, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:00:59');
+INSERT INTO `mf_screen_charts` VALUES ('e1a0e699c43711efa95fb03cdc9cfd05', '边框4', 'fb8d6852d275309854125a152f56e40b', 'MfBorder4', '4c60e6e128564628a41f0717ca07147e.png', 'ant-design:border-outlined', 4, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:07');
+INSERT INTO `mf_screen_charts` VALUES ('e1a1835fc43711efa95fb03cdc9cfd05', '边框5', 'fb8d6852d275309854125a152f56e40b', 'MfBorder5', '46547ff44eab4475974ba1154a63b370.png', 'ant-design:border-outlined', 5, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:15');
+INSERT INTO `mf_screen_charts` VALUES ('e1a20ad2c43711efa95fb03cdc9cfd05', '边框6', 'fb8d6852d275309854125a152f56e40b', 'MfBorder6', 'c0e954e83fee4844b9753352dd5285e7.png', 'ant-design:border-outlined', 6, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:23');
+INSERT INTO `mf_screen_charts` VALUES ('e1a2899ac43711efa95fb03cdc9cfd05', '边框7', 'fb8d6852d275309854125a152f56e40b', 'MfBorder7', '85a28d8186484e8fad91770704a4b8b7.png', 'ant-design:border-outlined', 7, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:30');
+INSERT INTO `mf_screen_charts` VALUES ('e1a2f1a7c43711efa95fb03cdc9cfd05', '边框8', 'fb8d6852d275309854125a152f56e40b', 'MfBorder8', 'c25c1e5e557f4f4396efe9f4644d6f4a.gif', 'ant-design:border-outlined', 8, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:39');
+INSERT INTO `mf_screen_charts` VALUES ('e1a36571c43711efa95fb03cdc9cfd05', '边框9', 'fb8d6852d275309854125a152f56e40b', 'MfBorder9', '8f98d14f29314630b056eb5324347d56.png', 'ant-design:border-outlined', 9, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:50');
+INSERT INTO `mf_screen_charts` VALUES ('e1a3cf90c43711efa95fb03cdc9cfd05', '边框10', 'fb8d6852d275309854125a152f56e40b', 'MfBorder10', '4c137a6f45fb453281af0bb782841cae.png', 'ant-design:border-outlined', 10, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:01:58');
+INSERT INTO `mf_screen_charts` VALUES ('e1a4484ac43711efa95fb03cdc9cfd05', '边框11', 'fb8d6852d275309854125a152f56e40b', 'MfBorder11', '02616e0fe2884bb1b161753477c3bdb8.png', 'ant-design:border-outlined', 11, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:02:06');
+INSERT INTO `mf_screen_charts` VALUES ('e1a4c54ac43711efa95fb03cdc9cfd05', '边框12', 'fb8d6852d275309854125a152f56e40b', 'MfBorder12', '517f5a86efe94253b4071efbb947da0d.png', 'ant-design:border-outlined', 12, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:02:19');
+INSERT INTO `mf_screen_charts` VALUES ('e1a547e0c43711efa95fb03cdc9cfd05', '边框13', 'fb8d6852d275309854125a152f56e40b', 'MfBorder13', '93be448ec74c47cabde12208ee36e175.png', 'ant-design:border-outlined', 13, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:02:26');
+INSERT INTO `mf_screen_charts` VALUES ('e468e465106ce5b3518cc84cee249572', '日期时间', 'aa4c61f29c59e7c982ec2255a7ab6316', 'MfDateTime', '579308c0050b478499c29cb1c71628eb.png', 'ant-design:field-time-outlined', 1, NULL, 'admin', '2025-01-11 23:42:30', 'admin', '2025-03-07 11:56:46');
+INSERT INTO `mf_screen_charts` VALUES ('e609613c1c85cedb8c2bf393f82de2c9', '折柱混合图', 'fafa6224eb9d3ebe49fe21a20171b05d', 'MfBarLine', '34a0407c9bf04aebbc56a1a9bb70c885.png', 'ant-design:bar-chart-outlined', 4, NULL, 'admin', '2025-01-09 10:50:24', 'admin', '2025-03-07 11:56:04');
+INSERT INTO `mf_screen_charts` VALUES ('eb0531ebc45e11efae65b03cdc9cfd05', '装饰1', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration1', 'f2b7e141c5294c80857bb63ee64538db.gif', 'ant-design:skin-outlined', 1, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:58:47');
+INSERT INTO `mf_screen_charts` VALUES ('eb06df29c45e11efae65b03cdc9cfd05', '装饰2', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration2', '00e9837eabb648038d0fa89bb98c7025.gif', 'ant-design:skin-outlined', 2, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:58:56');
+INSERT INTO `mf_screen_charts` VALUES ('eb080345c45e11efae65b03cdc9cfd05', '装饰3', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration3', '20f35e75bd794d71833479766d173aa8.gif', 'ant-design:skin-outlined', 3, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:05');
+INSERT INTO `mf_screen_charts` VALUES ('eb0931fac45e11efae65b03cdc9cfd05', '装饰4', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration4', '7b85680707a148b6b03e62415e5efcaa.gif', 'ant-design:skin-outlined', 4, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:17');
+INSERT INTO `mf_screen_charts` VALUES ('eb0a6b3fc45e11efae65b03cdc9cfd05', '装饰5', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration5', '264345057cb64813b3be2ff5bed097ad.gif', 'ant-design:skin-outlined', 5, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:25');
+INSERT INTO `mf_screen_charts` VALUES ('eb0be1bfc45e11efae65b03cdc9cfd05', '装饰6', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration6', 'c99678bbcae845758cbd1416bc69e720.gif', 'ant-design:skin-outlined', 6, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:33');
+INSERT INTO `mf_screen_charts` VALUES ('eb0c7ba4c45e11efae65b03cdc9cfd05', '装饰7', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration7', 'cff28ab7d82144d4b7e437110e651a8d.png', 'ant-design:skin-outlined', 7, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:41');
+INSERT INTO `mf_screen_charts` VALUES ('eb0d4bafc45e11efae65b03cdc9cfd05', '装饰8', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration8', 'a5b74d7cb10242db931a9fcd7289f6b2.png', 'ant-design:skin-outlined', 8, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:50');
+INSERT INTO `mf_screen_charts` VALUES ('eb0de5b8c45e11efae65b03cdc9cfd05', '装饰9', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration9', 'bc8718bfef2448d8b13ea505c9d5a899.gif', 'ant-design:skin-outlined', 9, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 11:59:58');
+INSERT INTO `mf_screen_charts` VALUES ('eb0e7c1ac45e11efae65b03cdc9cfd05', '装饰10', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration10', '267a39b74db944d4bb6e3fd12de92059.gif', 'ant-design:skin-outlined', 10, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:00:06');
+INSERT INTO `mf_screen_charts` VALUES ('eb0f153ac45e11efae65b03cdc9cfd05', '装饰11', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration11', '17ae3222f60a4139b4c484189974f1fd.png', 'ant-design:skin-outlined', 11, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:00:14');
+INSERT INTO `mf_screen_charts` VALUES ('eb0fab28c45e11efae65b03cdc9cfd05', '装饰12', '862f955f4ba4cb11266a22d8ef023913', 'MfDecoration12', '1e41c6aa0dd7414c9496067504ae2438.gif', 'ant-design:skin-outlined', 12, NULL, 'admin', '2024-12-27 14:55:51', 'admin', '2025-03-07 12:00:29');
+INSERT INTO `mf_screen_charts` VALUES ('f1f1b74e7400eda0e46eacefdb3255bf', '滚动表格', 'b5af416292a8659fcd2bc8d58164bf32', 'MfScrollTable', '689726a0e4994843aad420650aead081.gif', 'ant-design:table-outlined', 1, NULL, 'admin', '2025-01-12 23:23:13', 'admin', '2025-03-07 11:56:57');
+INSERT INTO `mf_screen_charts` VALUES ('f25f1316d6fc5fd3ebd24ba830f97c1b', '自定义图片', '00491f886354990b6aef2e7a41f397ba', 'MfPicture', 'bb5bb5f720d04596a7dbcfc230e83e02.png', 'ant-design:picture-outlined', 1, NULL, 'admin', '2025-01-23 20:53:39', 'admin', '2025-03-07 11:52:07');
+INSERT INTO `mf_screen_charts` VALUES ('fc5e9fcefa429a41a2dfbde95bd8dec6', '边框21', 'fb8d6852d275309854125a152f56e40b', 'MfBorder21', '59dcee71787d459dbfe4a159c52f707a.png', 'ant-design:border-outlined', 21, NULL, 'admin', '2025-01-24 17:09:42', 'admin', '2025-03-07 12:03:19');
+INSERT INTO `mf_screen_charts` VALUES ('fff5b31bc1f6f7cd72c301b52097698f', '边框18', 'fb8d6852d275309854125a152f56e40b', 'MfBorder18', '3106ba6c50c74ebea13db09226460126.png', 'ant-design:border-outlined', 18, NULL, 'admin', '2025-01-24 17:08:59', 'admin', '2025-03-07 12:02:59');
+
+-- ----------------------------
+-- Table structure for mf_screen_folder
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_folder`;
+CREATE TABLE `mf_screen_folder`  (
+                                     `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                     `parent_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父节点',
+                                     `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                                     `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '目录名称',
+                                     `folder_sort` int NULL DEFAULT NULL COMMENT '文件夹排序',
+                                     `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标签',
+                                     `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                                     `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                     `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                                     `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '大屏目录' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_layers
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_layers`;
+CREATE TABLE `mf_screen_layers`  (
+                                     `layer_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '图层ID',
+                                     `screen_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '大屏ID或者模板ID',
+                                     `config` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '组件配置信息(json方式存储)',
+                                     `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                     PRIMARY KEY (`layer_id`, `screen_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '我的大屏图层信息' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_layers_apis
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_layers_apis`;
+CREATE TABLE `mf_screen_layers_apis`  (
+                                          `screen_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '大屏ID',
+                                          `layer_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '图层id',
+                                          `api_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'APIID'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '大屏图层api关系' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_relation`;
+CREATE TABLE `mf_screen_relation`  (
+                                       `screen_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '大屏ID',
+                                       `child_screen_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '子大屏ID'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '大屏之间关系' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_resource
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_resource`;
+CREATE TABLE `mf_screen_resource`  (
+                                       `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一id',
+                                       `source_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '来源id',
+                                       `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '资源名称',
+                                       `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '资源描述',
+                                       `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '资源分类',
+                                       `canvas_config` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '画布配置',
+                                       `pic_key` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图片KEY',
+                                       `contains` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '大屏组件容器配置-位置信息(json方式存储)',
+                                       `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '资源价格',
+                                       `use_count` int NULL DEFAULT NULL COMMENT '使用次数',
+                                       `favorites_count` int NULL DEFAULT NULL COMMENT '收藏次数',
+                                       `click_count` int NULL DEFAULT NULL COMMENT '点击次数',
+                                       `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                                       `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
+                                       `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                       `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
+                                       `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                       PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '大屏资源信息' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_resource_api
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_resource_api`;
+CREATE TABLE `mf_screen_resource_api`  (
+                                           `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                           `resource_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '资源id',
+                                           `screen_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '大屏ID',
+                                           `api_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '原API ID',
+                                           `source_id` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据来源id',
+                                           `source_type` tinyint(1) NULL DEFAULT NULL COMMENT '数据来源类型 0 数据库 1文件 2API接口',
+                                           `source_sql` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据源SQL（原生查询方式存储）',
+                                           `config` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'API配置信息',
+                                           `rename_config` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '重命名配置',
+                                           `query_type` tinyint(1) NULL DEFAULT NULL COMMENT '查询类型 0 自定义查询 1原生SQL查询',
+                                           PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '大屏资源API' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

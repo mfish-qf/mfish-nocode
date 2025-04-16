@@ -1,11 +1,11 @@
-import { defHttp } from "@/utils/http/axios";
+import { defHttp } from "@mfish/core/utils/http/axios";
 import { ${entityName}, Req${entityName}, ${entityName}PageModel } from "@/api/${apiPrefix}/model/${entityName}Model";
 
 /**
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.2
+ * @version: V2.0.0
  */
 enum Api {
   ${entityName} = "/${apiPrefix}/${entityName?uncap_first}"

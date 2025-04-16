@@ -11,7 +11,7 @@ import java.util.List;
  * @Description: 字典项
  * @Author: mfish
  * @date: 2023-01-03
- * @Version: V1.3.2
+ * @version: V2.0.0
  */
 @SuppressWarnings("rawtypes")
 public interface DictItemService extends IService<DictItem> {
