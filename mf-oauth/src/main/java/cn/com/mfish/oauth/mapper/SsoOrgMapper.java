@@ -16,7 +16,7 @@ import java.util.List;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @Version: V1.3.2
+ * @version: V2.0.0
  */
 public interface SsoOrgMapper extends BaseMapper<SsoOrg> {
     int insertOrg(SsoOrg ssoOrg);

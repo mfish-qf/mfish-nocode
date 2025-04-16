@@ -26,7 +26,7 @@ import java.util.List;
  * @description: 树行分类字典
  * @author: mfish
  * @date: 2024-03-12
- * @version: V1.3.2
+ * @version: V2.0.0
  */
 @Slf4j
 @Tag(name = "树形分类")

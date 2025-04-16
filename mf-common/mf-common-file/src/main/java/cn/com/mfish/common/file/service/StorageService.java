@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @description: 文件缓存
  * @author: mfish
  * @date: 2023-01-05
- * @version: V1.3.2
+ * @version: V2.0.0
  */
 public interface StorageService extends IService<StorageInfo> {
 

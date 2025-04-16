@@ -2,7 +2,7 @@
  @description: ${tableInfo.tableComment}查看
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V1.3.2
+ @version: V2.0.0
 -->
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" title="${tableInfo.tableComment}信息">
@@ -10,8 +10,8 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { BasicModal, useModalInner } from "@/components/general/Modal";
-  import { Description, useDescription } from "@/components/general/Description";
+  import { BasicModal, useModalInner } from "@mfish/core/components/Modal";
+  import { Description, useDescription } from "@mfish/core/components/Description";
   import { ref } from "vue";
   import { ${entityName}Desc } from "./${entityName?uncap_first}.data";
 

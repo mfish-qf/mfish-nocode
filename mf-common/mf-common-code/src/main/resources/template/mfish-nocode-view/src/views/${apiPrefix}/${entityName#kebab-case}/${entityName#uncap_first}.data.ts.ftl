@@ -1,6 +1,5 @@
-import { BasicColumn } from "@/components/general/Table";
-import { FormSchema } from "@/components/general/Table";
-import { DescItem } from "@/components/general/Description";
+import { BasicColumn, FormSchema } from "@mfish/core/components/Table";
+import { DescItem } from "@mfish/core/components/Description";
 <#assign dictIndex = 0>
 <#list searchList as search>
 <#if search.component??>
@@ -17,7 +16,7 @@ import { buildDictTag, getDictProps } from "@/utils/DictUtils";
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V1.3.2
+ * @version: V2.0.0
  */
 export const columns: BasicColumn[] = [
 <#list tableInfo.fieldExpands as fieldExpands>
