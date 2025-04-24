@@ -71,7 +71,11 @@ public class GitRealm extends AuthorizingRealm {
             userInfo.setGitee(username);
         }
         userInfo.setNickname(json.getString("name"));
-        userInfo.setEmail(json.getString("email"));
+        String email = json.getString("email");
+        if(!StringUtils.isEmail(email)) {
+            email = null;
+        }
+        userInfo.setEmail(email);
         userInfo.setHeadImgUrl(json.getString("avatar_url"));
         userInfo.setRemark(json.getString("remark"));
         userInfo.setSex(1);

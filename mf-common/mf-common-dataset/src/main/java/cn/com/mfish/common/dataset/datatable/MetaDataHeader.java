@@ -3,6 +3,7 @@ package cn.com.mfish.common.dataset.datatable;
 import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.dataset.enums.TargetType;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
@@ -72,6 +73,13 @@ public class MetaDataHeader implements Serializable {
      */
     @Getter
     private TargetType targetType;
+
+    /**
+     * 索引
+     */
+    @Setter
+    @Getter
+    private Integer index;
 
 
     public MetaDataHeader setDataType(String dataType) {
