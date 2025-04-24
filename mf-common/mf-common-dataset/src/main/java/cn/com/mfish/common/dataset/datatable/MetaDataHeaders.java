@@ -48,6 +48,7 @@ public class MetaDataHeaders extends LinkedHashMap<String, MetaDataHeader> {
         if (!colName.equals(header.getColName())) {
             header.setColName(colName);
         }
+        header.setIndex(this.size());
         this.put(colName, header);
     }
 

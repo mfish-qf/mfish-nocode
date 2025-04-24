@@ -230,10 +230,20 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", phone);
     }
 
+    /**
+     * 是否邮箱地址
+     * @param email 邮箱
+     * @return
+     */
+    public static boolean isEmail(String email) {
+        return StringUtils.isMatch("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", email);
+    }
+
 
     public static void main(String[] args) {
 
         System.out.println(isMatch("^[A-Za-z]+[A-Za-z0-9]*$", "22aaaaa"));
         System.out.println(isMatch("^[A-Za-z]+[A-Za-z0-9]*$", "aa2323aaa"));
+
     }
 }

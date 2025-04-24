@@ -2,7 +2,6 @@ package cn.com.mfish.common.core.utils;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -101,14 +100,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static boolean isDate(Object str) {
         Date date = parseDate(str);
         return date != null;
-    }
-
-    /**
-     * 获取服务器启动时间
-     */
-    public static Date getServerStartDate() {
-        long time = ManagementFactory.getRuntimeMXBean().getStartTime();
-        return new Date(time);
     }
 
     /**
