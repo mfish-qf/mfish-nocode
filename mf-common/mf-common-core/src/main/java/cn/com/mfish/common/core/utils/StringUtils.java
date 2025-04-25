@@ -227,15 +227,22 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 是否
      */
     public static boolean isPhone(String phone) {
+        if (isEmpty(phone)) {
+            return false;
+        }
         return StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", phone);
     }
 
     /**
      * 是否邮箱地址
+     *
      * @param email 邮箱
      * @return
      */
     public static boolean isEmail(String email) {
+        if (isEmpty(email)) {
+            return false;
+        }
         return StringUtils.isMatch("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", email);
     }
 
