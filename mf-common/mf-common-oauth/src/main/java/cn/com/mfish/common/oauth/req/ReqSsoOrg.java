@@ -25,4 +25,10 @@ public class ReqSsoOrg {
     private String phone;
     @Schema(description = "状态（0正常 1停用）")
     private Integer status;
+    /**
+     * 附加标签，如果是1则查询出查询条件最外层组织下所有子节点
+     * 再加上不满足条件的所有节点
+     * 一般用于修改时，分页展示能展示出选中的组织
+     */
+    private Integer addFlag;
 }
