@@ -100,7 +100,7 @@ public class SysLogController {
     @Operation(summary = "系统日志-通过id删除", description = "系统日志-通过id删除")
     @DeleteMapping("/{id}")
     @RequiresPermissions("sys:log:delete")
-    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
+    public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable Long id) {
         if (sysLogService.removeById(id)) {
             return Result.ok(true, "系统日志-删除成功!");
         }

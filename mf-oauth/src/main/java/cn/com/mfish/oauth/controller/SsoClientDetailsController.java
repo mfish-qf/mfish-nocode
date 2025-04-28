@@ -85,7 +85,7 @@ public class SsoClientDetailsController {
         verifyDetails(ssoClientDetails);
         //内部项目oauth2，资源默认都给权限，跳过授权页。授权页面暂未开发
         //生成客户端ID及密钥
-        ssoClientDetails.setClientId(Utils.uuid32()).setClientSecret(Utils.uuid32()).setScope("all").setAutoApprove(true);
+        ssoClientDetails.setClientId(Utils.uuid32()).setClientSecret(Utils.uuid32()).setScope("all").setAutoApprove(1);
         if (ssoClientDetailsService.save(ssoClientDetails)) {
             return Result.ok(ssoClientDetails, "客户端信息-添加成功!");
         }
@@ -171,7 +171,7 @@ public class SsoClientDetailsController {
     @RequiresPermissions("sys:client:delete")
     public Result<Boolean> delete(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         SsoClientDetails ssoClientDetails = new SsoClientDetails();
-        ssoClientDetails.setDelFlag(true).setId(id);
+        ssoClientDetails.setDelFlag(1).setId(id);
         Result<SsoClientDetails> result = ssoClientDetailsService.updateClient(ssoClientDetails);
         if (result.isSuccess()) {
             return Result.ok(true, "客户端信息-删除成功!");

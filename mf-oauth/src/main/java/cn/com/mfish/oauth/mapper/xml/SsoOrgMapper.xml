@@ -19,8 +19,8 @@
         select
         <trim suffixOverrides=",">
             #{id}, #{parentId},
-            CONCAT(pcode,LPAD(SUBSTR(IFNULL((SELECT max( org_code ) FROM sso_org WHERE parent_id = #{parentId} ),
-            0),(lvl-1)*5+1)+ 1, 5, 0 )),
+            CONCAT(pcode,LPAD((IFNULL (SUBSTR((SELECT MAX( org_code ) FROM sso_org WHERE parent_id = #{parentId}) , (
+            lvl - 1 ) * 5+1 ), 0 ) + 1) ,5,'0')),
             lvl,
             <if test="orgName != null">#{orgName},</if>
             <if test="orgFixCode != null">#{orgFixCode},</if>
@@ -33,18 +33,18 @@
             <if test="tenantId != null">#{tenantId},</if>
             #{createBy}, now()
         </trim>
-        from (select IFNULL(org_code,'') pcode,IFNULL(org_level,0)+1 lvl from (SELECT '' FROM dual) d left join
+        from (select IFNULL(org_code,'') pcode,IFNULL(org_level,0)+1 lvl from (SELECT '') d left join
         sso_org on id = #{parentId}) t
     </insert>
     <sql id="reqCondition">
-        <if test="reqSsoOrg.orgName!=null">
+        <if test="reqSsoOrg.orgName!=null and reqSsoOrg.orgName!=''">
             and
             <foreach collection="reqSsoOrg.orgName.split(',')" item="name" separator="or" open="(" close=")">
-                 org_name like concat('%',#{name},'%')
+                org_name like concat('%',#{name},'%')
             </foreach>
         </if>
-        <if test="reqSsoOrg.leader != null">and leader like concat('%',#{reqSsoOrg.leader},'%')</if>
-        <if test="reqSsoOrg.phone != null">and phone like concat('%',#{reqSsoOrg.phone},'%')</if>
+        <if test="reqSsoOrg.leader != null and reqSsoOrg.leader != ''">and leader like concat('%',#{reqSsoOrg.leader},'%')</if>
+        <if test="reqSsoOrg.phone != null and reqSsoOrg.phone != ''">and phone like concat('%',#{reqSsoOrg.phone},'%')</if>
         <if test="reqSsoOrg.status!=null">and status = #{reqSsoOrg.status}</if>
     </sql>
     <select id="queryMaxOrgLevel" resultType="java.lang.Integer">
@@ -66,27 +66,52 @@
             tenant_id = #{reqSsoOrg.tenantId})) sso_org
         </if>
     </sql>
-    <sql id="queryOrgSql">
-        select o.id,o.parent_id,o.tenant_id,o.org_fix_code,o.org_code,o.org_level,o.org_name,o.org_sort,o.leader
-        ,o.phone,o.email,o.remark,o.status,o.del_flag,o.create_by,o.create_time,o.update_by,o.update_time
-        , GROUP_CONCAT(DISTINCT r.id) roleIds from (
-        <include refid="selectOrg" />
+    <sql id="queryOrgAndChild">
+        <include refid="selectOrg"/>
         <where>
             del_flag = 0
             <include refid="reqCondition"/>
         </where>
         <foreach collection="levels" item="value">
             UNION
-            <include refid="selectOrg" />
+            <include refid="selectOrg"/>
             WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
             FROM
             sso_org
             <where>
-                del_flag = 0
+                del_flag = 0 and org_level>#{value}
                 <include refid="reqCondition"/>
             </where>
             )
         </foreach>
+    </sql>
+    <sql id="queryOrgAndChild_noCondition">
+        <include refid="selectOrg"/>
+        <where>
+            del_flag = 0
+        </where>
+        <foreach collection="levels" item="value">
+            UNION
+            <include refid="selectOrg"/>
+            WHERE org_code IN (SELECT DISTINCT SUBSTR(org_code, 1,(org_level-#{value})*5)
+            FROM
+            sso_org
+            <where>
+                del_flag = 0 and org_level>#{value}
+            </where>
+            )
+        </foreach>
+    </sql>
+    <sql id="queryOrgSql">
+        select o.id,o.parent_id,o.tenant_id,o.org_fix_code,o.org_code,o.org_level,o.org_name,o.org_sort,o.leader
+        ,o.phone,o.email,o.remark,o.status,o.del_flag,o.create_by,o.create_time,o.update_by,o.update_time
+        , GROUP_CONCAT(DISTINCT r.id) roleIds from (
+        <if test="reqSsoOrg.addFlag == 1">
+            <include refid="queryOrgAndChild_noCondition" />
+        </if>
+        <if test="reqSsoOrg.addFlag != 1">
+            <include refid="queryOrgAndChild" />
+        </if>
         ) o
         left join sso_org_role sor on o.id = sor.org_id
         left join sso_role r on sor.role_id = r.id and r.del_flag = 0
@@ -98,11 +123,27 @@
         <include refid="queryOrgSql"/>
     </select>
     <select id="queryOneLevelOrg" resultMap="orgMap">
-        select * from (<include refid="queryOrgSql"/>) a where a.org_level = 1
+        select * from (
+        select * from (
+        <include refid="queryOrgAndChild"/>
+        ) a
+        <where>
+            org_level = 1
+        </where>
+        <if test="reqSsoOrg.addFlag == 1">
+            union
+            select * from (
+            <include refid="queryOrgAndChild_noCondition"/>
+            ) a
+            <where>
+                org_level = 1
+            </where>
+        </if>
+        ) a
         order by org_level,org_sort,org_code
     </select>
     <select id="queryChildOrg" resultMap="orgMap">
-        SELECT * FROM (<include refid="queryOrgSql" />) a
+        SELECT * FROM (<include refid="queryOrgSql"/>) a
         <where>
             <foreach collection="list" item="value">
                 or org_code like concat(#{value},'%')
@@ -131,9 +172,9 @@
         inner join sso_org_role sor on r.id = sor.role_id
         <where>
             r.status = 0 and r.del_flag = 0 and sor.org_id in
-        <foreach collection="orgIds" item="orgId" separator="," open="(" close=")">
-            #{orgId}
-        </foreach>
+            <foreach collection="orgIds" item="orgId" separator="," open="(" close=")">
+                #{orgId}
+            </foreach>
         </where>
     </select>
     <select id="isTenantOrg" resultType="java.lang.Integer">

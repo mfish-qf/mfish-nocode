@@ -53,7 +53,7 @@ public class SsoClientDetails extends BaseEntity<String> {
     private String authorities;
     @ExcelProperty("跳过授权页,默认true,适用于authorization_code模式，该属性暂未使用")
     @Schema(description = "跳过授权页,默认true,适用于authorization_code模式")
-    private Boolean autoApprove;
+    private Integer autoApprove;
     @Schema(description = "删除标记")
-    private Boolean delFlag = false;
+    private Integer delFlag = 0;
 }
