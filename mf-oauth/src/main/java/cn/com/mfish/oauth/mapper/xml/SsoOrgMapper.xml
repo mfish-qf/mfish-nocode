@@ -124,7 +124,7 @@
     </select>
     <select id="queryOneLevelOrg" resultMap="orgMap">
         select * from (
-        select * from (
+        select 1 as priority,a.* from (
         <include refid="queryOrgAndChild"/>
         ) a
         <where>
@@ -132,7 +132,7 @@
         </where>
         <if test="reqSsoOrg.addFlag == 1">
             union
-            select * from (
+            select 2 as priority,a.* from (
             <include refid="queryOrgAndChild_noCondition"/>
             ) a
             <where>
@@ -140,7 +140,7 @@
             </where>
         </if>
         ) a
-        order by org_level,org_sort,org_code
+        order by priority,org_level,org_sort,org_code
     </select>
     <select id="queryChildOrg" resultMap="orgMap">
         SELECT * FROM (<include refid="queryOrgSql"/>) a
