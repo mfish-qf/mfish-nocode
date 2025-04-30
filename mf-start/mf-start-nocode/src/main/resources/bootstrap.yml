@@ -23,8 +23,7 @@ spring:
         server-addr: @nacos.server-addr@
         # 配置文件格式
         file-extension: yml
-        # 共享配置
-        shared-configs[0]:
-          data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-          refresh: true
-        prefix:
+  config:
+    import:
+      - nacos:application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}?refreshEnabled=true
+      - nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}?refreshEnabled=true
