@@ -26,10 +26,10 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>3.3.8</spring-boot.version>
+        <spring-boot.version>3.3.11</spring-boot.version>
         <spring-boot-admin.version>3.3.6</spring-boot-admin.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
-        <spring-cloud-alibaba.version>2023.0.1.2</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
         <swagger.doc.version>2.6.0</swagger.doc.version>
         <swagger.core.version>2.2.28</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
@@ -44,10 +44,10 @@
         <fastjson.version>2.0.54</fastjson.version>
         <zxing.version>3.5.3</zxing.version>
         <shiro.version>2.0.2</shiro.version>
-        <wechat.version>4.6.7.B</wechat.version>
+        <wechat.version>4.7.4.B</wechat.version>
         <aliyun-oss.version>3.18.1</aliyun-oss.version>
         <qiniu-sdk.version>7.17.0</qiniu-sdk.version>
-        <rocketmq.version>2.3.2</rocketmq.version>
+        <rocketmq.version>2.3.3</rocketmq.version>
         <bcprov.version>1.79</bcprov.version>
         <oracle.version>23.7.0.25.01</oracle.version>
         <pgsql.version>42.7.4</pgsql.version>
@@ -494,6 +494,15 @@
                         <nonFilteredFileExtension>xls</nonFilteredFileExtension>
                         <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+            <!-- 禁用旧 deploy 插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
