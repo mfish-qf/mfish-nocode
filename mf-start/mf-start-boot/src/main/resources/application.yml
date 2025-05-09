@@ -23,6 +23,8 @@ spring:
       - swagger
       - gateway
       - shiro
+  autoconfigure:
+    exclude: org.springframework.cloud.openfeign.FeignAutoConfiguration
   data:
     redis:
       host: localhost
