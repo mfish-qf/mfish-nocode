@@ -115,8 +115,9 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     }
 
     private Result<Boolean> verifyOldPwd(SsoUser ssoUser, String oldPwd) {
-        //老密码为null时不校验老密码
-        if (StringUtils.isEmpty(oldPwd)) {
+        //旧密码为null时不校验旧密码
+        //超级管理员重置其他用户密码时不校验老密码
+        if (StringUtils.isEmpty(ssoUser.getPassword()) || AuthInfoUtils.isSuper() && !AuthInfoUtils.isSuper(ssoUser.getId())) {
             return Result.ok();
         }
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
@@ -254,12 +255,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             throw new MyRuntimeException("错误:不允许设置为超户!");
         }
         if (!StringUtils.isEmpty(user.getAccount())) {
-            if (user.getAccount().length() > 30) {
-                throw new MyRuntimeException("错误:帐号字符不要超过30个字符");
-            }
-            if (!StringUtils.isMatch("^[a-zA-Z0-9]+$", user.getAccount())) {
-                throw new MyRuntimeException("错误:帐号必须只允许为数字和字母");
-            }
+            StringUtils.isAccount(user.getAccount());
         }
         if (!StringUtils.isEmpty(user.getPhone()) && !StringUtils.isPhone(user.getPhone())) {
             throw new MyRuntimeException("错误:手机号不正确");
@@ -482,6 +478,38 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     public String decryptSid(String sid) {
         return SM4Utils.decryptEcb(sm4key, sid);
+    }
+
+    @Override
+    public boolean isPasswordExist(String userId) {
+        return baseMapper.exists(new LambdaQueryWrapper<SsoUser>().eq(SsoUser::getId, userId).isNotNull(SsoUser::getPassword));
+    }
+
+    @Override
+    public boolean allowChangeAccount(String userId) {
+        SsoUser ssoUser = userTempCache.getFromCacheAndDB(userId);
+        //如果是自动生成的账号允许修改
+        return StringUtils.isMatch("^G[0-9]*$", ssoUser.getAccount());
+    }
+
+    @Override
+    public Result<SsoUser> changeAccount(String userId, String account) {
+        StringUtils.isAccount(account);
+        SsoUser user = new SsoUser();
+        user.setId(userId);
+        user.setAccount(account);
+        if (!userId.equals(AuthInfoUtils.getCurrentUserId())) {
+            return Result.fail(user, "错误:只允许修改自己的账号");
+        }
+        if (isAccountExist(account, userId)) {
+            return Result.fail(user, "错误:账号已存在");
+        }
+
+        if (baseMapper.updateById(user) > 0) {
+            userTempCache.removeOneCache(userId);
+            return Result.ok(user, "修改账号成功");
+        }
+        return Result.fail(user, "修改账号失败");
     }
 
     private OnlineUser buildOnlineUser(RedisAccessToken redisAccessToken, String sessionId) {

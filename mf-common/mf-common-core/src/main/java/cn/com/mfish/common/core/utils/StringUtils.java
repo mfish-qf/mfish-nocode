@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.utils;
 
 import cn.com.mfish.common.core.constants.Constants;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.List;
@@ -231,6 +232,23 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             return false;
         }
         return StringUtils.isMatch("^1[3-9][0-9]\\d{8}$", phone);
+    }
+
+    /**
+     * 校验账号是否合法
+     *
+     * @param account 账号
+     */
+    public static void isAccount(String account) {
+        if (isEmpty(account)) {
+            throw new MyRuntimeException("错误:帐号不能为空");
+        }
+        if (account.length() > 30) {
+            throw new MyRuntimeException("错误:帐号字符不要超过30个字符");
+        }
+        if (!StringUtils.isMatch("^\\w+$", account)) {
+            throw new MyRuntimeException("错误:帐号必须只允许包含数字、字母或下划线");
+        }
     }
 
     /**

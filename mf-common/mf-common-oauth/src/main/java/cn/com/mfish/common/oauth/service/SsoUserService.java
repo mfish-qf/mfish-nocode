@@ -119,4 +119,9 @@ public interface SsoUserService extends IService<SsoUser> {
      */
     String decryptSid(String sid);
 
+    boolean isPasswordExist(String userId);
+
+    boolean allowChangeAccount(String userId);
+
+    Result<SsoUser> changeAccount(String userId, String account);
 }
