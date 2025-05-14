@@ -128,7 +128,7 @@
     </resultMap>
     <sql id="selectUser">
         select u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
-        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
+        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.gitee,u.github,u.remark,u.create_by
         ,u.create_time,u.update_by,u.update_time
          , GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
         ,GROUP_CONCAT(DISTINCT role_name) roleNames, GROUP_CONCAT(DISTINCT org_name) orgNames
@@ -162,8 +162,8 @@
             u.id = #{userId}
         </where>
         group by u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
-        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
-        ,u.create_time,u.update_by,u.update_time
+        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.gitee,u.github,u.remark
+        ,u.create_by,u.create_time,u.update_by,u.update_time
     </select>
     <select id="getUserList" resultMap="userMap">
         <include refid="selectUser"/>
@@ -189,8 +189,8 @@
             </if>
         </where>
         group by u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
-        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.remark,u.create_by
-        ,u.create_time,u.update_by,u.update_time
+        ,u.telephone,u.birthday,u.sex,u.status,u.del_flag,u.salt,u.openid,u.gitee,u.github,u.remark
+        ,u.create_by,u.create_time,u.update_by,u.update_time
         order by u.create_time desc
     </select>
     <insert id="insertUserRole">

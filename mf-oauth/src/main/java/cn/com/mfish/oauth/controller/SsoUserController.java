@@ -137,11 +137,6 @@ public class SsoUserController {
         if (StringUtils.isEmpty(reqChangePwd.getUserId())) {
             Result.fail(false, "错误:用户ID不允许为空");
         }
-        //除了超户，其他用户修改密码需要传入旧密码
-        //超户修改自己密码需要输入旧密码
-        if (StringUtils.isEmpty(reqChangePwd.getOldPwd()) && (!AuthInfoUtils.isSuper() || AuthInfoUtils.isSuper(reqChangePwd.getUserId()))) {
-            return Result.fail(true, "错误:未输入旧密码");
-        }
         return ssoUserService.changePassword(reqChangePwd.getUserId(), reqChangePwd.getOldPwd(), reqChangePwd.getNewPwd());
     }
 
@@ -203,7 +198,7 @@ public class SsoUserController {
      * 分页列表查询
      *
      * @param reqSsoUser 请求参数
-     * @param reqPage 翻页参数
+     * @param reqPage    翻页参数
      * @return 返回结果
      */
     @Operation(summary = "用户信息-分页列表查询", description = "用户信息-分页列表查询")
@@ -314,5 +309,24 @@ public class SsoUserController {
     @InnerUser
     public Result<List<UserInfo>> getUsersByAccount(@Parameter(name = "accounts", description = "帐号名称") @PathVariable String accounts) {
         return Result.ok(ssoUserService.getUsersByAccounts(List.of(accounts.split(","))), "获取用户信息成功");
+    }
+
+    @Operation(summary = "判断账号是否设置过密码")
+    @GetMapping("/pwdExist/{userId}")
+    public Result<Boolean> isPasswordExist(@PathVariable("userId") String userId) {
+        return Result.ok(ssoUserService.isPasswordExist(userId));
+    }
+
+    @Operation(summary = "是否允许修改账号")
+    @GetMapping("/allowChangeAccount/{userId}")
+    public Result<Boolean> allowChangeAccount(@PathVariable("userId") String userId) {
+        return Result.ok(ssoUserService.allowChangeAccount(userId));
+    }
+
+    @Operation(summary = "修改账号")
+    @PutMapping("/changeAccount")
+    @Log(title = "修改账号", operateType = OperateType.UPDATE)
+    public Result<SsoUser> changeAccount(@RequestBody SsoUser ssoUser) {
+        return ssoUserService.changeAccount(ssoUser.getId(), ssoUser.getAccount());
     }
 }
