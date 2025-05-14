@@ -173,3 +173,7 @@
 #### swagger访问地址
 
 http://localhost:8888/swagger-ui/index.html
+
+#### 账号密码
++ 账号：admin
++ 密码：!QAZ2wsx
