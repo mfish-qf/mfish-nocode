@@ -107,6 +107,12 @@
    └─更多功能开发中...
 ```
 
+#### 大屏配置教学
+[1.自助大屏配置系列-画布操作](https://www.bilibili.com/video/BV14YLbz7ESh/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
+
+[2.自助大屏配置系列-画布配置](https://www.bilibili.com/video/BV15CLnzBEWN/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
+
+[3.自助大屏配置系列-数据绑定](https://www.bilibili.com/video/BV1Mr5KzSE6V/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
 #### 项目截图
 
 <table>
