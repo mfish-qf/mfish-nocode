@@ -9,14 +9,42 @@
 [![star](https://gitee.com/qiufeng9862/mfish-nocode/badge/star.svg?theme=white)](https://gitee.com/qiufeng9862/mfish-nocode/stargazers)
 [![fork](https://gitee.com/qiufeng9862/mfish-nocode/badge/fork.svg?theme=white)](https://gitee.com/qiufeng9862/mfish-nocode/members)
 
-## 架构图
+## 🧱架构图
 
 ![](https://mfish-pic.pages.dev/frame.png)
 
-## 项目介绍
+## 🐟项目介绍
 
-摸鱼低代码平台一个不正经的名字，却是一个很正经的项目。希望打造一个基于低代码的无代码平台。既能给程序员使用，也能满足非专业人士的需求。
+摸鱼低代码平台，是一款致力于 **让开发像摸鱼一样轻松** 的低代码/无代码平台。我们希望打破技术门槛，让程序员和非程序员都能快速构建业务系统，提升效率，释放创造力。
 
+这不仅是程序员偷闲时的效率神器，更是职场小白的建站利器，甚至是领导画原型的秘密武器！
+
+## 🧠我们的愿景
+打造一个真正让人省心省力的开发平台：
+
+对程序员来说，是加速上线、复用逻辑、快速交付的开发利器
+
+对业务人员来说，是所见即所得、拖拖拽拽就能搞定的效率工具
+
+一句话：让懂技术的跑得更快，让不懂技术的也能跑起来！
+
+## 🚀核心特点
+低代码 + 无代码统一平台：灵活切换，按需使用
+
+即可快速生成业务代码，也可以无代码生成API接口和可视化大屏
+
+单实例微服务一体化架构：支持单体服务和微服务两种开发部署模式，一套代码解决两种架构，开箱即用
+
+权限解耦：企业级的权限控制，安全可靠与业务代码完全解耦，通过注解控制权限
+
+## 🎯适用场景
+企业内部系统搭建（ERP、CRM、OA等）
+
+快速原型设计与验证
+
+数据展示看板等轻应用开发快速集成
+
+## 💡技术栈
 * 后端基于SpringBoot3, Spring Cloud Alibaba，实现微服务、单体服务代码一体化架构
 * 前端采用VUE3+AntDesign
 * 注册中心、配置中心采用nacos(作为单体服务时无需使用注册中心)
@@ -25,28 +53,28 @@
 * 支持可视化配置查询API接口，后端自动生成SQL执行
 * 支持注解方式进行数据权限控制，与业务代码完全解耦
 
-## 安全报告
+## 🛡️安全报告
 
 [![Security Status](https://www.murphysec.com/platform3/v31/badge/1796428877999906816.svg)](https://www.murphysec.com/console/report/1672256253122600960/1796428877999906816)
 
-## 前端源码地址
+## 🌐前端源码地址
 
 [![github](https://img.shields.io/badge/前端地址-github-black.svg)](https://github.com/mfish-qf/mfish-nocode-view)
 [![gitee](https://img.shields.io/badge/前端地址-gitee-ad312d.svg)](https://gitee.com/qiufeng9862/mfish-nocode-view)
 [![gitcode](https://img.shields.io/badge/前端地址-gitcode-be3642.svg)](https://gitcode.com/mfish-qf/mfish-nocode-view.git)
 
-## 后端源码地址
+## 🌐后端源码地址
 
 [![github](https://img.shields.io/badge/后端地址-github-black.svg)](https://github.com/mfish-qf/mfish-nocode)
 [![gitee](https://img.shields.io/badge/后端地址-gitee-ad312d.svg)](https://gitee.com/qiufeng9862/mfish-nocode)
 [![gitcode](https://img.shields.io/badge/后端地址-gitcode-be3642.svg)](https://gitcode.com/mfish-qf/mfish-nocode.git)
 
-## 文档地址
+## 📖文档地址
 
 + [文档地址](http://www.mfish.com.cn)
 + [在线预览](http://app.mfish.com.cn:11119)
 
-## 平台交流
+## 🎭平台交流
 
 ### 微信:
 
@@ -57,7 +85,7 @@
 [![加入QQ群](https://img.shields.io/badge/522792773-blue.svg)](https://jq.qq.com/?_wv=1027&k=0A2bxoZX)
 点击链接加入群聊【摸鱼低代码交流群】
 
-## 功能模块
+## 🧩功能模块
 
 ```
 ├─ChatGpt
@@ -113,6 +141,8 @@
 [2.自助大屏配置系列-画布配置](https://www.bilibili.com/video/BV15CLnzBEWN/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
 
 [3.自助大屏配置系列-数据绑定](https://www.bilibili.com/video/BV1Mr5KzSE6V/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
+
+[4.自助大屏配置系列-动画绑定](https://www.bilibili.com/video/BV1K1JNzdEG1/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
 #### 项目截图
 
 <table>
