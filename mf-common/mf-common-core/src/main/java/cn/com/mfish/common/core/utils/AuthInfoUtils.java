@@ -3,7 +3,6 @@ package cn.com.mfish.common.core.utils;
 import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.http.WebRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -103,7 +102,7 @@ public class AuthInfoUtils {
     public static String getCurrentTenantId() {
         String tenantId = getAttr(RPCConstants.REQ_TENANT_ID);
         if (StringUtils.isEmpty(tenantId)) {
-            throw new OAuthValidateException("错误：未获取到租户信息");
+            throw new MyRuntimeException("错误：未获取到租户信息");
         }
         return tenantId;
     }
