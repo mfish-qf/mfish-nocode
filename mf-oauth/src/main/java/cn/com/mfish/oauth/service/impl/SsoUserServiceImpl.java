@@ -2,7 +2,6 @@ package cn.com.mfish.oauth.service.impl;
 
 import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.secret.SM4Utils;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -415,7 +414,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     public UserInfo getUserInfo(String userId) {
         SsoUser user = getUserById(userId);
         if (user == null) {
-            throw new OAuthValidateException("错误:未获取到用户信息！userId:" + userId);
+            throw new MyRuntimeException("错误:未获取到用户信息！userId:" + userId);
         }
         UserInfo userInfo = new UserInfo();
         BeanUtils.copyProperties(user, userInfo);

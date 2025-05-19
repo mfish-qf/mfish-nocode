@@ -2,6 +2,7 @@ package cn.com.mfish.common.web.aspect;
 
 import cn.com.mfish.common.core.annotation.GlobalException;
 import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
@@ -33,7 +34,7 @@ public class InnerUserAspect {
     public Object innerAround(ProceedingJoinPoint point, InnerUser innerUser) throws Throwable {
         HttpServletRequest request = ServletUtils.getRequest();
         if (request == null) {
-            throw new OAuthValidateException("错误:未获取到请求信息");
+            throw new MyRuntimeException("错误:未获取到请求信息");
         }
         String source = request.getHeader(RPCConstants.REQ_ORIGIN);
         if (StringUtils.isEmpty(source)) {
