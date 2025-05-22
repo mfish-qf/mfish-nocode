@@ -36,8 +36,8 @@ export function get${entityName}ById(id: string) {
  * @param req${entityName} 请求参数
  */
 export function export${entityName}(req${entityName}?: Req${entityName}) {
-  return defHttp.download({ url: Api.${entityName} + "/export", params: req${entityName} });
-};
+  return defHttp.download({ url: `<#noparse>${</#noparse>Api.${entityName}<#noparse>}</#noparse>/export`, params: req${entityName} });
+}
 
 /**
  * 新增${tableInfo.tableComment}
@@ -47,7 +47,7 @@ export function export${entityName}(req${entityName}?: Req${entityName}) {
  */
 export function insert${entityName}(${entityName?uncap_first}: ${entityName}) {
   return defHttp.post<${entityName}>({ url: Api.${entityName}, params: ${entityName?uncap_first} }, { successMessageMode: "message" });
-};
+}
 
 /**
  * 修改${tableInfo.tableComment}
@@ -57,7 +57,7 @@ export function insert${entityName}(${entityName?uncap_first}: ${entityName}) {
  */
 export function update${entityName}(${entityName?uncap_first}: ${entityName}) {
   return defHttp.put<${entityName}>({ url: Api.${entityName}, params: ${entityName?uncap_first} }, { successMessageMode: "message" });
-};
+}
 
 /**
  * 删除${tableInfo.tableComment}
@@ -67,7 +67,7 @@ export function update${entityName}(${entityName?uncap_first}: ${entityName}) {
  */
 export function delete${entityName}(id: <#if tableInfo.idType==''||tableInfo.idType=='String'>string<#else>number</#if>) {
   return defHttp.delete<boolean>({ url: `<#noparse>${</#noparse>Api.${entityName}<#noparse>}</#noparse>/<#noparse>${id}</#noparse>` }, { successMessageMode: "message" });
-};
+}
 
 /**
  * 批量删除${tableInfo.tableComment}
@@ -76,5 +76,5 @@ export function delete${entityName}(id: <#if tableInfo.idType==''||tableInfo.idT
  * @return 返回结果
  */
 export function deleteBatch${entityName}(ids: string) {
-  return defHttp.delete<boolean>({ url: Api.${entityName} + "/batch/" + ids }, { successMessageMode: "message" });
-};
+  return defHttp.delete<boolean>({ url: `<#noparse>${</#noparse>Api.${entityName}<#noparse>}</#noparse>/batch/<#noparse>${ids}</#noparse>` }, { successMessageMode: "message" });
+}

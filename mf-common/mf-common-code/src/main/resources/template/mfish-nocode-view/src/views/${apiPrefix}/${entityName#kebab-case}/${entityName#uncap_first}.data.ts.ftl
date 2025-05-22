@@ -5,7 +5,7 @@ import { DescItem } from "@mfish/core/components/Description";
 <#if search.component??>
 <#list search.component as com>
 <#if com_index == 1&&dictIndex==0>
-import { buildDictTag, getDictProps } from "@/utils/DictUtils";
+import { buildDictTag, getDictProps } from "@mfish/core/components/DictTag";
 <#assign dictIndex = 1>
 </#if>
 </#list>
@@ -124,5 +124,5 @@ export class ${entityName}Desc {
       label: "${fieldExpands.fieldInfo.comment}"
     },
 </#list>
-  ]
+  ];
 }
