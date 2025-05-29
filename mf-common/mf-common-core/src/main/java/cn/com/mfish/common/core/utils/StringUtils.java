@@ -222,6 +222,19 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
+     * 是否包含
+     *
+     * @param pattern 规则
+     * @param str     字符串
+     * @return 是否
+     */
+    public static boolean isFind(String pattern, String str) {
+        Pattern compile = Pattern.compile(pattern);
+        Matcher matcher = compile.matcher(str);
+        return matcher.find();
+    }
+
+    /**
      * 是否手机号
      *
      * @param phone 手机号
