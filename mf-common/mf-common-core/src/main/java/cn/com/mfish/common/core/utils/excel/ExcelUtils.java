@@ -9,10 +9,12 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.idev.excel.EasyExcel;
 import cn.idev.excel.ExcelWriter;
+import cn.idev.excel.write.builder.ExcelWriterBuilder;
 import cn.idev.excel.write.metadata.WriteSheet;
 import cn.idev.excel.write.metadata.fill.FillConfig;
 import cn.idev.excel.write.metadata.fill.FillWrapper;
 import cn.idev.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import cn.idev.excel.write.style.column.SimpleColumnWidthStyleStrategy;
 import com.alibaba.fastjson2.JSON;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +48,59 @@ public class ExcelUtils {
      * @throws IOException IO异常
      */
     public static <T> void write(String fileName, List<T> list) throws IOException {
-        write(fileName, list, null);
+        write(fileName, list, null, null);
+    }
+
+    /**
+     * excel导出下载
+     *
+     * @param fileName 文件名称（不带后缀默认为xlsx）
+     * @param list     数据
+     * @param header   自定义表头 如果为空则使用实体类的字段名
+     * @param <T>      泛型
+     * @throws IOException IO异常
+     */
+    public static <T> void write(String fileName, List<T> list, List<List<String>> header) throws IOException {
+        write(fileName, list, null, header, null);
+    }
+
+    /**
+     * excel导出下载
+     *
+     * @param fileName 文件名称（不带后缀默认为xlsx）
+     * @param list     数据
+     * @param width    列宽 如果为空自适应宽度，不为空则按照指定宽度
+     * @param <T>      泛型
+     * @throws IOException IO异常
+     */
+    public static <T> void write(String fileName, List<T> list, Integer width) throws IOException {
+        write(fileName, list, null, null, width);
+    }
+
+    /**
+     * excel导出下载
+     *
+     * @param fileName 文件名称（不带后缀默认为xlsx）
+     * @param list     数据
+     * @param header   自定义表头 如果为空则使用实体类的字段名
+     * @param width    列宽 如果为空自适应宽度，不为空则按照指定宽度
+     * @param <T>      泛型
+     * @throws IOException IO异常
+     */
+    public static <T> void write(String fileName, List<T> list, List<List<String>> header, Integer width) throws IOException {
+        write(fileName, list, null, header, width);
+    }
+
+    /**
+     * excel导出下载
+     * @param fileName 文件名称（不带后缀默认为xlsx）
+     * @param list 数据
+     * @param cls 泛型类型
+     * @param <T> 泛型
+     * @throws IOException IO异常
+     */
+    public static <T> void write(String fileName, List<T> list, Class<T> cls) throws IOException {
+        write(fileName, list, cls, null, null);
     }
 
     /**
@@ -58,7 +112,7 @@ public class ExcelUtils {
      * @param <T>      泛型
      * @throws IOException IO异常
      */
-    public static <T> void write(String fileName, List<T> list, Class<T> cls) throws IOException {
+    public static <T> void write(String fileName, List<T> list, Class<T> cls, List<List<String>> header, Integer width) throws IOException {
         //swagger调用会用问题，使用postman测试
         HttpServletResponse response = ServletUtils.getResponse();
         try {
@@ -80,11 +134,21 @@ public class ExcelUtils {
                     return;
                 }
             }
+            ExcelWriterBuilder builder = EasyExcel.write(response.getOutputStream());
+            if (header != null) {
+                builder.head(header);
+            } else {
+                builder.head(list.getFirst().getClass());
+            }
+            if (width != null) {
+                builder.registerWriteHandler(new SimpleColumnWidthStyleStrategy(width));
+            } else {
+                builder.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+            }
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), list.getFirst().getClass())
-                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                    .autoCloseStream(Boolean.FALSE).sheet("sheet1")
+            builder.autoCloseStream(Boolean.FALSE).sheet("sheet1")
                     .doWrite(list);
+
         } catch (Exception e) {
             // 重置response
             response.reset();
