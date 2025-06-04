@@ -93,10 +93,11 @@ public class ExcelUtils {
 
     /**
      * excel导出下载
+     *
      * @param fileName 文件名称（不带后缀默认为xlsx）
-     * @param list 数据
-     * @param cls 泛型类型
-     * @param <T> 泛型
+     * @param list     数据
+     * @param cls      泛型类型
+     * @param <T>      泛型
      * @throws IOException IO异常
      */
     public static <T> void write(String fileName, List<T> list, Class<T> cls) throws IOException {
