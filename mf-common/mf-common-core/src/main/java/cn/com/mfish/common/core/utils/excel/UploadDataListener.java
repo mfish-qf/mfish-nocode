@@ -1,14 +1,19 @@
 package cn.com.mfish.common.core.utils.excel;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.idev.excel.annotation.ExcelIgnore;
+import cn.idev.excel.annotation.ExcelProperty;
 import cn.idev.excel.context.AnalysisContext;
 import cn.idev.excel.metadata.CellExtra;
+import cn.idev.excel.metadata.data.ReadCellData;
 import cn.idev.excel.read.listener.ReadListener;
 import cn.idev.excel.util.ListUtils;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * @description: 模板读取(有个很重要的点 DemoDataListener 不能被spring管理 ， 要每次读取excel都要new, 然后里面用到spring可以构造方法传进去)
@@ -31,6 +36,10 @@ public class UploadDataListener<T> implements ReadListener<T> {
      * 额外属性
      */
     private final ExtraProp extraProp = new ExtraProp();
+    /**
+     * 列头 如果设置了列头，会校验列头是否正确
+     */
+    private final Class<T> head;
 
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
@@ -38,7 +47,7 @@ public class UploadDataListener<T> implements ReadListener<T> {
      * @param uploadDAO 上传操作类
      */
     public UploadDataListener(UploadDAO<T> uploadDAO) {
-        this.uploadDAO = uploadDAO;
+        this(uploadDAO, 10);
     }
 
     /**
@@ -52,8 +61,13 @@ public class UploadDataListener<T> implements ReadListener<T> {
      * @param batchCount 批量处理计数，一个正整数，表示批量大小。
      */
     public UploadDataListener(UploadDAO<T> uploadDAO, int batchCount) {
+        this(uploadDAO, batchCount, null);
+    }
+
+    public UploadDataListener(UploadDAO<T> uploadDAO, int batchCount, Class<T> head) {
         this.uploadDAO = uploadDAO;
         this.BATCH_COUNT = batchCount;
+        this.head = head;
     }
 
 
@@ -72,6 +86,44 @@ public class UploadDataListener<T> implements ReadListener<T> {
             saveData();
             // 存储完成清理 list
             cachedDataList.clear();
+        }
+    }
+
+    @Override
+    public void invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context) {
+        //列头默认都是字符串，如果出现其他类型列头暂时不支持
+        for (ReadCellData<?> value : headMap.values()) {
+            extraProp.getHeadSet().add(value.getStringValue());
+        }
+        verifyHead();
+    }
+
+    /**
+     * 如果设置了列头类型，需要校验列头
+     * 如果不需要检验可以不设置
+     */
+    private void verifyHead() {
+        if (head == null) {
+            return;
+        }
+        // 校验列头
+        Field[] fields = head.getDeclaredFields();
+        List<String> objectHeads = new ArrayList<>();
+        for (Field field : fields) {
+            ExcelProperty property = field.getAnnotation(ExcelProperty.class);
+            ExcelIgnore ignore = field.getAnnotation(ExcelIgnore.class);
+            //如果字段被忽略，不校验
+            if (ignore != null) {
+                continue;
+            }
+            if (null != property && property.value().length > 0) {
+                objectHeads.add(property.value()[0]);
+            }
+        }
+        for (String head : objectHeads) {
+            if (!extraProp.getHeadSet().contains(head)) {
+                throw new MyRuntimeException("错误：导入文件缺少【" + head + "】列头");
+            }
         }
     }
 
@@ -121,6 +173,10 @@ public class UploadDataListener<T> implements ReadListener<T> {
          */
         private int batch = 1;
         private boolean isEnd = false;
+        /**
+         * 设置列头用于后续校验列头
+         */
+        private final Set<String> headSet = new HashSet<>();
         /**
          * todo 注意注意
          * 使用extra属性时，batchCount要设置到Integer.MAX_VALUE
