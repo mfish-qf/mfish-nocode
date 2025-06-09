@@ -11,15 +11,13 @@ import java.io.InputStream;
 
 
 @Slf4j
-public class MinioStorage extends AbstractStorage{
+public class MinioStorage extends AbstractStorage {
 
     private String accessKey;
     private String secretKey;
     private String endpoint;
     private String bucket;
-
     private MinioClient minioClient;
-
 
     public MinioStorage(String address) {
         super(address);
@@ -40,13 +38,10 @@ public class MinioStorage extends AbstractStorage{
         return this;
     }
 
-
-
     public MinioStorage setBucket(String bucket) {
         this.bucket = bucket;
         return this;
     }
-
 
     /**
      * 通过配置绑定属性
@@ -55,10 +50,7 @@ public class MinioStorage extends AbstractStorage{
     public void init() {
         try {
             // 初始化 MinIO 客户端
-            minioClient = MinioClient.builder()
-                    .endpoint(endpoint)
-                    .credentials(accessKey, secretKey)
-                    .build();
+            minioClient = MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
 
             // 检查存储桶是否存在，不存在则创建
             boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
@@ -72,18 +64,11 @@ public class MinioStorage extends AbstractStorage{
         }
     }
 
-
     @Override
     public void store(InputStream inputStream, long contentLength, String contentType, String filePath) {
         try {
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(filePath)
-                            .stream(inputStream, contentLength, 5 * 1024 * 1024) // 5MB 分片
-                            .contentType(contentType)
-                            .build()
-            );
+            minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(filePath).stream(inputStream, contentLength, 5 * 1024 * 1024) // 5MB 分片
+                    .contentType(contentType).build());
             log.info("文件上传成功: {}", filePath);
         } catch (Exception e) {
             log.error("文件上传失败: {}", filePath, e);
@@ -94,12 +79,7 @@ public class MinioStorage extends AbstractStorage{
     @Override
     public Resource loadAsResource(String filePath) {
         try {
-            InputStream inputStream = minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(filePath)
-                            .build()
-            );
+            InputStream inputStream = minioClient.getObject(GetObjectArgs.builder().bucket(bucket).object(filePath).build());
             return new InputStreamResource(inputStream);
         } catch (Exception e) {
             log.error("加载文件失败: {}", filePath, e);
@@ -107,17 +87,10 @@ public class MinioStorage extends AbstractStorage{
         }
     }
 
-
-
     @Override
     public void delete(String filePath) {
         try {
-            minioClient.removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(filePath)
-                            .build()
-            );
+            minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucket).object(filePath).build());
             log.info("文件删除成功: {}", filePath);
         } catch (Exception e) {
             log.error("文件删除失败: {}", filePath, e);
@@ -131,6 +104,4 @@ public class MinioStorage extends AbstractStorage{
         String keyName = (index > 0) ? filePath.substring(index + 1) : filePath;
         return FileUtils.formatFilePath(endpoint) + "/" + keyName;
     }
-
-
 }

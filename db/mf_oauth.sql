@@ -220,6 +220,7 @@ INSERT INTO `sso_menu` VALUES ('29db2a54d3226d1ec2f90c6498033c99', '70943d8248fd
 INSERT INTO `sso_menu` VALUES ('312d2bc9ac4f1a7d2f2b5a61fa59ff64', '29db2a54d3226d1ec2f90c6498033c99', '000110000600003', 3, '修改', '#', 3, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:update', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('77c042434b5bebf53cd89afbd04ca28a', '29db2a54d3226d1ec2f90c6498033c99', '000110000600001', 3, '查询', '#', 1, 2, '', NULL, 'nocode:screenCharts:query', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('d4257d0d8d32697a82718a312e51fcda', '29db2a54d3226d1ec2f90c6498033c99', '000110000600002', 3, '新增', '#', 2, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:insert', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
+INSERT INTO `sso_menu` VALUES ('8f6ed381a02535791c17521ff0475808', 'eb5f513d5430597d3ea312e1bf760b23', '000120000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:tenant:query', 0, 1, NULL, 1, '', 'admin', '2025-06-03 13:53:51', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_org
