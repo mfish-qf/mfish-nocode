@@ -19,6 +19,8 @@ public class StorageProperties {
     private Local local;
     private AliYun aliyun;
     private QiNiu qiNiu;
+    private Minio minio;
+
     /**
      * 后端服务文件接口地址
      */
@@ -27,6 +29,14 @@ public class StorageProperties {
     @Data
     public static class Local {
         private String storagePath;
+    }
+
+    @Data
+    public static class Minio{
+        private String endpoint;
+        private String accessKey;
+        private String secretKey;
+        private String bucket;
     }
 
     @Data

@@ -53,9 +53,16 @@
         <pgsql.version>42.7.4</pgsql.version>
         <mssql.version>12.8.1.jre11</mssql.version>
         <fastexcel.version>1.1.0</fastexcel.version>
+        <minio.version>8.5.17</minio.version>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- minio -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
             <!-- SpringCloud 微服务 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
