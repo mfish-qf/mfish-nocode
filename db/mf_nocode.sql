@@ -275,6 +275,8 @@ INSERT INTO `mf_screen_charts` VALUES ('f1f1b74e7400eda0e46eacefdb3255bf', '滚�
 INSERT INTO `mf_screen_charts` VALUES ('f25f1316d6fc5fd3ebd24ba830f97c1b', '自定义图片', '00491f886354990b6aef2e7a41f397ba', 'MfPicture', 'bb5bb5f720d04596a7dbcfc230e83e02.png', 'ant-design:picture-outlined', 1, NULL, 'admin', '2025-01-23 20:53:39', 'admin', '2025-03-07 11:52:07');
 INSERT INTO `mf_screen_charts` VALUES ('fc5e9fcefa429a41a2dfbde95bd8dec6', '边框21', 'fb8d6852d275309854125a152f56e40b', 'MfBorder21', '59dcee71787d459dbfe4a159c52f707a.png', 'ant-design:border-outlined', 21, NULL, 'admin', '2025-01-24 17:09:42', 'admin', '2025-03-07 12:03:19');
 INSERT INTO `mf_screen_charts` VALUES ('fff5b31bc1f6f7cd72c301b52097698f', '边框18', 'fb8d6852d275309854125a152f56e40b', 'MfBorder18', '3106ba6c50c74ebea13db09226460126.png', 'ant-design:border-outlined', 18, NULL, 'admin', '2025-01-24 17:08:59', 'admin', '2025-03-07 12:02:59');
+INSERT INTO `mf_screen_charts` VALUES ('aca0f3cfbc9963495240bf3fbb0d0e53', '普通表格', 'b5af416292a8659fcd2bc8d58164bf32', 'MfTable', '63d99e78414c4cc4bf67857f0dd3f5b5.png', 'ant-design:table-outlined', 1, NULL, 'admin', '2025-06-04 17:05:56', 'admin', '2025-06-05 10:31:16');
+INSERT INTO `mf_screen_charts` VALUES ('a872143fdfc55e48f076f800cf716ce0', '下拉选择', 'aaf0612479eaffe56b8c3b2af7d3cb8f', 'MfSelect', '55b3e5199d4b4488aa62159ad9a9064d.png', 'ant-design:select-outlined', 2, NULL, 'admin', '2025-06-09 10:03:23', 'admin', '2025-06-09 16:30:10');
 
 -- ----------------------------
 -- Table structure for mf_screen_folder

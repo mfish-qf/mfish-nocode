@@ -281,7 +281,7 @@ CREATE TABLE `qrtz_job` (
                             `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
                             `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                             PRIMARY KEY (`id`,`job_name`,`job_group`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时调度任务';
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='定时调度任务';
 
 -- ----------------------------
 -- Records of qrtz_job
@@ -317,7 +317,7 @@ CREATE TABLE `qrtz_job_log` (
                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                 PRIMARY KEY (`id`,`job_name`,`job_group`) USING BTREE,
                                 KEY `create_time_index` (`create_time`) USING BTREE COMMENT '创建时间索引'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='定时任务调度日志';
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='定时任务调度日志';
 
 -- ----------------------------
 -- Table structure for qrtz_job_subscribe
@@ -554,6 +554,7 @@ INSERT INTO `sso_menu` VALUES ('29db2a54d3226d1ec2f90c6498033c99', '70943d8248fd
 INSERT INTO `sso_menu` VALUES ('312d2bc9ac4f1a7d2f2b5a61fa59ff64', '29db2a54d3226d1ec2f90c6498033c99', '000110000600003', 3, '修改', '#', 3, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:update', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('77c042434b5bebf53cd89afbd04ca28a', '29db2a54d3226d1ec2f90c6498033c99', '000110000600001', 3, '查询', '#', 1, 2, '', NULL, 'nocode:screenCharts:query', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('d4257d0d8d32697a82718a312e51fcda', '29db2a54d3226d1ec2f90c6498033c99', '000110000600002', 3, '新增', '#', 2, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:insert', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
+INSERT INTO `sso_menu` VALUES ('8f6ed381a02535791c17521ff0475808', 'eb5f513d5430597d3ea312e1bf760b23', '000120000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:tenant:query', 0, 1, NULL, 1, '', 'admin', '2025-06-03 13:53:51', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -1854,6 +1855,8 @@ INSERT INTO `mf_screen_charts` VALUES ('f1f1b74e7400eda0e46eacefdb3255bf', '滚�
 INSERT INTO `mf_screen_charts` VALUES ('f25f1316d6fc5fd3ebd24ba830f97c1b', '自定义图片', '00491f886354990b6aef2e7a41f397ba', 'MfPicture', 'bb5bb5f720d04596a7dbcfc230e83e02.png', 'ant-design:picture-outlined', 1, NULL, 'admin', '2025-01-23 20:53:39', 'admin', '2025-03-07 11:52:07');
 INSERT INTO `mf_screen_charts` VALUES ('fc5e9fcefa429a41a2dfbde95bd8dec6', '边框21', 'fb8d6852d275309854125a152f56e40b', 'MfBorder21', '59dcee71787d459dbfe4a159c52f707a.png', 'ant-design:border-outlined', 21, NULL, 'admin', '2025-01-24 17:09:42', 'admin', '2025-03-07 12:03:19');
 INSERT INTO `mf_screen_charts` VALUES ('fff5b31bc1f6f7cd72c301b52097698f', '边框18', 'fb8d6852d275309854125a152f56e40b', 'MfBorder18', '3106ba6c50c74ebea13db09226460126.png', 'ant-design:border-outlined', 18, NULL, 'admin', '2025-01-24 17:08:59', 'admin', '2025-03-07 12:02:59');
+INSERT INTO `mf_screen_charts` VALUES ('aca0f3cfbc9963495240bf3fbb0d0e53', '普通表格', 'b5af416292a8659fcd2bc8d58164bf32', 'MfTable', '63d99e78414c4cc4bf67857f0dd3f5b5.png', 'ant-design:table-outlined', 1, NULL, 'admin', '2025-06-04 17:05:56', 'admin', '2025-06-05 10:31:16');
+INSERT INTO `mf_screen_charts` VALUES ('a872143fdfc55e48f076f800cf716ce0', '下拉选择', 'aaf0612479eaffe56b8c3b2af7d3cb8f', 'MfSelect', '55b3e5199d4b4488aa62159ad9a9064d.png', 'ant-design:select-outlined', 2, NULL, 'admin', '2025-06-09 10:03:23', 'admin', '2025-06-09 16:30:10');
 
 -- ----------------------------
 -- Table structure for mf_screen_folder
