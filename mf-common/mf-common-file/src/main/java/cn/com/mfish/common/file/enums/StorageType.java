@@ -8,7 +8,8 @@ package cn.com.mfish.common.file.enums;
 public enum StorageType {
     本地("local"),
     阿里云("aliyun"),
-    七牛云("qiniu");
+    七牛云("qiniu"),
+    Minio("minio");
     private final String value;
 
     StorageType(String value) {
