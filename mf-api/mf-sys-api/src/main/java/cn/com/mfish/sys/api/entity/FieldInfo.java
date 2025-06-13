@@ -20,6 +20,8 @@ import java.io.Serializable;
 public class FieldInfo implements Serializable {
     @Schema(description = "字段名称")
     private String fieldName;
+    @Schema(description = "数据库字段名称")
+    private String tableFieldName;
     @Schema(description = "是否主键 true是 false否")
     private Boolean isPrimary = false;
     @Schema(description = "JAVA字段类型")
