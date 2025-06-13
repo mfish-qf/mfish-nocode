@@ -30,7 +30,7 @@ public class TokenFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setContentType(ContentType.APPLICATION_JSON.toString());
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().println(result);
+        response.getWriter().print(result);
     }
 
     protected Result<?> isAccessAllowed(ServletRequest request) {
