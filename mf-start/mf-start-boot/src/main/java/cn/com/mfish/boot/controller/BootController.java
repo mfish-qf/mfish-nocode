@@ -17,7 +17,7 @@ import java.util.Map;
  * @date: 2024/1/26
  */
 @Slf4j
-@Tag(name = "单实例补充接口")
+@Tag(name = "单实例补充接口--获取验证码")
 @RestController
 public class BootController {
     @Resource

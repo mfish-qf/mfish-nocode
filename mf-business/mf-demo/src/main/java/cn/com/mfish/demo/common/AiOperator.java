@@ -3,7 +3,6 @@ package cn.com.mfish.demo.common;
 import cn.com.mfish.common.core.utils.http.OkHttpUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.demo.entity.Completion;
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class AiOperator {
         openAi.setPresence_penalty(0);
         Map<String, String> map = new HashMap<>();
         map.put("Authorization", "Bearer " + token);
-        return OkHttpUtils.postJson(url, JSON.toJSONString(openAi), map, new OkHttpUtils.TimeOut().setTimeUnit(TimeUnit.MINUTES));
+        return OkHttpUtils.postJson(url, openAi, map, new OkHttpUtils.TimeOut().setTimeUnit(TimeUnit.MINUTES));
     }
 
 }
