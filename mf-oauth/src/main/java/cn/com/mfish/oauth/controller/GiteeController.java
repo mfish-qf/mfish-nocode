@@ -86,17 +86,19 @@ public class GiteeController {
      * @return 是否
      */
     private boolean isStarred(String token) {
-        try {
-            OkHttpUtils.get("https://gitee.com/api/v5/user/starred/qiufeng9862/mfish-nocode?access_token=" + token);
-            return true;
-        } catch (Exception ignored) {
-        }
-        try {
-            OkHttpUtils.get("https://gitee.com/api/v5/user/starred/qiufeng9862/mfish-nocode-view?access_token=" + token);
-            return true;
-        } catch (Exception ignored) {
-        }
-        return false;
+        // gitee star接口作废，暂时不校验
+//        try {
+//            OkHttpUtils.get("https://gitee.com/api/v5/user/starred/qiufeng9862/mfish-nocode?access_token=" + token);
+//            return true;
+//        } catch (Exception ignored) {
+//        }
+//        try {
+//            OkHttpUtils.get("https://gitee.com/api/v5/user/starred/qiufeng9862/mfish-nocode-view?access_token=" + token);
+//            return true;
+//        } catch (Exception ignored) {
+//        }
+//        return false;
+        return true;
     }
 
 }
