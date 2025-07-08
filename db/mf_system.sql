@@ -385,6 +385,7 @@ INSERT INTO `sys_dict_category` VALUES ('eeaab687ec80b493ab4725977ea975b9', 'da6
 INSERT INTO `sys_dict_category` VALUES ('f80fb0216a6e083a896655efb37af1da', 'eeaab687ec80b493ab4725977ea975b9', NULL, '所有', '000040000300001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2024-11-18 17:44:31', 'admin', '2024-11-27 21:21:35');
 INSERT INTO `sys_dict_category` VALUES ('fafa6224eb9d3ebe49fe21a20171b05d', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '柱状图', '000040000100002', 3, 'ant-design:bar-chart-outlined', NULL, 1, 'admin', '2024-11-19 16:54:26', 'admin', '2024-11-28 11:23:28');
 INSERT INTO `sys_dict_category` VALUES ('fb8d6852d275309854125a152f56e40b', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '边框', '000040000400002', 3, 'ant-design:border-outlined', NULL, 1, 'admin', '2024-12-27 14:26:03', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('fc74625ae4c3a53cbea0eb7bdd994a9a', '4d544061656fca47a6dca3896a9f94fb', NULL, '输入框', '000040000200004', 3, 'ant-design:edit-outlined', NULL, 3, 'admin', '2025-07-08 16:03:04', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('fe72c08cf082f8f1c6efef9d28119c45', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '装饰', '0000400004', 2, 'carbon:color-palette', NULL, 3, 'admin', '2024-11-18 17:15:41', 'admin', '2024-11-18 17:15:52');
 INSERT INTO `sys_dict_category` VALUES ('ff8792113848c4a2b03ea98d78381d7a', 'aaf0612479eaffe56b8c3b2af7d3cb8f', NULL, '所有', '000040000500001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2025-03-17 14:42:03', 'admin', '2025-03-17 14:42:19');
 

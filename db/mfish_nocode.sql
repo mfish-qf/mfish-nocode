@@ -1343,6 +1343,7 @@ INSERT INTO `sys_dict_category` VALUES ('eeaab687ec80b493ab4725977ea975b9', 'da6
 INSERT INTO `sys_dict_category` VALUES ('f80fb0216a6e083a896655efb37af1da', 'eeaab687ec80b493ab4725977ea975b9', NULL, '所有', '000040000300001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2024-11-18 17:44:31', 'admin', '2024-11-27 21:21:35');
 INSERT INTO `sys_dict_category` VALUES ('fafa6224eb9d3ebe49fe21a20171b05d', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '柱状图', '000040000100002', 3, 'ant-design:bar-chart-outlined', NULL, 1, 'admin', '2024-11-19 16:54:26', 'admin', '2024-11-28 11:23:28');
 INSERT INTO `sys_dict_category` VALUES ('fb8d6852d275309854125a152f56e40b', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '边框', '000040000400002', 3, 'ant-design:border-outlined', NULL, 1, 'admin', '2024-12-27 14:26:03', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('fc74625ae4c3a53cbea0eb7bdd994a9a', '4d544061656fca47a6dca3896a9f94fb', NULL, '输入框', '000040000200004', 3, 'ant-design:edit-outlined', NULL, 3, 'admin', '2025-07-08 16:03:04', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('fe72c08cf082f8f1c6efef9d28119c45', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '装饰', '0000400004', 2, 'carbon:color-palette', NULL, 3, 'admin', '2024-11-18 17:15:41', 'admin', '2024-11-18 17:15:52');
 INSERT INTO `sys_dict_category` VALUES ('ff8792113848c4a2b03ea98d78381d7a', 'aaf0612479eaffe56b8c3b2af7d3cb8f', NULL, '所有', '000040000500001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2025-03-17 14:42:03', 'admin', '2025-03-17 14:42:19');
 
@@ -1861,6 +1862,8 @@ INSERT INTO `mf_screen_charts` VALUES ('a872143fdfc55e48f076f800cf716ce0', '下�
 INSERT INTO `mf_screen_charts` VALUES ('af909fb2f353cda6d6ddbf53ac4091e1', '按钮', '3c94138cae5b3a485858e589618e58d0', 'MfButton', 'c7d4a99f49034feb81aab8f45ee3dca3.png', 'carbon:button-centered', 1, NULL, 'admin', '2025-06-20 17:59:13', 'admin', '2025-07-02 18:00:41');
 INSERT INTO `mf_screen_charts` VALUES ('00f7615ab1def50072f5a63d080d379c', '分布图', '27c665c8c4c8a1ca378b8c2342e75cf6', 'MfMapChunks', 'fa8913b0237045cd9fa13999ee1a73ab.png', 'carbon:map', 3, NULL, 'admin', '2025-07-04 11:24:54', 'admin', '2025-07-04 16:14:00');
 INSERT INTO `mf_screen_charts` VALUES ('fae4e2667e1309fe194ba967ed085a7f', '气泡图', '27c665c8c4c8a1ca378b8c2342e75cf6', 'MfMapScatter', 'bc3cb95c0bf949138268b565975bcefe.png', 'carbon:map', NULL, NULL, 'admin', '2025-07-04 17:42:46', 'admin', '2025-07-06 00:04:16');
+INSERT INTO `mf_screen_charts` VALUES ('bec3552d3f3d7c7eed54ebcaebe8853f', '文本输入库', 'fc74625ae4c3a53cbea0eb7bdd994a9a', 'MfInputTextArea', '15ec81b4946e499ea435b4694724215b.png', 'ant-design:edit-outlined', 2, NULL, 'admin', '2025-07-08 15:52:24', 'admin', '2025-07-08 16:19:07');
+INSERT INTO `mf_screen_charts` VALUES ('a9afc424685701a988943027b7598e89', '输入框', 'fc74625ae4c3a53cbea0eb7bdd994a9a', 'MfInput', '9fba91218f694b78aa2d9baa60bb9b2e.png', 'ant-design:edit-outlined', 1, NULL, 'admin', '2025-07-06 23:28:05', 'admin', '2025-07-08 16:18:59');
 
 -- ----------------------------
 -- Table structure for mf_screen_folder

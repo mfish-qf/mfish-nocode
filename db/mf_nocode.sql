@@ -280,6 +280,8 @@ INSERT INTO `mf_screen_charts` VALUES ('a872143fdfc55e48f076f800cf716ce0', '下�
 INSERT INTO `mf_screen_charts` VALUES ('af909fb2f353cda6d6ddbf53ac4091e1', '按钮', '3c94138cae5b3a485858e589618e58d0', 'MfButton', 'c7d4a99f49034feb81aab8f45ee3dca3.png', 'carbon:button-centered', 1, NULL, 'admin', '2025-06-20 17:59:13', 'admin', '2025-07-02 18:00:41');
 INSERT INTO `mf_screen_charts` VALUES ('00f7615ab1def50072f5a63d080d379c', '分布图', '27c665c8c4c8a1ca378b8c2342e75cf6', 'MfMapChunks', 'fa8913b0237045cd9fa13999ee1a73ab.png', 'carbon:map', 3, NULL, 'admin', '2025-07-04 11:24:54', 'admin', '2025-07-04 16:14:00');
 INSERT INTO `mf_screen_charts` VALUES ('fae4e2667e1309fe194ba967ed085a7f', '气泡图', '27c665c8c4c8a1ca378b8c2342e75cf6', 'MfMapScatter', 'bc3cb95c0bf949138268b565975bcefe.png', 'carbon:map', NULL, NULL, 'admin', '2025-07-04 17:42:46', 'admin', '2025-07-06 00:04:16');
+INSERT INTO `mf_screen_charts` VALUES ('bec3552d3f3d7c7eed54ebcaebe8853f', '文本输入库', 'fc74625ae4c3a53cbea0eb7bdd994a9a', 'MfInputTextArea', '15ec81b4946e499ea435b4694724215b.png', 'ant-design:edit-outlined', 2, NULL, 'admin', '2025-07-08 15:52:24', 'admin', '2025-07-08 16:19:07');
+INSERT INTO `mf_screen_charts` VALUES ('a9afc424685701a988943027b7598e89', '输入框', 'fc74625ae4c3a53cbea0eb7bdd994a9a', 'MfInput', '9fba91218f694b78aa2d9baa60bb9b2e.png', 'ant-design:edit-outlined', 1, NULL, 'admin', '2025-07-06 23:28:05', 'admin', '2025-07-08 16:18:59');
 
 -- ----------------------------
 -- Table structure for mf_screen_folder
