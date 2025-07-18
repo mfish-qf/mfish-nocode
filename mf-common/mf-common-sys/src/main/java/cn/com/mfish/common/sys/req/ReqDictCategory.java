@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V2.0.0
+ * @version: V2.0.1
  */
 @Data
 @Accessors(chain = true)

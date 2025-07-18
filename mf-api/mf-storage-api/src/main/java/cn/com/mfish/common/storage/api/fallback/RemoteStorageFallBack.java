@@ -5,6 +5,8 @@ import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.common.storage.api.remote.RemoteStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,6 +29,11 @@ public class RemoteStorageFallBack implements FallbackFactory<RemoteStorageServi
             @Override
             public Result<Boolean> logicDelete(String origin, String id) {
                 return Result.fail("错误:逻辑删除文件失败" + cause.getMessage());
+            }
+
+            @Override
+            public ResponseEntity<Resource> fetch(String origin, String key) {
+                return ResponseEntity.notFound().build();
             }
         };
 

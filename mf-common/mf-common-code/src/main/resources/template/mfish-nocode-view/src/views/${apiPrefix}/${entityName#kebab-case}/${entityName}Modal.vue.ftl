@@ -2,7 +2,7 @@
  @description: ${tableInfo.tableComment}
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V2.0.0
+ @version: V2.0.1
 -->
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">

@@ -253,7 +253,9 @@ public class QueryHandler {
                     //处理查询总数，返回 true 时继续分页查询，false 时直接返回
                     if (!pageHelper.afterCount(count)) {
                         //当查询总数为 0 时，处理逻辑
-                        return pageHandler.afterQuery();
+                        //由于此处需要返回列头信息，所以也做了一次查询
+                        //如果不需要返回列头信息，可以直接返回空结果集
+//                        return pageHandler.afterQuery();
                     }
                 }
                 resultList = pageHandler.pQuery(boundSql);

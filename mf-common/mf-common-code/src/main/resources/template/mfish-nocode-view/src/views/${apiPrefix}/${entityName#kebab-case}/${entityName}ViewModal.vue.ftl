@@ -2,7 +2,7 @@
  @description: ${tableInfo.tableComment}查看
  @author: mfish
  @date: ${.now?string["yyyy-MM-dd"]}
- @version: V2.0.0
+ @version: V2.0.1
 -->
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" title="${tableInfo.tableComment}信息">

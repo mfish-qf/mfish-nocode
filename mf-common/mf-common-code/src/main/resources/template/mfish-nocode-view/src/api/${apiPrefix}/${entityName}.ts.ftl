@@ -5,7 +5,7 @@ import { ${entityName}, Req${entityName}, ${entityName}PageModel } from "@/api/$
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V2.0.0
+ * @version: V2.0.1
  */
 enum Api {
   ${entityName} = "/${apiPrefix}/${entityName?uncap_first}"
