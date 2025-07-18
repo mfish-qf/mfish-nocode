@@ -3,10 +3,10 @@ package cn.com.mfish.common.api;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.file.service.StorageService;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
-import org.springframework.stereotype.Service;
 import cn.com.mfish.common.storage.api.remote.RemoteStorageService;
-
 import jakarta.annotation.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 /**
  * @description: 缓存接口单实例实现
@@ -26,5 +26,10 @@ public class BootStorageService implements RemoteStorageService {
     @Override
     public Result<Boolean> logicDelete(String origin, String id) {
         return storageService.logicDelete(id);
+    }
+
+    @Override
+    public ResponseEntity<org.springframework.core.io.Resource> fetch(String origin, String key) {
+        return storageService.fetch(key);
     }
 }

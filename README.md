@@ -81,9 +81,13 @@
 ![微信](https://oscimg.oschina.net/oscnet/up-aaf63a91b96c092ad240b2e9755d926ba62.png)
 
 ### QQ群:
+[![加入QQ2群](https://img.shields.io/badge/QQ2%E7%BE%A4-289877815-blue.svg)](https://qm.qq.com/q/zQdI2rMsj8)
 
-[![加入QQ群](https://img.shields.io/badge/522792773-blue.svg)](https://jq.qq.com/?_wv=1027&k=0A2bxoZX)
-点击链接加入群聊【摸鱼低代码交流群】
+点击链接加入群聊【摸鱼低代码2群】
+
+[![加入QQ1群](https://img.shields.io/badge/QQ1%E7%BE%A4-522792773--已满-blue--已满)](https://jq.qq.com/?_wv=1027&k=0A2bxoZX)
+
+点击链接加入群聊【摸鱼低代码1群】（已满）
 
 ## 🧩功能模块
 

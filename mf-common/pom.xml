@@ -5,7 +5,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mfish-nocode</artifactId>
-        <version>mf-2.0.0</version>
+        <version>mf-2.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mf-common</artifactId>

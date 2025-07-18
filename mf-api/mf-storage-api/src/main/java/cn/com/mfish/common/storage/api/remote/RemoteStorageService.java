@@ -6,6 +6,8 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.common.storage.api.fallback.RemoteStorageFallBack;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,4 +25,7 @@ public interface RemoteStorageService {
 
     @DeleteMapping("/sysFile/logic/{id}")
     Result<Boolean> logicDelete(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
+
+    @GetMapping("/file/{key:.+}")
+    ResponseEntity<Resource> fetch(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("key") String key);
 }

@@ -2,16 +2,14 @@ package cn.com.mfish.common.file.handler;
 
 import cn.com.mfish.common.core.utils.FileUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.file.enums.SuffixType;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import jakarta.annotation.Resource;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -35,18 +33,15 @@ public class StorageHandler {
      * @param contentType   类型
      * @param fileName      文件名称
      * @param path          业务路径
-     * @param isPrivate     是否私有
+     * @param strPrivate     是否私有文件 0否 1是
      * @return 返回存储信息对象，包含文件的详细存储信息
      */
-    public StorageInfo store(InputStream inputStream, long contentLength, String contentType, String fileName, String path, Integer isPrivate) {
-        if (path.startsWith("/")) {
+    public StorageInfo store(StorageInfo storageInfo, InputStream inputStream, long contentLength, String contentType, String fileName, String path, String strPrivate) {
+        if (StringUtils.isEmpty(path)) {
+            path = "";
+        } else if (path.startsWith("/")) {
             path = path.substring(1);
         }
-        String id = Utils.uuid32();
-        StorageInfo storageInfo = new StorageInfo();
-        storageInfo.setId(id);
-        storageInfo.setFileName(fileName);
-        storageInfo.setFileSize((int) contentLength);
         String formatPath = FileUtils.formatFilePath(path);
         if (StringUtils.isEmpty(formatPath)) {
             storageInfo.setFilePath(DateFormatUtils.format(new Date(), "yyyy/MM/dd"));
@@ -54,9 +49,12 @@ public class StorageHandler {
             storageInfo.setFilePath(formatPath + "/" + DateFormatUtils.format(new Date(), "yyyy/MM/dd"));
         }
         storageInfo.setFileType(contentType);
-        String key = buildKey(fileName, id, contentType);
+        storageInfo.setFileName(fileName);
+        storageInfo.setFileSize((int) contentLength);
+        String key = buildKey(fileName, storageInfo.getId(), contentType);
         storageInfo.setFileKey(key);
         String filePath = storageInfo.getFilePath() + "/" + key;
+        Integer isPrivate = "0".equals(strPrivate) ? 0 : 1;
         String url = storage.buildUrl(filePath, isPrivate);
         storageInfo.setFileUrl(url);
         storageInfo.setIsPrivate(isPrivate);
@@ -115,8 +113,8 @@ public class StorageHandler {
      * 根据原始文件名、唯一标识符和内容类型来生成一个唯一的键名，用于在存储或检索文件时使用
      *
      * @param originalFilename 文件的原始名称，用于提取文件扩展名
-     * @param id 唯一标识符，用于生成键名的主要部分
-     * @param contentType 文件的内容类型，用于确定文件的默认扩展名
+     * @param id               唯一标识符，用于生成键名的主要部分
+     * @param contentType      文件的内容类型，用于确定文件的默认扩展名
      * @return 返回生成的唯一文件键名
      */
     public String buildKey(String originalFilename, String id, String contentType) {
@@ -140,12 +138,11 @@ public class StorageHandler {
      * </p>
      *
      * @param filePath 文件路径
-     *                文件在文件系统中的路径，用于定位文件位置
+     *                 文件在文件系统中的路径，用于定位文件位置
      * @param key      文件key
      *                 用于生成完整文件路径的键值，可能结合filePath形成唯一的文件标识
-     * @return
-     *         返回文件对应的输入流，以便调用者可以读取文件内容
-     *         如果文件不存在或无法访问，将返回null
+     * @return 返回文件对应的输入流，以便调用者可以读取文件内容
+     * 如果文件不存在或无法访问，将返回null
      */
     public InputStream getInputStream(String filePath, String key) {
         return storage.getInputStream(buildFilePath(filePath, key));
@@ -158,7 +155,7 @@ public class StorageHandler {
     /**
      * 构建文件访问链接
      *
-     * @param filePath 文件的路径，用于识别特定文件
+     * @param filePath  文件的路径，用于识别特定文件
      * @param isPrivate 是否私有访问的标志，决定生成的链接类型
      * @return 返回生成的文件访问链接
      */

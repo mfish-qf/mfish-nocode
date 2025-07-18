@@ -1,7 +1,6 @@
 package cn.com.mfish.common.core.utils.http;
 
 import cn.com.mfish.common.core.enums.HttpType;
-import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.Result;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
@@ -282,14 +281,18 @@ public class OkHttpUtils {
      */
     private static Result<String> buildResult(OkHttpClient okHttpClient, Request request) throws IOException {
         try (Response response = okHttpClient.newCall(request).execute()) {
-            log.info("请求执行完成，响应状态码：{}，响应信息：{}", response.code(), response.message());
+            int code = response.code();
+            String msg = response.message();
+            log.info("请求执行完成，响应状态码：{}，响应信息：{}", code, msg);
             if (response.body() != null) {
-                return Result.buildResult(response.body().string(), response.code(), response.message());
+                String data = response.body().string();
+                log.info("响应结果：{}", data);
+                return Result.buildResult(data, code, msg);
             }
-            return Result.buildResult(null, response.code(), response.message());
+            return Result.buildResult(null, code, msg);
         } catch (IOException e) {
             log.error("错误:OkHttp请求异常", e);
-            throw new MyRuntimeException(e);
+            throw e;
         }
     }
 

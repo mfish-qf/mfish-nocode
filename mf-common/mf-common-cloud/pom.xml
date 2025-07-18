@@ -6,7 +6,7 @@
     <parent>
         <artifactId>mf-common</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <version>mf-2.0.0</version>
+        <version>mf-2.0.1</version>
     </parent>
     <artifactId>mf-common-cloud</artifactId>
     <description>摸鱼通用微服务</description>

@@ -18,7 +18,7 @@ import java.util.List;
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V2.0.0
+ * @version: V2.0.1
  */
 @Service
 public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig> implements SysConfigService {
