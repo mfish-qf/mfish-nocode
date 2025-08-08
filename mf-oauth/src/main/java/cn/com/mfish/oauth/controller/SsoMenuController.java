@@ -33,12 +33,12 @@ public class SsoMenuController {
     SsoMenuService ssoMenuService;
 
     /**
-     * 分页列表查询
+     * 查询菜单树
      *
      * @param reqSsoMenu 请求参数
      * @return 菜单列表
      */
-    @Operation(summary = "菜单表-分页列表查询", description = "菜单表-分页列表查询")
+    @Operation(summary = "菜单表-查询菜单树", description = "菜单表-查询菜单树")
     @GetMapping
     @RequiresPermissions("sys:menu:query")
     public Result<List<SsoMenu>> queryList(ReqSsoMenu reqSsoMenu) {

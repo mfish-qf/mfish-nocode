@@ -119,6 +119,8 @@ INSERT INTO `sys_dict` VALUES ('d42d4e365a7b3d43f8c5cf37a523dbd5', 'Druid连接�
 INSERT INTO `sys_dict` VALUES ('dce08f2d436e6582ec58301a76fe11fa', '任务过期策略', 'sys_job_misfire', 0, '任务过期处理策略 1立即处理一次 2放弃处理', 'admin', '2023-02-21 11:22:32', 'admin', '2023-02-21 18:07:12');
 INSERT INTO `sys_dict` VALUES ('e8e6e4c3f8e2fb775d6d083883e41839', '代码生成查询条件', 'sys_code_condition', 0, '代码生成的查询条件', 'admin', '2023-05-10 16:11:44', '', NULL);
 INSERT INTO `sys_dict` VALUES ('fb787f5398a1ad30463d4c6a263d3b89', 'API数据来源', 'api_data_source', 0, 'API数据来源', 'admin', '2024-09-25 14:23:14', 'admin', '2024-09-25 14:23:14');
+INSERT INTO `sys_dict` VALUES ('b0f0a03f9e879c2ce3b7722a3cd01061', 'HTTP请求类型', 'http_content_type', 0, NULL, 'admin', '2025-07-22 14:33:21', 'admin', '2025-07-22 14:33:21');
+INSERT INTO `sys_dict` VALUES ('4a9914bd42939163ceb9c5b4002cfa66', 'HTTP请求方式', 'http_request_method', 0, NULL, 'admin', '2025-07-22 14:30:25', 'admin', '2025-07-22 14:30:25');
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -256,7 +258,13 @@ INSERT INTO `sys_dict_item` VALUES ('606ed66c01af90f6474ccc761f4493e4', '980f701
 INSERT INTO `sys_dict_item` VALUES ('b6764e7cc7fe5e95bc4273dd0209403d', '980f701247526a1468f88122c687bee2', 'api_data_source', '文件', '1', 1, 1, 'ant-design:file-outlined', 'green', 0, NULL, 'admin', '2024-09-25 09:49:19', 'admin', '2024-11-15 17:14:47');
 INSERT INTO `sys_dict_item` VALUES ('36280b43c3262c240a058256d8656af3', '980f701247526a1468f88122c687bee2', 'api_data_source', '数据库', '0', 1, 0, 'ant-design:database-outlined', 'blue', 0, NULL, 'admin', '2024-09-25 09:48:41', 'admin', '2024-11-15 17:14:56');
 INSERT INTO `sys_dict_item` VALUES ('beec834fab73cd52190de4e07d1d9e84', '980f701247526a1468f88122c687bee2', 'api_data_source', '文件夹', '-1', 1, -1, 'ant-design:folder-outlined', 'primary', 0, NULL, 'admin', '2024-09-25 09:48:20', 'admin', '2024-11-15 17:15:10');
-
+INSERT INTO `sys_dict_item` VALUES ('5f04a11a89bdee99fddb75c9275a4eff', 'b0f0a03f9e879c2ce3b7722a3cd01061', 'http_content_type', 'multipart/form-data', 'multipart/form-data; charset=utf-8', 0, 3, NULL, 'cyan', 0, NULL, 'admin', '2025-07-22 14:41:59', 'admin', '2025-07-22 14:41:59');
+INSERT INTO `sys_dict_item` VALUES ('736b7180c22a642965310d19f9ea4de7', 'b0f0a03f9e879c2ce3b7722a3cd01061', 'http_content_type', 'application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=utf-8', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2025-07-22 14:40:09', 'admin', '2025-07-23 14:24:46');
+INSERT INTO `sys_dict_item` VALUES ('7d9f53a35c7014b646807cbbfb675489', 'b0f0a03f9e879c2ce3b7722a3cd01061', 'http_content_type', 'application/json', 'application/json; charset=utf-8', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-07-22 14:39:35', 'admin', '2025-07-23 14:24:52');
+INSERT INTO `sys_dict_item` VALUES ('fe02e4db9660a1e05ea079634b352794', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'DELETE', 'DELETE', 0, 4, NULL, 'red', 0, NULL, 'admin', '2025-07-22 14:32:31', 'admin', '2025-07-25 10:59:03');
+INSERT INTO `sys_dict_item` VALUES ('b9377a543e2156dd9b711782e9f93b71', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'PUT', 'PUT', 0, 3, NULL, 'orange', 0, NULL, 'admin', '2025-07-22 14:32:05', 'admin', '2025-07-25 10:58:59');
+INSERT INTO `sys_dict_item` VALUES ('d62ef2a8527779999b0f3e32a4d43aab', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'POST', 'POST', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-07-22 14:31:51', 'admin', '2025-07-22 14:31:51');
+INSERT INTO `sys_dict_item` VALUES ('844db10c10e41a1f7621bb5d5ef6b1b0', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'GET', 'GET', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2025-07-22 14:31:37', 'admin', '2025-07-22 14:31:37');
 
 -- ----------------------------
 -- Table structure for sys_log

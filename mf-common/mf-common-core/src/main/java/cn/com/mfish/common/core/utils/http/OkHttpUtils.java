@@ -43,7 +43,7 @@ public class OkHttpUtils {
     }
 
     public static Result<String> get(String url) throws IOException {
-        return get(url, null, null);
+        return get(url, null, null, null);
     }
 
     public static Result<String> get(String url, TimeOut timeOut) throws IOException {
@@ -51,7 +51,11 @@ public class OkHttpUtils {
     }
 
     public static Result<String> get(String url, Map<String, String> headers) throws IOException {
-        return get(url, headers, null);
+        return get(url, null, headers, null);
+    }
+
+    public static Result<String> get(String url, Map<String, String> params, Map<String, String> headers) throws IOException {
+        return get(url, params, headers, null);
     }
 
     /**
@@ -152,6 +156,56 @@ public class OkHttpUtils {
      * @throws IOException 如果请求过程中发生错误，可能会抛出此异常
      */
     public static <T> Result<String> post(String url, T params, Map<String, String> headers, TimeOut timeOut, MediaType mediaType) throws IOException {
+        return request(url, params, headers, timeOut, mediaType, RequestMethod.POST);
+    }
+
+    /**
+     * 执行PUT请求
+     * 该方法用于向指定URL发送PUT请求，用于更新资源
+     *
+     * @param url       请求的URL，指定资源位置
+     * @param params    请求的参数，通常为JSON字符串或其他格式的数据
+     * @param headers   请求头信息，包含一些附加信息如认证信息、内容类型等
+     * @param timeOut   请求的超时时间设置
+     * @param mediaType 请求体的媒体类型，通常指明发送的数据格式（如"application/json"）
+     * @return 返回请求的结果，包含响应的所有信息
+     * @throws IOException 如果请求过程中发生错误，可能会抛出此异常
+     */
+    public static <T> Result<String> put(String url, T params, Map<String, String> headers, TimeOut timeOut, MediaType mediaType) throws IOException {
+        return request(url, params, headers, timeOut, mediaType, RequestMethod.PUT);
+    }
+
+    /**
+     * 执行DELETE请求
+     * 该方法用于向指定URL发送DELETE请求，用于删除资源
+     *
+     * @param url       请求的URL，指定资源位置
+     * @param params    请求的参数，通常为JSON字符串或其他格式的数据
+     * @param headers   请求头信息，包含一些附加信息如认证信息、内容类型等
+     * @param timeOut   请求的超时时间设置
+     * @param mediaType 请求体的媒体类型，通常指明发送的数据格式（如"application/json"）
+     * @return 返回请求的结果，包含响应的所有信息
+     * @throws IOException 如果请求过程中发生错误，可能会抛出此异常
+     */
+    public static <T> Result<String> delete(String url, T params, Map<String, String> headers, TimeOut timeOut, MediaType mediaType) throws IOException {
+        return request(url, params, headers, timeOut, mediaType, RequestMethod.DELETE);
+    }
+
+    /**
+     * 执行通用请求
+     * 该方法用于向指定URL发送HTTP请求，根据提供的参数构建请求并发送
+     * 主要用于需要向服务器提交数据的场景
+     *
+     * @param url           请求的URL，表示服务器的地址
+     * @param params        请求的参数，通常为JSON字符串或其他格式的数据
+     * @param headers       请求头部，包含一些附加信息如认证信息、内容类型等
+     * @param timeOut       请求的超时时间设置
+     * @param mediaType     请求体的媒体类型，通常指明发送的数据格式（如"application/json"）
+     * @param requestMethod 请求方法，指定HTTP请求的类型（如GET、POST、PUT、DELETE等）
+     * @return 返回请求的结果，包含响应的所有信息
+     * @throws IOException 如果请求过程中发生错误，可能会抛出此异常
+     */
+    public static <T> Result<String> request(String url, T params, Map<String, String> headers, TimeOut timeOut, MediaType mediaType, RequestMethod requestMethod) throws IOException {
         log.info("请求url：{},请求入参：{},请求头部：{}", url, params, headers);
         RequestBody requestBody;
         // 判断请求参数类型
@@ -160,7 +214,7 @@ public class OkHttpUtils {
         } else {
             requestBody = RequestBody.create(JSON.toJSONString(params), mediaType);
         }
-        Request request = buildRequest(url, headers, requestBody, RequestMethod.POST);
+        Request request = buildRequest(url, headers, requestBody, requestMethod);
         OkHttpClient okHttpClient = buildOkHttpClient(url, timeOut);
         return buildResult(okHttpClient, request);
     }
@@ -300,7 +354,7 @@ public class OkHttpUtils {
         //获取SSLSocketFactory
         public static SSLSocketFactory getSSLSocketFactory() {
             try {
-                SSLContext sslContext = SSLContext.getInstance("SSL");
+                SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
                 sslContext.init(null, getTrustManager(), new SecureRandom());
                 return sslContext.getSocketFactory();
             } catch (Exception e) {
