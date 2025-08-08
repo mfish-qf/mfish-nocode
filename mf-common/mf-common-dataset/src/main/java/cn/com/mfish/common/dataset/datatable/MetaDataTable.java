@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.dataset.common.Constant;
 import com.github.pagehelper.Page;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,6 +22,12 @@ public class MetaDataTable extends Page<MetaDataRow> {
 
     public MetaDataTable(MetaDataHeaders headers) {
         this();
+        addColumn(headers);
+    }
+
+    public MetaDataTable(MetaDataHeaders headers, int pageNum, int pageSize, long total) {
+        super(pageNum, pageSize);
+        super.setTotal(total);
         addColumn(headers);
     }
 
@@ -208,6 +215,15 @@ public class MetaDataTable extends Page<MetaDataRow> {
      */
     public MetaDataHeaders getColHeaders() {
         return headers;
+    }
+
+    /**
+     * 获取列头列表
+     *
+     * @return
+     */
+    public List<MetaDataHeader> getColHeaderList() {
+        return new ArrayList<>(headers.values());
     }
 
     /**
