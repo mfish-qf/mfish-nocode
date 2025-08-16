@@ -6,7 +6,7 @@
     <groupId>cn.com.mfish</groupId>
     <artifactId>mfish-nocode</artifactId>
     <packaging>pom</packaging>
-    <version>mf-2.0.1</version>
+    <version>mf-2.1.0</version>
     <modules>
         <module>mf-gateway</module>
         <module>mf-common</module>
@@ -22,7 +22,7 @@
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <mfish.version>mf-2.0.1</mfish.version>
+        <mfish.version>mf-2.1.0</mfish.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -30,6 +30,8 @@
         <spring-boot-admin.version>3.3.6</spring-boot-admin.version>
         <spring-cloud.version>2023.0.6</spring-cloud.version>
         <spring-cloud-alibaba.version>2023.0.3.3</spring-cloud-alibaba.version>
+        <spring-ai.version>1.0.1</spring-ai.version>
+        <spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
         <swagger.doc.version>2.6.0</swagger.doc.version>
         <swagger.core.version>2.2.28</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
@@ -80,6 +82,21 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- SpringAI 依赖配置 -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-bom</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

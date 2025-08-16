@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * @description: 树行分类字典
  * @author: mfish
  * @date: 2024-03-12
- * @version: V2.0.1
+ * @version: V2.1.0
  */
 @Data
 @TableName("sys_dict_category")

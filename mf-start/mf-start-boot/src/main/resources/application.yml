@@ -1,5 +1,5 @@
 mfish:
-  version: 2.0.1
+  version: 2.1.0
   type: boot
 # 开发环境配置
 server:
@@ -23,6 +23,7 @@ spring:
       - swagger
       - gateway
       - shiro
+      - ai
   autoconfigure:
     exclude: org.springframework.cloud.openfeign.FeignAutoConfiguration
   data:

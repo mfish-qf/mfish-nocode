@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @description: 系统日志
  * @author: mfish
  * @date: 2023-01-08
- * @version: V2.0.1
+ * @version: V2.1.0
  */
 @Slf4j
 @Tag(name = "系统日志")

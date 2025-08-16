@@ -12,7 +12,7 @@ import java.util.List;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.0.1
+ * @version: V2.1.0
  */
 public interface SsoRoleMapper extends BaseMapper<SsoRole> {
     int insertRoleMenus(@Param("roleId") String roleId, @Param("menuList") List<String> menuList);

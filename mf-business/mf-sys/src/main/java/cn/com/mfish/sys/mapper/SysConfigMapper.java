@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V2.0.1
+ * @version: V2.1.0
  */
 public interface SysConfigMapper extends BaseMapper<SysConfig> {
 

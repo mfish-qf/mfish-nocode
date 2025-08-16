@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 * @description: ${tableInfo.tableComment}
 * @author: mfish
 * @date: ${.now?string["yyyy-MM-dd"]}
-* @version: V2.0.1
+* @version: V2.1.0
 */
 @Service
 public class ${entityName}ServiceImpl extends ServiceImpl<${entityName}Mapper, ${entityName}> implements ${entityName}Service {

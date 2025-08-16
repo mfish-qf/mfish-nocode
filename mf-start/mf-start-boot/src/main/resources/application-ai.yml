@@ -1,0 +1,13 @@
+spring:
+  ai:
+    openai:
+      api-key: sk-or-v1-b49*****************************************135dae3b
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          max-tokens: 1000
+          temperature: 0.8
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: qwen3:8b
