@@ -13,7 +13,7 @@ import java.util.List;
  * @description: 租户信息表
  * @author: mfish
  * @date: 2023-05-31
- * @version: V2.0.1
+ * @version: V2.1.0
  */
 public interface SsoTenantMapper extends BaseMapper<SsoTenant> {
     List<TenantVo> queryList(@Param("reqSsoTenant") ReqSsoTenant reqSsoTenant);

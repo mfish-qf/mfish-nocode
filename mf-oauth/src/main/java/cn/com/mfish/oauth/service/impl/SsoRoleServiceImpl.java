@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.0.1
+ * @version: V2.1.0
  */
 @Service
 @Slf4j

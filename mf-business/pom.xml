@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mfish-nocode</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <version>mf-2.0.1</version>
+        <version>mf-2.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,6 +15,7 @@
         <module>mf-demo</module>
         <module>mf-sys</module>
         <module>mf-consume</module>
+        <module>mf-ai</module>
     </modules>
 
     <properties>
