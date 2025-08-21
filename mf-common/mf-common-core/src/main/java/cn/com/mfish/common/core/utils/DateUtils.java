@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -121,5 +122,33 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
+    }
+
+    /**
+     * 获取指定日期所在月份的开始时间
+     */
+    public static Date getMonthStart(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.DAY_OF_MONTH, 1);   // 当月第一天
+        cal.set(Calendar.HOUR_OF_DAY, 0);    // 00:00:00.000
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    /**
+     * 获取指定日期所在月份的结束时间
+     */
+    public static Date getMonthEnd(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH)); // 当月最后一天
+        cal.set(Calendar.HOUR_OF_DAY, 23);   // 23:59:59.999
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        return cal.getTime();
     }
 }

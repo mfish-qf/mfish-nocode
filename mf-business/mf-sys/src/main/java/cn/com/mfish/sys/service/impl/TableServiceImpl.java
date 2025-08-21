@@ -11,6 +11,7 @@ import cn.com.mfish.common.dataset.enums.TargetType;
 import cn.com.mfish.common.dblink.db.DBAdapter;
 import cn.com.mfish.common.dblink.db.DBDialect;
 import cn.com.mfish.common.dblink.entity.DataSourceOptions;
+import cn.com.mfish.common.dblink.enums.DBType;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.page.MfPageHelper;
 import cn.com.mfish.common.dblink.query.QueryHandler;
@@ -76,7 +77,11 @@ public class TableServiceImpl implements TableService {
         if (StringUtils.isEmpty(tableSchema)) {
             return query(connectId, "select * from " + tableName, reqPage);
         }
-        return query(connectId, "select * from " + tableSchema + "." + tableName, reqPage);
+        DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
+        if(dataSourceOptions.getDbType() == DBType.mysql){
+            return query(dataSourceOptions, "select * from `" + tableSchema + "`." + tableName, reqPage);
+        }
+        return query(dataSourceOptions, "select * from \"" + tableSchema + "\"." + tableName, reqPage);
 
     }
 
@@ -113,6 +118,10 @@ public class TableServiceImpl implements TableService {
      */
     private MetaDataTable query(String connectId, String sql, ReqPage reqPage) {
         DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
+        return query(dataSourceOptions, sql, reqPage);
+    }
+
+    private MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String sql, ReqPage reqPage) {
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         }
@@ -121,6 +130,10 @@ public class TableServiceImpl implements TableService {
 
     private <T> List<T> queryT(String connectId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
         DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
+        return queryT(dataSourceOptions, cls, function, reqPage);
+    }
+
+    private <T> List<T> queryT(DataSourceOptions<?> dataSourceOptions, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
         DBDialect dialect = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
