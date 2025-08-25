@@ -2,39 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>mf-business</artifactId>
         <groupId>cn.com.mfish</groupId>
+        <artifactId>mf-common</artifactId>
         <version>mf-2.1.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mf-sys</artifactId>
+    <artifactId>mf-common-ai</artifactId>
 
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-web</artifactId>
+            <artifactId>mf-common-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-dblink</artifactId>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-code</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-sys</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-ai</artifactId>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
     </dependencies>
 </project>

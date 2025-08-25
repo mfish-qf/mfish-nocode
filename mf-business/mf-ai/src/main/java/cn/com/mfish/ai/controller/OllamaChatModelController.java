@@ -1,6 +1,6 @@
 package cn.com.mfish.ai.controller;
 
-import cn.com.mfish.ai.entity.ChatResponseVo;
+import cn.com.mfish.common.ai.entity.ChatResponseVo;
 import cn.com.mfish.common.core.utils.StringUtils;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;

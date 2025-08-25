@@ -31,6 +31,7 @@
         <module>mf-common-web</module>
         <module>mf-common-app</module>
         <module>mf-common-cloud</module>
+        <module>mf-common-ai</module>
     </modules>
 
 </project>
