@@ -27,16 +27,12 @@
             <artifactId>mf-common-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-ai</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-ollama</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-openai</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-model</artifactId>
         </dependency>
     </dependencies>
 </project>

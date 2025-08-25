@@ -1,6 +1,6 @@
-package cn.com.mfish.ai.client;
+package cn.com.mfish.sys.agent;
 
-import cn.com.mfish.ai.entity.ChatResponseVo;
+import cn.com.mfish.common.ai.entity.ChatResponseVo;
 import cn.com.mfish.common.core.utils.StringUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -44,10 +44,10 @@ public class MfishAssistant {
      * @return 聊天信息
      */
     public Flux<String> chat(String prompt) {
-        if (StringUtils.isEmpty(prompt)) {
+        if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
-        return this.chatClient.prompt(prompt).user(prompt)
+        return this.chatClient.prompt().user(prompt)
                 .stream()
                 .content();
     }
@@ -60,9 +60,6 @@ public class MfishAssistant {
      * @return 聊天信息
      */
     public Flux<ChatResponseVo> chat(String chatId, String prompt) {
-        if (StringUtils.isEmpty(prompt)) {
-            prompt = DEFAULT_PROMPT;
-        }
         return chat(prompt).mapNotNull(resp -> new ChatResponseVo().setId(chatId)
                 .setContent(resp));
     }

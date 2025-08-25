@@ -1,4 +1,4 @@
-package cn.com.mfish.ai.config;
+package cn.com.mfish.common.ai.config;
 
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @description: Ai配置信息
- * @author: qiufeng
+ * @author: mfish
  * @date: 2025/8/18
  */
 @Configuration
@@ -17,7 +17,6 @@ public class AiConfig {
     public ChatMemory chatMemory(ChatMemoryRepository chatMemoryRepository) {
         return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(10)
                 .build();
     }
 }

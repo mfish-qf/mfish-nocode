@@ -1,4 +1,4 @@
-package cn.com.mfish.ai.entity;
+package cn.com.mfish.common.ai.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
