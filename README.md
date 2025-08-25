@@ -11,7 +11,7 @@
 
 ## 🧱架构图
 
-![](https://mfish-pic.pages.dev/frame.png)
+![](https://pic.xinhongsoft.com/frame.png)
 
 ## 🐟项目介绍
 
@@ -151,40 +151,40 @@
 
 <table>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/login.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/menu.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/login.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/menu.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/screen.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/screenConfig.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/screen.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/screenConfig.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/api.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/flow.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/api.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/flow.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/datasource.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/codebuild.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/datasource.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/codebuild.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/org.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/role.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/org.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/role.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/dict.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/category.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/dict.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/category.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/account.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/tenant.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/account.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/tenant.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/schedule.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/monitor.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/schedule.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/monitor.png" /></td>
     </tr>
     <tr>
-      <td><img src="https://mfish-pic.pages.dev/file.png" /></td>
-      <td><img src="https://mfish-pic.pages.dev/log.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/file.png" /></td>
+      <td><img src="https://pic.xinhongsoft.com/log.png" /></td>
     </tr>
 </table>
 
