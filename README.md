@@ -11,7 +11,7 @@
 
 ## 🧱架构图
 
-![](https://mfish-pic.pages.dev/frame.png)
+![](http://oscimg.oschina.net/AiCreationDetail/up-49fe6faf5fa60eefe9a5c2e0fa65c797.png)
 
 ## 🐟项目介绍
 
