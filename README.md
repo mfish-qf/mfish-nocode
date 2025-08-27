@@ -73,6 +73,8 @@
 
 + [文档地址](http://www.mfish.com.cn)
 + [在线预览](http://app.mfish.com.cn:11119)
++ [阿里云折扣场](https://www.aliyun.com/minisite/goods?userCode=ee6ukuyy)
++ [腾讯云折扣场](https://curl.qcloud.com/ZTJbN0ik)
 
 ## 🎭平台交流
 
