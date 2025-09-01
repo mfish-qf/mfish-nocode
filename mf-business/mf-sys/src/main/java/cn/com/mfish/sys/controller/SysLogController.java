@@ -55,6 +55,7 @@ public class SysLogController {
                 .eq(reqSysLog.getOperType() != null, SysLog::getOperType, reqSysLog.getOperType())
                 .like(reqSysLog.getOperIp() != null, SysLog::getOperIp, reqSysLog.getOperIp())
                 .eq(reqSysLog.getOperStatus() != null, SysLog::getOperStatus, reqSysLog.getOperStatus())
+                .like(reqSysLog.getCreateBy() != null, SysLog::getCreateBy, reqSysLog.getCreateBy())
                 .ge(reqSysLog.getStartTime() != null, SysLog::getCreateTime, reqSysLog.getStartTime())
                 .le(reqSysLog.getEndTime() != null, SysLog::getCreateTime, reqSysLog.getEndTime())
                 .orderByDesc(SysLog::getCreateTime);
