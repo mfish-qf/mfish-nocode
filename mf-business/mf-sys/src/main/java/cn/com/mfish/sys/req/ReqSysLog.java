@@ -35,6 +35,8 @@ public class ReqSysLog {
     private String operIp;
     @Schema(description = "操作状态（0正常 1异常）")
     private Integer operStatus;
+    @Schema(description = "操作人")
+    private String createBy;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "创建时间")
