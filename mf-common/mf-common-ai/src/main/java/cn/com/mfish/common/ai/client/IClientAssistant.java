@@ -1,5 +1,6 @@
 package cn.com.mfish.common.ai.client;
 
+import cn.com.mfish.common.ai.entity.AiRequest;
 import cn.com.mfish.common.ai.entity.ChatResponseVo;
 import reactor.core.publisher.Flux;
 
@@ -11,18 +12,16 @@ import reactor.core.publisher.Flux;
 public interface IClientAssistant {
     /**
      * 聊天
-     *
-     * @param prompt 提示词
+     * @param sessionId 会话id
+     * @param prompt 聊天内容
      * @return 聊天信息
      */
-    Flux<String> chat(String prompt);
+    Flux<String> chat(String sessionId, String prompt);
 
     /**
      * 聊天
-     *
-     * @param chatId 聊天id
-     * @param prompt 聊天内容
+     * @param aiRequest 聊天请求
      * @return 聊天结果
      */
-    Flux<ChatResponseVo> chat(String chatId, String prompt);
+    Flux<ChatResponseVo> chat(AiRequest aiRequest);
 }

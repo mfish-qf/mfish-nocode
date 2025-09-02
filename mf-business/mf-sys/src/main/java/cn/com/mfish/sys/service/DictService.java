@@ -1,8 +1,12 @@
 package cn.com.mfish.sys.service;
 
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.entity.Dict;
+import cn.com.mfish.sys.req.ReqDict;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * @Description: 字典
@@ -29,4 +33,12 @@ public interface DictService extends IService<Dict> {
      * @return 返回删除结果
      */
     Result<Boolean> deleteDict(String id);
+
+    /**
+     * 查询字典列表
+     * @param reqDict 查询参数
+     * @param reqPage 分页参数
+     * @return
+     */
+    List<Dict> queryList(ReqDict reqDict, ReqPage reqPage);
 }

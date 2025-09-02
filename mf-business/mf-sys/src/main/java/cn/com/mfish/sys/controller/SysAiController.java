@@ -30,11 +30,11 @@ public class SysAiController {
 
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponseVo> chat(@RequestBody AiRequest aiRequest) {
-        return mfishAssistant.chat(aiRequest.getId(), aiRequest.getMessage().getContent());
+        return mfishAssistant.chat(aiRequest);
     }
 
     @PostMapping(value = "/assist", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponseVo> sysAssistant(@RequestBody AiRequest aiRequest) {
-        return sysAssistant.chat(aiRequest.getId(), aiRequest.getMessage().getContent());
+        return sysAssistant.chat(aiRequest);
     }
 }

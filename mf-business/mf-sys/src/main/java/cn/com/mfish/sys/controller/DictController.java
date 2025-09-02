@@ -11,8 +11,6 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.req.ReqDict;
 import cn.com.mfish.sys.service.DictService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @Description: 字典
@@ -47,26 +44,9 @@ public class DictController {
     @GetMapping
     @RequiresPermissions("sys:dict:query")
     public Result<PageResult<Dict>> queryPageList(ReqDict reqDict, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(queryList(reqDict, reqPage)), "字典-查询成功!");
+        return Result.ok(new PageResult<>(dictService.queryList(reqDict, reqPage)), "字典-查询成功!");
     }
 
-    /**
-     * 获取列表
-     *
-     * @param reqDict 请求参数
-     * @param reqPage 分页参数
-     * @return 返回列表
-     */
-
-    private List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
-        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
-        LambdaQueryWrapper<Dict> queryWrapper = new LambdaQueryWrapper<Dict>()
-                .like(reqDict.getDictCode() != null, Dict::getDictCode, reqDict.getDictCode())
-                .like(reqDict.getDictName() != null, Dict::getDictName, reqDict.getDictName())
-                .eq(reqDict.getStatus() != null, Dict::getStatus, reqDict.getStatus())
-                .orderByDesc(true, Dict::getCreateTime);
-        return dictService.list(queryWrapper);
-    }
 
     /**
      * 添加
@@ -166,6 +146,6 @@ public class DictController {
     @RequiresPermissions("sys:dict:query")
     public void export(ReqDict reqDict, ReqPage reqPage) throws IOException {
         //swagger调用会用问题，使用postman测试
-        ExcelUtils.write("字典", queryList(reqDict, reqPage));
+        ExcelUtils.write("字典", dictService.queryList(reqDict, reqPage));
     }
 }
