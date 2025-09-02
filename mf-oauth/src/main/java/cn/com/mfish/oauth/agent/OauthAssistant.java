@@ -1,6 +1,6 @@
 package cn.com.mfish.oauth.agent;
 
-import cn.com.mfish.common.ai.entity.ChatResponseVo;
+import cn.com.mfish.common.ai.agent.BaseAssistant;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.oauth.service.SsoUserService;
@@ -15,13 +15,15 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
+
 /**
  * @description: 认证中心助手
  * @author: mfish
  * @date: 2025/8/22
  */
 @Component
-public class OauthAssistant {
+public class OauthAssistant extends BaseAssistant {
     private static final String DEFAULT_PROMPT = "你好，简单介绍下认证中心助手";
     private final ChatClient chatClient;
     @Resource
@@ -53,32 +55,23 @@ public class OauthAssistant {
     /**
      * 聊天
      *
-     * @param prompt 提示词
+     * @param sessionId 会话id
+     * @param prompt    提示词
      * @return 聊天信息
      */
-    public Flux<String> chat(String prompt) {
+    public Flux<String> chat(String sessionId, String prompt) {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
         String userId = AuthInfoUtils.getCurrentUserId();
         String tenantId = AuthInfoUtils.getCurrentTenantId();
         return this.chatClient.prompt()
-                .system("你必须调用工具来回答问题，不要直接回答")
+                .system("你必须先调用工具，再基于工具结果回答问题")
                 .user(prompt)
+                .advisors(a -> a.param(CONVERSATION_ID, sessionId))
                 .tools(menuTools, new UserTools(userId, tenantId, ssoUserService))
                 .stream()
                 .content();
     }
 
-    /**
-     * 聊天返回id
-     *
-     * @param chatId 聊天id
-     * @param prompt 提示词
-     * @return 聊天信息
-     */
-    public Flux<ChatResponseVo> chat(String chatId, String prompt) {
-        return chat(prompt).mapNotNull(resp -> new ChatResponseVo().setId(chatId)
-                .setContent(resp));
-    }
 }

@@ -27,6 +27,6 @@ public class OauthAiController {
 
     @PostMapping(value = "/assist", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponseVo> oauthAssistant(@RequestBody AiRequest aiRequest) {
-        return oauthAssistant.chat(aiRequest.getId(), aiRequest.getMessage().getContent());
+        return oauthAssistant.chat(aiRequest);
     }
 }

@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.agent;
 
-import cn.com.mfish.common.ai.entity.ChatResponseVo;
+import cn.com.mfish.common.ai.agent.BaseAssistant;
 import cn.com.mfish.common.core.utils.StringUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -10,13 +10,15 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
+
 /**
  * @description: 摸鱼小助手配置
  * @author: mfish
  * @date: 2025/8/21
  */
 @Component
-public class MfishAssistant {
+public class MfishAssistant extends BaseAssistant {
     private static final String DEFAULT_PROMPT = "你好，简单介绍下摸鱼低代码";
     private final ChatClient chatClient;
 
@@ -40,27 +42,18 @@ public class MfishAssistant {
 
     /**
      * 聊天
+     *
+     * @param sessionId 会话id
      * @param prompt 提示词
      * @return 聊天信息
      */
-    public Flux<String> chat(String prompt) {
+    public Flux<String> chat(String sessionId, String prompt) {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
         return this.chatClient.prompt().user(prompt)
+                .advisors(a -> a.param(CONVERSATION_ID, sessionId))
                 .stream()
                 .content();
-    }
-
-    /**
-     * 聊天返回id
-     *
-     * @param chatId 聊天id
-     * @param prompt 提示词
-     * @return 聊天信息
-     */
-    public Flux<ChatResponseVo> chat(String chatId, String prompt) {
-        return chat(prompt).mapNotNull(resp -> new ChatResponseVo().setId(chatId)
-                .setContent(resp));
     }
 }

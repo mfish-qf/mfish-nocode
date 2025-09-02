@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 @TableName("sys_dict_item")
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@Schema(description = "sys_dict_item对象 字典项")
+@Schema(description = "字典项")
 public class DictItem<T> extends BaseEntity<String> {
     @Schema(description = "唯一ID")
     @TableId(type = IdType.ASSIGN_UUID)

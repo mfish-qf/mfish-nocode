@@ -1,6 +1,7 @@
 package cn.com.mfish.sys.service.impl;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.sys.req.ReqDictItem;
 import cn.com.mfish.common.sys.service.DictItemService;
@@ -8,8 +9,11 @@ import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.cache.DictCache;
 import cn.com.mfish.sys.entity.Dict;
 import cn.com.mfish.sys.mapper.DictMapper;
+import cn.com.mfish.sys.req.ReqDict;
 import cn.com.mfish.sys.service.DictService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,5 +74,16 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             return Result.ok(true, "字典-删除成功!");
         }
         return Result.fail(false, "错误:字典-删除失败!");
+    }
+
+    @Override
+    public List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
+        PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
+        LambdaQueryWrapper<Dict> queryWrapper = new LambdaQueryWrapper<Dict>()
+                .like(reqDict.getDictCode() != null, Dict::getDictCode, reqDict.getDictCode())
+                .like(reqDict.getDictName() != null, Dict::getDictName, reqDict.getDictName())
+                .eq(reqDict.getStatus() != null, Dict::getStatus, reqDict.getStatus())
+                .orderByDesc(true, Dict::getCreateTime);
+        return list(queryWrapper);
     }
 }

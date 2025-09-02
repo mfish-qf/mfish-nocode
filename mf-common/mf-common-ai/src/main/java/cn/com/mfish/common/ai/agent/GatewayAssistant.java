@@ -1,7 +1,7 @@
 package cn.com.mfish.common.ai.agent;
 
-import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.ai.entity.AiRouterVo;
+import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ResponseEntity;
@@ -60,7 +60,8 @@ public class GatewayAssistant {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
-        ResponseEntity<ChatResponse, AiRouterVo> responseEntity = this.chatClient.prompt().user(prompt).call()
+        ResponseEntity<ChatResponse, AiRouterVo> responseEntity = this.chatClient.prompt()
+                .user(prompt).call()
                 .responseEntity(AiRouterVo.class);
         AiRouterVo vo = Objects.requireNonNullElseGet(responseEntity.entity(), AiRouterVo::new);
         return Result.ok(vo);

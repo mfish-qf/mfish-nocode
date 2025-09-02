@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@Schema(description = "sys_dict对象 字典")
+@Schema(description = "字典")
 public class Dict extends BaseEntity<String> {
     @ExcelProperty("唯一ID")
     @Schema(description = "唯一ID")
