@@ -11,6 +11,8 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Objects;
 
@@ -27,7 +29,8 @@ public class GatewayAssistant {
     public GatewayAssistant(ChatModel openAiChatModel, ChatMemory chatMemory) {
         this.chatClient = ChatClient.builder(openAiChatModel)
                 .defaultSystem("""
-                        你是摸鱼低代码路由小助手，你会根据用户的问题，判断用户需要访问的路由路径!
+                        你是“摸鱼低代码”的路由小助手，你会根据用户的问题，判断用户需要访问的路由路径!
+                        当有人问“摸鱼低代码”相关信息时，实际是在问我们整个平台的信息
                         你只能返回路由路径，不能返回其他内容！
                         结果以json格式返回：
                         返回格式：{"path":"/sys/ai/chat","name":"摸鱼小助手"}
@@ -37,6 +40,12 @@ public class GatewayAssistant {
                         2. /sys/ai/assist : 系统中心助手 系统中心主要包括（字典信息、分类目录信息、日志信息、代码生成功能、在线用户信息、数据库连接信息、数据源信息 等）
                         3. /oauth2/ai/assist : 认证中心助手 认证中心主要包括（菜单信息、组织信息、角色信息、帐号信息、租户信息 等）
                         4. /nocode/ai/assist : 低代码中心助手 低代码中心主要包括（自助大屏、自助API、组件管理、公式信息 等）
+                        
+                        ```
+                        如果用户需要查询字典相关信息、分类目录相关信息、日志相关信息等系统信息，返回系统中心助手的路由路径
+                        如果用户需要查询菜单相关信息、组织相关信息、角色相关信息、帐号相关信息、租户相关信息等认证中心信息，返回认证中心助手的路由路径
+                        如果用户需要查询自助大屏、自助API、数据集、可视化等低代码中心信息，返回低代码中心助手的路由路径
+                        ```
                         
                         注意：
                         返回的路由路径必须上失眠列出来的路由路径
@@ -56,15 +65,19 @@ public class GatewayAssistant {
      * @param prompt 提示词
      * @return 聊天信息
      */
-    public Result<AiRouterVo> chat(String prompt) {
+    public Mono<Result<AiRouterVo>> chat(String prompt) {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
-        ResponseEntity<ChatResponse, AiRouterVo> responseEntity = this.chatClient.prompt()
-                .user(prompt).call()
-                .responseEntity(AiRouterVo.class);
-        AiRouterVo vo = Objects.requireNonNullElseGet(responseEntity.entity(), AiRouterVo::new);
-        return Result.ok(vo);
+        String finalPrompt = prompt;
+        return Mono.fromCallable(() -> {
+                    ResponseEntity<ChatResponse, AiRouterVo> responseEntity = this.chatClient.prompt()
+                            .user(finalPrompt).call()
+                            .responseEntity(AiRouterVo.class);
+                    AiRouterVo vo = Objects.requireNonNullElseGet(responseEntity.entity(), AiRouterVo::new);
+                    return Result.ok(vo);
+                })
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
 }

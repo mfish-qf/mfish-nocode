@@ -12,6 +12,7 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,13 +27,17 @@ public class DictTools {
     @Resource
     private DictItemService dictItemService;
 
-    @Tool(description = "查询字典编码")
+    @Tool(description = "查询字典编码", returnDirect = true)
     public List<Dict> queryCodeByName(@ToolParam(description = "字典名称") String dictName) {
         return dictService.queryList(new ReqDict().setDictName(dictName), new ReqPage(1, 100));
     }
 
-    @Tool(description = "查询字典项")
-    public Result<List<DictItem>> queryByCode(@ToolParam(description = "字典编码") String dictCode) {
-        return dictItemService.queryByCode(dictCode);
+    @Tool(description = "查询字典项", returnDirect = true)
+    public List<DictItem> queryByCode(@ToolParam(description = "字典编码") String dictCode) {
+        Result<List<DictItem>> result = dictItemService.queryByCode(dictCode);
+        if (result.isSuccess()) {
+            return result.getData();
+        }
+        return new ArrayList<>();
     }
 }

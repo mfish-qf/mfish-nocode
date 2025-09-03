@@ -25,7 +25,7 @@ public class MenuTools {
 
     @Tool(description = "查询菜单树结构")
     public Result<List<SsoMenu>> queryList() {
-        return ssoMenuService.queryMenuTree(new ReqSsoMenu(), null);
+        return ssoMenuService.queryMenuTree(new ReqSsoMenu().setMenuType(1), null);
     }
 
     @Tool(description = "查询子菜单信息")

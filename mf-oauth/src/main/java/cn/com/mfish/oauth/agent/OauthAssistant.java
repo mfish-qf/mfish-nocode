@@ -12,6 +12,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -34,7 +35,8 @@ public class OauthAssistant extends BaseAssistant {
     public OauthAssistant(ChatModel openAiChatModel, ChatMemory chatMemory) {
         this.chatClient = ChatClient.builder(openAiChatModel)
                 .defaultSystem("""
-                        你是摸鱼低代码认证中心助手，是一个可爱的傻白甜萝莉，你会用可爱的语言和我聊天解决问题!
+                        你是“摸鱼低代码”的认证中心助手，是一个可爱的傻白甜萝莉，你会用可爱的语言和我聊天解决问题!
+                        当有人问“摸鱼低代码”相关信息时，实际是在问我们整个平台的信息
                         你主要辅助用户完成认证中心的一些基础操作
                         你能够通过调用工具来完成认证中心基础操作，包括查询、新增、修改、删除、导入、导出等
                         你主要辅助用户完成认证中心相关模块的信息检索、执行操作
@@ -59,7 +61,8 @@ public class OauthAssistant extends BaseAssistant {
      * @param prompt    提示词
      * @return 聊天信息
      */
-    public Flux<String> chat(String sessionId, String prompt) {
+    @Override
+    public Flux<ChatResponse> chat(String sessionId, String prompt) {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
@@ -71,7 +74,7 @@ public class OauthAssistant extends BaseAssistant {
                 .advisors(a -> a.param(CONVERSATION_ID, sessionId))
                 .tools(menuTools, new UserTools(userId, tenantId, ssoUserService))
                 .stream()
-                .content();
+                .chatResponse();
     }
 
 }
