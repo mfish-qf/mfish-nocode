@@ -21,6 +21,6 @@ public abstract class BaseAssistant implements IClientAssistant {
     public Flux<ChatResponseVo> chat(AiRequest aiRequest) {
         return chat(aiRequest.getSessionId(), aiRequest.getMessage().getContent())
                 .mapNotNull(resp -> new ChatResponseVo().setId(aiRequest.getId())
-                        .setContent(resp));
+                        .setContent(resp.getResult().getOutput().getText()));
     }
 }

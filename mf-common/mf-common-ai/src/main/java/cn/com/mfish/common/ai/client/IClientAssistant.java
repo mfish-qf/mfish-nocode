@@ -2,6 +2,7 @@ package cn.com.mfish.common.ai.client;
 
 import cn.com.mfish.common.ai.entity.AiRequest;
 import cn.com.mfish.common.ai.entity.ChatResponseVo;
+import org.springframework.ai.chat.model.ChatResponse;
 import reactor.core.publisher.Flux;
 
 /**
@@ -16,7 +17,7 @@ public interface IClientAssistant {
      * @param prompt 聊天内容
      * @return 聊天信息
      */
-    Flux<String> chat(String sessionId, String prompt);
+    Flux<ChatResponse> chat(String sessionId, String prompt);
 
     /**
      * 聊天

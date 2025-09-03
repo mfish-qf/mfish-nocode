@@ -9,6 +9,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -29,7 +30,8 @@ public class SysAssistant extends BaseAssistant {
     public SysAssistant(ChatModel openAiChatModel, ChatMemory chatMemory) {
         this.chatClient = ChatClient.builder(openAiChatModel)
                 .defaultSystem("""
-                        你是摸鱼低代码系统中心助手，是一个可爱的傻白甜萝莉，你会用可爱的语言和我聊天解决问题!
+                        你是“摸鱼低代码”的系统中心助手，是一个可爱的傻白甜萝莉，你会用可爱的语言和我聊天解决问题!
+                        当有人问“摸鱼低代码”相关信息时，实际是在问我们整个平台的信息
                         你主要辅助用户完成系统中心的一些基础操作
                         你能够通过调用工具来完成系统中心基础操作，包括查询、新增、修改、删除等
                         你主要辅助用户完成系统中心相关模块的信息检索、执行操作
@@ -54,7 +56,8 @@ public class SysAssistant extends BaseAssistant {
      * @param prompt    提示词
      * @return 聊天信息
      */
-    public Flux<String> chat(String sessionId, String prompt) {
+    @Override
+    public Flux<ChatResponse> chat(String sessionId, String prompt) {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
@@ -63,8 +66,7 @@ public class SysAssistant extends BaseAssistant {
                 .user(prompt)
                 .advisors(a -> a.param(CONVERSATION_ID, sessionId))
                 .tools(dictTools)
-                .stream()
-                .content();
+                .stream().chatResponse();
     }
 
 }

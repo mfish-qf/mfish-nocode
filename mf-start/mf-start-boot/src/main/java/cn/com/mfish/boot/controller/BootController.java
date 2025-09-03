@@ -44,6 +44,6 @@ public class BootController {
     @GetMapping("/ai/router")
     public Result<AiRouterVo> aiRouter(String prompt) {
         prompt = StringUtils.isEmpty(prompt) ? "介绍下摸鱼低代码" : prompt;
-        return gatewayAssistant.chat(prompt);
+        return gatewayAssistant.chat(prompt).block();
     }
 }
