@@ -16,7 +16,7 @@ import java.util.Date;
  * @description: 任务订阅表
  * @author: mfish
  * @date: 2023-02-20
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @Data
 @TableName("qrtz_job_subscribe")

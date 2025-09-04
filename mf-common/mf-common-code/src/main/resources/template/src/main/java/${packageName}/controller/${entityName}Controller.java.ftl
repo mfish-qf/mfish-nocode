@@ -22,7 +22,7 @@ import java.io.IOException;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @Slf4j
 @Tag(name = "${tableInfo.tableComment}")

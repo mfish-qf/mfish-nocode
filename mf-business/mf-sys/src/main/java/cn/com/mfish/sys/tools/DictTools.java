@@ -10,6 +10,7 @@ import cn.com.mfish.sys.service.DictService;
 import jakarta.annotation.Resource;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author: mfish
  * @date: 2025/8/23
  */
+@Description("字典工具")
 @Component
 public class DictTools {
     @Resource

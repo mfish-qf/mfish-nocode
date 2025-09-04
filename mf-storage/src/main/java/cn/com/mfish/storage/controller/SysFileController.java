@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * @description: 文件存储
  * @author: mfish
  * @date: 2023-03-02
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @Slf4j
 @Tag(name = "文件存储")

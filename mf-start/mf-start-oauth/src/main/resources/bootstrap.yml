@@ -1,5 +1,5 @@
 mfish:
-  version: 2.1.0
+  version: 2.1.1
 # Tomcat
 server: 
   port: 9218
@@ -16,12 +16,8 @@ spring:
     nacos:
       username: @nacos.username@
       password: @nacos.password@
-      discovery:
-        # 服务注册地址
-        server-addr: @nacos.server-addr@
+      server-addr: @nacos.server-addr@
       config:
-        # 配置中心地址
-        server-addr: @nacos.server-addr@
         # 配置文件格式
         file-extension: yml
   config:

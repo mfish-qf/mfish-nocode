@@ -40,22 +40,6 @@
         </filter>
     </appender>
 
-    <appender name="file_sql" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/sql.log</file>
-        <!-- 循环政策：基于时间创建日志文件 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- 日志文件名格式 -->
-            <fileNamePattern>${log.path}/sql.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <!-- 日志最大的历史 60天 -->
-            <maxHistory>60</maxHistory>
-            <maxFileSize>${maxFileSize}</maxFileSize>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${log.pattern}</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
-
     <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.path}/error.log</file>
         <!-- 循环政策：基于时间创建日志文件 -->
@@ -79,7 +63,10 @@
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
-
+    <!--nacos 日志屏蔽-->
+    <logger name="com.alibaba.nacos" level="OFF">
+        <appender-ref ref="error"/>
+    </logger>
     <!-- 系统模块日志级别控制  -->
     <logger name="cn.com.mfish" level="info"/>
     <!-- Spring日志级别控制  -->

@@ -6,7 +6,7 @@
     <parent>
         <artifactId>mf-common</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <version>mf-2.1.0</version>
+        <version>mf-2.1.1</version>
     </parent>
 
     <artifactId>mf-common-code</artifactId>

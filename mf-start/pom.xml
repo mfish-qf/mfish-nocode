@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mfish-nocode</artifactId>
-        <version>mf-2.1.0</version>
+        <version>mf-2.1.1</version>
     </parent>
 
     <artifactId>mf-start</artifactId>

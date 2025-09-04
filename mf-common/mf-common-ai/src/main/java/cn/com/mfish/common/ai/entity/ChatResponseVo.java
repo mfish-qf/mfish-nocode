@@ -13,5 +13,6 @@ import lombok.experimental.Accessors;
 public class ChatResponseVo {
     private String id;
     private String content;
+    private String finishReason;
 
 }

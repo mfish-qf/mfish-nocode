@@ -9,7 +9,7 @@ import java.util.List;
  * @description: 导入导出Demo
  * @author: mfish
  * @date: 2024-09-02
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 public interface DemoImportExportService extends IService<DemoImportExport> {
     int insertBatchSomeColumn(List<DemoImportExport> list);

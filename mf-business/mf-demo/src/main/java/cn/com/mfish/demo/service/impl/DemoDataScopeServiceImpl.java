@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * @description: demo_data_scope
  * @author: mfish
  * @date: 2024-09-04
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @Service
 public class DemoDataScopeServiceImpl extends ServiceImpl<DemoDataScopeMapper, DemoDataScope> implements DemoDataScopeService {

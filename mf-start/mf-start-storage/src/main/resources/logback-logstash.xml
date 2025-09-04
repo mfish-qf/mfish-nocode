@@ -80,6 +80,10 @@
         </filter>
     </appender>
 
+    <!--nacos 日志屏蔽-->
+    <logger name="com.alibaba.nacos" level="OFF">
+        <appender-ref ref="error"/>
+    </logger>
     <!-- 系统模块日志级别控制  -->
     <logger name="cn.com.mfish" level="info"/>
     <!-- Spring日志级别控制  -->

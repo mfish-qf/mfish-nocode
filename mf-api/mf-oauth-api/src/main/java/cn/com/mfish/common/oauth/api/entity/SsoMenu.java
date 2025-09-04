@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -19,7 +19,7 @@ import java.util.List;
  * @Description: 字典项
  * @Author: mfish
  * @date: 2023-01-03
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @Service
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -52,7 +52,7 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> i
     public Result<List<DictItem>> queryByCode(String dictCode) {
         List<DictItem> list = dictCache.getFromCacheAndDB(dictCode);
         if (list == null || list.isEmpty()) {
-            return Result.fail("错误:未获取到字典信息");
+            return Result.fail("错误:未获取到字典项信息");
         }
         return Result.ok(list, "字典项-查询成功!");
     }
