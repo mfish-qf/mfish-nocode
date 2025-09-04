@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mfish-nocode</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <version>mf-2.1.0</version>
+        <version>mf-2.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,7 +18,7 @@
         <!-- SpringCloud Gateway -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
 
         <!-- SpringCloud Alibaba Nacos -->

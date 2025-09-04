@@ -45,9 +45,13 @@ public class RouteFunctionConfig {
     public RouterFunction<ServerResponse> aiRouter() {
         return RouterFunctions.route(GET("/ai/router"), request -> {
             String prompt = request.queryParam("prompt").orElse("介绍下摸鱼低代码");
-            Mono<Result<AiRouterVo>> result = gatewayAssistant.chat(prompt);
-            return ServerResponse.ok()
-                    .body(result, Result.class);
+            try {
+                Mono<Result<AiRouterVo>> result = gatewayAssistant.chat(prompt);
+                return ServerResponse.ok()
+                        .body(result, Result.class);
+            } catch (Exception ex) {
+                return Mono.error(ex);
+            }
         });
     }
 }

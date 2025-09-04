@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 @Service
 public class SsoMenuServiceImpl extends ServiceImpl<SsoMenuMapper, SsoMenu> implements SsoMenuService {

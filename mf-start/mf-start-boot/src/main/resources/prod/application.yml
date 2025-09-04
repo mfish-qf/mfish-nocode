@@ -1,5 +1,5 @@
 mfish:
-  version: 2.1.0
+  version: 2.1.1
   type: boot
 # 开发环境配置
 server:

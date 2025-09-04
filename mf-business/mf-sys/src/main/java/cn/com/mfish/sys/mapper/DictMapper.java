@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @version: V2.1.0
+ * @version: V2.1.1
  */
 public interface DictMapper extends BaseMapper<Dict> {
     Integer isDictCodeExist(@Param("id") String id, @Param("dictCode") String dictCode);

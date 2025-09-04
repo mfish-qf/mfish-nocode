@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,7 +19,9 @@ import java.util.Date;
  */
 @Data
 @Schema(description = "基础对象")
-public class BaseEntity<T> {
+public class BaseEntity<T> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     @ExcelIgnore
     @Schema(description = "ID")
     @Accessors(chain = true)
