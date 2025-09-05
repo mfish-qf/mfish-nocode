@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @description: 文档拦截
@@ -34,7 +36,7 @@ public class SwaggerInstancesSubscriber extends Subscriber<InstancesChangeEvent>
     private RouteDefinitionLocator locator;
     @Resource
     private SwaggerUiConfigProperties swaggerUiConfigProperties;
-    @Value("#{'${swagger.ignoreServers}'.split(',')}")
+    @Value("#{'${swagger.ignoreServers:mf-gateway}'.split(',')}")
     private Set<String> ignoreServers;
 
     @PostConstruct
@@ -50,6 +52,8 @@ public class SwaggerInstancesSubscriber extends Subscriber<InstancesChangeEvent>
         if (routeList == null || routeList.isEmpty()) {
             return;
         }
+        Map<String, String> map = routeList.stream().filter(route -> !route.getId().startsWith(ID_PREFIX))
+                .collect(Collectors.toMap((route) -> route.getUri().getHost(), RouteDefinition::getId));
         Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> set = new HashSet<>(routeList.size());
         for (RouteDefinition route : routeList) {
             if (!route.getMetadata().isEmpty()) {
@@ -57,7 +61,7 @@ public class SwaggerInstancesSubscriber extends Subscriber<InstancesChangeEvent>
                 if (ignoreServers.contains(name)) {
                     continue;
                 }
-                set.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(name, "/" + name + DOC_PATH, name));
+                set.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(name, "/" + map.getOrDefault(name, name) + DOC_PATH, name));
             }
         }
         swaggerUiConfigProperties.setUrls(set);
