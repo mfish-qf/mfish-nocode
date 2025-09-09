@@ -6,7 +6,6 @@ import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.gateway.common.GatewayUtils;
-import cn.com.mfish.gateway.common.ServletUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -14,6 +13,7 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -73,7 +73,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
                 if (selfCheck != CheckStatus.无需校验) {
                     GatewayUtils.addHeader(mutate, RPCConstants.REQ_CHECK_CAPTCHA_EXCEPTION, e.getMessage());
                 } else {
-                    return ServletUtils.webFluxResponseWriter(exchange.getResponse(), e.getMessage());
+                    return GatewayUtils.webFluxResponseWriter(exchange.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
                 }
             }
             return chain.filter(exchange);

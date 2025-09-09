@@ -1,12 +1,13 @@
 package cn.com.mfish.gateway.handler;
 
-import cn.com.mfish.gateway.common.ServletUtils;
+import cn.com.mfish.gateway.common.GatewayUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -37,6 +38,6 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             msg = "错误:内部服务器错误";
         }
         log.error("[统一异常处理]----请求路径:{},异常信息:{}", exchange.getRequest().getPath(), ex.getMessage());
-        return ServletUtils.webFluxResponseWriter(response, msg);
+        return GatewayUtils.webFluxResponseWriter(response, HttpStatus.INTERNAL_SERVER_ERROR, msg);
     }
 }

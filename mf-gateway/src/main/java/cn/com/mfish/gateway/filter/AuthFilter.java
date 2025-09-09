@@ -7,8 +7,8 @@ import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.gateway.common.GatewayUtils;
-import cn.com.mfish.gateway.common.ServletUtils;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -18,8 +18,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import jakarta.annotation.Resource;
 
 /**
  * @author: mfish
@@ -82,9 +80,16 @@ public class AuthFilter implements GlobalFilter, Ordered {
         GatewayUtils.addHeader(mutate, RPCConstants.REQ_ACCOUNT, weChatToken.getAccount());
     }
 
+    /**
+     * 未授权响应
+     *
+     * @param exchange 交换对象
+     * @param msg      异常信息
+     * @return 响应结果
+     */
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange, String msg) {
         log.error("[鉴权异常处理]请求路径:{}", exchange.getRequest().getPath());
-        return ServletUtils.webFluxResponseWriter(exchange.getResponse(), msg, HttpStatus.UNAUTHORIZED.value());
+        return GatewayUtils.webFluxResponseWriter(exchange.getResponse(), HttpStatus.UNAUTHORIZED, msg);
     }
 
     @Override

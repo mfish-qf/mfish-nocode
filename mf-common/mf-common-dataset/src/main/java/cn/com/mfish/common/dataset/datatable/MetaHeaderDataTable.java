@@ -20,6 +20,9 @@ public class MetaHeaderDataTable {
     private MetaDataHeaders headers;
 
     public MetaHeaderDataTable(MetaDataTable metaDataTable) {
+        if (metaDataTable == null) {
+            return;
+        }
         this.table = new PageResult<>(metaDataTable);
         this.headers = metaDataTable.getColHeaders();
     }
