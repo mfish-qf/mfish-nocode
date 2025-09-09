@@ -1,9 +1,10 @@
 package cn.com.mfish.gateway.handler;
 
-import cn.com.mfish.gateway.common.ServletUtils;
+import cn.com.mfish.gateway.common.GatewayUtils;
 import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.GatewayCallbackManager;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
@@ -24,6 +25,6 @@ public class RateLimitHandler implements WebExceptionHandler {
             return Mono.error(ex);
         }
         return GatewayCallbackManager.getBlockHandler().handleRequest(exchange, ex)
-                .flatMap(res -> ServletUtils.webFluxResponseWriter(exchange.getResponse(), "错误:服务器繁忙，请稍候再试！"));
+                .flatMap(res -> GatewayUtils.webFluxResponseWriter(exchange.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR, "错误:服务器繁忙，请稍候再试！"));
     }
 }

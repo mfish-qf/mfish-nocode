@@ -8,10 +8,11 @@ import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.TokenValidator;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.entity.ContentType;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @description: token过滤器
@@ -28,7 +29,8 @@ public class TokenFilter implements Filter {
             return;
         }
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        response.setContentType(ContentType.APPLICATION_JSON.toString());
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().print(result);
     }
