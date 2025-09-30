@@ -353,6 +353,7 @@ CREATE TABLE `mf_screen_resource`  (
   `favorites_count` int NULL DEFAULT NULL COMMENT '收藏次数',
   `click_count` int NULL DEFAULT NULL COMMENT '点击次数',
   `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+  `audit_state` tinyint(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '审核状态（0待审核 1审核通过 2审核不通过）',
   `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Service
 @Slf4j
@@ -272,6 +273,8 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
     private Result<List<String>> getOrgIdsByOrg(String tenantId, List<SsoOrg> list, TreeDirection direction) {
         //todo tenantId暂时未用到，后续完善
         switch (direction) {
+            case 当前:
+                return Result.ok(list.stream().map(SsoOrg::getId).toList(), "查询当前组织ID成功");
             case 向下:
                 return Result.ok(baseMapper.getOrgDownIdsByCode(list.stream().map(SsoOrg::getOrgCode).toList()), "查询下级组织ID成功");
             case 向上:
@@ -299,6 +302,8 @@ public class SsoOrgServiceImpl extends ServiceImpl<SsoOrgMapper, SsoOrg> impleme
         }
         List<SsoOrg> orgList;
         switch (direction) {
+            case 当前:
+                return Collections.singletonList(org);
             case 向下:
                 orgList = downOrg(org.getOrgCode());
                 List<SsoOrg> orgTree = new ArrayList<>();

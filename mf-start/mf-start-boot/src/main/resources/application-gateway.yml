@@ -14,3 +14,5 @@ gateway:
       packageName: cn.com.mfish.nocode
     - path: /ai
       packageName: cn.com.mfish.ai
+    - path: /workflow
+      packageName: cn.com.mfish.workflow

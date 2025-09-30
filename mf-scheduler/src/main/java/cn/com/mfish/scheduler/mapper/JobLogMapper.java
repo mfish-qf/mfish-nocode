@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @description: 任务日志
  * @author: mfish
  * @date: 2023-02-14
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 public interface JobLogMapper extends BaseMapper<JobLog> {
 

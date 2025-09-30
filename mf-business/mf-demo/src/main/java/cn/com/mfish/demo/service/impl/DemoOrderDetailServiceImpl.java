@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * @description: 销售订单明细
  * @author: mfish
  * @date: 2024-09-02
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Service
 public class DemoOrderDetailServiceImpl extends ServiceImpl<DemoOrderDetailMapper, DemoOrderDetail> implements DemoOrderDetailService {

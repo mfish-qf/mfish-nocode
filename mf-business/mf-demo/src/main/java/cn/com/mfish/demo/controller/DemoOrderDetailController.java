@@ -27,7 +27,7 @@ import java.util.List;
  * @description: 销售订单明细
  * @author: mfish
  * @date: 2024-09-02
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Slf4j
 @Tag(name = "销售订单明细")

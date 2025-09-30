@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @description: 系统日志
  * @author: mfish
  * @date: 2023-01-08
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 public interface SysLogService extends IService<SysLog> {
     Result<SysLog> insertLog(SysLog sysLog);

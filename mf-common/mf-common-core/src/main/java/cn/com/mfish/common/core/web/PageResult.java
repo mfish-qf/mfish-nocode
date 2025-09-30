@@ -57,6 +57,9 @@ public class PageResult<T> implements Serializable {
      * @param total   数据总记录数
      */
     public PageResult(List<T> list, int pageNum, int pageSize, long total) {
+        if(pageSize <= 0){
+            pageSize = 10;
+        }
         int pages = (int) (total / pageSize);
         pages = total % pageSize != 0 ? pages + 1 : pages;
         this.setList(list)

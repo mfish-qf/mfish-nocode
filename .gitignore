@@ -62,3 +62,9 @@
 /mf-business/mf-ai/target/
 /mf-common/mf-common-ai/target/
 /mf-start/mf-start-ai/target/
+/mf-business/mf-workflow/target/
+/mf-start/mf-start-workflow/target/
+/mf-common/mf-common-workflow/target/
+/mf-api/mf-nocode-api/target/
+/mf-api/mf-workflow-api/target/
+/mf-common/mf-common-nocode/target/

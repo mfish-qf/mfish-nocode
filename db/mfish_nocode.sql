@@ -530,7 +530,6 @@ INSERT INTO `sso_menu` VALUES ('ec07264b984c531ee729eda12ada4c49', 'e862cd0f1743
 INSERT INTO `sso_menu` VALUES ('bff2e13c8ef26ffc98cb4941b2390316', 'e862cd0f17439fe26950e5ecb9492cc2', '000130000300004', 3, '删除', '#', 4, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:delete', 0, 1, NULL, NULL, '', 'admin', '2024-09-02 16:24:18', '', NULL);
 INSERT INTO `sso_menu` VALUES ('1eb28fcc2c9e009ddf9accec8be4665d', '53e8eaceee36c1d54e43319fdd60811b', '0001300004', 2, '数据权限', 'ant-design:filter-outlined', 10, 1, '/demo-data-scope', '/demo/demo-data-scope/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-04 17:29:18', 'admin', '2024-09-09 21:12:50');
 INSERT INTO `sso_menu` VALUES ('0744327e98f399788bb030efb1c0b637', '1eb28fcc2c9e009ddf9accec8be4665d', '000130000400001', 3, '查询', '#', 1, 2, '', NULL, 'demo:demoDataScope:query', 0, 1, NULL, NULL, '', 'admin', '2024-09-04 17:29:18', '', NULL);
-INSERT INTO `sso_menu` VALUES ('08a567f09c8d90660c23f2b432e0e1d9', '53e8eaceee36c1d54e43319fdd60811b', '0001300005', 2, 'ChatGpt', 'ion:chatbubbles-outline', 1, 1, '/ai', '/demo/ai/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-05 10:12:02', 'admin', '2024-09-05 10:12:40');
 INSERT INTO `sso_menu` VALUES ('5a5a25e8923ace2700133ab997af0e80', '53e8eaceee36c1d54e43319fdd60811b', '0001300006', 2, '上传下载', 'ant-design:cloud-upload-outlined', 2, 1, '/demo-up-down', '/demo/demo-up-down/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-08 21:20:18', 'admin', '2024-09-08 21:20:41');
 INSERT INTO `sso_menu` VALUES ('0913e14334f59671ae6abfdfce5e0559', '5a5a25e8923ace2700133ab997af0e80', '000130000600001', 3, '上传', '#', 1, 2, '', NULL, 'demo:demoImportExport:query,demo:demoImportExport:update', 0, 1, NULL, 1, '', 'admin', '2024-09-09 21:59:21', 'admin', '2024-09-09 21:59:35');
 INSERT INTO `sso_menu` VALUES ('23f38246b88faf0826c17d57c0d846af', '53e8eaceee36c1d54e43319fdd60811b', '0001300007', 2, '主子表', 'ant-design:table-outlined', 5, 1, '/demo-order', '/demo/demo-order/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2024-09-13 14:22:11', 'admin', '2024-09-13 14:43:25');
@@ -1988,6 +1987,7 @@ CREATE TABLE `mf_screen_resource`  (
                                        `favorites_count` int NULL DEFAULT NULL COMMENT '收藏次数',
                                        `click_count` int NULL DEFAULT NULL COMMENT '点击次数',
                                        `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
+                                       `audit_state` tinyint(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '审核状态（0待审核 1审核通过 2审核不通过）',
                                        `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
                                        `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
                                        `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
