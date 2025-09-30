@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mfish-nocode</artifactId>
-        <version>mf-2.1.1</version>
+        <version>mf-2.2.0</version>
     </parent>
 
     <artifactId>mf-start</artifactId>
@@ -21,6 +21,7 @@
         <module>mf-start-demo</module>
         <module>mf-start-nocode</module>
         <module>mf-start-ai</module>
+        <module>mf-start-workflow</module>
     </modules>
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>

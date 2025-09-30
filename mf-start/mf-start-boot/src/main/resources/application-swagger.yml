@@ -4,7 +4,7 @@ swagger:
   description : 摸鱼框架接口文档
   license : Powered By mfish
   licenseUrl : https://github.com/mfish-qf/mfish-nocode/blob/main/LICENSE
-  version : 版本号:V2.1.1
+  version : 版本号:V2.2.0
   termsOfServiceUrl : http://www.mfish.com.cn
   contact:
     name: mfish

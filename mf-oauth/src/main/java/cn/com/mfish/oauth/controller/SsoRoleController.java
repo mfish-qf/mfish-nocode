@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Slf4j
 @Tag(name = "角色信息表")

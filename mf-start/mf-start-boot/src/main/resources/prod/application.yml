@@ -1,5 +1,5 @@
 mfish:
-  version: 2.1.1
+  version: 2.2.0
   type: boot
 # 开发环境配置
 server:
@@ -172,3 +172,6 @@ rocketmq:
     #目的地（topic:tag）
     #topic
     topic: mfish-scheduler-topic
+# Flowable 会自动建表
+flowable:
+  database-schema-update: true

@@ -9,6 +9,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.oauth.annotation.RequiresRoles;
+import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
@@ -78,6 +79,21 @@ public class OauthUtils {
      */
     public static List<UserRole> getRoles() {
         Result<List<UserRole>> result = getRemoteUserService().getRoles(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId());
+        if (result == null || !result.isSuccess()) {
+            return new ArrayList<>();
+        }
+        return result.getData();
+    }
+
+    /**
+     * 获取当前用户组织架构
+     * 注意：该方法请勿用异步调用
+     *
+     * @param direction 组织架构方向，可选值：all（查询所有）、up（向上查询）、down（向下查询）
+     * @return 返回用户组织架构
+     */
+    public static List<SsoOrg> getOrgs(String direction) {
+        Result<List<SsoOrg>> result = getRemoteUserService().getOrgs(RPCConstants.INNER, AuthInfoUtils.getCurrentUserId(), direction);
         if (result == null || !result.isSuccess()) {
             return new ArrayList<>();
         }

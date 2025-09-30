@@ -7,6 +7,7 @@ package cn.com.mfish.common.core.enums;
  */
 public enum TreeDirection {
     双向("all"),
+    当前("current"),
     向上("up"),
     向下("down");
     private final String value;

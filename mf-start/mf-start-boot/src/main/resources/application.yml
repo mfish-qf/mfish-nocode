@@ -1,5 +1,5 @@
 mfish:
-  version: 2.1.1
+  version: 2.2.0
   type: boot
 # 开发环境配置
 server:
@@ -74,7 +74,7 @@ spring:
         # 主库数据源
         master:
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://localhost:3306/mfish_nocode?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:mysql://localhost:3306/mfish_nocode?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
           username: root
           password: 123456
           # 从库数据源
@@ -175,3 +175,11 @@ rocketmq:
     #目的地（topic:tag）
     #topic
     topic: mfish-scheduler-topic
+# Flowable 会自动建表
+flowable:
+  # 自动更新数据库结构
+  database-schema-update: true
+  # 启用异步执行器
+  async-executor-activate: true
+  # 检查流程定义
+#  check-process-definitions: false

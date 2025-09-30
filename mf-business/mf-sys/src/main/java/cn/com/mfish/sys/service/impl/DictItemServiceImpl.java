@@ -19,7 +19,7 @@ import java.util.List;
  * @Description: 字典项
  * @Author: mfish
  * @date: 2023-01-03
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Service
 @SuppressWarnings({"rawtypes", "unchecked"})

@@ -5,7 +5,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mfish-nocode</artifactId>
-        <version>mf-2.1.1</version>
+        <version>mf-2.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mf-common</artifactId>
@@ -32,6 +32,8 @@
         <module>mf-common-app</module>
         <module>mf-common-cloud</module>
         <module>mf-common-ai</module>
+        <module>mf-common-workflow</module>
+        <module>mf-common-nocode</module>
     </modules>
 
 </project>

@@ -29,7 +29,7 @@ import java.math.BigDecimal;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Data
 @TableName("${tableInfo.tableName}")

@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mf-start</artifactId>
-        <version>mf-2.1.1</version>
+        <version>mf-2.2.0</version>
     </parent>
 
     <artifactId>mf-start-boot</artifactId>
@@ -51,11 +51,6 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-ai</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-bi</artifactId>
             <scope>system</scope>
             <classifier>pg</classifier>
@@ -65,6 +60,11 @@
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-api</artifactId>
+            <version>${mfish.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-workflow</artifactId>
             <version>${mfish.version}</version>
         </dependency>
         <dependency>

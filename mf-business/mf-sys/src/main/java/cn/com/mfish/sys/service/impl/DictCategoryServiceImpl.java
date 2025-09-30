@@ -7,10 +7,10 @@ import cn.com.mfish.common.core.utils.TreeUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.sys.api.entity.DictCategory;
-import cn.com.mfish.sys.mapper.DictCategoryMapper;
 import cn.com.mfish.common.sys.req.ReqDictCategory;
 import cn.com.mfish.common.sys.service.DictCategoryService;
+import cn.com.mfish.sys.api.entity.DictCategory;
+import cn.com.mfish.sys.mapper.DictCategoryMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V2.1.1
+ * @version: V2.2.0
  */
 @Service
 public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, DictCategory> implements DictCategoryService {
@@ -220,6 +221,8 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         }
         List<DictCategory> categoryList;
         switch (direction) {
+            case 当前:
+                return Collections.singletonList(category);
             case 向下:
                 categoryList = downCategory(category.getTreeCode());
                 break;
