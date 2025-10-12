@@ -121,6 +121,7 @@ INSERT INTO `sys_dict` VALUES ('e8e6e4c3f8e2fb775d6d083883e41839', '代码生成
 INSERT INTO `sys_dict` VALUES ('fb787f5398a1ad30463d4c6a263d3b89', 'API数据来源', 'api_data_source', 0, 'API数据来源', 'admin', '2024-09-25 14:23:14', 'admin', '2024-09-25 14:23:14');
 INSERT INTO `sys_dict` VALUES ('b0f0a03f9e879c2ce3b7722a3cd01061', 'HTTP请求类型', 'http_content_type', 0, NULL, 'admin', '2025-07-22 14:33:21', 'admin', '2025-07-22 14:33:21');
 INSERT INTO `sys_dict` VALUES ('4a9914bd42939163ceb9c5b4002cfa66', 'HTTP请求方式', 'http_request_method', 0, NULL, 'admin', '2025-07-22 14:30:25', 'admin', '2025-07-22 14:30:25');
+INSERT INTO `sys_dict` VALUES ('220bbd3b1dd32fd37d0abbd279a14774', '工作流任务状态', 'workflow_task_status', 0, '工作流任务状态字典', 'admin', '2025-10-10 16:27:01', 'admin', '2025-10-10 16:27:01');
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -265,6 +266,9 @@ INSERT INTO `sys_dict_item` VALUES ('fe02e4db9660a1e05ea079634b352794', '4a9914b
 INSERT INTO `sys_dict_item` VALUES ('b9377a543e2156dd9b711782e9f93b71', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'PUT', 'PUT', 0, 3, NULL, 'orange', 0, NULL, 'admin', '2025-07-22 14:32:05', 'admin', '2025-07-25 10:58:59');
 INSERT INTO `sys_dict_item` VALUES ('d62ef2a8527779999b0f3e32a4d43aab', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'POST', 'POST', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-07-22 14:31:51', 'admin', '2025-07-22 14:31:51');
 INSERT INTO `sys_dict_item` VALUES ('844db10c10e41a1f7621bb5d5ef6b1b0', '4a9914bd42939163ceb9c5b4002cfa66', 'http_request_method', 'GET', 'GET', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2025-07-22 14:31:37', 'admin', '2025-07-22 14:31:37');
+INSERT INTO `sys_dict_item` VALUES ('2cdf5389b1d6a35e52c14486e04a3a57', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '待审批', 'created', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2025-10-10 16:27:42', 'admin', '2025-10-10 16:27:42');
+INSERT INTO `sys_dict_item` VALUES ('261f489024bb90163e49ee85498df47e', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已审批', 'completed', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-10-10 16:28:02', 'admin', '2025-10-10 16:28:08');
+INSERT INTO `sys_dict_item` VALUES ('07582f8cb8443cd3de3f5ab150386690', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已取消', 'terminated', 0, 3, '', 'red', 0, NULL, 'admin', '2025-10-10 16:29:10', 'admin', '2025-10-10 16:29:14');
 
 -- ----------------------------
 -- Table structure for sys_log

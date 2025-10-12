@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.workflow.api.entity.*;
+import cn.com.mfish.common.workflow.api.req.ReqAllTask;
 import cn.com.mfish.common.workflow.api.req.ReqProcess;
 import cn.com.mfish.common.workflow.api.req.ReqTask;
 import cn.com.mfish.common.workflow.enums.AuditOperator;
@@ -74,39 +75,51 @@ public class ProcessController {
         return Result.ok(flowableService.queryImage(processInstanceId), "查询流程图片成功");
     }
 
-    @Operation(summary = "查询实例的任务进度")
-    @GetMapping("/tasks/{processInstanceId}")
-    public Result<List<MfTask>> getProcessTasks(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {
-        return Result.ok(flowableService.getProcessTasks(processInstanceId), "查询任务列表成功");
-    }
-
     @Operation(summary = "查询实例的审批意见")
     @GetMapping("/comments/{processInstanceId}")
     public Result<List<AuditComment>> getAuditComments(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {
         return Result.ok(flowableService.getAuditComments(processInstanceId), "查询审批意见列表成功");
     }
 
+    @Operation(summary = "查询实例的任务进度")
+    @GetMapping("/tasks/{processInstanceId}")
+    public Result<List<MfTask>> getProcessTasks(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {
+        return Result.ok(flowableService.getProcessTasks(processInstanceId), "查询任务列表成功");
+    }
+
     @Operation(summary = "查询待处理任务列表")
-    @GetMapping("/pendingTasks")
+    @GetMapping("/tasks/pending")
     public Result<PageResult<MfTask>> getPendingTasks(ReqTask reqTask, ReqPage reqPage) {
         return Result.ok(flowableService.getPendingTasks(reqTask, reqPage), "查询待处理任务列表成功");
     }
 
+    @Operation(summary = "查询所有任务列表")
+    @GetMapping("/tasks/all")
+    public Result<PageResult<MfTask>> getAllTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
+        return Result.ok(flowableService.getAllTasks(reqAllTask, reqPage), "查询所有任务列表成功");
+    }
+
     @Operation(summary = "查询历史任务-包括当前正在处理的任务")
-    @GetMapping("/historyTasks/{processInstanceId}")
+    @GetMapping("/tasks/history/{processInstanceId}")
     public Result<List<MfTask>> getHistoryTasks(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {
         return Result.ok(flowableService.getProcessTasks(processInstanceId, true), "查询历史任务列表成功");
     }
 
+    @Operation(summary = "查询当前用户任务统计")
+    @GetMapping("/tasks/total")
+    public Result<TaskTotal> getTaskTotal(ReqTask reqTask) {
+        return Result.ok(flowableService.getTaskTotal(reqTask), "查询当前用户任务统计成功");
+    }
+
     @Operation(summary = "审核通过")
-    @PostMapping("/approved")
+    @PostMapping("/tasks/approved")
     public Result<String> approvedTask(@RequestBody ApproveInfo approveInfo) {
         flowableService.completeTask(AuditOperator.审核通过, approveInfo);
         return Result.ok("审核通过");
     }
 
     @Operation(summary = "审核不通过")
-    @PostMapping("/rejected")
+    @PostMapping("/tasks/rejected")
     public Result<String> rejectedTask(@RequestBody ApproveInfo approveInfo) {
         flowableService.completeTask(AuditOperator.审核拒绝, approveInfo);
         return Result.ok("审核不通过");

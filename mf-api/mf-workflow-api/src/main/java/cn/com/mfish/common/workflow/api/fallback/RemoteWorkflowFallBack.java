@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.workflow.api.entity.*;
 import cn.com.mfish.common.workflow.api.remote.RemoteWorkflowService;
+import cn.com.mfish.common.workflow.api.req.ReqAllTask;
 import cn.com.mfish.common.workflow.api.req.ReqProcess;
 import cn.com.mfish.common.workflow.api.req.ReqTask;
 import lombok.extern.slf4j.Slf4j;
@@ -77,8 +78,18 @@ public class RemoteWorkflowFallBack implements FallbackFactory<RemoteWorkflowSer
             }
 
             @Override
+            public Result<PageResult<MfTask>> getAllTasks(String origin, ReqAllTask reqAllTask, ReqPage reqPage) {
+                return Result.fail("错误：查询所有任务列表失败");
+            }
+
+            @Override
             public Result<List<MfTask>> getHistoryTasks(String origin, String processInstanceId) {
                 return Result.fail("错误：查询历史任务失败");
+            }
+
+            @Override
+            public Result<TaskTotal> getTaskTotal(String origin, ReqTask reqTask) {
+                return Result.fail("错误：查询当前用户任务统计失败");
             }
 
             @Override
