@@ -8,6 +8,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.workflow.api.entity.*;
 import cn.com.mfish.common.workflow.api.enums.FlowKey;
+import cn.com.mfish.common.workflow.api.req.ReqAllTask;
 import cn.com.mfish.common.workflow.api.req.ReqProcess;
 import cn.com.mfish.common.workflow.api.req.ReqTask;
 import cn.com.mfish.common.workflow.common.Constants;
@@ -29,6 +30,8 @@ import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +79,14 @@ public class FlowableServiceImpl implements FlowableService {
             log.error("错误：流程实例已存在");
             throw new MyRuntimeException("错误：流程实例已存在");
         }
-        // 设置启动人
-        identityService.setAuthenticatedUserId(AuthInfoUtils.getCurrentAccount());
+        // 设置启动人 如果未指定启动人，则默认使用当前登录用户 否则使用指定的启动人
+        if (StringUtils.isEmpty(param.getStartAccount())) {
+            String account = AuthInfoUtils.getCurrentAccount();
+            identityService.setAuthenticatedUserId(account);
+            param.setStartAccount(account);
+        } else {
+            identityService.setAuthenticatedUserId(param.getStartAccount());
+        }
         // 设置流程变量
         ProcessInstance pi = runtimeService.startProcessInstanceByKey(param.getKey(), param.getId().toString(), Map.of(Constants.WORKFLOW_PARAM, param));
         // 清理上下文，避免线程污染
@@ -192,7 +201,7 @@ public class FlowableServiceImpl implements FlowableService {
             throw new MyRuntimeException("错误：该用户无权限删除流程实例");
         }
         try {
-            runtimeService.deleteProcessInstance(pi.getProcessInstanceId(), reason);
+            runtimeService.deleteProcessInstance(pi.getProcessInstanceId(), AuditOperator.终止.getValue() + ":" + reason);
         } catch (Exception e) {
             throw new MyRuntimeException("错误：删除流程实例失败");
         }
@@ -296,6 +305,7 @@ public class FlowableServiceImpl implements FlowableService {
                 //历史任务设置状态
                 if (hisTaskMap.getData().containsKey(userTask.getId())) {
                     mfTask = hisTaskMap.getData().get(userTask.getId());
+                    // 历史任务存在，更新状态
                     if (activeTasks.containsKey(userTask.getId())) {
                         mfTask.setStatus(activeTasks.get(userTask.getId()));
                     }
@@ -352,6 +362,100 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
+    public PageResult<MfTask> getAllTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
+        FlowAuthority auth = FlowAuthority.getFlowAuthority();
+        HistoricTaskInstanceQuery query = supplyHistoricTaskInstanceQuery(auth, reqAllTask);
+        int first = (reqPage.getPageNum() - 1) * reqPage.getPageSize();
+        List<HistoricTaskInstance> list = query.listPage(first, reqPage.getPageSize());
+        List<MfTask> mfTasks = new ArrayList<>();
+        for (HistoricTaskInstance his : list) {
+            MfTask mfTask = buildMfTask(his);
+            mfTasks.add(mfTask);
+        }
+        return new PageResult<>(mfTasks, reqPage.getPageNum(), reqPage.getPageSize(), query.count());
+    }
+
+    /**
+     * 构建MfTask对象，从历史任务实例中提取任务信息
+     *
+     * @param his 历史任务实例
+     * @return 构建的MfTask对象
+     */
+    private MfTask buildMfTask(HistoricTaskInstance his) {
+        MfTask mfTask = new MfTask()
+                .setId(his.getId())
+                .setName(his.getName())
+                .setProcessInstanceId(his.getProcessInstanceId())
+                .setProcessDefinitionId(his.getProcessDefinitionId())
+                .setAssignee(his.getAssignee())
+                .setStartTime(his.getCreateTime())
+                .setStatus(getState(his))
+                .setStartTime(his.getCreateTime())
+                .setDescription(his.getDescription())
+                .setDeleteReason(his.getDeleteReason())
+                .setFormKey(his.getFormKey());
+        setProcessKey(his.getProcessVariables(), mfTask);
+        return mfTask;
+    }
+
+    /**
+     * 获取任务状态，已完成任务如果有删除原因则状态为已取消
+     *
+     * @param task 历史任务实例
+     * @return 任务状态
+     */
+    private String getState(HistoricTaskInstance task) {
+        String state = task.getState();
+        if (task.getState().equals(Task.COMPLETED) && StringUtils.isNotEmpty(task.getDeleteReason())) {
+            state = Task.TERMINATED;
+        }
+        return state;
+    }
+
+    @Override
+    public TaskTotal getTaskTotal(ReqTask reqTask) {
+        FlowAuthority auth = FlowAuthority.getFlowAuthority();
+        ReqAllTask reqAllTask = new ReqAllTask();
+        BeanUtils.copyProperties(reqTask, reqAllTask);
+        long todoCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(0)).count();
+        long completedCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(1)).count();
+        long cancelledCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(2)).count();
+        return new TaskTotal(todoCount, completedCount, cancelledCount);
+    }
+
+    /**
+     * 补充历史任务查询，根据流程用户权限添加查询条件
+     *
+     * @param auth       流程用户权限
+     * @param reqAllTask 查询参数
+     * @return 补充后的历史任务查询
+     */
+    private HistoricTaskInstanceQuery supplyHistoricTaskInstanceQuery(FlowAuthority auth, ReqAllTask reqAllTask) {
+        HistoricTaskInstanceQuery query = FlowAuthority.getAuthHistoricTaskQuery(auth, historyService);
+        if (StringUtils.isNotBlank(reqAllTask.getTaskName())) {
+            query.taskNameLike("%" + reqAllTask.getTaskName() + "%");
+        }
+        if (reqAllTask.getStartTime() != null) {
+            query.taskCreatedAfter(reqAllTask.getStartTime());
+        }
+        if (reqAllTask.getEndTime() != null) {
+            query.taskCreatedBefore(reqAllTask.getEndTime());
+        }
+        if (reqAllTask.getStatus() != null) {
+            if (reqAllTask.getStatus() == 1) {
+                query.finished().or().taskWithoutDeleteReason().taskDeleteReason("completed").endOr();
+            } else if (reqAllTask.getStatus() == 2) {
+                query.finished().or()
+                        .taskDeleteReasonLike(AuditOperator.终止.getValue() + ":%")
+                        .endOr();
+            } else {
+                query.unfinished();
+            }
+        }
+        return query.orderByTaskCreateTime().desc();
+    }
+
+    @Override
     @Transactional
     public void completeTask(AuditOperator flowOperator, ApproveInfo approveInfo) {
         FlowAuthority auth = FlowAuthority.getFlowAuthority();
@@ -361,7 +465,7 @@ public class FlowableServiceImpl implements FlowableService {
         }
         identityService.setAuthenticatedUserId(auth.getAccount());
         taskService.setAssignee(approveInfo.getTaskId(), auth.getAccount());
-        taskService.addComment(approveInfo.getTaskId(), task.getProcessInstanceId(), approveInfo.getMessage());
+        taskService.addComment(approveInfo.getTaskId(), task.getProcessInstanceId(), "[" + flowOperator.name() + "]" + approveInfo.getMessage());
         taskService.complete(approveInfo.getTaskId(), auth.getAccount(), Map.of(Constants.AUDIT_TYPE, flowOperator.getValue(), Constants.AUDIT_COMMENT, approveInfo.getMessage()));
         identityService.setAuthenticatedUserId(null);
     }
@@ -411,20 +515,7 @@ public class FlowableServiceImpl implements FlowableService {
         String processDefinitionId = null;
         for (HistoricTaskInstance his : history) {
             processDefinitionId = his.getProcessDefinitionId();
-            String state = his.getState();
-            if (his.getState().equals(Task.COMPLETED) && StringUtils.isNotEmpty(his.getDeleteReason())) {
-                state = Task.TERMINATED;
-            }
-            MfTask mfTask = new MfTask()
-                    .setId(his.getId())
-                    .setName(his.getName())
-                    .setProcessInstanceId(processInstanceId)
-                    .setProcessDefinitionId(processDefinitionId)
-                    .setAssignee(his.getAssignee())
-                    .setStartTime(his.getCreateTime())
-                    .setStatus(state)
-                    .setEndTime(his.getEndTime());
-            setProcessKey(his.getProcessVariables(), mfTask);
+            MfTask mfTask = buildMfTask(his);
             if (StringUtils.isNotEmpty(his.getId())) {
                 List<Comment> comments = taskService.getTaskComments(his.getId());
                 if (comments != null && !comments.isEmpty()) {
@@ -454,6 +545,7 @@ public class FlowableServiceImpl implements FlowableService {
         if (flowableParam != null) {
             mfTask.setProcessDefinitionKey(flowableParam.getKey());
             mfTask.setProcessName(FlowKey.getByKey(flowableParam.getKey()).name());
+            mfTask.setStartAccount(flowableParam.getStartAccount());
             if (flowableParam.getId() != null) {
                 mfTask.setBusinessKey(flowableParam.getId().toString());
             }
@@ -476,7 +568,9 @@ public class FlowableServiceImpl implements FlowableService {
                         .setName(his.getName())
                         .setAssignee(comment.getUserId())
                         .setComment(comment.getFullMessage())
-                        .setTime(comment.getTime())).collect(Collectors.toList());
+                        .setTime(comment.getTime())
+                        .setType(comment.getType())
+        ).collect(Collectors.toList());
     }
 
 }

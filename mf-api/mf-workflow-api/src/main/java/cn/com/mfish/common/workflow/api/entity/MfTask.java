@@ -42,6 +42,8 @@ public class MfTask {
     private String formKey;
     @Schema(description = "任务负责人")
     private String assignee;
+    @Schema(description = "发起人账号")
+    private String startAccount;
     @Schema(description = "任务开始时间")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -52,6 +54,8 @@ public class MfTask {
     private Date endTime;
     @Schema(description = "任务状态")
     private String status;
+    @Schema(description = "删除原因")
+    private String deleteReason;
     @Schema(description = "审批意见")
     private List<AuditComment> comments;
 }

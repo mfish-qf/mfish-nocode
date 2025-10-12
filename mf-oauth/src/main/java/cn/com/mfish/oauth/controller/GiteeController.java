@@ -108,7 +108,7 @@ public class GiteeController {
 //        } catch (Exception ignored) {
 //        }
         try {
-            Result<String> result = OkHttpUtils.get("https://gitee.com/api/v5/repos/qiufeng9862/mfish-nocode/events?limit=100&access_token=" + token);
+            Result<String> result = OkHttpUtils.get("https://gitee.com/api/v5/repos/qiufeng9862/mfish-nocode/events?limit=500&access_token=" + token);
             if (result.isSuccess()) {
                 Pattern pattern = Pattern.compile("\"StarEvent\".*?\"login\"\\s*:\\s*\"(?<login>.*?)\"");
                 String data = result.getData().replace(" ","");

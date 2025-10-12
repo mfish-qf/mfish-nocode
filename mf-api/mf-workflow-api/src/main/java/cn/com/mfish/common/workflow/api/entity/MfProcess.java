@@ -14,7 +14,7 @@ import java.util.Date;
  * @date: 2025/9/19
  */
 @Data
-@Accessors(chain=true)
+@Accessors(chain = true)
 @Schema(description = "流程实例")
 public class MfProcess {
     @Schema(description = "流程定义key")

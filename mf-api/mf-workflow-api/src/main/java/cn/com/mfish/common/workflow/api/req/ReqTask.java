@@ -14,7 +14,7 @@ import java.util.Date;
  * @date: 2025/9/26
  */
 @Data
-@Accessors(chain=true)
+@Accessors(chain = true)
 @Schema(description = "任务请求参数")
 public class ReqTask {
     @Schema(description = "开始时间")

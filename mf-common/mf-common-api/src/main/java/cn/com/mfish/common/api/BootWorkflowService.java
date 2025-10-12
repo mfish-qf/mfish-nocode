@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.workflow.api.entity.*;
 import cn.com.mfish.common.workflow.api.remote.RemoteWorkflowService;
+import cn.com.mfish.common.workflow.api.req.ReqAllTask;
 import cn.com.mfish.common.workflow.api.req.ReqProcess;
 import cn.com.mfish.common.workflow.api.req.ReqTask;
 import cn.com.mfish.common.workflow.enums.AuditOperator;
@@ -61,13 +62,13 @@ public class BootWorkflowService implements RemoteWorkflowService {
     }
 
     @Override
-    public Result<List<MfTask>> getProcessTasks(String origin, String processInstanceId) {
-        return Result.ok(flowableService.getProcessTasks(processInstanceId), "查询流程实例任务列表成功");
+    public Result<List<AuditComment>> getAuditComments(String origin, String processInstanceId) {
+        return Result.ok(flowableService.getAuditComments(processInstanceId), "查询流程实例审核评论列表成功");
     }
 
     @Override
-    public Result<List<AuditComment>> getAuditComments(String origin, String processInstanceId) {
-        return Result.ok(flowableService.getAuditComments(processInstanceId), "查询流程实例审核评论列表成功");
+    public Result<List<MfTask>> getProcessTasks(String origin, String processInstanceId) {
+        return Result.ok(flowableService.getProcessTasks(processInstanceId), "查询流程实例任务列表成功");
     }
 
     @Override
@@ -76,8 +77,18 @@ public class BootWorkflowService implements RemoteWorkflowService {
     }
 
     @Override
+    public Result<PageResult<MfTask>> getAllTasks(String origin, ReqAllTask reqAllTask, ReqPage reqPage) {
+        return Result.ok(flowableService.getAllTasks(reqAllTask, reqPage), "查询所有任务列表成功");
+    }
+
+    @Override
     public Result<List<MfTask>> getHistoryTasks(String origin, String processInstanceId) {
         return Result.ok(flowableService.getProcessTasks(processInstanceId, true), "查询历史任务列表成功");
+    }
+
+    @Override
+    public Result<TaskTotal> getTaskTotal(String origin, ReqTask reqTask) {
+        return Result.ok(flowableService.getTaskTotal(reqTask), "查询当前用户任务统计成功");
     }
 
     @Override
