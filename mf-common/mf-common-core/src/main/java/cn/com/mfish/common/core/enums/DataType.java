@@ -87,6 +87,7 @@ public enum DataType {
         typeMap.put(DataConstant.DataType.CLOB, DataType.STRING);
         typeMap.put(DataConstant.DataType.CURSOR, DataType.STRING);
         typeMap.put(DataConstant.DataType.NVARCHAR, DataType.STRING);
+        typeMap.put(DataConstant.DataType.NVARCHAR2, DataType.STRING);
         typeMap.put(DataConstant.DataType.NCHAR, DataType.STRING);
         typeMap.put(DataConstant.DataType.NCLOB, DataType.STRING);
         typeMap.put(DataConstant.DataType.STRUCT, DataType.STRING);

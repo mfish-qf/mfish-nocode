@@ -122,6 +122,15 @@ public interface FlowableService {
     PageResult<MfTask> getAllTasks(ReqAllTask reqAllTask, ReqPage reqPage);
 
     /**
+     * 查询我发起任务列表
+     *
+     * @param reqAllTask 查询参数
+     * @param reqPage    分页参数
+     * @return 启动任务列表
+     */
+    PageResult<MfTask> getApplyTasks(ReqAllTask reqAllTask, ReqPage reqPage);
+
+    /**
      * 查询任务统计
      *
      * @param reqTask 查询参数

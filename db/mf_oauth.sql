@@ -220,6 +220,9 @@ INSERT INTO `sso_menu` VALUES ('312d2bc9ac4f1a7d2f2b5a61fa59ff64', '29db2a54d322
 INSERT INTO `sso_menu` VALUES ('77c042434b5bebf53cd89afbd04ca28a', '29db2a54d3226d1ec2f90c6498033c99', '000110000600001', 3, '查询', '#', 1, 2, '', NULL, 'nocode:screenCharts:query', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('d4257d0d8d32697a82718a312e51fcda', '29db2a54d3226d1ec2f90c6498033c99', '000110000600002', 3, '新增', '#', 2, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:insert', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('8f6ed381a02535791c17521ff0475808', 'eb5f513d5430597d3ea312e1bf760b23', '000120000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:tenant:query', 0, 1, NULL, 1, '', 'admin', '2025-06-03 13:53:51', '', NULL);
+INSERT INTO `sso_menu` VALUES ('3a9999ccbdcdc36d69cd0266a6513a05', '', '00014', 1, '审批管理', 'ant-design:audit-outlined', 9, 0, '/audit', NULL, NULL, 0, 1, NULL, 1, '', 'admin', '2025-10-15 15:47:38', 'admin', '2025-10-16 10:36:51');
+INSERT INTO `sso_menu` VALUES ('e7a2fcb9e2eb633d4008c7f295fffc65', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400001', 2, '审批列表', 'ant-design:file-search-outlined', 1, 1, '/list', '/workflow/audit/index.vue', NULL, 0, 1, NULL, 0, '', 'admin', '2025-10-15 15:47:59', 'admin', '2025-10-17 11:16:41');
+INSERT INTO `sso_menu` VALUES ('8a47a373c5b79c7fa495f1abe06efa5d', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400002', 2, '我的申请', 'ant-design:solution-outlined', 2, 1, '/apply', '/workflow/apply/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2025-10-17 11:12:30', 'admin', '2025-10-17 11:14:15');
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -267,7 +270,9 @@ DROP TABLE IF EXISTS `sso_org_role`;
 CREATE TABLE `sso_org_role`  (
                                  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
                                  `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
-                                 PRIMARY KEY (`role_id`, `org_id`) USING BTREE
+                                 PRIMARY KEY (`role_id`, `org_id`) USING BTREE,
+                                 INDEX `idx_role_id`(`role_id`) USING BTREE,
+                                 INDEX `idx_org_id`(`org_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色组织关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -287,7 +292,9 @@ DROP TABLE IF EXISTS `sso_org_user`;
 CREATE TABLE `sso_org_user`  (
                                  `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
                                  `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
-                                 PRIMARY KEY (`org_id`, `user_id`) USING BTREE
+                                 PRIMARY KEY (`org_id`, `user_id`) USING BTREE,
+                                 INDEX `idx_org_id`(`org_id`) USING BTREE,
+                                 INDEX `idx_user_id`(`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -338,7 +345,9 @@ DROP TABLE IF EXISTS `sso_role_menu`;
 CREATE TABLE `sso_role_menu`  (
                                   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
                                   `menu_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单ID',
-                                  PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
+                                  PRIMARY KEY (`role_id`, `menu_id`) USING BTREE,
+                                  INDEX `idx_role_id`(`role_id`) USING BTREE,
+                                  INDEX `idx_menu_id`(`menu_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -624,7 +633,9 @@ DROP TABLE IF EXISTS `sso_user_role`;
 CREATE TABLE `sso_user_role`  (
                                   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
                                   `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
-                                  PRIMARY KEY (`user_id`, `role_id`) USING BTREE
+                                  PRIMARY KEY (`user_id`, `role_id`) USING BTREE,
+                                  INDEX `idx_user_id`(`user_id`) USING BTREE,
+                                  INDEX `idx_role_id`(`role_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户角色关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------

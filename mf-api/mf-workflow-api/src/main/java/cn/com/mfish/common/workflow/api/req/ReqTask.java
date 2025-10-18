@@ -17,14 +17,22 @@ import java.util.Date;
 @Accessors(chain = true)
 @Schema(description = "任务请求参数")
 public class ReqTask {
-    @Schema(description = "开始时间")
+    @Schema(description = "发起开始时间")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date startTime;
-    @Schema(description = "结束时间")
+    private Date applyStartTime;
+    @Schema(description = "发起结束时间")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
+    private Date applyEndTime;
     @Schema(description = "任务名称")
     private String taskName;
+    @Schema(description = "流程定义key")
+    private String processDefinitionKey;
+    @Schema(description = "流程实例id")
+    private String processInstanceId;
+    @Schema(description = "发起人账号")
+    private String startAccount;
+    @Schema(description = "任务处理人")
+    private String assignee;
 }

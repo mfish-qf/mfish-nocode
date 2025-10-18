@@ -68,6 +68,10 @@ public interface RemoteWorkflowService {
     @GetMapping("/process/tasks/all")
     Result<PageResult<MfTask>> getAllTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @SpringQueryMap ReqAllTask reqAllTask, @SpringQueryMap ReqPage reqPage);
 
+    @Operation(summary = "查询我发起任务列表")
+    @GetMapping("/process/tasks/apply")
+    Result<PageResult<MfTask>> getApplyTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @SpringQueryMap ReqAllTask reqAllTask, @SpringQueryMap ReqPage reqPage);
+
     @Operation(summary = "查询历史任务-包括当前正在处理的任务")
     @GetMapping("/process/tasks/history/{processInstanceId}")
     Result<List<MfTask>> getHistoryTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("processInstanceId") String processInstanceId);

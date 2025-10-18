@@ -24,7 +24,7 @@ public class AuditComment {
     @Schema(description = "流程定义id")
     private String processDefinitionId;
     @Schema(description = "任务名称")
-    private String name;
+    private String taskName;
     @Schema(description = "审批人")
     private String assignee;
     @Schema(description = "审批操作")

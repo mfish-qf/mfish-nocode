@@ -3,7 +3,6 @@ package cn.com.mfish.common.dblink.query;
 import cn.com.mfish.common.core.constants.DataConstant;
 import cn.com.mfish.common.core.enums.DataType;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.DataUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.dataset.datatable.MetaDataHeader;
@@ -207,9 +206,6 @@ public class BaseQuery {
                 break;
             case BIGDECIMAL:
                 stmt.setBigDecimal(i + 1, new BigDecimal(value));
-                break;
-            case DATE:
-                stmt.setTimestamp(i + 1, new Timestamp(DataUtils.switchDate(value).getTime()));
                 break;
             default:
                 stmt.setObject(i + 1, value);

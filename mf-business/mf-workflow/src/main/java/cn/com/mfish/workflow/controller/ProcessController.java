@@ -99,6 +99,12 @@ public class ProcessController {
         return Result.ok(flowableService.getAllTasks(reqAllTask, reqPage), "查询所有任务列表成功");
     }
 
+    @Operation(summary = "查询我发起任务列表")
+    @GetMapping("/tasks/apply")
+    public Result<PageResult<MfTask>> getApplyTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
+        return Result.ok(flowableService.getApplyTasks(reqAllTask, reqPage), "查询我发起任务列表成功");
+    }
+
     @Operation(summary = "查询历史任务-包括当前正在处理的任务")
     @GetMapping("/tasks/history/{processInstanceId}")
     public Result<List<MfTask>> getHistoryTasks(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {

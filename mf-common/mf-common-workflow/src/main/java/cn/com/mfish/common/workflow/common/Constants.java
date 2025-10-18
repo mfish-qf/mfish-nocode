@@ -10,6 +10,11 @@ public class Constants {
      * 启动参数
      */
     public static final String WORKFLOW_PARAM = "workflowParam";
+
+    /**
+     * 流程启动用户账号
+     */
+    public static final String PROCESS_START_ACCOUNT = "processStartAccount";
     /**
      * 审批类型
      */
