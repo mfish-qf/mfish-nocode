@@ -82,6 +82,11 @@ public class BootWorkflowService implements RemoteWorkflowService {
     }
 
     @Override
+    public Result<PageResult<MfTask>> getApplyTasks(String origin, ReqAllTask reqAllTask, ReqPage reqPage) {
+        return Result.ok(flowableService.getApplyTasks(reqAllTask, reqPage), "查询我发起任务列表成功");
+    }
+
+    @Override
     public Result<List<MfTask>> getHistoryTasks(String origin, String processInstanceId) {
         return Result.ok(flowableService.getProcessTasks(processInstanceId, true), "查询历史任务列表成功");
     }

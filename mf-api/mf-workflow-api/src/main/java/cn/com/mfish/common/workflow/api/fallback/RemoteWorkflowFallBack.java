@@ -83,6 +83,11 @@ public class RemoteWorkflowFallBack implements FallbackFactory<RemoteWorkflowSer
             }
 
             @Override
+            public Result<PageResult<MfTask>> getApplyTasks(String origin, ReqAllTask reqAllTask, ReqPage reqPage) {
+                return Result.fail("错误：查询我发起任务列表失败");
+            }
+
+            @Override
             public Result<List<MfTask>> getHistoryTasks(String origin, String processInstanceId) {
                 return Result.fail("错误：查询历史任务失败");
             }

@@ -554,6 +554,9 @@ INSERT INTO `sso_menu` VALUES ('312d2bc9ac4f1a7d2f2b5a61fa59ff64', '29db2a54d322
 INSERT INTO `sso_menu` VALUES ('77c042434b5bebf53cd89afbd04ca28a', '29db2a54d3226d1ec2f90c6498033c99', '000110000600001', 3, '查询', '#', 1, 2, '', NULL, 'nocode:screenCharts:query', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('d4257d0d8d32697a82718a312e51fcda', '29db2a54d3226d1ec2f90c6498033c99', '000110000600002', 3, '新增', '#', 2, 2, '', NULL, 'nocode:screenCharts:query,nocode:screenCharts:insert', 0, 1, NULL, NULL, '', 'admin', '2024-11-19 09:27:16', '', NULL);
 INSERT INTO `sso_menu` VALUES ('8f6ed381a02535791c17521ff0475808', 'eb5f513d5430597d3ea312e1bf760b23', '000120000200001', 3, '查询', '#', 1, 2, '', NULL, 'sys:tenant:query', 0, 1, NULL, 1, '', 'admin', '2025-06-03 13:53:51', '', NULL);
+INSERT INTO `sso_menu` VALUES ('3a9999ccbdcdc36d69cd0266a6513a05', '', '00014', 1, '审批管理', 'ant-design:audit-outlined', 9, 0, '/audit', NULL, NULL, 0, 1, NULL, 1, '', 'admin', '2025-10-15 15:47:38', 'admin', '2025-10-16 10:36:51');
+INSERT INTO `sso_menu` VALUES ('e7a2fcb9e2eb633d4008c7f295fffc65', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400001', 2, '审批列表', 'ant-design:file-search-outlined', 1, 1, '/list', '/workflow/audit/index.vue', NULL, 0, 1, NULL, 0, '', 'admin', '2025-10-15 15:47:59', 'admin', '2025-10-17 11:16:41');
+INSERT INTO `sso_menu` VALUES ('8a47a373c5b79c7fa495f1abe06efa5d', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400002', 2, '我的申请', 'ant-design:solution-outlined', 2, 1, '/apply', '/workflow/apply/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2025-10-17 11:12:30', 'admin', '2025-10-17 11:14:15');
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -599,9 +602,11 @@ INSERT INTO `sso_org` VALUES ('af30f104a622b5de76add210dd33b361', '8b7bbf1cac1af
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_org_role`;
 CREATE TABLE `sso_org_role`  (
-  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
-  `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
-  PRIMARY KEY (`role_id`, `org_id`) USING BTREE
+                                 `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
+                                 `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
+                                 PRIMARY KEY (`role_id`, `org_id`) USING BTREE,
+                                 INDEX `idx_role_id`(`role_id`) USING BTREE,
+                                 INDEX `idx_org_id`(`org_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色组织关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -619,9 +624,11 @@ INSERT INTO `sso_org_role` VALUES ('a787082d9b7c177439a114995e4caff1', '624edadc
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_org_user`;
 CREATE TABLE `sso_org_user`  (
-  `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
-  `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
-  PRIMARY KEY (`org_id`, `user_id`) USING BTREE
+                                 `org_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '组织ID',
+                                 `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
+                                 PRIMARY KEY (`org_id`, `user_id`) USING BTREE,
+                                 INDEX `idx_org_id`(`org_id`) USING BTREE,
+                                 INDEX `idx_user_id`(`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -670,9 +677,11 @@ INSERT INTO `sso_role` VALUES ('a787082d9b7c177439a114995e4caff1', '1', '开发'
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_role_menu`;
 CREATE TABLE `sso_role_menu`  (
-  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
-  `menu_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单ID',
-  PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
+                                  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
+                                  `menu_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单ID',
+                                  PRIMARY KEY (`role_id`, `menu_id`) USING BTREE,
+                                  INDEX `idx_role_id`(`role_id`) USING BTREE,
+                                  INDEX `idx_menu_id`(`menu_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -956,9 +965,11 @@ INSERT INTO `sso_user` VALUES ('c51fde3955594074bb4db31e654a4483', 'mfish', '189
 -- ----------------------------
 DROP TABLE IF EXISTS `sso_user_role`;
 CREATE TABLE `sso_user_role`  (
-  `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
-  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
-  PRIMARY KEY (`user_id`, `role_id`) USING BTREE
+                                  `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
+                                  `role_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '角色ID',
+                                  PRIMARY KEY (`user_id`, `role_id`) USING BTREE,
+                                  INDEX `idx_user_id`(`user_id`) USING BTREE,
+                                  INDEX `idx_role_id`(`role_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户角色关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -1080,6 +1091,7 @@ INSERT INTO `sys_dict` VALUES ('fb787f5398a1ad30463d4c6a263d3b89', 'API数据来
 INSERT INTO `sys_dict` VALUES ('b0f0a03f9e879c2ce3b7722a3cd01061', 'HTTP请求类型', 'http_content_type', 0, NULL, 'admin', '2025-07-22 14:33:21', 'admin', '2025-07-22 14:33:21');
 INSERT INTO `sys_dict` VALUES ('4a9914bd42939163ceb9c5b4002cfa66', 'HTTP请求方式', 'http_request_method', 0, NULL, 'admin', '2025-07-22 14:30:25', 'admin', '2025-07-22 14:30:25');
 INSERT INTO `sys_dict` VALUES ('220bbd3b1dd32fd37d0abbd279a14774', '工作流任务状态', 'workflow_task_status', 0, '工作流任务状态字典', 'admin', '2025-10-10 16:27:01', 'admin', '2025-10-10 16:27:01');
+INSERT INTO `sys_dict` VALUES ('eeb27772c310addeae7c12d296521399', '工作流审批类型', 'workflow_process_key', 0, '工作流流程定义key，例如大屏发布审批是screen_release', 'admin', '2025-10-15 16:34:32', 'admin', '2025-10-15 16:34:32');
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -1227,6 +1239,7 @@ INSERT INTO `sys_dict_item` VALUES ('844db10c10e41a1f7621bb5d5ef6b1b0', '4a9914b
 INSERT INTO `sys_dict_item` VALUES ('2cdf5389b1d6a35e52c14486e04a3a57', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '待审批', 'created', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2025-10-10 16:27:42', 'admin', '2025-10-10 16:27:42');
 INSERT INTO `sys_dict_item` VALUES ('261f489024bb90163e49ee85498df47e', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已审批', 'completed', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-10-10 16:28:02', 'admin', '2025-10-10 16:28:08');
 INSERT INTO `sys_dict_item` VALUES ('07582f8cb8443cd3de3f5ab150386690', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已取消', 'terminated', 0, 3, '', 'red', 0, NULL, 'admin', '2025-10-10 16:29:10', 'admin', '2025-10-10 16:29:14');
+INSERT INTO `sys_dict_item` VALUES ('4e14582f0b59762f2ca1cfda04539202', 'eeb27772c310addeae7c12d296521399', 'workflow_process_key', '大屏发布', 'screen_release', 0, 1, 'ant-design:fund-projection-screen-outlined', '', 0, NULL, 'admin', '2025-10-15 16:35:15', 'admin', '2025-10-16 11:04:43');
 
 -- ----------------------------
 -- Table structure for sys_log

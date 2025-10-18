@@ -27,7 +27,7 @@ public class MfTask {
     @Schema(description = "流程定义key")
     private String processDefinitionKey;
     @Schema(description = "任务名称")
-    private String name;
+    private String taskName;
     @Schema(description = "流程名称")
     private String processName;
     @Schema(description = "业务key")

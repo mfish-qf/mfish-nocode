@@ -25,6 +25,7 @@ public class DataConstant {
         public static final String CLOB = "CLOB";
         public static final String CURSOR = "CURSOR";
         public static final String NVARCHAR = "NVARCHAR";
+        public static final String NVARCHAR2 = "NVARCHAR2";
         public static final String NCHAR = "NCHAR";
         public static final String NCLOB = "NCLOB";
         public static final String STRUCT = "STRUCT";

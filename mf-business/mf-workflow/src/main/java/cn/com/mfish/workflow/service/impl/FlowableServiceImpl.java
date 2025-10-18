@@ -35,9 +35,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -88,7 +90,8 @@ public class FlowableServiceImpl implements FlowableService {
             identityService.setAuthenticatedUserId(param.getStartAccount());
         }
         // 设置流程变量
-        ProcessInstance pi = runtimeService.startProcessInstanceByKey(param.getKey(), param.getId().toString(), Map.of(Constants.WORKFLOW_PARAM, param));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey(param.getKey(), param.getId().toString()
+                , Map.of(Constants.WORKFLOW_PARAM, param, Constants.PROCESS_START_ACCOUNT, param.getStartAccount()));
         // 清理上下文，避免线程污染
         identityService.setAuthenticatedUserId(null);
         return pi.getId();
@@ -181,6 +184,7 @@ public class FlowableServiceImpl implements FlowableService {
 
 
     @Override
+    @Transactional
     public Result<String> delProcess(String processInstanceId, String businessKey, String reason) {
         ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery();
         if (StringUtils.isNotEmpty(processInstanceId)) {
@@ -192,20 +196,20 @@ public class FlowableServiceImpl implements FlowableService {
         ProcessInstance pi = query.singleResult();
         // 流程实例不存在，直接返回
         if (pi == null) {
-            return Result.ok(businessKey, "流程实例不存在");
+            return Result.ok(businessKey, "错误：流程不存在");
         }
+        String curAccount = AuthInfoUtils.getCurrentAccount();
         // 非超管，且流程实例不存在，或流程实例启动人不是当前用户，抛出异常
-        if (!AuthInfoUtils.isSuper() && (AuthInfoUtils.getCurrentAccount() == null
-                || !AuthInfoUtils.getCurrentAccount().equals(pi.getStartUserId()))) {
-            log.error("错误：该用户无权限删除流程实例");
-            throw new MyRuntimeException("错误：该用户无权限删除流程实例");
+        if (!AuthInfoUtils.isSuper() && (curAccount == null || !curAccount.equals(pi.getStartUserId()))) {
+            log.error("错误：该用户无权限终止流程");
+            throw new MyRuntimeException("错误：该用户无权限删除流程");
         }
         try {
-            runtimeService.deleteProcessInstance(pi.getProcessInstanceId(), AuditOperator.终止.getValue() + ":" + reason);
+            runtimeService.deleteProcessInstance(pi.getProcessInstanceId(), AuditOperator.终止.getValue() + ":" + curAccount + "终止了流程，原因：" + reason);
         } catch (Exception e) {
-            throw new MyRuntimeException("错误：删除流程实例失败");
+            throw new MyRuntimeException("错误：删除流程失败");
         }
-        return Result.ok(businessKey, "删除流程实例成功");
+        return Result.ok(businessKey, "删除流程成功");
     }
 
     @Override
@@ -225,7 +229,7 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Override
     public String queryImage(String processInstanceId) {
-        ProcessInstance pi = runtimeService.createProcessInstanceQuery()
+        HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
                 .singleResult();
         if (pi == null) {
@@ -238,21 +242,27 @@ public class FlowableServiceImpl implements FlowableService {
             throw new MyRuntimeException("错误：流程定义ID不能为空");
         }
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
-        List<String> activeActivityIds = runtimeService.getActiveActivityIds(processInstanceId);
+        List<HistoricTaskInstance> htiList = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).list();
+        List<String> activeActivityIds = new ArrayList<>();
+        for (HistoricTaskInstance hti : htiList) {
+            if (hti.getEndTime() == null) {
+                activeActivityIds.add(hti.getTaskDefinitionKey());
+            }
+        }
         ProcessEngine processEngine = processEngineConfiguration.buildProcessEngine();
         ProcessDiagramGenerator diagramGenerator = processEngine.getProcessEngineConfiguration()
                 .getProcessDiagramGenerator();
         // 获取流程图资源流
         try (InputStream imageStream = diagramGenerator.generateDiagram(
                 bpmnModel,
-                "png",
+                "jpg",
                 activeActivityIds,
                 new ArrayList<>(),  // 高亮连线ID
-                "Microsoft YaHei",
-                "Microsoft YaHei",
-                "Microsoft YaHei",
+                "宋体",
+                "宋体",
+                "宋体",
                 processEngine.getProcessEngineConfiguration().getClassLoader(),
-                1.0,
+                2.0,
                 true
         )) {
             if (imageStream == null) {
@@ -315,7 +325,7 @@ public class FlowableServiceImpl implements FlowableService {
                     mfTask = new MfTask();
                 }
                 mfTask.setProcessInstanceId(processInstanceId)
-                        .setName(userTask.getName())
+                        .setTaskName(userTask.getName())
                         .setDescription(userTask.getDocumentation())
                         .setCandidateUsers(userTask.getCandidateUsers())
                         .setCandidateGroups(userTask.getCandidateGroups())
@@ -332,11 +342,23 @@ public class FlowableServiceImpl implements FlowableService {
         if (StringUtils.isNotBlank(reqTask.getTaskName())) {
             query.taskNameLike("%" + reqTask.getTaskName() + "%");
         }
-        if (reqTask.getStartTime() != null) {
-            query.taskCreatedAfter(reqTask.getStartTime());
+        if (reqTask.getApplyStartTime() != null) {
+            query.taskCreatedAfter(reqTask.getApplyStartTime());
         }
-        if (reqTask.getEndTime() != null) {
-            query.taskCreatedBefore(reqTask.getEndTime());
+        if (reqTask.getApplyEndTime() != null) {
+            query.taskCreatedBefore(reqTask.getApplyEndTime());
+        }
+        if (StringUtils.isNotBlank(reqTask.getProcessDefinitionKey())) {
+            query.processDefinitionKey(reqTask.getProcessDefinitionKey());
+        }
+        if (StringUtils.isNotBlank(reqTask.getProcessInstanceId())) {
+            query.processInstanceId(reqTask.getProcessInstanceId());
+        }
+        if (StringUtils.isNotBlank(reqTask.getStartAccount())) {
+            query.processVariableValueLikeIgnoreCase(Constants.PROCESS_START_ACCOUNT, "%" + reqTask.getStartAccount() + "%");
+        }
+        if (StringUtils.isNotBlank(reqTask.getAssignee())) {
+            query.taskAssignee(reqTask.getAssignee());
         }
         query.orderByTaskCreateTime().desc();
         int first = (reqPage.getPageNum() - 1) * reqPage.getPageSize();
@@ -345,7 +367,7 @@ public class FlowableServiceImpl implements FlowableService {
         for (Task task : list) {
             MfTask mfTask = new MfTask()
                     .setId(task.getId())
-                    .setName(task.getName())
+                    .setTaskName(task.getName())
                     .setProcessInstanceId(task.getProcessInstanceId())
                     .setProcessDefinitionId(task.getProcessDefinitionId())
                     .setAssignee(task.getAssignee())
@@ -365,6 +387,19 @@ public class FlowableServiceImpl implements FlowableService {
     public PageResult<MfTask> getAllTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
         FlowAuthority auth = FlowAuthority.getFlowAuthority();
         HistoricTaskInstanceQuery query = supplyHistoricTaskInstanceQuery(auth, reqAllTask);
+        return buildPageResult(query, reqPage);
+    }
+
+    @Override
+    public PageResult<MfTask> getApplyTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
+        HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery()
+                .includeProcessVariables()
+                .processVariableValueEquals(Constants.PROCESS_START_ACCOUNT, AuthInfoUtils.getCurrentAccount());
+        query = supplyHistoricTaskInstanceQuery(query, reqAllTask);
+        return buildPageResult(query, reqPage);
+    }
+
+    private PageResult<MfTask> buildPageResult(HistoricTaskInstanceQuery query, ReqPage reqPage) {
         int first = (reqPage.getPageNum() - 1) * reqPage.getPageSize();
         List<HistoricTaskInstance> list = query.listPage(first, reqPage.getPageSize());
         List<MfTask> mfTasks = new ArrayList<>();
@@ -384,7 +419,7 @@ public class FlowableServiceImpl implements FlowableService {
     private MfTask buildMfTask(HistoricTaskInstance his) {
         MfTask mfTask = new MfTask()
                 .setId(his.getId())
-                .setName(his.getName())
+                .setTaskName(his.getName())
                 .setProcessInstanceId(his.getProcessInstanceId())
                 .setProcessDefinitionId(his.getProcessDefinitionId())
                 .setAssignee(his.getAssignee())
@@ -393,7 +428,8 @@ public class FlowableServiceImpl implements FlowableService {
                 .setStartTime(his.getCreateTime())
                 .setDescription(his.getDescription())
                 .setDeleteReason(his.getDeleteReason())
-                .setFormKey(his.getFormKey());
+                .setFormKey(his.getFormKey())
+                .setEndTime(his.getEndTime());
         setProcessKey(his.getProcessVariables(), mfTask);
         return mfTask;
     }
@@ -417,9 +453,9 @@ public class FlowableServiceImpl implements FlowableService {
         FlowAuthority auth = FlowAuthority.getFlowAuthority();
         ReqAllTask reqAllTask = new ReqAllTask();
         BeanUtils.copyProperties(reqTask, reqAllTask);
-        long todoCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(0)).count();
-        long completedCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(1)).count();
-        long cancelledCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(2)).count();
+        long todoCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(Task.CREATED)).count();
+        long completedCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(Task.COMPLETED)).count();
+        long cancelledCount = supplyHistoricTaskInstanceQuery(auth, reqAllTask.setStatus(Task.TERMINATED)).count();
         return new TaskTotal(todoCount, completedCount, cancelledCount);
     }
 
@@ -432,21 +468,47 @@ public class FlowableServiceImpl implements FlowableService {
      */
     private HistoricTaskInstanceQuery supplyHistoricTaskInstanceQuery(FlowAuthority auth, ReqAllTask reqAllTask) {
         HistoricTaskInstanceQuery query = FlowAuthority.getAuthHistoricTaskQuery(auth, historyService);
+        return supplyHistoricTaskInstanceQuery(query, reqAllTask);
+    }
+
+    /**
+     * 补充历史任务查询，根据查询参数添加查询条件
+     *
+     * @param query      历史任务查询
+     * @param reqAllTask 查询参数
+     * @return 补充后的历史任务查询
+     */
+    private HistoricTaskInstanceQuery supplyHistoricTaskInstanceQuery(HistoricTaskInstanceQuery query, ReqAllTask reqAllTask) {
         if (StringUtils.isNotBlank(reqAllTask.getTaskName())) {
             query.taskNameLike("%" + reqAllTask.getTaskName() + "%");
         }
-        if (reqAllTask.getStartTime() != null) {
-            query.taskCreatedAfter(reqAllTask.getStartTime());
+        if (StringUtils.isNotBlank(reqAllTask.getProcessDefinitionKey())) {
+            query.processDefinitionKey(reqAllTask.getProcessDefinitionKey());
         }
-        if (reqAllTask.getEndTime() != null) {
-            query.taskCreatedBefore(reqAllTask.getEndTime());
+        if (reqAllTask.getApplyStartTime() != null) {
+            query.taskCreatedAfter(reqAllTask.getApplyStartTime());
+        }
+        if (reqAllTask.getApplyEndTime() != null) {
+            query.taskCreatedBefore(reqAllTask.getApplyEndTime());
+        }
+        if (reqAllTask.getAuditStartTime() != null) {
+            query.taskCompletedAfter(reqAllTask.getAuditStartTime());
+        }
+        if (reqAllTask.getAuditEndTime() != null) {
+            query.taskCompletedBefore(reqAllTask.getAuditEndTime());
+        }
+        if (StringUtils.isNotBlank(reqAllTask.getStartAccount())) {
+            query.processVariableValueLikeIgnoreCase(Constants.PROCESS_START_ACCOUNT, "%" + reqAllTask.getStartAccount() + "%");
+        }
+        if (StringUtils.isNotBlank(reqAllTask.getAssignee())) {
+            query.taskAssignee(reqAllTask.getAssignee());
         }
         if (reqAllTask.getStatus() != null) {
-            if (reqAllTask.getStatus() == 1) {
-                query.finished().or().taskWithoutDeleteReason().taskDeleteReason("completed").endOr();
-            } else if (reqAllTask.getStatus() == 2) {
+            if (Task.COMPLETED.equals(reqAllTask.getStatus())) {
+                query.finished().or().taskWithoutDeleteReason().taskDeleteReason(Task.COMPLETED).endOr();
+            } else if (Task.TERMINATED.equals(reqAllTask.getStatus())) {
                 query.finished().or()
-                        .taskDeleteReasonLike(AuditOperator.终止.getValue() + ":%")
+                        .taskDeleteReasonLike(Task.TERMINATED + ":%")
                         .endOr();
             } else {
                 query.unfinished();
@@ -565,7 +627,7 @@ public class FlowableServiceImpl implements FlowableService {
                         .setTaskId(his.getId())
                         .setProcessInstanceId(his.getProcessInstanceId())
                         .setProcessDefinitionId(his.getProcessDefinitionId())
-                        .setName(his.getName())
+                        .setTaskName(his.getName())
                         .setAssignee(comment.getUserId())
                         .setComment(comment.getFullMessage())
                         .setTime(comment.getTime())

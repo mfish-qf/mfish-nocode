@@ -122,6 +122,7 @@ INSERT INTO `sys_dict` VALUES ('fb787f5398a1ad30463d4c6a263d3b89', 'API数据来
 INSERT INTO `sys_dict` VALUES ('b0f0a03f9e879c2ce3b7722a3cd01061', 'HTTP请求类型', 'http_content_type', 0, NULL, 'admin', '2025-07-22 14:33:21', 'admin', '2025-07-22 14:33:21');
 INSERT INTO `sys_dict` VALUES ('4a9914bd42939163ceb9c5b4002cfa66', 'HTTP请求方式', 'http_request_method', 0, NULL, 'admin', '2025-07-22 14:30:25', 'admin', '2025-07-22 14:30:25');
 INSERT INTO `sys_dict` VALUES ('220bbd3b1dd32fd37d0abbd279a14774', '工作流任务状态', 'workflow_task_status', 0, '工作流任务状态字典', 'admin', '2025-10-10 16:27:01', 'admin', '2025-10-10 16:27:01');
+INSERT INTO `sys_dict` VALUES ('eeb27772c310addeae7c12d296521399', '工作流审批类型', 'workflow_process_key', 0, '工作流流程定义key，例如大屏发布审批是screen_release', 'admin', '2025-10-15 16:34:32', 'admin', '2025-10-15 16:34:32');
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -269,6 +270,7 @@ INSERT INTO `sys_dict_item` VALUES ('844db10c10e41a1f7621bb5d5ef6b1b0', '4a9914b
 INSERT INTO `sys_dict_item` VALUES ('2cdf5389b1d6a35e52c14486e04a3a57', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '待审批', 'created', 0, 1, NULL, 'blue', 0, NULL, 'admin', '2025-10-10 16:27:42', 'admin', '2025-10-10 16:27:42');
 INSERT INTO `sys_dict_item` VALUES ('261f489024bb90163e49ee85498df47e', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已审批', 'completed', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-10-10 16:28:02', 'admin', '2025-10-10 16:28:08');
 INSERT INTO `sys_dict_item` VALUES ('07582f8cb8443cd3de3f5ab150386690', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已取消', 'terminated', 0, 3, '', 'red', 0, NULL, 'admin', '2025-10-10 16:29:10', 'admin', '2025-10-10 16:29:14');
+INSERT INTO `sys_dict_item` VALUES ('4e14582f0b59762f2ca1cfda04539202', 'eeb27772c310addeae7c12d296521399', 'workflow_process_key', '大屏发布', 'screen_release', 0, 1, 'ant-design:fund-projection-screen-outlined', '', 0, NULL, 'admin', '2025-10-15 16:35:15', 'admin', '2025-10-16 11:04:43');
 
 -- ----------------------------
 -- Table structure for sys_log
