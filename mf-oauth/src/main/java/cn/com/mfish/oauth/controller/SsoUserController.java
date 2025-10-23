@@ -329,4 +329,26 @@ public class SsoUserController {
     public Result<SsoUser> changeAccount(@RequestBody SsoUser ssoUser) {
         return ssoUserService.changeAccount(ssoUser.getId(), ssoUser.getAccount());
     }
+
+    @Operation(summary = "获取用户安全设置")
+    @GetMapping("/secureSetting/{userId}")
+    public Result<SsoUser> getSecureSetting(@PathVariable("userId") String userId) {
+        return Result.ok(ssoUserService.getSecureSetting(userId));
+    }
+
+    @Operation(summary = "解绑gitee账号")
+    @PutMapping("/unbind/gitee/{userId}")
+    @Log(title = "解绑gitee账号", operateType = OperateType.UPDATE)
+    public Result<Boolean> unbindGitee(@PathVariable("userId") String userId) {
+        return ssoUserService.unbindGitee(userId);
+    }
+
+
+
+    @Operation(summary = "解绑github账号")
+    @PutMapping("/unbind/github/{userId}")
+    @Log(title = "解绑github账号", operateType = OperateType.UPDATE)
+    public Result<Boolean> unbindGithub(@PathVariable("userId") String userId) {
+        return ssoUserService.unbindGithub(userId);
+    }
 }

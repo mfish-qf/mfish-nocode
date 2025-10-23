@@ -36,7 +36,9 @@ gitee:
   clientId: a83ea66522fef5f382c6aaffa875c7e87b21d3933277c44a326cd3407fc0b651
   clientSecret: 3ebdce2afcb4a7df9b16355f60d898d452f4d9cf8ad1ab8279bb3bb465e614db
   redirectUri: http://localhost:5186/giteeOauth2
+  bindUri: http://localhost:5186/tenant/info/1?callback=gitee
 github:
   clientId: Ov23li7oH0Djw3ZEJCoJ
   clientSecret: ada9a510b3bde542e7510142f07d32a5f6bed131
   redirectUri: http://localhost:5186/githubOauth2
+  bindUri: http://localhost:5186/tenant/info/1?callback=github

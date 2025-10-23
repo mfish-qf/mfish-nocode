@@ -55,7 +55,7 @@ public interface SsoUserService extends IService<SsoUser> {
     /**
      * 通过用户ID获取按钮权限
      *
-     * @param userId 用户id
+     * @param userId   用户id
      * @param tenantId 租户id
      * @return 返回权限集合
      */
@@ -80,7 +80,7 @@ public interface SsoUserService extends IService<SsoUser> {
      * 插入用户角色关系
      *
      * @param userId 用户id
-     * @param roles 角色id集合
+     * @param roles  角色id集合
      * @return 插入数量
      */
     int insertUserRole(String userId, List<String> roles);
@@ -88,7 +88,7 @@ public interface SsoUserService extends IService<SsoUser> {
     /**
      * 插入用户组织关系
      *
-     * @param userId 用户id
+     * @param userId  用户id
      * @param orgList 组织id集合
      * @return 返回插入数量
      */
@@ -123,5 +123,52 @@ public interface SsoUserService extends IService<SsoUser> {
 
     boolean allowChangeAccount(String userId);
 
+    /**
+     * 修改账号
+     *
+     * @param userId  用户id
+     * @param account 账号
+     * @return 返回修改后的用户
+     */
     Result<SsoUser> changeAccount(String userId, String account);
+
+    /**
+     * 获取用户安全设置
+     *
+     * @param userId 用户id
+     * @return 返回用户安全设置
+     */
+    SsoUser getSecureSetting(String userId);
+
+    /**
+     * 解绑gitee账号
+     *
+     * @param userId 用户id
+     * @return 返回解绑结果
+     */
+    Result<Boolean> unbindGitee(String userId);
+
+    /**
+     * 绑定gitee账号
+     *
+     * @param giteeAccount gitee账号
+     * @return 返回绑定结果
+     */
+    Result<Boolean> bindGitee(String giteeAccount);
+
+    /**
+     * 解绑github账号
+     *
+     * @param userId 用户id
+     * @return 返回解绑结果
+     */
+    Result<Boolean> unbindGithub(String userId);
+
+    /**
+     * 绑定github账号
+     *
+     * @param githubAccount github账号
+     * @return 返回绑定结果
+     */
+    Result<Boolean> bindGithub(String githubAccount);
 }

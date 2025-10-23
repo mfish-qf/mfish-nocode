@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
+import cn.com.mfish.oauth.common.GitLoginInfo;
 import cn.com.mfish.oauth.service.LoginService;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -15,10 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,6 +42,8 @@ public class GiteeController {
     private String clientSecret;
     @Value("${gitee.redirectUri}")
     private String redirectUri;
+    @Value("${gitee.bindUri:http://localhost:5186/tenant/info/1?callback=gitee}")
+    private String bindUri;
     @Resource
     SsoUserService ssoUserService;
 
@@ -53,6 +53,51 @@ public class GiteeController {
             @Parameter(name = SerConstant.QR_CODE, description = "gitee认证Code", required = true)
     })
     public Result<Integer> getToken(@PathVariable String code) throws IOException {
+        Result<GitLoginInfo> result = getGiteeAccount(code, redirectUri);
+        if (!result.isSuccess()) {
+            return Result.fail(result.getMsg());
+        }
+        String account = result.getData().getAccount();
+        String token = result.getData().getToken();
+        SsoUser user = ssoUserService.getUserByGitee(account);
+        // 新用户判断是否关注仓库
+        if ((user == null || user.getCreateTime().getTime() > System.currentTimeMillis() - 24 * 3600 * 1000) && !isStarred(token, account)) {
+            return Result.ok(1, "警告：未关注码云仓库");
+        }
+        Result<String> res = loginService.login(result.getData().getGitInfo(), token, SerConstant.LoginType.Gitee, "system", "false");
+        if (!res.isSuccess()) {
+            return Result.fail(res.getMsg());
+        }
+        return Result.ok(0, "登录成功");
+    }
+
+    @GetMapping("/url")
+    @Operation(summary = "获取gitee url")
+    public Result<String> getUrl() {
+        return Result.ok("https://gitee.com/oauth/authorize?client_id=" + clientId
+                + "&redirect_uri=" + redirectUri + "&response_type=code", "获取地址成功");
+    }
+
+    @PutMapping("/bind/{code}")
+    @Operation(summary = "绑定gitee账号")
+    public Result<Boolean> bindGitee(@Parameter(name = "code", description = "gitee认证Code", required = true) @PathVariable String code) throws IOException {
+        Result<GitLoginInfo> result = getGiteeAccount(code, bindUri);
+        if (!result.isSuccess()) {
+            return Result.fail(result.getMsg());
+        }
+        String account = result.getData().getAccount();
+        return ssoUserService.bindGitee(account);
+    }
+
+    /**
+     * 获取码云账号信息
+     *
+     * @param code        认证码
+     * @param redirectUri 重定向地址
+     * @return 码云账号信息
+     * @throws IOException 网络异常
+     */
+    private Result<GitLoginInfo> getGiteeAccount(String code, String redirectUri) throws IOException {
         Map<String, String> param = new HashMap<>();
         param.put("client_secret", clientSecret);
         Result<String> result = OkHttpUtils.postJson("https://gitee.com/oauth/token?grant_type=authorization_code" +
@@ -69,24 +114,7 @@ public class GiteeController {
             return Result.fail("错误：请求码云用户信息失败");
         }
         JSONObject giteeUser = JSON.parseObject(result.getData());
-        String login = giteeUser.getString("login");
-        SsoUser user = ssoUserService.getUserByGitee(giteeUser.getString("login"));
-        // 新用户判断是否关注仓库
-        if ((user == null || user.getCreateTime().getTime() > System.currentTimeMillis() - 24 * 3600 * 1000) && !isStarred(token, login)) {
-            return Result.ok(1, "警告：未关注码云仓库");
-        }
-        result = loginService.login(result.getData(), token, SerConstant.LoginType.Gitee, "system", "false");
-        if (!result.isSuccess()) {
-            return Result.fail(result.getMsg());
-        }
-        return Result.ok(0, "登录成功");
-    }
-
-    @GetMapping("/url")
-    @Operation(summary = "获取gitee url")
-    public Result<String> getUrl() {
-        return Result.ok("https://gitee.com/oauth/authorize?client_id=" + clientId
-                + "&redirect_uri=" + redirectUri + "&response_type=code", "获取地址成功");
+        return Result.ok(new GitLoginInfo(token, giteeUser.getString("login"), result.getData()), "获取码云账号成功");
     }
 
     /**
@@ -111,7 +139,7 @@ public class GiteeController {
             Result<String> result = OkHttpUtils.get("https://gitee.com/api/v5/repos/qiufeng9862/mfish-nocode/events?limit=500&access_token=" + token);
             if (result.isSuccess()) {
                 Pattern pattern = Pattern.compile("\"StarEvent\".*?\"login\"\\s*:\\s*\"(?<login>.*?)\"");
-                String data = result.getData().replace(" ","");
+                String data = result.getData().replace(" ", "");
                 Matcher matcher = pattern.matcher(data);
                 while (matcher.find()) {
                     String value = matcher.group("login");
