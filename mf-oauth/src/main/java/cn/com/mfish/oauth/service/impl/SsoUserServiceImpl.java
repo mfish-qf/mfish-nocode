@@ -503,12 +503,128 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (isAccountExist(account, userId)) {
             return Result.fail(user, "错误:账号已存在");
         }
-
         if (baseMapper.updateById(user) > 0) {
             userTempCache.removeOneCache(userId);
             return Result.ok(user, "修改账号成功");
         }
         return Result.fail(user, "修改账号失败");
+    }
+
+    @Override
+    public SsoUser getSecureSetting(String userId) {
+        SsoUser ssoUser = userTempCache.getFromCacheAndDB(userId);
+        //脱敏
+        ssoUser.setPassword(null);
+        ssoUser.setOldPassword(null);
+        if(ssoUser.getPhone() != null){
+            ssoUser.setPhone(ssoUser.getPhone().replaceAll("(\\d{3})(\\d*)(\\d{2})", "$1****$3"));
+        }
+        if(ssoUser.getEmail() != null){
+            ssoUser.setEmail(ssoUser.getEmail().replaceAll("(\\w)\\w*(@\\w+\\.\\w+)", "$1****$2"));
+        }
+        if(ssoUser.getGitee() != null){
+            ssoUser.setGitee(ssoUser.getGitee().replaceAll("(\\w{1})(\\w*)(\\w{1})", "$1****$3"));
+        }
+        if(ssoUser.getGithub() != null){
+            ssoUser.setGithub(ssoUser.getGithub().replaceAll("(\\w{1})(\\w*)(\\w{1})", "$1****$3"));
+        }
+        if(ssoUser.getOpenid() != null){
+            ssoUser.setOpenid(ssoUser.getOpenid().replaceAll("(\\w{1})(\\w*)(\\w{2})", "$1****$3"));
+        }
+        return ssoUser;
+    }
+
+    @Override
+    public Result<Boolean> unbindGitee(String userId) {
+        Result<SsoUser> result = unbindVerify(userId);
+        if(!result.isSuccess()){
+            return Result.fail(false, result.getMsg());
+        }
+        SsoUser ssoUser = result.getData();
+        if(StringUtils.isEmpty(ssoUser.getGitee())){
+            return Result.fail(false, "错误：未绑定gitee账号");
+        }
+        ssoUser.setGitee("");
+        if(baseMapper.updateById(ssoUser) > 0){
+            userTempCache.removeOneCache(userId);
+            return Result.ok(true, "解绑gitee账号成功");
+        }
+        return Result.fail(false, "解绑gitee账号失败");
+    }
+
+    @Override
+    public Result<Boolean> bindGitee(String giteeAccount) {
+        SsoUser user = getUserByGitee(giteeAccount);
+        // 新用户判断是否关注仓库
+        if (user != null) {
+            return Result.fail(false, "警告：Gitee账号已被其他用户绑定");
+        }
+        String userId = AuthInfoUtils.getCurrentUserId();
+        if(StringUtils.isEmpty(userId)){
+            return Result.fail(false, "错误：未获取到当前用户ID");
+        }
+        SsoUser ssoUser = userTempCache.getFromCacheAndDB(userId);
+        if(StringUtils.isNotEmpty(ssoUser.getGitee())){
+            return Result.fail(false, "错误：已绑定gitee账号");
+        }
+        ssoUser.setGitee(giteeAccount);
+        if(baseMapper.updateById(ssoUser) > 0){
+            userTempCache.removeOneCache(AuthInfoUtils.getCurrentUserId());
+            return Result.ok(true, "绑定gitee账号成功");
+        }
+        return Result.fail(false, "错误：绑定gitee账号失败");
+    }
+
+    @Override
+    public Result<Boolean> unbindGithub(String userId) {
+        Result<SsoUser> result = unbindVerify(userId);
+        if(!result.isSuccess()){
+            return Result.fail(false, result.getMsg());
+        }
+        SsoUser ssoUser = result.getData();
+        if(StringUtils.isEmpty(ssoUser.getGithub())){
+            return Result.fail(false, "错误：未绑定github账号");
+        }
+        ssoUser.setGithub("");
+        if(baseMapper.updateById(ssoUser) > 0){
+            userTempCache.removeOneCache(userId);
+            return Result.ok(true, "解绑github账号成功");
+        }
+        return Result.fail(false, "解绑github账号失败");
+    }
+
+    @Override
+    public Result<Boolean> bindGithub(String githubAccount) {
+        SsoUser user = getUserByGithub(githubAccount);
+        // 新用户判断是否关注仓库
+        if (user != null) {
+            return Result.fail(false, "警告：Github账号已被其他用户绑定");
+        }
+        String userId = AuthInfoUtils.getCurrentUserId();
+        if(StringUtils.isEmpty(userId)){
+            return Result.fail(false, "错误：未获取到当前用户ID");
+        }
+        SsoUser ssoUser = userTempCache.getFromCacheAndDB(userId);
+        if(StringUtils.isNotEmpty(ssoUser.getGithub())){
+            return Result.fail(false, "错误：已绑定github账号");
+        }
+        ssoUser.setGithub(githubAccount);
+        if(baseMapper.updateById(ssoUser) > 0){
+            userTempCache.removeOneCache(AuthInfoUtils.getCurrentUserId());
+            return Result.ok(true, "绑定github账号成功");
+        }
+        return Result.fail(false, "错误：绑定github账号失败");
+    }
+
+    private Result<SsoUser> unbindVerify(String userId) {
+        SsoUser ssoUser = userTempCache.getFromCacheAndDB(userId);
+        if(StringUtils.isEmpty(ssoUser.getPassword())){
+            return Result.fail(ssoUser, "错误：未设置密码，请设置密码后再解绑");
+        }
+        if(StringUtils.isMatch("^G[0-9]*$", ssoUser.getAccount())){
+            return Result.fail(ssoUser, "错误：自动生成账号，请在个人信息中修改账号名称后再解绑");
+        }
+        return Result.ok(ssoUser, "验证通过");
     }
 
     private OnlineUser buildOnlineUser(RedisAccessToken redisAccessToken, String sessionId) {

@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.utils.http;
 
 import cn.com.mfish.common.core.enums.HttpType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.web.Result;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -344,6 +346,9 @@ public class OkHttpUtils {
                 return Result.buildResult(data, code, msg);
             }
             return Result.buildResult(null, code, msg);
+        } catch (SocketTimeoutException se) {
+            log.error("错误:OkHttp请求超时", se);
+            throw new MyRuntimeException("Http请求超时");
         } catch (IOException e) {
             log.error("错误:OkHttp请求异常", e);
             throw e;
