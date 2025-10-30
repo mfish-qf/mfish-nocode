@@ -30,7 +30,7 @@
         <spring-boot-admin.version>3.5.2</spring-boot-admin.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2023.0.3.3</spring-cloud-alibaba.version>
-        <spring-ai.version>1.1.0-SNAPSHOT</spring-ai.version>
+        <spring-ai.version>1.1.0-M3</spring-ai.version>
         <swagger.doc.version>2.8.12</swagger.doc.version>
         <swagger.core.version>2.2.36</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
@@ -510,43 +510,6 @@
     <!--            <url>http://app.mfish.com.cn:18122/repository/mf-snapshots/</url>-->
     <!--        </snapshotRepository>-->
     <!--    </distributionManagement>-->
-    <repositories>
-        <!-- Maven Central -->
-        <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-
-        <!-- Spring Milestones -->
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-
-        <!-- Spring Snapshots -->
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <profiles>
         <profile>
             <id>dev</id>
