@@ -78,8 +78,9 @@ public class AliYunStorage extends AbstractStorage {
             // 对象键（Key）是对象在存储桶中的唯一标识，filePath为文件全路径会在阿里云创建相应目录
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, filePath, inputStream, objectMetadata);
             oss.putObject(putObjectRequest);
+            log.info("文件上传成功，文件路径为：{}", filePath);
         } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+            log.error("错误:文件存储异常，文件路径为：{}，异常信息：{}", filePath, ex.getMessage(), ex);
             throw new MyRuntimeException("错误:文件存储异常");
         } finally {
             oss.shutdown();

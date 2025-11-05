@@ -1,10 +1,12 @@
 package cn.com.mfish.storage.controller;
 
+import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.file.handler.StorageHandler;
 import cn.com.mfish.common.file.service.StorageService;
+import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +38,7 @@ public class StorageController {
     StorageService storageService;
 
     @Operation(summary = "文件新增")
+    @Log(title = "文件新增", operateType = OperateType.IMPORT)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @RequiresPermissions("sys:file:upload")
     public Result<StorageInfo> upload(@RequestPart("file") MultipartFile file
@@ -56,6 +59,7 @@ public class StorageController {
 
     @Operation(summary = "文件更新")
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Log(title = "文件更新", operateType = OperateType.IMPORT)
     @RequiresPermissions("sys:file:upload")
     public Result<StorageInfo> upload(@RequestPart("file") MultipartFile file
             , @Schema(description = "文件key") @RequestPart(value = "fileKey") String fileKey

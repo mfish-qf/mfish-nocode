@@ -41,7 +41,9 @@ public class LocalStorage extends AbstractStorage {
         File file = new File(getFilePath(filePath));
         try {
             org.apache.commons.io.FileUtils.copyInputStreamToFile(inputStream, file);
+            log.info("文件上传成功，文件路径为：{}", filePath);
         } catch (IOException e) {
+            log.error("错误:文件存储异常，文件路径为：{}，异常信息：{}", filePath, e.getMessage(), e);
             throw new MyRuntimeException("错误:文件存储异常");
         }
     }

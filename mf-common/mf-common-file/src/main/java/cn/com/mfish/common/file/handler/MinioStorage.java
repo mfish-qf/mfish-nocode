@@ -69,9 +69,9 @@ public class MinioStorage extends AbstractStorage {
         try {
             minioClient.putObject(PutObjectArgs.builder().bucket(bucket).object(filePath).stream(inputStream, contentLength, 5 * 1024 * 1024) // 5MB 分片
                     .contentType(contentType).build());
-            log.info("文件上传成功: {}", filePath);
+            log.info("文件上传成功，文件路径为 {}", filePath);
         } catch (Exception e) {
-            log.error("文件上传失败: {}", filePath, e);
+            log.error("文件上传失败，文件路径为 {}, 异常信息: {}", filePath, e.getMessage(), e);
             throw new RuntimeException("文件上传失败", e);
         }
     }
