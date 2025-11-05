@@ -127,7 +127,7 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
     /**
      * 触发完成
      *
-     * @param context 上下文对象，包含执行相关的信息
+     * @param context                上下文对象，包含执行相关的信息
      * @param triggerInstructionCode 触发器的执行指令代码
      * @throws SchedulerException 如果保存过程中发生异常，则抛出调度异常
      */
@@ -165,27 +165,27 @@ public class ListenerService extends ListenerEvent<TriggerLog> {
         // 获得计划任务实例
         Scheduler s = context.getScheduler();
         //构造
-        TriggerLog log = new TriggerLog();
-        log.setId(context.getFireInstanceId());
-        log.setScheduledFireTime(context.getScheduledFireTime());
-        log.setFireTime(context.getFireTime());
-        log.setEndTime(new Date());
-        log.setJobRunTime(context.getJobRunTime());
-        log.setStatus(status);
-        log.setResult(result);
-        log.setErrorMsg(exceptionDetail);
-        log.setTriggerName(context.getTrigger().getKey().getName());
-        log.setTriggerGroup(context.getTrigger().getKey().getGroup());
-        log.setJobName(context.getJobDetail().getKey().getName());
-        log.setJobGroup(context.getJobDetail().getKey().getGroup());
-        log.setJobClass(context.getJobDetail().getJobClass().getName());
-        log.setThreadGroupName(Thread.currentThread().getThreadGroup().getName());
-        log.setThreadId(Long.toString(Thread.currentThread().threadId()));
-        log.setThreadName(Thread.currentThread().getName());
-        log.setThreadPriority(Long.toString(Thread.currentThread().getPriority()));
-        log.setScheduledId(s.getSchedulerInstanceId());
-        log.setScheduledName(s.getSchedulerName());
-        log.setCreateDate(new Date());
+        TriggerLog log = new TriggerLog()
+                .setId(context.getFireInstanceId())
+                .setScheduledFireTime(context.getScheduledFireTime())
+                .setFireTime(context.getFireTime())
+                .setEndTime(new Date())
+                .setJobRunTime(context.getJobRunTime())
+                .setStatus(status)
+                .setResult(result)
+                .setErrorMsg(exceptionDetail)
+                .setTriggerName(context.getTrigger().getKey().getName())
+                .setTriggerGroup(context.getTrigger().getKey().getGroup())
+                .setJobName(context.getJobDetail().getKey().getName())
+                .setJobGroup(context.getJobDetail().getKey().getGroup())
+                .setJobClass(context.getJobDetail().getJobClass().getName())
+                .setThreadGroupName(Thread.currentThread().getThreadGroup().getName())
+                .setThreadId(Long.toString(Thread.currentThread().threadId()))
+                .setThreadName(Thread.currentThread().getName())
+                .setThreadPriority(Long.toString(Thread.currentThread().getPriority()))
+                .setScheduledId(s.getSchedulerInstanceId())
+                .setScheduledName(s.getSchedulerName())
+                .setCreateDate(new Date());
         delete(context.getFireInstanceId());
         save(log);
     }

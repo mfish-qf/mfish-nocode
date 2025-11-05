@@ -97,7 +97,7 @@ public class LogAspect {
                 try {
                     params.append(",").append(JSON.toJSONString(obj));
                 } catch (Exception ex) {
-                    log.error("参数转json出错", ex);
+                    log.error("参数转json出错 {} {}", obj, ex.getMessage(), ex);
                     params.append(obj.toString());
                 }
             }

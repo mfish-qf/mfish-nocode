@@ -72,8 +72,9 @@ public class QiNiuStorage extends AbstractStorage {
     public void store(InputStream inputStream, long contentLength, String contentType, String filePath) {
         try {
             uploadManager.put(inputStream, contentLength, filePath, getUpToken(filePath), null, contentType, false);
+            log.info("文件上传成功，文件路径为：{}", filePath);
         } catch (QiniuException e) {
-            log.error(e.getMessage(), e);
+            log.error("文件上传失败，文件路径为：{}, 异常信息：{}", filePath, e.getMessage(), e);
         }
     }
 

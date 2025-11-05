@@ -1,6 +1,7 @@
 package cn.com.mfish.scheduler.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
  * @date: 2023/2/7 12:10
  */
 @Data
+@Accessors(chain = true)
 public class TriggerLog {
     /**
      * 日志ID
