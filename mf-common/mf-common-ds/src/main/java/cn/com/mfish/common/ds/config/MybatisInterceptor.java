@@ -43,10 +43,9 @@ public class MybatisInterceptor implements Interceptor {
 
     private void setParam(MappedStatement mappedStatement, String account, List<?> list) {
         for (Object entity : list) {
-            if (!(entity instanceof BaseEntity)) {
+            if (!(entity instanceof BaseEntity<?> parameter)) {
                 continue;
             }
-            BaseEntity<?> parameter = (BaseEntity<?>) entity;
             SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
             switch (sqlCommandType) {
                 case INSERT:

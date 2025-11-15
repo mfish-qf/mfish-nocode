@@ -1,8 +1,11 @@
 package cn.com.mfish.consume;
 
 import cn.com.mfish.common.app.annotation.AutoApp;
+import cn.com.mfish.common.core.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @description: 消费端
@@ -11,15 +14,10 @@ import org.springframework.boot.SpringApplication;
  */
 @Slf4j
 @AutoApp
+@EnableFeignClients(basePackages = "cn.com.mfish")
 public class MfConsumeApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MfConsumeApplication.class, args);
-        log.info("""
-                
-                \t----------------------------------------------------------
-                \t\
-                
-                \t--------------------摸鱼调度中心消费端测试样例启动成功-----------------------
-                \t""");
+        ConfigurableApplicationContext application = SpringApplication.run(MfConsumeApplication.class, args);
+        Utils.printServerRun(application);
     }
 }
