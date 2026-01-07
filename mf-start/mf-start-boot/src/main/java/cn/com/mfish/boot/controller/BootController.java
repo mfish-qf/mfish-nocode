@@ -5,6 +5,9 @@ import cn.com.mfish.common.ai.entity.AiRouterVo;
 import cn.com.mfish.common.captcha.service.CheckCodeService;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.prom.annotation.MetricsMonitor;
+import cn.com.mfish.common.prom.annotation.MetricsMonitors;
+import cn.com.mfish.common.prom.enums.MetricEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -42,6 +45,10 @@ public class BootController {
 
     @Operation(summary = "Ai路由", description = "Ai路由")
     @GetMapping("/ai/router")
+    @MetricsMonitors({
+            @MetricsMonitor(metricEnum = MetricEnum.MFISH_REQUEST_COUNT, tagValues = {"GET", "/ai/router"}),
+            @MetricsMonitor(metricEnum = MetricEnum.MFISH_REQUEST_DURATION, tagValues = {"GET", "/ai/router"})
+    })
     public Result<AiRouterVo> aiRouter(String prompt) {
         prompt = StringUtils.isEmpty(prompt) ? "介绍下摸鱼低代码" : prompt;
         return gatewayAssistant.chat(prompt).block();

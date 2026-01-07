@@ -2,6 +2,9 @@ package cn.com.mfish.prometheus;
 
 import cn.com.mfish.common.prom.common.PromClientUtils;
 import cn.com.mfish.common.prom.enums.StepUnit;
+import cn.com.mfish.common.prom.req.PromDuration;
+import cn.com.mfish.common.prom.req.ReqPromQuery;
+import cn.com.mfish.common.prom.req.ReqPromQueryRange;
 import cn.com.mfish.common.prom.result.PromResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -30,11 +33,12 @@ public class PromTest {
         String promql = "node_cpu_seconds_total{mode=\"idle\",cpu=\"0\"}"; // 简单查询示例
         long sixHoursInMillis = 6L * 60 * 60 * 1000;
         Date start = new Date(System.currentTimeMillis() - sixHoursInMillis);
+
         try {
-            PromResponse result = PromClientUtils.queryRange(HOST, promql, start, new Date(), 1, StepUnit.m);
+            PromResponse result = PromClientUtils.queryRange((ReqPromQueryRange) new ReqPromQueryRange().setStart(start).setEnd(new Date()).setStep(new PromDuration(1L, StepUnit.m)).setQuery(promql), HOST);
             System.out.println(result);
 
-            PromResponse result2 = PromClientUtils.query(HOST, promql);
+            PromResponse result2 = PromClientUtils.query((ReqPromQuery) new ReqPromQuery().setQuery(promql).setLookBackDelta(new PromDuration(1L, StepUnit.h)), HOST);
             System.out.println(result2);
         } catch (IOException e) {
             log.error("查询victor metrics失败", e);

@@ -64,6 +64,10 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-workflow</artifactId>
             <version>${mfish.version}</version>
         </dependency>
@@ -75,14 +79,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-prometheus</artifactId>
         </dependency>
     </dependencies>
     <build>
