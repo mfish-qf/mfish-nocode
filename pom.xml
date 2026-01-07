@@ -38,7 +38,7 @@
         <pagehelper.boot.version>2.1.1</pagehelper.boot.version>
         <jsqlparser.version>5.3</jsqlparser.version>
         <druid.version>1.2.27</druid.version>
-        <dynamic-ds.version>4.3.1</dynamic-ds.version>
+        <dynamic-ds.version>4.5.0</dynamic-ds.version>
         <commons.io.version>2.21.0</commons.io.version>
         <commons.text.version>1.15.0</commons.text.version>
         <freemarker.version>2.3.34</freemarker.version>

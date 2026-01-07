@@ -1,19 +1,28 @@
 package cn.com.mfish.common.prom.common;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.SpringBeanFactory;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.http.OkHttpUtils;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.common.prom.enums.StepUnit;
+import cn.com.mfish.common.prom.enums.MetricEnum;
+import cn.com.mfish.common.prom.req.ReqPromQuery;
+import cn.com.mfish.common.prom.req.ReqPromQueryRange;
 import cn.com.mfish.common.prom.result.PromResponse;
 import com.alibaba.fastjson2.JSON;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @description: Prometheus 客户端工具类
@@ -22,73 +31,59 @@ import java.util.HashMap;
  */
 @Slf4j
 public class PromClientUtils {
+
+    private static final Map<String, AtomicReference<Double>> VALUE_MAP = new ConcurrentHashMap<>();
+
     /**
      * 查询时间范围数据
      *
-     * @param host     Prometheus 主机地址
-     * @param promql   查询语句
-     * @param start    开始时间
-     * @param end      结束时间
-     * @param step     时间步长
-     * @param stepUnit 时间步长单位
+     * @param reqPromQueryRange 查询参数
+     * @param host              Prometheus 主机地址
      * @return 查询结果
-     * @throws IOException IO 异常
      */
-    public static PromResponse queryRange(String host, String promql, Date start, Date end, Integer step, StepUnit stepUnit) throws IOException {
-        return queryRange(host, promql, start, end, step, stepUnit, null, null);
+    public static PromResponse queryRange(ReqPromQueryRange reqPromQueryRange, String host) throws IOException {
+        return queryRange(reqPromQueryRange, host, null, null);
     }
 
     /**
      * 查询时间范围数据
      *
-     * @param host     Prometheus 主机地址
-     * @param promql   查询语句
-     * @param start    开始时间
-     * @param end      结束时间
-     * @param step     时间步长
-     * @param stepUnit 时间步长单位
-     * @param account  账号
-     * @param password 密码
+     * @param reqPromQueryRange 查询参数
+     * @param host              Prometheus 主机地址
+     * @param account           账号
+     * @param password          密码
      * @return 查询结果
      * @throws IOException IO 异常
      */
-    public static PromResponse queryRange(String host, String promql, Date start, Date end, Integer step, StepUnit stepUnit, String account, String password) throws IOException {
-        log.info("查询时间范围数据, promql: {}, start: {}, end: {}, step: {}, stepUnit: {}", promql, start, end, step, stepUnit);
-        String queryParam = URLEncoder.encode(promql, StandardCharsets.UTF_8);
-        String url = String.format("%s/api/v1/query_range?query=%s&start=%d&end=%d&step=%s",
-                host, queryParam, start.toInstant().getEpochSecond(), end.toInstant().getEpochSecond(), step + stepUnit.getValue());
-        return requestVM(url, account, password);
+    public static PromResponse queryRange(ReqPromQueryRange reqPromQueryRange, String host, String account, String password) throws IOException {
+        return requestVM(host + reqPromQueryRange.toString(), account, password);
     }
 
     /**
      * 查询最新数据
      *
-     * @param host   Prometheus 主机地址
-     * @param promql 查询语句
+     * @param reqPromQuery 查询参数
+     * @param host         Prometheus 主机地址
      * @return 查询结果
      * @throws IOException IO 异常
      */
-    public static PromResponse query(String host, String promql) throws IOException {
-        return query(host, promql, null, null);
+    public static PromResponse query(ReqPromQuery reqPromQuery, String host) throws IOException {
+        return query(reqPromQuery, host, null, null);
     }
 
 
     /**
      * 查询最新数据
      *
-     * @param host     Prometheus 主机地址
-     * @param promql   查询语句
-     * @param account  账号
-     * @param password 密码
+     * @param reqPromQuery 查询参数
+     * @param host         Prometheus 主机地址
+     * @param account      账号
+     * @param password     密码
      * @return 查询结果
      * @throws IOException IO 异常
      */
-    public static PromResponse query(String host, String promql, String account, String password) throws IOException {
-        log.info("查询最新数据, promql: {}", promql);
-        String queryParam = URLEncoder.encode(promql, StandardCharsets.UTF_8);
-        String url = String.format("%s/api/v1/query?query=%s",
-                host, queryParam);
-        return requestVM(url, account, password);
+    public static PromResponse query(ReqPromQuery reqPromQuery, String host, String account, String password) throws IOException {
+        return requestVM(host + reqPromQuery.toString(), account, password);
     }
 
     /**
@@ -111,9 +106,79 @@ public class PromClientUtils {
             result = OkHttpUtils.get(url);
         }
         if (!result.isSuccess()) {
-            log.error("查询victor metrics失败, url: {}, result: {}", url, result);
+            log.error("查询 Prometheus 指标失败, url: {}, result: {}", url, result);
             return null;
         }
         return JSON.parseObject(result.getData(), PromResponse.class);
     }
+
+    /**
+     * 设置指标值
+     *
+     * @param metricEnum  指标枚举
+     * @param metricValue 指标值
+     * @param tagValues 标签值
+     */
+    public static void setValue(MetricEnum metricEnum, double metricValue, String... tagValues) {
+        if (tagValues.length != metricEnum.getTags().size()) {
+            throw new MyRuntimeException("标签数量不匹配, 指标: " + metricEnum.getName());
+        }
+        String key = buildKey(metricEnum, tagValues);
+        AtomicReference<Double> valueRef = VALUE_MAP.computeIfAbsent(key, k -> {
+            AtomicReference<Double> ref = new AtomicReference<>(0d);
+            Gauge.builder(metricEnum.getName(), ref, AtomicReference::get)
+                    .description(metricEnum.getDescription())
+                    .tags(buildTags(metricEnum, tagValues))
+                    .register(SpringBeanFactory.getBean(MeterRegistry.class));
+            return ref;
+        });
+        valueRef.set(metricValue);
+    }
+
+    /**
+     * 指标值增加 1
+     * @param metricEnum 指标枚举
+     * @param tagValues 标签值
+     */
+    public static void increment(MetricEnum metricEnum, String... tagValues) {
+        Counter counter = Counter.builder(metricEnum.getName())
+                .description(metricEnum.getDescription())
+                .tags(buildTags(metricEnum, tagValues))
+                .register(SpringBeanFactory.getBean(MeterRegistry.class));
+        counter.increment();
+    }
+
+    /**
+     * 构建指标键
+     *
+     * @param metricEnum  指标枚举
+     * @param tagValues 标签值
+     * @return 指标键
+     */
+    private static String buildKey(MetricEnum metricEnum, String... tagValues) {
+        StringBuilder sb = new StringBuilder(metricEnum.getName());
+        sb.append("{");
+        for (int i = 0; i < tagValues.length; i++) {
+            sb.append(metricEnum.getTags().get(i)).append("=\"").append(tagValues[i]).append("\",");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * 构建指标标签
+     *
+     * @param metricEnum  指标枚举
+     * @param tagValues 标签值
+     * @return 指标标签
+     */
+    private static Tags buildTags(MetricEnum metricEnum, String... tagValues) {
+        Tags tags = Tags.empty();
+        for (int i = 0; i < tagValues.length; i++) {
+            tags = tags.and(metricEnum.getTags().get(i), tagValues[i]);
+        }
+        return tags;
+    }
+
 }
