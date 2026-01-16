@@ -62,10 +62,14 @@ public class FlowAuthority {
     public static TaskQuery getAuthTaskQuery(FlowAuthority flowAuthority, TaskService taskService) {
         TaskQuery query = taskService.createTaskQuery().includeProcessVariables();
         if (!AuthInfoUtils.isSuper()) {
-            query.or()
-                    .taskCandidateGroupIn(flowAuthority.getGroupList())
-                    .taskCandidateOrAssigned(flowAuthority.getAccount())
-                    .endOr();
+            query = query.or();
+            if (flowAuthority.getGroupList() != null && !flowAuthority.getGroupList().isEmpty()) {
+                query.taskCandidateGroupIn(flowAuthority.getGroupList());
+            }
+            if (StringUtils.isNotEmpty(flowAuthority.getAccount())) {
+                query.taskCandidateOrAssigned(flowAuthority.getAccount());
+            }
+            query = query.endOr();
         }
         return query;
     }
@@ -99,7 +103,7 @@ public class FlowAuthority {
                 query.taskAssignee(flowAuthority.getAccount())
                         .taskCandidateUser(flowAuthority.getAccount());
             }
-            query.endOr();
+            query = query.endOr();
         }
         return query;
     }
