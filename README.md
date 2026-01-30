@@ -153,6 +153,8 @@
 [5.自助大屏配置系列-多屏联动](https://www.bilibili.com/video/BV1kvjHzdEok/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
 
 [6.自助大屏配置系列-动态显隐](https://www.bilibili.com/video/BV1CkrNBWEsj/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
+
+[7.自助大屏配置系列-表单查询](https://www.bilibili.com/video/BV1efzsB4Ebq/?share_source=copy_web&vd_source=0cf425790dc7750eb5d8a4d1c0b028f4)
 #### 项目截图
 
 <table>
