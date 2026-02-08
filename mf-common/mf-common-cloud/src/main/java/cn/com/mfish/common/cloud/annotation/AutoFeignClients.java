@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@EnableFeignClients
+@EnableFeignClients(basePackages = "cn.com.mfish")
 public @interface AutoFeignClients {
     String[] value() default {};
 

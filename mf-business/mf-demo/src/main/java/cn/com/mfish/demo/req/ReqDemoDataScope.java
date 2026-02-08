@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
  * @description: demo_data_scope
  * @author: mfish
  * @date: 2024-09-04
- * @version: V2.2.0
+ * @version: V2.3.0
  */
 @Data
 @Accessors(chain = true)
