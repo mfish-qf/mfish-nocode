@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -43,5 +44,20 @@ public class PromTest {
         } catch (IOException e) {
             log.error("查询victor metrics失败", e);
         }
+    }
+
+    @Test
+    public void getReqPromQuery() {
+        ReqPromQueryRange reqPromQuery = new ReqPromQueryRange();
+        reqPromQuery.setQuery("model_call_count{model_service_id=\"****\"}");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            reqPromQuery.setStart(sdf.parse("2025-12-31 00:00:00"));
+            reqPromQuery.setEnd(sdf.parse("2025-12-31 23:59:59"));
+        } catch (Exception e) {
+            log.error("解析时间失败", e);
+        }
+        reqPromQuery.setStep(new PromDuration(5L, StepUnit.m));
+        System.out.println(reqPromQuery);
     }
 }

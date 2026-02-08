@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
  * @description: openai_chat_model
  * @author: mfish
  * @date: 2025-08-13
- * @version: V2.2.0
+ * @version: V2.3.0
  */
 @Tag(name = "AI聊天模型-openai")
 @RestController

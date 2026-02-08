@@ -45,7 +45,7 @@
 数据展示看板等轻应用开发快速集成
 
 ## 💡技术栈
-* 后端基于SpringBoot3, Spring Cloud Alibaba，实现微服务、单体服务代码一体化架构
+* 后端基于SpringBoot4, Spring Cloud Alibaba，实现微服务、单体服务代码一体化架构
 * 前端采用VUE3+AntDesign
 * 注册中心、配置中心采用nacos(作为单体服务时无需使用注册中心)
 * 支持oauth2统一认证接入，支持多种登录方式（账号密码登录、手机短信登录、微信扫码登录）

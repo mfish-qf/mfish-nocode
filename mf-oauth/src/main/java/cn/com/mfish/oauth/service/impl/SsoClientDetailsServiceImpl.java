@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @description: 客户端信息
  * @author: mfish
  * @date: 2023-05-12
- * @version: V2.2.0
+ * @version: V2.3.0
  */
 @Service
 public class SsoClientDetailsServiceImpl extends ServiceImpl<SsoClientDetailsMapper, SsoClientDetails> implements SsoClientDetailsService {
