@@ -33,19 +33,15 @@ public enum DataType {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public enum SlimType {
-
-        UNKNOWN("unknown"),
-        STRING("string"),
-        NUMBER("number"),
-        BOOLEAN("boolean"),
-        DATE("date");
-
+        UNKNOWN("UNKNOWN"),
+        STRING("STRING"),
+        NUMBER("NUMBER"),
+        BOOLEAN("BOOLEAN"),
+        DATE("DATE");
         private final String type;
-
         SlimType(String type) {
             this.type = type;
         }
-
         @JsonCreator
         public static SlimType from(String value) {
             if (StringUtils.isEmpty(value)) {
