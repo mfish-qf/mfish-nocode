@@ -45,7 +45,7 @@
 数据展示看板等轻应用开发快速集成
 
 ## 💡技术栈
-* 后端基于SpringBoot3, Spring Cloud Alibaba，实现微服务、单体服务代码一体化架构
+* 后端基于SpringBoot4, Spring Cloud Alibaba，实现微服务、单体服务代码一体化架构
 * 前端采用VUE3+AntDesign
 * 注册中心、配置中心采用nacos(作为单体服务时无需使用注册中心)
 * 支持oauth2统一认证接入，支持多种登录方式（账号密码登录、手机短信登录、微信扫码登录）
@@ -163,12 +163,16 @@
       <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-c77cdb0b34e61b837cbfc22e5ad5acb7.png" /></td>
     </tr>
     <tr>
-      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-c95ce1019e5db9f461d8c5e9d973b7e7.png" /></td>
-      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-90b38eb06367c9fdb0ff79362f3aa5bd.png" /></td>
+      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-ee4f2a35788db09fcc6e281cf171f8c1.jpg" /></td>
+      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-6e87424a0defbdb968a21f9bc42a610b.jpg" /></td>
+    </tr>
+    <tr>
+      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-0d6f1ff813c700191c34536a1d84bf6d.jpg" /></td>
+      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-5586c6c0e7600f96fe62eed1e2a558ad.jpg" /></td>
     </tr>
     <tr>
       <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-51a14b3a3d460c40a5cad78404420d78.png" /></td>
-      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-6b78130a40ccf3fcccae8891ccfb9737.png" /></td>
+      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-a8003812c6f8895b1f52a9005742f521.png" /></td>
     </tr>
     <tr>
       <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-68939a2ada4ed26028beebaa6cabac04.png" /></td>
@@ -188,7 +192,7 @@
     </tr>
     <tr>
       <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-3cf5951020da20b3e7ccf445fadfc0c3.png" /></td>
-      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-aee8abe754615fea679215bf23723cfa.png" /></td>
+      <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-7bb21a0253bd19d4172331ec2472b277.jpg" /></td>
     </tr>
     <tr>
       <td><img src="http://oscimg.oschina.net/AiCreationDetail/up-7fa88472a42caa99f6606697b1b0a250.png" /></td>
