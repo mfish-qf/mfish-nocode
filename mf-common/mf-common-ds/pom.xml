@@ -5,26 +5,29 @@
     <parent>
         <artifactId>mf-common</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <version>mf-2.2.0</version>
+        <version>mf-2.3.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <description>多数据源配置</description>
     <artifactId>mf-common-ds</artifactId>
 
     <dependencies>
-        <!-- Druid -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-3-starter</artifactId>
-        </dependency>
-
         <!-- Dynamic DataSource -->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <artifactId>dynamic-datasource-spring-boot4-starter</artifactId>
             <version>${dynamic-ds.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis-spring-boot.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- SpringBoot Seata -->
         <!--        <dependency>-->
         <!--            <groupId>com.alibaba.cloud</groupId>-->
@@ -36,23 +39,6 @@
         <!--                </exclusion>-->
         <!--            </exclusions>-->
         <!--        </dependency>-->
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.mybatis.spring.boot</groupId>-->
-        <!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
-        <!--        </dependency>-->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring</artifactId>
-        </dependency>
-        <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-core</artifactId>
-            </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-core</artifactId>

@@ -17,7 +17,7 @@ import java.util.List;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.2.0
+ * @version: V2.3.0
  */
 @Data
 @TableName("sso_org")

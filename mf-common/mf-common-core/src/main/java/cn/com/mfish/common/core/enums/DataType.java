@@ -2,7 +2,9 @@ package cn.com.mfish.common.core.enums;
 
 import cn.com.mfish.common.core.constants.DataConstant;
 import cn.com.mfish.common.core.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -31,20 +33,31 @@ public enum DataType {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public enum SlimType {
-        UNKNOWN("unknown"),
-        STRING("string"),
-        NUMBER("number"),
-        BOOLEAN("boolean"),
-        DATE("date");
-
+        UNKNOWN("UNKNOWN"),
+        STRING("STRING"),
+        NUMBER("NUMBER"),
+        BOOLEAN("BOOLEAN"),
+        DATE("DATE");
         private final String type;
-
         SlimType(String type) {
             this.type = type;
         }
+        @JsonCreator
+        public static SlimType from(String value) {
+            if (StringUtils.isEmpty(value)) {
+                return UNKNOWN;
+            }
+            for (SlimType t : values()) {
+                if (t.name().equalsIgnoreCase(value)
+                        || t.type.equalsIgnoreCase(value)) {
+                    return t;
+                }
+            }
+            return UNKNOWN;
+        }
 
-        @Override
-        public String toString() {
+        @JsonValue
+        public String getType() {
             return type;
         }
     }
@@ -131,10 +144,22 @@ public enum DataType {
         typeMap.put(DataConstant.DataType.YEAR, DataType.DATE);
     }
 
+    @JsonValue
     public String getValue() {
         return dataType;
     }
 
+
+    @JsonCreator
+    public static DataType from(Object value) {
+        if (value == null) {
+            return DataType.UNKNOWN;
+        }
+        if (value instanceof SlimType slimType) {
+            return forType(slimType);
+        }
+        return forType(value.toString());
+    }
 
     /**
      * 根据值获取操作条件
@@ -162,7 +187,7 @@ public enum DataType {
         if (slimType == null) {
             return DataType.UNKNOWN;
         }
-        return forType(slimType.toString());
+        return forType(slimType.getType());
     }
 
     /**

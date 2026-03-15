@@ -1,3 +1,2 @@
 cn.com.mfish.common.ds.config.MybatisInterceptor
 cn.com.mfish.common.ds.config.BatchSqlInjector
-com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
