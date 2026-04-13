@@ -64,7 +64,18 @@ public class AccessTokenController {
     @Resource
     CaptchaProperties captchaProperties;
 
-    @Operation(summary = "token获取")
+    /**
+     * 获取访问令牌
+     * <p>根据授权类型获取对应的访问令牌，支持授权码模式、密码模式和刷新令牌模式</p>
+     *
+     * @param request HTTP 请求对象，包含 OAuth2 认证所需参数
+     * @return 访问令牌信息
+     * @throws OAuthProblemException OAuth 认证异常
+     * @throws InvocationTargetException 方法调用异常
+     * @throws IllegalAccessException 方法访问异常
+     * @throws OAuthSystemException OAuth 系统异常
+     */
+    @Operation(summary = "token 获取")
     @PostMapping(value = "/accessToken")
     @Parameters({
             @Parameter(name = OAuth.HeaderType.CONTENT_TYPE, description = "请求类型,必须使用application/x-www-form-urlencoded类型", required = true, in = ParameterIn.HEADER),

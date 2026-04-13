@@ -7,11 +7,9 @@ import cn.com.mfish.common.prom.req.ReqPromQuery;
 import cn.com.mfish.common.prom.req.ReqPromQueryRange;
 import cn.com.mfish.common.prom.result.PromResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -25,7 +23,6 @@ import java.util.Date;
 @Slf4j
 @SpringBootTest
 @ComponentScan(basePackages = "cn.com.mfish")
-@RunWith(SpringRunner.class)
 public class PromTest {
     private final static String HOST = "http://localhost:9090";
 

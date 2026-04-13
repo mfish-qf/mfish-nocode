@@ -1,5 +1,6 @@
 package cn.com.mfish.common.file.handler;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.FileUtils;
 import io.minio.*;
 import jakarta.annotation.PostConstruct;
@@ -60,7 +61,7 @@ public class MinioStorage extends AbstractStorage {
             }
         } catch (Exception e) {
             log.error("MinIO 初始化失败", e);
-            throw new RuntimeException("MinIO 初始化失败", e);
+            throw new MyRuntimeException("MinIO 初始化失败", e);
         }
     }
 
@@ -72,7 +73,7 @@ public class MinioStorage extends AbstractStorage {
             log.info("文件上传成功，文件路径为 {}", filePath);
         } catch (Exception e) {
             log.error("文件上传失败，文件路径为 {}, 异常信息: {}", filePath, e.getMessage(), e);
-            throw new RuntimeException("文件上传失败", e);
+            throw new MyRuntimeException("文件上传失败", e);
         }
     }
 
@@ -83,7 +84,7 @@ public class MinioStorage extends AbstractStorage {
             return new InputStreamResource(inputStream);
         } catch (Exception e) {
             log.error("加载文件失败: {}", filePath, e);
-            throw new RuntimeException("加载文件失败", e);
+            throw new MyRuntimeException("加载文件失败", e);
         }
     }
 
@@ -94,7 +95,7 @@ public class MinioStorage extends AbstractStorage {
             log.info("文件删除成功: {}", filePath);
         } catch (Exception e) {
             log.error("文件删除失败: {}", filePath, e);
-            throw new RuntimeException("文件删除失败", e);
+            throw new MyRuntimeException("文件删除失败", e);
         }
     }
 

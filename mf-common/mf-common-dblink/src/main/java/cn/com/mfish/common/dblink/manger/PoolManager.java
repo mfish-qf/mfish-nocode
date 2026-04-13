@@ -72,7 +72,7 @@ public class PoolManager {
                     //测试连接是否正常，异常连接情况下druid存在获取连接超时卡死问题此处设置请求尝试时间
                     try (Connection conn = poolContext.getConnection(TIMEOUT)) {
                         if (conn.isClosed()) {
-                            throw new RuntimeException("连接已关闭");
+                            throw new MyRuntimeException("连接已关闭");
                         }
                         count = 0;
                         poolContext.setCheckTime(System.currentTimeMillis());

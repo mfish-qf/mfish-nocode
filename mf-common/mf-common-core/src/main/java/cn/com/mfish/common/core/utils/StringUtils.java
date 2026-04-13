@@ -24,6 +24,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     private static final char SEPARATOR = '_';
 
     /**
+     * AntPathMatcher 实例，用于路径匹配
+     */
+    private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+
+    /**
      * 去空格
      */
     public static String trim(String str) {
@@ -204,8 +209,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 如果url与规则匹配，则返回true，否则返回false
      */
     public static boolean isPathMatch(String pattern, String url) {
-        AntPathMatcher matcher = new AntPathMatcher();
-        return matcher.match(pattern, url);
+        return PATH_MATCHER.match(pattern, url);
     }
 
     /**
@@ -277,11 +281,4 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return StringUtils.isMatch("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", email);
     }
 
-
-    public static void main(String[] args) {
-
-        System.out.println(isMatch("^[A-Za-z]+[A-Za-z0-9]*$", "22aaaaa"));
-        System.out.println(isMatch("^[A-Za-z]+[A-Za-z0-9]*$", "aa2323aaa"));
-
-    }
 }

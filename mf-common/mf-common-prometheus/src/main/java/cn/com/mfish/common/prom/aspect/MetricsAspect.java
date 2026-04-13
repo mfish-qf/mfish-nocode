@@ -90,5 +90,6 @@ public class MetricsAspect {
     @AfterThrowing(value = "@annotation(cn.com.mfish.common.prom.annotation.MetricsMonitor)||@annotation(cn.com.mfish.common.prom.annotation.MetricsMonitors)", throwing = "e")
     public void doAfterThrowing(Throwable e) {
         log.error("doAfterThrowing", e);
+        durationThreadLocal.remove();
     }
 }

@@ -26,8 +26,8 @@ public class BootWorkflowService implements RemoteWorkflowService {
     FlowableService flowableService;
 
     @Override
-    public Result<String> deployProcess(String origin, String name) {
-        flowableService.deployProcess(name);
+    public Result<Integer> deployProcess(String origin, String id) {
+        flowableService.deployProcess(id);
         return Result.ok("部署成功");
     }
 

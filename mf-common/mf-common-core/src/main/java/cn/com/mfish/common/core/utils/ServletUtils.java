@@ -115,19 +115,15 @@ public class ServletUtils {
     public static Map<String, String> getParameterStringMap(HttpServletRequest request) {
         Map<String, String[]> properties = request.getParameterMap();
         Map<String, String> returnMap = new HashMap<>();
-        String value = "";
         for (Map.Entry<String, String[]> entry : properties.entrySet()) {
             String key = entry.getKey();
             String[] values = entry.getValue();
-            if (null == values) {
+            String value;
+            if (null == values || values.length == 0) {
                 value = "";
-
             } else if (values.length > 1) {
-                //用于请求参数中有多个相同名称
-                for (String s : values) {
-                    value = "," + s;
-                }
-                value = value.substring(1);
+                // 用于请求参数中有多个相同名称
+                value = String.join(",", values);
             } else {
                 value = values[0];
             }

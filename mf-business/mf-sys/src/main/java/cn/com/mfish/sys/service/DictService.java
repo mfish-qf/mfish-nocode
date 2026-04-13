@@ -12,9 +12,15 @@ import java.util.List;
  * @Description: 字典
  * @Author: mfish
  * @date: 2023-01-03
- * @version: V2.3.0
+ * @version: V2.3.1
  */
 public interface DictService extends IService<Dict> {
+    /**
+     * 更新字典
+     *
+     * @param dict 字典对象
+     * @return 操作结果
+     */
     Result<Dict> updateDict(Dict dict);
 
     /**
@@ -38,7 +44,7 @@ public interface DictService extends IService<Dict> {
      * 查询字典列表
      * @param reqDict 查询参数
      * @param reqPage 分页参数
-     * @return
+     * @return 字典列表
      */
     List<Dict> queryList(ReqDict reqDict, ReqPage reqPage);
 }

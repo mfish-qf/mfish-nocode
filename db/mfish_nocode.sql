@@ -448,6 +448,11 @@ INSERT INTO `sso_menu` VALUES ('d4257d0d8d32697a82718a312e51fcda', '29db2a54d322
 INSERT INTO `sso_menu` VALUES ('3a9999ccbdcdc36d69cd0266a6513a05', '', '00014', 1, '审批管理', 'ant-design:audit-outlined', 9, 0, '/audit', NULL, NULL, 0, 1, NULL, 1, '', 'admin', '2025-10-15 15:47:38', 'admin', '2025-10-16 10:36:51');
 INSERT INTO `sso_menu` VALUES ('e7a2fcb9e2eb633d4008c7f295fffc65', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400001', 2, '审批列表', 'ant-design:file-search-outlined', 1, 1, '/list', '/workflow/audit/index.vue', NULL, 0, 1, NULL, 0, '', 'admin', '2025-10-15 15:47:59', 'admin', '2025-10-17 11:16:41');
 INSERT INTO `sso_menu` VALUES ('8a47a373c5b79c7fa495f1abe06efa5d', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400002', 2, '我的申请', 'ant-design:solution-outlined', 2, 1, '/apply', '/workflow/apply/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2025-10-17 11:12:30', 'admin', '2025-10-17 11:14:15');
+INSERT INTO `sso_menu` VALUES ('8ae3ea76329402ee495cccfaa4c4c38d', '3a9999ccbdcdc36d69cd0266a6513a05', '0001400003', 2, '流程管理', 'ant-design:fork-outlined', 3, 1, '/flow-manage', '/workflow/flow-manage/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2026-03-30 19:43:52', 'admin', '2026-03-30 19:46:28');
+INSERT INTO `sso_menu` VALUES ('a7d3a7b61fa52964c5c9db477e3b1962', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300003', 3, '修改', '#', 3, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:update', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
+INSERT INTO `sso_menu` VALUES ('ad5b361ff34235e8ec85cd613a59bf6e', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300001', 3, '查询', '#', 1, 2, '', NULL, 'workflow:flowManage:query', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
+INSERT INTO `sso_menu` VALUES ('c5309ca3ba545da9950278637c90e674', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300002', 3, '新增', '#', 2, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:insert', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
+INSERT INTO `sso_menu` VALUES ('e92728a6d996d4b7cb3acb0fc031d183', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300004', 3, '删除', '#', 4, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:delete', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -1898,5 +1903,26 @@ CREATE TABLE `mf_screen_resource_api`  (
                                            `query_type` tinyint(1) NULL DEFAULT NULL COMMENT '查询类型 0 自定义查询 1原生SQL查询',
                                            PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '大屏资源API' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for flw_mf_manage
+-- ----------------------------
+DROP TABLE IF EXISTS `flw_mf_manage`;
+CREATE TABLE `flw_mf_manage`  (
+                                  `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                  `flow_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '流程key',
+                                  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '流程名称',
+                                  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '流程描述',
+                                  `version` int DEFAULT NULL COMMENT '版本号',
+                                  `released` tinyint(1) NULL DEFAULT 0 COMMENT '是否发布（0未发布 1已发布）',
+                                  `flow_config` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '流程配置',
+                                  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记(0未删除1删除)',
+                                  `hex` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '配置信息hex',
+                                  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建用户',
+                                  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新用户',
+                                  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '流程管理' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

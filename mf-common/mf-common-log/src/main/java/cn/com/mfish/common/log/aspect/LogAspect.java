@@ -45,7 +45,7 @@ public class LogAspect {
     public void doBefore(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String origin = request.getHeader(RPCConstants.REQ_ORIGIN);
-        if (!StringUtils.isEmpty(origin) && origin.equals(RPCConstants.INNER)) {
+        if (RPCConstants.INNER.equals(origin)) {
             //内部请求不记录日志
             return;
         }

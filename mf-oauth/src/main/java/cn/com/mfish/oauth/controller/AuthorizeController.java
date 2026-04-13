@@ -60,6 +60,14 @@ public class AuthorizeController {
     @Resource
     CaptchaProperties captchaProperties;
 
+    /**
+     * 获取授权码（GET 请求）
+     * <p>OAuth2 认证授权接口，用户未登录时跳转到登录页面</p>
+     *
+     * @param model 模型对象
+     * @param request HTTP 请求对象
+     * @return 登录页面或授权码响应
+     */
     @Operation(summary = "认证接口")
     @GetMapping("/authorize")
     @Parameters({
@@ -75,6 +83,14 @@ public class AuthorizeController {
         return authorize(model, request, (m, r) -> loginService.getLogin(m, r), forceLogin);
     }
 
+    /**
+     * 获取授权码（POST 请求）
+     * <p>OAuth2 认证授权接口，处理用户登录后的授权请求</p>
+     *
+     * @param model 模型对象
+     * @param request HTTP 请求对象
+     * @return 登录页面或授权码响应
+     */
     @Operation(summary = "认证接口")
     @PostMapping("/authorize")
     @Parameters({

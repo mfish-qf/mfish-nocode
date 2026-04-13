@@ -1,6 +1,7 @@
 package cn.com.mfish.common.dblink.page.dialect;
 
 import cn.com.mfish.common.core.enums.DataType;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.dblink.entity.QueryParam;
 import cn.com.mfish.common.dblink.page.BoundSql;
 import cn.com.mfish.common.dblink.query.BaseQuery;
@@ -34,7 +35,7 @@ public class SqlServer2012Dialect extends AbstractDialect {
                     select +
                     "\n ) TMP_COUNT";
         } catch (JSQLParserException e) {
-            throw new RuntimeException(e);
+            throw new MyRuntimeException(e);
         }
 
     }
@@ -66,7 +67,7 @@ public class SqlServer2012Dialect extends AbstractDialect {
             boundSql.getParams().add(new QueryParam().setValue(page.getPageSize()).setType(DataType.INTEGER));
             return boundSql.setSql(sql);
         } catch (JSQLParserException e) {
-            throw new RuntimeException(e);
+            throw new MyRuntimeException(e);
         }
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
  * @description: 文件缓存
  * @author: mfish
  * @date: 2023-01-05
- * @version: V2.3.0
+ * @version: V2.3.1
  */
 public interface StorageService extends IService<StorageInfo> {
 

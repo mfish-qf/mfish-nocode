@@ -51,17 +51,29 @@ public class SsoUserController {
     @Resource
     SsoUserService ssoUserService;
 
+    /**
+     * 获取用户、权限相关信息
+     *
+     * @return 用户权限信息
+     */
     @Operation(summary = "获取用户、权限相关信息")
     @GetMapping("/info")
     public Result<UserInfoVo> getUserInfo() {
         return Result.ok(ssoUserService.getUserInfoAndRoles(AuthInfoUtils.getCurrentUserId(), AuthInfoUtils.getCurrentTenantId()));
     }
 
+    /**
+     * 获取用户权限
+     *
+     * @param userId 用户 ID，为空时默认当前登录用户
+     * @param tenantId 租户 ID
+     * @return 用户权限集合
+     */
     @Operation(summary = "获取用户权限")
     @GetMapping("/permissions")
     @Parameters({
-            @Parameter(name = "userId", description = "用户ID"),
-            @Parameter(name = "tenantId", description = "租户ID")
+            @Parameter(name = "userId", description = "用户 ID"),
+            @Parameter(name = "tenantId", description = "租户 ID")
     })
     @InnerUser
     public Result<Set<String>> getPermissions(String userId, String tenantId) {
@@ -71,11 +83,18 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserPermissions(userId, tenantId));
     }
 
+    /**
+     * 获取用户角色列表
+     *
+     * @param userId 用户 ID，为空时默认当前登录用户
+     * @param tenantId 租户 ID
+     * @return 用户角色列表
+     */
     @Operation(summary = "获取用户角色")
     @GetMapping("/roles")
     @Parameters({
-            @Parameter(name = "userId", description = "用户ID"),
-            @Parameter(name = "tenantId", description = "租户ID")
+            @Parameter(name = "userId", description = "用户 ID"),
+            @Parameter(name = "tenantId", description = "租户 ID")
     })
     public Result<List<UserRole>> getRoles(String userId, String tenantId) {
         if (StringUtils.isEmpty(userId)) {
@@ -98,37 +117,70 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserTenants(userId), "获取当前租户列表成功!");
     }
 
+    /**
+     * 获取用户组织树
+     *
+     * @param userId 用户 ID
+     * @param direction 方向：all-返回所有父子节点，up-返回父节点，down-返回子节点
+     * @return 用户组织树列表
+     */
     @Operation(summary = "获取用户组织树")
     @GetMapping("/orgs/{userId}")
     @Parameters({
-            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up 返回父节点 down 返回子节点", required = true)
     })
     public Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam String direction) {
         return ssoUserService.getOrgs(userId, direction);
     }
 
-    @Operation(summary = "获取用户组织ID列表")
+    /**
+     * 获取用户组织 ID 列表
+     *
+     * @param userId 用户 ID
+     * @param tenantId 租户 ID
+     * @param direction 方向：all-返回所有父子节点，up-返回父节点，down-返回子节点
+     * @return 用户组织 ID 列表
+     */
+    @Operation(summary = "获取用户组织 ID 列表")
     @GetMapping("/orgIds/{userId}")
     @Parameters({
-            @Parameter(name = "tenantId", description = "租户id"),
-            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
+            @Parameter(name = "tenantId", description = "租户 id"),
+            @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up 返回父节点 down 返回子节点", required = true)
     })
     public Result<List<String>> getOrgIds(@PathVariable("userId") String userId, @RequestParam String tenantId, @RequestParam String direction) {
         return ssoUserService.getOrgIds(tenantId, userId, direction);
     }
 
-    @Operation(summary = "通过用户ID获取用户")
+    /**
+     * 通过用户 ID 获取用户信息
+     *
+     * @param id 用户 ID
+     * @return 用户信息
+     */
+    @Operation(summary = "通过用户 ID 获取用户")
     @GetMapping("/{id}")
-    public Result<UserInfo> getUserById(@Parameter(name = "id", description = "用户ID") @PathVariable String id) {
+    public Result<UserInfo> getUserById(@Parameter(name = "id", description = "用户 ID") @PathVariable String id) {
         return Result.ok(ssoUserService.getUserByIdNoPwd(id));
     }
 
+    /**
+     * 根据账号获取用户信息
+     *
+     * @param account 账号名称
+     * @return 用户信息
+     */
     @Operation(summary = "根据账号获取用户信息")
     @GetMapping("/info/{account}")
     public Result<UserInfo> getUserByAccount(@Parameter(name = "account", description = "帐号名称") @PathVariable String account) {
         return Result.ok(ssoUserService.getUserByAccountNoPwd(account));
     }
 
+    /**
+     * 修改密码
+     *
+     * @param reqChangePwd 修改密码请求参数
+     * @return 修改结果
+     */
     @Operation(summary = "修改密码")
     @PutMapping("/pwd")
     @Log(title = "修改密码", operateType = OperateType.UPDATE)
@@ -140,8 +192,14 @@ public class SsoUserController {
         return ssoUserService.changePassword(reqChangePwd.getUserId(), reqChangePwd.getOldPwd(), reqChangePwd.getNewPwd());
     }
 
-    @Log(title = "用户-设置状态", operateType = OperateType.UPDATE)
-    @Operation(summary = "用户-设置状态", description = "用户-设置状态")
+    /**
+     * 设置用户状态
+     *
+     * @param ssoUser 用户对象，包含 ID 和状态
+     * @return 设置结果
+     */
+    @Log(title = "用户 - 设置状态", operateType = OperateType.UPDATE)
+    @Operation(summary = "用户 - 设置状态", description = "用户 - 设置状态")
     @PutMapping("/status")
     @RequiresPermissions("sys:account:update")
     public Result<Boolean> setStatus(@RequestBody SsoUser ssoUser) {
@@ -154,7 +212,13 @@ public class SsoUserController {
         return Result.fail(false, "错误:用户-设置状态失败!");
     }
 
-    @Operation(summary = "用户登出", description = "用户登出--该方法只适用于web前端登录的用户登出")
+    /**
+     * 用户登出
+     * <p>该方法只适用于 web 前端登录的用户登出</p>
+     *
+     * @return 登出结果
+     */
+    @Operation(summary = "用户登出", description = "用户登出--该方法只适用于 web 前端登录的用户登出")
     @DeleteMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {

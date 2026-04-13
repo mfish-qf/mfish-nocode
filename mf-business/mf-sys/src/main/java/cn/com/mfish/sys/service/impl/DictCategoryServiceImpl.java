@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @description: 树形分类
  * @author: mfish
  * @date: 2024-03-12
- * @version: V2.3.0
+ * @version: V2.3.1
  */
 @Service
 public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, DictCategory> implements DictCategoryService {
@@ -96,7 +96,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         //parentId为空时，设置为空字符串
         if (StringUtils.isEmpty(dictCategory.getParentId())) {
             dictCategory.setParentId("");
-        } else if (dictCategory.getParentId().equals(dictCategory.getId())) {
+        } else if (dictCategory.getId().equals(dictCategory.getParentId())) {
             return Result.fail("错误：父节点不允许设置自己");
         }
         if (!StringUtils.isEmpty(dictCategory.getCategoryCode()) && baseMapper.exists(new LambdaQueryWrapper<DictCategory>()
@@ -207,7 +207,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         }
         List<DictCategory> categoryList = queryCategory(category, direction);
         List<DictCategory> categoryTree = new ArrayList<>();
-        if (direction.equals(TreeDirection.向下)) {
+        if (TreeDirection.向下.equals(direction)) {
             TreeUtils.buildTree(category.getParentId(), categoryList, categoryTree, DictCategory.class);
         } else {
             TreeUtils.buildTree("", categoryList, categoryTree, DictCategory.class);

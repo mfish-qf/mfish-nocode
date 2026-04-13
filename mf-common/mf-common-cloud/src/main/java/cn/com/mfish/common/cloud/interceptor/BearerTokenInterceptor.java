@@ -21,6 +21,7 @@ import java.util.Objects;
  */
 @Component
 public class BearerTokenInterceptor implements RequestInterceptor {
+
     @Override
     public void apply(RequestTemplate requestTemplate) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -45,6 +46,7 @@ public class BearerTokenInterceptor implements RequestInterceptor {
                 Enumeration<String> values = request.getHeaders(name);
                 while (values.hasMoreElements()) {
                     String value = values.nextElement();
+                    // 转发 header 到 Feign 请求
                     requestTemplate.header(name, value);
                 }
             }
@@ -54,7 +56,7 @@ public class BearerTokenInterceptor implements RequestInterceptor {
         }
         //重新添加token信息,防止token使用非head传入被遗漏问题
         String token = AuthInfoUtils.getAccessToken(request);
-        if (!StringUtils.isEmpty(token)) {
+        if (StringUtils.isNotBlank(token)) {
             // 清除token头 避免传染
             requestTemplate.removeHeader(Constants.AUTHENTICATION);
             requestTemplate.header(Constants.AUTHENTICATION, Constants.OAUTH_HEADER_NAME + token);

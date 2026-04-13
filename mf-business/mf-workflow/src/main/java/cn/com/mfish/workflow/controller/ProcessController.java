@@ -1,5 +1,6 @@
 package cn.com.mfish.workflow.controller;
 
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -9,11 +10,21 @@ import cn.com.mfish.common.workflow.api.req.ReqProcess;
 import cn.com.mfish.common.workflow.api.req.ReqTask;
 import cn.com.mfish.common.workflow.enums.AuditOperator;
 import cn.com.mfish.common.workflow.service.FlowableService;
+import cn.com.mfish.workflow.common.BpmnConverter;
+import cn.com.mfish.workflow.entity.FlowManage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.flowable.bpmn.converter.BpmnXMLConverter;
+import org.flowable.bpmn.model.BpmnModel;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,6 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/process")
 @Tag(name = "工作流接口")
+@Slf4j
 public class ProcessController {
 
     private final FlowableService flowableService;
@@ -33,10 +45,9 @@ public class ProcessController {
     }
 
     @Operation(summary = "手动部署流程")
-    @GetMapping("/deploy/{name}")
-    public Result<String> deployProcess(@Parameter(name = "name", description = "流程定义文件名称 例如：test.bpmn20.xml文件名称传test") @PathVariable String name) {
-        flowableService.deployProcess(name);
-        return Result.ok("部署成功");
+    @GetMapping("/deploy/{id}")
+    public Result<Integer> deployProcess(@Parameter(name = "id", description = "流程定义key") @PathVariable String id) {
+        return Result.ok(flowableService.deployProcess(id), "部署成功");
     }
 
     @Operation(summary = "分页查询流程列表")
@@ -129,5 +140,37 @@ public class ProcessController {
     public Result<String> rejectedTask(@RequestBody ApproveInfo approveInfo) {
         flowableService.completeTask(AuditOperator.审核拒绝, approveInfo);
         return Result.ok("审核不通过");
+    }
+
+    @Operation(summary = "构建流程xml")
+    @PostMapping("/buildXml")
+    public void buildXml(@RequestBody FlowManage flowManage) {
+        BpmnModel bpmnModel = BpmnConverter.convertToBpmn(flowManage.getFlowKey(), flowManage.getName(), flowManage.getRemark(), flowManage.getFlowConfig());
+        byte[] xml = new BpmnXMLConverter().convertToXML(bpmnModel);
+        if (xml == null) {
+            return;
+        }
+        String fileName = (flowManage.getFlowKey() != null ? flowManage.getFlowKey() : "process") + ".bpmn20.xml";
+        HttpServletResponse response = ServletUtils.getResponse();
+        if (null == response) {
+            return;
+        }
+        response.setContentType("application/xml;charset=UTF-8");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8'zh_cn'" + fileName);
+        try (ServletOutputStream servletOutputStream = response.getOutputStream();
+             BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(xml))) {
+            byte[] buffer = new byte[8096];
+            while (true) {
+                int count = in.read(buffer);
+                if (count == -1) {
+                    break;
+                }
+                servletOutputStream.write(buffer, 0, count);
+            }
+            servletOutputStream.flush();
+        } catch (IOException e) {
+            log.error("下载流程定义xml失败", e);
+        }
     }
 }

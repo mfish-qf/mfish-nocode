@@ -23,7 +23,7 @@ public class RemoteStorageFallBack implements FallbackFactory<RemoteStorageServi
         return new RemoteStorageService() {
             @Override
             public Result<StorageInfo> queryByKey(String origin, String fileKey) {
-                return Result.fail("错误:根据ID获取组织列表失败" + cause.getMessage());
+                return Result.fail("错误:根据Key获取文件信息失败" + cause.getMessage());
             }
 
             @Override
