@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mf-business</artifactId>
-        <version>mf-2.3.0</version>
+        <version>mf-2.3.1</version>
     </parent>
 
     <artifactId>mf-workflow</artifactId>
@@ -33,6 +33,11 @@
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter-process</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-bpmn-layout</artifactId>
+            <version>${flowable.version}</version>
         </dependency>
     </dependencies>
 </project>

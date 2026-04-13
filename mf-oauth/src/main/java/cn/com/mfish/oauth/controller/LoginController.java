@@ -44,6 +44,14 @@ public class LoginController {
      *
      * @return 返回验证码
      */
+    /**
+     * 发送短信验证码
+     * <p>用于登录时验证手机号，如果用户不存在且不允许自动创建则不发送</p>
+     *
+     * @param phone 手机号码
+     * @return 短信验证码
+     * @throws NoSuchAlgorithmException 生成验证码异常
+     */
     @Operation(summary = "发送短信")
     @PostMapping("/sendMsg")
     @ResponseBody
@@ -85,6 +93,15 @@ public class LoginController {
         return "404";
     }
 
+    /**
+     * 解锁账号
+     * <p>通过用户名密码验证后解锁被锁定的账号</p>
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @param clientId 客户端 ID
+     * @return 解锁结果
+     */
     @PostMapping("/unLock")
     @ResponseBody
     @Parameters({

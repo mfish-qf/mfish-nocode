@@ -5,6 +5,7 @@ import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.common.oauth.api.remote.RemoteMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * @description: 菜单远程调用失败处理
@@ -12,6 +13,7 @@ import org.springframework.cloud.openfeign.FallbackFactory;
  * @date: 2024/4/22
  */
 @Slf4j
+@Component
 public class RemoteMenuFallback implements FallbackFactory<RemoteMenuService> {
     @Override
     public RemoteMenuService create(Throwable cause) {
@@ -26,7 +28,6 @@ public class RemoteMenuFallback implements FallbackFactory<RemoteMenuService> {
             public Result<Boolean> routeExist(String origin, String routePath, String parentId) {
                 return Result.fail("错误:路由判断失败" + cause.getMessage());
             }
-            
         };
     }
 }

@@ -381,7 +381,7 @@ public class BaseQuery {
             }
         } catch (final SQLException ex) {
             log.error("数据库资源释放异常", ex);
-            throw new RuntimeException("数据库资源释放异常", ex);
+            throw new MyRuntimeException("数据库资源释放异常", ex);
         }
     }
 }

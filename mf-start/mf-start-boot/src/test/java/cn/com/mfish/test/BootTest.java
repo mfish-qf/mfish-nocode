@@ -2,8 +2,7 @@ package cn.com.mfish.test;
 
 import cn.com.mfish.common.core.utils.excel.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ByteArrayResource;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -34,7 +32,6 @@ import java.util.Map;
 @Slf4j
 @SpringBootTest
 @ComponentScan(basePackages = "cn.com.mfish")
-@RunWith(SpringRunner.class)
 public class BootTest {
     @Test
     public void excelExport() throws IOException {

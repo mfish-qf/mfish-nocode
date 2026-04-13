@@ -363,7 +363,7 @@ public class OkHttpUtils {
                 sslContext.init(null, getTrustManager(), new SecureRandom());
                 return sslContext.getSocketFactory();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new MyRuntimeException(e);
             }
         }
 

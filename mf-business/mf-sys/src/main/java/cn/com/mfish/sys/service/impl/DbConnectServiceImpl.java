@@ -26,7 +26,7 @@ import java.util.List;
  * @description: 数据库连接
  * @author: mfish
  * @date: 2023-03-13
- * @version: V2.3.0
+ * @version: V2.3.1
  */
 @Service
 @RefreshScope
@@ -34,6 +34,13 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
     @Value("${DBConnect.password.privateKey}")
     private String privateKey;
 
+    /**
+     * 分页查询数据库连接列表
+     *
+     * @param reqDbConnect 查询条件
+     * @param reqPage      分页参数
+     * @return 数据库连接分页列表
+     */
     @Override
     public Result<PageResult<DbConnect>> queryPageList(ReqDbConnect reqDbConnect, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
@@ -47,33 +54,51 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
         for (DbConnect connect : list) {
             connect.setPassword(null);
         }
-        return Result.ok(new PageResult<>(list), "数据库连接-查询成功!");
+        return Result.ok(new PageResult<>(list), "数据库连接 - 查询成功!");
     }
 
+    /**
+     * 添加数据库连接
+     *
+     * @param dbConnect 数据库连接对象
+     * @return 添加结果
+     */
     @Override
     public Result<DbConnect> insertConnect(DbConnect dbConnect) {
         Result<Boolean> result = testConnect(dbConnect);
         if (!result.isSuccess()) {
-            return Result.fail(dbConnect, "错误:尝试连接失败!");
+            return Result.fail(dbConnect, "错误：尝试连接失败!");
         }
         if (save(dbConnect)) {
-            return Result.ok(dbConnect, "数据库连接-添加成功!");
+            return Result.ok(dbConnect, "数据库连接 - 添加成功!");
         }
-        return Result.fail(dbConnect, "错误:数据库连接-添加失败!");
+        return Result.fail(dbConnect, "错误：数据库连接 - 添加失败!");
     }
 
+    /**
+     * 更新数据库连接
+     *
+     * @param dbConnect 数据库连接对象
+     * @return 更新结果
+     */
     @Override
     public Result<DbConnect> updateConnect(DbConnect dbConnect) {
         Result<Boolean> result = testConnect(dbConnect);
         if (!result.isSuccess()) {
-            return Result.fail(dbConnect, "错误:尝试连接失败!");
+            return Result.fail(dbConnect, "错误：尝试连接失败!");
         }
         if (updateById(dbConnect)) {
-            return Result.ok(dbConnect, "数据库连接-编辑成功!");
+            return Result.ok(dbConnect, "数据库连接 - 编辑成功!");
         }
-        return Result.fail(dbConnect, "错误:数据库连接-编辑失败!");
+        return Result.fail(dbConnect, "错误：数据库连接 - 编辑失败!");
     }
 
+    /**
+     * 测试数据库连接
+     *
+     * @param dbConnect 数据库连接对象
+     * @return 连接结果
+     */
     @Override
     public Result<Boolean> testConnect(DbConnect dbConnect) {
         DataSourceOptions<?> dataSourceOptions = QueryHandler.buildDataSourceOptions(dbConnect, privateKey);
@@ -83,8 +108,8 @@ public class DbConnectServiceImpl extends ServiceImpl<DbConnectMapper, DbConnect
             Connection conn = PoolManager.getConnection(dataSourceOptions, 3000);
             return Result.ok(!conn.isClosed(), "连接成功");
         } catch (SQLException e) {
-            log.error("错误:测试连接异常", e);
-            return Result.fail(false, "错误:连接失败");
+            log.error("错误：测试连接异常", e);
+            return Result.fail(false, "错误：连接失败");
         } finally {
             PoolManager.release();
         }

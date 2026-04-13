@@ -1,5 +1,7 @@
 package cn.com.mfish.common.core.secret;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import java.security.Key;
@@ -31,7 +33,7 @@ public class DesUtils {
             key = generator.generateKey();
             generator = null;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MyRuntimeException(e);
         }
     }
 
@@ -55,7 +57,7 @@ public class DesUtils {
             //byte[]to encode好的String 并返回
             return new String(Base64.getEncoder().encode(doFinal));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MyRuntimeException(e);
         }
     }
 
@@ -77,7 +79,7 @@ public class DesUtils {
             byte[] doFinal = cipher.doFinal(bytes);
             return new String(doFinal, CHARSET_NAME);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MyRuntimeException(e);
         }
     }
 

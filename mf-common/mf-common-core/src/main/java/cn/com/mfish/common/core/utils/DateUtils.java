@@ -1,5 +1,6 @@
 package cn.com.mfish.common.core.utils;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.ParseException;
@@ -12,12 +13,12 @@ import java.util.Date;
  * @author: mfish
  * @date: 2024/7/1
  */
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
-    public static String YYYY_MM_DD = "yyyy-MM-dd";
+public class DateUtils {
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
-    public static String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
+    public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
-    public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
 
     private static final String[] parsePatterns = {
             "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
@@ -58,7 +59,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         try {
             return new SimpleDateFormat(format).parse(ts);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new MyRuntimeException(e);
         }
     }
 
@@ -86,7 +87,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             return null;
         }
         try {
-            return parseDate(str.toString(), parsePatterns);
+            return org.apache.commons.lang3.time.DateUtils.parseDate(str.toString(), parsePatterns);
         } catch (ParseException e) {
             return null;
         }

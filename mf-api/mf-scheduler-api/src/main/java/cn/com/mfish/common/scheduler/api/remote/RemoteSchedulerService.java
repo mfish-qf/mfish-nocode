@@ -18,6 +18,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(contextId = "remoteSchedulerService", value = ServiceConstants.SCHEDULER_SERVICE, fallbackFactory = RemoteSchedulerFallBack.class)
 public interface RemoteSchedulerService {
 
+    /**
+     * 回调更新任务执行状态
+     *
+     * @param origin 来源
+     * @param jobLog 任务日志对象
+     * @return 更新结果
+     */
     @PutMapping("/jobLog/callBackStatus")
     Result<Boolean> callBackStatus(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody JobLog jobLog);
 }

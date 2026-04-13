@@ -6,6 +6,8 @@ import cn.com.mfish.common.ai.entity.ChatResponseVo;
 import cn.com.mfish.common.core.utils.StringUtils;
 import reactor.core.publisher.Flux;
 
+import java.util.Objects;
+
 /**
  * @description: 系统中心助手
  * @author: mfish
@@ -21,10 +23,10 @@ public abstract class BaseAssistant implements IClientAssistant {
     @Override
     public Flux<ChatResponseVo> chat(AiRequest aiRequest) {
         return chat(aiRequest.getSessionId(), aiRequest.getMessage().getContent())
-                .filter(resp -> "STOP".equals(resp.getResult().getMetadata().getFinishReason())
+                .filter(resp -> "STOP".equals(Objects.requireNonNull(resp.getResult()).getMetadata().getFinishReason())
                         || StringUtils.isNotEmpty(resp.getResult().getOutput().getText()))
                 .map(resp -> new ChatResponseVo().setId(aiRequest.getId())
-                        .setContent(resp.getResult().getOutput().getText())
+                        .setContent(Objects.requireNonNull(resp.getResult()).getOutput().getText())
                         .setFinishReason(resp.getResult().getMetadata().getFinishReason())
                 );
     }

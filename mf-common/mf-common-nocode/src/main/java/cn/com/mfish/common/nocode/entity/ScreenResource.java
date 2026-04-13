@@ -17,7 +17,7 @@ import java.math.BigDecimal;
  * @description: 大屏资源信息
  * @author: mfish
  * @date: 2025-03-19
- * @version: V2.3.0
+ * @version: V2.3.1
  */
 @Data
 @TableName("mf_screen_resource")

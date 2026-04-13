@@ -61,14 +61,13 @@ public class SM4Utils {
      * 它对每一个数据块独立加密，不依赖于其他数据块。此方法用于初始化和返回一个Cipher实例，
      * 该实例使用指定算法和模式以及给定的密钥进行加密或解密。
      *
-     * @param algorithmName 算法名称，如"AES"或"SM4"
-     * @param mode          Cipher模式，如Cipher.ENCRYPT_MODE或Cipher.DECRYPT_MODE
-     * @param key           加密密钥的字节数组
+     * @param mode Cipher模式，如Cipher.ENCRYPT_MODE或Cipher.DECRYPT_MODE
+     * @param key  加密密钥的字节数组
      * @return 初始化后的Cipher实例
      * @throws Exception 如果算法名称无效或密钥不合法，则抛出异常
      */
-    private static Cipher generateEcbCipher(String algorithmName, int mode, byte[] key) throws Exception {
-        Cipher cipher = Cipher.getInstance(algorithmName, BouncyCastleProvider.PROVIDER_NAME);
+    private static Cipher generateEcbCipher(int mode, byte[] key) throws Exception {
+        Cipher cipher = Cipher.getInstance(SM4Utils.ALGORITHM_NAME_ECB_PADDING, BouncyCastleProvider.PROVIDER_NAME);
         Key sm4Key = new SecretKeySpec(key, ALGORITHM_NAME);
         cipher.init(mode, sm4Key);
         return cipher;
@@ -115,7 +114,7 @@ public class SM4Utils {
      * @throws Exception 如果加密过程中出现任何错误，将抛出异常
      */
     public static byte[] encrypt_Ecb_Padding(byte[] key, byte[] data) throws Exception {
-        Cipher cipher = generateEcbCipher(ALGORITHM_NAME_ECB_PADDING, Cipher.ENCRYPT_MODE, key);
+        Cipher cipher = generateEcbCipher(Cipher.ENCRYPT_MODE, key);
         return cipher.doFinal(data);
     }
 
@@ -156,7 +155,7 @@ public class SM4Utils {
      * @throws Exception 如果解密过程中发生任何错误，将抛出异常
      */
     public static byte[] decrypt_Ecb_Padding(byte[] key, byte[] cipherText) throws Exception {
-        Cipher cipher = generateEcbCipher(ALGORITHM_NAME_ECB_PADDING, Cipher.DECRYPT_MODE, key);
+        Cipher cipher = generateEcbCipher(Cipher.DECRYPT_MODE, key);
         return cipher.doFinal(cipherText);
     }
 

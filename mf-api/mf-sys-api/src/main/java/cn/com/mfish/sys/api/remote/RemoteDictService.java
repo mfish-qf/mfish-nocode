@@ -17,9 +17,15 @@ import java.util.List;
  * @author: mfish
  * @date: 2023/5/18 18:15
  */
-@SuppressWarnings("rawtypes")
 @FeignClient(contextId = "remoteDictService", value = ServiceConstants.SYS_SERVICE, fallbackFactory = RemoteDictFallback.class)
 public interface RemoteDictService {
+    /**
+     * 根据字典编码查询字典项列表
+     *
+     * @param origin   来源
+     * @param dictCode 字典编码
+     * @return 字典项列表
+     */
     @GetMapping("/dictItem/{dictCode}")
     Result<List<DictItem>> queryByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("dictCode") String dictCode);
 }

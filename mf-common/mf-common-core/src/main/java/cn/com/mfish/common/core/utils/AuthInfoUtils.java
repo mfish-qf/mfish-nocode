@@ -190,6 +190,6 @@ public class AuthInfoUtils {
             throw new MyRuntimeException("错误:未获取到请求信息");
         }
         String source = request.getHeader(RPCConstants.REQ_ORIGIN);
-        return !StringUtils.isEmpty(source) && source.equals(RPCConstants.INNER);
+        return RPCConstants.INNER.equals(source);
     }
 }

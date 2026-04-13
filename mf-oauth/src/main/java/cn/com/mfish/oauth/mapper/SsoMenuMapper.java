@@ -12,7 +12,7 @@ import java.util.List;
  * @Description: 菜单权限表
  * @Author: mfish
  * @date: 2022-09-21
- * @version: V2.3.0
+ * @version: V2.3.1
  */
 public interface SsoMenuMapper extends BaseMapper<SsoMenu> {
     int insertMenu(SsoMenu ssoMenu);

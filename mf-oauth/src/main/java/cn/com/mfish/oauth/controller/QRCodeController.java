@@ -49,6 +49,12 @@ public class QRCodeController {
     @Resource
     WeChatTokenValidator weChatTokenValidator;
 
+    /**
+     * 生成二维码
+     * <p>生成用于扫码登录的二维码图像，包含二维码内容和状态信息</p>
+     *
+     * @return 二维码图像响应对象
+     */
     @Operation(summary = "生成二维码")
     @GetMapping("/build")
     public Result<QRCodeImg> buildQRCode() {
@@ -112,6 +118,15 @@ public class QRCodeController {
         return qrCodeImg;
     }
 
+    /**
+     * 检测扫码登录状态
+     * <p>根据二维码 code 值检查当前扫码状态</p>
+     *
+     * @param code 二维码 code 值
+     * @return 二维码状态信息
+     * @throws InvocationTargetException 方法调用异常
+     * @throws IllegalAccessException 方法访问异常
+     */
     @Operation(summary = "检测扫码登录状态")
     @GetMapping("/check")
     @Parameters({
@@ -127,6 +142,13 @@ public class QRCodeController {
         return Result.ok(qrCode);
     }
 
+    /**
+     * 扫描二维码登录
+     * <p>用户扫描二维码后调用此接口，将状态从未扫描改为已扫描</p>
+     *
+     * @param request HTTP 请求对象
+     * @return 操作结果
+     */
     @Operation(summary = "扫描二维码登录")
     @PostMapping("/scan")
     @Parameters({
@@ -136,6 +158,13 @@ public class QRCodeController {
         return qrCodeOperator(request, SerConstant.ScanStatus.未扫描, SerConstant.ScanStatus.已扫描);
     }
 
+    /**
+     * 扫码确认登录
+     * <p>用户确认登录后调用此接口，将状态从已扫描改为已确认</p>
+     *
+     * @param request HTTP 请求对象
+     * @return 操作结果
+     */
     @Operation(summary = "扫码确认登录")
     @PostMapping("/login")
     @Parameters({
@@ -146,6 +175,13 @@ public class QRCodeController {
         return qrCodeOperator(request, SerConstant.ScanStatus.已扫描, SerConstant.ScanStatus.已确认);
     }
 
+    /**
+     * 扫码取消登录
+     * <p>用户取消登录后调用此接口，将状态从已扫描改为已取消</p>
+     *
+     * @param request HTTP 请求对象
+     * @return 操作结果
+     */
     @Operation(summary = "扫码取消登录")
     @PostMapping("/cancel")
     @Parameters({

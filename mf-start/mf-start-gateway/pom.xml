@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mf-start</artifactId>
-        <version>mf-2.3.0</version>
+        <version>mf-2.3.1</version>
     </parent>
 
     <artifactId>mf-start-gateway</artifactId>
@@ -29,7 +29,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.3.3</version>
+                <version>${spring-boot.version}</version>
                 <executions>
                     <execution>
                         <goals>

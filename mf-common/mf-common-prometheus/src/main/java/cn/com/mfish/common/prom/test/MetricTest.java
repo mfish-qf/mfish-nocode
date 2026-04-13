@@ -1,5 +1,6 @@
 package cn.com.mfish.common.prom.test;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.prom.common.PromClientUtils;
 import cn.com.mfish.common.prom.enums.MetricEnum;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class MetricTest {
                 try {
                     Thread.sleep(15000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new MyRuntimeException(e);
                 }
             }
         }).start();

@@ -38,7 +38,7 @@ public class ReqPage implements Serializable {
     }
 
     public ReqPage setPageSize(Integer pageSize) {
-        if (pageNum == null) {
+        if (pageSize == null) {
             return this;
         }
         this.pageSize = pageSize;

@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 /**
@@ -56,9 +59,9 @@ public class DataUtils {
             case Double ignored -> value = BigDecimal.valueOf((double) obj);
             case BigDecimal bigDecimal -> value = bigDecimal;
             default -> {
-                //如果是字符串类型强转数字类型
+                // 尝试将其他类型转为字符串再解析为数字
                 try {
-                    value = BigDecimal.valueOf(Double.parseDouble((String) obj));
+                    value = BigDecimal.valueOf(Double.parseDouble(obj.toString()));
                 } catch (NumberFormatException e) {
                     log.error(UNKNOWN_DATA);
                     return null;
@@ -77,7 +80,7 @@ public class DataUtils {
      */
     public static int numCompare(Object obj1, Object obj2) {
         return (int) calculator(obj1, obj2, (value1, value2) -> {
-            int value = NullCompare(value1, value2);
+            int value = nullCompare(value1, value2);
             if (value <= 1) {
                 return value;
             }
@@ -98,7 +101,7 @@ public class DataUtils {
      * @return 比较结果，与String的compareTo方法返回值一致，小于0表示obj1小于obj2，等于0表示两者相等，大于0表示obj1大于obj2
      */
     public static int strCompare(Object obj1, Object obj2) {
-        int value = NullCompare(obj1, obj2);
+        int value = nullCompare(obj1, obj2);
         if (value <= 1) {
             return value;
         }
@@ -108,11 +111,11 @@ public class DataUtils {
     /**
      * 空比较 如果都不为空返回2
      *
-     * @param value1 值1
-     * @param value2 值2
+     * @param value1 倃1
+     * @param value2 倃2
      * @return 返回比较结果
      */
-    public static int NullCompare(Object value1, Object value2) {
+    public static int nullCompare(Object value1, Object value2) {
         if (value1 == null && value2 == null) {
             return 0;
         }
@@ -139,10 +142,12 @@ public class DataUtils {
         if (obj2 == null) {
             return 1;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         try {
-            return sdf.parse(obj1.toString()).compareTo(sdf.parse(obj2.toString()));
-        } catch (ParseException e) {
+            LocalDateTime d1 = LocalDateTime.parse(obj1.toString(), formatter);
+            LocalDateTime d2 = LocalDateTime.parse(obj2.toString(), formatter);
+            return d1.compareTo(d2);
+        } catch (DateTimeParseException e) {
             return -1;
         }
     }
