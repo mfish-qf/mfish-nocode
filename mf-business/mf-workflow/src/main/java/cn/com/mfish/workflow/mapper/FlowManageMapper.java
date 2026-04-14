@@ -1,6 +1,6 @@
 package cn.com.mfish.workflow.mapper;
 
-import cn.com.mfish.workflow.entity.FlowManage;
+import cn.com.mfish.common.workflow.api.entity.FlowManage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

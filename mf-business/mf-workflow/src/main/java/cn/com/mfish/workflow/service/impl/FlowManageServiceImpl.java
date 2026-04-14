@@ -1,14 +1,15 @@
 package cn.com.mfish.workflow.service.impl;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.excel.ExcelUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.workflow.api.entity.FlowManage;
 import cn.com.mfish.common.workflow.service.FlowableService;
 import cn.com.mfish.workflow.common.BpmnConverter;
 import cn.com.mfish.workflow.entity.FlowJson;
-import cn.com.mfish.workflow.entity.FlowManage;
 import cn.com.mfish.workflow.mapper.FlowManageMapper;
 import cn.com.mfish.workflow.req.ReqFlowManage;
 import cn.com.mfish.workflow.service.FlowManageService;
@@ -183,9 +184,12 @@ public class FlowManageServiceImpl extends ServiceImpl<FlowManageMapper, FlowMan
         if (flowManage == null) {
             return Result.fail(false, "错误：流程不存在");
         }
-        // 2. 验证流程配置是否为空
+        // 2. 验证流程配置是否为空，检查是否已发布
         if (StringUtils.isEmpty(flowManage.getFlowConfig())) {
             return Result.fail(false, "错误：流程配置不能为空");
+        }
+        if (flowManage.getReleased() == 1) {
+            return Result.fail(false, "错误：流程已发布，请先撤回");
         }
         // 3. 调用流程格式化进行验证
         try {
@@ -200,16 +204,27 @@ public class FlowManageServiceImpl extends ServiceImpl<FlowManageMapper, FlowMan
             return Result.fail(false, "错误：流程配置不正确，请检查流程设计是否完整且符合规范");
         }
         // 4. 如果存在同flowKey的流程，则将同flowKey的流程发布状态设为未发布
-        update(new FlowManage().setReleased((short) 0), new LambdaQueryWrapper<FlowManage>().eq(FlowManage::getFlowKey, flowManage.getFlowKey()));
+        update(new FlowManage().setReleased(0), new LambdaQueryWrapper<FlowManage>().eq(FlowManage::getFlowKey, flowManage.getFlowKey()));
         // 5. 部署流程,获取版本号
         Integer version = flowableService.deployProcess(flowManage.getFlowKey(), flowManage.getName(), flowManage.getRemark(), flowManage.getFlowConfig());
-        flowManage.setVersion(version);
-        flowManage.setReleased((short) 1);
-        // 6. 更新流程信息
-        if (updateById(flowManage)) {
-            return Result.ok(true, "流程发布成功!");
+        // 6. 如果版本号大于数据库中的版本号，新增一条流程信息，否则更新流程信息
+        if (version != null && flowManage.getVersion() != null && version > flowManage.getVersion()) {
+            flowManage.setDelFlag(1);
+            if (updateById(flowManage)) {
+                flowManage.setId(null).setVersion(version).setReleased(1).setDelFlag(0);
+                if (save(flowManage)) {
+                    return Result.ok(true, "流程发布成功!");
+                }
+            }
+        } else {
+            flowManage.setVersion(version);
+            flowManage.setReleased(1);
+            // 6. 更新流程信息
+            if (updateById(flowManage)) {
+                return Result.ok(true, "流程发布成功!");
+            }
         }
-        return Result.fail(false, "错误：流程发布失败!");
+        throw new MyRuntimeException("错误：流程发布失败!");
     }
 
     /**
@@ -231,10 +246,11 @@ public class FlowManageServiceImpl extends ServiceImpl<FlowManageMapper, FlowMan
             return Result.fail(false, "错误：流程未发布，无需撤回");
         }
         // 3. 更新发布状态为未发布
-        flowManage.setReleased((short) 0);
+        flowManage.setReleased(0);
         if (updateById(flowManage)) {
             return Result.ok(true, "流程撤回成功!");
         }
         return Result.fail(false, "错误：流程撤回失败!");
     }
+
 }

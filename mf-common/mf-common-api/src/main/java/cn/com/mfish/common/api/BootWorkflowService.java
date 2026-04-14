@@ -57,8 +57,8 @@ public class BootWorkflowService implements RemoteWorkflowService {
     }
 
     @Override
-    public Result<String> queryImage(String origin, String processInstanceId) {
-        return Result.ok(flowableService.queryImage(processInstanceId), "查询流程实例图片成功");
+    public Result<String> getImage(String origin, String processInstanceId) {
+        return Result.ok(flowableService.getImage(processInstanceId), "查询流程实例图片成功");
     }
 
     @Override
@@ -106,5 +106,15 @@ public class BootWorkflowService implements RemoteWorkflowService {
     public Result<String> rejectedTask(String origin, ApproveInfo approveInfo) {
         flowableService.completeTask(AuditOperator.审核拒绝, approveInfo);
         return Result.ok("审核不通过");
+    }
+
+    @Override
+    public Result<FlowManage> queryFlowManage(String origin, String processInstanceId) {
+        return Result.ok(flowableService.queryFlowManage(processInstanceId), "查询流程管理信息成功");
+    }
+
+    @Override
+    public Result<List<String>> getActiveDefinitionKeys(String origin, String processInstanceId) {
+        return Result.ok(flowableService.getActiveDefinitionKeys(processInstanceId), "查询流程实例当前活动节点成功");
     }
 }

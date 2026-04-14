@@ -11,7 +11,6 @@ import cn.com.mfish.common.workflow.api.req.ReqTask;
 import cn.com.mfish.common.workflow.enums.AuditOperator;
 import cn.com.mfish.common.workflow.service.FlowableService;
 import cn.com.mfish.workflow.common.BpmnConverter;
-import cn.com.mfish.workflow.entity.FlowManage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -82,8 +81,8 @@ public class ProcessController {
 
     @Operation(summary = "查询流程图片")
     @GetMapping("/image/{processInstanceId}")
-    public Result<String> queryImage(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable("processInstanceId") String processInstanceId) {
-        return Result.ok(flowableService.queryImage(processInstanceId), "查询流程图片成功");
+    public Result<String> getImage(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable("processInstanceId") String processInstanceId) {
+        return Result.ok(flowableService.getImage(processInstanceId), "查询流程图片成功");
     }
 
     @Operation(summary = "查询实例的审批意见")
@@ -172,5 +171,17 @@ public class ProcessController {
         } catch (IOException e) {
             log.error("下载流程定义xml失败", e);
         }
+    }
+
+    @Operation(summary = "查询流程管理信息")
+    @GetMapping("/flowManage/{processInstanceId}")
+    public Result<FlowManage> queryFlowManage(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {
+        return Result.ok(flowableService.queryFlowManage(processInstanceId), "查询流程管理信息成功");
+    }
+
+    @Operation(summary = "查询当前流程激活的流程定义key")
+    @GetMapping("/activeDefinitionKeys/{processInstanceId}")
+    public Result<List<String>> getActiveDefinitionKeys(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable String processInstanceId) {
+        return Result.ok(flowableService.getActiveDefinitionKeys(processInstanceId), "查询流程定义key成功");
     }
 }

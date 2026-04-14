@@ -58,7 +58,7 @@ public class RemoteWorkflowFallBack implements FallbackFactory<RemoteWorkflowSer
             }
 
             @Override
-            public Result<String> queryImage(String origin, String processInstanceId) {
+            public Result<String> getImage(String origin, String processInstanceId) {
                 return Result.fail("错误：查询流程图片失败" + cause.getMessage());
             }
 
@@ -105,6 +105,16 @@ public class RemoteWorkflowFallBack implements FallbackFactory<RemoteWorkflowSer
             @Override
             public Result<String> rejectedTask(String origin, ApproveInfo approveInfo) {
                 return Result.fail("错误：拒绝任务失败" + cause.getMessage());
+            }
+
+            @Override
+            public Result<FlowManage> queryFlowManage(String origin, String processInstanceId) {
+                return Result.fail("错误：查询流程管理信息失败" + cause.getMessage());
+            }
+
+            @Override
+            public Result<List<String>> getActiveDefinitionKeys(String origin, String processInstanceId) {
+                return Result.fail("错误：查询流程定义失败" + cause.getMessage());
             }
         };
 

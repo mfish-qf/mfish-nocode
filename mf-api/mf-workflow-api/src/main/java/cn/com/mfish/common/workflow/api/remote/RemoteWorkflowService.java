@@ -27,12 +27,12 @@ public interface RemoteWorkflowService {
     /**
      * 手动部署流程
      *
-     * @param origin  来源
-     * @param id 流程ID
+     * @param origin 来源
+     * @param id     流程ID
      * @return 部署版本号
      */
     @GetMapping("/process/deploy/{id}")
-    Result<Integer> deployProcess(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
+    Result<Integer> deployProcess(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String id);
 
     /**
      * 分页查询流程列表
@@ -75,7 +75,7 @@ public interface RemoteWorkflowService {
      * @return 删除结果
      */
     @DeleteMapping("/process/{processInstanceId}")
-    Result<String> delProcess(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("processInstanceId") String processInstanceId, @RequestParam("reason") String reason);
+    Result<String> delProcess(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId, @RequestParam("reason") String reason);
 
     /**
      * 通过业务key删除流程实例
@@ -86,7 +86,7 @@ public interface RemoteWorkflowService {
      * @return 删除结果
      */
     @DeleteMapping("/process/businessKey/{businessKey}")
-    Result<String> delProcessByBusinessKey(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("businessKey") String businessKey, @RequestParam("reason") String reason);
+    Result<String> delProcessByBusinessKey(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String businessKey, @RequestParam("reason") String reason);
 
     /**
      * 查询流程图片
@@ -96,7 +96,7 @@ public interface RemoteWorkflowService {
      * @return 流程图片Base64
      */
     @GetMapping("/process/image/{processInstanceId}")
-    Result<String> queryImage(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("processInstanceId") String processInstanceId);
+    Result<String> getImage(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
 
     /**
      * 查询实例的审批意见
@@ -106,7 +106,7 @@ public interface RemoteWorkflowService {
      * @return 审批意见列表
      */
     @GetMapping("/process/comments/{processInstanceId}")
-    Result<List<AuditComment>> getAuditComments(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("processInstanceId") String processInstanceId);
+    Result<List<AuditComment>> getAuditComments(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
 
     /**
      * 查询实例的任务进度
@@ -116,7 +116,7 @@ public interface RemoteWorkflowService {
      * @return 任务列表
      */
     @GetMapping("/process/tasks/{processInstanceId}")
-    Result<List<MfTask>> getProcessTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("processInstanceId") String processInstanceId);
+    Result<List<MfTask>> getProcessTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
 
     /**
      * 查询待处理任务列表
@@ -159,7 +159,7 @@ public interface RemoteWorkflowService {
      * @return 历史任务列表
      */
     @GetMapping("/process/tasks/history/{processInstanceId}")
-    Result<List<MfTask>> getHistoryTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("processInstanceId") String processInstanceId);
+    Result<List<MfTask>> getHistoryTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
 
     /**
      * 查询当前用户任务统计
@@ -190,4 +190,23 @@ public interface RemoteWorkflowService {
      */
     @PostMapping("/process/tasks/rejected")
     Result<String> rejectedTask(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody ApproveInfo approveInfo);
+
+    /**
+     * 查询流程管理信息
+     *
+      * @param origin            来源
+      * @param processInstanceId 流程实例ID
+      * @return 流程管理信息
+     */
+    @GetMapping("/process/flowManage/{processInstanceId}")
+    Result<FlowManage> queryFlowManage(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
+
+    /**
+     * 查询流程实例当前活动的节点
+      * @param origin            来源
+      * @param processInstanceId 流程实例ID
+      * @return 流程实例当前活动的节点
+     */
+    @GetMapping("/process/activeDefinitionKeys/{processInstanceId}")
+    Result<List<String>> getActiveDefinitionKeys(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
 }
