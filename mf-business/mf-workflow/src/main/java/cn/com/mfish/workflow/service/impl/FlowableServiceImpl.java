@@ -16,7 +16,6 @@ import cn.com.mfish.common.workflow.enums.AuditOperator;
 import cn.com.mfish.common.workflow.service.FlowableService;
 import cn.com.mfish.workflow.common.BpmnConverter;
 import cn.com.mfish.workflow.common.FlowAuthority;
-import cn.com.mfish.workflow.entity.FlowManage;
 import cn.com.mfish.workflow.mapper.FlowManageMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
@@ -345,7 +344,24 @@ public class FlowableServiceImpl implements FlowableService {
      * @return 图片base64编码
      */
     @Override
-    public String queryImage(String processInstanceId) {
+    public String getImage(String processInstanceId) {
+        FlowDefinition definition = getFlowDefinition(processInstanceId);
+        String processDefinitionId = definition.getId();
+        if (StringUtils.isEmpty(processDefinitionId)) {
+            log.error("错误：流程定义ID不能为空");
+            throw new MyRuntimeException("错误：流程定义ID不能为空");
+        }
+        List<String> activeIds = getActiveDefinitionKeys(processInstanceId);
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        if (bpmnModel == null) {
+            log.error("错误：流程定义不存在，流程定义ID：{}", processDefinitionId);
+            throw new MyRuntimeException("错误：流程定义不存在");
+        }
+        return buildFlowImage(bpmnModel, activeIds);
+    }
+
+    @Override
+    public FlowDefinition getFlowDefinition(String processInstanceId) {
         HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
                 .singleResult();
@@ -353,35 +369,32 @@ public class FlowableServiceImpl implements FlowableService {
             log.error("错误：流程实例不存在，实例id:{}", processInstanceId);
             throw new MyRuntimeException("错误：流程实例不存在");
         }
-        String processDefinitionId = pi.getProcessDefinitionId();
-        if (StringUtils.isEmpty(processDefinitionId)) {
-            log.error("错误：流程定义ID不能为空");
-            throw new MyRuntimeException("错误：流程定义ID不能为空");
-        }
+        return new FlowDefinition()
+                .setFlowKey(pi.getProcessDefinitionKey())
+                .setVersion(pi.getProcessDefinitionVersion())
+                .setId(pi.getProcessDefinitionId());
+    }
 
+    @Override
+    public List<String> getActiveDefinitionKeys(String processInstanceId) {
         List<HistoricTaskInstance> htiList = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).list();
-        List<String> activeActivityIds = new ArrayList<>();
+        List<String> activeIds = new ArrayList<>();
         for (HistoricTaskInstance hti : htiList) {
             if (hti.getEndTime() == null) {
-                activeActivityIds.add(hti.getTaskDefinitionKey());
+                activeIds.add(hti.getTaskDefinitionKey());
             }
         }
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
-        if (bpmnModel == null) {
-            log.error("错误：流程定义不存在，流程定义ID：{}", processDefinitionId);
-            throw new MyRuntimeException("错误：流程定义不存在");
-        }
-        return buildFlowImage(bpmnModel, activeActivityIds);
+        return activeIds;
     }
 
     /**
      * 构建流程实例图片
      *
-     * @param bpmnModel         流程定义模型
-     * @param activeActivityIds 活动id列表
+     * @param bpmnModel 流程定义模型
+     * @param activeIds 活动id列表
      * @return 返回图片base64编码
      */
-    public String buildFlowImage(BpmnModel bpmnModel, List<String> activeActivityIds) {
+    public String buildFlowImage(BpmnModel bpmnModel, List<String> activeIds) {
         if (bpmnModel == null) {
             throw new MyRuntimeException("错误：流程定义不存在");
         }
@@ -392,7 +405,7 @@ public class FlowableServiceImpl implements FlowableService {
         try (InputStream imageStream = diagramGenerator.generateDiagram(
                 bpmnModel,
                 "jpg",
-                activeActivityIds,
+                activeIds,
                 new ArrayList<>(),  // 高亮连线ID
                 "宋体",
                 "宋体",
@@ -431,10 +444,11 @@ public class FlowableServiceImpl implements FlowableService {
     public List<MfTask> getProcessTasks(String processInstanceId, boolean isHistory) {
         Result<Map<String, MfTask>> hisTaskMap = getHistoryTaskMap(processInstanceId);
         if (!hisTaskMap.isSuccess()) {
-            throw new MyRuntimeException(hisTaskMap.getMsg());
+            throw new MyRuntimeException("错误：获取历史任务失败");
         }
         Map<String, String> activeTasks = taskService.createTaskQuery()
-                .taskIds(hisTaskMap.getData().values().stream().map(MfTask::getId).collect(Collectors.toList()))
+                .processInstanceId(processInstanceId)
+                .active()
                 .list().stream().collect(Collectors.toMap(Task::getTaskDefinitionKey, Task::getState));
         BpmnModel bpmnModel = repositoryService.getBpmnModel(hisTaskMap.getMsg());
         List<MfTask> mfTasks = new ArrayList<>();
@@ -771,4 +785,17 @@ public class FlowableServiceImpl implements FlowableService {
         ).collect(Collectors.toList());
     }
 
+    /**
+     * 查询流程管理信息
+     *
+     * @param processInstanceId 流程实例id
+     * @return 流程管理信息
+     */
+    public FlowManage queryFlowManage(String processInstanceId) {
+        FlowDefinition flowDefinition = getFlowDefinition(processInstanceId);
+        return flowManageMapper.selectOne(new LambdaQueryWrapper<FlowManage>()
+                .eq(StringUtils.isNotEmpty(flowDefinition.getFlowKey()), FlowManage::getFlowKey, flowDefinition.getFlowKey())
+                .eq(flowDefinition.getVersion() != null, FlowManage::getVersion, flowDefinition.getVersion())
+        );
+    }
 }

@@ -1,4 +1,4 @@
-package cn.com.mfish.workflow.entity;
+package cn.com.mfish.common.workflow.api.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
 import cn.idev.excel.annotation.ExcelProperty;
@@ -41,7 +41,7 @@ public class FlowManage extends BaseEntity<String> {
 	private Integer version;
     @ExcelProperty("是否发布（0未发布 1已发布）")
     @Schema(description = "是否发布（0未发布 1已发布）")
-	private Short released;
+	private Integer released;
     @ExcelProperty("流程配置")
     @Schema(description = "流程配置")
 	private String flowConfig;

@@ -103,7 +103,23 @@ public interface FlowableService {
      * @param processInstanceId 流程实例id
      * @return 图片base64编码
      */
-    String queryImage(String processInstanceId);
+    String getImage(String processInstanceId);
+
+    /**
+     * 查询流程定义
+     *
+     * @param processInstanceId 流程实例id
+     * @return 流程定义
+     */
+    FlowDefinition getFlowDefinition(String processInstanceId);
+
+    /**
+     * 查询激活的流程定义key
+     *
+     * @param processInstanceId 流程实例id
+     * @return 流程定义key列表
+     */
+    List<String> getActiveDefinitionKeys(String processInstanceId);
 
     /**
      * 查询任务列表
@@ -172,5 +188,13 @@ public interface FlowableService {
      * @return 审核评论列表
      */
     List<AuditComment> getAuditComments(String processInstanceId);
+
+    /**
+     * 查询流程管理信息
+     *
+     * @param processInstanceId 流程实例id
+     * @return 流程管理信息
+     */
+    FlowManage queryFlowManage(String processInstanceId);
 
 }

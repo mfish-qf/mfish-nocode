@@ -3,7 +3,7 @@ package cn.com.mfish.workflow.service;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import cn.com.mfish.workflow.entity.FlowManage;
+import cn.com.mfish.common.workflow.api.entity.FlowManage;
 import cn.com.mfish.workflow.req.ReqFlowManage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
