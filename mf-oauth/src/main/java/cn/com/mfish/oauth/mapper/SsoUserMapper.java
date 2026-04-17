@@ -2,10 +2,9 @@ package cn.com.mfish.oauth.mapper;
 
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
-import cn.com.mfish.common.oauth.entity.SimpleUserInfo;
+import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
-import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -46,13 +45,19 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     /**
      * 通过用户ID获取按钮权限
      *
-     * @param userId 用户id
+     * @param userId   用户id
      * @param tenantId 租户id
      * @return 按钮权限列表
      */
     List<String> getUserPermissions(@Param("userId") String userId, @Param("tenantId") String tenantId);
 
 
+    /**
+     * 获取用户所属的租户列表
+     *
+     * @param userId 用户ID
+     * @return 租户列表
+     */
     List<TenantVo> getUserTenants(String userId);
 
     /**
@@ -73,8 +78,21 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      */
     Integer isAccountExist(@Param("account") String account, @Param("userId") String userId);
 
+    /**
+     * 获取用户列表
+     *
+     * @param reqSsoUser 用户查询条件
+     * @return 用户信息列表
+     */
     List<UserInfo> getUserList(ReqSsoUser reqSsoUser);
 
+    /**
+     * 插入用户角色关系
+     *
+     * @param userId 用户ID
+     * @param roles  角色ID列表
+     * @return 影响行数
+     */
     int insertUserRole(@Param("userId") String userId, @Param("roles") List<String> roles);
 
     /**
@@ -89,15 +107,46 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
     @Delete("delete from sso_user_role where user_id = #{userId}")
     int deleteUserRole(String userId);
 
+    /**
+     * 插入用户组织关系
+     *
+     * @param userId  用户ID
+     * @param orgList 组织ID列表
+     * @return 影响行数
+     */
     int insertUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
+    /**
+     * 删除用户组织关系
+     *
+     * @param userId  用户ID
+     * @param orgList 组织ID列表
+     * @return 影响行数
+     */
     int deleteUserOrg(@Param("userId") String userId, @Param("orgList") List<String> orgList);
 
+    /**
+     * 检查用户是否存在于指定组织中
+     *
+     * @param userId 用户ID
+     * @param orgId  组织ID
+     * @return 存在返回1，不存在返回0
+     */
     int isExistUserOrg(@Param("userId") String userId, @Param("orgId") String orgId);
 
-    List<SimpleUserInfo> searchUserList(@Param("condition") String condition);
-
+    /**
+     * 根据账号列表获取用户ID列表
+     *
+     * @param accounts 账号列表
+     * @return 用户ID列表
+     */
     List<String> getUserIdsByAccounts(@Param("accounts") List<String> accounts);
 
+    /**
+     * 根据账号列表获取用户信息列表
+     *
+     * @param accounts 账号列表
+     * @return 用户信息列表
+     */
     List<UserInfo> getUsersByAccounts(@Param("accounts") List<String> accounts);
 }

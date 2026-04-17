@@ -65,7 +65,7 @@ public class SsoUserController {
     /**
      * 获取用户权限
      *
-     * @param userId 用户 ID，为空时默认当前登录用户
+     * @param userId   用户 ID，为空时默认当前登录用户
      * @param tenantId 租户 ID
      * @return 用户权限集合
      */
@@ -86,7 +86,7 @@ public class SsoUserController {
     /**
      * 获取用户角色列表
      *
-     * @param userId 用户 ID，为空时默认当前登录用户
+     * @param userId   用户 ID，为空时默认当前登录用户
      * @param tenantId 租户 ID
      * @return 用户角色列表
      */
@@ -120,7 +120,7 @@ public class SsoUserController {
     /**
      * 获取用户组织树
      *
-     * @param userId 用户 ID
+     * @param userId    用户 ID
      * @param direction 方向：all-返回所有父子节点，up-返回父节点，down-返回子节点
      * @return 用户组织树列表
      */
@@ -136,8 +136,8 @@ public class SsoUserController {
     /**
      * 获取用户组织 ID 列表
      *
-     * @param userId 用户 ID
-     * @param tenantId 租户 ID
+     * @param userId    用户 ID
+     * @param tenantId  租户 ID
      * @param direction 方向：all-返回所有父子节点，up-返回父节点，down-返回子节点
      * @return 用户组织 ID 列表
      */
@@ -280,8 +280,10 @@ public class SsoUserController {
             @Parameter(name = "condition", description = "检索条件，可输入用户名、昵称、手机号")
     })
     @RequiresPermissions("sys:tenantUser:insert")
-    public Result<List<SimpleUserInfo>> queryUserList(String condition) {
-        return Result.ok(ssoUserService.searchUserList(condition), "用户信息-检索成功!");
+    public Result<List<UserInfo>> queryUserList(String condition) {
+        // 只检索100条
+        PageHelper.startPage(1, 100);
+        return Result.ok(ssoUserService.getUserList(new ReqSsoUser().setCondition(condition)), "用户信息-检索成功!");
     }
 
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
@@ -406,7 +408,6 @@ public class SsoUserController {
     public Result<Boolean> unbindGitee(@PathVariable("userId") String userId) {
         return ssoUserService.unbindGitee(userId);
     }
-
 
 
     @Operation(summary = "解绑github账号")

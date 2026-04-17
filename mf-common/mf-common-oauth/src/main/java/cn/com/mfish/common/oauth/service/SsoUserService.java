@@ -9,7 +9,6 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.entity.OnlineUser;
-import cn.com.mfish.common.oauth.entity.SimpleUserInfo;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -97,8 +96,6 @@ public interface SsoUserService extends IService<SsoUser> {
     int deleteUserOrg(String userId, String... orgList);
 
     boolean isExistUserOrg(String userId, String orgId);
-
-    List<SimpleUserInfo> searchUserList(String condition);
 
     UserInfo getUserInfo(String userId);
 

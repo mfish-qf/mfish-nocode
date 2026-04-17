@@ -10,6 +10,7 @@ import cn.com.mfish.gateway.common.GatewayUtils;
 import cn.com.mfish.gateway.config.properties.IgnoreWhiteProperties;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -34,7 +35,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     private TokenValidator tokenValidator;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    public @NonNull Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String url = request.getURI().getPath();
         ServerHttpRequest.Builder mutate = request.mutate();

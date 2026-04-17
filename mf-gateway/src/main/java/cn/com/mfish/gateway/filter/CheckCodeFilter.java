@@ -8,6 +8,7 @@ import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.gateway.common.GatewayUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -46,7 +47,7 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
     CaptchaProperties captchaProperties;
 
     @Override
-    public GatewayFilter apply(Object config) {
+    public @NonNull GatewayFilter apply(@NonNull Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             CheckStatus gatewayCheck = isMatch(request.getURI().getPath(), captchaProperties.getGatewayCheckCaptcha());
