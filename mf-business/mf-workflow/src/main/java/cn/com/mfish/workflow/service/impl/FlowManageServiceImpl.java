@@ -111,7 +111,7 @@ public class FlowManageServiceImpl extends ServiceImpl<FlowManageMapper, FlowMan
         FlowJson flowJson = JSON.parseObject(flowManage.getFlowConfig(), FlowJson.class);
         String hex = DigestUtils.sha256Hex(JSON.toJSONString(flowJson));
         // 3. 判断流程配置是否修改，如果未修改则执行更新操作
-        if (hex.equals(dbFlowManage.getHex())) {
+        if (hex.equals(dbFlowManage.getHex()) || dbFlowManage.getVersion() == null) {
             if (updateById(flowManage)) {
                 return Result.ok(flowManage, "流程管理-编辑成功!");
             }

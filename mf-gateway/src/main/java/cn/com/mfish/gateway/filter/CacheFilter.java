@@ -2,6 +2,7 @@ package cn.com.mfish.gateway.filter;
 
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
@@ -34,7 +35,7 @@ public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config
     }
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public @NonNull GatewayFilter apply(Config config) {
         CacheRequestGatewayFilter cacheRequestGatewayFilter = new CacheRequestGatewayFilter();
         Integer order = config.getOrder();
         if (order == null) {
@@ -45,7 +46,7 @@ public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config
 
     public static class CacheRequestGatewayFilter implements GatewayFilter {
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public @NonNull Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             // GET DELETE 不过滤
             HttpMethod method = exchange.getRequest().getMethod();
             if (method == HttpMethod.GET || method == HttpMethod.DELETE) {

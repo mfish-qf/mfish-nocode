@@ -52,11 +52,18 @@ public class SwaggerInstancesSubscriber extends Subscriber<InstancesChangeEvent>
         if (routeList == null || routeList.isEmpty()) {
             return;
         }
-        Map<String, String> map = routeList.stream().filter(route -> !route.getId().startsWith(ID_PREFIX))
-                .collect(Collectors.toMap((route) -> route.getUri().getHost(), RouteDefinition::getId));
+        Map<String, String> map = routeList.stream().filter(route -> {
+                    assert route.getId() != null;
+                    return !route.getId().startsWith(ID_PREFIX);
+                })
+                .collect(Collectors.toMap((route) -> {
+                    assert route.getUri() != null;
+                    return route.getUri().getHost();
+                }, RouteDefinition::getId));
         Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> set = new HashSet<>(routeList.size());
         for (RouteDefinition route : routeList) {
             if (!route.getMetadata().isEmpty()) {
+                assert route.getId() != null;
                 String name = route.getId().replace(ID_PREFIX, "");
                 if (ignoreServers.contains(name)) {
                     continue;

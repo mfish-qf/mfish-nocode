@@ -5,6 +5,9 @@ import cn.com.mfish.workflow.nodes.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @description: 节点对象
  * @author: mfish
@@ -30,11 +33,17 @@ public class FlowNode {
             case APPROVAL:
                 node = new ApprovalNode(id, data.getLabel(), data.getDescription());
                 ApprovalNode approvalNode = (ApprovalNode) node;
-                approvalNode.setCandidateUsers(data.getCandidateUsers());
-                approvalNode.setCandidateGroups(data.getCandidateGroups());
+                approvalNode.setCandidateUsers(data.getUserIds());
+                List<String> groupList = new ArrayList<>();
+                if (data.getOrgIds() != null && !data.getOrgIds().isEmpty()) {
+                    groupList.addAll(data.getOrgIds().stream().map(orgId -> "org:" + orgId).toList());
+                }
+                if (data.getRoleIds() != null && !data.getRoleIds().isEmpty()) {
+                    groupList.addAll(data.getRoleIds().stream().map(roleId -> "role:" + roleId).toList());
+                }
+                approvalNode.setCandidateGroups(groupList);
                 approvalNode.setApprovalType(data.getApprovalType());
                 approvalNode.setCompletionPercent(data.getCompletionPercent());
-                approvalNode.setAssignee(data.getAssignee());
                 break;
             case CONDITION:
                 node = new ExclusiveNode(id, data.getLabel(), data.getDescription(), data.getBranches());

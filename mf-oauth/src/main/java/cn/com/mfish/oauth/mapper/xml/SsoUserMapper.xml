@@ -184,6 +184,20 @@
             <if test="nickname != null and nickname != ''">
                 and u.nickname like concat('%',#{nickname},'%')
             </if>
+            <if test="condition != null and condition != ''">
+                and
+                <foreach collection="condition.split(',')" item="name" separator="or" open="(" close=")">
+                    (u.account like CONCAT('%',#{name},'%')
+                    or nickname like CONCAT('%',#{name},'%')
+                    or phone like CONCAT('%',#{name},'%'))
+                </foreach>
+            </if>
+            <if test="userIds != null and userIds != ''">
+                and u.id in
+                <foreach collection="userIds.split(',')" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
             <if test="status != null">
                 and u.status = #{status}
             </if>
@@ -231,16 +245,6 @@
         from sso_org_user
         where user_Id = #{userId}
           and org_id = #{orgId}
-    </select>
-    <select id="searchUserList" resultType="cn.com.mfish.common.oauth.entity.SimpleUserInfo">
-        select * from sso_user
-        <where>
-            <if test="condition != null and condition != ''">
-                or account like CONCAT('%',#{condition},'%')
-                or nickname like CONCAT('%',#{condition},'%')
-                or phone like CONCAT('%',#{condition},'%')
-            </if>
-        </where>
     </select>
     <select id="getUserIdsByAccounts" resultType="java.lang.String">
         select id from sso_user where account in

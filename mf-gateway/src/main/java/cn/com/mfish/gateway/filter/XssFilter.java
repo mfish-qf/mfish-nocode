@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.utils.http.EscapeUtil;
 import cn.com.mfish.common.core.config.XssProperties;
 import io.netty.buffer.ByteBufAllocator;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -37,7 +38,7 @@ public class XssFilter implements GlobalFilter, Ordered {
     XssProperties xssProperties;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         if (!xssProperties.getEnabled()) {
             return chain.filter(exchange);
         }

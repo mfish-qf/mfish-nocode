@@ -4,6 +4,7 @@ import cn.com.mfish.common.core.enums.TreeDirection;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
+import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import lombok.Data;
 import org.flowable.engine.HistoryService;
@@ -11,8 +12,8 @@ import org.flowable.engine.TaskService;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @description: 流程用户权限
@@ -32,12 +33,18 @@ public class FlowAuthority {
      */
     public static FlowAuthority getFlowAuthority() {
         FlowAuthority flowAuthority = new FlowAuthority();
-        flowAuthority.setAccount(AuthInfoUtils.getCurrentAccount());
+        flowAuthority.setAccount(AuthInfoUtils.getCurrentUserId());
         List<SsoOrg> orgList = OauthUtils.getOrgs(TreeDirection.当前.toString());
+        List<UserRole> roleList = OauthUtils.getRoles();
+        List<String> groupIds = new ArrayList<>();
         if (orgList != null && !orgList.isEmpty()) {
-            flowAuthority.setGroupList(orgList.stream().map(SsoOrg::getOrgFixCode)
-                    .filter(StringUtils::isNotEmpty).collect(Collectors.toList()));
+            groupIds.addAll(orgList.stream().map((org) -> "org:" + org.getId())
+                    .filter(StringUtils::isNotEmpty).toList());
         }
+        if (roleList != null && !roleList.isEmpty()) {
+            groupIds.addAll(roleList.stream().map((role) -> "role:" + role.getId()).toList());
+        }
+        flowAuthority.setGroupList(groupIds);
         return flowAuthority;
     }
 
