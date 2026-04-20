@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum FlowKey {
     UNKNOWN("unknown"),
     大屏发布("screen_release"),
+    请假申请发布("demo_leave_apply_release"),
     TEST("test");
 
     private final String key;

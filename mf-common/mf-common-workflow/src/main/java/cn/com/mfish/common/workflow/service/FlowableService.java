@@ -91,7 +91,7 @@ public interface FlowableService {
     /**
      * 判断是否是流程启动人
      *
-     * @param businessKey 业务id
+     * @param businessKey 业务key
      * @param userId      用户id
      * @return 是否是启动人
      */
@@ -128,6 +128,13 @@ public interface FlowableService {
      * @return 任务列表
      */
     List<MfTask> getProcessTasks(String processInstanceId);
+
+    /**
+     * 根据业务key获取最新流程实例任务列表
+      * @param businessKey 业务key
+      * @return 任务列表
+     */
+    List<MfTask> getProcessTasksByBusinessKey(String businessKey);
 
     /**
      * 查询历史任务列表

@@ -14,6 +14,7 @@ public class ServiceConstants {
     public static final String STORAGE_SERVICE = "mf-storage";
     public static final String WORKFLOW_SERVICE = "mf-workflow";
     public static final String NOCODE_SERVICE = "mf-nocode";
+    public static final String DEMO_SERVICE = "mf-demo";
 
     public static boolean isBoot(String type) {
         return ServiceConstants.SERVER_BOOT.equals(type);

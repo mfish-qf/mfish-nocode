@@ -69,3 +69,5 @@
 /mf-api/mf-workflow-api/target/
 /mf-common/mf-common-nocode/target/
 /mf-common/mf-common-prometheus/target/
+/mf-common/mf-common-demo/target/
+/mf-api/mf-demo-api/target/

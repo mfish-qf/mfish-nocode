@@ -271,6 +271,7 @@ INSERT INTO `sys_dict_item` VALUES ('2cdf5389b1d6a35e52c14486e04a3a57', '220bbd3
 INSERT INTO `sys_dict_item` VALUES ('261f489024bb90163e49ee85498df47e', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已审批', 'completed', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-10-10 16:28:02', 'admin', '2025-10-10 16:28:08');
 INSERT INTO `sys_dict_item` VALUES ('07582f8cb8443cd3de3f5ab150386690', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已取消', 'terminated', 0, 3, '', 'red', 0, NULL, 'admin', '2025-10-10 16:29:10', 'admin', '2025-10-10 16:29:14');
 INSERT INTO `sys_dict_item` VALUES ('4e14582f0b59762f2ca1cfda04539202', 'eeb27772c310addeae7c12d296521399', 'workflow_process_key', '大屏发布', 'screen_release', 0, 1, 'ant-design:fund-projection-screen-outlined', '', 0, NULL, 'admin', '2025-10-15 16:35:15', 'admin', '2025-10-16 11:04:43');
+INSERT INTO `sys_dict_item` VALUES ('581a7e287feec3be8771175bdc5dab9b', 'eeb27772c310addeae7c12d296521399', 'workflow_process_key', '工作流样例审批', 'demo_leave_apply_release', 0, 2, 'ant-design:fork-outlined', 'blue', 0, '工作流试用样例', 'admin', '2026-04-08 20:08:42', 'admin', '2026-04-20 21:38:45');
 
 -- ----------------------------
 -- Table structure for sys_log

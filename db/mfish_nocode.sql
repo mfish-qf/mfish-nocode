@@ -453,6 +453,7 @@ INSERT INTO `sso_menu` VALUES ('a7d3a7b61fa52964c5c9db477e3b1962', '8ae3ea763294
 INSERT INTO `sso_menu` VALUES ('ad5b361ff34235e8ec85cd613a59bf6e', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300001', 3, '查询', '#', 1, 2, '', NULL, 'workflow:flowManage:query', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 INSERT INTO `sso_menu` VALUES ('c5309ca3ba545da9950278637c90e674', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300002', 3, '新增', '#', 2, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:insert', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 INSERT INTO `sso_menu` VALUES ('e92728a6d996d4b7cb3acb0fc031d183', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300004', 3, '删除', '#', 4, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:delete', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
+INSERT INTO `sso_menu` VALUES ('c0adefdb601f6e41f82a06ff6513613e', '53e8eaceee36c1d54e43319fdd60811b', '0001300008', 2, '工作流样例', 'ant-design:fork-outlined', 11, 1, '/demo-leave-apply', '/demo/demo-leave-apply/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2026-04-20 17:05:36', 'admin', '2026-04-20 20:05:50');
 
 -- ----------------------------
 -- Table structure for sso_org
@@ -1138,6 +1139,7 @@ INSERT INTO `sys_dict_item` VALUES ('2cdf5389b1d6a35e52c14486e04a3a57', '220bbd3
 INSERT INTO `sys_dict_item` VALUES ('261f489024bb90163e49ee85498df47e', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已审批', 'completed', 0, 2, NULL, 'green', 0, NULL, 'admin', '2025-10-10 16:28:02', 'admin', '2025-10-10 16:28:08');
 INSERT INTO `sys_dict_item` VALUES ('07582f8cb8443cd3de3f5ab150386690', '220bbd3b1dd32fd37d0abbd279a14774', 'workflow_task_status', '已取消', 'terminated', 0, 3, '', 'red', 0, NULL, 'admin', '2025-10-10 16:29:10', 'admin', '2025-10-10 16:29:14');
 INSERT INTO `sys_dict_item` VALUES ('4e14582f0b59762f2ca1cfda04539202', 'eeb27772c310addeae7c12d296521399', 'workflow_process_key', '大屏发布', 'screen_release', 0, 1, 'ant-design:fund-projection-screen-outlined', '', 0, NULL, 'admin', '2025-10-15 16:35:15', 'admin', '2025-10-16 11:04:43');
+INSERT INTO `sys_dict_item` VALUES ('581a7e287feec3be8771175bdc5dab9b', 'eeb27772c310addeae7c12d296521399', 'workflow_process_key', '工作流样例审批', 'demo_leave_apply_release', 0, 2, 'ant-design:fork-outlined', 'blue', 0, '工作流试用样例', 'admin', '2026-04-08 20:08:42', 'admin', '2026-04-20 21:38:45');
 
 -- ----------------------------
 -- Table structure for sys_log
@@ -1513,6 +1515,26 @@ INSERT INTO `demo_order_detail` VALUES ('e319c6ae4efd11eb820300163e11f4a0', 'O16
 INSERT INTO `demo_order_detail` VALUES ('e319c6b94efd11eb820300163e11f4a0', 'O16098137908580001', '【8折】皇冠丹麦曲奇饼干特别礼盒装 1.01kg/盒', 'https://www.ecishan.com.cn/storage/file16087791143760001.png', 126.60, 126.60, 2, NULL, NULL, 0.00, 253.20, 0.00, '', NULL, '', NULL);
 INSERT INTO `demo_order_detail` VALUES ('f36c3a074b0911eb820300163e11f4a0', 'O16093791675560001', '雕牌超效加酶无磷洗衣粉2.68千克/袋', 'https://www.ecishan.com.cn/storage/714991-1.png', 24.30, 24.30, 2, NULL, NULL, 0.00, 48.60, 0.00, '', NULL, '', NULL);
 INSERT INTO `demo_order_detail` VALUES ('f36c3a2f4b0911eb820300163e11f4a0', 'O16093791675560001', '福临门苏软香 10kg/袋', 'https://www.ecishan.com.cn/storage/file16049116832980001.png', 59.90, 59.90, 2, NULL, NULL, 0.00, 119.80, 0.00, '', NULL, '', NULL);
+
+-- ----------------------------
+-- Table structure for demo_leave_apply
+-- ----------------------------
+DROP TABLE IF EXISTS `demo_leave_apply`;
+CREATE TABLE `demo_leave_apply`  (
+                                     `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+                                     `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '申请标题',
+                                     `leave_type` tinyint NULL DEFAULT NULL COMMENT '请假类型 1事假 2病假 3年假',
+                                     `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
+                                     `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
+                                     `leave_days` decimal(5, 1) NULL DEFAULT NULL COMMENT '请假天数',
+                                     `reason` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '请假事由',
+                                     `audit_state` tinyint NULL DEFAULT NULL COMMENT '审核状态 null未提交 0审核中 1已通过 2未通过',
+                                     `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+                                     `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+                                     `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+                                     `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '请假申请审批Demo' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for mf_api
@@ -1924,5 +1946,7 @@ CREATE TABLE `flw_mf_manage`  (
                                   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
                                   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '流程管理' ROW_FORMAT = DYNAMIC;
+
+INSERT INTO `flw_mf_manage` VALUES ('b686750cc7edd180d4f5c4ac8d5299fa', 'demo_leave_apply_release', '工作流样例审批', '工作流试用样例', 1, 1, '{\"nodes\":[{\"id\":\"node_start_1\",\"type\":\"custom\",\"draggable\":true,\"initialized\":false,\"position\":{\"x\":250,\"y\":50},\"data\":{\"type\":\"start\",\"label\":\"开始\",\"icon\":\"Play\"},\"label\":\"开始\"},{\"id\":\"node_approval_1776677052658\",\"type\":\"custom\",\"draggable\":true,\"initialized\":false,\"position\":{\"x\":550,\"y\":50},\"data\":{\"type\":\"approval\",\"label\":\"审批\",\"approvalType\":\"OR\",\"userIds\":[\"c51fde3955594074bb4db31e654a4483\"],\"userNames\":[\"mfish\"]},\"label\":\"审批\"},{\"id\":\"node_approval_1776677060910\",\"type\":\"custom\",\"draggable\":true,\"initialized\":false,\"position\":{\"x\":981.25,\"y\":47.5},\"data\":{\"type\":\"approval\",\"label\":\"审批\",\"approvalType\":\"OR\",\"roleIds\":[\"4b423f7b1ac0ed0b46a8e5ec3389ac14\"],\"roleNames\":[\"管理\"]},\"label\":\"审批\"},{\"id\":\"node_end_1776677072235\",\"type\":\"custom\",\"draggable\":true,\"initialized\":false,\"position\":{\"x\":1360,\"y\":221.24999999999997},\"data\":{\"type\":\"end\",\"label\":\"结束\",\"executionListeners\":[{\"event\":\"start\",\"type\":\"class\",\"value\":\"cn.com.mfish.workflow.handler.CompleteCallbackHandler\"}]},\"label\":\"结束\"}],\"edges\":[{\"id\":\"e-node_start_1-right-node_approval_1776677052658-left\",\"type\":\"custom\",\"source\":\"node_start_1\",\"target\":\"node_approval_1776677052658\",\"sourceHandle\":\"right\",\"targetHandle\":\"left\",\"data\":{\"showArrow\":true,\"pathType\":\"default\",\"condition\":null},\"label\":\"\",\"animated\":true,\"style\":{\"stroke\":\"#EE4F12\",\"strokeWidth\":2},\"markerEnd\":{\"type\":\"arrowclosed\",\"color\":\"#EE4F12\"},\"sourceX\":492.5,\"sourceY\":80.66667175292969,\"targetX\":547.5,\"targetY\":110.66665649414062},{\"id\":\"e-node_approval_1776677052658-right-node_approval_1776677060910-left\",\"type\":\"custom\",\"source\":\"node_approval_1776677052658\",\"target\":\"node_approval_1776677060910\",\"sourceHandle\":\"right\",\"targetHandle\":\"left\",\"data\":{\"showArrow\":true,\"pathType\":\"default\",\"condition\":\"approved\"},\"label\":\"\",\"animated\":true,\"style\":{\"stroke\":\"#EE4F12\",\"strokeWidth\":2},\"markerEnd\":{\"type\":\"arrowclosed\",\"color\":\"#EE4F12\"},\"sourceX\":792.5,\"sourceY\":110.66665649414062,\"targetX\":978.75,\"targetY\":108.16665649414062},{\"id\":\"e-node_approval_1776677060910-top-source-node_approval_1776677052658-top-source\",\"type\":\"custom\",\"source\":\"node_approval_1776677060910\",\"target\":\"node_approval_1776677052658\",\"sourceHandle\":\"top-source\",\"targetHandle\":\"top-source\",\"data\":{\"showArrow\":true,\"pathType\":\"default\",\"condition\":\"rejected\"},\"label\":\"\",\"animated\":true,\"style\":{\"stroke\":\"#EE4F12\",\"strokeWidth\":2},\"markerEnd\":{\"type\":\"arrowclosed\",\"color\":\"#EE4F12\"},\"sourceX\":1101.25,\"sourceY\":45,\"targetX\":670,\"targetY\":47.5},{\"id\":\"e-node_approval_1776677060910-right-node_end_1776677072235-left\",\"type\":\"custom\",\"source\":\"node_approval_1776677060910\",\"target\":\"node_end_1776677072235\",\"sourceHandle\":\"right\",\"targetHandle\":\"left\",\"data\":{\"showArrow\":true,\"pathType\":\"default\",\"condition\":\"approved\"},\"label\":\"\",\"animated\":true,\"style\":{\"stroke\":\"#EE4F12\",\"strokeWidth\":2},\"markerEnd\":{\"type\":\"arrowclosed\",\"color\":\"#EE4F12\"},\"sourceX\":1223.75,\"sourceY\":108.16665649414062,\"targetX\":1357.5,\"targetY\":251.9166564941406},{\"id\":\"e-node_approval_1776677052658-bottom-node_end_1776677072235-left\",\"type\":\"custom\",\"source\":\"node_approval_1776677052658\",\"target\":\"node_end_1776677072235\",\"sourceHandle\":\"bottom\",\"targetHandle\":\"left\",\"data\":{\"showArrow\":true,\"pathType\":\"smoothstep\",\"condition\":\"rejected\"},\"label\":\"\",\"animated\":true,\"style\":{\"stroke\":\"#EE4F12\",\"strokeWidth\":2},\"markerEnd\":{\"type\":\"arrowclosed\",\"color\":\"#EE4F12\"},\"sourceX\":670,\"sourceY\":173.83331298828125,\"targetX\":1357.5,\"targetY\":251.9166564941406}],\"position\":[-27.5,349.1],\"zoom\":0.8,\"viewport\":{\"x\":-27.5,\"y\":349.1,\"zoom\":0.8}}', 0, 'ca50d1785a07f71abbec0da4af6b0632d8d51f54c84ca5050debf1c46f529291', 'admin', '2026-04-20 17:25:00', 'admin', '2026-04-20 17:25:05');
 
 SET FOREIGN_KEY_CHECKS = 1;
