@@ -97,6 +97,12 @@ public class ProcessController {
         return Result.ok(flowableService.getProcessTasks(processInstanceId), "查询任务列表成功");
     }
 
+    @Operation(summary = "根据业务key获取最新流程实例任务列表")
+    @GetMapping("/tasks/businessKey/{businessKey}")
+    public Result<List<MfTask>> getProcessTasksByBusinessKey(@Parameter(name = "businessKey", description = "业务id") @PathVariable String businessKey) {
+        return Result.ok(flowableService.getProcessTasksByBusinessKey(businessKey), "查询任务列表成功");
+    }
+
     @Operation(summary = "查询待处理任务列表")
     @GetMapping("/tasks/pending")
     public Result<PageResult<MfTask>> getPendingTasks(ReqTask reqTask, ReqPage reqPage) {

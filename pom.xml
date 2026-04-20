@@ -478,6 +478,16 @@
                 <artifactId>mf-workflow-api</artifactId>
                 <version>${mfish.version}</version>
             </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-demo-api</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-common-demo</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <!-- 私有库暂时停用，代码注销-->

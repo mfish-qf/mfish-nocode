@@ -312,7 +312,7 @@ public class FlowableServiceImpl implements FlowableService {
     /**
      * 判断用户是否为流程启动人
      *
-     * @param businessKey 业务id
+     * @param businessKey 业务key
      * @param userId      用户id
      * @return 是否为启动人
      */
@@ -335,6 +335,32 @@ public class FlowableServiceImpl implements FlowableService {
     @Override
     public List<MfTask> getProcessTasks(String processInstanceId) {
         return getProcessTasks(processInstanceId, false);
+    }
+
+
+    /**
+     * 根据业务key获取最新流程实例任务列表
+     * @param businessKey 业务key
+     * @return 任务列表
+     */
+    @Override
+    public List<MfTask> getProcessTasksByBusinessKey(String businessKey) {
+        if (StringUtils.isEmpty(businessKey)) {
+            log.error("错误：业务id不能为空");
+            throw new MyRuntimeException("错误：业务id不能为空");
+        }
+        // 通过业务key查询流程实例，按开始时间降序排序，只取最新的一条
+        List<HistoricProcessInstance> hpiList = historyService.createHistoricProcessInstanceQuery()
+                .processInstanceBusinessKey(businessKey)
+                .orderByProcessInstanceStartTime().desc()
+                .listPage(0, 1);
+        if (hpiList == null || hpiList.isEmpty()) {
+            log.error("错误：流程实例不存在，业务id:{}", businessKey);
+            throw new MyRuntimeException("错误：流程实例不存在");
+        }
+        HistoricProcessInstance hpi = hpiList.get(0);
+        // 通过流程实例ID获取任务列表
+        return getProcessTasks(hpi.getId());
     }
 
     /**

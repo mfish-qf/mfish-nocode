@@ -68,6 +68,11 @@ public class RemoteWorkflowFallBack implements FallbackFactory<RemoteWorkflowSer
             }
 
             @Override
+            public Result<List<MfTask>> getProcessTasksByBusinessKey(String origin, String businessKey) {
+                return Result.fail("错误：查询流程任务失败" + cause.getMessage());
+            }
+
+            @Override
             public Result<List<AuditComment>> getAuditComments(String origin, String processInstanceId) {
                 return Result.fail("错误：查询审批评论失败" + cause.getMessage());
             }

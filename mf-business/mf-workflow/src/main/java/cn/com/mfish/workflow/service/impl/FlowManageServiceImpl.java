@@ -108,6 +108,9 @@ public class FlowManageServiceImpl extends ServiceImpl<FlowManageMapper, FlowMan
         if (dbFlowManage == null) {
             return Result.fail(flowManage, "错误：流程不存在");
         }
+        if (!dbFlowManage.getFlowKey().equals(flowManage.getFlowKey())) {
+            return Result.fail(flowManage, "错误：流程key不允许修改");
+        }
         FlowJson flowJson = JSON.parseObject(flowManage.getFlowConfig(), FlowJson.class);
         String hex = DigestUtils.sha256Hex(JSON.toJSONString(flowJson));
         // 3. 判断流程配置是否修改，如果未修改则执行更新操作

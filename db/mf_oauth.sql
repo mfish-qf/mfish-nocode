@@ -228,6 +228,7 @@ INSERT INTO `sso_menu` VALUES ('a7d3a7b61fa52964c5c9db477e3b1962', '8ae3ea763294
 INSERT INTO `sso_menu` VALUES ('ad5b361ff34235e8ec85cd613a59bf6e', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300001', 3, '查询', '#', 1, 2, '', NULL, 'workflow:flowManage:query', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 INSERT INTO `sso_menu` VALUES ('c5309ca3ba545da9950278637c90e674', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300002', 3, '新增', '#', 2, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:insert', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 INSERT INTO `sso_menu` VALUES ('e92728a6d996d4b7cb3acb0fc031d183', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300004', 3, '删除', '#', 4, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:delete', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
+INSERT INTO `sso_menu` VALUES ('c0adefdb601f6e41f82a06ff6513613e', '53e8eaceee36c1d54e43319fdd60811b', '0001300008', 2, '工作流样例', 'ant-design:fork-outlined', 11, 1, '/demo-leave-apply', '/demo/demo-leave-apply/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2026-04-20 17:05:36', 'admin', '2026-04-20 20:05:50');
 
 -- ----------------------------
 -- Table structure for sso_org

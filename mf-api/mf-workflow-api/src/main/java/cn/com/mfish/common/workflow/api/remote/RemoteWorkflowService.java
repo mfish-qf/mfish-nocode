@@ -119,6 +119,16 @@ public interface RemoteWorkflowService {
     Result<List<MfTask>> getProcessTasks(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String processInstanceId);
 
     /**
+     * 通过业务id查询流程实例任务列表
+     *
+     * @param origin      来源
+     * @param businessKey 业务key
+     * @return 任务列表
+     */
+    @GetMapping("/process/tasks/businessKey/{businessKey}")
+    Result<List<MfTask>> getProcessTasksByBusinessKey(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable String businessKey);
+
+    /**
      * 查询待处理任务列表
      *
      * @param origin  来源
