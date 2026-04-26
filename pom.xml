@@ -50,7 +50,7 @@
         <aliyun-oss.version>3.18.3</aliyun-oss.version>
         <qiniu-sdk.version>7.19.0</qiniu-sdk.version>
         <rocketmq.version>2.3.5</rocketmq.version>
-        <bcprov.version>1.83</bcprov.version>
+        <bcprov.version>1.84</bcprov.version>
         <oracle.version>23.26.0.0.0</oracle.version>
         <pgsql.version>42.7.8</pgsql.version>
         <mssql.version>13.4.0.jre11</mssql.version>
