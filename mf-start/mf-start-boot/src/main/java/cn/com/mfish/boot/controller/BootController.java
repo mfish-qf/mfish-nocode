@@ -14,6 +14,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -49,8 +50,8 @@ public class BootController {
             @MetricsMonitor(metricEnum = MetricEnum.MFISH_REQUEST_COUNT, tagValues = {"GET", "/ai/router"}),
             @MetricsMonitor(metricEnum = MetricEnum.MFISH_REQUEST_DURATION, tagValues = {"GET", "/ai/router"})
     })
-    public Result<AiRouterVo> aiRouter(String prompt) {
+    public Mono<Result<AiRouterVo>> aiRouter(String prompt) {
         prompt = StringUtils.isEmpty(prompt) ? "介绍下摸鱼低代码" : prompt;
-        return gatewayAssistant.chat(prompt).block();
+        return gatewayAssistant.chat(prompt);
     }
 }

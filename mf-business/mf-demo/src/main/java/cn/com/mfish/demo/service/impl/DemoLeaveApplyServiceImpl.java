@@ -27,7 +27,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -196,8 +198,10 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
     }
 
     private void startProcess(DemoLeaveApply demoLeaveApply) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("leaveDays",demoLeaveApply.getLeaveDays());
         Result<String> result = remoteWorkflowService.startProcess(RPCConstants.INNER, new FlowableParam<String>()
-                .setKey(FlowKey.请假申请发布.toString())
+                .setKey(FlowKey.请假申请发布.toString()).setParam(param)
                 .setId(demoLeaveApply.getId())
                 .setPrefix("demoLeaveApply")
                 .setCallback("cn.com.mfish.demo.api.remote.RemoteDemoLeaveApplyService"));
