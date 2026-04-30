@@ -180,8 +180,13 @@ public class FlowableServiceImpl implements FlowableService {
         }
         // 设置流程变量
         try {
-            ProcessInstance pi = runtimeService.startProcessInstanceByKey(param.getKey(), param.getId().toString()
-                    , Map.of(Constants.WORKFLOW_PARAM, param, Constants.PROCESS_START_ACCOUNT, param.getStartAccount()));
+            Map<String, Object> map = new HashMap<>();
+            map.put(Constants.WORKFLOW_PARAM, param);
+            map.put(Constants.PROCESS_START_ACCOUNT, param.getStartAccount());
+            map.putAll(param.getParam());
+            // 清空param中的param参数
+            param.setParam(null);
+            ProcessInstance pi = runtimeService.startProcessInstanceByKey(param.getKey(), param.getId().toString(), map);
             // 清理上下文，避免线程污染
             identityService.setAuthenticatedUserId(null);
             return pi.getId();
@@ -340,6 +345,7 @@ public class FlowableServiceImpl implements FlowableService {
 
     /**
      * 根据业务key获取最新流程实例任务列表
+     *
      * @param businessKey 业务key
      * @return 任务列表
      */
