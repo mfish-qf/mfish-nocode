@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @description: github认证
+ * @description: Github OAuth认证控制器，支持Github账号登录和绑定
  * @author: mfish
  * @date: 2025/2/10
  */
@@ -32,17 +32,28 @@ import java.util.Map;
 public class GithubController {
     @Resource
     LoginService loginService;
+    /** Github应用客户端ID */
     @Value("${github.clientId}")
     private String clientId;
+    /** Github应用客户端密钥 */
     @Value("${github.clientSecret}")
     private String clientSecret;
+    /** Github认证回调地址 */
     @Value("${github.redirectUri}")
     private String redirectUri;
+    /** Github账号绑定回调地址 */
     @Value("${github.bindUri:http://localhost:5186/tenant/info/1?callback=github}")
     private String bindUri;
     @Resource
     SsoUserService ssoUserService;
 
+    /**
+     * 通过Github认证码获取token并登录
+     *
+     * @param code Github认证码
+     * @return 登录结果，0表示成功，1表示未关注仓库
+     * @throws IOException 网络请求异常
+     */
     @GetMapping("/token/{code}")
     @Operation(summary = "获取github token")
     @Parameters({
@@ -64,6 +75,11 @@ public class GithubController {
         return Result.ok(0, "登录成功");
     }
 
+    /**
+     * 获取Github OAuth认证地址
+     *
+     * @return Github认证URL
+     */
     @GetMapping("/url")
     @Operation(summary = "获取github url")
     public Result<String> getUrl() {
@@ -71,6 +87,13 @@ public class GithubController {
                 + "&redirect_uri=" + redirectUri + "&response_type=code", "获取地址成功");
     }
 
+    /**
+     * 绑定Github账号到当前登录用户
+     *
+     * @param code Github认证码
+     * @return 返回绑定结果
+     * @throws IOException 网络请求异常
+     */
     @PutMapping("/bind/{code}")
     @Operation(summary = "绑定github账号")
     public Result<Boolean> bindGithub(@Parameter(name = "code", description = "github认证Code", required = true) @PathVariable String code) throws IOException {

@@ -9,6 +9,7 @@ import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: 自定义哈希凭证匹配器，在密码匹配基础上增加登录重试次数限制
  * @author: mfish
  * @date: 2020/2/10 19:48
  */

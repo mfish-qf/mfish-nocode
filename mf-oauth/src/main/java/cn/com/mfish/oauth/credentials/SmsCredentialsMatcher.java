@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 
 
 /**
+ * @description: 短信验证码凭证匹配器，校验短信验证码并支持新用户自动创建
  * @author: mfish
  * @date: 2020/2/25 16:51
  */

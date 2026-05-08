@@ -26,6 +26,9 @@ import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.OAuthResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * OAuth授权服务器响应构建类，用于构建授权码响应
+ */
 public class OAuthASResponse extends OAuthResponse {
 
     protected OAuthASResponse(String uri, int responseStatus) {

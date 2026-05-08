@@ -25,6 +25,11 @@ package cn.com.mfish.oauth.oltu.common.validators;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * OAuth 请求校验器，按协议要求校验请求方法、参数、内容类型和客户端认证信息。
+ *
+ * @param <T> HTTP 请求类型
+ */
 public interface OAuthValidator<T extends HttpServletRequest> {
 
     void validateMethod(T request) throws OAuthProblemException;

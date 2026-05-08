@@ -42,12 +42,30 @@ public class TableServiceImpl implements TableService {
     @Value("${DBConnect.password.privateKey}")
     private String privateKey;
 
+    /**
+     * 获取表字段信息列表
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 字段信息列表
+     */
     @Override
     public List<FieldInfo> getFieldList(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
         return queryT(connectId, FieldInfo.class, (build, dbName) -> build.getColumns(dbName, tableSchema, tableName), reqPage);
     }
 
+    /**
+     * 获取单个表信息
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 表信息对象
+     */
     @Override
     public TableInfo getTableInfo(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
@@ -58,12 +76,30 @@ public class TableServiceImpl implements TableService {
         return list.getFirst();
     }
 
+    /**
+     * 获取表信息列表
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 表信息列表
+     */
     @Override
     public List<TableInfo> getTableList(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
         return queryT(connectId, TableInfo.class, (build, dbName) -> build.getTableInfo(dbName, tableSchema, tableName), reqPage);
     }
 
+    /**
+     * 获取带列头的数据表
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 带列头的数据表结果
+     */
     @Override
     public Result<MetaHeaderDataTable> getHeaderDataTable(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
@@ -71,6 +107,15 @@ public class TableServiceImpl implements TableService {
         return Result.ok(new MetaHeaderDataTable(table), "获取表数据成功");
     }
 
+    /**
+     * 获取数据表内容
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 数据表对象
+     */
     @Override
     public MetaDataTable getDataTable(String connectId, String tableSchema, String tableName, ReqPage reqPage) {
         verifyTableName(tableName);
@@ -85,6 +130,11 @@ public class TableServiceImpl implements TableService {
 
     }
 
+    /**
+     * 校验表名合法性（不允许空格、特殊字符，长度不超过128）
+     *
+     * @param tableName 表名
+     */
     private void verifyTableName(String tableName) {
         if (tableName == null) {
             return;
@@ -100,6 +150,12 @@ public class TableServiceImpl implements TableService {
         }
     }
 
+    /**
+     * 根据连接ID构建数据源配置
+     *
+     * @param connectId 数据库连接ID
+     * @return 数据源配置对象
+     */
     private DataSourceOptions<?> buildDBQuery(String connectId) {
         Result<DbConnect> result = dbConnectService.queryById(connectId);
         if (!result.isSuccess()) {
@@ -121,6 +177,14 @@ public class TableServiceImpl implements TableService {
         return query(dataSourceOptions, sql, reqPage);
     }
 
+    /**
+     * 使用数据源配置执行SQL查询
+     *
+     * @param dataSourceOptions 数据源配置
+     * @param sql               SQL语句
+     * @param reqPage           分页参数
+     * @return 数据表结果
+     */
     private MetaDataTable query(DataSourceOptions<?> dataSourceOptions, String sql, ReqPage reqPage) {
         if (reqPage != null) {
             MfPageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
@@ -128,11 +192,31 @@ public class TableServiceImpl implements TableService {
         return QueryHandler.query(dataSourceOptions, sql);
     }
 
+    /**
+     * 通过连接ID执行泛型查询
+     *
+     * @param connectId 数据库连接ID
+     * @param cls       目标类型
+     * @param function  查询函数
+     * @param reqPage   分页参数
+     * @param <T>       返回类型
+     * @return 查询结果列表
+     */
     private <T> List<T> queryT(String connectId, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
         DataSourceOptions<?> dataSourceOptions = buildDBQuery(connectId);
         return queryT(dataSourceOptions, cls, function, reqPage);
     }
 
+    /**
+     * 使用数据源配置执行泛型查询
+     *
+     * @param dataSourceOptions 数据源配置
+     * @param cls               目标类型
+     * @param function          查询函数
+     * @param reqPage           分页参数
+     * @param <T>               返回类型
+     * @return 查询结果列表
+     */
     private <T> List<T> queryT(DataSourceOptions<?> dataSourceOptions, Class<T> cls, BiFunction<DBDialect, String, BoundSql> function, ReqPage reqPage) {
         DBDialect dialect = DBAdapter.getDBDialect(dataSourceOptions.getDbType());
         if (reqPage != null) {

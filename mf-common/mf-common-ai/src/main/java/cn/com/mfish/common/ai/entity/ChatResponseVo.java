@@ -11,8 +11,11 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class ChatResponseVo {
+    /** 消息ID */
     private String id;
+    /** 消息内容 */
     private String content;
+    /** 结束原因 */
     private String finishReason;
 
 }

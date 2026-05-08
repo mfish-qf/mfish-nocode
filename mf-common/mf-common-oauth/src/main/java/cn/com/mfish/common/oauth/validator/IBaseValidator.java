@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 
 /**
+ * @description: 基础校验接口
  * @author: mfish
  * @date: 2020/2/13 13:43
  */

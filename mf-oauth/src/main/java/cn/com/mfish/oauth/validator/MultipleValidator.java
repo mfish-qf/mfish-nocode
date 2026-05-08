@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @description: 组合校验器抽象类，支持多个校验器的链式组合校验
  * @author: mfish
  * @date: 2020/2/13 14:41
  */
@@ -31,6 +32,15 @@ public abstract class MultipleValidator {
         return validate(request, result, validateClientList);
     }
 
+    /**
+     * 通用多校验器组合执行方法
+     *
+     * @param request HTTP请求对象
+     * @param result  前一次校验结果
+     * @param list    校验器类列表
+     * @param <T>     校验结果数据类型
+     * @return 校验结果
+     */
     public <T> Result<T> validate(HttpServletRequest request, Result<T> result, List<Class<? extends IBaseValidator<T>>> list) {
         for (Class<? extends IBaseValidator<T>> validator : list) {
             result = SpringBeanFactory.getBean(validator)

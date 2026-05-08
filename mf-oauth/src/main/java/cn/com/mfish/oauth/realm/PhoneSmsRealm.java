@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 
 
 /**
+ * @description: 手机短信认证领域，通过短信验证码方式进行登录认证
  * @author: mfish
  * @date: 2020/2/11 9:41
  */

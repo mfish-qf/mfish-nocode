@@ -20,6 +20,13 @@ public class TokenValidator {
     @Resource
     private WeChatTokenValidator weChatTokenValidator;
 
+    /**
+     * 统一token校验入口，根据token前缀自动选择Web或微信校验器
+     *
+     * @param request 请求对象
+     * @param <R>     请求类型
+     * @return 校验结果
+     */
     public <R> Result<?> validator(R request) {
         String accessToken = AuthInfoUtils.getAccessToken(request);
         Result<?> result;

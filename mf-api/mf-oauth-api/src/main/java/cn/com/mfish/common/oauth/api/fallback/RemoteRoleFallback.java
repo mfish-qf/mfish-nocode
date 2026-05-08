@@ -16,6 +16,12 @@ import java.util.List;
 @Slf4j
 @Component
 public class RemoteRoleFallback implements FallbackFactory<RemoteRoleService> {
+    /**
+     * 创建角色服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的角色服务实例
+     */
     @Override
     public RemoteRoleService create(Throwable cause) {
         log.error("角色服务调用失败:{}", cause.getMessage());

@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * @author: mfish
- * @description: 用户角色临时缓存
+ * @description: 用户角色临时缓存，通过用户ID和租户ID获取角色列表
  * @date: 2022/12/5 22:00
  */
 @Component("userRoleTempCache")

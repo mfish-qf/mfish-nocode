@@ -20,10 +20,22 @@ public class MonitorSecurityConfig {
     //项目应用路径
     private final String adminContextPath;
 
+    /**
+     * 构造监控安全配置，注入Admin Server属性以获取应用上下文路径
+     *
+     * @param adminServerProperties Admin Server配置属性
+     */
     public MonitorSecurityConfig(AdminServerProperties adminServerProperties) {
         this.adminContextPath = adminServerProperties.getContextPath();
     }
 
+    /**
+     * 配置安全过滤器链，定义请求授权规则、表单登录、注销、HTTP Basic认证、CSRF保护及iframe嵌入策略
+     *
+     * @param http HTTP安全配置对象
+     * @return 安全过滤器链
+     * @throws Exception 安全配置异常
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();

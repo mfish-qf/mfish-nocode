@@ -11,6 +11,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class AiMessage {
+    /** 消息角色 */
     private String role;
+    /** 消息内容 */
     private String content;
 }

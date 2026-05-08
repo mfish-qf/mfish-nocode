@@ -11,7 +11,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class WorkflowCompleteResult {
+    /** 流程实例ID */
     private String processInstanceId;
+    /** 审批意见 */
     private String comment;
+    /** 事件名称 */
     private String eventName;
 }

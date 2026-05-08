@@ -15,6 +15,13 @@ import reactor.core.publisher.Mono;
  * @date: 2022/1/1 12:00
  */
 public class RateLimitHandler implements WebExceptionHandler {
+    /**
+     * 处理限流异常，当请求被Sentinel限流时返回服务器繁忙提示
+     *
+     * @param exchange 服务端Web交换对象
+     * @param ex       异常信息
+     * @return 响应结果
+     */
     @NotNull
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, @NotNull Throwable ex) {

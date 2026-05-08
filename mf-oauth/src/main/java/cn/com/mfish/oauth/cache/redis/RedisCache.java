@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @description: 基于Redis的Shiro缓存实现，用于存储Shiro的认证和授权缓存数据
  * @author: mfish
  * @date: 2020/2/11 19:18
  */

@@ -15,6 +15,7 @@ public class DefaultField {
     public static final String UPDATE_BY = "update_by";
     public static final String UPDATE_TIME = "update_time";
 
+    /** 缺省字段名称集合 */
     public static Set<String> values = new HashSet<>();
 
     static {

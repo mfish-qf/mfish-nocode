@@ -25,11 +25,23 @@ public class DictCache extends BaseTempCache<List<DictItem>> {
     @Resource
     DictItemMapper dictItemMapper;
 
+    /**
+     * 构建缓存键
+     *
+     * @param key 字典编码
+     * @return Redis缓存键
+     */
     @Override
     protected String buildKey(String... key) {
         return RedisPrefix.buildCode2DictItemKey(key[0]);
     }
 
+    /**
+     * 从数据库获取字典项列表，并根据值类型进行类型转换
+     *
+     * @param key 字典编码
+     * @return 字典项列表
+     */
     @Override
     protected List<DictItem> getFromDB(String... key) {
         String dictCode = key[0];

@@ -41,6 +41,12 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
     @Resource
     private RemoteMenuService remoteMenuService;
 
+    /**
+     * 新增代码构建配置
+     *
+     * @param codeBuild 代码构建配置对象
+     * @return 新增结果
+     */
     @Override
     @Transactional
     public Result<CodeBuild> insertCodeBuild(CodeBuild codeBuild) {
@@ -54,6 +60,12 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         throw new MyRuntimeException("错误:代码生成失败");
     }
 
+    /**
+     * 更新代码构建配置
+     *
+     * @param codeBuild 代码构建配置对象
+     * @return 更新结果
+     */
     @Override
     public Result<CodeBuild> updateCodeBuild(CodeBuild codeBuild) {
         Result<CodeBuild> result = validateCodeBuild(codeBuild);
@@ -66,11 +78,24 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         throw new MyRuntimeException("错误:代码生成更新失败");
     }
 
+    /**
+     * 获取代码生成结果
+     *
+     * @param id 代码构建ID
+     * @return 生成的代码列表
+     */
     @Override
     public Result<List<CodeVo>> getCode(Long id) {
         return Result.ok(freemarkerUtils.getCode(buildReqCode(id)), "获取代码成功");
     }
 
+    /**
+     * 下载生成的代码（ZIP格式）
+     *
+     * @param id       代码构建ID
+     * @param response HTTP响应对象
+     * @throws IOException IO异常
+     */
     @Override
     public void downloadCode(Long id, HttpServletResponse response) throws IOException {
         ReqCode reqCode = buildReqCode(id);
@@ -83,6 +108,12 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         IOUtils.write(data, response.getOutputStream());
     }
 
+    /**
+     * 将生成的代码保存到本地IDE目录
+     *
+     * @param id 代码构建ID
+     * @return 保存结果
+     */
     @Override
     public Result<Boolean> saveLocal(Long id) {
         if (!freemarkerUtils.saveCode(buildReqCode(id))) {
@@ -91,6 +122,12 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         return Result.ok(true, "代码保存成功，请重新启动后端");
     }
 
+    /**
+     * 校验代码构建参数（数据库连接ID和表名不能为空）
+     *
+     * @param codeBuild 代码构建对象
+     * @return 校验结果
+     */
     private Result<CodeBuild> validateCodeBuild(CodeBuild codeBuild) {
         if (StringUtils.isEmpty(codeBuild.getConnectId()) || StringUtils.isEmpty(codeBuild.getTableName())) {
             return Result.fail(codeBuild, "错误:请选择数据库和表");
@@ -120,6 +157,12 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         return reqCode;
     }
 
+    /**
+     * 根据代码构建配置创建菜单及按钮权限
+     *
+     * @param reqMenuCreate 菜单创建请求参数
+     * @return 创建的菜单对象
+     */
     @Override
     public Result<SsoMenu> createMenu(ReqMenuCreate reqMenuCreate) {
         ReqCode reqCode = buildReqCode(reqMenuCreate.getId());
@@ -146,6 +189,15 @@ public class CodeBuildServiceImpl extends ServiceImpl<CodeBuildMapper, CodeBuild
         return result;
     }
 
+    /**
+     * 构建按钮菜单对象（查询按钮仅含查询权限，其他按钮同时包含查询和对应操作权限）
+     *
+     * @param id      父菜单ID
+     * @param reqCode 代码请求参数
+     * @param type    操作类型
+     * @param sort    排序号
+     * @return 按钮菜单对象
+     */
     private SsoMenu buildButtonMenu(String id, ReqCode reqCode, OperateType type, int sort) {
         SsoMenu menu = new SsoMenu();
         menu.setParentId(id)

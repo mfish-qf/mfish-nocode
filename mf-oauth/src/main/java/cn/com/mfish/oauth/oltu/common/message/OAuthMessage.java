@@ -23,6 +23,9 @@ package cn.com.mfish.oauth.oltu.common.message;
 
 import java.util.Map;
 
+/**
+ * OAuth 消息基础接口，统一访问跳转地址、消息体和响应头。
+ */
 public interface OAuthMessage {
 
     String getLocationUri();

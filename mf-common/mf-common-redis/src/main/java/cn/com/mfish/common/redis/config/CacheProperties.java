@@ -15,5 +15,6 @@ import org.springframework.context.annotation.Configuration;
 @RefreshScope
 @Data
 public class CacheProperties {
+    /** 缓存过期时间（单位：天） */
     private long time = 7;
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  * @author: mfish
- * @description: 用户权限缓存
+ * @description: 用户权限缓存，通过用户ID和租户ID获取权限集合
  * @date: 2022/12/5 22:06
  */
 @Component("userPermissionTempCache")

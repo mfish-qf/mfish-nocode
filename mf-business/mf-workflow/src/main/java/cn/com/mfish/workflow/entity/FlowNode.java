@@ -21,6 +21,12 @@ public class FlowNode {
     @Schema(description = "节点业务数据")
     private NodeData data;
 
+    /**
+     * 根据节点类型创建对应的基础节点对象
+     * 将节点业务数据转换为具体的节点实现（开始节点、结束节点、审批节点、排他网关）
+     *
+     * @return 基础节点对象
+     */
     public BaseNode create() {
         BaseNode node;
         switch (data.getType()) {

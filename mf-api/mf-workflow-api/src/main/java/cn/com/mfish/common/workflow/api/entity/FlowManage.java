@@ -46,7 +46,7 @@ public class FlowManage extends BaseEntity<String> {
     @Schema(description = "流程配置")
 	private String flowConfig;
     @ExcelProperty("hex")
-    @Schema(description = "hex")
+    @Schema(description = "流程图十六进制编码数据")
     private String hex;
     @ExcelProperty("删除标记(0未删除1删除)")
     @Schema(description = "删除标记(0未删除1删除)")

@@ -11,6 +11,9 @@ import org.springframework.core.io.Resource;
 import java.io.InputStream;
 
 
+/**
+ * MinIO 文件存储实现，负责文件上传、读取、删除和访问地址构建。
+ */
 @Slf4j
 public class MinioStorage extends AbstractStorage {
 
@@ -24,21 +27,33 @@ public class MinioStorage extends AbstractStorage {
         super(address);
     }
 
+    /**
+     * 设置 MinIO 访问密钥。
+     */
     public MinioStorage setAccessKey(String accessKey) {
         this.accessKey = accessKey;
         return this;
     }
 
+    /**
+     * 设置 MinIO 访问密钥对应的密文。
+     */
     public MinioStorage setSecretKey(String secretKey) {
         this.secretKey = secretKey;
         return this;
     }
 
+    /**
+     * 设置 MinIO 服务地址。
+     */
     public MinioStorage setEndpoint(String endpoint) {
         this.endpoint = endpoint;
         return this;
     }
 
+    /**
+     * 设置 MinIO 存储桶名称。
+     */
     public MinioStorage setBucket(String bucket) {
         this.bucket = bucket;
         return this;

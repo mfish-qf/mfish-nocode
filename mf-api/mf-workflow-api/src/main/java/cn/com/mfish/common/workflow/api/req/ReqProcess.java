@@ -26,6 +26,12 @@ public class ReqProcess {
     @Schema(description = "流程实例id列表")
     private List<String> processInstanceIds;
 
+    /**
+     * 设置流程实例ID列表（逗号分隔的字符串）
+     *
+     * @param ids 逗号分隔的流程实例ID字符串
+     * @return 当前对象
+     */
     public ReqProcess setProcessInstanceIds(String ids) {
         if (StringUtils.isNotEmpty(ids.trim())) {
             processInstanceIds = Arrays.asList(ids.trim().split(","));
@@ -35,6 +41,12 @@ public class ReqProcess {
         return this;
     }
 
+    /**
+     * 设置流程实例ID列表
+     *
+     * @param ids 流程实例ID列表，为null时设为空列表
+     * @return 当前对象
+     */
     public ReqProcess setProcessInstanceIds(List<String> ids) {
         this.processInstanceIds = Objects.requireNonNullElseGet(ids, ArrayList::new);
         return this;

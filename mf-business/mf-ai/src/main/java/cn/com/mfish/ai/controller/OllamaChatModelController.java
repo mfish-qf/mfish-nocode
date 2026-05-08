@@ -24,10 +24,17 @@ import reactor.core.publisher.Flux;
 @RequestMapping("/ollama")
 public class OllamaChatModelController {
 
+    /** 默认提示词 */
     private static final String DEFAULT_PROMPT = "你好，介绍下你自己吧。请用中文回答。";
 
+    /** Ollama聊天模型 */
     private final ChatModel ollamaChatModel;
 
+    /**
+     * 构造函数，注入Ollama聊天模型
+     *
+     * @param ollamaChatModel Ollama聊天模型实例
+     */
     public OllamaChatModelController(ChatModel ollamaChatModel) {
         this.ollamaChatModel = ollamaChatModel;
     }
@@ -48,6 +55,13 @@ public class OllamaChatModelController {
         return ollamaChatModel.call(new Prompt(prompt)).getResult().getOutput().getText();
     }
 
+    /**
+     * 流式聊天接口，以SSE方式返回AI响应内容
+     *
+     * @param id     会话ID，用于标识一次对话
+     * @param prompt 用户输入的提示词，为空时使用默认提示词
+     * @return 流式响应内容
+     */
     @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Parameters({
             @Parameter(name = "id", description = "会话id"),

@@ -26,6 +26,9 @@ import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.validators.AbstractValidator;
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * OAuth 密码模式令牌请求校验器。
+ */
 public class PasswordValidator extends AbstractValidator<HttpServletRequest> {
 
     public PasswordValidator() {

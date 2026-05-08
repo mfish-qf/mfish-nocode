@@ -22,6 +22,13 @@ import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
+    /**
+     * 统一异常处理方法，根据异常类型返回对应的错误信息
+     *
+     * @param exchange 服务端Web交换对象
+     * @param ex       异常信息
+     * @return 响应结果
+     */
     @NotNull
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, @NotNull Throwable ex) {

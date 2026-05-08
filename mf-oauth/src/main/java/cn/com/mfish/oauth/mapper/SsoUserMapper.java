@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
+ * @description: 用户数据访问接口，提供用户、角色、权限、组织等信息的数据库查询
  * @author: mfish
  * @date: 2020/2/13 17:13
  */
@@ -104,6 +105,12 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      */
     int insertUserRoleByRoleCode(@Param("userId") String userId, @Param("roles") List<String> roles);
 
+    /**
+     * 删除用户所有角色关系
+     *
+     * @param userId 用户ID
+     * @return 影响行数
+     */
     @Delete("delete from sso_user_role where user_id = #{userId}")
     int deleteUserRole(String userId);
 

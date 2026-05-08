@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class RemoteMenuFallback implements FallbackFactory<RemoteMenuService> {
+    /**
+     * 创建菜单服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的菜单服务实例
+     */
     @Override
     public RemoteMenuService create(Throwable cause) {
         log.error("菜单服务调用失败:{}", cause.getMessage());

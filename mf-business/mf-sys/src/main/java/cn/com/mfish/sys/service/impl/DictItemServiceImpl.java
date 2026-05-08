@@ -28,16 +28,34 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> i
     @Resource
     private DictCache dictCache;
 
+    /**
+     * 查询字典项列表
+     *
+     * @param reqDictItem 查询条件
+     * @return 字典项列表
+     */
     @Override
     public List<DictItem> getDictItems(ReqDictItem reqDictItem) {
         return baseMapper.selectList(buildCondition(reqDictItem));
     }
 
+    /**
+     * 根据字典编码删除所有字典项
+     *
+     * @param dictCode 字典编码
+     * @return 是否删除成功
+     */
     @Override
     public boolean deleteDictItemsByCode(String dictCode) {
         return baseMapper.delete(new LambdaQueryWrapper<DictItem>().eq(DictItem::getDictCode, dictCode)) > 0;
     }
 
+    /**
+     * 构建字典项查询条件
+     *
+     * @param reqDictItem 查询参数
+     * @return Lambda查询条件包装器
+     */
     private LambdaQueryWrapper buildCondition(ReqDictItem reqDictItem) {
         return new LambdaQueryWrapper<DictItem>()
                 .eq(StringUtils.isNotEmpty(reqDictItem.getDictCode()), DictItem::getDictCode, reqDictItem.getDictCode())
@@ -48,6 +66,12 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemMapper, DictItem> i
                 .orderByAsc(DictItem::getDictSort);
     }
 
+    /**
+     * 根据字典编码查询字典项（优先从缓存获取）
+     *
+     * @param dictCode 字典编码
+     * @return 字典项列表
+     */
     @Override
     public Result<List<DictItem>> queryByCode(String dictCode) {
         List<DictItem> list = dictCache.getFromCacheAndDB(dictCode);

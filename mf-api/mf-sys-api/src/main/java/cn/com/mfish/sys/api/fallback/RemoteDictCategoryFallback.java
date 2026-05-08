@@ -17,6 +17,12 @@ import java.util.List;
 @Slf4j
 @Component
 public class RemoteDictCategoryFallback implements FallbackFactory<RemoteDictCategoryService> {
+    /**
+     * 创建树形字典服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的树形字典服务实例
+     */
     @Override
     public RemoteDictCategoryService create(Throwable cause) {
         log.error("错误:树形字典调用异常", cause);

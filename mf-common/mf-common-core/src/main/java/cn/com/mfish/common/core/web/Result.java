@@ -38,42 +38,115 @@ public class Result<T> implements Serializable {
     @Schema(description = "补充参数 用于多次检查时携带上一次参数提供下次使用")
     private Map<String, String> param = new HashMap<>();
 
+    /**
+     * 构建返回结果
+     *
+     * @param data 数据对象
+     * @param code 状态码
+     * @param msg  返回消息
+     * @param <T>  数据类型
+     * @return 结果对象
+     */
     public static <T> Result<T> buildResult(T data, int code, String msg) {
         return new Result<T>().setCode(code).setData(data).setMsg(msg).setSuccess(code == Constants.SUCCESS);
     }
 
+    /**
+     * 返回成功结果（无数据无消息）
+     *
+     * @param <T> 数据类型
+     * @return 成功结果
+     */
     public static <T> Result<T> ok() {
         return buildResult(null, Constants.SUCCESS, null);
     }
 
+    /**
+     * 返回成功结果（带消息）
+     *
+     * @param msg 返回消息
+     * @param <T> 数据类型
+     * @return 成功结果
+     */
     public static <T> Result<T> ok(String msg) {
         return buildResult(null, Constants.SUCCESS, msg);
     }
 
+    /**
+     * 返回成功结果（带数据）
+     *
+     * @param data 数据对象
+     * @param <T>  数据类型
+     * @return 成功结果
+     */
     public static <T> Result<T> ok(T data) {
         return buildResult(data, Constants.SUCCESS, null);
     }
 
+    /**
+     * 返回成功结果（带数据和消息）
+     *
+     * @param data 数据对象
+     * @param msg  返回消息
+     * @param <T>  数据类型
+     * @return 成功结果
+     */
     public static <T> Result<T> ok(T data, String msg) {
         return buildResult(data, Constants.SUCCESS, msg);
     }
 
+    /**
+     * 返回失败结果（无数据无消息）
+     *
+     * @param <T> 数据类型
+     * @return 失败结果
+     */
     public static <T> Result<T> fail() {
         return buildResult(null, Constants.FAIL, null);
     }
 
+    /**
+     * 返回失败结果（带消息）
+     *
+     * @param msg 返回消息
+     * @param <T> 数据类型
+     * @return 失败结果
+     */
     public static <T> Result<T> fail(String msg) {
         return buildResult(null, Constants.FAIL, msg);
     }
 
+    /**
+     * 返回失败结果（带数据）
+     *
+     * @param data 数据对象
+     * @param <T>  数据类型
+     * @return 失败结果
+     */
     public static <T> Result<T> fail(T data) {
         return buildResult(data, Constants.FAIL, null);
     }
 
+    /**
+     * 返回失败结果（带数据和消息）
+     *
+     * @param data 数据对象
+     * @param msg  返回消息
+     * @param <T>  数据类型
+     * @return 失败结果
+     */
     public static <T> Result<T> fail(T data, String msg) {
         return buildResult(data, Constants.FAIL, msg);
     }
 
+    /**
+     * 返回失败结果（带状态码和消息）
+     *
+     * @param code 状态码
+     * @param msg  返回消息
+     * @param <T>  数据类型
+     * @return 失败结果
+     */
     public static <T> Result<T> fail(int code, String msg) {
         return buildResult(null, code, msg);
     }

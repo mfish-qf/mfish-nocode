@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.web.Result;
 import java.util.Map;
 
 /**
+ * @description: 验证码校验服务接口
  * @author: mfish
  * @date: 2021/8/12 11:06
  */

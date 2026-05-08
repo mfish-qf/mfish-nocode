@@ -22,6 +22,12 @@ import java.util.List;
 @Component
 @Slf4j
 public class RemoteWorkflowFallBack implements FallbackFactory<RemoteWorkflowService> {
+    /**
+     * 创建工作流服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的工作流服务实例，所有方法返回失败结果
+     */
     @Override
     public RemoteWorkflowService create(Throwable cause) {
         log.error("错误:工作流接口调用异常", cause);

@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.validator;
 import org.springframework.stereotype.Component;
 
 /**
+ * @description: 获取授权码的组合校验器，组合了客户端ID、授权码支持和回调地址三个校验
  * @author: mfish
  * @date: 2020/2/16 19:10
  */

@@ -34,6 +34,12 @@ public class Utils {
         return getAllFields(clazz);
     }
 
+    /**
+     * 反射获取类的所有字段，包括父类字段
+     *
+     * @param clazz 类对象
+     * @return 返回包含所有字段的列表
+     */
     public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = new ArrayList<>();
         while (clazz != null) {
@@ -141,6 +147,11 @@ public class Utils {
         return ip;
     }
 
+    /**
+     * 获取当前主机IP地址
+     *
+     * @return 主机IP地址，获取失败时返回127.0.0.1
+     */
     public static String getHostIp() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
@@ -160,6 +171,11 @@ public class Utils {
         return StringUtils.isEmpty(properties.getType()) ? "cloud" : properties.getType();
     }
 
+    /**
+     * 打印服务启动信息，包括swagger地址
+     *
+     * @param application Spring应用上下文
+     */
     public static void printServerRun(ConfigurableApplicationContext application) {
         Environment env = application.getEnvironment();
         String ip = getHostIp();

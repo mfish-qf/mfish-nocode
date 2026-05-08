@@ -20,6 +20,12 @@ import java.util.List;
 @Slf4j
 @Component
 public class RemoteOrgFallback implements FallbackFactory<RemoteOrgService> {
+    /**
+     * 创建组织服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的组织服务实例
+     */
     @Override
     public RemoteOrgService create(Throwable cause) {
         log.error("组织服务调用失败:{}", cause.getMessage());

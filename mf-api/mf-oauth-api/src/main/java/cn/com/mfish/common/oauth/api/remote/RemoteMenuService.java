@@ -15,9 +15,24 @@ import org.springframework.web.bind.annotation.*;
  */
 @FeignClient(contextId = "remoteMenuService", value = ServiceConstants.OAUTH_SERVICE, fallbackFactory = RemoteMenuFallback.class)
 public interface RemoteMenuService {
+    /**
+     * 新增菜单
+     *
+     * @param origin  来源
+     * @param ssoMenu 菜单信息
+     * @return 新增后的菜单信息
+     */
     @PostMapping("/menu")
     Result<SsoMenu> add(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestBody SsoMenu ssoMenu);
 
+    /**
+     * 判断路由路径是否已存在
+     *
+     * @param origin    来源
+     * @param routePath 路由路径
+     * @param parentId  父菜单ID
+     * @return 是否存在
+     */
     @GetMapping("/menu/routeExist")
     Result<Boolean> routeExist(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @RequestParam("routePath") String routePath, @RequestParam("parentId") String parentId);
 }

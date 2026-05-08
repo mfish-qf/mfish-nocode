@@ -13,7 +13,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ConditionGroup extends Condition{
-    // 'AND' or 'OR'
+    /** 条件组合逻辑关系（AND 或 OR） */
     private String logic;
+    /** 子条件列表 */
     private List<Condition> children;
 }

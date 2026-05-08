@@ -1,6 +1,7 @@
 package cn.com.mfish.common.oauth.service;
 
 /**
+ * @description: Token服务接口，提供Token的增删改查操作
  * @author: mfish
  * @date: 2020/2/29
  */

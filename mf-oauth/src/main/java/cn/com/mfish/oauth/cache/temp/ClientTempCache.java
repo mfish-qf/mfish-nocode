@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: OAuth客户端临时缓存，通过缓存和数据库双层获取客户端信息
  * @author: mfish
  * @date: 2020/2/16 15:54
  */

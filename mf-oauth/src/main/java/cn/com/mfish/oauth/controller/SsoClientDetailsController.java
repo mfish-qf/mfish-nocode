@@ -129,6 +129,12 @@ public class SsoClientDetailsController {
         return ssoClientDetailsService.updateClient(ssoClientDetails);
     }
 
+    /**
+     * 显示客户端密钥
+     *
+     * @param id 客户端ID
+     * @return 返回客户端密钥
+     */
     @Log(title = "显示密钥", operateType = OperateType.QUERY)
     @Operation(summary = "显示密钥")
     @GetMapping("/secret/{id}")
@@ -141,6 +147,12 @@ public class SsoClientDetailsController {
         return Result.fail("", "错误:获取密钥失败!");
     }
 
+    /**
+     * 重置客户端密钥
+     *
+     * @param id 客户端ID
+     * @return 返回新的客户端密钥
+     */
     @Log(title = "重置密钥", operateType = OperateType.UPDATE)
     @Operation(summary = "重置密钥")
     @PutMapping("/secret/{id}")

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @description: 授权码换令牌的组合校验器，验证客户端信息和授权码的一致性
  * @author: mfish
  * @date: 2020/2/17 14:43
  */

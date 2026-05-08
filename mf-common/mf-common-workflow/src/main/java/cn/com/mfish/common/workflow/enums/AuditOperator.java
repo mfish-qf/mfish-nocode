@@ -23,6 +23,12 @@ public enum AuditOperator {
         this.value = value;
     }
 
+    /**
+     * 根据操作值获取枚举
+     *
+     * @param value 操作值
+     * @return 审批操作枚举，未匹配返回null
+     */
     public static AuditOperator of(String value) {
         for (AuditOperator flowOperator : values()) {
             if (flowOperator.value.equals(value)) return flowOperator;

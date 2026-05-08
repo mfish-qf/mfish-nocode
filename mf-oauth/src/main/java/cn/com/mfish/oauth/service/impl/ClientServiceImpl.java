@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: OAuth客户端服务实现类，通过缓存获取客户端信息
  * @author: mfish
  * @date: 2020/2/16 16:11
  */

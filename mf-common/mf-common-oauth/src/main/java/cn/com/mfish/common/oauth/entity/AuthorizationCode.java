@@ -7,6 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * @description: OAuth认证码实体
  * @author: mfish
  * @date: 2020/2/13 12:56
  */

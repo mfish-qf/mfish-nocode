@@ -23,6 +23,11 @@ public class AsyncSaveLog {
     @Resource
     RemoteLogService remoteLogService;
 
+    /**
+     * 异步保存日志
+     *
+     * @param sysLog 系统日志对象
+     */
     @Async
     public void saveLog(SysLog sysLog) {
         Result<SysLog> result = remoteLogService.insertLog(RPCConstants.INNER, sysLog);

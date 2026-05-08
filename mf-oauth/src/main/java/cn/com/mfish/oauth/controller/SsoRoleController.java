@@ -45,6 +45,13 @@ public class SsoRoleController {
     @Resource
     SsoTenantMapper ssoTenantMapper;
 
+    /**
+     * 分页查询角色信息列表
+     *
+     * @param reqSsoRole 角色查询参数
+     * @param reqPage    分页参数
+     * @return 角色分页列表
+     */
     @Operation(summary = "角色信息表-分页列表查询", description = "角色信息表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:role:query")
@@ -54,6 +61,12 @@ public class SsoRoleController {
         return Result.ok(new PageResult<>(ssoRoleService.list(buildCondition(reqSsoRole))), "角色信息表-查询成功!");
     }
 
+    /**
+     * 获取角色关联的菜单ID列表
+     *
+     * @param roleId 角色ID
+     * @return 菜单ID列表
+     */
     @Operation(summary = "获取角色下的菜单ID")
     @GetMapping("/menus/{roleId}")
     @RequiresPermissions("sys:role:query")
@@ -61,6 +74,12 @@ public class SsoRoleController {
         return Result.ok(ssoRoleService.getRoleMenus(roleId), "查询角色下菜单成功");
     }
 
+    /**
+     * 查询角色列表（不分页）
+     *
+     * @param reqSsoRole 角色查询参数
+     * @return 角色列表
+     */
     @Operation(summary = "角色信息表-列表查询", description = "角色信息表-列表查询")
     @GetMapping("/all")
     public Result<List<SsoRole>> queryList(ReqSsoRole reqSsoRole) {
@@ -75,6 +94,12 @@ public class SsoRoleController {
         return Result.ok(ssoRoleService.list(buildCondition(reqSsoRole)), "角色信息-查询成功!");
     }
 
+    /**
+     * 构建角色查询条件
+     *
+     * @param reqSsoRole 角色查询参数
+     * @return 查询条件包装器
+     */
     public static LambdaQueryWrapper<SsoRole> buildCondition(ReqSsoRole reqSsoRole) {
         LambdaQueryWrapper<SsoRole> wrapper = new LambdaQueryWrapper<SsoRole>()
                 .eq(SsoRole::getDelFlag, 0)
@@ -93,6 +118,12 @@ public class SsoRoleController {
         return wrapper;
     }
 
+    /**
+     * 添加角色
+     *
+     * @param ssoRole 角色对象
+     * @return 返回添加结果
+     */
     @Log(title = "角色信息表-添加", operateType = OperateType.INSERT)
     @Operation(summary = "角色信息表-添加", description = "角色信息表-添加")
     @PostMapping
@@ -102,6 +133,12 @@ public class SsoRoleController {
         return ssoRoleService.insertRole(ssoRole);
     }
 
+    /**
+     * 编辑角色
+     *
+     * @param ssoRole 角色对象
+     * @return 返回编辑结果
+     */
     @Log(title = "角色信息表-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "角色信息表-编辑", description = "角色信息表-编辑")
     @PutMapping
@@ -111,6 +148,12 @@ public class SsoRoleController {
         return ssoRoleService.updateRole(ssoRole);
     }
 
+    /**
+     * 设置角色状态（启用/禁用）
+     *
+     * @param ssoRole 角色对象（包含角色ID和状态）
+     * @return 返回状态设置结果
+     */
     @Log(title = "角色信息表-设置状态", operateType = OperateType.UPDATE)
     @Operation(summary = "角色信息表-设置状态", description = "角色信息表-设置状态")
     @PutMapping("/status")
@@ -121,6 +164,12 @@ public class SsoRoleController {
         return Result.fail(false, "错误:角色信息表-设置状态失败!");
     }
 
+    /**
+     * 通过id删除角色
+     *
+     * @param id 角色唯一ID
+     * @return 返回删除结果
+     */
     @Log(title = "角色信息表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "角色信息表-通过id删除", description = "角色信息表-通过id删除")
     @DeleteMapping("/{id}")
@@ -132,6 +181,12 @@ public class SsoRoleController {
         return ssoRoleService.deleteRole(id);
     }
 
+    /**
+     * 通过id查询角色信息
+     *
+     * @param ids 角色ID，多个以逗号分隔
+     * @return 角色信息列表
+     */
     @Operation(summary = "角色信息表-通过id查询", description = "角色信息表-通过id查询")
     @GetMapping("/{ids}")
     @RequiresPermissions("sys:role:query")
@@ -139,6 +194,13 @@ public class SsoRoleController {
         return ssoRoleService.queryByIds(ids);
     }
 
+    /**
+     * 通过角色编码获取角色ID列表（内部接口）
+     *
+     * @param tenantId 租户ID
+     * @param codes    角色编码，多个以逗号分隔
+     * @return 角色ID列表
+     */
     @Operation(summary = "获取角色id", description = "获取角色id-通过角色编码查询")
     @GetMapping("/ids")
     @InnerUser
@@ -153,6 +215,13 @@ public class SsoRoleController {
         return ssoRoleService.getRoleIdsByCode(tenantId, List.of(codes.split(",")));
     }
 
+    /**
+     * 通过角色编码获取角色下所有用户ID（内部接口）
+     *
+     * @param tenantId 租户ID
+     * @param codes    角色编码，多个以逗号分隔
+     * @return 用户ID列表
+     */
     @Operation(summary = "获取角色编码获取角色下所有用户id", description = "获取角色编码获取角色下所有用户id")
     @GetMapping("/users")
     @InnerUser

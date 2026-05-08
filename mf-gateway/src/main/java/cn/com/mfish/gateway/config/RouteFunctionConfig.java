@@ -29,6 +29,11 @@ public class RouteFunctionConfig {
     @Resource
     private GatewayAssistant gatewayAssistant;
 
+    /**
+     * 验证码生成路由，通过GET方式访问/captcha获取验证码
+     *
+     * @return 验证码路由函数
+     */
     @Bean
     public RouterFunction<?> captcha() {
         return RouterFunctions.route(GET("/captcha")
@@ -41,6 +46,11 @@ public class RouteFunctionConfig {
         });
     }
 
+    /**
+     * AI路由接口，通过GET方式访问/ai/router与AI助手进行对话
+     *
+     * @return AI路由函数
+     */
     @Bean
     public RouterFunction<ServerResponse> aiRouter() {
         return RouterFunctions.route(GET("/ai/router"), request -> {

@@ -34,6 +34,13 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     private TokenValidator tokenValidator;
 
+    /**
+     * 认证过滤核心方法，校验请求中的Token信息并根据白名单策略决定是否放行
+     *
+     * @param exchange 服务端Web交换对象
+     * @param chain    网关过滤器链
+     * @return 过滤结果
+     */
     @Override
     public @NonNull Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -93,6 +100,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
         return GatewayUtils.webFluxResponseWriter(exchange.getResponse(), HttpStatus.UNAUTHORIZED, msg);
     }
 
+    /**
+     * 获取过滤器执行顺序，值为-1
+     *
+     * @return 过滤器顺序值
+     */
     @Override
     public int getOrder() {
         return -1;

@@ -21,6 +21,9 @@
 
 package cn.com.mfish.oauth.oltu.common.message.types;
 
+/**
+ * OAuth 授权端点支持的响应类型。
+ */
 public enum ResponseType {
 
     CODE("code"),

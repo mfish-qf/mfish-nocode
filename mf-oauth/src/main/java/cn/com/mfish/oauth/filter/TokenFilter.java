@@ -15,12 +15,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @description: token过滤器
+ * @description: Token过滤器，校验请求中的访问令牌并在请求中注入用户信息
  * @author: mfish
  * @date: 2024/1/30
  */
 public class TokenFilter implements Filter {
 
+    /**
+     * 过滤请求，校验Token有效性
+     *
+     * @param servletRequest  请求对象
+     * @param servletResponse 响应对象
+     * @param filterChain     过滤链
+     * @throws IOException      IO异常
+     * @throws ServletException Servlet异常
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         Result<?> result = isAccessAllowed(servletRequest);
@@ -35,6 +44,12 @@ public class TokenFilter implements Filter {
         response.getWriter().print(result);
     }
 
+    /**
+     * 校验请求是否允许访问，验证Token有效性并注入用户信息到请求属性
+     *
+     * @param request 请求对象
+     * @return 校验结果
+     */
     protected Result<?> isAccessAllowed(ServletRequest request) {
         TokenValidator tokenValidator = SpringBeanFactory.getBean(TokenValidator.class);
         Result<?> result = tokenValidator.validator(request);

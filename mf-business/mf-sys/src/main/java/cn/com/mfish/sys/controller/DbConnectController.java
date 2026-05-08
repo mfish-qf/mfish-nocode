@@ -63,6 +63,15 @@ public class DbConnectController {
         return dbConnectService.queryPageList(reqDbConnect, reqPage);
     }
 
+    /**
+     * 获取数据库表信息列表
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 返回数据库表信息分页列表
+     */
     @Operation(summary = "获取数据库表信息")
     @GetMapping("/tables")
     @RequiresPermissions("sys:database:query")
@@ -76,6 +85,12 @@ public class DbConnectController {
         return Result.ok(new PageResult<>(tableService.getTableList(connectId, tableSchema, tableName, reqPage)), "获取表列表成功");
     }
 
+    /**
+     * 获取数据库树形结构信息（分层查询：父节点为空时查询数据库列表，有值时查询库下的表列表）
+     *
+     * @param parentId 父节点ID
+     * @return 返回数据库树形节点列表
+     */
     @Operation(summary = "获取数据库树形结构信息-只能分层查询")
     @GetMapping("/tree")
     @Parameters({
@@ -100,6 +115,15 @@ public class DbConnectController {
         return Result.ok(treeNodes, "查询标列表成功");
     }
 
+    /**
+     * 获取表字段信息列表
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 返回字段信息分页列表
+     */
     @Operation(summary = "获取表字段信息")
     @GetMapping("/fields")
     @RequiresPermissions("sys:database:query")
@@ -113,6 +137,15 @@ public class DbConnectController {
         return Result.ok(new PageResult<>(tableService.getFieldList(connectId, tableSchema, tableName, reqPage)), "获取字段列表成功");
     }
 
+    /**
+     * 获取表数据（带列头信息）
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 返回带列头的数据表
+     */
     @Operation(summary = "获取表数据")
     @GetMapping("/data")
     @Parameters({
@@ -125,6 +158,15 @@ public class DbConnectController {
         return tableService.getHeaderDataTable(connectId, tableSchema, tableName, reqPage);
     }
 
+    /**
+     * 获取表列头信息
+     *
+     * @param connectId   数据库连接ID
+     * @param tableSchema 表前缀（schema）
+     * @param tableName   表名
+     * @param reqPage     分页参数
+     * @return 返回列头信息列表
+     */
     @Operation(summary = "获取表列头信息")
     @GetMapping("/headers")
     @Parameters({
@@ -204,6 +246,12 @@ public class DbConnectController {
         return dbConnectService.queryById(id);
     }
 
+    /**
+     * 测试数据库连接是否可用
+     *
+     * @param dbConnect 数据库连接对象
+     * @return 返回连接测试结果
+     */
     @Log(title = "测试数据库连接", operateType = OperateType.OTHER)
     @Operation(summary = "测试数据库库连接")
     @PostMapping("/test")
@@ -212,6 +260,11 @@ public class DbConnectController {
         return dbConnectService.testConnect(dbConnect);
     }
 
+    /**
+     * 校验数据库连接是否存在且属于当前租户
+     *
+     * @param id 数据库连接ID
+     */
     private void verifyTenantId(String id) {
         if (!dbConnectService.exists(new LambdaQueryWrapper<DbConnect>().eq(DbConnect::getId, id))) {
             throw new MyRuntimeException("错误：数据库连接不存在或无权限!");

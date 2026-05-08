@@ -31,6 +31,9 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * OAuth 响应消息，封装响应状态、跳转地址、响应体和响应头。
+ */
 public class OAuthResponse implements OAuthMessage {
 
     @Getter
@@ -89,6 +92,9 @@ public class OAuthResponse implements OAuthMessage {
         headers.put(name, header);
     }
 
+    /**
+     * OAuth 响应构建器，根据参数类型决定通过 query 或 fragment 返回响应参数。
+     */
     public static class OAuthResponseBuilder {
 
         protected OAuthParametersApplier applier;

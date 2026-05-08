@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class RemoteDemoLeaveApplyFallBack implements FallbackFactory<RemoteDemoLeaveApplyService> {
+    /**
+     * 创建demo请假申请审批服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的请假申请审批服务实例
+     */
     @Override
     public RemoteDemoLeaveApplyService create(Throwable cause) {
         log.error("错误: demo请假申请审批回调接口调用异常", cause);

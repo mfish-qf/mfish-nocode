@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
+ * @description: 自定义用户名密码令牌，扩展了Shiro的令牌以支持多种登录类型和用户信息
  * @author: mfish
  * @date: 2020/2/10 19:28
  */

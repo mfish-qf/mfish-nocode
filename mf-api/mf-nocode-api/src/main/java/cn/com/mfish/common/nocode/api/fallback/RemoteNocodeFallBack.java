@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class RemoteNocodeFallBack implements FallbackFactory<RemoteNocodeService> {
+    /**
+     * 创建低代码服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的低代码服务实例
+     */
     @Override
     public RemoteNocodeService create(Throwable cause) {
         log.error("错误: 低代码服务接口调用异常", cause);

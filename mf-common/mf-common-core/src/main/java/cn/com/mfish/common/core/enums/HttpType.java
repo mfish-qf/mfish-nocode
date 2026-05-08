@@ -22,6 +22,12 @@ public enum HttpType {
         return String.valueOf(value);
     }
 
+    /**
+     * 根据URL判断HTTP类型
+     *
+     * @url 请求URL
+     * @return HTTP类型枚举
+     */
     public static HttpType getHttpType(String url) {
         if (url.startsWith("https:")) {
             return HttpType.HTTPS;

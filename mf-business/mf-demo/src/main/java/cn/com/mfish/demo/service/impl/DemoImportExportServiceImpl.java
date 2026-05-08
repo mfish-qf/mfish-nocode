@@ -18,6 +18,12 @@ import java.util.List;
 @Service
 public class DemoImportExportServiceImpl extends ServiceImpl<DemoImportExportMapper, DemoImportExport> implements DemoImportExportService {
 
+    /**
+     * 批量插入数据（部分字段）
+     *
+     * @param list 待插入的数据列表
+     * @return 插入的记录数
+     */
     @Override
     public int insertBatchSomeColumn(List<DemoImportExport> list) {
         return baseMapper.insertBatchSomeColumn(list);

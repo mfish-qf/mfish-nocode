@@ -10,6 +10,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.*;
 
 /**
+ * @description: Servlet工具类，提供请求、响应、会话等操作
  * @author: mfish
  * @date: 2021/8/13 9:38
  */
@@ -84,6 +85,11 @@ public class ServletUtils {
         return Objects.requireNonNull(getRequest()).getSession();
     }
 
+    /**
+     * 获取ServletRequestAttributes
+     *
+     * @return ServletRequestAttributes对象，获取失败返回null
+     */
     public static ServletRequestAttributes getRequestAttributes() {
         try {
             RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
@@ -93,6 +99,12 @@ public class ServletUtils {
         }
     }
 
+    /**
+     * 获取请求中所有header信息
+     *
+     * @param request HTTP请求对象
+     * @return header键值对Map
+     */
     public static Map<String, String> getHeaders(HttpServletRequest request) {
         Map<String, String> map = new LinkedHashMap<>();
         Enumeration<String> enumeration = request.getHeaderNames();

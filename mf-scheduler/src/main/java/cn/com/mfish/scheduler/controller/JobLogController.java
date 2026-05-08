@@ -91,6 +91,12 @@ public class JobLogController {
         return Result.fail(jobLog, "错误:任务日志-编辑失败!");
     }
 
+    /**
+     * 回调设置任务执行状态（由远程任务执行完成后回调）
+     *
+     * @param jobLog 任务日志对象（包含任务ID、执行状态、耗时等信息）
+     * @return 返回状态设置结果
+     */
     @Log(title = "回调设置执行状态", operateType = OperateType.UPDATE)
     @Operation(summary = "回调设置执行状态", description = "回调设置执行状态")
     @PutMapping("/callBackStatus")

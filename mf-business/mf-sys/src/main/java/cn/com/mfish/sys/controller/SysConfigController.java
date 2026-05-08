@@ -41,6 +41,12 @@ public class SysConfigController {
         return Result.ok(sysConfigService.querySysConfig(AuthInfoUtils.getCurrentUserId()), "界面配置-查询成功!");
     }
 
+    /**
+     * 根据配置类型查询当前用户的界面配置
+     *
+     * @param type 配置类型（0:样式风格, 1:表格配置）
+     * @return 返回界面配置对象
+     */
     @Operation(summary = "界面配置-通过token查询")
     @GetMapping("/{type}")
     public Result<SysConfig> queryConfig(@PathVariable("type") Integer type) {

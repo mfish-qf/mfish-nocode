@@ -35,10 +35,20 @@ public class FieldInfo implements Serializable {
     @Schema(description = "字段描述")
     private String comment;
 
+    /**
+     * 根据数据库字段类型获取对应的JAVA字段类型
+     *
+     * @return JAVA字段类型
+     */
     public String getType() {
         return DataType.forType(this.dbType).getValue();
     }
 
+    /**
+     * 获取字段描述，为空时返回空字符串
+     *
+     * @return 字段描述
+     */
     public String getComment() {
         if (StringUtils.isEmpty(this.comment)) {
             return "";

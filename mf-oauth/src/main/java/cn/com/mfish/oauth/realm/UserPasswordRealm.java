@@ -7,6 +7,7 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.lang.util.ByteSource;
 
 /**
+ * @description: 用户密码认证领域，处理用户名密码方式的登录认证
  * @author: mfish
  * @date: 2020/2/11 9:33
  */

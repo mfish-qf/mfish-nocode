@@ -23,7 +23,9 @@ import java.util.List;
 @Data
 public class FlowAuthority {
 
+    /** 当前用户账号 */
     private String account;
+    /** 用户所属组列表（包括组织和角色） */
     private List<String> groupList;
 
     /**

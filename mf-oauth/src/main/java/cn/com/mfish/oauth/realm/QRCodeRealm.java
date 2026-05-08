@@ -11,6 +11,7 @@ import org.apache.shiro.authc.*;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: 扫码登录认证领域，通过二维码扫码状态进行登录认证
  * @author: mfish
  * @date: 2020/2/11 9:42
  */

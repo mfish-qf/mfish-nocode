@@ -24,6 +24,12 @@ import java.util.List;
 @Slf4j
 @Component
 public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectService> {
+    /**
+     * 创建数据库连接服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的数据库连接服务实例
+     */
     @Override
     public RemoteDbConnectService create(Throwable cause) {
         log.error("错误:数据库连接调用异常", cause);

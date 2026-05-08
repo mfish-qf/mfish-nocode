@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @description: 登录服务实现类，处理用户登录认证、短信验证码管理、登录重试限制等逻辑
  * @author: mfish
  * @date: 2020/2/15 16:10
  */

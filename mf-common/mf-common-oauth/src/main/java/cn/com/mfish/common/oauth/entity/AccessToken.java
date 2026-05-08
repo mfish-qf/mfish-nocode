@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
+ * @description: 访问令牌实体
  * @author: mfish
  * @date: 2020/2/17 15:09
  */

@@ -3,6 +3,7 @@ package cn.com.mfish.common.oauth.common;
 import lombok.Getter;
 
 /**
+ * @description: OAuth服务常量
  * @author: mfish
  * @date: 2020/2/10 19:32
  */

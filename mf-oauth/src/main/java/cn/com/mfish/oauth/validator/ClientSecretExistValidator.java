@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
+ * @description: 客户端密钥校验器，验证请求中的客户端密钥是否正确
  * @author: mfish
  * @date: 2020/2/17 15:26
  */

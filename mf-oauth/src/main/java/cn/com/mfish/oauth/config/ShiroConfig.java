@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * @description: Shiro安全框架配置类，配置安全管理器、会话管理、多认证方式和过滤器等
  * @author: mfish
  * @date: 2020/2/10 18:05
  */
@@ -72,6 +73,10 @@ public class ShiroConfig {
             //过滤链定义从上向下顺序执行，一般将/**放在最为下边
             filterChainDefinitionMap.put("/**", "token");
             shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        } else {
+            // Shiro 3 默认未命中任何过滤链时会走 noAccess 并重定向到登录页。
+            // 微服务模式由网关统一鉴权，本服务不配置 Shiro 访问链时需要显式放行。
+            shiroFilterFactoryBean.setAllowAccessByDefault(true);
         }
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/404");
@@ -152,16 +157,25 @@ public class ShiroConfig {
         return t;
     }
 
+    /**
+     * 短信验证码凭证匹配器
+     */
     @Bean
     public SmsCredentialsMatcher smsCredentialsMatcher() {
         return new SmsCredentialsMatcher();
     }
 
+    /**
+     * 二维码凭证匹配器
+     */
     @Bean
     public QRCodeCredentialsMatcher qrCodeCredentialsMatcher() {
         return new QRCodeCredentialsMatcher();
     }
 
+    /**
+     * 第三方登录凭证匹配器
+     */
     @Bean
     public OtherCredentialsMatcher otherCredentialsMatcher() {
         return new OtherCredentialsMatcher();
@@ -179,6 +193,9 @@ public class ShiroConfig {
         return userPasswordRealm;
     }
 
+    /**
+     * 手机短信登录方式初始化
+     */
     @Bean
     public PhoneSmsRealm phoneSmsRealm() {
         PhoneSmsRealm phoneSmsRealm = new PhoneSmsRealm();
@@ -187,6 +204,9 @@ public class ShiroConfig {
         return phoneSmsRealm;
     }
 
+    /**
+     * 扫码登录方式初始化
+     */
     @Bean
     public QRCodeRealm qrCodeRealm() {
         QRCodeRealm qrCodeRealm = new QRCodeRealm();
@@ -195,6 +215,9 @@ public class ShiroConfig {
         return qrCodeRealm;
     }
 
+    /**
+     * 第三方Git登录方式初始化
+     */
     @Bean
     public GitRealm gitRealm() {
         GitRealm gitRealm = new GitRealm();
@@ -203,6 +226,9 @@ public class ShiroConfig {
         return gitRealm;
     }
 
+    /**
+     * 多认证方式组合初始化，根据登录类型分发到对应的Realm
+     */
     @Bean
     public MultipleRealm multipleRealm() {
         MultipleRealm multipleRealm = new MultipleRealm();
@@ -231,6 +257,9 @@ public class ShiroConfig {
         return sessionManager;
     }
 
+    /**
+     * 记住我Cookie配置
+     */
     @Bean
     public SimpleCookie rememberMeCookie() {
         //这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
@@ -261,6 +290,9 @@ public class ShiroConfig {
         return cookieRememberMeManager;
     }
 
+    /**
+     * 安全管理器配置，整合多认证方式、会话管理、缓存和记住我功能
+     */
     @Bean
     public SecurityManager securityManager(DefaultWebSessionManager sessionManager, RedisCacheManager redisCacheManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
