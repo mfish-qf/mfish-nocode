@@ -5,9 +5,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 上传存储操作
- *
- * @param <T>
+ * @description: 上传数据存储操作接口
+ * @author: mfish
+ * @date: 2023/12/18
+ * @param <T> 数据类型
  */
 @Repository
 public interface UploadDAO<T> {

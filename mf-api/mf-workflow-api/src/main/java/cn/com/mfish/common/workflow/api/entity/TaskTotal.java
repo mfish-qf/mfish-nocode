@@ -10,6 +10,13 @@ import lombok.Getter;
 
 public class TaskTotal {
 
+    /**
+     * 构造任务统计对象
+     *
+     * @param todoCount      待办任务数量
+     * @param completedCount 已办任务数量
+     * @param cancelledCount 已取消任务数量
+     */
     public TaskTotal(long todoCount, long completedCount, long cancelledCount) {
         this.todoCount = todoCount;
         this.completedCount = completedCount;

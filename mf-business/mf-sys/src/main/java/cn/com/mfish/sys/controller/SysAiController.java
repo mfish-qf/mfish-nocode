@@ -28,11 +28,23 @@ public class SysAiController {
 
     private final SysAssistant sysAssistant;
 
+    /**
+     * 与摸鱼小助手聊天
+     *
+     * @param aiRequest AI请求参数，包含会话ID和提示词
+     * @return 聊天响应流
+     */
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponseVo> chat(@RequestBody AiRequest aiRequest) {
         return mfishAssistant.chat(aiRequest);
     }
 
+    /**
+     * 与系统中心助手聊天
+     *
+     * @param aiRequest AI请求参数，包含会话ID和提示词
+     * @return 聊天响应流
+     */
     @PostMapping(value = "/assist", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponseVo> sysAssistant(@RequestBody AiRequest aiRequest) {
         return sysAssistant.chat(aiRequest);

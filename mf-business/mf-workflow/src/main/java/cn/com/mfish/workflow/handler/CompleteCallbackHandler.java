@@ -24,6 +24,12 @@ import org.flowable.engine.delegate.ExecutionListener;
 public class CompleteCallbackHandler implements ExecutionListener {
     private final RuntimeService runtimeService = SpringBeanFactory.getBean(RuntimeService.class);
 
+    /**
+     * 流程审核完成后的回调通知方法
+     * 根据审批操作类型（通过、拒绝、取消）调用对应的远程审核接口完成业务回调
+     *
+     * @param execution 流程执行上下文对象
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void notify(DelegateExecution execution) {

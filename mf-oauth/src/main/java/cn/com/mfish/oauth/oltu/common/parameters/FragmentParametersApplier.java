@@ -26,6 +26,9 @@ import cn.com.mfish.oauth.oltu.common.utils.OAuthUtils;
 
 import java.util.Map;
 
+/**
+ * 将 OAuth 参数追加到回调地址 fragment 部分的参数应用器。
+ */
 public class FragmentParametersApplier implements OAuthParametersApplier {
 
     public OAuthMessage applyOAuthParameters(OAuthMessage message, Map<String, Object> params) {

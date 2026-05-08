@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @description: 二维码服务实现类，基于Redis实现二维码的存储、查询和更新
  * @author: mfish
  * @date: 2020/3/5 14:59
  */

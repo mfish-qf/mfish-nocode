@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @description: 刷新令牌的组合校验器，验证客户端信息和刷新令牌的一致性
  * @author: mfish
  * @date: 2020/2/18 19:02
  */

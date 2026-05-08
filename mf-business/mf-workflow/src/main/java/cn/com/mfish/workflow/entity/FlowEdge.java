@@ -16,11 +16,17 @@ import org.flowable.bpmn.model.SequenceFlow;
 @Data
 @Schema(description = "连线对象", name = "FlowEdge")
 public class FlowEdge {
+    /** 审核通过标识 */
     private static final String APPROVED = "approved";
+    /** 审核拒绝标识 */
     private static final String REJECTED = "rejected";
+    /** 条件分支-if前缀 */
     private static final String IF = "if_";
+    /** 条件分支-else前缀 */
     private static final String ELSE = "else_";
+    /** 条件分支-case前缀 */
     private static final String CASE = "case_";
+    /** 审批类型变量名 */
     private static final String AUDIT_TYPE = "auditType";
     @Schema(description = "连线 ID")
     private String id;
@@ -35,6 +41,12 @@ public class FlowEdge {
     @Schema(description = "连线业务数据")
     private EdgeData data;
 
+    /**
+     * 将连线对象转换为 Flowable 的 SequenceFlow
+     * 根据连线数据构建条件表达式（如审批结果条件或网关分支条件）
+     *
+     * @return Flowable 连线对象
+     */
     public SequenceFlow create() {
         SequenceFlow flow = new SequenceFlow(source, target);
         // BPMN ID 不能包含连字符，做简单替换处理

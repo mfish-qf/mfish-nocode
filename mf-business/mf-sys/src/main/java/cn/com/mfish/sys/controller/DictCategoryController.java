@@ -50,6 +50,12 @@ public class DictCategoryController {
         return dictCategoryService.queryCategoryTree(reqDictCategory, reqPage);
     }
 
+    /**
+     * 查询树形分类列表（不分页）
+     *
+     * @param reqDictCategory 树形分类请求参数
+     * @return 返回树形分类列表
+     */
     @Operation(summary = "树形分类查询", description = "树形分类")
     @GetMapping("/tree")
     @RequiresPermissions("sys:dictCategory:query")
@@ -112,6 +118,13 @@ public class DictCategoryController {
         return Result.ok(dictCategoryService.listByIds(Arrays.asList(ids.split(","))), "树形分类-查询成功!");
     }
 
+    /**
+     * 通过分类编码查询分类树
+     *
+     * @param code      分类编码
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 返回分类树列表
+     */
     @Operation(summary = "分类树-通过分类编码查询", description = "分类树-通过分类编码查询")
     @GetMapping("/tree/{code}")
     @Parameters({
@@ -121,6 +134,13 @@ public class DictCategoryController {
         return Result.ok(dictCategoryService.queryCategoryTreeByCode(code, TreeDirection.getDirection(direction)), "分类树-查询成功!");
     }
 
+    /**
+     * 通过分类编码查询分类列表（扁平结构）
+     *
+     * @param code      分类编码
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 返回分类列表
+     */
     @Operation(summary = "分类列表-通过分类编码查询", description = "分类列表-通过分类编码查询")
     @GetMapping("/list/{code}")
     @Parameters({
@@ -130,6 +150,13 @@ public class DictCategoryController {
         return Result.ok(dictCategoryService.queryCategoryListByCode(code, TreeDirection.getDirection(direction)), "分类列表-查询成功!");
     }
 
+    /**
+     * 通过分类ID查询分类树
+     *
+     * @param id        分类唯一ID
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 返回分类树列表
+     */
     @Operation(summary = "分类树-通过分类id查询", description = "分类树-通过分类id查询")
     @GetMapping("/tree/id/{id}")
     @Parameters({
@@ -139,6 +166,13 @@ public class DictCategoryController {
         return Result.ok(dictCategoryService.queryCategoryTreeById(id, TreeDirection.getDirection(direction)), "分类树-查询成功!");
     }
 
+    /**
+     * 通过分类ID查询分类列表（扁平结构）
+     *
+     * @param id        分类唯一ID
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 返回分类列表
+     */
     @Operation(summary = "分类列表-通过分类id查询", description = "分类列表-通过分类id查询")
     @GetMapping("/list/id/{id}")
     @Parameters({
@@ -148,6 +182,12 @@ public class DictCategoryController {
         return Result.ok(dictCategoryService.queryCategoryListById(id, TreeDirection.getDirection(direction)), "分类列表-查询成功!");
     }
 
+    /**
+     * 通过分类编码查询单个分类信息
+     *
+     * @param code 分类编码
+     * @return 返回分类对象
+     */
     @Operation(summary = "分类-通过编码查询")
     @GetMapping("/one/{code}")
     public Result<DictCategory> queryOneByCode(@Parameter(name = "code", description = "唯一性ID") @PathVariable String code) {
@@ -155,6 +195,14 @@ public class DictCategoryController {
                 .eq(DictCategory::getCategoryCode, code)), "物料分类-查询成功!");
     }
 
+    /**
+     * 判断分类ID是否在指定固定编码的分类范围内
+     *
+     * @param categoryId 分类ID
+     * @param fixCode    固定编码
+     * @param direction  查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 返回是否包含该分类
+     */
     @Operation(summary = "判断分类id是否在指定固定编码分类范围中")
     @GetMapping("/include")
     @Parameters({

@@ -177,6 +177,12 @@ public class DemoImportExportController {
         ExcelUtils.write("普通表格导出", queryList(reqDemoImportExport, reqPage));
     }
 
+    /**
+     * 基于Excel模板导出订单数据，包含订单基本信息、租户信息和订单明细
+     *
+     * @param id 订单唯一ID
+     * @throws IOException IO异常
+     */
     @Operation(summary = "模板导出Demo", description = "模板导出Demo")
     @GetMapping("/export/{id}")
     @RequiresPermissions("demo:demoImportExport:export")
@@ -201,6 +207,13 @@ public class DemoImportExportController {
         ExcelUtils.write("/excel/销售订单.xlsx", demoImportExport.getId(), map);
     }
 
+    /**
+     * 通用Excel模板导入，读取上传的Excel文件并批量插入数据
+     *
+     * @param file 上传的Excel文件
+     * @return 返回导入结果
+     * @throws IOException IO异常
+     */
     @Operation(summary = "通用模板导入", description = "通用模板导入")
     @PostMapping("/import")
     @RequiresPermissions("demo:demoImportExport:import")

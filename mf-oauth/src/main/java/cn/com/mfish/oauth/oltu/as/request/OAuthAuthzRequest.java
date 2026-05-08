@@ -33,6 +33,9 @@ import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
 import jakarta.servlet.http.HttpServletRequest;
 
 
+/**
+ * OAuth授权请求对象，解析和验证OAuth2授权请求参数
+ */
 public class OAuthAuthzRequest extends OAuthRequest {
 
     public OAuthAuthzRequest(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException {

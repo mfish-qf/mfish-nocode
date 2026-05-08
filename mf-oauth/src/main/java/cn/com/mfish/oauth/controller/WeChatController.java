@@ -39,7 +39,7 @@ import java.util.Map;
 
 /**
  * @author: mfish
- * @description: 小程序请求接口
+ * @description: 微信小程序认证接口，支持微信绑定、登录和用户信息获取
  * @date: 2021/12/14 9:35
  */
 @Tag(name = "小程序接口")
@@ -60,6 +60,12 @@ public class WeChatController {
     @Resource
     UserTokenCache userTokenCache;
 
+    /**
+     * 检查微信是否已绑定，如果已绑定直接返回accessToken
+     *
+     * @param code 微信认证code
+     * @return 访问令牌
+     */
     @GetMapping("/bind/check")
     @Operation(summary = "检查微信是否绑定 如果已绑定返回accessToken")
     @Parameters({
@@ -107,6 +113,12 @@ public class WeChatController {
         }
     }
 
+    /**
+     * 绑定微信账号，通过用户名密码验证后绑定
+     *
+     * @param request HTTP请求对象
+     * @return 访问令牌
+     */
     @PostMapping("/bind")
     @Operation(summary = "绑定账号和微信")
     @Parameters({
@@ -133,6 +145,12 @@ public class WeChatController {
     }
 
 
+    /**
+     * 获取当前微信登录用户信息
+     *
+     * @param request HTTP请求对象
+     * @return 用户信息
+     */
     @Operation(summary = "获取用户信息")
     @GetMapping("/userInfo")
     @Parameters({
@@ -148,6 +166,15 @@ public class WeChatController {
         return Result.ok(ssoUserService.getUserInfo(result.getData().getUserId()));
     }
 
+    /**
+     * 通过手机号和短信验证码绑定微信账号
+     *
+     * @param code     微信认证code
+     * @param nickname 微信昵称
+     * @param phone    手机号
+     * @param password 短信验证码
+     * @return 访问令牌
+     */
     @PostMapping("/login/pwd")
     @Operation(summary = "通过密码绑定账号")
     @Parameters({
@@ -181,6 +208,12 @@ public class WeChatController {
     }
 
 
+    /**
+     * 获取微信sessionKey，用于后续手机号绑定登录
+     *
+     * @param code 微信认证code
+     * @return 包含sessionKey的Map
+     */
     @Operation(summary = "获取sessionKey 与手机登录联合使用")
     @GetMapping("/session")
     @Parameters({
@@ -194,6 +227,15 @@ public class WeChatController {
         return map;
     }
 
+    /**
+     * 通过微信手机号快速绑定账号，需先调用/sessionKey获取sessionKey
+     *
+     * @param sessionKey 微信登录返回的sessionKey
+     * @param nickname   微信昵称
+     * @param code       微信手机号认证code
+     * @return 访问令牌
+     * @throws WxErrorException 微信接口异常
+     */
     @Operation(summary = "通过手机号绑定账号 先调用/sessionKey方法")
     @PostMapping("/login/phone")
     @Parameters({

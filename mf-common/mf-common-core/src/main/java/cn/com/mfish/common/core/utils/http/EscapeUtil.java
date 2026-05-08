@@ -3,6 +3,7 @@ package cn.com.mfish.common.core.utils.http;
 import cn.com.mfish.common.core.utils.StringUtils;
 
 /**
+ * @description: HTML转义工具类，用于防止XSS攻击
  * @author: mfish
  * @date: 2021/8/12 10:48
  */

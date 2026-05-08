@@ -42,6 +42,10 @@ public class MfTask {
     private String formKey;
     @Schema(description = "任务负责人")
     private String assignee;
+    @Schema(description = "任务负责人账号")
+    private String assigneeAccount;
+    @Schema(description = "任务负责人昵称")
+    private String assigneeName;
     @Schema(description = "发起人账号")
     private String startAccount;
     @Schema(description = "任务开始时间")

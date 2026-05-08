@@ -25,8 +25,10 @@ import reactor.core.publisher.Flux;
 @RequestMapping("/openai")
 @RequiredArgsConstructor
 public class OpenAiChatModelController {
+    /** 默认提示词 */
     private static final String DEFAULT_PROMPT = "你好，简单介绍下摸鱼低代码";
 
+    /** OpenAI聊天模型 */
     private final ChatModel openAiChatModel;
 
     /**
@@ -48,6 +50,10 @@ public class OpenAiChatModelController {
     /**
      * 使用编程方式自定义 LLMs ChatOptions 参数， {@link org.springframework.ai.openai.OpenAiChatOptions}
      * 优先级高于在 application.yml 中配置的 LLMs 参数！
+     *
+     * @param id     会话ID，用于标识一次对话
+     * @param prompt 用户输入的提示词，为空时使用默认提示词
+     * @return 流式聊天响应内容
      */
     @GetMapping("/chat/custom")
     @Parameters({

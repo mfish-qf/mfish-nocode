@@ -74,6 +74,12 @@ public class CodeBuildController {
         return codeBuildService.insertCodeBuild(codeBuild);
     }
 
+    /**
+     * 更新代码构建配置
+     *
+     * @param codeBuild 代码构建对象
+     * @return 返回代码构建-更新结果
+     */
     @Log(title = "代码构建-更新", operateType = OperateType.INSERT)
     @Operation(summary = "代码构建-更新")
     @PutMapping
@@ -82,6 +88,12 @@ public class CodeBuildController {
         return codeBuildService.updateCodeBuild(codeBuild);
     }
 
+    /**
+     * 查看生成的代码
+     *
+     * @param id 代码构建唯一ID
+     * @return 返回生成的代码列表
+     */
     @Log(title = "查看代码", operateType = OperateType.QUERY)
     @Operation(summary = "查看代码")
     @GetMapping("/view/{id}")
@@ -91,6 +103,13 @@ public class CodeBuildController {
         return codeBuildService.getCode(id);
     }
 
+    /**
+     * 下载生成的代码（ZIP格式）
+     *
+     * @param id       代码构建唯一ID
+     * @param response HTTP响应对象
+     * @throws IOException IO异常
+     */
     @Log(title = "下载代码", operateType = OperateType.EXPORT)
     @Operation(summary = "下载代码")
     @GetMapping("/download/{id}")
@@ -100,6 +119,12 @@ public class CodeBuildController {
         codeBuildService.downloadCode(id, response);
     }
 
+    /**
+     * 将生成的代码保存到本地IDE目录
+     *
+     * @param id 代码构建唯一ID
+     * @return 返回保存结果
+     */
     @Log(title = "保存代码到IDE", operateType = OperateType.QUERY)
     @Operation(summary = "保存代码到IDE")
     @GetMapping("/saveLocal/{id}")

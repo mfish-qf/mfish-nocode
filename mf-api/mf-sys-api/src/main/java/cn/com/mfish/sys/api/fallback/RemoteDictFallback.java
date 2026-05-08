@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemoteDictFallback implements FallbackFactory<RemoteDictService> {
 
+    /**
+     * 创建字典服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的字典服务实例
+     */
     @Override
     public RemoteDictService create(Throwable cause) {
         log.error("错误:字典调用异常", cause);

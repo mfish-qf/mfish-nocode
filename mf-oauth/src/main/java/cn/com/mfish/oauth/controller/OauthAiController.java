@@ -25,6 +25,12 @@ public class OauthAiController {
 
     private final OauthAssistant oauthAssistant;
 
+    /**
+     * 认证小助手对话接口，支持流式响应
+     *
+     * @param aiRequest AI请求对象
+     * @return 流式聊天响应
+     */
     @PostMapping(value = "/assist", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponseVo> oauthAssistant(@RequestBody AiRequest aiRequest) {
         return oauthAssistant.chat(aiRequest);

@@ -20,5 +20,6 @@ import lombok.Data;
         @JsonSubTypes.Type(value = ConditionGroup.class, name = "group")
 })
 public abstract class Condition {
+    /** 条件类型（simple 或 group） */
     private String type;
 }

@@ -1,5 +1,6 @@
 package cn.com.mfish.workflow.entity;
 
+import cn.com.mfish.workflow.enums.ApproveType;
 import cn.com.mfish.workflow.enums.NodeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -33,7 +34,7 @@ public class NodeData {
     @Schema(description = "组织名称列表")
     private List<String> orgNames;
     @Schema(description = "审批类型（OR 或签，AND 会签）")
-    private String approvalType;
+    private ApproveType approvalType;
     @Schema(description = "执行监听器列表")
     private List<ExecutionListenersInfo> executionListeners;
     @Schema(description = "完成百分比")

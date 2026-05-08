@@ -22,6 +22,12 @@ import java.util.Set;
 @Component
 @Slf4j
 public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
+    /**
+     * 创建用户服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的用户服务实例
+     */
     @Override
     public RemoteUserService create(Throwable cause) {
         log.error("用户服务调用失败:{}", cause.getMessage());

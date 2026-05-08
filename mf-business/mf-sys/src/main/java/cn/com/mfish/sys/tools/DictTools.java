@@ -29,11 +29,23 @@ public class DictTools {
     @Resource
     private DictItemService dictItemService;
 
+    /**
+     * 根据字典名称查询字典编码
+     *
+     * @param dictName 字典名称
+     * @return 字典列表
+     */
     @Tool(description = "查询字典编码", returnDirect = true)
     public List<Dict> queryCodeByName(@ToolParam(description = "字典名称") String dictName) {
         return dictService.queryList(new ReqDict().setDictName(dictName), new ReqPage(1, 100));
     }
 
+    /**
+     * 根据字典编码查询字典项列表
+     *
+     * @param dictCode 字典编码
+     * @return 字典项列表
+     */
     @Tool(description = "查询字典项", returnDirect = true)
     public List<DictItem> queryByCode(@ToolParam(description = "字典编码") String dictCode) {
         Result<List<DictItem>> result = dictItemService.queryByCode(dictCode);

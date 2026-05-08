@@ -40,6 +40,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * @description: 访问令牌控制器，支持授权码、密码和刷新令牌三种方式获取访问令牌
  * @author: mfish
  * @date: 2020/2/17 14:17
  */

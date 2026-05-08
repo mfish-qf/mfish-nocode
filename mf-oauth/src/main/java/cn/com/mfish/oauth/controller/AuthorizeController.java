@@ -41,6 +41,7 @@ import java.text.MessageFormat;
 import java.util.function.BiFunction;
 
 /**
+ * @description: OAuth2授权控制器，处理授权码获取和用户认证授权流程
  * @author: mfish
  * @date: 2020/2/11 11:42
  */

@@ -19,6 +19,11 @@ public class WeChatConfig {
     @Resource
     private WeChatProperties weChatProperties;
 
+    /**
+     * 初始化微信小程序服务
+     *
+     * @return 微信小程序服务实例
+     */
     @Bean
     public WxMaService wxMaService() {
         WxMaDefaultConfigImpl config = new WxMaDefaultConfigImpl();

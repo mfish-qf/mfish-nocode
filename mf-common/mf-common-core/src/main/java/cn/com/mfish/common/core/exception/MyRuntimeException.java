@@ -1,6 +1,7 @@
 package cn.com.mfish.common.core.exception;
 
 /**
+ * @description: 自定义运行时异常
  * @author: mfish
  * @date: 2020/2/10 17:17
  */

@@ -18,7 +18,9 @@ import java.util.Date;
  */
 @Slf4j
 public class DataUtils {
+    /** 数值为空错误提示 */
     private static final String DATA_NULL = "错误:数值不允许为空";
+    /** 未知数据类型错误提示 */
     private static final String UNKNOWN_DATA = "错误:未知的数值类型";
 
     /**

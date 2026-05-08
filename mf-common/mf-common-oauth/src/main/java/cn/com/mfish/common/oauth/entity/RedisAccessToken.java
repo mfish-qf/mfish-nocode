@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
+ * @description: Redis中存储的访问令牌信息
  * @author: mfish
  * @date: 2020/2/17 15:04
  */

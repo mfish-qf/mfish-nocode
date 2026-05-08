@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @description: OAuth2服务实现类，基于Redis实现授权码管理和访问令牌的构建、刷新等核心OAuth2流程
  * @author: mfish
  * @date: 2020/2/15 16:07
  */
@@ -55,6 +56,12 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     @Value("${oauth2.expire.refreshToken}")
     private long reTokenExpire = 604800;
 
+    /**
+     * 构建授权码，生成唯一code并存储到Redis
+     *
+     * @param request OAuth2授权请求对象
+     * @return 授权码对象
+     */
     @Override
     public AuthorizationCode buildCode(OAuthAuthzRequest request) {
         AuthorizationCode code = setProperty(request);
@@ -95,16 +102,32 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         return code;
     }
 
+    /**
+     * 保存授权码到Redis缓存，设置过期时间
+     *
+     * @param code 授权码对象
+     */
     @Override
     public void setCode(AuthorizationCode code) {
         redisTemplate.opsForValue().set(RedisPrefix.buildAuthCodeKey(code.getCode()), code, codeExpire, TimeUnit.SECONDS);
     }
 
+    /**
+     * 从Redis中删除授权码
+     *
+     * @param code 授权码值
+     */
     @Override
     public void delCode(String code) {
         redisTemplate.delete(RedisPrefix.buildAuthCodeKey(code));
     }
 
+    /**
+     * 从Redis中获取授权码信息
+     *
+     * @param code 授权码值
+     * @return 授权码对象
+     */
     @Override
     public AuthorizationCode getCode(String code) {
         return (AuthorizationCode) redisTemplate.opsForValue().get(RedisPrefix.buildAuthCodeKey(code));
@@ -122,6 +145,13 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         return code2Token(oAuthTokenRequest, code);
     }
 
+    /**
+     * 通过授权码构建访问令牌，生成accessToken和refreshToken并存储
+     *
+     * @param request OAuth2令牌请求对象
+     * @param code    授权码对象
+     * @return 访问令牌对象
+     */
     @Override
     public RedisAccessToken code2Token(OAuthTokenRequest request, AuthorizationCode code) {
         RedisAccessToken accessToken = new RedisAccessToken();
@@ -140,6 +170,12 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         return accessToken;
     }
 
+    /**
+     * 刷新访问令牌，删除旧令牌并生成新的accessToken和refreshToken
+     *
+     * @param token 原始访问令牌对象
+     * @return 新的访问令牌对象
+     */
     @Override
     public RedisAccessToken refresh2Token(RedisAccessToken token) {
         webTokenService.delToken(token.getAccessToken());

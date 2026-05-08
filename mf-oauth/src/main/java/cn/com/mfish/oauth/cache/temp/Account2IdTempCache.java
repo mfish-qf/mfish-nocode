@@ -12,6 +12,7 @@ import jakarta.annotation.Resource;
 import java.text.MessageFormat;
 
 /**
+ * @description: 账号到用户ID的临时缓存，通过账号快速查找对应的用户ID
  * @author: mfish
  * @date: 2020/2/14 18:56
  */

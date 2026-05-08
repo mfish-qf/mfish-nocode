@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: Redis缓存管理器，为Shiro提供基于Redis的缓存管理
  * @author: mfish
  * @date: 2020/2/11 17:53
  */

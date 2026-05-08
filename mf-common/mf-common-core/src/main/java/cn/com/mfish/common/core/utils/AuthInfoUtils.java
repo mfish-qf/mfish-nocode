@@ -43,6 +43,7 @@ public class AuthInfoUtils {
      */
     public static final String SUPER_ORG_ID = "1";
 
+    /** 全部权限标识 */
     public static final String ALL_PERMISSION = "*:*:*";
 
     /**

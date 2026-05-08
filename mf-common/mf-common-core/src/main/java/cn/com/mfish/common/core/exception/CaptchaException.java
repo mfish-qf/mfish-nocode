@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @description: 验证码异常
  * @author: mfish
  * @date: 2021/8/12 11:32
  */
@@ -15,9 +16,12 @@ public class CaptchaException extends RuntimeException {
         TIMEOUT("timeout", "错误:验证码已失效"),
         ERROR("error", "错误:验证码不正确");
 
+        /** 异常名称标识 */
         @Getter
         private final String name;
+        /** 异常描述信息 */
         private final String value;
+        /** 异常名称到枚举的映射 */
         private static final Map<String, Info> map = new HashMap<>();
 
         static {

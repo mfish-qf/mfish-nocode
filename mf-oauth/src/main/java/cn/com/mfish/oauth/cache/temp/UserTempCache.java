@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: 用户信息临时缓存，通过用户ID获取用户详细信息
  * @author: mfish
  * @date: 2020/2/14 17:46
  */

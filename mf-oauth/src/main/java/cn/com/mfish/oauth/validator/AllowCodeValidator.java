@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 /**
+ * @description: 授权码模式校验器，验证客户端是否支持授权码模式
  * @author: mfish
  * @date: 2020/2/16 18:57
  */

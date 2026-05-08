@@ -16,6 +16,12 @@ public class ServiceConstants {
     public static final String NOCODE_SERVICE = "mf-nocode";
     public static final String DEMO_SERVICE = "mf-demo";
 
+    /**
+     * 判断是否为单体服务类型
+     *
+     * @param type 服务类型
+     * @return 是否为单体服务
+     */
     public static boolean isBoot(String type) {
         return ServiceConstants.SERVER_BOOT.equals(type);
     }

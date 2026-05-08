@@ -18,6 +18,12 @@ public class ReqPage implements Serializable {
     public ReqPage() {
     }
 
+    /**
+     * 带参数的构造方法
+     *
+     * @param pageNum  页码
+     * @param pageSize 每页条数
+     */
     public ReqPage(Integer pageNum, Integer pageSize) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
@@ -29,6 +35,12 @@ public class ReqPage implements Serializable {
     @Schema(description = "每页条数(默认值:10)")
     private Integer pageSize = 10;
 
+    /**
+     * 设置页码，空值不设置
+     *
+     * @param pageNum 页码
+     * @return 当前对象
+     */
     public ReqPage setPageNum(Integer pageNum) {
         if (pageNum == null) {
             return this;
@@ -37,6 +49,12 @@ public class ReqPage implements Serializable {
         return this;
     }
 
+    /**
+     * 设置每页条数，空值不设置
+     *
+     * @param pageSize 每页条数
+     * @return 当前对象
+     */
     public ReqPage setPageSize(Integer pageSize) {
         if (pageSize == null) {
             return this;

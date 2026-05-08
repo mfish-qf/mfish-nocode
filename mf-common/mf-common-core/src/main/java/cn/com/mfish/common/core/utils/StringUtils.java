@@ -272,7 +272,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * 是否邮箱地址
      *
      * @param email 邮箱
-     * @return
+     * @return 是否为合法邮箱地址
      */
     public static boolean isEmail(String email) {
         if (isEmpty(email)) {

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * @description: 用户信息控制器，提供用户管理、权限查询、登录状态管理等功能
  * @author: mfish
  * @date: 2020/2/17 18:49
  */
@@ -274,6 +275,12 @@ public class SsoUserController {
         return Result.ok(new PageResult<>(pageList), "用户信息-查询成功!");
     }
 
+    /**
+     * 检索用户列表（限制最多查询100人，需要租户用户新增权限）
+     *
+     * @param condition 检索条件，支持用户名、昵称、手机号模糊搜索
+     * @return 用户信息列表
+     */
     @Operation(summary = "检索用户列表-限制最多查询50人(有新增租户用户权限人允许检索)", description = "检索用户列表")
     @GetMapping("/search")
     @Parameters({
@@ -286,6 +293,12 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserList(new ReqSsoUser().setCondition(condition)), "用户信息-检索成功!");
     }
 
+    /**
+     * 添加用户
+     *
+     * @param ssoUser 用户信息对象
+     * @return 返回添加结果
+     */
     @Log(title = "用户信息-添加", operateType = OperateType.INSERT)
     @Operation(summary = "用户信息-添加", description = "用户信息-添加")
     @PostMapping
@@ -308,6 +321,12 @@ public class SsoUserController {
         return ssoUserService.updateUser(ssoUser);
     }
 
+    /**
+     * 编辑当前登录用户自己的信息
+     *
+     * @param ssoUser 用户信息对象
+     * @return 返回编辑结果
+     */
     @Log(title = "用户信息-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "用户信息-编辑", description = "用户信息-编辑")
     @PutMapping("/me")
@@ -338,6 +357,12 @@ public class SsoUserController {
         return Result.fail(false, "错误:用户信息-删除失败!");
     }
 
+    /**
+     * 判断用户账号是否已存在
+     *
+     * @param account 用户账号
+     * @return 返回账号是否存在
+     */
     @Operation(summary = "判断用户是否存在")
     @GetMapping("/exist/{account}")
     public Result<Boolean> isAccountExist(@Parameter(name = "account", description = "帐号名称") @PathVariable String account) {
@@ -347,6 +372,12 @@ public class SsoUserController {
         return Result.ok(false, "帐号[" + account + "]不存在");
     }
 
+    /**
+     * 获取在线用户列表
+     *
+     * @param reqPage 分页参数
+     * @return 在线用户分页列表
+     */
     @Operation(summary = "获取在线用户信息")
     @GetMapping("/online")
     @RequiresPermissions("sys:online:query")
@@ -354,6 +385,12 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getOnlineUser(reqPage), "获取在线用户成功");
     }
 
+    /**
+     * 踢出指定在线用户
+     *
+     * @param sid 加密的用户会话ID
+     * @return 返回踢出结果
+     */
     @Operation(summary = "踢出指定用户")
     @DeleteMapping("/revoke/{sid}")
     @Log(title = "踢出指定用户", operateType = OperateType.LOGOUT)
@@ -363,6 +400,12 @@ public class SsoUserController {
         return Result.ok(true, "成功登出");
     }
 
+    /**
+     * 根据账号获取用户ID列表（内部接口）
+     *
+     * @param accounts 用户账号，多个以逗号分隔
+     * @return 用户ID列表
+     */
     @Operation(summary = "根据账号获取用户id(内部接口)")
     @GetMapping("/userId/{accounts}")
     @InnerUser
@@ -370,6 +413,12 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUserIdsByAccounts(List.of(accounts.split(","))), "获取用户id成功");
     }
 
+    /**
+     * 根据账号获取简单用户信息列表（内部接口）
+     *
+     * @param accounts 用户账号，多个以逗号分隔
+     * @return 用户信息列表
+     */
     @Operation(summary = "根据账号获取简单用户信息(内部接口)")
     @GetMapping("/users/{accounts}")
     @InnerUser
@@ -377,18 +426,36 @@ public class SsoUserController {
         return Result.ok(ssoUserService.getUsersByAccounts(List.of(accounts.split(","))), "获取用户信息成功");
     }
 
+    /**
+     * 判断用户是否已设置过密码
+     *
+     * @param userId 用户ID
+     * @return 返回是否已设置密码
+     */
     @Operation(summary = "判断账号是否设置过密码")
     @GetMapping("/pwdExist/{userId}")
     public Result<Boolean> isPasswordExist(@PathVariable("userId") String userId) {
         return Result.ok(ssoUserService.isPasswordExist(userId));
     }
 
+    /**
+     * 判断是否允许修改用户账号
+     *
+     * @param userId 用户ID
+     * @return 返回是否允许修改
+     */
     @Operation(summary = "是否允许修改账号")
     @GetMapping("/allowChangeAccount/{userId}")
     public Result<Boolean> allowChangeAccount(@PathVariable("userId") String userId) {
         return Result.ok(ssoUserService.allowChangeAccount(userId));
     }
 
+    /**
+     * 修改用户账号
+     *
+     * @param ssoUser 用户对象（包含用户ID和新账号）
+     * @return 返回修改结果
+     */
     @Operation(summary = "修改账号")
     @PutMapping("/changeAccount")
     @Log(title = "修改账号", operateType = OperateType.UPDATE)
@@ -396,12 +463,24 @@ public class SsoUserController {
         return ssoUserService.changeAccount(ssoUser.getId(), ssoUser.getAccount());
     }
 
+    /**
+     * 获取用户安全设置信息
+     *
+     * @param userId 用户ID
+     * @return 用户安全设置信息
+     */
     @Operation(summary = "获取用户安全设置")
     @GetMapping("/secureSetting/{userId}")
     public Result<SsoUser> getSecureSetting(@PathVariable("userId") String userId) {
         return Result.ok(ssoUserService.getSecureSetting(userId));
     }
 
+    /**
+     * 解绑Gitee第三方账号
+     *
+     * @param userId 用户ID
+     * @return 返回解绑结果
+     */
     @Operation(summary = "解绑gitee账号")
     @PutMapping("/unbind/gitee/{userId}")
     @Log(title = "解绑gitee账号", operateType = OperateType.UPDATE)
@@ -410,6 +489,12 @@ public class SsoUserController {
     }
 
 
+    /**
+     * 解绑GitHub第三方账号
+     *
+     * @param userId 用户ID
+     * @return 返回解绑结果
+     */
     @Operation(summary = "解绑github账号")
     @PutMapping("/unbind/github/{userId}")
     @Log(title = "解绑github账号", operateType = OperateType.UPDATE)

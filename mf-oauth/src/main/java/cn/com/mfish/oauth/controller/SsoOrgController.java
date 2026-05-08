@@ -40,6 +40,13 @@ public class SsoOrgController {
     @Resource
     private SsoOrgService ssoOrgService;
 
+    /**
+     * 分页查询组织结构列表
+     *
+     * @param reqSsoOrg 组织查询参数
+     * @param reqPage   分页参数
+     * @return 组织结构分页列表
+     */
     @Operation(summary = "组织结构表-分页列表查询", description = "组织结构表-分页列表查询")
     @GetMapping
     @RequiresPermissions("sys:org:query")
@@ -47,6 +54,12 @@ public class SsoOrgController {
         return ssoOrgService.queryOrg(reqSsoOrg, reqPage);
     }
 
+    /**
+     * 获取组织结构树（不分页）
+     *
+     * @param reqSsoOrg 组织查询参数
+     * @return 组织树列表
+     */
     @Operation(summary = "获取组织结构")
     @GetMapping("/tree")
     public Result<List<SsoOrg>> queryOrgTree(ReqSsoOrg reqSsoOrg) {
@@ -56,6 +69,13 @@ public class SsoOrgController {
         return Result.ok(orgList, "组织结构表-查询成功!");
     }
 
+    /**
+     * 通过组织ID获取组织结构树
+     *
+     * @param ids       组织ID，多个以逗号分隔
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 组织树列表
+     */
     @Operation(summary = "获取组织结构")
     @GetMapping("/tree/{ids}")
     @Parameters({
@@ -72,6 +92,12 @@ public class SsoOrgController {
         return Result.ok(list, "组织结构表-查询成功!");
     }
 
+    /**
+     * 获取组织关联的角色列表
+     *
+     * @param orgIds 组织ID，多个以逗号分隔
+     * @return 角色列表
+     */
     @Operation(summary = "获取组织的角色")
     @GetMapping("/roles/{orgIds}")
     @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
@@ -82,6 +108,12 @@ public class SsoOrgController {
         return Result.ok(ssoOrgService.getOrgRoles(orgIds.split(",")), "组织角色-查询成功!");
     }
 
+    /**
+     * 添加组织结构
+     *
+     * @param ssoOrg 组织对象
+     * @return 返回添加结果
+     */
     @Log(title = "组织结构表-添加", operateType = OperateType.INSERT)
     @Operation(summary = "组织结构表-添加", description = "组织结构表-添加")
     @PostMapping
@@ -90,6 +122,12 @@ public class SsoOrgController {
         return ssoOrgService.insertOrg(ssoOrg);
     }
 
+    /**
+     * 编辑组织结构
+     *
+     * @param ssoOrg 组织对象
+     * @return 返回编辑结果
+     */
     @Log(title = "组织结构表-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "组织结构表-编辑", description = "组织结构表-编辑")
     @PutMapping
@@ -98,6 +136,12 @@ public class SsoOrgController {
         return ssoOrgService.updateOrg(ssoOrg);
     }
 
+    /**
+     * 通过id删除组织
+     *
+     * @param id 组织唯一ID
+     * @return 返回删除结果
+     */
     @Log(title = "组织结构表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "组织结构表-通过id删除", description = "组织结构表-通过id删除")
     @DeleteMapping("/{id}")
@@ -106,6 +150,12 @@ public class SsoOrgController {
         return ssoOrgService.removeOrg(id);
     }
 
+    /**
+     * 通过id查询组织信息
+     *
+     * @param ids 组织ID，多个以逗号分隔
+     * @return 组织信息列表
+     */
     @Operation(summary = "组织结构表-通过id查询", description = "组织结构表-通过id查询")
     @GetMapping("/{ids}")
     @RequiresPermissions("sys:org:query")
@@ -113,6 +163,13 @@ public class SsoOrgController {
         return ssoOrgService.queryByIds(ids);
     }
 
+    /**
+     * 通过固定编码查询组织树
+     *
+     * @param code      组织固定编码
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 组织树列表
+     */
     @Operation(summary = "组织树-通过固定编码查询", description = "组织树-通过固定编码查询")
     @GetMapping("/code/{code}")
     @Parameters({
@@ -123,12 +180,28 @@ public class SsoOrgController {
         return Result.ok(list, "组织结构表-查询成功!");
     }
 
+    /**
+     * 通过固定编码获取组织及子组织下的所有用户
+     *
+     * @param code      组织固定编码
+     * @param reqOrgUser 用户查询参数
+     * @param reqPage   分页参数
+     * @return 用户分页列表
+     */
     @Operation(summary = "获取组织及子组织下的所有用户-通过固定编码查询", description = "获取组织及子组织下的所有用户-通过固定编码查询")
     @GetMapping("/user/{code}")
     public Result<PageResult<UserInfo>> queryUserByCode(@Parameter(name = "code", description = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
         return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage), "组织下用户查询成功");
     }
 
+    /**
+     * 根据组织固定编码获取各级组织ID
+     *
+     * @param tenantId  租户ID
+     * @param codes     组织固定编码，多个以逗号分隔
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 组织ID列表
+     */
     @Operation(summary = "根据组织固定编码获取各级组织id", description = "获取各级组织id-通过组织编码查询")
     @GetMapping("/ids")
     @Parameters({
@@ -140,6 +213,14 @@ public class SsoOrgController {
         return ssoOrgService.getOrgIdsByFixCode(tenantId, List.of(codes.split(",")), TreeDirection.getDirection(direction));
     }
 
+    /**
+     * 根据组织ID获取各级组织ID
+     *
+     * @param tenantId  租户ID
+     * @param orgIds    组织ID，多个以逗号分隔
+     * @param direction 查询方向（all:所有父子节点, up:父节点, down:子节点）
+     * @return 组织ID列表
+     */
     @Operation(summary = "根据当前组织id获取各级组织id", description = "获取各级组织id-通过组织id查询")
     @GetMapping("/ids/byId")
     @Parameters({

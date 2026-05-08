@@ -55,6 +55,12 @@ public class SysFileController {
         return Result.ok(new PageResult<>(storageService.list(queryWrapper)), "文件存储-查询成功!");
     }
 
+    /**
+     * 设置文件公开/私密状态，同时重新生成文件访问URL
+     *
+     * @param storageInfo 包含文件ID和目标状态的文件信息
+     * @return 返回更新后的文件信息
+     */
     @Log(title = "设置文件状态", operateType = OperateType.UPDATE)
     @Operation(summary = "设置文件状态 0 公开 1 私密")
     @PutMapping("/status")
@@ -72,6 +78,12 @@ public class SysFileController {
         return Result.fail(storageInfo, "错误:文件状态设置失败!");
     }
 
+    /**
+     * 恢复已逻辑删除的文件
+     *
+     * @param id 文件唯一性ID
+     * @return 返回恢复操作结果
+     */
     @Log(title = "逻辑删除文件恢复", operateType = OperateType.UPDATE)
     @Operation(summary = "逻辑删除文件恢复")
     @PutMapping("/restore/{id}")
@@ -100,6 +112,12 @@ public class SysFileController {
         return Result.fail(false, "错误:文件存储-逻辑删除失败!");
     }
 
+    /**
+     * 通过ID物理删除文件，同时删除实际存储文件
+     *
+     * @param id 文件唯一性ID
+     * @return 返回删除操作结果
+     */
     @Log(title = "文件存储-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "文件存储-通过id删除")
     @DeleteMapping("/{id}")

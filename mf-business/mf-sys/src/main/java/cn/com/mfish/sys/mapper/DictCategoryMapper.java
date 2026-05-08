@@ -14,10 +14,29 @@ import java.util.List;
  * @version: V2.3.1
  */
 public interface DictCategoryMapper extends BaseMapper<DictCategory> {
+    /**
+     * 新增分类（使用自定义插入以自动生成树编码）
+     *
+     * @param dictCategory 分类对象
+     * @return 影响行数
+     */
     int insertCategory(DictCategory dictCategory);
 
+    /**
+     * 查询满足条件的分类最大等级
+     *
+     * @param reqDictCategory 过滤参数
+     * @return 最大分类等级
+     */
     Integer queryMaxCategoryLevel(@Param("reqDictCategory") ReqDictCategory reqDictCategory);
 
+    /**
+     * 查询分类列表
+     *
+     * @param reqDictCategory 过滤参数
+     * @param levels          父级等级列表
+     * @return 分类列表
+     */
     List<DictCategory> queryCategory(@Param("reqDictCategory") ReqDictCategory reqDictCategory, @Param("levels") List<Integer> levels);
 
     /**

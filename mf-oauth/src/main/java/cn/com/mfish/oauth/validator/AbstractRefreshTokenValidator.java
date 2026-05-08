@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * @description: 刷新令牌校验器基类，提供从缓存中获取刷新令牌信息的通用方法
  * @author: mfish
  * @date: 2020/2/18 18:53
  */
@@ -17,6 +18,14 @@ public abstract class AbstractRefreshTokenValidator implements IBaseValidator<Re
     @Resource
     WebTokenServiceImpl webTokenService;
 
+    /**
+     * 获取刷新令牌信息
+     * 如果参数中已传入令牌信息直接返回，如果未传入从缓存中获取
+     *
+     * @param request HTTP请求对象
+     * @param result  上次校验结果
+     * @return 返回刷新令牌信息
+     */
     public Result<RedisAccessToken> getRefreshToken(HttpServletRequest request, Result<RedisAccessToken> result) {
         RedisAccessToken token;
         if (result == null || result.getData() == null) {

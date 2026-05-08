@@ -36,6 +36,7 @@ import java.util.Base64;
 import java.util.UUID;
 
 /**
+ * @description: 扫码登录控制器，提供二维码生成、状态检测、扫码和确认登录等功能
  * @author: mfish
  * @date: 2020/3/5 14:54
  */

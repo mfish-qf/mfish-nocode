@@ -25,15 +25,28 @@ import reactor.core.publisher.Mono;
 @Component
 public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config> {
 
+    /**
+     * 构造函数，初始化缓存过滤器配置类
+     */
     public CacheFilter() {
         super(Config.class);
     }
 
+    /**
+     * 缓存过滤器配置类，用于设置过滤器执行顺序
+     */
     @Data
     public static class Config {
+        /** 过滤器执行顺序 */
         private Integer order;
     }
 
+    /**
+     * 根据配置创建缓存请求的网关过滤器
+     *
+     * @param config 过滤器配置
+     * @return 网关过滤器实例
+     */
     @Override
     public @NonNull GatewayFilter apply(Config config) {
         CacheRequestGatewayFilter cacheRequestGatewayFilter = new CacheRequestGatewayFilter();
@@ -44,7 +57,17 @@ public class CacheFilter extends AbstractGatewayFilterFactory<CacheFilter.Config
         return new OrderedGatewayFilter(cacheRequestGatewayFilter, order);
     }
 
+    /**
+     * 缓存请求体数据的网关过滤器，将请求体缓存到字节数组中以支持重复读取
+     */
     public static class CacheRequestGatewayFilter implements GatewayFilter {
+        /**
+         * 过滤请求，将非GET/DELETE请求的请求体数据进行缓存以支持重复读取
+         *
+         * @param exchange 服务端Web交换对象
+         * @param chain    网关过滤器链
+         * @return 过滤结果
+         */
         @Override
         public @NonNull Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             // GET DELETE 不过滤

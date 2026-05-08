@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
+ * @description: 授权类型校验器，验证请求的授权类型是否被客户端支持
  * @author: mfish
  * @date: 2020/2/17 14:44
  */

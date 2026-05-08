@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @description: 基于Redis的Shiro会话数据访问对象，实现会话的分布式存储和管理
  * @author: mfish
  * @date: 2020/2/10 20:06
  */

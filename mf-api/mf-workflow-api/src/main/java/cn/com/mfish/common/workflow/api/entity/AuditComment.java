@@ -27,6 +27,10 @@ public class AuditComment {
     private String taskName;
     @Schema(description = "审批人")
     private String assignee;
+    @Schema(description = "审批人名称")
+    private String assigneeName;
+    @Schema(description = "审批人账号")
+    private String assigneeAccount;
     @Schema(description = "审批操作")
     private String type;
     @Schema(description = "审批意见")

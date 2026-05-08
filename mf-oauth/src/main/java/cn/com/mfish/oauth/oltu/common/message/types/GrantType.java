@@ -21,6 +21,9 @@
 
 package cn.com.mfish.oauth.oltu.common.message.types;
 
+/**
+ * OAuth 令牌端点支持的授权模式。
+ */
 public enum GrantType {
     // NONE("none"),
     AUTHORIZATION_CODE("authorization_code"),

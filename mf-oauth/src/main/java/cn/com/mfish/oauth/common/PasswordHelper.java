@@ -9,6 +9,7 @@ import org.apache.shiro.lang.util.ByteSource;
 import org.springframework.stereotype.Component;
 
 /**
+ * @description: 密码助手类，提供密码加密和盐值生成功能
  * @author: mfish
  * @date: 2020/2/13 16:32
  */

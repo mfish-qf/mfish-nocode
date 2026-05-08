@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
+ * @description: 基础认证领域，提供通用的用户认证和授权逻辑，支持自动创建用户
  * @author: mfish
  * @date: 2020/2/26 17:23
  */
@@ -30,6 +31,12 @@ public abstract class BaseRealm extends AuthorizingRealm {
     @Value("${oauth2.user.autoCreate}")
     boolean autoCreateUser = false;
 
+    /**
+     * 获取授权信息，当前不基于Shiro验证权限，由微服务框架统一处理
+     *
+     * @param principalCollection 主体信息
+     * @return 空的授权信息
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 //        String userId = (String) principalCollection.getPrimaryPrincipal();

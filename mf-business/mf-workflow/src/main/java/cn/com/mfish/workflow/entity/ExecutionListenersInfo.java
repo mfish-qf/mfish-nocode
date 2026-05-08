@@ -3,6 +3,11 @@ package cn.com.mfish.workflow.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * @description: 节点执行监听器信息
+ * @author: mfish
+ * @date: 2026/3/24
+ */
 @Data
 @Schema(description = "节点监听器")
 public class ExecutionListenersInfo {

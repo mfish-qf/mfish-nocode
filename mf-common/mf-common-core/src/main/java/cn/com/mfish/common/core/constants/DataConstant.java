@@ -1,13 +1,17 @@
 package cn.com.mfish.common.core.constants;
 
 /**
- * @description: 常量
+ * @description: 数据相关常量
  * @author: mfish
  * @date: 2023/3/21
  */
 public class DataConstant {
+    /** Oracle行号别名 */
     public static final String ORACLE_ROW = "ROWNUM_";
 
+    /**
+     * @description: 数据库字段类型常量
+     */
     public static class DataType {
         public static final String ARRAY = "ARRAY";
         public static final String TEXT = "TEXT";

@@ -40,14 +40,29 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper, DemoLeaveApply> implements DemoLeaveApplyService {
+    /** 远程工作流服务 */
     @Resource
     private RemoteWorkflowService remoteWorkflowService;
 
+    /**
+     * 分页查询请假申请列表
+     *
+     * @param reqDemoLeaveApply 请假申请请求参数
+     * @param reqPage           分页参数
+     * @return 返回分页结果
+     */
     @Override
     public Result<PageResult<DemoLeaveApply>> queryPageList(ReqDemoLeaveApply reqDemoLeaveApply, ReqPage reqPage) {
         return Result.ok(new PageResult<>(queryList(reqDemoLeaveApply, reqPage)), "请假申请审批Demo-查询成功!");
     }
 
+    /**
+     * 构建查询条件并获取请假申请列表
+     *
+     * @param reqDemoLeaveApply 请假申请请求参数
+     * @param reqPage           分页参数
+     * @return 返回请假申请列表
+     */
     private List<DemoLeaveApply> queryList(ReqDemoLeaveApply reqDemoLeaveApply, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         LambdaQueryWrapper<DemoLeaveApply> lambdaQueryWrapper = new LambdaQueryWrapper<DemoLeaveApply>()
@@ -58,6 +73,12 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return list(lambdaQueryWrapper);
     }
 
+    /**
+     * 添加请假申请，自动根据起止时间计算请假天数
+     *
+     * @param demoLeaveApply 请假申请对象
+     * @return 返回添加结果
+     */
     @Override
     public Result<DemoLeaveApply> add(DemoLeaveApply demoLeaveApply) {
         demoLeaveApply.setAuditState(-1);
@@ -76,6 +97,12 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.fail(demoLeaveApply, "错误:请假申请审批Demo-添加失败!");
     }
 
+    /**
+     * 编辑请假申请，仅未提交审批的记录允许编辑
+     *
+     * @param demoLeaveApply 请假申请对象
+     * @return 返回编辑结果
+     */
     @Override
     public Result<DemoLeaveApply> edit(DemoLeaveApply demoLeaveApply) {
         DemoLeaveApply exist = getById(demoLeaveApply.getId());
@@ -102,6 +129,12 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.fail(demoLeaveApply, "错误:请假申请审批Demo-编辑失败!");
     }
 
+    /**
+     * 删除请假申请，若该申请已进入审批流程则同步删除流程实例
+     *
+     * @param id 请假申请ID
+     * @return 返回删除结果
+     */
     @Override
     @Transactional
     public Result<Boolean> delete(String id) {
@@ -121,6 +154,12 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.fail(false, "错误:请假申请审批Demo-删除失败!");
     }
 
+    /**
+     * 批量删除请假申请，逐条执行删除逻辑
+     *
+     * @param ids 批量ID，多个ID以逗号分隔
+     * @return 返回删除结果
+     */
     @Override
     @Transactional
     public Result<Boolean> deleteBatch(String ids) {
@@ -134,17 +173,36 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.ok(true, "请假申请审批Demo-批量删除成功!");
     }
 
+    /**
+     * 通过id查询请假申请详情
+     *
+     * @param id 请假申请ID
+     * @return 返回请假申请对象
+     */
     @Override
     public Result<DemoLeaveApply> queryById(String id) {
         DemoLeaveApply demoLeaveApply = getById(id);
         return Result.ok(demoLeaveApply, "请假申请审批Demo-查询成功!");
     }
 
+    /**
+     * 导出请假申请数据到Excel
+     *
+     * @param reqDemoLeaveApply 请假申请请求参数
+     * @param reqPage           分页参数
+     * @throws IOException IO异常
+     */
     @Override
     public void export(ReqDemoLeaveApply reqDemoLeaveApply, ReqPage reqPage) throws IOException {
         ExcelUtils.write("请假申请审批Demo_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), queryList(reqDemoLeaveApply, reqPage));
     }
 
+    /**
+     * 提交请假申请审批，更新状态并启动工作流流程
+     *
+     * @param id 请假申请ID
+     * @return 返回提交结果
+     */
     @Override
     @Transactional
     public Result<DemoLeaveApply> submit(String id) {
@@ -163,6 +221,12 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.ok(demoLeaveApply, "提交审批成功!");
     }
 
+    /**
+     * 撤回请假申请审批，删除流程实例并恢复申请状态
+     *
+     * @param id 请假申请ID
+     * @return 返回撤回结果
+     */
     @Override
     @Transactional
     public Result<DemoLeaveApply> revoke(String id) {
@@ -184,6 +248,14 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.ok(demoLeaveApply, "撤回审批成功!");
     }
 
+    /**
+     * 审批回调处理，根据审批结果更新请假申请状态
+     *
+     * @param id         请假申请ID
+     * @param auditState 审批状态（1-通过，2-驳回，null-取消）
+     * @param result     工作流完成结果
+     * @return 返回审批结果
+     */
     @Override
     public Result<String> audit(String id, Integer auditState, WorkflowCompleteResult result) {
         DemoLeaveApply demoLeaveApply = getById(id);
@@ -197,6 +269,12 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
         return Result.ok(id, "审批操作成功!");
     }
 
+    /**
+     * 启动请假申请工作流流程
+     * <p>将请假天数作为流程参数传入，用于条件分支判断</p>
+     *
+     * @param demoLeaveApply 请假申请对象
+     */
     private void startProcess(DemoLeaveApply demoLeaveApply) {
         Map<String, Object> param = new HashMap<>();
         param.put("leaveDays",demoLeaveApply.getLeaveDays());

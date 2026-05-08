@@ -13,6 +13,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import java.util.Map;
 
 /**
+ * @description: 多认证方式领域分发器，根据登录类型选择对应的Realm进行认证
  * @author: mfish
  * @date: 2020/2/10 19:21
  */

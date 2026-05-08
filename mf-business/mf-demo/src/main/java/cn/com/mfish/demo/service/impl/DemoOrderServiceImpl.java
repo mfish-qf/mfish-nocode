@@ -25,9 +25,16 @@ import java.util.List;
  */
 @Service
 public class DemoOrderServiceImpl extends ServiceImpl<DemoOrderMapper, DemoOrder> implements DemoOrderService {
+    /** 订单明细Mapper */
     @Resource
     DemoOrderDetailMapper demoOrderDetailMapper;
 
+    /**
+     * 添加销售订单及其明细，使用事务保证数据一致性
+     *
+     * @param demoOrder 销售订单对象（包含订单明细）
+     * @return 返回添加结果
+     */
     @Override
     @Transactional
     public Result<DemoOrder> addOrder(DemoOrder demoOrder) {
@@ -40,6 +47,12 @@ public class DemoOrderServiceImpl extends ServiceImpl<DemoOrderMapper, DemoOrder
         return Result.fail(demoOrder, "错误:销售订单-添加失败!");
     }
 
+    /**
+     * 编辑销售订单，先删除原有明细再重新插入新明细
+     *
+     * @param demoOrder 销售订单对象（包含订单明细）
+     * @return 返回编辑结果
+     */
     @Override
     @Transactional
     public Result<DemoOrder> editOrder(DemoOrder demoOrder) {
@@ -55,6 +68,12 @@ public class DemoOrderServiceImpl extends ServiceImpl<DemoOrderMapper, DemoOrder
         return Result.fail(demoOrder, "错误:销售订单-编辑失败!");
     }
 
+    /**
+     * 通过id删除销售订单及其关联的订单明细
+     *
+     * @param id 订单ID
+     * @return 返回删除结果
+     */
     @Override
     @Transactional
     public Result<Boolean> deleteOrder(String id) {
@@ -67,6 +86,12 @@ public class DemoOrderServiceImpl extends ServiceImpl<DemoOrderMapper, DemoOrder
         return Result.fail(false, "错误:销售订单-删除失败!");
     }
 
+    /**
+     * 批量删除销售订单及其关联的订单明细
+     *
+     * @param ids 批量订单ID，多个ID以逗号分隔
+     * @return 返回删除结果
+     */
     @Override
     public Result<Boolean> deleteBatchOrder(String ids) {
         List<String> idArray = Arrays.asList(ids.split(","));

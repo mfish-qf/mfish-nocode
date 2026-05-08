@@ -21,6 +21,9 @@
 
 package cn.com.mfish.oauth.oltu.exception;
 
+/**
+ * OAuth 系统级异常，表示协议处理过程中发生的非业务错误。
+ */
 public class OAuthSystemException extends Exception {
 
     public OAuthSystemException() {

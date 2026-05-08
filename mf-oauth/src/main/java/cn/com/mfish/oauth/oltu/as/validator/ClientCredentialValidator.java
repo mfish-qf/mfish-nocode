@@ -25,6 +25,9 @@ import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.validators.AbstractValidator;
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * OAuth 客户端凭证模式令牌请求校验器。
+ */
 public class ClientCredentialValidator extends AbstractValidator<HttpServletRequest> {
     public ClientCredentialValidator() {
         requiredParams.add(OAuth.OAUTH_GRANT_TYPE);

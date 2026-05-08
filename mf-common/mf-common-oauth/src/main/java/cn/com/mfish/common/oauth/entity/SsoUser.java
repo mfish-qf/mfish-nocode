@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
+ * @description: 用户完整信息实体（包含密码等敏感信息）
  * @author: mfish
  * @date: 2020/2/13 17:29
  */

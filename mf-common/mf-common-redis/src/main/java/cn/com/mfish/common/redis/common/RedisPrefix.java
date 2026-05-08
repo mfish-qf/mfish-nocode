@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.enums.DeviceType;
 import cn.com.mfish.common.core.utils.StringUtils;
 
 /**
+ * @description: Redis缓存Key前缀常量及构建方法
  * @author: mfish
  * @date: 2020/2/14 15:46
  */

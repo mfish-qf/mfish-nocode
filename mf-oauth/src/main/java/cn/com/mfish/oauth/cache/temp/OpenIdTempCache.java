@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 
 /**
+ * @description: 微信openId临时缓存，通过openId获取关联的用户ID
  * @author: mfish
  * @date: 2020/2/29 15:07
  */

@@ -24,9 +24,16 @@ import java.util.List;
 @Service
 @RocketMQMessageListener(nameServer = "${rocketmq.consumer.nameServer}", topic = "${rocketmq.consumer.topic}", consumerGroup = "${rocketmq.consumer.group}")
 public class JobConsumer implements RocketMQListener<JobLog> {
+    /** 远程调度服务 */
     @Resource
     RemoteSchedulerService remoteSchedulerService;
 
+    /**
+     * 接收并执行RocketMQ中的定时任务消息
+     * <p>通过反射调用任务指定的类和方法，执行完成后回调更新任务状态</p>
+     *
+     * @param jobLog 任务日志对象，包含任务执行的类名、方法名和参数等信息
+     */
     @Override
     public void onMessage(JobLog jobLog) {
         JobStatus jobStatus = JobStatus.执行成功;

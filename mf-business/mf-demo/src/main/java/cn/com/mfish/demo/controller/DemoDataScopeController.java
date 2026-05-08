@@ -61,6 +61,13 @@ public class DemoDataScopeController {
         return demoDataScopeService.list();
     }
 
+    /**
+     * 查询当前租户数据（数据权限过滤）
+     *
+     * @param reqDemoDataScope 数据权限样例请求参数
+     * @param reqPage          分页参数
+     * @return 返回当前租户下的数据权限列表
+     */
     @Operation(summary = "查询当前租户数据", description = "查询当前租户数据")
     @GetMapping("/currentTenant")
     @RequiresPermissions("demo:demoDataScope:query")
@@ -69,6 +76,13 @@ public class DemoDataScopeController {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询当前租户数据成功!");
     }
 
+    /**
+     * 查询当前组织及其子组织数据（组织数据权限过滤）
+     *
+     * @param reqDemoDataScope 数据权限样例请求参数
+     * @param reqPage          分页参数
+     * @return 返回当前组织及其子组织下的数据列表
+     */
     @Operation(summary = "查询当前组织及其子组织数据", description = "查询当前组织及其子组织数据")
     @GetMapping("/currentOrg")
     @RequiresPermissions("demo:demoDataScope:query")
@@ -77,6 +91,13 @@ public class DemoDataScopeController {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询当前组织及其子组织数据成功!");
     }
 
+    /**
+     * 查询当前角色数据（角色数据权限过滤）
+     *
+     * @param reqDemoDataScope 数据权限样例请求参数
+     * @param reqPage          分页参数
+     * @return 返回当前角色下的数据列表
+     */
     @Operation(summary = "查询当前角色数据", description = "查询当前角色数据")
     @GetMapping("/currentRole")
     @RequiresPermissions("demo:demoDataScope:query")
@@ -85,6 +106,13 @@ public class DemoDataScopeController {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询当前角色数据成功!");
     }
 
+    /**
+     * 查询指定组织编码及其下级组织数据
+     *
+     * @param reqDemoDataScope 数据权限样例请求参数
+     * @param reqPage          分页参数
+     * @return 返回组织编码为admin或mfish及其下级组织的数据列表
+     */
     @Operation(summary = "查询组织编码为admin或mfish及其下级组织数据", description = "查询组织编码为admin或mfish及其下级组织数据")
     @GetMapping("/adminOrg")
     @RequiresPermissions("demo:demoDataScope:query")
@@ -93,6 +121,13 @@ public class DemoDataScopeController {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询组织编码为admin或mfish及其下级组织数据成功!");
     }
 
+    /**
+     * 查询指定角色编码的数据
+     *
+     * @param reqDemoDataScope 数据权限样例请求参数
+     * @param reqPage          分页参数
+     * @return 返回角色编码为manage或superAdmin的数据列表
+     */
     @Operation(summary = "查询角色编码为manage或superAdmin数据", description = "查询角色编码为manage或superAdmin数据")
     @GetMapping("/fixRole")
     @RequiresPermissions("demo:demoDataScope:query")
@@ -101,6 +136,14 @@ public class DemoDataScopeController {
         return Result.ok(new PageResult<>(queryList(reqDemoDataScope, reqPage)), "查询角色编码为manage或superAdmin数据成功!");
     }
 
+    /**
+     * 组合数据权限查询：当前租户下指定角色编码的数据
+     * <p>同时使用租户和角色两种数据权限进行过滤</p>
+     *
+     * @param reqDemoDataScope 数据权限样例请求参数
+     * @param reqPage          分页参数
+     * @return 返回当前租户下角色编码为manage或superAdmin的数据列表
+     */
     @Operation(summary = "查询当前租户下角色编码为manage或superAdmin数据", description = "查询当前租户下角色编码为manage或superAdmin数据")
     @GetMapping("/mixScope")
     @RequiresPermissions("demo:demoDataScope:query")

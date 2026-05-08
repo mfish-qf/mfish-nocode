@@ -30,6 +30,13 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, DictCategory> implements DictCategoryService {
+    /**
+     * 分页查询分类树（先查一级分类，再查子分类构建树）
+     *
+     * @param reqDictCategory 查询条件
+     * @param reqPage         分页参数
+     * @return 分类树分页结果
+     */
     @Override
     public Result<PageResult<DictCategory>> queryCategoryTree(ReqDictCategory reqDictCategory, ReqPage reqPage) {
         List<Integer> levels = buildParentLevel(reqDictCategory);
@@ -43,6 +50,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return Result.ok(result, "分类树-查询成功!");
     }
 
+    /**
+     * 查询分类树（不分页）
+     *
+     * @param reqDictCategory 查询条件
+     * @return 分类树列表
+     */
     @Override
     public Result<List<DictCategory>> queryCategoryTree(ReqDictCategory reqDictCategory) {
         List<DictCategory> list = queryCategory(reqDictCategory);
@@ -51,23 +64,50 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return Result.ok(trees, "分类树-查询成功!");
     }
 
+    /**
+     * 查询分类列表（扁平结构）
+     *
+     * @param reqDictCategory 查询条件
+     * @return 分类列表
+     */
     @Override
     public List<DictCategory> queryCategory(ReqDictCategory reqDictCategory) {
         List<Integer> list = buildParentLevel(reqDictCategory);
         return baseMapper.queryCategory(reqDictCategory, list);
     }
 
+    /**
+     * 分页查询一级分类列表
+     *
+     * @param reqDictCategory 查询条件
+     * @param reqPage         分页参数
+     * @return 一级分类分页结果
+     */
     @Override
     public PageResult<DictCategory> queryOneLevelCategory(ReqDictCategory reqDictCategory, ReqPage reqPage) {
         List<Integer> list = buildParentLevel(reqDictCategory);
         return queryOneLevelCategory(reqDictCategory, reqPage, list);
     }
 
+    /**
+     * 根据父级等级列表分页查询一级分类
+     *
+     * @param reqDictCategory 查询条件
+     * @param reqPage         分页参数
+     * @param list            父级等级列表
+     * @return 一级分类分页结果
+     */
     public PageResult<DictCategory> queryOneLevelCategory(ReqDictCategory reqDictCategory, ReqPage reqPage, List<Integer> list) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         return new PageResult<>(baseMapper.queryOneLevelCategory(reqDictCategory, list));
     }
 
+    /**
+     * 构建父级等级列表，用于查询满足条件的父级节点
+     *
+     * @param reqDictCategory 查询条件
+     * @return 父级等级列表
+     */
     private List<Integer> buildParentLevel(ReqDictCategory reqDictCategory) {
         //查询满足条件的父级节点等级
         Integer level = baseMapper.queryMaxCategoryLevel(reqDictCategory);
@@ -80,6 +120,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return list;
     }
 
+    /**
+     * 新增分类
+     *
+     * @param category 分类对象
+     * @return 新增结果
+     */
     @Override
     public Result<DictCategory> insertCategory(DictCategory category) {
         Result<DictCategory> result = verifyCategory(category);
@@ -92,6 +138,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return Result.fail("错误:分类-添加失败!");
     }
 
+    /**
+     * 校验分类信息（父节点不能设为自身，分类编码不允许重复）
+     *
+     * @param dictCategory 分类对象
+     * @return 校验结果
+     */
     private Result<DictCategory> verifyCategory(DictCategory dictCategory) {
         //parentId为空时，设置为空字符串
         if (StringUtils.isEmpty(dictCategory.getParentId())) {
@@ -107,6 +159,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return Result.ok("分类校验成功");
     }
 
+    /**
+     * 删除分类（包含子节点时不允许删除）
+     *
+     * @param categoryId 分类ID
+     * @return 删除结果
+     */
     @Override
     @Transactional
     public Result<Boolean> deleteCategory(String categoryId) {
@@ -123,6 +181,12 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return Result.fail("错误:分类-删除失败!");
     }
 
+    /**
+     * 更新分类（父节点变更时重新生成树编码序列）
+     *
+     * @param category 分类对象
+     * @return 更新结果
+     */
     @Override
     @Transactional
     public Result<DictCategory> updateCategory(DictCategory category) {
@@ -158,6 +222,13 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
 
     }
 
+    /**
+     * 通过分类编码查询分类树
+     *
+     * @param fixCode   固定编码
+     * @param direction 查询方向
+     * @return 分类树列表
+     */
     @Override
     public List<DictCategory> queryCategoryTreeByCode(String fixCode, TreeDirection direction) {
         if (StringUtils.isEmpty(fixCode)) {
@@ -167,6 +238,13 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return queryCategoryTree(category, direction);
     }
 
+    /**
+     * 通过分类编码查询分类列表（扁平结构）
+     *
+     * @param fixCode   固定编码
+     * @param direction 查询方向
+     * @return 分类列表
+     */
     @Override
     public List<DictCategory> queryCategoryListByCode(String fixCode, TreeDirection direction) {
         if (StringUtils.isEmpty(fixCode)) {
@@ -177,6 +255,13 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
 
     }
 
+    /**
+     * 通过分类ID查询分类树
+     *
+     * @param id        分类ID
+     * @param direction 查询方向
+     * @return 分类树列表
+     */
     @Override
     public List<DictCategory> queryCategoryTreeById(String id, TreeDirection direction) {
         if (StringUtils.isEmpty(id)) {
@@ -186,6 +271,13 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return queryCategoryTree(category, direction);
     }
 
+    /**
+     * 通过分类ID查询分类列表（扁平结构）
+     *
+     * @param id        分类ID
+     * @param direction 查询方向
+     * @return 分类列表
+     */
     @Override
     public List<DictCategory> queryCategoryListById(String id, TreeDirection direction) {
         if (StringUtils.isEmpty(id)) {
@@ -195,12 +287,27 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return queryCategory(category, direction);
     }
 
+    /**
+     * 判断分类ID是否在指定编码的分类范围内
+     *
+     * @param categoryId 分类ID
+     * @param fixCode    固定编码
+     * @param direction  查询方向
+     * @return 是否包含
+     */
     @Override
     public boolean includeCategory(String categoryId, String fixCode, TreeDirection direction) {
         List<DictCategory> list = queryCategoryListByCode(fixCode, direction);
         return list.stream().anyMatch((item) -> item.getId().equals(categoryId));
     }
 
+    /**
+     * 查询分类树（根据方向构建不同范围的树结构）
+     *
+     * @param category  分类对象
+     * @param direction 查询方向
+     * @return 分类树列表
+     */
     private List<DictCategory> queryCategoryTree(DictCategory category, TreeDirection direction) {
         if (category == null) {
             return new ArrayList<>();
@@ -215,6 +322,13 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         return categoryTree;
     }
 
+    /**
+     * 根据方向查询分类列表（支持向上、向下、当前、全部方向）
+     *
+     * @param category  分类对象
+     * @param direction 查询方向
+     * @return 分类列表
+     */
     private List<DictCategory> queryCategory(DictCategory category, TreeDirection direction) {
         if (category == null) {
             return new ArrayList<>();

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * @description: 登录控制器，处理用户登录、短信验证码发送和账号解锁等操作
  * @author: mfish
  * @date: 2020/2/11 11:13
  */

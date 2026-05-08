@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
+ * @description: 授权码校验器基类，提供从Redis获取授权码信息的通用方法
  * @author: mfish
  * @date: 2020/2/17 15:39
  */

@@ -35,26 +35,63 @@ public class DateUtils {
         return dateTimeNow(YYYY_MM_DD);
     }
 
+    /**
+     * 获取当前时间，格式为yyyy-MM-dd HH:mm:ss
+     *
+     * @return 当前时间字符串
+     */
     public static String getTime() {
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS);
     }
 
+    /**
+     * 获取当前时间戳字符串，格式为yyyyMMddHHmmss
+     *
+     * @return 时间戳字符串
+     */
     public static String dateTimeNow() {
         return dateTimeNow(YYYYMMDDHHMMSS);
     }
 
+    /**
+     * 按指定格式获取当前时间字符串
+     *
+     * @param format 日期格式
+     * @return 格式化后的当前时间字符串
+     */
     public static String dateTimeNow(final String format) {
         return parseDateToStr(format, new Date());
     }
 
+    /**
+     * 将日期格式化为yyyy-MM-dd字符串
+     *
+     * @param date 日期对象
+     * @return 格式化后的日期字符串
+     */
     public static String dateTime(final Date date) {
         return parseDateToStr(YYYY_MM_DD, date);
     }
 
+    /**
+     * 将日期按指定格式转换为字符串
+     *
+     * @param format 日期格式
+     * @param date   日期对象
+     * @return 格式化后的日期字符串
+     */
     public static String parseDateToStr(final String format, final Date date) {
         return new SimpleDateFormat(format).format(date);
     }
 
+    /**
+     * 将字符串按指定格式解析为日期对象
+     *
+     * @param format 日期格式
+     * @param ts     日期字符串
+     * @return 解析后的日期对象
+     * @throws MyRuntimeException 解析失败时抛出异常
+     */
     public static Date dateTime(final String format, final String ts) {
         try {
             return new SimpleDateFormat(format).parse(ts);

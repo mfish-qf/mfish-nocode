@@ -17,6 +17,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class RemoteStorageFallBack implements FallbackFactory<RemoteStorageService> {
+    /**
+     * 创建文件存储服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的文件存储服务实例
+     */
     @Override
     public RemoteStorageService create(Throwable cause) {
         log.error("错误:文件接口调用异常", cause);

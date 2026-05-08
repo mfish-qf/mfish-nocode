@@ -26,26 +26,26 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>4.0.5</spring-boot.version>
-        <spring-boot-admin.version>4.0.2</spring-boot-admin.version>
+        <spring-boot.version>4.0.6</spring-boot.version>
+        <spring-boot-admin.version>4.0.4</spring-boot-admin.version>
         <spring-cloud.version>2025.1.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
-        <spring-ai.version>2.0.0-M4</spring-ai.version>
-        <swagger.doc.version>3.0.1</swagger.doc.version>
-        <swagger.core.version>2.2.42</swagger.core.version>
+        <spring-ai.version>2.0.0-M5</spring-ai.version>
+        <swagger.doc.version>3.0.3</swagger.doc.version>
+        <swagger.core.version>2.2.47</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
-        <mybatis-spring-boot.version>3.0.5</mybatis-spring-boot.version>
-        <pagehelper.boot.version>2.1.1</pagehelper.boot.version>
+        <mybatis-spring-boot.version>4.0.1</mybatis-spring-boot.version>
+        <pagehelper.boot.version>4.0.0</pagehelper.boot.version>
         <jsqlparser.version>5.3</jsqlparser.version>
-        <druid.version>1.2.27</druid.version>
+        <druid.version>1.2.28</druid.version>
         <dynamic-ds.version>4.5.0</dynamic-ds.version>
         <commons.io.version>2.21.0</commons.io.version>
         <commons.text.version>1.15.0</commons.text.version>
         <freemarker.version>2.3.34</freemarker.version>
         <fastjson.version>2.0.60</fastjson.version>
         <zxing.version>3.5.4</zxing.version>
-        <shiro.version>2.1.0</shiro.version>
+        <shiro.version>3.0.0-alpha-1</shiro.version>
         <wechat.version>4.7.9.B</wechat.version>
         <aliyun-oss.version>3.18.3</aliyun-oss.version>
         <qiniu-sdk.version>7.19.0</qiniu-sdk.version>
@@ -184,7 +184,7 @@
             <!-- Swagger 依赖配置 -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations-jakarta</artifactId>
+                <artifactId>swagger-annotations</artifactId>
                 <version>${swagger.core.version}</version>
             </dependency>
             <dependency>
@@ -272,35 +272,6 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
-                <classifier>jakarta</classifier>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.shiro</groupId>
-                        <artifactId>shiro-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.shiro</groupId>
-                        <artifactId>shiro-web</artifactId>
-                    </exclusion>
-                </exclusions>
-                <version>${shiro.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-core</artifactId>
-                <classifier>jakarta</classifier>
-                <version>${shiro.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-web</artifactId>
-                <classifier>jakarta</classifier>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.shiro</groupId>
-                        <artifactId>shiro-core</artifactId>
-                    </exclusion>
-                </exclusions>
                 <version>${shiro.version}</version>
             </dependency>
             <dependency>

@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class RemoteLogFallback implements FallbackFactory<RemoteLogService> {
+    /**
+     * 创建日志服务降级实例
+     *
+     * @param cause 导致降级的异常原因
+     * @return 降级后的日志服务实例
+     */
     @Override
     public RemoteLogService create(Throwable cause) {
         log.error("错误:日志服务调用异常", cause);

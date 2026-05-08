@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "mfish")
 public class ServiceProperties {
+    /** 服务版本号 */
     private String version;
+    /** 服务类型（cloud/boot） */
     private String type = "cloud";
 }

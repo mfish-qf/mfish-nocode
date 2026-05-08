@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * @description: 用户基础信息
  * @author: mfish
  * @date: 2020/2/18 17:48
  */

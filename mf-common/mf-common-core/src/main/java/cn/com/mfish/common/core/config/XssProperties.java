@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @description: XSS防护配置属性
  * @author: mfish
  * @date: 2021/8/12 10:08
  */

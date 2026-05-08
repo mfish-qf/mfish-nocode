@@ -27,6 +27,12 @@ public class StorageServiceImpl extends ServiceImpl<StorageMapper, StorageInfo> 
     @Resource
     TokenValidator tokenValidator;
 
+    /**
+     * 根据文件key查询文件存储信息
+     *
+     * @param fileKey 文件唯一标识key
+     * @return 返回文件存储信息
+     */
     @Override
     public Result<StorageInfo> queryByKey(String fileKey) {
         StorageInfo storageInfo = baseMapper.selectOne(new LambdaQueryWrapper<StorageInfo>().eq(StorageInfo::getFileKey, fileKey));
@@ -36,6 +42,12 @@ public class StorageServiceImpl extends ServiceImpl<StorageMapper, StorageInfo> 
         return Result.ok(storageInfo, "获取文件信息-查询成功!");
     }
 
+    /**
+     * 逻辑删除文件，将删除标记置为1
+     *
+     * @param id 文件唯一性ID
+     * @return 返回逻辑删除操作结果
+     */
     @Override
     public Result<Boolean> logicDelete(String id) {
         if (baseMapper.updateById(new StorageInfo().setId(id).setDelFlag(1)) > 0) {
@@ -44,6 +56,13 @@ public class StorageServiceImpl extends ServiceImpl<StorageMapper, StorageInfo> 
         return Result.fail(false, "错误:文件存储-逻辑删除失败!");
     }
 
+    /**
+     * 根据文件key获取文件资源，私有文件需要校验token后才能访问
+     *
+     * @param key 文件唯一标识key
+     * @return 返回文件资源响应实体
+     * @throws OAuthValidateException 私有文件token校验失败时抛出异常
+     */
     @Override
     public ResponseEntity<org.springframework.core.io.Resource> fetch(String key) {
         if (key == null) {

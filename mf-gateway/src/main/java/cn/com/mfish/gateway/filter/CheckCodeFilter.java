@@ -29,12 +29,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author: mfish
+ * @description: 验证码校验过滤器，用于在网关层拦截需要验证码校验的请求
  * @date: 2021/8/12 9:59
  */
 @Component
 @Slf4j
 public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
 
+    /**
+     * 验证码校验状态枚举
+     */
     enum CheckStatus {
         需要校验,
         无需校验,
@@ -46,6 +50,12 @@ public class CheckCodeFilter extends AbstractGatewayFilterFactory<Object> {
     @Resource
     CaptchaProperties captchaProperties;
 
+    /**
+     * 创建验证码校验过滤器，根据配置判断请求是否需要进行验证码校验
+     *
+     * @param config 过滤器配置
+     * @return 网关过滤器实例
+     */
     @Override
     public @NonNull GatewayFilter apply(@NonNull Object config) {
         return (exchange, chain) -> {

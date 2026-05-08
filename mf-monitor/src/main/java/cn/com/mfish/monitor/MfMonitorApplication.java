@@ -14,6 +14,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableAdminServer
 @Slf4j
 public class MfMonitorApplication {
+    /**
+     * 应用程序入口方法，启动摸鱼监控中心Spring Boot应用
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         SpringApplication.run(MfMonitorApplication.class, args);
         log.info("""

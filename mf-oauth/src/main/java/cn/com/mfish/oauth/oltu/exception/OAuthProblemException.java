@@ -29,6 +29,9 @@ import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * OAuth 协议错误异常，封装错误码、描述、跳转地址和响应状态等错误上下文。
+ */
 public class OAuthProblemException extends Exception {
 
     @Getter

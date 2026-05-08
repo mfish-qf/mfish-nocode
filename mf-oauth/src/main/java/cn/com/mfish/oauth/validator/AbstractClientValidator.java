@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
+ * @description: 客户端校验器基类，提供从缓存或数据库获取客户端信息的通用方法
  * @author: mfish
  * @date: 2020/2/16 18:10
  */

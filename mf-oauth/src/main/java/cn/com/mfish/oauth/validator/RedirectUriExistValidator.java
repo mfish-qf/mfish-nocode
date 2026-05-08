@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
+ * @description: 回调地址校验器，验证请求的回调地址是否与客户端配置的地址匹配
  * @author: mfish
  * @date: 2020/2/16 17:57
  */

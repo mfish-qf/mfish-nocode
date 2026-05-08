@@ -1,11 +1,14 @@
 package cn.com.mfish.workflow.service.impl;
 
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.workflow.api.entity.*;
 import cn.com.mfish.common.workflow.api.enums.FlowKey;
 import cn.com.mfish.common.workflow.api.req.ReqAllTask;
@@ -68,6 +71,8 @@ public class FlowableServiceImpl implements FlowableService {
     private final ProcessEngineConfiguration processEngineConfiguration;
     @Resource
     private FlowManageMapper flowManageMapper;
+    @Resource
+    private RemoteUserService remoteUserService;
 
     /**
      * 项目启动后自动执行初始化流程任务
@@ -98,6 +103,12 @@ public class FlowableServiceImpl implements FlowableService {
         log.info("项目启动后自动执行初始化流程任务完成！");
     }
 
+    /**
+     * 根据流程管理ID部署流程
+     *
+     * @param id 流程管理记录ID
+     * @return 部署后的流程版本号
+     */
     @Override
     public Integer deployProcess(String id) {
         FlowManage flowManage = flowManageMapper.selectById(id);
@@ -107,6 +118,16 @@ public class FlowableServiceImpl implements FlowableService {
         return deployProcess(flowManage.getFlowKey(), flowManage.getName(), flowManage.getRemark(), flowManage.getFlowConfig());
     }
 
+    /**
+     * 部署流程定义到 Flowable 引擎
+     * 将前端流程配置转换为 BPMN 模型并部署
+     *
+     * @param flowKey     流程定义Key
+     * @param name        流程名称
+     * @param desc        流程描述
+     * @param flowConfig  前端流程配置JSON字符串
+     * @return 部署后的流程版本号
+     */
     @Override
     public Integer deployProcess(String flowKey, String name, String desc, String flowConfig) {
         if (StringUtils.isEmpty(flowKey) || StringUtils.isEmpty(flowConfig)) {
@@ -127,6 +148,13 @@ public class FlowableServiceImpl implements FlowableService {
         return processDefinition.getVersion();
     }
 
+    /**
+     * 删除流程部署
+     * 如果存在未完成的流程实例则不允许删除
+     *
+     * @param flowKey 流程定义Key
+     * @param version 流程版本号（为null时删除所有版本）
+     */
     @Override
     public void deleteDeploy(String flowKey, Integer version) {
         ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery()
@@ -155,6 +183,14 @@ public class FlowableServiceImpl implements FlowableService {
         }
     }
 
+    /**
+     * 启动流程实例
+     * 设置启动人、流程变量，并根据流程参数启动对应的流程定义
+     *
+     * @param param 流程启动参数，包含流程Key、业务ID、回调信息等
+     * @param <T>   业务ID类型
+     * @return 流程实例ID
+     */
     @Override
     public <T> String startProcess(FlowableParam<T> param) {
         if (param.getKey() == null) {
@@ -199,6 +235,13 @@ public class FlowableServiceImpl implements FlowableService {
         }
     }
 
+    /**
+     * 分页查询运行中的流程实例列表
+     *
+     * @param reqProcess 流程查询参数（支持按流程Key、业务Key等条件筛选）
+     * @param reqPage    分页参数
+     * @return 流程实例分页结果
+     */
     @Override
     public PageResult<MfProcess> getProcessList(ReqProcess reqProcess, ReqPage reqPage) {
         if (FlowKey.UNKNOWN.toString().equals(reqProcess.getFlowKey())) {
@@ -238,6 +281,13 @@ public class FlowableServiceImpl implements FlowableService {
         ).collect(Collectors.toList()), reqPage.getPageNum(), reqPage.getPageSize(), query.count());
     }
 
+    /**
+     * 分页查询历史流程实例列表（包括已结束的流程）
+     *
+     * @param reqProcess 流程查询参数
+     * @param reqPage    分页参数
+     * @return 历史流程实例分页结果
+     */
     @Override
     public PageResult<MfProcess> getHistoryProcessList(ReqProcess reqProcess, ReqPage reqPage) {
         if (FlowKey.UNKNOWN.toString().equals(reqProcess.getFlowKey())) {
@@ -279,12 +329,27 @@ public class FlowableServiceImpl implements FlowableService {
         ).collect(Collectors.toList()), reqPage.getPageNum(), reqPage.getPageSize(), query.count());
     }
 
+    /**
+     * 判断流程实例是否已存在
+     *
+     * @param reqProcess 流程查询参数
+     * @return true表示流程实例已存在
+     */
     @Override
     public boolean existProcess(ReqProcess reqProcess) {
         return getProcessList(reqProcess, new ReqPage()).getTotal() > 0;
     }
 
 
+    /**
+     * 删除流程实例（支持通过流程实例ID或业务Key删除）
+     * 非超管用户只能删除自己启动的流程
+     *
+     * @param processInstanceId 流程实例ID（与businessKey二选一）
+     * @param businessKey       业务Key（与processInstanceId二选一）
+     * @param reason            删除原因
+     * @return 删除结果
+     */
     @Override
     @Transactional
     public Result<String> delProcess(String processInstanceId, String businessKey, String reason) {
@@ -392,6 +457,12 @@ public class FlowableServiceImpl implements FlowableService {
         return buildFlowImage(bpmnModel, activeIds);
     }
 
+    /**
+     * 获取流程定义信息
+     *
+     * @param processInstanceId 流程实例ID
+     * @return 流程定义信息（包含流程Key、版本号、定义ID）
+     */
     @Override
     public FlowDefinition getFlowDefinition(String processInstanceId) {
         HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery()
@@ -407,6 +478,12 @@ public class FlowableServiceImpl implements FlowableService {
                 .setId(pi.getProcessDefinitionId());
     }
 
+    /**
+     * 获取流程实例中当前活跃的（未完成的）任务定义Key列表
+     *
+     * @param processInstanceId 流程实例ID
+     * @return 活跃任务定义Key列表
+     */
     @Override
     public List<String> getActiveDefinitionKeys(String processInstanceId) {
         List<HistoricTaskInstance> htiList = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).list();
@@ -518,6 +595,14 @@ public class FlowableServiceImpl implements FlowableService {
         return mfTasks;
     }
 
+    /**
+     * 分页查询当前用户待处理的任务列表
+     * 根据当前用户权限（候选人/候选组）过滤任务
+     *
+     * @param reqTask  任务查询参数（支持按任务名称、流程Key、时间范围等条件筛选）
+     * @param reqPage  分页参数
+     * @return 待处理任务分页结果
+     */
     @Override
     public PageResult<MfTask> getPendingTasks(ReqTask reqTask, ReqPage reqPage) {
         TaskQuery query = FlowAuthority.getAuthTaskQuery(taskService);
@@ -558,6 +643,7 @@ public class FlowableServiceImpl implements FlowableService {
                     .setStartTime(task.getCreateTime())
                     .setDescription(task.getDescription())
                     .setFormKey(task.getFormKey());
+            setUserInfo(task.getAssignee(), mfTask);
             setProcessKey(task.getProcessVariables(), mfTask);
             mfTasks.add(mfTask);
         }
@@ -565,6 +651,13 @@ public class FlowableServiceImpl implements FlowableService {
 
     }
 
+    /**
+     * 分页查询所有任务列表（包含当前用户有权限的所有历史任务）
+     *
+     * @param reqAllTask 全部任务查询参数
+     * @param reqPage    分页参数
+     * @return 任务分页结果
+     */
     @Override
     public PageResult<MfTask> getAllTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
         FlowAuthority auth = FlowAuthority.getFlowAuthority();
@@ -572,6 +665,14 @@ public class FlowableServiceImpl implements FlowableService {
         return buildPageResult(query, reqPage);
     }
 
+    /**
+     * 分页查询当前用户发起的任务列表
+     * 按流程启动人过滤，只返回当前登录用户发起的流程任务
+     *
+     * @param reqAllTask 任务查询参数
+     * @param reqPage    分页参数
+     * @return 任务分页结果
+     */
     @Override
     public PageResult<MfTask> getApplyTasks(ReqAllTask reqAllTask, ReqPage reqPage) {
         HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery()
@@ -581,6 +682,13 @@ public class FlowableServiceImpl implements FlowableService {
         return buildPageResult(query, reqPage);
     }
 
+    /**
+     * 构建历史任务分页结果
+     *
+     * @param query   历史任务查询对象
+     * @param reqPage 分页参数
+     * @return 任务分页结果
+     */
     private PageResult<MfTask> buildPageResult(HistoricTaskInstanceQuery query, ReqPage reqPage) {
         int first = (reqPage.getPageNum() - 1) * reqPage.getPageSize();
         List<HistoricTaskInstance> list = query.listPage(first, reqPage.getPageSize());
@@ -613,7 +721,25 @@ public class FlowableServiceImpl implements FlowableService {
                 .setFormKey(his.getFormKey())
                 .setEndTime(his.getEndTime());
         setProcessKey(his.getProcessVariables(), mfTask);
+        setUserInfo(his.getAssignee(), mfTask);
         return mfTask;
+    }
+
+    /**
+     * 设置任务办理人的用户信息（昵称、账号）
+     *
+     * @param assignee 办理人账号
+     * @param mfTask   任务对象，用于设置用户信息
+     */
+    private void setUserInfo(String assignee, MfTask mfTask) {
+        if (StringUtils.isEmpty(assignee)) {
+            return;
+        }
+        Result<UserInfo> userInfo = remoteUserService.getUserById(RPCConstants.INNER, assignee);
+        if (userInfo.isSuccess()) {
+            mfTask.setAssigneeName(userInfo.getData().getNickname());
+            mfTask.setAssigneeAccount(userInfo.getData().getAccount());
+        }
     }
 
     /**
@@ -630,6 +756,12 @@ public class FlowableServiceImpl implements FlowableService {
         return state;
     }
 
+    /**
+     * 查询当前用户任务统计（待办数、已完成数、已取消数）
+     *
+     * @param reqTask 任务查询参数
+     * @return 任务统计信息
+     */
     @Override
     public TaskTotal getTaskTotal(ReqTask reqTask) {
         FlowAuthority auth = FlowAuthority.getFlowAuthority();
@@ -699,6 +831,13 @@ public class FlowableServiceImpl implements FlowableService {
         return query.orderByTaskCreateTime().desc();
     }
 
+    /**
+     * 完成任务审批（通过或拒绝）
+     * 验证任务权限后设置办理人、添加审批意见并完成任务
+     *
+     * @param flowOperator 审批操作类型
+     * @param approveInfo  审批信息（包含任务ID和审批意见）
+     */
     @Override
     @Transactional
     public void completeTask(AuditOperator flowOperator, ApproveInfo approveInfo) {
@@ -714,6 +853,12 @@ public class FlowableServiceImpl implements FlowableService {
         identityService.setAuthenticatedUserId(null);
     }
 
+    /**
+     * 获取流程实例的所有审批意见
+     *
+     * @param processInstanceId 流程实例ID
+     * @return 审批意见列表
+     */
     @Override
     public List<AuditComment> getAuditComments(String processInstanceId) {
         List<HistoricTaskInstance> history = historyService
@@ -781,6 +926,12 @@ public class FlowableServiceImpl implements FlowableService {
         return Result.ok(taskMap, processDefinitionId);
     }
 
+    /**
+     * 从流程变量中提取流程Key并设置到任务对象中
+     *
+     * @param variables 流程变量Map
+     * @param mfTask    任务对象
+     */
     private void setProcessKey(Map<String, Object> variables, MfTask mfTask) {
         if (variables == null) {
             return;
@@ -804,25 +955,35 @@ public class FlowableServiceImpl implements FlowableService {
      * @return 审批意见列表
      */
     private List<AuditComment> buildAuditComment(List<Comment> comments, HistoricTaskInstance his) {
-        return comments.stream().map(comment ->
-                new AuditComment()
-                        .setTaskId(his.getId())
-                        .setProcessInstanceId(his.getProcessInstanceId())
-                        .setProcessDefinitionId(his.getProcessDefinitionId())
-                        .setTaskName(his.getName())
-                        .setAssignee(comment.getUserId())
-                        .setComment(comment.getFullMessage())
-                        .setTime(comment.getTime())
-                        .setType(comment.getType())
-        ).collect(Collectors.toList());
+        return comments.stream().map(comment -> {
+            AuditComment ac = new AuditComment()
+                    .setTaskId(his.getId())
+                    .setProcessInstanceId(his.getProcessInstanceId())
+                    .setProcessDefinitionId(his.getProcessDefinitionId())
+                    .setTaskName(his.getName())
+                    .setAssignee(comment.getUserId())
+                    .setComment(comment.getFullMessage())
+                    .setTime(comment.getTime())
+                    .setType(comment.getType());
+            String userId = comment.getUserId();
+            if (StringUtils.isNotEmpty(userId)) {
+                Result<UserInfo> userInfo = remoteUserService.getUserById(RPCConstants.INNER, userId);
+                if (userInfo.isSuccess()) {
+                    ac.setAssigneeName(userInfo.getData().getNickname());
+                    ac.setAssigneeAccount(userInfo.getData().getAccount());
+                }
+            }
+            return ac;
+        }).collect(Collectors.toList());
     }
 
     /**
-     * 查询流程管理信息
+     * 根据流程实例ID查询流程管理信息
      *
-     * @param processInstanceId 流程实例id
+     * @param processInstanceId 流程实例ID
      * @return 流程管理信息
      */
+    @Override
     public FlowManage queryFlowManage(String processInstanceId) {
         FlowDefinition flowDefinition = getFlowDefinition(processInstanceId);
         return flowManageMapper.selectOne(new LambdaQueryWrapper<FlowManage>()

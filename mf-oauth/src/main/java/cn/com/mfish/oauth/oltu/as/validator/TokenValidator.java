@@ -28,6 +28,9 @@ import cn.com.mfish.oauth.oltu.common.validators.AbstractValidator;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * OAuth 隐式授权令牌请求校验器。
+ */
 public class TokenValidator extends AbstractValidator<HttpServletRequest> {
 
     public TokenValidator() {

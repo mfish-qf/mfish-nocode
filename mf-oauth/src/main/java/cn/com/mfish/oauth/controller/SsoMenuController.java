@@ -45,18 +45,35 @@ public class SsoMenuController {
         return ssoMenuService.queryMenuTree(reqSsoMenu, null);
     }
 
+    /**
+     * 获取所有菜单树（不分页）
+     *
+     * @param reqSsoMenu 菜单查询参数
+     * @return 菜单树列表
+     */
     @Operation(summary = "获取所有菜单树")
     @GetMapping("/tree")
     public Result<List<SsoMenu>> queryMenuTree(ReqSsoMenu reqSsoMenu) {
         return ssoMenuService.queryMenuTree(reqSsoMenu, null);
     }
 
+    /**
+     * 获取当前用户的角色菜单树（左侧菜单，不含按钮）
+     *
+     * @return 菜单树列表
+     */
     @Operation(summary = "获取角色树-左侧菜单")
     @GetMapping("/roleTree")
     public Result<List<SsoMenu>> queryRoleMenuTree() {
         return ssoMenuService.queryMenuTree(new ReqSsoMenu().setNoButton(true), AuthInfoUtils.getCurrentUserId());
     }
 
+    /**
+     * 添加菜单
+     *
+     * @param ssoMenu 菜单对象
+     * @return 返回添加结果
+     */
     @Log(title = "菜单表-添加", operateType = OperateType.INSERT)
     @Operation(summary = "菜单表-添加", description = "菜单表-添加")
     @PostMapping
@@ -65,6 +82,12 @@ public class SsoMenuController {
         return ssoMenuService.insertMenu(ssoMenu);
     }
 
+    /**
+     * 编辑菜单
+     *
+     * @param ssoMenu 菜单对象
+     * @return 返回编辑结果
+     */
     @Log(title = "菜单表-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "菜单表-编辑", description = "菜单表-编辑")
     @PutMapping
@@ -73,6 +96,12 @@ public class SsoMenuController {
         return ssoMenuService.updateMenu(ssoMenu);
     }
 
+    /**
+     * 通过id删除菜单
+     *
+     * @param id 菜单唯一ID
+     * @return 返回删除结果
+     */
     @Log(title = "菜单表-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "菜单表-通过id删除", description = "菜单表-通过id删除")
     @DeleteMapping("/{id}")
@@ -81,6 +110,12 @@ public class SsoMenuController {
         return ssoMenuService.deleteMenu(id);
     }
 
+    /**
+     * 通过id查询菜单信息
+     *
+     * @param id 菜单唯一ID
+     * @return 菜单对象
+     */
     @Operation(summary = "菜单表-通过id查询", description = "菜单表-通过id查询")
     @GetMapping("/{id}")
     @RequiresPermissions("sys:menu:query")
@@ -89,6 +124,13 @@ public class SsoMenuController {
         return Result.ok(ssoMenu, "菜单表-查询成功!");
     }
 
+    /**
+     * 判断路由地址是否已存在（内部接口）
+     *
+     * @param routePath 路由地址
+     * @param parentId  父菜单ID
+     * @return 返回路由是否已存在
+     */
     @Operation(summary = "判断路由是否存在")
     @GetMapping("/routeExist")
     @InnerUser

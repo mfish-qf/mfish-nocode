@@ -57,6 +57,12 @@ public class DictItemController {
         return Result.ok(new PageResult<>(dictItemService.getDictItems(reqDictItem)), "字典项-查询成功!");
     }
 
+    /**
+     * 根据字典编码获取字典项（值根据类型设置进行转换）
+     *
+     * @param dictCode 字典编码
+     * @return 返回字典项列表
+     */
     @Operation(summary = "根据字典编码获取字典项(值根据类型设置进行转换)")
     @SuppressWarnings("rawtypes")
     @GetMapping("/{dictCode}")

@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @description: 码云认证
+ * @description: 码云(Gitee)OAuth认证控制器，支持Gitee账号登录和绑定
  * @author: mfish
  * @date: 2025/2/7
  */
@@ -36,17 +36,28 @@ import java.util.regex.Pattern;
 public class GiteeController {
     @Resource
     LoginService loginService;
+    /** Gitee应用客户端ID */
     @Value("${gitee.clientId}")
     private String clientId;
+    /** Gitee应用客户端密钥 */
     @Value("${gitee.clientSecret}")
     private String clientSecret;
+    /** Gitee认证回调地址 */
     @Value("${gitee.redirectUri}")
     private String redirectUri;
+    /** Gitee账号绑定回调地址 */
     @Value("${gitee.bindUri:http://localhost:5186/tenant/info/1?callback=gitee}")
     private String bindUri;
     @Resource
     SsoUserService ssoUserService;
 
+    /**
+     * 通过Gitee认证码获取token并登录
+     *
+     * @param code Gitee认证码
+     * @return 登录结果，0表示成功，1表示未关注仓库
+     * @throws IOException 网络请求异常
+     */
     @GetMapping("/token/{code}")
     @Operation(summary = "获取gitee token")
     @Parameters({
@@ -71,6 +82,11 @@ public class GiteeController {
         return Result.ok(0, "登录成功");
     }
 
+    /**
+     * 获取Gitee OAuth认证地址
+     *
+     * @return Gitee认证URL
+     */
     @GetMapping("/url")
     @Operation(summary = "获取gitee url")
     public Result<String> getUrl() {
@@ -78,6 +94,13 @@ public class GiteeController {
                 + "&redirect_uri=" + redirectUri + "&response_type=code", "获取地址成功");
     }
 
+    /**
+     * 绑定Gitee账号到当前登录用户
+     *
+     * @param code Gitee认证码
+     * @return 返回绑定结果
+     * @throws IOException 网络请求异常
+     */
     @PutMapping("/bind/{code}")
     @Operation(summary = "绑定gitee账号")
     public Result<Boolean> bindGitee(@Parameter(name = "code", description = "gitee认证Code", required = true) @PathVariable String code) throws IOException {

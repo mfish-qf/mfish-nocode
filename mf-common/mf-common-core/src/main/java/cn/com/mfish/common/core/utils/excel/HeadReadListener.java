@@ -12,8 +12,14 @@ import java.util.function.Consumer;
  * @date: 2023/12/18
  */
 public class HeadReadListener extends AnalysisEventListener<Map<Integer, String>> {
+    /** 头信息回调消费者 */
     private final Consumer<Map<Integer, String>> consumer;
 
+    /**
+     * 构造方法
+     *
+     * @param consumer 头信息回调消费者
+     */
     public HeadReadListener(Consumer<Map<Integer, String>> consumer) {
         this.consumer = consumer;
     }

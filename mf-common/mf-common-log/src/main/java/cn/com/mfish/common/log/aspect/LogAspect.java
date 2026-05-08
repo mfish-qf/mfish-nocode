@@ -41,6 +41,11 @@ public class LogAspect {
     @Resource
     AsyncSaveLog asyncSaveLog;
 
+    /**
+     * 前置通知，记录请求信息
+     *
+     * @param joinPoint 切点
+     */
     @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
     public void doBefore(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
@@ -108,11 +113,21 @@ public class LogAspect {
         return params.substring(1);
     }
 
+    /**
+     * 返回后通知，记录正常返回结果
+     *
+     * @param returnValue 返回值
+     */
     @AfterReturning(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", returning = "returnValue")
     public void doAfterReturning(Object returnValue) {
         setReturn(0, JSON.toJSONString(returnValue));
     }
 
+    /**
+     * 异常通知，记录异常信息
+     *
+     * @param e 异常对象
+     */
     @AfterThrowing(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", throwing = "e")
     public void doAfterThrowing(Throwable e) {
         StackTraceElement[] elements = e.getStackTrace();

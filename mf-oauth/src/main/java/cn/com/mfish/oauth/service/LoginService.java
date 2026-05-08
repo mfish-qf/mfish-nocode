@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 
 /**
+ * @description: 登录服务接口，提供用户登录认证、短信验证码管理和登录重试限制等功能
  * @author: mfish
  * @date: 2020/2/15 16:09
  */

@@ -37,10 +37,17 @@ public class OkHttpUtils {
 
     @Data
     @Accessors(chain = true)
+    /**
+     * 超时配置类
+     */
     public static class TimeOut {
+        /** 连接超时时间（秒） */
         private long connectTimeOut = 30;
+        /** 读取超时时间（秒） */
         private long readTimeOut = 30;
+        /** 写入超时时间（秒） */
         private long writeTimeout = 60;
+        /** 时间单位 */
         private TimeUnit timeUnit = TimeUnit.SECONDS;
     }
 
@@ -355,8 +362,15 @@ public class OkHttpUtils {
         }
     }
 
+    /**
+     * SSL构建工具类，用于构建HTTPS请求所需的SSL相关组件
+     */
     public static class SSLBuild {
-        //获取SSLSocketFactory
+        /**
+         * 获取SSLSocketFactory
+         *
+         * @return SSLSocketFactory实例
+         */
         public static SSLSocketFactory getSSLSocketFactory() {
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
@@ -367,7 +381,11 @@ public class OkHttpUtils {
             }
         }
 
-        //获取TrustManager
+        /**
+         * 获取TrustManager数组，信任所有证书
+         *
+         * @return TrustManager数组
+         */
         private static TrustManager[] getTrustManager() {
             return new TrustManager[]{
                     new X509TrustManager() {
@@ -387,6 +405,11 @@ public class OkHttpUtils {
             };
         }
 
+        /**
+         * 获取X509TrustManager实例
+         *
+         * @return X509TrustManager实例
+         */
         public static X509TrustManager getX509TrustManager() {
             X509TrustManager trustManager = null;
             try {

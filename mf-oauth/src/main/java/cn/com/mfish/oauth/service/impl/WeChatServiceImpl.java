@@ -41,11 +41,24 @@ public class WeChatServiceImpl implements WeChatService {
     WeChatTokenServiceImpl weChatTokenService;
 
 
+    /**
+     * 通过openId获取用户ID
+     *
+     * @param openId 微信openId
+     * @return 用户ID
+     */
     @Override
     public String getUserIdByOpenId(String openId) {
         return openIdTempCache.getFromCacheAndDB(openId);
     }
 
+    /**
+     * 绑定微信openId到用户
+     *
+     * @param openId 微信openId
+     * @param userId 用户ID
+     * @return 是否绑定成功
+     */
     @Override
     public boolean bindWeChat(String openId, String userId) {
         SsoUser user = new SsoUser();
@@ -54,11 +67,27 @@ public class WeChatServiceImpl implements WeChatService {
         return ssoUserService.updateById(user);
     }
 
+    /**
+     * 绑定微信openId到用户（带昵称），暂未实现
+     *
+     * @param openId   微信openId
+     * @param userId   用户ID
+     * @param nickname 微信昵称
+     * @return 是否绑定成功
+     */
     @Override
     public boolean bindWeChat(String openId, String userId, String nickname) {
         return false;
     }
 
+    /**
+     * 构建微信令牌，生成accessToken和refreshToken并缓存
+     *
+     * @param openId     微信openId
+     * @param sessionKey 微信sessionKey
+     * @param userId     用户ID
+     * @return 微信令牌对象
+     */
     @Override
     public WeChatToken buildWeChatToken(String openId, String sessionKey, String userId) {
         WeChatToken weChatToken = new WeChatToken();
@@ -82,6 +111,12 @@ public class WeChatServiceImpl implements WeChatService {
         return weChatToken;
     }
 
+    /**
+     * 将微信令牌转换为通用访问令牌，屏蔽内部属性
+     *
+     * @param weChatToken 微信令牌
+     * @return 通用访问令牌
+     */
     @Override
     public AccessToken convertToken(WeChatToken weChatToken) {
         //重新copy屏蔽不像外返回的属性

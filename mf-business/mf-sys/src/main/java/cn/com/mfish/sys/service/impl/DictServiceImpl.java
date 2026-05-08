@@ -36,6 +36,12 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Resource
     DictCache dictCache;
 
+    /**
+     * 更新字典（如果字典编码变更，同步更新所有关联的字典项编码）
+     *
+     * @param dict 字典对象
+     * @return 更新结果
+     */
     @Override
     @Transactional
     public Result<Dict> updateDict(Dict dict) {
@@ -59,11 +65,24 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         throw new MyRuntimeException("错误:编辑字典失败!");
     }
 
+    /**
+     * 判断字典编码是否已存在（排除自身）
+     *
+     * @param id       字典ID
+     * @param dictCode 字典编码
+     * @return 是否存在
+     */
     @Override
     public boolean isDictCodeExist(String id, String dictCode) {
         return baseMapper.isDictCodeExist(id, dictCode) > 0;
     }
 
+    /**
+     * 删除字典及其关联的所有字典项
+     *
+     * @param id 字典ID
+     * @return 删除结果
+     */
     @Override
     @Transactional
     public Result<Boolean> deleteDict(String id) {
@@ -76,6 +95,13 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         return Result.fail(false, "错误:字典-删除失败!");
     }
 
+    /**
+     * 分页查询字典列表
+     *
+     * @param reqDict  查询参数
+     * @param reqPage  分页参数
+     * @return 字典列表
+     */
     @Override
     public List<Dict> queryList(ReqDict reqDict, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());

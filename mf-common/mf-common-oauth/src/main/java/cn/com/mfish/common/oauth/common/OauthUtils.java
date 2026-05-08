@@ -279,6 +279,13 @@ public class OauthUtils {
         return getToken(getTokenService(token), token);
     }
 
+    /**
+     * 通过TokenService获取token对象
+     *
+     * @param tokenService Token服务
+     * @param token        token字符串
+     * @return token对象
+     */
     public static Object getToken(TokenService tokenService, String token) {
         return tokenService.getToken(token);
     }
@@ -292,6 +299,12 @@ public class OauthUtils {
         delToken(getTokenService(token), token);
     }
 
+    /**
+     * 通过TokenService删除token
+     *
+     * @param tokenService Token服务
+     * @param token        token字符串
+     */
     public static void delToken(TokenService tokenService, String token) {
         tokenService.delToken(token);
     }
@@ -305,6 +318,12 @@ public class OauthUtils {
         delRefreshToken(getTokenService(refreshToken), refreshToken);
     }
 
+    /**
+     * 通过TokenService删除refreshToken
+     *
+     * @param tokenService  Token服务
+     * @param refreshToken  refreshToken字符串
+     */
     public static void delRefreshToken(TokenService tokenService, String refreshToken) {
         tokenService.delRefreshToken(refreshToken);
     }
