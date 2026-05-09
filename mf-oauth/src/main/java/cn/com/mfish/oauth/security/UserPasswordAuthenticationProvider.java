@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.security;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
+import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class UserPasswordAuthenticationProvider implements AuthenticationProvide
         token.setUserInfo(user);
 
         String submittedPassword = String.valueOf(token.getCredentials());
-        String hashedPassword = PasswordHashUtils.md5Hash(submittedPassword, user.getId() + user.getSalt());
+        String hashedPassword = PasswordHelper.encryptPassword(user.getId(), submittedPassword, user.getSalt());
         boolean matches = hashedPassword.equals(user.getPassword());
 
         loginService.retryLimit(user.getId(), matches);
