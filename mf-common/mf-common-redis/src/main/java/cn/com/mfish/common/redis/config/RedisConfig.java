@@ -61,23 +61,4 @@ public class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
-
-    /**
-     * redis存储session序列化方式使用GenericJackson2JsonRedisSerializer会造成反序列化失败
-     * 单独定义template
-     *
-     * @param redisConnectionFactory redis连接工厂
-     * @return redisTemplate
-     */
-    @Bean(name = "sessionRedisTemplate")
-    public RedisTemplate<String, Object> sessionRedisTemplate(@Lazy RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> sessionRedisTemplate = new RedisTemplate<>();
-        sessionRedisTemplate.setConnectionFactory(redisConnectionFactory);
-        // 设置key的序列化方式，采用StringRedisSerializer
-        GenericToStringSerializer<String> keySerializer = new GenericToStringSerializer<>(String.class);
-        sessionRedisTemplate.setKeySerializer(keySerializer);
-        sessionRedisTemplate.setHashKeySerializer(keySerializer);
-        sessionRedisTemplate.afterPropertiesSet();
-        return sessionRedisTemplate;
-    }
 }
