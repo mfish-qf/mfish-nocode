@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -259,10 +259,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
             result = ssoUserService.insertUser(ssoUser);
         } catch (MyRuntimeException ex) {
             //包装成shiro异常,便于shiro统一处理
-            throw new IncorrectCredentialsException(ex.getMessage());
+            throw new BadCredentialsException(ex.getMessage());
         }
         if (!result.isSuccess()) {
-            throw new IncorrectCredentialsException(result.getMsg());
+            throw new BadCredentialsException(result.getMsg());
         }
         SsoTenant ssoTenant = new SsoTenant();
         ssoTenant.setUserId(ssoUser.getId());
@@ -279,10 +279,10 @@ public class SsoTenantServiceImpl extends ServiceImpl<SsoTenantMapper, SsoTenant
         try {
             result1 = insertTenant(ssoTenant);
         } catch (MyRuntimeException ex) {
-            throw new IncorrectCredentialsException(ex.getMessage());
+            throw new BadCredentialsException(ex.getMessage());
         }
         if (!result1.isSuccess()) {
-            throw new IncorrectCredentialsException("错误：创建新租户失败");
+            throw new BadCredentialsException("错误：创建新租户失败");
         }
     }
 }

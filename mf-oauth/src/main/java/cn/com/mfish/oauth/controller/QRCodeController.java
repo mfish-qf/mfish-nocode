@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -139,7 +139,7 @@ public class QRCodeController {
             return Result.ok(null, "未检测到扫码状态");
         }
         QRCode qrCode = new QRCode();
-        BeanUtils.copyProperties(qrCode, redisQrCode);
+        BeanUtils.copyProperties(redisQrCode, qrCode);
         return Result.ok(qrCode);
     }
 

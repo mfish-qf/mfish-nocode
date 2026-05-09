@@ -15,6 +15,7 @@ import cn.com.mfish.oauth.oltu.as.request.OAuthAuthzRequest;
 import cn.com.mfish.oauth.oltu.as.response.OAuthASResponse;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.OAuthResponse;
+import cn.com.mfish.oauth.security.LoginSessionHolder;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,10 +27,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -136,8 +138,12 @@ public class AuthorizeController {
             log.error(ex.getMessage(), ex);
             throw new MyRuntimeException("错误:请求参数校验出错");
         }
-        log.info(MessageFormat.format("用户:{0}登录状态:{1}", SecurityUtils.getSubject().getPrincipal(), SecurityUtils.getSubject().isAuthenticated()));
-        if (!SecurityUtils.getSubject().isAuthenticated()) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal());
+        log.info(MessageFormat.format("用户:{0}登录状态:{1}",
+                authentication != null ? authentication.getPrincipal() : null, isAuthenticated));
+        if (!isAuthenticated) {
             if (!function.apply(model, request)) {
                 //登录失败时跳转到登陆页面
                 return LOGIN_PATH;
@@ -145,11 +151,11 @@ public class AuthorizeController {
         }
         //如果是强制登录，当前登录状态登出直接返回登录页面
         if (forceLogin) {
-            SecurityUtils.getSubject().logout();
+            SecurityContextHolder.clearContext();
+            LoginSessionHolder.clear();
             return LOGIN_PATH;
         }
         return buildCodeResponse(request, oauthRequest);
-
     }
 
     private ResponseEntity<Object> buildCodeResponse(HttpServletRequest request, OAuthAuthzRequest oauthRequest) {

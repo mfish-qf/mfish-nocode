@@ -10,9 +10,12 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @description: Token过滤器，校验请求中的访问令牌并在请求中注入用户信息
@@ -20,6 +23,16 @@ import java.nio.charset.StandardCharsets;
  * @date: 2024/1/30
  */
 public class TokenFilter implements Filter {
+
+    private List<String> whiteUrls = Collections.emptyList();
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    public TokenFilter() {
+    }
+
+    public TokenFilter(List<String> whiteUrls) {
+        this.whiteUrls = whiteUrls != null ? whiteUrls : Collections.emptyList();
+    }
 
     /**
      * 过滤请求，校验Token有效性
@@ -32,6 +45,10 @@ public class TokenFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        if (isWhiteUrl(servletRequest)) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
         Result<?> result = isAccessAllowed(servletRequest);
         if (result.isSuccess()) {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -42,6 +59,29 @@ public class TokenFilter implements Filter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().print(result);
+    }
+
+    /**
+     * 判断请求URL是否在白名单中
+     */
+    private boolean isWhiteUrl(ServletRequest request) {
+        if (whiteUrls.isEmpty()) {
+            return false;
+        }
+        if (request instanceof jakarta.servlet.http.HttpServletRequest httpRequest) {
+            String uri = httpRequest.getRequestURI();
+            // 去掉 context path 前缀
+            String contextPath = httpRequest.getContextPath();
+            if (contextPath != null && !contextPath.isEmpty() && uri.startsWith(contextPath)) {
+                uri = uri.substring(contextPath.length());
+            }
+            for (String pattern : whiteUrls) {
+                if (pathMatcher.match(pattern, uri)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -56,7 +96,6 @@ public class TokenFilter implements Filter {
         if (!result.isSuccess()) {
             return result;
         }
-        //验证通过后请求中补充用户相关信息，单实例服务用户属性放在attribute中传递
         if (result.getData() instanceof WeChatToken token) {
             request.setAttribute(RPCConstants.REQ_ACCOUNT, token.getAccount());
             request.setAttribute(RPCConstants.REQ_USER_ID, token.getUserId());
@@ -69,5 +108,4 @@ public class TokenFilter implements Filter {
         }
         return Result.ok();
     }
-
 }

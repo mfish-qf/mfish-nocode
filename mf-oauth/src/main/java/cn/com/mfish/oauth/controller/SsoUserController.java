@@ -22,6 +22,7 @@ import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.req.ReqChangePwd;
+import cn.com.mfish.oauth.security.LoginSessionHolder;
 import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,8 +30,8 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -223,13 +224,12 @@ public class SsoUserController {
     @DeleteMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
     public Result<Boolean> revoke() {
-        Subject subject = SecurityUtils.getSubject();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = null;
-        //session中存在userId,优先使用session中的userId
-        if (subject != null) {
-            userId = (String) subject.getPrincipal();
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal())) {
+            userId = (String) authentication.getPrincipal();
         }
-        //session中不存在userId获取token中的userId
         if (StringUtils.isEmpty(userId)) {
             try {
                 userId = AuthInfoUtils.getCurrentUserId();
@@ -237,7 +237,8 @@ public class SsoUserController {
                 log.error(e.getMessage());
             }
         } else {
-            subject.logout();
+            SecurityContextHolder.clearContext();
+            LoginSessionHolder.clear();
         }
         if (StringUtils.isEmpty(userId)) {
             String error = "未获取到用户登录状态，无需登出";

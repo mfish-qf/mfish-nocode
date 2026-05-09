@@ -7,7 +7,6 @@ import cn.com.mfish.common.redis.common.RedisPrefix;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 public class UserTokenCache {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
-    @Resource
-    RedisSessionDAO redisSessionDAO;
     //登录是否互斥 默认不互斥
     @Value("${oauth2.login.mutex}")
     private boolean loginMutex = false;
@@ -91,13 +88,6 @@ public class UserTokenCache {
 
     public void delDeviceTokenCache(String deviceId) {
         delTokenList(deviceId);
-        try {
-            redisSessionDAO.delete(redisSessionDAO.readSession(deviceId));
-        } catch (UnknownSessionException ex) {
-            log.info("sessionId不存在");
-        } catch (Exception ex) {
-            log.error("删除session异常", ex);
-        }
     }
 
     /**

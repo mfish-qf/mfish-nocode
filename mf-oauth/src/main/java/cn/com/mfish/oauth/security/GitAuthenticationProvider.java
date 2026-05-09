@@ -1,4 +1,4 @@
-package cn.com.mfish.oauth.realm;
+package cn.com.mfish.oauth.security;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.Utils;
@@ -6,47 +6,53 @@ import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.redis.common.IDBuild;
-import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
+import cn.com.mfish.oauth.service.SsoTenantService;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.subject.PrincipalCollection;
-
-import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 /**
- * @description: gitee登录
- * @author: mfish
- * @date: 2025/2/7
+ * Gitee/Github 第三方登录认证提供者
+ * 替代 GitRealm + OtherCredentialsMatcher
  */
 @Slf4j
-public class GitRealm extends AuthorizingRealm {
-    @Resource
-    SsoUserService ssoUserService;
+@Component
+public class GitAuthenticationProvider implements AuthenticationProvider {
 
-    @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        MyUsernamePasswordToken myToken = (MyUsernamePasswordToken) authenticationToken;
-        SsoUser user = getUser(myToken.getUsername(), myToken);
-        //设置用户信息
-        myToken.setUserInfo(user);
-        return new SimpleAuthenticationInfo(
-                user.getId(), Arrays.toString(myToken.getPassword()), getName());
+    private final SsoUserService ssoUserService;
+    private final SsoTenantService ssoTenantService;
+
+    @Autowired
+    public GitAuthenticationProvider(SsoUserService ssoUserService, SsoTenantService ssoTenantService) {
+        this.ssoUserService = ssoUserService;
+        this.ssoTenantService = ssoTenantService;
     }
 
-    private SsoUser getUser(String giteeInfo, MyUsernamePasswordToken myToken) {
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        MfishAuthenticationToken token = (MfishAuthenticationToken) authentication;
+        String giteeInfo = token.getUsername();
+        SsoUser user = getUser(giteeInfo, token);
+        token.setUserInfo(user);
+        ssoTenantService.createTenantUser(user);
+        token.setAuthenticated(true);
+        return token;
+    }
+
+    private SsoUser getUser(String giteeInfo, MfishAuthenticationToken myToken) {
         if (StringUtils.isEmpty(giteeInfo)) {
-            throw new UnknownAccountException("错误:未获取到用户信息");
+            throw new UsernameNotFoundException("错误:未获取到用户信息");
         }
         JSONObject json = JSON.parseObject(giteeInfo);
         String username = json.getString("login");
         if (StringUtils.isEmpty(username)) {
-            throw new UnknownAccountException("错误：未获取到账号");
+            throw new UsernameNotFoundException("错误：未获取到账号");
         }
         SsoUser user = null;
         if (myToken.getLoginType() == SerConstant.LoginType.Github) {
@@ -72,7 +78,7 @@ public class GitRealm extends AuthorizingRealm {
         }
         userInfo.setNickname(json.getString("name"));
         String email = json.getString("email");
-        if(!StringUtils.isEmail(email)) {
+        if (!StringUtils.isEmail(email)) {
             email = null;
         }
         userInfo.setEmail(email);
@@ -83,9 +89,8 @@ public class GitRealm extends AuthorizingRealm {
         return userInfo;
     }
 
-
     @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        return new SimpleAuthorizationInfo();
+    public boolean supports(Class<?> authentication) {
+        return MfishAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

@@ -27,14 +27,11 @@ import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.oauth.cache.temp.*;
 import cn.com.mfish.oauth.common.PasswordHelper;
 import cn.com.mfish.oauth.mapper.SsoUserMapper;
+import cn.com.mfish.oauth.security.PasswordHashUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.lang.util.ByteSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
@@ -65,8 +62,6 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     UserRoleTempCache userRoleTempCache;
     @Resource
     UserPermissionTempCache userPermissionTempCache;
-    @Resource
-    HashedCredentialsMatcher hashedCredentialsMatcher;
     @Resource
     UserTenantTempCache userTenantTempCache;
     @Resource
@@ -129,14 +124,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (StringUtils.isEmpty(ssoUser.getPassword()) || AuthInfoUtils.isSuper() && !AuthInfoUtils.isSuper(ssoUser.getId())) {
             return Result.ok();
         }
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-                ssoUser.getId(), //用户名
-                ssoUser.getPassword(), //密码
-                ByteSource.Util.bytes(ssoUser.getId() + ssoUser.getSalt()),
-                ""  //调用基类realm
-        );
-        UsernamePasswordToken token = new UsernamePasswordToken(ssoUser.getAccount(), oldPwd);
-        boolean result = hashedCredentialsMatcher.doCredentialsMatch(token, authenticationInfo);
+        String hashedOldPwd = PasswordHashUtils.md5Hash(oldPwd, ssoUser.getId() + ssoUser.getSalt());
+        boolean result = hashedOldPwd.equals(ssoUser.getPassword());
         if (result) {
             return Result.ok(true, "密码校验正确");
         }

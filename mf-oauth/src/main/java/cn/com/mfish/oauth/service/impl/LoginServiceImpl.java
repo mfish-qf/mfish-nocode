@@ -9,26 +9,31 @@ import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
-import cn.com.mfish.oauth.common.MyUsernamePasswordToken;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.oltu.common.OAuth;
+import cn.com.mfish.oauth.security.LoginSessionHolder;
+import cn.com.mfish.oauth.security.MfishAuthenticationToken;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,6 +52,9 @@ public class LoginServiceImpl implements LoginService {
     GetCodeValidator getCodeValidator;
     @Resource
     UserTempCache userTempCache;
+    @Lazy
+    @Resource
+    AuthenticationManager authenticationManager;
     //允许连续出错时间间隔的最大错误数
     final static int ERROR_COUNT = 5;
     //允许连续出错的时间间隔 单位:分钟  30分钟内不允许连续出错5次
@@ -144,12 +152,13 @@ public class LoginServiceImpl implements LoginService {
                     .getParam().put(SerConstant.ERROR_MSG, SerConstant.INVALID_USER_SECRET_DESCRIPTION);
             return result;
         }
-        MyUsernamePasswordToken token = new MyUsernamePasswordToken(username, password, remember)
-                .setLoginType(loginType).setClientId(clientId);
+        MfishAuthenticationToken authToken = new MfishAuthenticationToken(username, password, loginType, clientId);
         try {
-            SecurityUtils.getSubject().login(token);
+            Authentication auth = authenticationManager.authenticate(authToken);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            LoginSessionHolder.set(UUID.randomUUID().toString());
             return result;
-        } catch (IncorrectCredentialsException ex) {
+        } catch (BadCredentialsException ex) {
             //错误凭证错误信息
             result.setSuccess(false).setMsg(ex.getMessage()).getParam().put(SerConstant.ERROR_MSG, ex.getMessage());
             log.info("用户:{}登录客户端:{}凭证错误{}", username, clientId, ex.getMessage(), ex);
@@ -160,7 +169,7 @@ public class LoginServiceImpl implements LoginService {
             log.info("用户:{}登录客户端:{}异常{}", username, clientId, ex.getMessage(), ex);
             return result;
         } finally {
-            result.setData(token.getUserInfo() != null ? token.getUserInfo().getId() : null);
+            result.setData(authToken.getUserInfo() != null ? authToken.getUserInfo().getId() : null);
             result.getParam().put(OAuth.OAUTH_USERNAME, username);
             result.getParam().put(SerConstant.LOGIN_TYPE, loginType.toString());
         }
@@ -171,17 +180,17 @@ public class LoginServiceImpl implements LoginService {
         SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
             log.error("{}" + SerConstant.INVALID_USER_ID_DESCRIPTION, userId);
-            throw new IncorrectCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
+            throw new BadCredentialsException(SerConstant.INVALID_USER_ID_DESCRIPTION);
         }
         //超户不允许禁用、删除
         if (!AuthInfoUtils.isSuper(userId)) {
             if (SerConstant.AccountState.禁用.getValue() == user.getStatus()) {
                 log.error("{}" + SerConstant.ACCOUNT_DISABLE_DESCRIPTION, userId);
-                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
+                throw new BadCredentialsException(SerConstant.ACCOUNT_DISABLE_DESCRIPTION);
             }
             if (user.getDelFlag().equals(1)) {
                 log.error("{}" + SerConstant.ACCOUNT_DELETE_DESCRIPTION, userId);
-                throw new IncorrectCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
+                throw new BadCredentialsException(SerConstant.ACCOUNT_DELETE_DESCRIPTION);
             }
         }
         int count = getLoginCount(userId);
@@ -198,13 +207,12 @@ public class LoginServiceImpl implements LoginService {
             userTempCache.updateCacheInfo(user, 5, TimeUnit.MINUTES, user.getId());
             userTempCache.setTimeIncrease(false);
             log.error("{}{}", userId, error);
-            //规定时间内重试ERROR_COUNT次，抛出多次尝试异常
-            throw new ExcessiveAttemptsException(error);
+            throw new LockedException(error);
         }
         String error = MessageFormat.format("{0}，密码错误{1}次，{2}次后禁用登录"
                 , SerConstant.INVALID_USER_SECRET_DESCRIPTION, count, ERROR_COUNT);
         log.error("{}{}", userId, error);
-        throw new IncorrectCredentialsException(error);
+        throw new BadCredentialsException(error);
     }
 
     @Override

@@ -1,11 +1,9 @@
 package cn.com.mfish.oauth.common;
 
 import cn.com.mfish.oauth.config.properties.ShiroProperties;
+import cn.com.mfish.oauth.security.PasswordHashUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.lang.util.ByteSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,34 +20,21 @@ public class PasswordHelper {
      * @return 盐值
      */
     public static String buildSalt() {
-        return new SecureRandomNumberGenerator().nextBytes().toHex();
+        return PasswordHashUtils.buildSalt();
     }
 
     /**
-     * 密码通过shiro配置的加密模式和hash次数进行加密
+     * 密码通过 MD5 x2 加密，与原 Shiro SimpleHash 输出一致
      *
-     * @param userId 用户id
+     * @param userId   用户id
      * @param password 密码
-     * @param salt 盐
+     * @param salt     盐
      * @return 加密后的密码
      */
     public String encryptPassword(String userId, String password, String salt) {
         if (StringUtils.isEmpty(password)) {
             return null;
         }
-        SimpleHash simpleHash = new SimpleHash(
-                ShiroProperties.algorithmName,
-                password,
-                ByteSource.Util.bytes(userId + salt),
-                ShiroProperties.hashIterations);
-        if (ShiroProperties.hexEncoded) {
-            return simpleHash.toHex();
-        }
-        return simpleHash.toBase64();
-
+        return PasswordHashUtils.md5Hash(password, userId + salt);
     }
-
-//    public static void main(String[] args){
-//        System.out.println(buildSalt());
-//    }
 }

@@ -20,6 +20,7 @@ import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.types.GrantType;
 import cn.com.mfish.oauth.oltu.exception.OAuthProblemException;
 import cn.com.mfish.oauth.oltu.exception.OAuthSystemException;
+import cn.com.mfish.oauth.security.LoginSessionHolder;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import cn.com.mfish.oauth.validator.Code2TokenValidator;
@@ -31,7 +32,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,7 +109,7 @@ public class AccessTokenController {
         //缓存用户角色信息
         CompletableFuture.supplyAsync(() -> ssoUserService.getUserInfoAndRoles(token.getUserId(), token.getTenantId()));
         userTokenCache.addUserTokenCache(DeviceType.Web
-                , SecurityUtils.getSubject().getSession().getId().toString()
+                , LoginSessionHolder.get()
                 , token.getUserId(), token.getAccessToken());
         return Result.ok(new AccessToken().setAccess_token(token.getAccessToken()).setExpires_in(token.getExpire()).setRefresh_token(token.getRefreshToken()));
     }
