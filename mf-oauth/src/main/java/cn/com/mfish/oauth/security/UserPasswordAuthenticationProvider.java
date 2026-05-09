@@ -15,22 +15,38 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 /**
- * 用户密码认证提供者
- * 替代 UserPasswordRealm + MyHashedCredentialsMatcher
+ * @description: 用户密码认证提供者，处理通过用户名和密码进行登录认证的逻辑，包含密码加密校验和登录重试限制
+ * @author: mfish
+ * @date: 2026/05/09
  */
 @Slf4j
 @Component
 public class UserPasswordAuthenticationProvider implements AuthenticationProvider {
 
+    /** 用户服务，用于查询用户信息 */
     private final SsoUserService ssoUserService;
+    /** 登录服务，用于登录重试次数限制 */
     private final LoginService loginService;
 
+    /**
+     * 构造函数，注入依赖服务
+     *
+     * @param ssoUserService 用户服务
+     * @param loginService   登录服务
+     */
     @Autowired
     public UserPasswordAuthenticationProvider(SsoUserService ssoUserService, LoginService loginService) {
         this.ssoUserService = ssoUserService;
         this.loginService = loginService;
     }
 
+    /**
+     * 执行用户密码认证，通过加密后的密码与数据库中存储的密码进行比对，并执行登录重试次数限制
+     *
+     * @param authentication 认证令牌，用户名为账号，凭证为明文密码
+     * @return 认证成功后的Authentication对象
+     * @throws AuthenticationException 用户不存在或密码错误时抛出异常
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MfishAuthenticationToken token = (MfishAuthenticationToken) authentication;
@@ -56,6 +72,12 @@ public class UserPasswordAuthenticationProvider implements AuthenticationProvide
         return token;
     }
 
+    /**
+     * 判断当前Provider是否支持处理指定类型的认证令牌
+     *
+     * @param authentication 认证令牌类型
+     * @return 是否支持该认证类型
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         if (!MfishAuthenticationToken.class.isAssignableFrom(authentication)) {
