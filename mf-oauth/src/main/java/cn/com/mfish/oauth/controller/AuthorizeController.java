@@ -15,7 +15,6 @@ import cn.com.mfish.oauth.oltu.as.request.OAuthAuthzRequest;
 import cn.com.mfish.oauth.oltu.as.response.OAuthASResponse;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.oltu.common.message.OAuthResponse;
-import cn.com.mfish.oauth.security.LoginSessionHolder;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,8 +29,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,10 +81,10 @@ public class AuthorizeController {
             @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
             @Parameter(name = FORCE_LOGIN, description = "强制登录 值为1时强行返回登录界面")
     })
-    public Object getAuthorize(Model model, HttpServletRequest request) {
+    public Object getAuthorize(Model model, HttpServletRequest request, HttpServletResponse response) {
         String force = request.getParameter(FORCE_LOGIN);
         boolean forceLogin = !StringUtils.isEmpty(force) && "1".equals(force);
-        return authorize(model, request, (m, r) -> loginService.getLogin(m, r), forceLogin);
+        return authorize(model, request, response, (m, r) -> loginService.getLogin(m, r), forceLogin);
     }
 
     /**
@@ -109,7 +110,7 @@ public class AuthorizeController {
             @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值，单实例服务需要验证码时传入")
     })
     @Log(title = "code认证接口", operateType = OperateType.LOGIN)
-    public Object authorize(Model model, HttpServletRequest request) {
+    public Object authorize(Model model, HttpServletRequest request, HttpServletResponse response) {
         //单体服务时，自己验证验证码，微服务时由网关验证
         if (ServiceConstants.isBoot(Utils.getServiceType()) && captchaProperties.getEnabled()) {
             try {
@@ -119,7 +120,7 @@ public class AuthorizeController {
                 return LOGIN_PATH;
             }
         }
-        return authorize(model, request, (m, r) -> loginService.postLogin(m, r), false);
+        return authorize(model, request, response, (m, r) -> loginService.postLogin(m, r), false);
     }
 
     /**
@@ -130,7 +131,7 @@ public class AuthorizeController {
      * @param function 处理方法get post
      * @return 登录结果
      */
-    private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function, boolean forceLogin) {
+    private Object authorize(Model model, HttpServletRequest request, HttpServletResponse response, BiFunction<Model, HttpServletRequest, Boolean> function, boolean forceLogin) {
         OAuthAuthzRequest oauthRequest;
         try {
             oauthRequest = new OAuthAuthzRequest(request);
@@ -139,8 +140,7 @@ public class AuthorizeController {
             throw new MyRuntimeException("错误:请求参数校验出错");
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
-                && !"anonymousUser".equals(authentication.getPrincipal());
+        boolean isAuthenticated = !(authentication instanceof AnonymousAuthenticationToken);
         log.info(MessageFormat.format("用户:{0}登录状态:{1}",
                 authentication != null ? authentication.getPrincipal() : null, isAuthenticated));
         if (!isAuthenticated) {
@@ -151,8 +151,8 @@ public class AuthorizeController {
         }
         //如果是强制登录，当前登录状态登出直接返回登录页面
         if (forceLogin) {
-            SecurityContextHolder.clearContext();
-            LoginSessionHolder.clear();
+            new SecurityContextLogoutHandler()
+                    .logout(request, response, authentication);
             return LOGIN_PATH;
         }
         return buildCodeResponse(request, oauthRequest);

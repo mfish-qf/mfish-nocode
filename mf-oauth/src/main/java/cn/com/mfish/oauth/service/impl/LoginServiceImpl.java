@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.service.impl;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
@@ -11,7 +12,6 @@ import cn.com.mfish.common.redis.common.RedisPrefix;
 import cn.com.mfish.oauth.cache.temp.UserTempCache;
 import cn.com.mfish.oauth.entity.OAuthClient;
 import cn.com.mfish.oauth.oltu.common.OAuth;
-import cn.com.mfish.oauth.security.LoginSessionHolder;
 import cn.com.mfish.oauth.security.MfishAuthenticationToken;
 import cn.com.mfish.oauth.service.LoginService;
 import cn.com.mfish.oauth.validator.GetCodeValidator;
@@ -26,7 +26,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -55,6 +57,9 @@ public class LoginServiceImpl implements LoginService {
     @Lazy
     @Resource
     AuthenticationManager authenticationManager;
+    @Resource
+    @Lazy
+    private SecurityContextRepository securityContextRepository;
     //允许连续出错时间间隔的最大错误数
     final static int ERROR_COUNT = 5;
     //允许连续出错的时间间隔 单位:分钟  30分钟内不允许连续出错5次
@@ -154,9 +159,21 @@ public class LoginServiceImpl implements LoginService {
         }
         MfishAuthenticationToken authToken = new MfishAuthenticationToken(username, password, loginType, clientId);
         try {
-            Authentication auth = authenticationManager.authenticate(authToken);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            LoginSessionHolder.set(UUID.randomUUID().toString());
+            Authentication authentication =
+                    authenticationManager.authenticate(authToken);
+
+            SecurityContext context =
+                    SecurityContextHolder.createEmptyContext();
+
+            context.setAuthentication(authentication);
+
+            SecurityContextHolder.setContext(context);
+            // 关键：保存到 Session
+            securityContextRepository.saveContext(
+                    context,
+                    Objects.requireNonNull(ServletUtils.getRequest()),
+                    Objects.requireNonNull(ServletUtils.getResponse())
+            );
             return result;
         } catch (BadCredentialsException ex) {
             //错误凭证错误信息

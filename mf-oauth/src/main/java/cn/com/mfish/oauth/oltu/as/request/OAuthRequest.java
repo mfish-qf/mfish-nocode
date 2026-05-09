@@ -105,4 +105,7 @@ public abstract class OAuthRequest {
         return OAuthUtils.decodeScopes(scopes);
     }
 
+    public HttpServletRequest getServletRequest() {
+        return request;
+    }
 }

@@ -22,16 +22,18 @@ import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.req.ReqChangePwd;
-import cn.com.mfish.oauth.security.LoginSessionHolder;
 import com.github.pagehelper.PageHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -223,7 +225,7 @@ public class SsoUserController {
     @Operation(summary = "用户登出", description = "用户登出--该方法只适用于 web 前端登录的用户登出")
     @DeleteMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
-    public Result<Boolean> revoke() {
+    public Result<Boolean> revoke(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = null;
         if (authentication != null && authentication.isAuthenticated()
@@ -237,8 +239,8 @@ public class SsoUserController {
                 log.error(e.getMessage());
             }
         } else {
-            SecurityContextHolder.clearContext();
-            LoginSessionHolder.clear();
+            new SecurityContextLogoutHandler()
+                    .logout(request, response, authentication);
         }
         if (StringUtils.isEmpty(userId)) {
             String error = "未获取到用户登录状态，无需登出";

@@ -33,6 +33,9 @@ public class UserPasswordAuthenticationProvider implements AuthenticationProvide
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MfishAuthenticationToken token = (MfishAuthenticationToken) authentication;
+        if (token.getLoginType() != SerConstant.LoginType.密码登录) {
+            return null;
+        }
         String username = token.getUsername();
         SsoUser user = ssoUserService.getUserByAccount(username);
         if (user == null) {

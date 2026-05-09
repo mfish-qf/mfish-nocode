@@ -37,10 +37,16 @@ public class GitAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MfishAuthenticationToken token = (MfishAuthenticationToken) authentication;
+        SerConstant.LoginType loginType = token.getLoginType();
+        if (loginType != SerConstant.LoginType.Github && loginType != SerConstant.LoginType.Gitee) {
+            return null;
+        }
         String giteeInfo = token.getUsername();
         SsoUser user = getUser(giteeInfo, token);
         token.setUserInfo(user);
-        ssoTenantService.createTenantUser(user);
+        if (token.isNew()) {
+            ssoTenantService.createTenantUser(user);
+        }
         token.setAuthenticated(true);
         return token;
     }

@@ -17,7 +17,6 @@ import cn.com.mfish.oauth.oltu.as.request.OAuthAuthzRequest;
 import cn.com.mfish.oauth.oltu.as.request.OAuthRequest;
 import cn.com.mfish.oauth.oltu.as.request.OAuthTokenRequest;
 import cn.com.mfish.oauth.oltu.common.OAuth;
-import cn.com.mfish.oauth.security.LoginSessionHolder;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
@@ -88,7 +87,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         code.setUserId(userId);
         SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
-            userTokenCache.delUserTokenCache(DeviceType.Web, LoginSessionHolder.get(), userId);
+            userTokenCache.delUserTokenCache(DeviceType.Web, request.getServletRequest().getSession().getId(), userId);
             throw new MyRuntimeException("错误:未获取到用户信息");
         }
         List<TenantVo> tenants = ssoUserService.getUserTenants(userId);
@@ -96,7 +95,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
             code.setTenantId(tenants.getFirst().getId());
         }
         code.setAccount(user.getAccount());
-        code.setCodeSessionId(LoginSessionHolder.get());
+        code.setCodeSessionId(request.getServletRequest().getSession().getId());
         code.setScope(StringUtils.join(request.getScopes().iterator(), ","));
         code.setRedirectUri(request.getRedirectURI());
         code.setParentToken(request.getParam(OAuth.OAUTH_ACCESS_TOKEN));
@@ -159,7 +158,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         BeanUtils.copyProperties(code, accessToken);
         accessToken.setAccessToken(Utils.uuid32());
         accessToken.setRefreshToken(Utils.uuid32());
-        accessToken.setTokenSessionId(LoginSessionHolder.get());
+        accessToken.setTokenSessionId(request.getServletRequest().getSession().getId());
         accessToken.setGrantType(request.getGrantType());
         accessToken.setClientSecret(request.getClientSecret());
         accessToken.setExpire(tokenExpire);

@@ -43,6 +43,9 @@ public class PhoneSmsAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MfishAuthenticationToken token = (MfishAuthenticationToken) authentication;
+        if (token.getLoginType() != SerConstant.LoginType.短信登录) {
+            return null;
+        }
         String username = token.getUsername();
         SsoUser user = ssoUserService.getUserByAccount(username);
         boolean isNew = false;
