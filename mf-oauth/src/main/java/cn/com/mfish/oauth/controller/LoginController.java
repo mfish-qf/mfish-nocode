@@ -6,6 +6,7 @@ import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.service.LoginService;
+import cn.com.mfish.oauth.service.LoginVerifyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -36,15 +37,12 @@ public class LoginController {
     @Resource
     LoginService loginService;
     @Resource
+    LoginVerifyService loginVerifyService;
+    @Resource
     SsoUserService ssoUserService;
     @Value("${oauth2.user.autoCreate}")
     boolean autoCreateUser = false;
 
-    /**
-     * 短信发送接口（没有短信网关，短信代码需自己实现）
-     *
-     * @return 返回验证码
-     */
     /**
      * 发送短信验证码
      * <p>用于登录时验证手机号，如果用户不存在且不允许自动创建则不发送</p>
@@ -70,7 +68,7 @@ public class LoginController {
         if (codeTime > 0) {
             return Result.fail(Long.toString(codeTime), "一分钟内不允许重复发送");
         }
-        String code = loginService.getSmsCode(phone);
+        String code = loginVerifyService.getSmsCode(phone);
         //如果5分钟内不重新生成code
         if (StringUtils.isEmpty(code)) {
             code = OauthUtils.buildCode();

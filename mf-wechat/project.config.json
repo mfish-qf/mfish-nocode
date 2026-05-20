@@ -40,10 +40,11 @@
         "minifyWXML": true,
         "showES6CompileOption": false,
         "useCompilerPlugins": false,
-        "ignoreUploadUnusedFiles": true
+        "ignoreUploadUnusedFiles": true,
+        "condition": false
     },
     "compileType": "miniprogram",
-    "libVersion": "2.30.0",
+    "libVersion": "3.16.0",
     "appid": "wxf7ae0f4abbee34a3",
     "projectname": "Mfish-WeChat",
     "simulatorType": "wechat",

@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * @description: 客户端信息
  * @author: mfish
  * @date: 2023-05-12
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 @Data
 @TableName("sso_client_details")

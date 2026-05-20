@@ -42,7 +42,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 结果
      */
     public static boolean isHttp(String link) {
-        return StringUtils.startsWithAny(link, Constants.HTTP, Constants.HTTPS);
+        return link != null && (link.startsWith(Constants.HTTP) || link.startsWith(Constants.HTTPS));
     }
 
     /**

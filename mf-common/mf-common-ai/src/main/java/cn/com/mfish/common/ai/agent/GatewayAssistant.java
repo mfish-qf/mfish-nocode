@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
+
 import java.util.Objects;
 
 /**
@@ -62,17 +64,20 @@ public class GatewayAssistant {
     /**
      * 聊天
      *
-     * @param prompt 提示词
+     * @param sessionId 会话id
+     * @param prompt    提示词
      * @return 聊天信息
      */
-    public Mono<Result<AiRouterVo>> chat(String prompt) {
+    public Mono<Result<AiRouterVo>> chat(String sessionId, String prompt) {
         if (StringUtils.isEmpty(prompt.trim())) {
             prompt = DEFAULT_PROMPT;
         }
         String finalPrompt = prompt;
         return Mono.fromCallable(() -> {
                     ResponseEntity<ChatResponse, AiRouterVo> responseEntity = this.chatClient.prompt()
-                            .user(finalPrompt).call()
+                            .user(finalPrompt)
+                            .advisors(a -> a.param(CONVERSATION_ID, sessionId))
+                            .call()
                             .responseEntity(AiRouterVo.class);
                     AiRouterVo vo = Objects.requireNonNullElseGet(responseEntity.entity(), AiRouterVo::new);
                     return Result.ok(vo);

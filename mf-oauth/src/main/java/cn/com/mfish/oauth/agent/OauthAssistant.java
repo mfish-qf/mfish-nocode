@@ -7,6 +7,7 @@ import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.tools.MenuTools;
 import cn.com.mfish.oauth.tools.UserTools;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -15,6 +16,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 
@@ -23,6 +26,7 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
  * @author: mfish
  * @date: 2025/8/22
  */
+@Slf4j
 @Component
 public class OauthAssistant extends BaseAssistant {
     private static final String DEFAULT_PROMPT = "你好，简单介绍下认证中心助手";
@@ -68,13 +72,21 @@ public class OauthAssistant extends BaseAssistant {
         }
         String userId = AuthInfoUtils.getCurrentUserId();
         String tenantId = AuthInfoUtils.getCurrentTenantId();
-        return this.chatClient.prompt()
+        String finalPrompt = prompt;
+        ChatClient.ChatClientRequestSpec requestSpec = this.chatClient.prompt()
                 .system("你必须先调用工具，再基于工具结果回答问题")
-                .user(prompt)
+                .user(finalPrompt)
                 .advisors(a -> a.param(CONVERSATION_ID, sessionId))
-                .tools(menuTools, new UserTools(userId, tenantId, ssoUserService))
+                .tools(menuTools, new UserTools(userId, tenantId, ssoUserService));
+        return requestSpec
                 .stream()
-                .chatResponse();
+                .chatResponse()
+                .onErrorResume(e -> {
+                    log.warn("流式调用失败，降级为非流式调用: {}", e.getMessage());
+                    return Mono.fromCallable(() -> requestSpec.call().chatResponse())
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .flux();
+                });
     }
 
 }

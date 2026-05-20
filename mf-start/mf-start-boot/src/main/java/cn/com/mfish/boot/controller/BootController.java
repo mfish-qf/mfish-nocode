@@ -50,8 +50,9 @@ public class BootController {
             @MetricsMonitor(metricEnum = MetricEnum.MFISH_REQUEST_COUNT, tagValues = {"GET", "/ai/router"}),
             @MetricsMonitor(metricEnum = MetricEnum.MFISH_REQUEST_DURATION, tagValues = {"GET", "/ai/router"})
     })
-    public Mono<Result<AiRouterVo>> aiRouter(String prompt) {
+    public Mono<Result<AiRouterVo>> aiRouter(String sessionId, String prompt) {
         prompt = StringUtils.isEmpty(prompt) ? "介绍下摸鱼低代码" : prompt;
-        return gatewayAssistant.chat(prompt);
+        sessionId = StringUtils.isEmpty(sessionId) ? "default" : sessionId;
+        return gatewayAssistant.chat(sessionId, prompt);
     }
 }

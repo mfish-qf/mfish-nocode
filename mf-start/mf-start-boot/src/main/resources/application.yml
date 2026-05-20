@@ -1,5 +1,5 @@
 mfish:
-  version: 2.3.1
+  version: 2.4.0
   type: boot
 # 开发环境配置
 server:
@@ -22,7 +22,7 @@ spring:
       - code
       - swagger
       - gateway
-      - shiro
+      - security
       - ai
   autoconfigure:
     exclude:

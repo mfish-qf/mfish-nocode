@@ -29,6 +29,16 @@ public class TokenValidator {
      */
     public <R> Result<?> validator(R request) {
         String accessToken = AuthInfoUtils.getAccessToken(request);
+        return validate(accessToken);
+    }
+
+    /**
+     * 校验token有效性
+     *
+     * @param accessToken 访问令牌
+     * @return 校验结果
+     */
+    public Result<?> validate(String accessToken) {
         Result<?> result;
         if (!StringUtils.isEmpty(accessToken) && accessToken.startsWith(SerConstant.WX_PREFIX)) {
             result = weChatTokenValidator.validate(accessToken);

@@ -18,6 +18,7 @@ import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.service.LoginService;
+import cn.com.mfish.oauth.service.LoginVerifyService;
 import cn.com.mfish.oauth.service.WeChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,6 +52,8 @@ public class WeChatController {
     WeChatService weChatService;
     @Resource
     LoginService loginService;
+    @Resource
+    LoginVerifyService loginVerifyService;
     @Resource
     SsoUserService ssoUserService;
     @Resource
@@ -244,7 +247,7 @@ public class WeChatController {
             @Parameter(name = SerConstant.QR_CODE, description = "微信认证code", required = true)
     })
     public AccessToken phoneLogin(String sessionKey, String nickname, String code) throws WxErrorException {
-        String openid = loginService.getOpenIdBySessionKey(sessionKey);
+        String openid = loginVerifyService.getOpenIdBySessionKey(sessionKey);
         if (StringUtils.isEmpty(openid)) {
             log.error("sessionKey:" + sessionKey + ",手机号绑定失败");
             throw new OAuthValidateException("错误:sessionKey有误");
