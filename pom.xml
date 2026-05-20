@@ -6,7 +6,7 @@
     <groupId>cn.com.mfish</groupId>
     <artifactId>mfish-nocode</artifactId>
     <packaging>pom</packaging>
-    <version>mf-2.3.1</version>
+    <version>mf-2.4.0</version>
     <modules>
         <module>mf-gateway</module>
         <module>mf-common</module>
@@ -22,7 +22,7 @@
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <mfish.version>mf-2.3.1</mfish.version>
+        <mfish.version>mf-2.4.0</mfish.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -30,7 +30,7 @@
         <spring-boot-admin.version>4.0.4</spring-boot-admin.version>
         <spring-cloud.version>2025.1.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
-        <spring-ai.version>2.0.0-M5</spring-ai.version>
+        <spring-ai.version>2.0.0-M6</spring-ai.version>
         <swagger.doc.version>3.0.3</swagger.doc.version>
         <swagger.core.version>2.2.47</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
@@ -45,8 +45,7 @@
         <freemarker.version>2.3.34</freemarker.version>
         <fastjson.version>2.0.60</fastjson.version>
         <zxing.version>3.5.4</zxing.version>
-        <shiro.version>3.0.0-alpha-1</shiro.version>
-        <wechat.version>4.7.9.B</wechat.version>
+        <wechat.version>4.8.2-20260509.102920</wechat.version>
         <aliyun-oss.version>3.18.3</aliyun-oss.version>
         <qiniu-sdk.version>7.19.0</qiniu-sdk.version>
         <rocketmq.version>2.3.5</rocketmq.version>
@@ -268,11 +267,6 @@
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-mp</artifactId>
                 <version>${wechat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring</artifactId>
-                <version>${shiro.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.aliyun.oss</groupId>

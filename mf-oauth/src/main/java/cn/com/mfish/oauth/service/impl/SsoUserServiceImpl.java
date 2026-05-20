@@ -31,10 +31,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.lang.util.ByteSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
@@ -56,8 +52,6 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> implements SsoUserService {
     @Resource
-    PasswordHelper passwordHelper;
-    @Resource
     UserTempCache userTempCache;
     @Resource
     Account2IdTempCache account2IdTempCache;
@@ -65,8 +59,6 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     UserRoleTempCache userRoleTempCache;
     @Resource
     UserPermissionTempCache userPermissionTempCache;
-    @Resource
-    HashedCredentialsMatcher hashedCredentialsMatcher;
     @Resource
     UserTenantTempCache userTenantTempCache;
     @Resource
@@ -104,7 +96,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
             return result;
         }
         user.setOldPassword(setOldPwd(user.getOldPassword(), user.getPassword()));
-        user.setPassword(passwordHelper.encryptPassword(userId, newPwd, user.getSalt()));
+        user.setPassword(PasswordHelper.encryptPassword(userId, newPwd, user.getSalt()));
         if (user.getOldPassword().contains(user.getPassword())) {
             return Result.fail(false, "错误:密码5次内不得循环使用");
         }
@@ -129,14 +121,8 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         if (StringUtils.isEmpty(ssoUser.getPassword()) || AuthInfoUtils.isSuper() && !AuthInfoUtils.isSuper(ssoUser.getId())) {
             return Result.ok();
         }
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-                ssoUser.getId(), //用户名
-                ssoUser.getPassword(), //密码
-                ByteSource.Util.bytes(ssoUser.getId() + ssoUser.getSalt()),
-                ""  //调用基类realm
-        );
-        UsernamePasswordToken token = new UsernamePasswordToken(ssoUser.getAccount(), oldPwd);
-        boolean result = hashedCredentialsMatcher.doCredentialsMatch(token, authenticationInfo);
+        String hashedOldPwd = PasswordHelper.encryptPassword(ssoUser.getId(), oldPwd, ssoUser.getSalt());
+        boolean result = hashedOldPwd.equals(ssoUser.getPassword());
         if (result) {
             return Result.ok(true, "密码校验正确");
         }
@@ -203,7 +189,7 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
         }
         //短信直接创建用户可以初始不设置密码此处密码允许为空
         if (!StringUtils.isEmpty(user.getPassword())) {
-            user.setPassword(passwordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
+            user.setPassword(PasswordHelper.encryptPassword(user.getId(), user.getPassword(), user.getSalt()));
         }
         if (null == user.getStatus()) {
             user.setStatus(0);

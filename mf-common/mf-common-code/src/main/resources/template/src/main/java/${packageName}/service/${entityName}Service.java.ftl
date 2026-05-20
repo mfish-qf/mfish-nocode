@@ -13,7 +13,7 @@ import java.io.IOException;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 public interface ${entityName}Service extends IService<${entityName}> {
     /**

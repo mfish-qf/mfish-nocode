@@ -3,11 +3,9 @@ package cn.com.mfish.oauth.controller;
 import cn.com.mfish.common.captcha.common.CaptchaConstant;
 import cn.com.mfish.common.captcha.config.properties.CaptchaProperties;
 import cn.com.mfish.common.captcha.service.CheckCodeService;
-import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.exception.CaptchaException;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.AuthorizationCode;
@@ -26,10 +24,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,7 +66,7 @@ public class AuthorizeController {
      * 获取授权码（GET 请求）
      * <p>OAuth2 认证授权接口，用户未登录时跳转到登录页面</p>
      *
-     * @param model 模型对象
+     * @param model   模型对象
      * @param request HTTP 请求对象
      * @return 登录页面或授权码响应
      */
@@ -78,17 +79,17 @@ public class AuthorizeController {
             @Parameter(name = OAuth.OAUTH_STATE, description = "状态"),
             @Parameter(name = FORCE_LOGIN, description = "强制登录 值为1时强行返回登录界面")
     })
-    public Object getAuthorize(Model model, HttpServletRequest request) {
+    public Object getAuthorize(Model model, HttpServletRequest request, HttpServletResponse response) {
         String force = request.getParameter(FORCE_LOGIN);
         boolean forceLogin = !StringUtils.isEmpty(force) && "1".equals(force);
-        return authorize(model, request, (m, r) -> loginService.getLogin(m, r), forceLogin);
+        return authorize(model, request, response, (m, r) -> loginService.getLogin(m, r), forceLogin);
     }
 
     /**
      * 获取授权码（POST 请求）
      * <p>OAuth2 认证授权接口，处理用户登录后的授权请求</p>
      *
-     * @param model 模型对象
+     * @param model   模型对象
      * @param request HTTP 请求对象
      * @return 登录页面或授权码响应
      */
@@ -107,9 +108,10 @@ public class AuthorizeController {
             @Parameter(name = CaptchaConstant.CAPTCHA_VALUE, description = "验证码值，单实例服务需要验证码时传入")
     })
     @Log(title = "code认证接口", operateType = OperateType.LOGIN)
-    public Object authorize(Model model, HttpServletRequest request) {
-        //单体服务时，自己验证验证码，微服务时由网关验证
-        if (ServiceConstants.isBoot(Utils.getServiceType()) && captchaProperties.getEnabled()) {
+    public Object authorize(Model model, HttpServletRequest request, HttpServletResponse response) {
+        SerConstant.LoginType loginType = SerConstant.LoginType.getLoginType(request.getParameter(SerConstant.LOGIN_TYPE));
+        // 密码登录时，校验验证码
+        if (captchaProperties.getEnabled() && loginType == SerConstant.LoginType.密码登录) {
             try {
                 checkCodeService.checkCaptcha(request.getParameter(CaptchaConstant.CAPTCHA_VALUE), request.getParameter(CaptchaConstant.CAPTCHA_KEY));
             } catch (CaptchaException e) {
@@ -117,7 +119,7 @@ public class AuthorizeController {
                 return LOGIN_PATH;
             }
         }
-        return authorize(model, request, (m, r) -> loginService.postLogin(m, r), false);
+        return authorize(model, request, response, (m, r) -> loginService.postLogin(m, r), false);
     }
 
     /**
@@ -128,7 +130,7 @@ public class AuthorizeController {
      * @param function 处理方法get post
      * @return 登录结果
      */
-    private Object authorize(Model model, HttpServletRequest request, BiFunction<Model, HttpServletRequest, Boolean> function, boolean forceLogin) {
+    private Object authorize(Model model, HttpServletRequest request, HttpServletResponse response, BiFunction<Model, HttpServletRequest, Boolean> function, boolean forceLogin) {
         OAuthAuthzRequest oauthRequest;
         try {
             oauthRequest = new OAuthAuthzRequest(request);
@@ -136,8 +138,11 @@ public class AuthorizeController {
             log.error(ex.getMessage(), ex);
             throw new MyRuntimeException("错误:请求参数校验出错");
         }
-        log.info(MessageFormat.format("用户:{0}登录状态:{1}", SecurityUtils.getSubject().getPrincipal(), SecurityUtils.getSubject().isAuthenticated()));
-        if (!SecurityUtils.getSubject().isAuthenticated()) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = !(authentication instanceof AnonymousAuthenticationToken);
+        log.info(MessageFormat.format("用户:{0}登录状态:{1}",
+                authentication != null ? authentication.getPrincipal() : null, isAuthenticated));
+        if (!isAuthenticated) {
             if (!function.apply(model, request)) {
                 //登录失败时跳转到登陆页面
                 return LOGIN_PATH;
@@ -145,11 +150,11 @@ public class AuthorizeController {
         }
         //如果是强制登录，当前登录状态登出直接返回登录页面
         if (forceLogin) {
-            SecurityUtils.getSubject().logout();
+            new SecurityContextLogoutHandler()
+                    .logout(request, response, authentication);
             return LOGIN_PATH;
         }
         return buildCodeResponse(request, oauthRequest);
-
     }
 
     private ResponseEntity<Object> buildCodeResponse(HttpServletRequest request, OAuthAuthzRequest oauthRequest) {

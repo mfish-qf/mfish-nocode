@@ -1,5 +1,5 @@
 mfish:
-  version: 2.3.1
+  version: 2.4.0
   type: boot
 # 开发环境配置
 server:
@@ -22,7 +22,12 @@ spring:
       - code
       - swagger
       - gateway
-      - shiro
+      - security
+      - ai
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.openfeign.FeignAutoConfiguration
+      - org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration
   data:
     redis:
       host: localhost
@@ -47,31 +52,28 @@ spring:
       # 设置总上传的文件大小
       max-request-size: 1200MB
   datasource:
-    druid:
-      stat-view-servlet:
-        enabled: true
-        loginUsername: admin
-        loginPassword: 123456
     dynamic:
-      druid:
-        initial-size: 5
-        min-idle: 5
-        maxActive: 20
-        maxWait: 60000
-        timeBetweenEvictionRunsMillis: 60000
-        minEvictableIdleTimeMillis: 300000
-        validationQuery: SELECT 1 FROM DUAL
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        poolPreparedStatements: true
-        maxPoolPreparedStatementPerConnectionSize: 20
-        filters: stat,slf4j
+      hikari:
+        # ========== 连接池核心参数 ==========
+        minimum-idle: 5              # 连接池最小空闲连接数
+        maximum-pool-size: 20        # 连接池最大连接数
+        idle-timeout: 300000         # 5分钟，空闲连接存活最大时间
+        max-lifetime: 1800000        # 30分钟 连接最大存活时间
+        connection-timeout: 30000    # 连接超时时间
+        validation-timeout: 5000
+        # ========== 连接检测 ==========
+        connection-test-query: SELECT 1
+        # ========== PreparedStatement 缓存 ==========
+        data-source-properties:
+          cachePrepStmts: true
+          prepStmtCacheSize: 250
+          prepStmtCacheSqlLimit: 2048
+          useServerPrepStmts: true
       datasource:
         # 主库数据源
         master:
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://localhost:3306/mfish_nocode?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:mysql://localhost:3306/mfish_nocode?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
           username: root
           password: 123456
           # 从库数据源
@@ -83,10 +85,16 @@ spring:
       # seata: true    # 开启seata代理，开启后默认每个数据源都代理，如果某个不需要代理可单独关闭
 # 暴露监控端点
 management:
+  server:
+    port: 9999
   endpoints:
     web:
       exposure:
-        include: '*'
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
   endpoint:
     health:
       show-details: always
@@ -174,4 +182,11 @@ rocketmq:
     topic: mfish-scheduler-topic
 # Flowable 会自动建表
 flowable:
+  # 自动更新数据库结构
   database-schema-update: true
+  # 启用异步执行器
+  async-executor-activate: true
+  eventregistry:
+    enabled: false
+  # 检查流程定义
+#  check-process-definitions: false

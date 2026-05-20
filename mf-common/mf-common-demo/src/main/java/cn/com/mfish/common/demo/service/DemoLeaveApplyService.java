@@ -14,7 +14,7 @@ import java.io.IOException;
  * @description: leave apply service
  * @author: mfish
  * @date: 2026-04-19
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 public interface DemoLeaveApplyService extends IService<DemoLeaveApply> {
 

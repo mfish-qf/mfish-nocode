@@ -1,19 +1,20 @@
 package cn.com.mfish.oauth.cache.redis;
 
 import cn.com.mfish.common.core.enums.DeviceType;
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.oauth.common.LoginMutexEntity;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.redis.common.RedisPrefix;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 public class UserTokenCache {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
-    @Resource
-    RedisSessionDAO redisSessionDAO;
     //登录是否互斥 默认不互斥
     @Value("${oauth2.login.mutex}")
     private boolean loginMutex = false;
@@ -92,9 +91,7 @@ public class UserTokenCache {
     public void delDeviceTokenCache(String deviceId) {
         delTokenList(deviceId);
         try {
-            redisSessionDAO.delete(redisSessionDAO.readSession(deviceId));
-        } catch (UnknownSessionException ex) {
-            log.info("sessionId不存在");
+            Objects.requireNonNull(ServletUtils.getRequest()).getSession().invalidate();
         } catch (Exception ex) {
             log.error("删除session异常", ex);
         }
@@ -107,9 +104,9 @@ public class UserTokenCache {
      * 首先调用setUserDevice方法更新或设置用户设备信息，然后调用setToken方法更新该设备的认证令牌
      *
      * @param deviceType 设备类型，指明了用户所使用的设备类型，如移动设备、桌面设备等
-     * @param deviceId 设备的唯一标识符，用于区分不同的设备
-     * @param userId 用户的唯一标识符，用于区分不同的用户
-     * @param token 认证令牌，用于设备在系统中的认证和通信
+     * @param deviceId   设备的唯一标识符，用于区分不同的设备
+     * @param userId     用户的唯一标识符，用于区分不同的用户
+     * @param token      认证令牌，用于设备在系统中的认证和通信
      */
     private void setUserDevice(DeviceType deviceType, String deviceId, String userId, String token) {
         setUserDevice(deviceType, deviceId, userId);
@@ -121,8 +118,8 @@ public class UserTokenCache {
      * 当用户关闭浏览器重新登录会重新设置该信息
      *
      * @param deviceType 设备类型，指明了用户所使用的设备类型，如移动设备、桌面设备等
-     * @param deviceId 设备的唯一标识符，用于区分不同的设备
-     * @param userId 用户的唯一标识符，用于区分不同的用户
+     * @param deviceId   设备的唯一标识符，用于区分不同的设备
+     * @param userId     用户的唯一标识符，用于区分不同的用户
      */
     private void setUserDevice(DeviceType deviceType, String deviceId, String userId) {
         //如果当前用户为空则不设置该属性
@@ -136,7 +133,7 @@ public class UserTokenCache {
      * 获取用户设备id
      *
      * @param deviceType 设备类型，指明了用户所使用的设备类型，如移动设备、桌面设备等
-     * @param userId 用户的唯一标识符，用于区分不同的用户
+     * @param userId     用户的唯一标识符，用于区分不同的用户
      * @return 用户设备id
      */
     private String getUserDevice(DeviceType deviceType, String userId) {
@@ -150,7 +147,7 @@ public class UserTokenCache {
      * 一个设备可能对应多个token  存储token列表信息
      *
      * @param deviceId 设备的唯一标识符，用于区分不同的设备
-     * @param token 令牌
+     * @param token    令牌
      */
     private void setToken(String deviceId, String token) {
         redisTemplate.opsForList().leftPush(RedisPrefix.buildDevice2TokenKey(deviceId), token);

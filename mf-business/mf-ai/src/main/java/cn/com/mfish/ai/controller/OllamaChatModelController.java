@@ -17,7 +17,7 @@ import reactor.core.publisher.Flux;
  * @description: ollama_chat_model
  * @author: mfish
  * @date: 2025-08-13
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 @Tag(name = "AI聊天模型-ollama")
 @RestController

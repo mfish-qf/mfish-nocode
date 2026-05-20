@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
  * @description: leave apply request
  * @author: mfish
  * @date: 2026-04-19
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 @Data
 @Accessors(chain = true)

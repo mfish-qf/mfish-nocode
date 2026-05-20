@@ -2,12 +2,12 @@ package cn.com.mfish.oauth.controller;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.exception.OAuthValidateException;
+import cn.com.mfish.common.core.utils.QRCodeUtils;
 import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.common.SerConstant;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.validator.WeChatTokenValidator;
-import cn.com.mfish.common.core.utils.QRCodeUtils;
 import cn.com.mfish.oauth.entity.QRCode;
 import cn.com.mfish.oauth.entity.QRCodeImg;
 import cn.com.mfish.oauth.entity.RedisQrCode;
@@ -20,8 +20,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,7 +139,7 @@ public class QRCodeController {
             return Result.ok(null, "未检测到扫码状态");
         }
         QRCode qrCode = new QRCode();
-        BeanUtils.copyProperties(qrCode, redisQrCode);
+        BeanUtils.copyProperties(redisQrCode, qrCode);
         return Result.ok(qrCode);
     }
 

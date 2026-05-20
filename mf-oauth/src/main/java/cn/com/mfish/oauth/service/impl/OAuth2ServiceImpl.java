@@ -19,12 +19,12 @@ import cn.com.mfish.oauth.oltu.as.request.OAuthTokenRequest;
 import cn.com.mfish.oauth.oltu.common.OAuth;
 import cn.com.mfish.oauth.service.OAuth2Service;
 import jakarta.annotation.Resource;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -82,20 +82,20 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     private AuthorizationCode setProperty(OAuthRequest request) {
         AuthorizationCode code = new AuthorizationCode();
         code.setClientId(request.getClientId());
-        Subject subject = SecurityUtils.getSubject();
-        code.setUserId((String) subject.getPrincipal());
-        SsoUser user = ssoUserService.getUserById(code.getUserId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = (String) authentication.getPrincipal();
+        code.setUserId(userId);
+        SsoUser user = ssoUserService.getUserById(userId);
         if (user == null) {
-            userTokenCache.delUserTokenCache(DeviceType.Web, subject.getSession().getId().toString(), code.getUserId());
+            userTokenCache.delUserTokenCache(DeviceType.Web, request.getRequest().getSession().getId(), userId);
             throw new MyRuntimeException("错误:未获取到用户信息");
         }
-        List<TenantVo> tenants = ssoUserService.getUserTenants(code.getUserId());
+        List<TenantVo> tenants = ssoUserService.getUserTenants(userId);
         if (tenants != null && !tenants.isEmpty()) {
-            //设置第一个为默认登录租户
             code.setTenantId(tenants.getFirst().getId());
         }
         code.setAccount(user.getAccount());
-        code.setCodeSessionId(subject.getSession().getId().toString());
+        code.setCodeSessionId(request.getRequest().getSession().getId());
         code.setScope(StringUtils.join(request.getScopes().iterator(), ","));
         code.setRedirectUri(request.getRedirectURI());
         code.setParentToken(request.getParam(OAuth.OAUTH_ACCESS_TOKEN));
@@ -158,7 +158,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         BeanUtils.copyProperties(code, accessToken);
         accessToken.setAccessToken(Utils.uuid32());
         accessToken.setRefreshToken(Utils.uuid32());
-        accessToken.setTokenSessionId(SecurityUtils.getSubject().getSession().getId().toString());
+        accessToken.setTokenSessionId(request.getRequest().getSession().getId());
         accessToken.setGrantType(request.getGrantType());
         accessToken.setClientSecret(request.getClientSecret());
         accessToken.setExpire(tokenExpire);
@@ -187,6 +187,4 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         webTokenService.setRefreshToken(token);
         return token;
     }
-
-
 }

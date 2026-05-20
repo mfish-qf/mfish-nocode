@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
  * @Description: 角色信息表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 @Data
 @Accessors(chain = true)

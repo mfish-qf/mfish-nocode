@@ -19,7 +19,7 @@ import java.util.Date;
  * @description: leave apply demo
  * @author: mfish
  * @date: 2026-04-19
- * @version: V2.3.1
+ * @version: V2.4.0
  */
 @Data
 @TableName("demo_leave_apply")

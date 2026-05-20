@@ -50,15 +50,6 @@ public interface LoginService {
     Result<String> login(String username, String password, SerConstant.LoginType loginType, String clientId, String rememberMe);
 
     /**
-     * 登录重试计数
-     *
-     * @param userId 用户id
-     * @param matches 是否验证通过
-     * @return 是否
-     */
-    boolean retryLimit(String userId, boolean matches);
-
-    /**
      * 发送短信
      *
      * @param phone 手机号
@@ -73,21 +64,6 @@ public interface LoginService {
      * @param code 验证码
      */
     void saveSmsCode(String phone, String code);
-
-    /**
-     * 删除短信验证码
-     *
-     * @param phone 手机号
-     */
-    void delSmsCode(String phone);
-
-    /**
-     * 获取短信验证码
-     *
-     * @param phone 手机号
-     * @return 返回验证码
-     */
-    String getSmsCode(String phone);
 
     /**
      * 保存短信倒计时信息
@@ -118,12 +94,4 @@ public interface LoginService {
      * @param openId openId
      */
     void sessionKeyTempCache(String sessionKey, String openId);
-
-    /**
-     * 通过sessionKey获取openId
-     *
-     * @param sessionKey sessionKey
-     * @return 返回openId
-     */
-    String getOpenIdBySessionKey(String sessionKey);
 }

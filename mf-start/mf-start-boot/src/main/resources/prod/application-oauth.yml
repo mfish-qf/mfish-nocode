@@ -11,12 +11,6 @@ security:
 spring:
   thymeleaf:
     cache: false
-redisCache:
-  expire: 50400
-  keyPrefix: sso_cache
-redisSession:
-  expire: 50400
-  keyPrefix: sso_session
 oauth2:
   expire:
     code: 180

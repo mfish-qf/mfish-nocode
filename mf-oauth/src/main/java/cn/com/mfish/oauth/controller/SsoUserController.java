@@ -17,7 +17,10 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
-import cn.com.mfish.common.oauth.entity.*;
+import cn.com.mfish.common.oauth.entity.OnlineUser;
+import cn.com.mfish.common.oauth.entity.RedisAccessToken;
+import cn.com.mfish.common.oauth.entity.SsoUser;
+import cn.com.mfish.common.oauth.entity.WeChatToken;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import cn.com.mfish.oauth.cache.redis.UserTokenCache;
@@ -28,9 +31,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -222,14 +228,13 @@ public class SsoUserController {
     @Operation(summary = "用户登出", description = "用户登出--该方法只适用于 web 前端登录的用户登出")
     @DeleteMapping("/revoke")
     @Log(title = "用户登出", operateType = OperateType.LOGOUT)
-    public Result<Boolean> revoke() {
-        Subject subject = SecurityUtils.getSubject();
+    public Result<Boolean> revoke(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = null;
-        //session中存在userId,优先使用session中的userId
-        if (subject != null) {
-            userId = (String) subject.getPrincipal();
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal())) {
+            userId = (String) authentication.getPrincipal();
         }
-        //session中不存在userId获取token中的userId
         if (StringUtils.isEmpty(userId)) {
             try {
                 userId = AuthInfoUtils.getCurrentUserId();
@@ -237,7 +242,8 @@ public class SsoUserController {
                 log.error(e.getMessage());
             }
         } else {
-            subject.logout();
+            new SecurityContextLogoutHandler()
+                    .logout(request, response, authentication);
         }
         if (StringUtils.isEmpty(userId)) {
             String error = "未获取到用户登录状态，无需登出";

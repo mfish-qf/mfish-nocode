@@ -54,9 +54,10 @@ public class RouteFunctionConfig {
     @Bean
     public RouterFunction<ServerResponse> aiRouter() {
         return RouterFunctions.route(GET("/ai/router"), request -> {
+            String sessionId = request.queryParam("sessionId").orElse("default");
             String prompt = request.queryParam("prompt").orElse("介绍下摸鱼低代码");
             try {
-                Mono<Result<AiRouterVo>> result = gatewayAssistant.chat(prompt);
+                Mono<Result<AiRouterVo>> result = gatewayAssistant.chat(sessionId, prompt);
                 return ServerResponse.ok()
                         .body(result, Result.class);
             } catch (Exception ex) {
