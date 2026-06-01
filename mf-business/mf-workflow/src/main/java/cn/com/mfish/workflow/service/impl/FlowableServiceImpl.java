@@ -219,7 +219,9 @@ public class FlowableServiceImpl implements FlowableService {
             Map<String, Object> map = new HashMap<>();
             map.put(Constants.WORKFLOW_PARAM, param);
             map.put(Constants.PROCESS_START_ACCOUNT, param.getStartAccount());
-            map.putAll(param.getParam());
+            if(param.getParam() != null){
+                map.putAll(param.getParam());
+            }
             // 清空param中的param参数
             param.setParam(null);
             ProcessInstance pi = runtimeService.startProcessInstanceByKey(param.getKey(), param.getId().toString(), map);
