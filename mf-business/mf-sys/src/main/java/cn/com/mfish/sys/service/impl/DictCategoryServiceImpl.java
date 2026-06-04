@@ -148,7 +148,7 @@ public class DictCategoryServiceImpl extends ServiceImpl<DictCategoryMapper, Dic
         //parentId为空时，设置为空字符串
         if (StringUtils.isEmpty(dictCategory.getParentId())) {
             dictCategory.setParentId("");
-        } else if (dictCategory.getId().equals(dictCategory.getParentId())) {
+        } else if (dictCategory.getParentId().equals(dictCategory.getId())) {
             return Result.fail("错误：父节点不允许设置自己");
         }
         if (!StringUtils.isEmpty(dictCategory.getCategoryCode()) && baseMapper.exists(new LambdaQueryWrapper<DictCategory>()
