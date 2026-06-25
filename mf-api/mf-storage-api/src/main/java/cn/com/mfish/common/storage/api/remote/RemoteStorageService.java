@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.common.storage.api.fallback.RemoteStorageFallBack;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public interface RemoteStorageService {
      * @return 存储信息
      */
     @GetMapping("/sysFile/{fileKey}")
-    Result<StorageInfo> queryByKey(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("fileKey") String fileKey);
+    Result<StorageInfo> queryByKey(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "fileKey", description = "文件key") @PathVariable String fileKey);
 
     /**
      * 逻辑删除文件
@@ -38,7 +39,7 @@ public interface RemoteStorageService {
      * @return 删除结果
      */
     @DeleteMapping("/sysFile/logic/{id}")
-    Result<Boolean> logicDelete(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
+    Result<Boolean> logicDelete(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "id", description = "文件ID") @PathVariable String id);
 
     /**
      * 获取文件资源
@@ -48,5 +49,5 @@ public interface RemoteStorageService {
      * @return 文件资源响应
      */
     @GetMapping("/file/{key:.+}")
-    ResponseEntity<Resource> fetch(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("key") String key);
+    ResponseEntity<Resource> fetch(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "key", description = "文件key") @PathVariable String key);
 }

@@ -12,6 +12,7 @@ import cn.com.mfish.sys.api.entity.FieldInfo;
 import cn.com.mfish.sys.api.entity.TableInfo;
 import cn.com.mfish.sys.api.fallback.RemoteDbConnectFallback;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +48,7 @@ public interface RemoteDbConnectService {
      * @return 数据库连接信息
      */
     @GetMapping("/dbConnect/{id}")
-    Result<DbConnect> queryById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
+    Result<DbConnect> queryById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "id", description = "连接ID") @PathVariable String id);
 
     /**
      * 获取数据库表列表

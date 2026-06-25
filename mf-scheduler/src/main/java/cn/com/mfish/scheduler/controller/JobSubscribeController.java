@@ -59,7 +59,7 @@ public class JobSubscribeController {
     @Operation(summary = "根据任务ID获取策略列表")
     @GetMapping("/{jobId}")
     @RequiresPermissions("sys:job:query")
-    public Result<List<JobSubscribe>> queryList(@Parameter(name = "jobId", description = "任务ID") @PathVariable("jobId") String jobId) {
+    public Result<List<JobSubscribe>> queryList(@PathVariable @Parameter(name = "jobId", description = "任务ID") String jobId) {
         return Result.ok(jobSubscribeService.getSubscribesByJobId(jobId), "任务策略-查询成功!");
     }
 

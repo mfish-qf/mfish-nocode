@@ -49,7 +49,7 @@ public class SysConfigController {
      */
     @Operation(summary = "界面配置-通过token查询")
     @GetMapping("/{type}")
-    public Result<SysConfig> queryConfig(@PathVariable("type") Integer type) {
+    public Result<SysConfig> queryConfig(@Parameter(name = "type", description = "配置类型") @PathVariable Integer type) {
         return Result.ok(sysConfigService.querySysConfig(AuthInfoUtils.getCurrentUserId(), type), "界面配置-查询成功!");
     }
 

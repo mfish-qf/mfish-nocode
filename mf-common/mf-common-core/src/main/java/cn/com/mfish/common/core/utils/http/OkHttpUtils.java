@@ -347,12 +347,9 @@ public class OkHttpUtils {
             int code = response.code();
             String msg = response.message();
             log.info("请求执行完成，响应状态码：{}，响应信息：{}", code, msg);
-            if (response.body() != null) {
-                String data = response.body().string();
-                log.info("响应结果：{}", data);
-                return Result.buildResult(data, code, msg);
-            }
-            return Result.buildResult(null, code, msg);
+            String data = response.body().string();
+            log.info("响应结果：{}", data);
+            return Result.buildResult(data, code, msg);
         } catch (SocketTimeoutException se) {
             log.error("错误:OkHttp请求超时", se);
             throw new MyRuntimeException("Http请求超时");

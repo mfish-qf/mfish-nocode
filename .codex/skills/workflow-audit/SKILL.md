@@ -1,4 +1,4 @@
-﻿---
+---
 name: workflow-audit
 description: 为 mfish-nocode-pro 项目集成 Flowable 工作流审批能力，包括注册 FlowKey、实体审批状态字段、Service 启动/撤回流程、Controller 审批回调接口、Feign 回调接口注册五个步骤的完整代码模板。当用户说"带工作流审批"、"发布审核流程"、"集成工作流"、"审批回调"时使用此 skill。
 ---

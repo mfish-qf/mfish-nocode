@@ -205,7 +205,7 @@ public class SsoTenantController {
      */
     @Operation(summary = "切换租户")
     @PutMapping("/change/{tenantId}")
-    public Result<String> changeTenant(@PathVariable("tenantId") String tenantId) {
+    public Result<String> changeTenant(@Parameter(name = "tenantId", description = "租户ID") @PathVariable String tenantId) {
         if (StringUtils.isEmpty(tenantId)) {
             return Result.fail(tenantId, "错误:租户ID不允许为空");
         }
@@ -266,7 +266,7 @@ public class SsoTenantController {
     @GetMapping("/org/{ids}")
     @RequiresPermissions("sys:tenantOrg:query")
     @DataScope(table = "sso_org", type = DataScopeType.Tenant)
-    public Result<List<SsoOrg>> queryByIds(@Parameter(name = "ids", description = "唯一性ID") @PathVariable("ids") String ids) {
+    public Result<List<SsoOrg>> queryByIds(@Parameter(name = "ids", description = "组织ID") @PathVariable String ids) {
         return ssoOrgService.queryByIds(ids);
     }
 

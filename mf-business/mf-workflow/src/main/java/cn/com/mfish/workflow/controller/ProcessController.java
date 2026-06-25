@@ -132,7 +132,7 @@ public class ProcessController {
      */
     @Operation(summary = "查询流程图片")
     @GetMapping("/image/{processInstanceId}")
-    public Result<String> getImage(@Parameter(name = "processInstanceId", description = "流程实例id") @PathVariable("processInstanceId") String processInstanceId) {
+    public Result<String> getImage(@PathVariable @Parameter(name = "processInstanceId", description = "流程实例id") String processInstanceId) {
         return Result.ok(flowableService.getImage(processInstanceId), "查询流程图片成功");
     }
 

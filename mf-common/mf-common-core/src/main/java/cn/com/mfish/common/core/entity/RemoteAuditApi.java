@@ -2,6 +2,7 @@ package cn.com.mfish.common.core.entity;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.web.Result;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ public interface RemoteAuditApi<T> {
      * @return 操作结果
      */
     @PostMapping("/{prefix}/approved/{id}")
-    Result<String> approved(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("prefix") String prefix, @PathVariable("id") T id, @RequestBody WorkflowCompleteResult result);
+    Result<String> approved(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "prefix", description = "业务前缀") @PathVariable String prefix, @Parameter(name = "id", description = "业务ID") @PathVariable T id, @RequestBody WorkflowCompleteResult result);
 
     /**
      * 审批驳回接口
@@ -36,7 +37,7 @@ public interface RemoteAuditApi<T> {
      * @return 操作结果
      */
     @PostMapping("/{prefix}/rejected/{id}")
-    Result<String> rejected(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("prefix") String prefix, @PathVariable("id") T id, @RequestBody WorkflowCompleteResult result);
+    Result<String> rejected(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "prefix", description = "业务前缀") @PathVariable String prefix, @Parameter(name = "id", description = "业务ID") @PathVariable T id, @RequestBody WorkflowCompleteResult result);
 
     /**
      * 审批撤销接口
@@ -48,6 +49,6 @@ public interface RemoteAuditApi<T> {
      * @return 操作结果
      */
     @PostMapping("/{prefix}/canceled/{id}")
-    Result<String> canceled(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("prefix") String prefix, @PathVariable("id") T id, @RequestBody WorkflowCompleteResult result);
+    Result<String> canceled(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "prefix", description = "业务前缀") @PathVariable String prefix, @Parameter(name = "id", description = "业务ID") @PathVariable T id, @RequestBody WorkflowCompleteResult result);
 
 }
