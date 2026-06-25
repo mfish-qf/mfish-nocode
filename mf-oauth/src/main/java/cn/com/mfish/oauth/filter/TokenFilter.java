@@ -71,7 +71,7 @@ public class TokenFilter extends OncePerRequestFilter {
         if (whitesProperties.getWhites().isEmpty()) {
             return false;
         }
-        if (request instanceof jakarta.servlet.http.HttpServletRequest httpRequest) {
+        if (request instanceof HttpServletRequest httpRequest) {
             String uri = httpRequest.getRequestURI();
             // 去掉 context path 前缀
             String contextPath = httpRequest.getContextPath();

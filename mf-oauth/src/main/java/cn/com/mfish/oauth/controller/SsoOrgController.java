@@ -81,7 +81,7 @@ public class SsoOrgController {
     @Parameters({
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true)
     })
-    public Result<List<SsoOrg>> queryOrgTreeById(@PathVariable("ids") String ids, String direction) {
+    public Result<List<SsoOrg>> queryOrgTreeById(@Parameter(name = "ids", description = "组织ID") @PathVariable String ids, String direction) {
         if (StringUtils.isEmpty(ids)) {
             return Result.fail(new ArrayList<>(), "错误:组织ID不允许为空");
         }
@@ -101,7 +101,7 @@ public class SsoOrgController {
     @Operation(summary = "获取组织的角色")
     @GetMapping("/roles/{orgIds}")
     @RequiresPermissions(value = {"sys:account:insert", "sys:tenantUser:insert"})
-    public Result<List<UserRole>> queryOrgRoles(@Parameter(name = "orgIds", description = "组织ID") @PathVariable("orgIds") String orgIds) {
+    public Result<List<UserRole>> queryOrgRoles(@PathVariable @Parameter(name = "orgIds", description = "组织ID") String orgIds) {
         if (StringUtils.isEmpty(orgIds)) {
             return Result.fail(new ArrayList<>(), "错误:组织ID不允许为空");
         }
@@ -159,7 +159,7 @@ public class SsoOrgController {
     @Operation(summary = "组织结构表-通过id查询", description = "组织结构表-通过id查询")
     @GetMapping("/{ids}")
     @RequiresPermissions("sys:org:query")
-    public Result<List<SsoOrg>> queryByIds(@Parameter(name = "ids", description = "唯一性ID") @PathVariable("ids") String ids) {
+    public Result<List<SsoOrg>> queryByIds(@PathVariable @Parameter(name = "ids", description = "唯一性ID") String ids) {
         return ssoOrgService.queryByIds(ids);
     }
 
@@ -175,7 +175,7 @@ public class SsoOrgController {
     @Parameters({
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up返回父节点 down返回子节点", required = true),
     })
-    public Result<List<SsoOrg>> queryByFixCode(@Parameter(name = "code", description = "固定编码") @PathVariable("code") String code, @RequestParam String direction) {
+    public Result<List<SsoOrg>> queryByFixCode(@PathVariable @Parameter(name = "code", description = "固定编码") String code, @RequestParam String direction) {
         List<SsoOrg> list = ssoOrgService.queryOrgByCode(code, TreeDirection.getDirection(direction));
         return Result.ok(list, "组织结构表-查询成功!");
     }
@@ -190,7 +190,7 @@ public class SsoOrgController {
      */
     @Operation(summary = "获取组织及子组织下的所有用户-通过固定编码查询", description = "获取组织及子组织下的所有用户-通过固定编码查询")
     @GetMapping("/user/{code}")
-    public Result<PageResult<UserInfo>> queryUserByCode(@Parameter(name = "code", description = "固定编码") @PathVariable("code") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
+    public Result<PageResult<UserInfo>> queryUserByCode(@PathVariable @Parameter(name = "code", description = "固定编码") String code, ReqOrgUser reqOrgUser, ReqPage reqPage) {
         return Result.ok(ssoOrgService.queryUserByCode(code, reqOrgUser, reqPage), "组织下用户查询成功");
     }
 

@@ -136,7 +136,7 @@ public class SsoUserController {
     @Parameters({
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up 返回父节点 down 返回子节点", required = true)
     })
-    public Result<List<SsoOrg>> getOrgs(@PathVariable("userId") String userId, @RequestParam String direction) {
+    public Result<List<SsoOrg>> getOrgs(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId, @RequestParam String direction) {
         return ssoUserService.getOrgs(userId, direction);
     }
 
@@ -154,7 +154,7 @@ public class SsoUserController {
             @Parameter(name = "tenantId", description = "租户 id"),
             @Parameter(name = "direction", description = "方向 all 返回所有父子节点 up 返回父节点 down 返回子节点", required = true)
     })
-    public Result<List<String>> getOrgIds(@PathVariable("userId") String userId, @RequestParam String tenantId, @RequestParam String direction) {
+    public Result<List<String>> getOrgIds(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId, @RequestParam String tenantId, @RequestParam String direction) {
         return ssoUserService.getOrgIds(tenantId, userId, direction);
     }
 
@@ -242,8 +242,7 @@ public class SsoUserController {
                 log.error(e.getMessage());
             }
         } else {
-            new SecurityContextLogoutHandler()
-                    .logout(request, response, authentication);
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
         if (StringUtils.isEmpty(userId)) {
             String error = "未获取到用户登录状态，无需登出";
@@ -440,7 +439,7 @@ public class SsoUserController {
      */
     @Operation(summary = "判断账号是否设置过密码")
     @GetMapping("/pwdExist/{userId}")
-    public Result<Boolean> isPasswordExist(@PathVariable("userId") String userId) {
+    public Result<Boolean> isPasswordExist(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId) {
         return Result.ok(ssoUserService.isPasswordExist(userId));
     }
 
@@ -452,7 +451,7 @@ public class SsoUserController {
      */
     @Operation(summary = "是否允许修改账号")
     @GetMapping("/allowChangeAccount/{userId}")
-    public Result<Boolean> allowChangeAccount(@PathVariable("userId") String userId) {
+    public Result<Boolean> allowChangeAccount(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId) {
         return Result.ok(ssoUserService.allowChangeAccount(userId));
     }
 
@@ -477,7 +476,7 @@ public class SsoUserController {
      */
     @Operation(summary = "获取用户安全设置")
     @GetMapping("/secureSetting/{userId}")
-    public Result<SsoUser> getSecureSetting(@PathVariable("userId") String userId) {
+    public Result<SsoUser> getSecureSetting(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId) {
         return Result.ok(ssoUserService.getSecureSetting(userId));
     }
 
@@ -490,7 +489,7 @@ public class SsoUserController {
     @Operation(summary = "解绑gitee账号")
     @PutMapping("/unbind/gitee/{userId}")
     @Log(title = "解绑gitee账号", operateType = OperateType.UPDATE)
-    public Result<Boolean> unbindGitee(@PathVariable("userId") String userId) {
+    public Result<Boolean> unbindGitee(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId) {
         return ssoUserService.unbindGitee(userId);
     }
 
@@ -504,7 +503,7 @@ public class SsoUserController {
     @Operation(summary = "解绑github账号")
     @PutMapping("/unbind/github/{userId}")
     @Log(title = "解绑github账号", operateType = OperateType.UPDATE)
-    public Result<Boolean> unbindGithub(@PathVariable("userId") String userId) {
+    public Result<Boolean> unbindGithub(@PathVariable @Parameter(name = "userId", description = "用户 ID") String userId) {
         return ssoUserService.unbindGithub(userId);
     }
 }

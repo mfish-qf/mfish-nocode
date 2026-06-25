@@ -10,6 +10,7 @@ import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.fallback.RemoteUserFallback;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,7 @@ public interface RemoteUserService {
      * @return 用户信息
      */
     @GetMapping("/user/{id}")
-    Result<UserInfo> getUserById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("id") String id);
+    Result<UserInfo> getUserById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "id", description = "用户ID") @PathVariable String id);
 
     /**
      * 根据账号获取用户信息（不包括密码）
@@ -54,7 +55,7 @@ public interface RemoteUserService {
      * @return 用户信息
      */
     @GetMapping("/user/info/{account}")
-    Result<UserInfo> getUserByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("account") String account);
+    Result<UserInfo> getUserByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable @Parameter(name = "account", description = "账号") String account);
 
     /**
      * 获取用户角色
@@ -97,7 +98,7 @@ public interface RemoteUserService {
      * @return 用户组织列表
      */
     @GetMapping("/user/orgs/{userId}")
-    Result<List<SsoOrg>> getOrgs(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("direction") String direction);
+    Result<List<SsoOrg>> getOrgs(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "userId", description = "用户ID") @PathVariable String userId, @RequestParam("direction") String direction);
 
     /**
      * 获取用户相关组织id
@@ -109,7 +110,7 @@ public interface RemoteUserService {
      * @return 组织id列表
      */
     @GetMapping("/user/orgIds/{userId}")
-    Result<List<String>> getOrgIds(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("userId") String userId, @RequestParam("tenantId") String tenantId, @RequestParam("direction") String direction);
+    Result<List<String>> getOrgIds(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "userId", description = "用户ID") @PathVariable String userId, @RequestParam("tenantId") String tenantId, @RequestParam("direction") String direction);
 
     /**
      * 根据账号获取用户id
@@ -119,7 +120,7 @@ public interface RemoteUserService {
      * @return 返回用户id列表
      */
     @GetMapping("/user/userId/{accounts}")
-    Result<List<String>> getUserIdsByAccounts(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("accounts") String accounts);
+    Result<List<String>> getUserIdsByAccounts(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable @Parameter(name = "accounts", description = "账号") String accounts);
 
     /**
      * 根据账号获取用户信息
@@ -129,5 +130,5 @@ public interface RemoteUserService {
      * @return 返回用户信息列表
      */
     @GetMapping("/user/users/{accounts}")
-    Result<List<UserInfo>> getUsersByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("accounts") String accounts);
+    Result<List<UserInfo>> getUsersByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable @Parameter(name = "accounts", description = "账号") String accounts);
 }

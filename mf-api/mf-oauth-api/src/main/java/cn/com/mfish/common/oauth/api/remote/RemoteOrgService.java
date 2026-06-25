@@ -8,6 +8,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.fallback.RemoteOrgFallback;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,7 @@ public interface RemoteOrgService {
      * @return 组织列表
      */
     @GetMapping("/org/{ids}")
-    Result<List<SsoOrg>> queryById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("ids") String ids);
+    Result<List<SsoOrg>> queryById(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "ids", description = "组织ID") @PathVariable String ids);
 
     /**
      * 根据固定编码查询组织树
@@ -44,7 +45,7 @@ public interface RemoteOrgService {
      * @return 组织树列表
      */
     @GetMapping("/org/code/{code}")
-    Result<List<SsoOrg>> queryByFixCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("code") String code, @RequestParam("direction") String direction);
+    Result<List<SsoOrg>> queryByFixCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "code", description = "组织固定编码") @PathVariable String code, @RequestParam("direction") String direction);
 
     /**
      * 根据组织编码查询组织下用户列表
@@ -58,7 +59,7 @@ public interface RemoteOrgService {
      * @return 用户分页列表
      */
     @GetMapping("/org/user/{code}")
-    Result<PageResult<UserInfo>> queryUserByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable("code") String code, @RequestParam("account") String account, @RequestParam("nickname") String nickname, @RequestParam("phone") String phone, @SpringQueryMap ReqPage reqPage);
+    Result<PageResult<UserInfo>> queryUserByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "code", description = "组织固定编码") @PathVariable String code, @RequestParam("account") String account, @RequestParam("nickname") String nickname, @RequestParam("phone") String phone, @SpringQueryMap ReqPage reqPage);
 
     /**
      * 根据固定编码获取各级组织ID
