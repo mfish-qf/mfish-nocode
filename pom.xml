@@ -27,7 +27,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>4.1.0</spring-boot.version>
-        <spring-boot-admin.version>4.1.0</spring-boot-admin.version>
+        <spring-boot-admin.version>4.1.1</spring-boot-admin.version>
         <spring-cloud.version>2025.1.2</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
         <spring-ai.version>2.0.0</spring-ai.version>
