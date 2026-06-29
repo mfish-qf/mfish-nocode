@@ -5,6 +5,7 @@ import cn.com.mfish.common.core.exception.OAuthValidateException;
 import cn.com.mfish.common.core.web.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -18,10 +19,11 @@ import java.nio.file.AccessDeniedException;
 
 /**
  * @author: mfish
- * @description: 全局异常处理
+ * @description: 全局异常处理（仅适用于Servlet环境，WebFlux环境请使用ErrorWebExceptionHandler）
  * @date: 2021/12/13 18:06
  */
 @RestControllerAdvice
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @Slf4j
 public class ExceptionHandlerAdvice {
     /**

@@ -117,18 +117,29 @@ public class Utils {
     }
 
     /**
-     * 获取请求用户IP
-     * 该方法主要用于获取HTTP请求发起者的IP地址。它尝试通过多种方式获取IP，以应对不同的网络环境和代理配置。
-     * 首先尝试从"X-Forwarded-For"头获取IP，这是HTTP协议中没有规定的扩展头，用来记载原始客户端IP地址。
-     * 如果"X-Forwarded-For"不可用或为"unknown"，则尝试从"Proxy-Client-IP"和"WL-Proxy-Client-IP"中获取IP，
-     * 这些通常是代理服务器设置的头信息。如果这些尝试都失败，则最终回退到使用请求对象的远程地址。
-     * 对于通过多个代理的情况，取第一个IP作为客户端真实IP。
+     * 获取请求用户真实IP
+     * 优先从Forwarded头获取（Spring Boot 4.x默认启用ForwardedHeaderFilter，
+     * 会将X-Forwarded-For合并到Forwarded头并在处理后移除X-Forwarded-*头，
+     * 因此直接读取X-Forwarded-For可能为空），
+     * 再依次尝试X-Forwarded-For、Proxy-Client-IP、WL-Proxy-Client-IP，
+     * 最后回退到request.getRemoteAddr()。
+     * 对于多级代理，取第一个IP作为客户端真实IP。
      *
-     * @param request HTTP请求对象，包含了获取IP所需的所有头信息和请求数据。
-     * @return 客户端的IP地址字符串。
+     * @param request HTTP请求对象
+     * @return 客户端真实IP地址
      */
     public static String getRemoteIP(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
+        // Spring Boot 4.x: ForwardedHeaderFilter会合并X-Forwarded-For到Forwarded头
+        // 格式: Forwarded: for=192.168.1.1;by=proxy;host=example.com;proto=https
+        String forwarded = request.getHeader("Forwarded");
+        if (StringUtils.isNotEmpty(forwarded)) {
+            String ip = extractForwardedFor(forwarded);
+            if (StringUtils.isNotEmpty(ip)) {
+                return ip;
+            }
+        }
+
+        String ip = request.getHeader("X-Forwarded-For");
         if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
@@ -138,13 +149,39 @@ public class Utils {
         if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-        if (ip != null && ip.length() > 15) {
-            if (ip.indexOf(',') > 0) {
-                ip = ip.substring(0, ip.indexOf(','));
-            }
+        // 多级代理时，第一个IP为客户端真实IP，多个IP按','分割
+        if (ip != null && ip.contains(",")) {
+            ip = ip.substring(0, ip.indexOf(',')).trim();
         }
         return ip;
+    }
+
+    /**
+     * 从Forwarded头中提取for字段的IP地址
+     * Forwarded头格式: for=192.168.1.1;by=proxy;host=example.com;proto=https
+     * 多级代理格式: for=192.168.1.1, for=10.0.0.1
+     *
+     * @param forwarded Forwarded头内容
+     * @return 第一个for字段的IP地址，提取失败返回null
+     */
+    private static String extractForwardedFor(String forwarded) {
+        // 匹配 for=xxx 部分，取第一个
+        for (String segment : forwarded.split(";")) {
+            String trimmed = segment.trim();
+            if (trimmed.toLowerCase().startsWith("for=")) {
+                String value = trimmed.substring(4).trim();
+                // 多个for值按逗号分隔，取第一个
+                if (value.contains(",")) {
+                    value = value.substring(0, value.indexOf(',')).trim();
+                }
+                // 去掉可能的引号包裹
+                if (value.startsWith("\"") && value.endsWith("\"")) {
+                    value = value.substring(1, value.length() - 1);
+                }
+                return value;
+            }
+        }
+        return null;
     }
 
     /**
