@@ -31,6 +31,10 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-nocode-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-demo-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>mf-workflow</finalName>
