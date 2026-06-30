@@ -2,11 +2,11 @@ package cn.com.mfish.workflow.entity;
 
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.workflow.common.ConditionConverter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.flowable.bpmn.model.SequenceFlow;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * @description: 连线对象
@@ -71,7 +71,7 @@ public class FlowEdge {
             return null;
         }
         if (sourceHandle.startsWith(IF) || sourceHandle.startsWith(ELSE) || sourceHandle.startsWith(CASE)) {
-            ObjectMapper mapper = new ObjectMapper();
+            JsonMapper mapper = new JsonMapper();
             try {
                 Condition condition = mapper.readValue(data.getCondition(), Condition.class);
                 String expr = ConditionConverter.convert(condition);
@@ -80,7 +80,7 @@ public class FlowEdge {
                     expr = expr.substring(1, expr.length() - 1);
                 }
                 return expr;
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeException(e);
             }
         }

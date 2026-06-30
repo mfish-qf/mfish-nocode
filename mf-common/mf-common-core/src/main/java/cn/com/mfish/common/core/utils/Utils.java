@@ -129,56 +129,28 @@ public class Utils {
      * @return 客户端真实IP地址
      */
     public static String getRemoteIP(HttpServletRequest request) {
-        // Spring Boot 4.x: ForwardedHeaderFilter会合并X-Forwarded-For到Forwarded头
-        // 格式: Forwarded: for=192.168.1.1;by=proxy;host=example.com;proto=https
-        String forwarded = request.getHeader("Forwarded");
-        if (StringUtils.isNotEmpty(forwarded)) {
-            String ip = extractForwardedFor(forwarded);
-            if (StringUtils.isNotEmpty(ip)) {
-                return ip;
-            }
-        }
-
-        String ip = request.getHeader("X-Forwarded-For");
-        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        // 多级代理时，第一个IP为客户端真实IP，多个IP按','分割
+        String ip = getFirstValidIp(
+                request.getHeader("X-Client-IP"),      // Gateway统一设置（推荐）
+                request.getHeader("X-Forwarded-For"),
+                request.getHeader("X-Real-IP"),
+                request.getHeader("Forwarded"),
+                request.getHeader("Proxy-Client-IP"),
+                request.getHeader("WL-Proxy-Client-IP"),
+                request.getRemoteAddr());
         if (ip != null && ip.contains(",")) {
             ip = ip.substring(0, ip.indexOf(',')).trim();
+        }
+        if ("0:0:0:0:0:0:0:1".equals(ip)) {
+            ip = "127.0.0.1";
         }
         return ip;
     }
 
-    /**
-     * 从Forwarded头中提取for字段的IP地址
-     * Forwarded头格式: for=192.168.1.1;by=proxy;host=example.com;proto=https
-     * 多级代理格式: for=192.168.1.1, for=10.0.0.1
-     *
-     * @param forwarded Forwarded头内容
-     * @return 第一个for字段的IP地址，提取失败返回null
-     */
-    private static String extractForwardedFor(String forwarded) {
-        // 匹配 for=xxx 部分，取第一个
-        for (String segment : forwarded.split(";")) {
-            String trimmed = segment.trim();
-            if (trimmed.toLowerCase().startsWith("for=")) {
-                String value = trimmed.substring(4).trim();
-                // 多个for值按逗号分隔，取第一个
-                if (value.contains(",")) {
-                    value = value.substring(0, value.indexOf(',')).trim();
-                }
-                // 去掉可能的引号包裹
-                if (value.startsWith("\"") && value.endsWith("\"")) {
-                    value = value.substring(1, value.length() - 1);
-                }
-                return value;
+    private static String getFirstValidIp(String... ips) {
+        for (String ip : ips) {
+            if (StringUtils.isNotBlank(ip)
+                    && !"unknown".equalsIgnoreCase(ip)) {
+                return ip;
             }
         }
         return null;
