@@ -1,10 +1,9 @@
 package cn.com.mfish.gateway.config;
 
-import cn.com.mfish.common.ai.agent.GatewayAssistant;
-import cn.com.mfish.common.ai.entity.AiRouterVo;
 import cn.com.mfish.common.captcha.service.CheckCodeService;
-import cn.com.mfish.common.core.web.Result;
 import jakarta.annotation.Resource;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -26,8 +25,17 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 public class RouteFunctionConfig {
     @Resource
     CheckCodeService checkCodeService;
-    @Resource
-    private GatewayAssistant gatewayAssistant;
+
+    /**
+     * AI智能路由入口，仅用于让/aiRouter请求进入Gateway Filter链
+     * 实际路由目标由AiRouteFilter动态覆盖，此处uri仅作占位
+     */
+    @Bean
+    public RouteLocator aiRouterRoute(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("aiRouter", r -> r.path("/aiRouter").uri("lb://mf-sys"))
+                .build();
+    }
 
     /**
      * 验证码生成路由，通过GET方式访问/captcha获取验证码
@@ -40,26 +48,6 @@ public class RouteFunctionConfig {
                 .and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), request -> {
             try {
                 return ServerResponse.ok().body(BodyInserters.fromValue(checkCodeService.createCaptcha()));
-            } catch (Exception ex) {
-                return Mono.error(ex);
-            }
-        });
-    }
-
-    /**
-     * AI路由接口，通过GET方式访问/ai/router与AI助手进行对话
-     *
-     * @return AI路由函数
-     */
-    @Bean
-    public RouterFunction<ServerResponse> aiRouter() {
-        return RouterFunctions.route(GET("/ai/router"), request -> {
-            String sessionId = request.queryParam("sessionId").orElse("default");
-            String prompt = request.queryParam("prompt").orElse("介绍下摸鱼低代码");
-            try {
-                Mono<Result<AiRouterVo>> result = gatewayAssistant.chat(sessionId, prompt);
-                return ServerResponse.ok()
-                        .body(result, Result.class);
             } catch (Exception ex) {
                 return Mono.error(ex);
             }
