@@ -38,6 +38,17 @@ public class RouteFunctionConfig {
     }
 
     /**
+     * LLM代理路由，将/v1开头的请求路由到mf-ai微服务
+     * LLM慢速长连接由mf-ai处理，避免占用网关资源
+     */
+    @Bean
+    public RouteLocator llmProxyRoute(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("llm-proxy", r -> r.path("/v1/**").uri("lb://mf-ai"))
+                .build();
+    }
+
+    /**
      * 验证码生成路由，通过GET方式访问/captcha获取验证码
      *
      * @return 验证码路由函数

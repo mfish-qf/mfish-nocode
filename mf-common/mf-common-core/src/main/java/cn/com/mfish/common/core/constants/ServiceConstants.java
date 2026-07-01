@@ -20,6 +20,7 @@ public class ServiceConstants {
     public static final String WORKFLOW_SERVICE = "mf-workflow";
     public static final String NOCODE_SERVICE = "mf-nocode";
     public static final String DEMO_SERVICE = "mf-demo";
+    public static final String AI_SERVICE = "mf-ai";
 
     /**
      * 判断是否为单体服务类型
@@ -42,7 +43,8 @@ public class ServiceConstants {
         STORAGE(STORAGE_SERVICE, "/storage"),
         WORKFLOW(WORKFLOW_SERVICE, "/workflow"),
         NOCODE(NOCODE_SERVICE, "/nocode"),
-        DEMO(DEMO_SERVICE, "/demo");
+        DEMO(DEMO_SERVICE, "/demo"),
+        AI(AI_SERVICE, "/ai");
 
         private final String value;
         private final String gatewayPrefix;

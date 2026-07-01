@@ -26,6 +26,18 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-cloud</artifactId>
             <version>${mfish.version}</version>
+            <exclusions>
+                <!-- mf-ai使用WebFlux，排除Servlet容器 -->
+                <exclusion>
+                    <groupId>cn.com.mfish</groupId>
+                    <artifactId>mf-common-web</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Actuator监控（原本在mf-common-app中，排除mf-common-web后丢失） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
     <build>
