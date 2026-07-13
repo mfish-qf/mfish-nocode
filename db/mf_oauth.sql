@@ -1,6 +1,6 @@
-/**
-  微服务认证、用户、权限、租户相关表（采用微服务启动，需要创建该库）
- */
+-- ----------------------------------------
+--  微服务认证、用户、权限、租户相关表（采用微服务启动，需要创建该库）
+-- ----------------------------------------
 DROP DATABASE IF EXISTS `mf_oauth`;
 CREATE DATABASE  `mf_oauth` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 SET NAMES utf8mb4;
@@ -229,6 +229,11 @@ INSERT INTO `sso_menu` VALUES ('ad5b361ff34235e8ec85cd613a59bf6e', '8ae3ea763294
 INSERT INTO `sso_menu` VALUES ('c5309ca3ba545da9950278637c90e674', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300002', 3, '新增', '#', 2, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:insert', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 INSERT INTO `sso_menu` VALUES ('e92728a6d996d4b7cb3acb0fc031d183', '8ae3ea76329402ee495cccfaa4c4c38d', '000140000300004', 3, '删除', '#', 4, 2, '', NULL, 'workflow:flowManage:query,workflow:flowManage:delete', 0, 1, NULL, NULL, '', 'admin', '2026-03-30 19:43:52', '', NULL);
 INSERT INTO `sso_menu` VALUES ('c0adefdb601f6e41f82a06ff6513613e', '53e8eaceee36c1d54e43319fdd60811b', '0001300008', 2, '工作流样例', 'ant-design:fork-outlined', 11, 1, '/demo-leave-apply', '/demo/demo-leave-apply/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2026-04-20 17:05:36', 'admin', '2026-04-20 20:05:50');
+INSERT INTO `sso_menu` VALUES ('3993e903efe9406aca08697bf80a4140', 'f65cc0cfee8cced9bf0613def2d04b42', '000020001500004', 3, '删除', '#', 4, 2, '', NULL, 'ai:aiModelConfig:query,ai:aiModelConfig:delete', 0, 1, NULL, NULL, '', 'admin', '2026-07-06 21:35:04', '', NULL);
+INSERT INTO `sso_menu` VALUES ('417074a416446e7b6382691e0750bdad', 'f65cc0cfee8cced9bf0613def2d04b42', '000020001500001', 3, '查询', '#', 1, 2, '', NULL, 'ai:aiModelConfig:query', 0, 1, NULL, NULL, '', 'admin', '2026-07-06 21:35:04', '', NULL);
+INSERT INTO `sso_menu` VALUES ('4ee0d5036b299c5efb7674c9ccf1d647', 'f65cc0cfee8cced9bf0613def2d04b42', '000020001500002', 3, '新增', '#', 2, 2, '', NULL, 'ai:aiModelConfig:query,ai:aiModelConfig:insert', 0, 1, NULL, NULL, '', 'admin', '2026-07-06 21:35:04', '', NULL);
+INSERT INTO `sso_menu` VALUES ('567c06fabc1f6c429aec3e6b1c7fa511', 'f65cc0cfee8cced9bf0613def2d04b42', '000020001500003', 3, '修改', '#', 3, 2, '', NULL, 'ai:aiModelConfig:query,ai:aiModelConfig:update', 0, 1, NULL, NULL, '', 'admin', '2026-07-06 21:35:04', '', NULL);
+INSERT INTO `sso_menu` VALUES ('f65cc0cfee8cced9bf0613def2d04b42', '2a4e024fdc76063da32926c63ca9ead2', '0000200015', 2, '模型配置', 'ant-design:open-a-i-outlined', 13, 1, '/ai-model-config', '/ai/ai-model-config/index.vue', NULL, 0, 1, NULL, 1, '', 'admin', '2026-07-06 21:35:04', 'admin', '2026-07-06 21:40:34');
 
 -- ----------------------------
 -- Table structure for sso_org

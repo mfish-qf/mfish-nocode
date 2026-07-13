@@ -19,6 +19,7 @@
         <module>mf-workflow-api</module>
         <module>mf-nocode-api</module>
         <module>mf-demo-api</module>
+        <module>mf-ai-api</module>
     </modules>
 
     <properties>

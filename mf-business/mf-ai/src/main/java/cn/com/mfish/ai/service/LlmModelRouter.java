@@ -1,31 +1,36 @@
 package cn.com.mfish.ai.service;
 
+import cn.com.mfish.ai.api.entity.AiModelConfig;
+import cn.com.mfish.ai.api.req.ReqAiModelConfig;
+import cn.com.mfish.ai.event.AiModelChangedEvent;
+import cn.com.mfish.common.ai.service.AiModelConfigService;
+import cn.com.mfish.common.ai.service.LlmModelFactory;
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * LLM多模型路由服务
  * <p>
- * 通过ApplicationContext自动发现所有ChatModel Bean，Bean名称自动转提供者名称：
- * - "openAiChatModel"  → "openai"
- * - "ollamaChatModel"  → "ollama"
- * - "zhiPuAiChatModel" → "zhipuai"
+ * 按租户维度路由：数据库中 tenantId 为空的配置属于全局模型，作为未配置专属模型租户的兜底；
+ * 每个租户拥有独立的ChatModel列表，按sortOrder决定fallback优先级。
  * <p>
- * 模型名→提供者的映射支持两种来源：
- * 1. 内置前缀规则（默认兜底）
- * 2. 数据库配置（动态刷新，优先级更高）
+ * 创建性能优化：通过配置签名缓存已构建的ChatModel，重建时仅构建新增/变更的配置，
+ * 未变更的ChatModel直接复用，避免重复创建HTTP客户端等昂贵对象。
  * <p>
- * fallback顺序：优先使用模型名对应的提供者，失败后按注册顺序依次降级
+ * 线程安全：租户模型表为 volatile 不可变快照，读操作无锁；重建整体替换引用。
  *
  * @author: mfish
  * @date: 2026/07/01
@@ -33,190 +38,189 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 public class LlmModelRouter {
+    private final ChatModel openaiChatModel;
+    private final AiModelConfigService aiModelConfigService;
+    /**
+     * 租户 → 该租户可用的ChatModel列表（不可变快照）。
+     * 通过 volatile 发布，读操作无锁且线程安全；写操作整体替换引用。
+     */
+    private volatile Map<String, List<ChatModel>> tenantProviders = Map.of();
+    /**
+     * 配置签名 → 已构建ChatModel 的缓存（仅在 rebuildLock 内访问）。
+     * 重建时优先复用未变更配置对应的ChatModel，避免重复构建HTTP客户端等昂贵对象。
+     * 被发布到快照的ChatModel对象即使后续从缓存移除，也不影响正在使用它的请求（它们持有对象引用）。
+     */
+    private final Map<String, ChatModel> modelCache = new HashMap<>();
+    /**
+     * 串行化重建动作。读操作不获取此锁，因此重建期间读取线程仍可使用旧快照，不受阻塞。
+     */
+    private final ReentrantLock rebuildLock = new ReentrantLock();
 
-    /** Bean名称后缀 → 提供者名称的转换规则 */
-    private static final String BEAN_SUFFIX = "ChatModel";
+    public LlmModelRouter(ChatModel openAiChatModel, AiModelConfigService aiModelConfigService) {
+        this.openaiChatModel = openAiChatModel;
+        this.aiModelConfigService = aiModelConfigService;
+    }
 
-    /** 提供者名称 → ChatModel实例 */
-    private final Map<String, ChatModel> providers = new LinkedHashMap<>();
-    /** fallback顺序（按Bean注册顺序） */
-    private final List<String> fallbackOrder;
-
-    /** 模型名前缀 → 提供者名称的映射（内置默认规则） */
-    private final Map<String, String> defaultPrefixMap = new LinkedHashMap<>();
-    /** 模型名前缀 → 提供者名称的映射（数据库动态配置，优先级高于默认） */
-    private final Map<String, String> dynamicPrefixMap = new ConcurrentHashMap<>();
-
-    public LlmModelRouter(ApplicationContext applicationContext) {
-        // 自动发现所有ChatModel Bean
-        Map<String, ChatModel> beans = applicationContext.getBeansOfType(ChatModel.class);
-        for (Map.Entry<String, ChatModel> entry : beans.entrySet()) {
-            String providerName = beanNameToProvider(entry.getKey());
-            this.providers.put(providerName, entry.getValue());
-            log.info("[LLM路由] 注册模型提供者: {} ({})", providerName, entry.getKey());
-        }
-        this.fallbackOrder = List.copyOf(this.providers.keySet());
-
-        // 内置默认前缀规则
-        initDefaultPrefixMap();
-
-        log.info("[LLM路由] 已注册提供者: {}, fallback顺序: {}", providers.keySet(), fallbackOrder);
+    @PostConstruct
+    public void initProviders() {
+        doInitProviders();
     }
 
     /**
-     * Bean名称转提供者名称
-     * "openAiChatModel"  → "openai"
-     * "ollamaChatModel"  → "ollama"
-     * "zhiPuAiChatModel" → "zhipuai"
+     * 监听数据库模型配置变更事件，重新加载模型。
+     * 助手不再缓存ChatClient（每请求实时构建），因此重载后无需通知助手刷新；
+     * 下次请求自动取到新的ChatModel。
      */
-    private String beanNameToProvider(String beanName) {
-        if (beanName.endsWith(BEAN_SUFFIX)) {
-            beanName = beanName.substring(0, beanName.length() - BEAN_SUFFIX.length());
+    @EventListener
+    public void onModelChanged(AiModelChangedEvent event) {
+        log.info("[LLM路由] 收到模型变更事件，开始重新初始化");
+        try {
+            doInitProviders();
+        } catch (Exception e) {
+            log.error("[LLM路由] 重新初始化失败，保持现有模型配置", e);
+            return;
         }
-        // 驼峰转小写，首字母小写
-        if (beanName.isEmpty()) {
-            return "default";
-        }
-        // 将驼峰转为下划线再连成小写：openAi → open_ai → openai
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < beanName.length(); i++) {
-            char c = beanName.charAt(i);
-            if (Character.isUpperCase(c)) {
-                if (i > 0) {
-                    sb.append('_');
+        log.info("[LLM路由] 模型重新初始化完成");
+    }
+
+    private void doInitProviders() {
+        rebuildLock.lock();
+        try {
+            List<AiModelConfig> configs = aiModelConfigService.queryList(new ReqAiModelConfig().setEnabled(1));
+            Map<String, List<ChatModel>> newMap = new HashMap<>();
+            Set<String> usedSignatures = new HashSet<>();
+            if (configs != null) {
+                for (AiModelConfig config : configs) {
+                    if (1 != config.getEnabled()) {
+                        continue;
+                    }
+                    String signature = signatureOf(config);
+                    if (!usedSignatures.add(signature)) {
+                        continue; // 同签名去重
+                    }
+                    try {
+                        // 签名命中缓存则复用已构建的ChatModel，避免重复创建昂贵的HTTP客户端
+                        ChatModel chatModel = modelCache.computeIfAbsent(signature, k -> buildModel(config));
+                        newMap.computeIfAbsent(config.getTenantId(), k -> new ArrayList<>()).add(chatModel);
+                        log.info("[LLM路由] 注册: tenant={}, protocol={}, provider={}, model={}",
+                                config.getTenantId(), config.getProtocol(), config.getProvider(), config.getModelName());
+                    } catch (Exception e) {
+                        log.error("[LLM路由] 注册失败: tenant={}, protocol={}, provider={}, model={}",
+                                config.getTenantId(), config.getProtocol(), config.getProvider(), config.getModelName(), e);
+                    }
                 }
-                sb.append(Character.toLowerCase(c));
-            } else {
-                sb.append(c);
             }
-        }
-        return sb.toString().replace("_", "");
-    }
-
-    /**
-     * 初始化内置默认前缀规则
-     * 这些规则在数据库没有配置时作为兜底使用
-     */
-    private void initDefaultPrefixMap() {
-        // Ollama常见模型
-        defaultPrefixMap.put("llama", "ollama");
-        defaultPrefixMap.put("mistral", "ollama");
-        defaultPrefixMap.put("phi", "ollama");
-        defaultPrefixMap.put("gemma", "ollama");
-        // OpenAI兼容API常见模型
-        defaultPrefixMap.put("gpt", "openai");
-        defaultPrefixMap.put("qwen", "openai");
-        defaultPrefixMap.put("deepseek", "openai");
-        defaultPrefixMap.put("o1", "openai");
-        defaultPrefixMap.put("o3", "openai");
-        defaultPrefixMap.put("chatglm", "zhipuai");
-
-    }
-
-    /**
-     * 刷新数据库动态映射配置
-     * 由外部定时任务或配置变更事件调用
-     *
-     * @param prefixMap 模型名前缀 → 提供者名称的映射
-     */
-    public void refreshDynamicPrefixMap(Map<String, String> prefixMap) {
-        dynamicPrefixMap.clear();
-        if (prefixMap != null) {
-            dynamicPrefixMap.putAll(prefixMap);
-        }
-        log.info("[LLM路由] 刷新动态映射配置: {}", dynamicPrefixMap);
-    }
-
-    /**
-     * 根据模型名解析提供者名称
-     * 优先级：动态配置 > 内置默认规则 > 首个注册的提供者
-     */
-    public String resolveProvider(String model) {
-        if (model == null || model.isEmpty()) {
-            return fallbackOrder.getFirst();
-        }
-        String lower = model.toLowerCase();
-
-        // 1. 优先查动态配置（数据库）
-        for (Map.Entry<String, String> entry : dynamicPrefixMap.entrySet()) {
-            if (lower.startsWith(entry.getKey()) && providers.containsKey(entry.getValue())) {
-                return entry.getValue();
+            // 构建不可变快照
+            Map<String, List<ChatModel>> snapshot = new HashMap<>();
+            for (Map.Entry<String, List<ChatModel>> e : newMap.entrySet()) {
+                snapshot.put(e.getKey(), List.copyOf(e.getValue()));
             }
-        }
-        // 2. 兜底查内置默认规则
-        for (Map.Entry<String, String> entry : defaultPrefixMap.entrySet()) {
-            if (lower.startsWith(entry.getKey()) && providers.containsKey(entry.getValue())) {
-                return entry.getValue();
+            // 清理不再使用的缓存项，释放已删除配置占用的资源
+            modelCache.keySet().retainAll(usedSignatures);
+            tenantProviders = Map.copyOf(snapshot);
+            if (snapshot.isEmpty()) {
+                log.warn("[LLM路由] 数据库无启用的模型配置");
             }
+        } finally {
+            rebuildLock.unlock();
         }
-        // 3. 直接匹配提供者名称
-        if (providers.containsKey(lower)) {
-            return lower;
-        }
-        // 4. 默认返回首个提供者
-        return fallbackOrder.getFirst();
+    }
+
+    private ChatModel buildModel(AiModelConfig config) {
+        return LlmModelFactory.create(
+                config.getProtocol(), config.getApiKey(),
+                config.getBaseUrl(), config.getModelName(),
+                config.getMaxTokens(), config.getTemperature());
     }
 
     /**
-     * 获取所有已注册的提供者名称
+     * 配置签名：由影响ChatModel构建的字段组成。签名不变则复用已构建的ChatModel。
+     * 使用加密后的apiKey（与解密后一一对应）避免明文密钥出现在签名串中。
      */
-    public Set<String> getProviderNames() {
-        return Collections.unmodifiableSet(providers.keySet());
+    private String signatureOf(AiModelConfig config) {
+        return config.getProtocol() + "|" + config.getModelName() + "|" + config.getBaseUrl()
+                + "|" + config.getApiKey() + "|" + config.getMaxTokens() + "|" + config.getTemperature();
     }
 
     /**
-     * 流式调用，支持fallback链
+     * 安全获取当前请求租户ID；无请求上下文（如启动期构造）时返回 null，回退到全局模型。
+     * 注意：必须在请求线程调用，不能在reactive异步线程中调用。
+     */
+    public String currentTenantId() {
+        try {
+            return AuthInfoUtils.getCurrentTenantId();
+        } catch (Exception e) {
+            return AuthInfoUtils.SUPER_TENANT_ID;
+        }
+    }
+
+    /**
+     * 获取指定租户的ChatModel：租户专属模型 → 全局模型 → 默认模型
+     */
+    public ChatModel getChatModel(String tenantId) {
+        List<ChatModel> list = resolveProviders(tenantId);
+        return list.isEmpty() ? openaiChatModel : list.getFirst();
+    }
+
+    /**
+     * 解析租户可用的provider链：优先租户专属，为空则回退全局
+     */
+    private List<ChatModel> resolveProviders(String tenantId) {
+        Map<String, List<ChatModel>> snapshot = tenantProviders;
+        List<ChatModel> list = snapshot.get(tenantId);
+        if (list == null || list.isEmpty()) {
+            list = snapshot.get(AuthInfoUtils.SUPER_TENANT_ID);
+        }
+        return list == null ? List.of() : list;
+    }
+
+    /**
+     * 流式调用，支持fallback链。租户在请求线程解析后传入链路，避免在reactive异步线程中获取租户。
      */
     public Flux<ChatResponse> streamWithFallback(Prompt prompt, String model) {
-        String primaryProvider = resolveProvider(model);
-        List<String> chain = buildFallbackChain(primaryProvider);
-        return tryStreamChain(prompt, chain, 0, model);
+        List<ChatModel> providers = resolveProviders(currentTenantId());
+        return tryStreamChain(prompt, 0, model, providers);
     }
 
     /**
-     * 同步调用，支持fallback链
+     * 同步调用，支持fallback链。租户在请求线程解析后传入链路。
      */
     public Mono<ChatResponse> callWithFallback(Prompt prompt, String model) {
-        String primaryProvider = resolveProvider(model);
-        List<String> chain = buildFallbackChain(primaryProvider);
-        return tryCallChain(prompt, chain, 0);
+        List<ChatModel> providers = resolveProviders(currentTenantId());
+        return tryCallChain(prompt, 0, model, providers);
     }
 
-    private List<String> buildFallbackChain(String primaryProvider) {
-        List<String> chain = new ArrayList<>();
-        chain.add(primaryProvider);
-        for (String provider : fallbackOrder) {
-            if (!chain.contains(provider)) {
-                chain.add(provider);
-            }
-        }
-        return chain;
-    }
-
-    private Flux<ChatResponse> tryStreamChain(Prompt prompt, List<String> chain, int index, String model) {
-        if (index >= chain.size()) {
-            return Flux.error(new RuntimeException("所有模型均不可用"));
-        }
-        String provider = chain.get(index);
-        log.info("[LLM路由] 流式调用, provider={}, model={}", provider, model);
-        return providers.get(provider).stream(prompt)
+    private Flux<ChatResponse> tryStreamChain(Prompt prompt, int index, String model, List<ChatModel> providers) {
+        ChatModel provider = getProvider(index, model, providers);
+        return provider.stream(prompt)
                 .onErrorResume(ex -> {
                     log.warn("[LLM路由] 提供者{}流式调用失败，尝试fallback", provider, ex);
-                    return tryStreamChain(prompt, chain, index + 1, model);
+                    return tryStreamChain(prompt, index + 1, model, providers);
                 });
     }
 
-    private Mono<ChatResponse> tryCallChain(Prompt prompt, List<String> chain, int index) {
-        if (index >= chain.size()) {
-            return Mono.error(new RuntimeException("所有模型均不可用"));
-        }
-        String provider = chain.get(index);
-        log.info("[LLM路由] 同步调用, provider={}", provider);
-        return Mono.fromCallable(() -> providers.get(provider).call(prompt))
+    private Mono<ChatResponse> tryCallChain(Prompt prompt, int index, String model, List<ChatModel> providers) {
+        ChatModel provider = getProvider(index, model, providers);
+        return Mono.fromCallable(() -> provider.call(prompt))
                 .subscribeOn(Schedulers.boundedElastic())
                 .onErrorResume(ex -> {
                     log.warn("[LLM路由] 提供者{}同步调用失败，尝试fallback", provider, ex);
-                    return tryCallChain(prompt, chain, index + 1);
+                    return tryCallChain(prompt, index + 1, model, providers);
                 });
     }
+
+    private ChatModel getProvider(int index, String model, List<ChatModel> providers) {
+        if (index >= providers.size()) {
+            throw new MyRuntimeException("所有模型均不可用");
+        }
+        ChatModel provider;
+        if (model == null || model.isEmpty()) {
+            provider = providers.get(index);
+        } else {
+            provider = providers.stream().filter(p -> Objects.equals(p.getOptions().getModel(), model)).findFirst().orElseGet(() -> providers.get(index));
+        }
+        log.info("[LLM路由] 调用, provider={}, model={}", provider, provider.getOptions().getModel());
+        return provider;
+    }
+
 }

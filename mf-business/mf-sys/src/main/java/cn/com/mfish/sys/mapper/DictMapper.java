@@ -1,6 +1,6 @@
 package cn.com.mfish.sys.mapper;
 
-import cn.com.mfish.sys.entity.Dict;
+import cn.com.mfish.sys.api.entity.Dict;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

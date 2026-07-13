@@ -1,10 +1,15 @@
 package cn.com.mfish.sys.api.fallback;
 
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.sys.api.entity.Dict;
+import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.api.remote.RemoteDictService;
+import cn.com.mfish.sys.api.req.ReqDict;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @description: 远程字典失败处理
@@ -24,6 +29,16 @@ public class RemoteDictFallback implements FallbackFactory<RemoteDictService> {
     @Override
     public RemoteDictService create(Throwable cause) {
         log.error("错误:字典调用异常", cause);
-        return (origin, dictCode) -> Result.fail("错误:查询字典数据出错");
+        return new RemoteDictService() {
+            @Override
+            public Result<List<DictItem>> queryByCode(String origin, String dictCode) {
+                return Result.fail("查询字典项失败");
+            }
+
+            @Override
+            public Result<List<Dict>> queryList(String origin, ReqDict reqDict) {
+                return Result.fail("查询字典列表失败");
+            }
+        };
     }
 }

@@ -11,7 +11,7 @@ import cn.com.mfish.common.sys.req.ReqDictItem;
 import cn.com.mfish.common.sys.service.DictItemService;
 import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.cache.DictCache;
-import cn.com.mfish.sys.entity.Dict;
+import cn.com.mfish.sys.api.entity.Dict;
 import cn.com.mfish.sys.mapper.DictMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;

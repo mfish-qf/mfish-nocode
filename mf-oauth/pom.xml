@@ -44,9 +44,5 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-captcha</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-ai</artifactId>
-        </dependency>
     </dependencies>
 </project>

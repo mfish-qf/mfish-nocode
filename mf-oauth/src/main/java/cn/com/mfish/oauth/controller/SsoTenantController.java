@@ -22,7 +22,7 @@ import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.RedisAccessToken;
 import cn.com.mfish.common.oauth.entity.SsoRole;
 import cn.com.mfish.common.oauth.entity.WeChatToken;
-import cn.com.mfish.common.oauth.req.ReqSsoMenu;
+import cn.com.mfish.common.oauth.api.req.ReqSsoMenu;
 import cn.com.mfish.common.oauth.req.ReqSsoOrg;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import cn.com.mfish.common.oauth.service.SsoMenuService;

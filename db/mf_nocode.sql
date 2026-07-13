@@ -1,6 +1,6 @@
-/**
-  自助大屏、自助API相关表（使用自助大屏相关功能需要创建该表）
- */
+-- ----------------------------------------
+--  自助大屏、自助API相关表（使用自助大屏相关功能需要创建该表）
+-- ----------------------------------------
 DROP DATABASE IF EXISTS `mf_nocode`;
 CREATE DATABASE  `mf_nocode` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 SET NAMES utf8mb4;

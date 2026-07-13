@@ -8,8 +8,8 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,13 +31,6 @@ import java.util.UUID;
 /**
  * LLM统一代理控制器（WebFlux版）
  * 对外提供OpenAI兼容的 /v1/chat/completions 接口
- * <p>
- * 改进：
- * 1. 多模型路由 + fallback链（通过LlmModelRouter）
- * 2. 使用Spring AI Message列表保持对话结构
- * 3. 使用Jackson ObjectMapper序列化，替代手工拼接JSON
- * 4. 支持流式（SSE）和非流式（JSON）双模式
- * 5. WebFlux非Servlet架构，LLM长连接不占用Servlet线程
  *
  * @author: mfish
  * @date: 2026/07/01
@@ -116,8 +109,7 @@ public class LlmProxyController {
                 .map(chatResponse -> buildResponse(completionId, model, chatResponse))
                 .onErrorResume(ex -> {
                     log.error("[LLM代理] 同步调用失败", ex);
-                    return Mono.just(buildErrorResponse(completionId, model,
-                            "AI服务暂时不可用，请稍后再试。"));
+                    return Mono.just(buildResponse(completionId, model, "AI服务暂时不可用，请稍后再试。"));
                 })
                 .map(resp -> response.bufferFactory()
                         .wrap(writeJson(resp).getBytes(StandardCharsets.UTF_8)))
@@ -147,7 +139,7 @@ public class LlmProxyController {
     }
 
     private Prompt buildPrompt(List<Message> messages, ChatCompletionDto.Request request) {
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
+        ChatOptions options = ChatOptions.builder()
                 .model(request.getModel() != null ? request.getModel() : "default")
                 .maxTokens(request.getMaxTokens() != null ? request.getMaxTokens() : 1000)
                 .temperature(request.getTemperature() != null ? request.getTemperature() : 0.7)
@@ -173,36 +165,22 @@ public class LlmProxyController {
     }
 
     private ChatCompletionDto.Response buildResponse(String id, String model, ChatResponse chatResponse) {
-        ChatCompletionDto.Response response = new ChatCompletionDto.Response();
-        response.setId(id);
-        response.setCreated(Instant.now().getEpochSecond());
-        response.setModel(model != null ? model : "default");
-
-        ChatCompletionDto.ResponseChoice choice = new ChatCompletionDto.ResponseChoice();
-        choice.setIndex(0);
-        ChatCompletionDto.ResponseMessage message = new ChatCompletionDto.ResponseMessage();
-        message.setContent(extractContent(chatResponse));
-        choice.setMessage(message);
-        choice.setFinishReason("stop");
-        response.setChoices(List.of(choice));
-
+        ChatCompletionDto.Response response =  buildResponse(id, model, extractContent(chatResponse));
         // 尝试提取usage信息
         try {
-            if (chatResponse.getMetadata() != null && chatResponse.getMetadata().getUsage() != null) {
-                var usageData = chatResponse.getMetadata().getUsage();
-                ChatCompletionDto.Usage usage = new ChatCompletionDto.Usage();
-                usage.setPromptTokens(usageData.getPromptTokens().intValue());
-                usage.setCompletionTokens(usageData.getCompletionTokens().intValue());
-                usage.setTotalTokens(usageData.getTotalTokens().intValue());
-                response.setUsage(usage);
-            }
+            var usageData = chatResponse.getMetadata().getUsage();
+            ChatCompletionDto.Usage usage = new ChatCompletionDto.Usage();
+            usage.setPromptTokens(usageData.getPromptTokens());
+            usage.setCompletionTokens(usageData.getCompletionTokens());
+            usage.setTotalTokens(usageData.getTotalTokens());
+            response.setUsage(usage);
         } catch (Exception e) {
             log.debug("[LLM代理] 获取usage信息失败，跳过", e);
         }
         return response;
     }
 
-    private ChatCompletionDto.Response buildErrorResponse(String id, String model, String errorMessage) {
+    private ChatCompletionDto.Response buildResponse(String id, String model, String message) {
         ChatCompletionDto.Response response = new ChatCompletionDto.Response();
         response.setId(id);
         response.setCreated(Instant.now().getEpochSecond());
@@ -210,9 +188,9 @@ public class LlmProxyController {
 
         ChatCompletionDto.ResponseChoice choice = new ChatCompletionDto.ResponseChoice();
         choice.setIndex(0);
-        ChatCompletionDto.ResponseMessage message = new ChatCompletionDto.ResponseMessage();
-        message.setContent(errorMessage);
-        choice.setMessage(message);
+        ChatCompletionDto.ResponseMessage responseMessage = new ChatCompletionDto.ResponseMessage();
+        responseMessage.setContent(message);
+        choice.setMessage(responseMessage);
         choice.setFinishReason("stop");
         response.setChoices(List.of(choice));
         return response;

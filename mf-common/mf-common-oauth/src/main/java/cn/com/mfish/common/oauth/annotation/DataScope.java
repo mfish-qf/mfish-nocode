@@ -72,4 +72,10 @@ public @interface DataScope {
      * @return 跳过条件
      */
     String[] ignores() default {};
+
+    /**
+     * 超户是否忽略数据权限（默认 超户也受数据权限限制，如果超户不需要受数据权限限制，将属性设置为true）
+     * @return 是否忽略
+     */
+    boolean superIgnore() default false;
 }

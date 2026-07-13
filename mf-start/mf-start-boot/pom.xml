@@ -51,6 +51,16 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-workflow</artifactId>
+            <version>${mfish.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-ai</artifactId>
+            <version>${mfish.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-bi</artifactId>
             <scope>system</scope>
             <classifier>pg</classifier>
@@ -60,15 +70,6 @@
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-api</artifactId>
-            <version>${mfish.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-prometheus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-workflow</artifactId>
             <version>${mfish.version}</version>
         </dependency>
         <dependency>

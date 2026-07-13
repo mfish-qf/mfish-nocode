@@ -1,5 +1,7 @@
 package cn.com.mfish.common.core.constants;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +38,7 @@ public class ServiceConstants {
      * 微服务枚举，引用ServiceConstants中的编译期常量，保持单一定义源
      * gatewayPrefix: 网关路由前缀（如/sys），用于将网关路径转换为服务实际路径
      */
+    @Getter
     public enum MfService {
         OAUTH(OAUTH_SERVICE, "/oauth2"),
         SYS(SYS_SERVICE, "/sys"),
@@ -52,14 +55,6 @@ public class ServiceConstants {
         MfService(String value, String gatewayPrefix) {
             this.value = value;
             this.gatewayPrefix = gatewayPrefix;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String getGatewayPrefix() {
-            return gatewayPrefix;
         }
 
         /**
@@ -85,9 +80,9 @@ public class ServiceConstants {
 
         /**
          * 将网关路径转换为服务实际路径
-         * 例如：/sys/ai/assist → /ai/assist（去掉/sys前缀）
+         * 例如：/ai/sys/assist → /sys/assist（去掉/sys前缀）
          *
-         * @param gatewayPath 网关路径（如/sys/ai/assist）
+         * @param gatewayPath 网关路径（如/ai/sys/assist）
          * @return 服务路径（如/ai/assist），如果路径不以该服务前缀开头则原样返回
          */
         public String toServicePath(String gatewayPath) {

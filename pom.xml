@@ -450,6 +450,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.com.mfish</groupId>
+                <artifactId>mf-ai-api</artifactId>
+                <version>${mfish.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.mfish</groupId>
                 <artifactId>mf-common-demo</artifactId>
                 <version>${mfish.version}</version>
             </dependency>

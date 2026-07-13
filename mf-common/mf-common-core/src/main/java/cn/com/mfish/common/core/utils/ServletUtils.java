@@ -3,9 +3,11 @@ package cn.com.mfish.common.core.utils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.server.ServerWebExchange;
 
 import java.util.*;
 
@@ -15,6 +17,41 @@ import java.util.*;
  * @date: 2021/8/13 9:38
  */
 public class ServletUtils {
+
+    private static final ThreadLocal<ServerWebExchange> EXCHANGE_HOLDER = new ThreadLocal<>();
+
+    public static void setExchange(ServerWebExchange exchange) {
+        EXCHANGE_HOLDER.set(exchange);
+    }
+
+    public static void removeExchange() {
+        EXCHANGE_HOLDER.remove();
+    }
+
+    public static ServerWebExchange getExchange() {
+        return EXCHANGE_HOLDER.get();
+    }
+
+    public static ServerHttpRequest getServerHttpRequest() {
+        ServerWebExchange exchange = EXCHANGE_HOLDER.get();
+        return exchange != null ? exchange.getRequest() : null;
+    }
+    /**
+     * 获取String参数
+     *
+     * @return 返回与header名称相对应的header值如果请求对象为null或指定的header不存在，则返回null
+     */
+    public static String getHeader(String header) {
+        HttpServletRequest request = getRequest();
+        if (request != null) {
+            return request.getHeader(header);
+        }
+        ServerHttpRequest serverHttpRequest = getServerHttpRequest();
+        if (serverHttpRequest != null) {
+            return serverHttpRequest.getHeaders().getFirst(header);
+        }
+        return null;
+    }
 
     /**
      * 获取String参数
@@ -33,38 +70,20 @@ public class ServletUtils {
             return null;
         }
     }
-
-    /**
-     * 获取header信息
-     * 该方法用于从HTTP请求中提取指定的header信息
-     *
-     * @param header 指定的header名称，不能为空
-     * @return 返回与header名称相对应的header值如果请求对象为null或指定的header不存在，则返回null
-     */
-    public static String getHeader(String header) {
-        HttpServletRequest request = getRequest();
-        if (request == null) {
-            return null;
-        }
-        return request.getHeader(header);
-    }
-
     /**
      * 获取请求属性
-     * <p>
-     * 本方法旨在从HTTP请求中获取特定的属性值通过提供属性名称，它首先确保有一个有效的请求对象存在
-     * 如果请求对象不存在，方法直接返回null表明在没有有效请求的情况下，无法获取属性
-     * 当请求对象存在时，方法则根据提供的属性名从请求中提取相应的属性值
-     *
-     * @param attr 请求属性的名称，用于标识所需的属性
      * @return 如果请求存在且指定的属性存在，则返回该属性值；否则返回null
      */
     public static Object getAttribute(String attr) {
         HttpServletRequest request = getRequest();
-        if (request == null) {
-            return null;
+        if (request != null) {
+            return request.getAttribute(attr);
         }
-        return request.getAttribute(attr);
+        ServerWebExchange exchange = getExchange();
+        if (exchange != null) {
+            return exchange.getAttributes().get(attr);
+        }
+        return null;
     }
 
     /**
