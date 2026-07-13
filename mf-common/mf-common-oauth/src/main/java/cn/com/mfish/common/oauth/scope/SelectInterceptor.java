@@ -1,6 +1,7 @@
 package cn.com.mfish.common.oauth.scope;
 
 import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
@@ -74,6 +75,9 @@ public class SelectInterceptor implements Interceptor {
     private Map<String, List<DataScopeValue>> buildParamsMap(List<DataScope> scopes) {
         Map<String, List<DataScopeValue>> map = new HashMap<>();
         for (DataScope scope : scopes) {
+            if (scope.superIgnore() && AuthInfoUtils.isSuper()) {
+                continue;
+            }
             String tableName = scope.table();
             List<DataScopeValue> list;
             if (map.containsKey(tableName)) {
@@ -93,7 +97,8 @@ public class SelectInterceptor implements Interceptor {
     private Map<String, List<String>> buildIgnoreMap(List<DataScope> scopes) {
         Map<String, List<String>> map = new HashMap<>();
         for (DataScope scope : scopes) {
-            if (scope.ignores() == null || scope.ignores().length == 0) {
+            if (scope.ignores() == null || scope.ignores().length == 0
+                    || (scope.superIgnore() && AuthInfoUtils.isSuper())) {
                 continue;
             }
             String tableName = scope.table();

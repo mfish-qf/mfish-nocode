@@ -8,9 +8,9 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
-import cn.com.mfish.sys.entity.Dict;
-import cn.com.mfish.sys.req.ReqDict;
-import cn.com.mfish.sys.service.DictService;
+import cn.com.mfish.sys.api.entity.Dict;
+import cn.com.mfish.sys.api.req.ReqDict;
+import cn.com.mfish.common.sys.service.DictService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Description: 字典
@@ -47,6 +48,19 @@ public class DictController {
         return Result.ok(new PageResult<>(dictService.queryList(reqDict, reqPage)), "字典-查询成功!");
     }
 
+
+    /**
+     * 字典列表查询
+     *
+     * @param reqDict 请求参数
+     * @return 返回字典列表
+     */
+    @Operation(summary = "字典-列表查询", description = "字典-列表查询")
+    @GetMapping("/list")
+    @RequiresPermissions("sys:dict:query")
+    public Result<List<Dict>> queryList(ReqDict reqDict) {
+        return Result.ok(dictService.queryList(reqDict, new ReqPage(1, 10000)), "字典列表-查询成功!");
+    }
 
     /**
      * 添加

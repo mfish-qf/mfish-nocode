@@ -25,4 +25,12 @@ public interface IClientAssistant {
      * @return 聊天结果
      */
     Flux<ChatResponseVo> chat(AiRequest aiRequest);
+
+    /**
+     * 获取助手对应的网关路由路径
+     * 用于AssistantRegistry按路径查找助手，替代Servlet forward实现真正的SSE流式传输
+     *
+     * @return 路由路径，如/ai/agent/chat、/ai/sys/assist、/ai/oauth2/assist
+     */
+    String getPath();
 }

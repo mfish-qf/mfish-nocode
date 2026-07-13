@@ -1,7 +1,7 @@
-/**
-  DEMO样例表（采用微服务启动，如果需要使用演示样例需要创建该库）
-  根据个人使用场景选择是否初始化
- */
+-- ----------------------------------------
+--  DEMO样例表（采用微服务启动，如果需要使用演示样例需要创建该库）
+--  根据个人使用场景选择是否初始化
+-- ----------------------------------------
 DROP DATABASE IF EXISTS `mf_demo`;
 CREATE DATABASE  `mf_demo` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 SET NAMES utf8mb4;

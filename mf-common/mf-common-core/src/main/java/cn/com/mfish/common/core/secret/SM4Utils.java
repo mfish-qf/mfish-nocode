@@ -1,5 +1,6 @@
 package cn.com.mfish.common.core.secret;
 
+import cn.com.mfish.common.core.exception.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -84,7 +85,6 @@ public class SM4Utils {
      */
     public static String encryptEcb(String hexKey, String paramStr) {
         try {
-            String cipherText = "";
             // 16进制字符串-->byte[]
             org.bouncycastle.util.Arrays.fill(new byte[hexKey.length() / 2], (byte) 0);
 
@@ -94,11 +94,10 @@ public class SM4Utils {
             // 加密后的数组
             byte[] cipherArray = encrypt_Ecb_Padding(keyData, srcData);
             // byte[]-->hexString
-            cipherText = Hex.toHexString(cipherArray);
-            return cipherText;
+            return Hex.toHexString(cipherArray);
         } catch (Exception e) {
             log.error("ECB加密异常" + e.getMessage(), e);
-            return paramStr;
+            throw new MyRuntimeException("ECB加密异常", e);
         }
     }
 
@@ -127,10 +126,6 @@ public class SM4Utils {
      * @return 解密后的字符串
      */
     public static String decryptEcb(String hexKey, String cipherText) {
-        // 用于接收解密后的字符串
-        String decryptStr = "";
-        // hexString-->byte[]
-
         byte[] keyData = Hex.decode(hexKey);
         // hexString-->byte[]
         byte[] cipherData = Hex.decode(cipherText);
@@ -139,11 +134,11 @@ public class SM4Utils {
         try {
             srcData = decrypt_Ecb_Padding(keyData, cipherData);
             // byte[]-->String
-            decryptStr = new String(srcData, ENCODING);
+            return new String(srcData, ENCODING);
         } catch (Exception e) {
             log.error("ECB解密异常" + e.getMessage(), e);
+            throw new MyRuntimeException("ECB解密异常", e);
         }
-        return decryptStr;
     }
 
     /**

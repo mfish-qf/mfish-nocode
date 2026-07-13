@@ -209,6 +209,7 @@
 | `mf_nocode.sql`    | 低代码中心数据库                     |
 | `mf_workflow.sql`  | 工作流数据库                       |
 | `mf_demo.sql`      | 样例中心数据库(非必须)                 |
+| `mf_ai.sql`         | AI中心数据库                 |
 | `mfish_nocode.sql` | 单实例数据库<br />`单实例启动只需要执行这个脚本` |
 
 ```

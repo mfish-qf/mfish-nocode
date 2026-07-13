@@ -2,7 +2,7 @@ package cn.com.mfish.common.oauth.service;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoMenu;
-import cn.com.mfish.common.oauth.req.ReqSsoMenu;
+import cn.com.mfish.common.oauth.api.req.ReqSsoMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

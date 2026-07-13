@@ -3,10 +3,13 @@ package cn.com.mfish.sys.api.remote;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.sys.api.entity.Dict;
 import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.api.fallback.RemoteDictFallback;
+import cn.com.mfish.sys.api.req.ReqDict;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,4 +32,14 @@ public interface RemoteDictService {
      */
     @GetMapping("/dictItem/{dictCode}")
     Result<List<DictItem>> queryByCode(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @Parameter(name = "dictCode", description = "字典编码") @PathVariable String dictCode);
+
+    /**
+     * 查询字典列表
+     *
+     * @param origin 来源
+     * @param reqDict 查询参数
+     * @return 字典列表
+     */
+    @GetMapping("/dict/list")
+    Result<List<Dict>> queryList(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @SpringQueryMap ReqDict reqDict);
 }

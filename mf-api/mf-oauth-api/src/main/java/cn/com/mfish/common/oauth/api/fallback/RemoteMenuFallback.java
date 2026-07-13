@@ -3,9 +3,12 @@ package cn.com.mfish.common.oauth.api.fallback;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.common.oauth.api.remote.RemoteMenuService;
+import cn.com.mfish.common.oauth.api.req.ReqSsoMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @description: 菜单远程调用失败处理
@@ -25,6 +28,11 @@ public class RemoteMenuFallback implements FallbackFactory<RemoteMenuService> {
     public RemoteMenuService create(Throwable cause) {
         log.error("菜单服务调用失败:{}", cause.getMessage());
         return new RemoteMenuService() {
+            @Override
+            public Result<List<SsoMenu>> queryMenuTree(String origin, ReqSsoMenu reqSsoMenu) {
+                return Result.fail("错误:查询菜单树失败" + cause.getMessage());
+            }
+
             @Override
             public Result<SsoMenu> add(String origin, SsoMenu ssoMenu) {
                 return Result.fail("错误:保存菜单失败" + cause.getMessage());

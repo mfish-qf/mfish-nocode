@@ -47,10 +47,6 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
-            <artifactId>mf-common-ai</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-workflow</artifactId>
         </dependency>
         <dependency>

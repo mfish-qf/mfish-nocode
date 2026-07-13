@@ -10,7 +10,7 @@ import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.oauth.cache.common.ClearCache;
 import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.oauth.mapper.SsoMenuMapper;
-import cn.com.mfish.common.oauth.req.ReqSsoMenu;
+import cn.com.mfish.common.oauth.api.req.ReqSsoMenu;
 import cn.com.mfish.common.oauth.service.SsoMenuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

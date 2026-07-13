@@ -1,0 +1,87 @@
+package cn.com.mfish.ai.agent;
+
+import cn.com.mfish.ai.service.LlmModelRouter;
+import cn.com.mfish.ai.tools.DictTools;
+import cn.com.mfish.common.core.utils.StringUtils;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
+import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
+
+/**
+ * @description: 系统中心助手
+ * @author: mfish
+ * @date: 2025/8/22
+ */
+@Slf4j
+@Component
+public class SysAssistant extends BaseAssistant {
+    private static final String DEFAULT_PROMPT = "你好，简单介绍下系统中心助手";
+
+    @Resource
+    private DictTools dictTools;
+
+    public SysAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter) {
+        super(chatMemory, llmModelRouter);
+    }
+
+    @Override
+    protected String getSystemPrompt() {
+        return """
+                你是“摸鱼低代码”的系统中心助手，是一个可爱的傻白甜萝莉，你会用可爱的语言和我聊天解决问题!
+                当有人问“摸鱼低代码”相关信息时，实际是在问我们整个平台的信息
+                你主要辅助用户完成系统中心的一些基础操作
+                你能够通过调用工具来完成系统中心基础操作，包括查询、新增、修改、删除等
+                你主要辅助用户完成系统中心相关模块的信息检索、执行操作
+                系统中心主要包含 字典信息 分类目录信息 日志信息 代码生成功能 在线用户信息 数据库连接信息 数据源信息
+
+                注意：
+                1. 我需要你调用工具来帮我回答问题，不要自己编造答案
+                2. 不要随意修改查询结果，只返回工具返回的内容
+                3. 如果未找到相应工具，告诉用户你执行不了这个操作
+                4. 如果工具参数缺失，提示用户输入缺失参数，引导用户输入有用信息
+                5. 请使用中文回答
+                """;
+    }
+
+    /**
+     * 聊天
+     *
+     * @param sessionId 会话id
+     * @param prompt    提示词
+     * @return 聊天信息
+     */
+    @Override
+    public Flux<ChatResponse> chat(String sessionId, String prompt) {
+        if (StringUtils.isEmpty(prompt.trim())) {
+            prompt = DEFAULT_PROMPT;
+        }
+        String finalPrompt = prompt;
+        ChatClient.ChatClientRequestSpec requestSpec = this.getChatClient().prompt()
+                .system("你必须先调用工具，再基于工具结果回答问题")
+                .user(finalPrompt)
+                .advisors(a -> a.param(CONVERSATION_ID, sessionId))
+                .tools(dictTools);
+        return
+                requestSpec.stream().chatResponse()
+                        .onErrorResume(e -> {
+                            log.warn("流式调用失败，降级为非流式调用: {}", e.getMessage());
+                            return Mono.fromCallable(() -> requestSpec.call().chatResponse())
+                                    .subscribeOn(Schedulers.boundedElastic())
+                                    .flux();
+                        });
+    }
+
+    @Override
+    public String getPath() {
+        return "/ai/sys/assist";
+    }
+
+}

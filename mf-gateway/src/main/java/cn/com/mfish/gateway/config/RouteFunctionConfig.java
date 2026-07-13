@@ -27,17 +27,6 @@ public class RouteFunctionConfig {
     CheckCodeService checkCodeService;
 
     /**
-     * AI智能路由入口，仅用于让/aiRouter请求进入Gateway Filter链
-     * 实际路由目标由AiRouteFilter动态覆盖，此处uri仅作占位
-     */
-    @Bean
-    public RouteLocator aiRouterRoute(RouteLocatorBuilder builder) {
-        return builder.routes()
-                .route("aiRouter", r -> r.path("/aiRouter").uri("lb://mf-sys"))
-                .build();
-    }
-
-    /**
      * LLM代理路由，将/v1开头的请求路由到mf-ai微服务
      * LLM慢速长连接由mf-ai处理，避免占用网关资源
      */

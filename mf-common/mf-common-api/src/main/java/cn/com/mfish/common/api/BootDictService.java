@@ -1,10 +1,14 @@
 package cn.com.mfish.common.api;
 
+import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.sys.service.DictItemService;
+import cn.com.mfish.sys.api.entity.Dict;
 import cn.com.mfish.sys.api.entity.DictItem;
 import cn.com.mfish.sys.api.remote.RemoteDictService;
+import cn.com.mfish.sys.api.req.ReqDict;
 import org.springframework.stereotype.Service;
+import cn.com.mfish.common.sys.service.DictService;
 
 import jakarta.annotation.Resource;
 
@@ -21,9 +25,16 @@ public class BootDictService implements RemoteDictService {
 
     @Resource
     DictItemService dictItemService;
+    @Resource
+    DictService dictService;
 
     @Override
     public Result<List<DictItem>> queryByCode(String origin, String dictCode) {
         return dictItemService.queryByCode(dictCode);
+    }
+
+    @Override
+    public Result<List<Dict>> queryList(String origin, ReqDict reqDict) {
+        return Result.ok(dictService.queryList(reqDict, new ReqPage(1, 10000)), "查询字典列表成功");
     }
 }
