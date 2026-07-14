@@ -10,7 +10,7 @@ import java.util.List;
  * @description: 界面配置
  * @author: mfish
  * @date: 2023-03-07
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface SysConfigService extends IService<SysConfig> {
     /**

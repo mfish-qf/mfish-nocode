@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @description: 请假申请审批Demo
  * @author: mfish
  * @date: 2026-04-18
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Service
 public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper, DemoLeaveApply> implements DemoLeaveApplyService {

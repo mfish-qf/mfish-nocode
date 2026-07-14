@@ -13,7 +13,6 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author: mfish
@@ -22,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableConfigurationProperties(SwaggerProperties.class)
-public class SwaggerConfig implements WebMvcConfigurer {
+public class SwaggerConfig {
     /**
      * 配置Swagger接口文档的详细信息
      *

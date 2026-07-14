@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @description: ${tableInfo.tableComment}
  * @author: mfish
  * @date: ${.now?string["yyyy-MM-dd"]}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface ${entityName}Mapper extends BaseMapper<${entityName}> {
 

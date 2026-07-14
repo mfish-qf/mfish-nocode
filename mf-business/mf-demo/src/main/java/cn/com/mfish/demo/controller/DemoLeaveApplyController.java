@@ -22,7 +22,7 @@ import java.io.IOException;
  * @description: 请假申请审批Demo
  * @author: mfish
  * @date: 2026-04-18
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Slf4j
 @Tag(name = "请假申请审批Demo")

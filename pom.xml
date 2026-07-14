@@ -6,7 +6,7 @@
     <groupId>cn.com.mfish</groupId>
     <artifactId>mfish-nocode</artifactId>
     <packaging>pom</packaging>
-    <version>mf-2.4.0</version>
+    <version>mf-2.4.1</version>
     <modules>
         <module>mf-gateway</module>
         <module>mf-common</module>
@@ -22,7 +22,7 @@
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <mfish.version>mf-2.4.0</mfish.version>
+        <mfish.version>mf-2.4.1</mfish.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -36,7 +36,7 @@
         <kaptcha.version>2.3.2</kaptcha.version>
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
         <mybatis-spring-boot.version>4.0.1</mybatis-spring-boot.version>
-        <pagehelper.boot.version>4.0.0</pagehelper.boot.version>
+        <pagehelper.boot.version>4.1.1</pagehelper.boot.version>
         <jsqlparser.version>5.3</jsqlparser.version>
         <druid.version>1.2.28</druid.version>
         <dynamic-ds.version>4.5.0</dynamic-ds.version>

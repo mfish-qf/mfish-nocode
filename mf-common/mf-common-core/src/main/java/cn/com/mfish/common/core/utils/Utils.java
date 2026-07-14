@@ -146,7 +146,7 @@ public class Utils {
         return ip;
     }
 
-    private static String getFirstValidIp(String... ips) {
+    public static String getFirstValidIp(String... ips) {
         for (String ip : ips) {
             if (StringUtils.isNotBlank(ip)
                     && !"unknown".equalsIgnoreCase(ip)) {

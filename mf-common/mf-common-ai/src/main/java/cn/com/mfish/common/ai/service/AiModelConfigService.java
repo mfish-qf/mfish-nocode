@@ -15,7 +15,7 @@ import java.util.List;
  * @description: AI模型配置信息
  * @author: mfish
  * @date: 2026-07-03
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface AiModelConfigService extends IService<AiModelConfig> {
     /**
@@ -83,7 +83,16 @@ public interface AiModelConfigService extends IService<AiModelConfig> {
     Result<AiModelConfigVo> queryByIdVo(String id);
 
     /**
-     * 导出
+     * 查询导出数据列表（脱敏后的VO列表，供双栈导出复用）
+     *
+     * @param reqAiModelConfig AI模型配置信息请求参数
+     * @param reqPage          分页参数
+     * @return 返回AI模型配置信息VO列表
+     */
+    List<AiModelConfigVo> queryExportList(ReqAiModelConfig reqAiModelConfig, ReqPage reqPage);
+
+    /**
+     * 导出（Servlet环境专用，直接写HttpServletResponse）
      *
      * @param reqAiModelConfig AI模型配置信息请求参数
      * @param reqPage 分页参数

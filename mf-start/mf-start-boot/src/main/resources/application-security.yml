@@ -24,3 +24,4 @@ security:
       - "/swagger-resources/**"
       - "/v3/api-docs/**"
       - "/404"
+      - "/actuator/**"

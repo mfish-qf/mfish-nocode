@@ -44,9 +44,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public @NonNull Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        log.info("X-Forwarded-For={}",request.getHeaders().getFirst("X-Forwarded-For"));
-        log.info("X-Real-IP={}",request.getHeaders().getFirst("X-Real-IP"));
-        log.info("remoteAddress={}",request.getRemoteAddress());
         String url = request.getURI().getPath();
         ServerHttpRequest.Builder mutate = request.mutate();
         // 内部请求来源参数清除
