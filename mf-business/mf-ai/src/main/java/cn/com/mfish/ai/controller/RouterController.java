@@ -36,13 +36,7 @@ public class RouterController {
     AiRouteService aiRouteService;
     @Resource
     AssistantRegistry assistantRegistry;
-
-    /**
-     * AI智能路由（单实例模式）
-     * 同步阻塞等待AI路由决策完成后，通过AssistantRegistry直接调用目标助手，
-     * 返回Flux<ChatResponseVo>由Spring MVC原生处理SSE流式响应，
-     * 避免Servlet forward缓冲整个响应导致流式失效的问题
-     */
+    
     @Operation(summary = "Ai路由", description = "Ai路由")
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @MetricsMonitors({

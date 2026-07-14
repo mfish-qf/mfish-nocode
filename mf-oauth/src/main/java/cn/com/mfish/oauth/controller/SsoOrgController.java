@@ -30,7 +30,7 @@ import java.util.List;
  * @Description: 组织结构表
  * @Author: mfish
  * @date: 2022-09-20
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Slf4j
 @Tag(name = "组织结构表")

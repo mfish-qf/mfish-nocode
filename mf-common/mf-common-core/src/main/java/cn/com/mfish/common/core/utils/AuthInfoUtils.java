@@ -4,10 +4,10 @@ import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.http.WebRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -69,12 +69,21 @@ public class AuthInfoUtils {
     }
 
     /**
-     * 获取当前accessToken
+     * 获取当前accessToken（双栈兼容）
+     * Servlet环境通过HttpServletRequest获取，WebFlux环境通过ServerHttpRequest获取
      *
      * @return 返回token
      */
     public static String getAccessToken() {
-        return getAccessToken(ServletUtils.getRequest());
+        HttpServletRequest servletRequest = ServletUtils.getRequest();
+        if (servletRequest != null) {
+            return getAccessToken(servletRequest);
+        }
+        ServerHttpRequest serverHttpRequest = ServletUtils.getServerHttpRequest();
+        if (serverHttpRequest != null) {
+            return getAccessToken(serverHttpRequest);
+        }
+        return null;
     }
 
     /**
@@ -186,11 +195,7 @@ public class AuthInfoUtils {
      * @return 是否
      */
     public static boolean isInnerRequest() {
-        HttpServletRequest request = ServletUtils.getRequest();
-        if (request == null) {
-            throw new MyRuntimeException("错误:未获取到请求信息");
-        }
-        String source = request.getHeader(RPCConstants.REQ_ORIGIN);
+        String source = getAttr(RPCConstants.REQ_ORIGIN);
         return RPCConstants.INNER.equals(source);
     }
 }

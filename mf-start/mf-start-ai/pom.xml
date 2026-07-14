@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.com.mfish</groupId>
         <artifactId>mf-start</artifactId>
-        <version>mf-2.4.0</version>
+        <version>mf-2.4.1</version>
     </parent>
 
     <artifactId>mf-start-ai</artifactId>
@@ -44,7 +44,24 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-        <!-- WebFlux版Swagger -->
+        <!-- Swagger通用配置（排除webmvc相关依赖，兼容WebFlux） -->
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-common-swagger</artifactId>
+            <version>${mfish.version}</version>
+            <exclusions>
+                <!-- 排除webmvc版springdoc，改用webflux版 -->
+                <exclusion>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- WebFlux版Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>

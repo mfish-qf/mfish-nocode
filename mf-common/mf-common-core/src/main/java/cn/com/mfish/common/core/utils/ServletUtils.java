@@ -54,10 +54,84 @@ public class ServletUtils {
     }
 
     /**
-     * 获取String参数
+     * 获取String参数（双栈兼容）
+     * Servlet环境通过HttpServletRequest获取，WebFlux环境通过ServerHttpRequest查询参数获取
      */
     public static String getParameter(String name) {
-        return Objects.requireNonNull(getRequest()).getParameter(name);
+        HttpServletRequest request = getRequest();
+        if (request != null) {
+            return request.getParameter(name);
+        }
+        ServerHttpRequest serverHttpRequest = getServerHttpRequest();
+        if (serverHttpRequest != null) {
+            List<String> values = serverHttpRequest.getQueryParams().get(name);
+            if (values != null && !values.isEmpty()) {
+                return values.getFirst();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取请求URI（双栈兼容）
+     */
+    public static String getRequestURI() {
+        HttpServletRequest request = getRequest();
+        if (request != null) {
+            return request.getRequestURI();
+        }
+        ServerHttpRequest serverHttpRequest = getServerHttpRequest();
+        if (serverHttpRequest != null) {
+            return serverHttpRequest.getURI().getPath();
+        }
+        return null;
+    }
+
+    /**
+     * 获取请求方法（双栈兼容）
+     */
+    public static String getMethod() {
+        HttpServletRequest request = getRequest();
+        if (request != null) {
+            return request.getMethod();
+        }
+        ServerHttpRequest serverHttpRequest = getServerHttpRequest();
+        if (serverHttpRequest != null) {
+            return serverHttpRequest.getMethod().name();
+        }
+        return null;
+    }
+
+    /**
+     * 获取客户端真实IP（双栈兼容）
+     * 优先从Forwarded相关header获取，回退到远程地址
+     */
+    public static String getRemoteIP() {
+        HttpServletRequest request = getRequest();
+        if (request != null) {
+            return Utils.getRemoteIP(request);
+        }
+        ServerHttpRequest serverHttpRequest = getServerHttpRequest();
+        if (serverHttpRequest != null) {
+            String ip = Utils.getFirstValidIp(
+                    serverHttpRequest.getHeaders().getFirst("X-Client-IP"),
+                    serverHttpRequest.getHeaders().getFirst("X-Forwarded-For"),
+                    serverHttpRequest.getHeaders().getFirst("X-Real-IP"),
+                    serverHttpRequest.getHeaders().getFirst("Forwarded"),
+                    serverHttpRequest.getHeaders().getFirst("Proxy-Client-IP"),
+                    serverHttpRequest.getHeaders().getFirst("WL-Proxy-Client-IP"),
+                    serverHttpRequest.getRemoteAddress() != null
+                            ? serverHttpRequest.getRemoteAddress().getAddress().getHostAddress()
+                            : null);
+            if (ip != null && ip.contains(",")) {
+                ip = ip.substring(0, ip.indexOf(',')).trim();
+            }
+            if ("0:0:0:0:0:0:0:1".equals(ip)) {
+                ip = "127.0.0.1";
+            }
+            return ip;
+        }
+        return null;
     }
 
     /**

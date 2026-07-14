@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @description: 销售订单
  * @author: mfish
  * @date: 2024-09-13
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface DemoOrderService extends IService<DemoOrder> {
     /**

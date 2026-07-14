@@ -82,7 +82,7 @@ import java.math.BigDecimal;
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Data
 @TableName("{表名}")
@@ -139,7 +139,7 @@ import java.util.Date;
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Data
 @Accessors(chain = true)
@@ -175,7 +175,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface {类名}Mapper extends BaseMapper<{类名}> {
     // 如有复杂查询，声明自定义方法，并对应 XML
@@ -209,7 +209,7 @@ import java.io.IOException;
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface {类名}Service extends IService<{类名}> {
 
@@ -267,7 +267,7 @@ import java.util.List;
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Service
 public class {类名}ServiceImpl extends ServiceImpl<{类名}Mapper, {类名}> implements {类名}Service {
@@ -364,7 +364,7 @@ import java.io.IOException;
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Slf4j
 @Tag(name = "{中文名称}")

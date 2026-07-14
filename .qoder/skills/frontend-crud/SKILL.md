@@ -66,7 +66,7 @@ import { BaseEntity, PageResult, ReqPage } from "@mfish/core/api";
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 export interface {类名} extends BaseEntity<string> {
   //{字段注释}
@@ -104,7 +104,7 @@ import { {类名}, Req{类名}, {类名}PageModel } from "@/api/{apiPrefix}/mode
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 enum Api {
   {类名} = "/{apiPrefix}/{变量名}"
@@ -176,7 +176,7 @@ import { buildDictTag, getDictProps } from "@mfish/core/components/DictTag";
  * @description: {中文名称}
  * @author: mfish
  * @date: {当前日期}
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 
 // ========== 表格列定义 ==========
@@ -323,7 +323,7 @@ export class {类名}Desc {
  @description: {中文名称}
  @author: mfish
  @date: {当前日期}
- @version: V2.4.0
+ @version: V2.4.1
 -->
 <template>
   <div>
@@ -463,7 +463,7 @@ export class {类名}Desc {
  @description: {中文名称}
  @author: mfish
  @date: {当前日期}
- @version: V2.4.0
+ @version: V2.4.1
 -->
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
@@ -530,7 +530,7 @@ export class {类名}Desc {
  @description: {中文名称}查看
  @author: mfish
  @date: {当前日期}
- @version: V2.4.0
+ @version: V2.4.1
 -->
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" title="{中文名称}信息">

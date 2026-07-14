@@ -2,6 +2,8 @@ package cn.com.mfish.ai.controller;
 
 import cn.com.mfish.ai.dto.ChatCompletionDto;
 import cn.com.mfish.ai.service.LlmModelRouter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -36,6 +38,7 @@ import java.util.UUID;
  * @date: 2026/07/01
  */
 @RestController
+@Tag(name = "LLM统一代理")
 @RequestMapping("/v1")
 @Slf4j
 public class LlmProxyController {
@@ -55,6 +58,7 @@ public class LlmProxyController {
      * OpenAI兼容的聊天补全接口
      * 根据 stream 参数自动切换流式/非流式响应
      */
+    @Operation(summary = "OpenAI兼容的聊天补全接口")
     @PostMapping("/chat/completions")
     public Mono<Void> chatCompletions(@RequestBody ChatCompletionDto.Request request,
                                       ServerHttpResponse response) {

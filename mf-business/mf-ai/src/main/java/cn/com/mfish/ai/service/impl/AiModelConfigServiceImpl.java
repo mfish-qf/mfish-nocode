@@ -32,7 +32,7 @@ import java.util.List;
  * @description: AI模型配置信息
  * @author: mfish
  * @date: 2026-07-03
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Service
 public class AiModelConfigServiceImpl extends ServiceImpl<AiModelConfigMapper, AiModelConfig> implements AiModelConfigService {
@@ -61,17 +61,14 @@ public class AiModelConfigServiceImpl extends ServiceImpl<AiModelConfigMapper, A
      */
     @Override
     public Result<PageResult<AiModelConfigVo>> queryPageList(ReqAiModelConfig reqAiModelConfig, ReqPage reqPage) {
-        return Result.ok(new PageResult<>(queryList(reqAiModelConfig, reqPage)), "AI模型配置信息-查询成功!");
+        return Result.ok(new PageResult<>(queryExportList(reqAiModelConfig, reqPage)), "AI模型配置信息-查询成功!");
     }
 
     /**
-     * 获取列表
-     *
-     * @param reqAiModelConfig AI模型配置信息请求参数
-     * @param reqPage          分页参数
-     * @return 返回AI模型配置信息-分页列表
+     * 查询导出数据列表（脱敏后的VO列表）
      */
-    private List<AiModelConfigVo> queryList(ReqAiModelConfig reqAiModelConfig, ReqPage reqPage) {
+    @Override
+    public List<AiModelConfigVo> queryExportList(ReqAiModelConfig reqAiModelConfig, ReqPage reqPage) {
         PageHelper.startPage(reqPage.getPageNum(), reqPage.getPageSize());
         List<AiModelConfig> list = queryList(reqAiModelConfig);
         List<AiModelConfigVo> voList = new ArrayList<>();
@@ -211,6 +208,6 @@ public class AiModelConfigServiceImpl extends ServiceImpl<AiModelConfigMapper, A
     @Override
     public void export(ReqAiModelConfig reqAiModelConfig, ReqPage reqPage) throws IOException {
         //swagger调用会用问题，使用postman测试
-        ExcelUtils.write("AI模型配置信息_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), queryList(reqAiModelConfig, reqPage));
+        ExcelUtils.write("AI模型配置信息_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), queryExportList(reqAiModelConfig, reqPage));
     }
 }

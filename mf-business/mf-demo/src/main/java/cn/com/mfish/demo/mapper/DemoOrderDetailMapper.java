@@ -7,7 +7,7 @@ import cn.com.mfish.demo.entity.DemoOrderDetail;
  * @description: 销售订单明细
  * @author: mfish
  * @date: 2024-09-02
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 public interface DemoOrderDetailMapper extends BatchBaseMapper<DemoOrderDetail> {
 

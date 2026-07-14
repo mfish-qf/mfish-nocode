@@ -2,8 +2,8 @@ package cn.com.mfish.common.log.aspect;
 
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.ServletUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
-import cn.com.mfish.common.core.utils.Utils;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.log.service.AsyncSaveLog;
 import cn.com.mfish.sys.api.entity.SysLog;
@@ -14,52 +14,74 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author: mfish
- * @description: 日志记录切面
+ * @description: 日志记录切面（兼容Servlet与WebFlux双栈，支持Mono/Flux响应式返回值）
  * @date: 2022/9/4 12:05
  */
 @Aspect
 @Component
 @Slf4j
 public class LogAspect {
-    ThreadLocal<SysLog> logThreadLocal = new ThreadLocal<>();
     @Resource
     AsyncSaveLog asyncSaveLog;
 
     /**
-     * 前置通知，记录请求信息
-     *
-     * @param joinPoint 切点
+     * 环绕通知，记录请求信息并在方法执行完成后记录日志
+     * 对响应式返回值（Mono/Flux），在管线完成或出错时记录，避免在publisher返回瞬间误记
      */
-    @Before("@annotation(cn.com.mfish.common.log.annotation.Log)")
-    public void doBefore(JoinPoint joinPoint) {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        String origin = request.getHeader(RPCConstants.REQ_ORIGIN);
+    @Around("@annotation(cn.com.mfish.common.log.annotation.Log)")
+    public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        // 内部Feign请求不记录日志
+        String origin = ServletUtils.getHeader(RPCConstants.REQ_ORIGIN);
         if (RPCConstants.INNER.equals(origin)) {
-            //内部请求不记录日志
-            return;
+            return joinPoint.proceed();
         }
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        String title;
         Log aLog = methodSignature.getMethod().getDeclaredAnnotation(Log.class);
-        title = aLog.title();
-        if (StringUtils.isEmpty(title)) {
+        SysLog sysLog = buildSysLog(joinPoint, methodSignature, aLog);
 
+        Object result;
+        try {
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            // 同步路径异常
+            completeLog(sysLog, e, 1);
+            throw e;
+        }
+
+        // 响应式返回值：在管线真正完成或出错时记录
+        if (result instanceof Mono<?> mono) {
+            return mono
+                    .doOnSuccess(v -> completeLog(sysLog, v, 0))
+                    .doOnError(e -> completeLog(sysLog, e, 1));
+        }
+        if (result instanceof Flux<?> flux) {
+            return flux
+                    .doOnComplete(() -> completeLog(sysLog, null, 0))
+                    .doOnError(e -> completeLog(sysLog, e, 1));
+        }
+        // 同步路径成功
+        completeLog(sysLog, result, 0);
+        return result;
+    }
+
+    private SysLog buildSysLog(ProceedingJoinPoint joinPoint, MethodSignature methodSignature, Log aLog) {
+        String title = aLog.title();
+        if (StringUtils.isEmpty(title)) {
             Operation apiOperation = methodSignature.getMethod().getDeclaredAnnotation(Operation.class);
             if (apiOperation != null) {
                 title = apiOperation.description();
@@ -68,28 +90,29 @@ public class LogAspect {
             }
         }
         SysLog sysLog = new SysLog();
-        sysLog.setReqUri(request.getRequestURI());
-        sysLog.setReqType(request.getMethod());
+        sysLog.setReqUri(ServletUtils.getRequestURI());
+        sysLog.setReqType(ServletUtils.getMethod());
         sysLog.setReqParam(getParams(joinPoint.getArgs()));
         sysLog.setReqSource(aLog.reqSource().getValue());
         sysLog.setOperType(aLog.operateType().toString());
-        sysLog.setOperIp(Utils.getRemoteIP(request));
+        sysLog.setOperIp(ServletUtils.getRemoteIP());
         sysLog.setTitle(title);
         sysLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
-        logThreadLocal.set(sysLog);
+        return sysLog;
     }
 
     /**
      * 获取请求参数并格式化为字符串
-     *
-     * @param paramsArray 请求参数数组，包含可能的各种类型参数
-     * @return 格式化后的参数字符串，如果没有参数则返回空字符串
+     * 跳过Servlet/Reactive的请求与响应对象，避免序列化无意义数据
      */
     private String getParams(Object[] paramsArray) {
         StringBuilder params = new StringBuilder();
         if (paramsArray != null) {
             for (Object obj : paramsArray) {
-                if (null == obj || obj instanceof Map && ((Map<?, ?>) obj).isEmpty() || obj instanceof HttpServletResponse) {
+                if (null == obj
+                        || obj instanceof HttpServletResponse
+                        || obj instanceof ServerHttpResponse
+                        || obj instanceof Map && ((Map<?, ?>) obj).isEmpty()) {
                     continue;
                 }
                 if (obj instanceof String) {
@@ -98,6 +121,8 @@ public class LogAspect {
                 }
                 if (obj instanceof HttpServletRequest request) {
                     obj = request.getParameterMap();
+                } else if (obj instanceof ServerHttpRequest request) {
+                    obj = request.getQueryParams();
                 }
                 try {
                     params.append(",").append(JSON.toJSONString(obj));
@@ -114,44 +139,33 @@ public class LogAspect {
     }
 
     /**
-     * 返回后通知，记录正常返回结果
+     * 完成日志记录
      *
-     * @param returnValue 返回值
+     * @param sysLog      日志对象
+     * @param returnValue 返回值（state=0时为方法返回值，state=1时为Throwable异常）
+     * @param state       0正常 1异常
      */
-    @AfterReturning(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", returning = "returnValue")
-    public void doAfterReturning(Object returnValue) {
-        setReturn(0, JSON.toJSONString(returnValue));
-    }
-
-    /**
-     * 异常通知，记录异常信息
-     *
-     * @param e 异常对象
-     */
-    @AfterThrowing(value = "@annotation(cn.com.mfish.common.log.annotation.Log)", throwing = "e")
-    public void doAfterThrowing(Throwable e) {
-        StackTraceElement[] elements = e.getStackTrace();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("error", e.toString());
-        if (elements.length > 0) {
-            jsonObject.put("stack", elements[0].toString());
-        }
-        setReturn(1, jsonObject.toJSONString());
-    }
-
-    private void setReturn(int state, String remark) {
-        SysLog sysLog = logThreadLocal.get();
-        if (sysLog == null) {
-            return;
-        }
+    private void completeLog(SysLog sysLog, Object returnValue, int state) {
         try {
+            String remark;
+            if (state == 0) {
+                remark = returnValue == null ? "" : JSON.toJSONString(returnValue);
+            } else {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("error", returnValue.toString());
+                StackTraceElement[] elements = ((Throwable) returnValue).getStackTrace();
+                if (elements.length > 0) {
+                    jsonObject.put("stack", elements[0].toString());
+                }
+                remark = jsonObject.toJSONString();
+            }
             sysLog.setCreateBy(AuthInfoUtils.getCurrentAccount());
             sysLog.setCreateTime(new Date());
             sysLog.setOperStatus(state);
             sysLog.setRemark(remark);
             asyncSaveLog.saveLog(sysLog);
-        } finally {
-            logThreadLocal.remove();
+        } catch (Exception e) {
+            log.error("记录操作日志失败", e);
         }
     }
 }

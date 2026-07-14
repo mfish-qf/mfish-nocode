@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * @description: 流程管理
  * @author: mfish
  * @date: 2026-03-30
- * @version: V2.4.0
+ * @version: V2.4.1
  */
 @Data
 @TableName("flw_mf_manage")

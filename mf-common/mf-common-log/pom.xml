@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mf-common</artifactId>
         <groupId>cn.com.mfish</groupId>
-        <version>mf-2.4.0</version>
+        <version>mf-2.4.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,6 +31,11 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring</artifactId>
+        </dependency>
+        <!-- Reactor（用于LogAspect处理响应式返回值Mono/Flux，所有依赖本模块的服务均会传递） -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
         </dependency>
     </dependencies>
 </project>
