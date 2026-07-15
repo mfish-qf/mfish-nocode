@@ -49,6 +49,26 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-sys-api</artifactId>
         </dependency>
+        <!-- 低代码服务Feign接口 -->
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-nocode-api</artifactId>
+        </dependency>
+        <!-- 调度服务Feign接口 -->
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-scheduler-api</artifactId>
+        </dependency>
+        <!-- 存储服务Feign接口 -->
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-storage-api</artifactId>
+        </dependency>
+        <!-- 工作流服务Feign接口 -->
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-workflow-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-common-prometheus</artifactId>
