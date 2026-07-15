@@ -86,14 +86,14 @@ public abstract class BaseAssistant implements IClientAssistant {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServerWebExchange serverWebExchange = ServletUtils.getExchange();
         Map<String, Object> toolContextMap = new HashMap<>();
-        toolContextMap.put("userId", userId != null ? userId : "");
-        toolContextMap.put("tenantId", tenantId != null ? tenantId : AuthInfoUtils.SUPER_TENANT_ID);
-        toolContextMap.put("origin", RPCConstants.INNER);
+        toolContextMap.put(RPCConstants.REQ_USER_ID, userId != null ? userId : "");
+        toolContextMap.put(RPCConstants.REQ_TENANT_ID, tenantId != null ? tenantId : AuthInfoUtils.SUPER_TENANT_ID);
+        toolContextMap.put(RPCConstants.REQ_ORIGIN, RPCConstants.AI);
         if (requestAttributes != null) {
-            toolContextMap.put("requestAttributes", requestAttributes);
+            toolContextMap.put(RPCConstants.REQ_REQUEST_ATTRIBUTES, requestAttributes);
         }
         if (serverWebExchange != null) {
-            toolContextMap.put("serverWebExchange", serverWebExchange);
+            toolContextMap.put(RPCConstants.REQ_SERVER_WEB_EXCHANGE, serverWebExchange);
         }
         return toolContextMap;
     }

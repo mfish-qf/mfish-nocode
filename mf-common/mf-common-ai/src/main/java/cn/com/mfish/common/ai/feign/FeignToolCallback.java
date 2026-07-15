@@ -1,5 +1,6 @@
 package cn.com.mfish.common.ai.feign;
 
+import cn.com.mfish.common.core.constants.Constants;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
@@ -47,8 +48,11 @@ public class FeignToolCallback implements ToolCallback {
 
     /**
      * 自动填充的参数名集合（不暴露给LLM，从请求上下文自动获取）
+     * 复用 RPCConstants 中已有的 header 名常量
      */
-    private static final Set<String> AUTO_FILL_NAMES = Set.of("origin", "tenantId", "userId", "token");
+    private static final Set<String> AUTO_FILL_NAMES = Set.of(
+            RPCConstants.REQ_ORIGIN, RPCConstants.REQ_TENANT_ID,
+            RPCConstants.REQ_USER_ID, RPCConstants.REQ_TOKEN);
 
     private final Object feignProxy;
     private final Method method;
@@ -99,22 +103,20 @@ public class FeignToolCallback implements ToolCallback {
     }
 
     /**
-     * 判断参数是否为内部参数，返回标准化的 autoFillKey
+     * 判断参数是否为内部参数，返回 autoFillKey（用于从 ToolContext 中取值）
      * <p>
-     * 映射规则：
-     * - @RequestHeader("req-origin")   → "origin"
-     * - @RequestHeader("req-tenant-id") → "tenantId"
-     * - @RequestHeader("req-user-id")   → "userId"
-     * - @RequestHeader("Authorization") → "token"
-     * - 其他 @RequestHeader → "header"
+     * RPC header 参数（req-origin/req-tenant-id/req-user-id）直接用 header 名作为 key，
+     * Authorization/access_token 映射为 REQ_TOKEN，其他 @RequestHeader 视为普通 header 转发
      */
     private String determineAutoFillKey(String paramName, java.lang.reflect.Parameter param) {
         if (param.isAnnotationPresent(RequestHeader.class)) {
-            if (RPCConstants.REQ_ORIGIN.equals(paramName)) return "origin";
-            if (RPCConstants.REQ_TENANT_ID.equals(paramName)) return "tenantId";
-            if (RPCConstants.REQ_USER_ID.equals(paramName)) return "userId";
-            if ("Authorization".equals(paramName) || "access_token".equals(paramName)) return "token";
-            return "header";
+            if (RPCConstants.REQ_ORIGIN.equals(paramName)
+                    || RPCConstants.REQ_TENANT_ID.equals(paramName)
+                    || RPCConstants.REQ_USER_ID.equals(paramName)) {
+                return paramName;
+            }
+            if (Constants.AUTHENTICATION.equals(paramName) || Constants.ACCESS_TOKEN.equals(paramName)) return RPCConstants.REQ_TOKEN;
+            return Constants.HEADER;
         }
         if (AUTO_FILL_NAMES.contains(paramName)) {
             return paramName;
@@ -234,8 +236,8 @@ public class FeignToolCallback implements ToolCallback {
         // WebFlux: ServletUtils.EXCHANGE_HOLDER → AuthInfoUtils 兜底读取头部
         RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();
         ServerWebExchange previousExchange = ServletUtils.getExchange();
-        RequestAttributes inheritedAttributes = extractFromContext(context, "requestAttributes", RequestAttributes.class);
-        ServerWebExchange inheritedExchange = extractFromContext(context, "serverWebExchange", ServerWebExchange.class);
+        RequestAttributes inheritedAttributes = extractFromContext(context, RPCConstants.REQ_REQUEST_ATTRIBUTES, RequestAttributes.class);
+        ServerWebExchange inheritedExchange = extractFromContext(context, RPCConstants.REQ_SERVER_WEB_EXCHANGE, ServerWebExchange.class);
         boolean servletInjected = false;
         boolean exchangeInjected = false;
         try {
@@ -293,19 +295,19 @@ public class FeignToolCallback implements ToolCallback {
         }
         // 兜底：从 RequestContextHolder（已由上方注入）获取
         return switch (key) {
-            case "origin" -> {
-                try { yield AuthInfoUtils.isInnerRequest() ? RPCConstants.INNER : RPCConstants.INNER; }
-                catch (Exception e) { yield RPCConstants.INNER; }
+            case RPCConstants.REQ_ORIGIN -> {
+                try { yield AuthInfoUtils.isInnerRequest() ? RPCConstants.INNER : RPCConstants.AI; }
+                catch (Exception e) { yield RPCConstants.AI; }
             }
-            case "tenantId" -> {
+            case RPCConstants.REQ_TENANT_ID -> {
                 try { yield AuthInfoUtils.getCurrentTenantId(); }
                 catch (Exception e) { yield AuthInfoUtils.SUPER_TENANT_ID; }
             }
-            case "userId" -> {
+            case RPCConstants.REQ_USER_ID -> {
                 try { yield AuthInfoUtils.getCurrentUserId(); }
                 catch (Exception e) { yield null; }
             }
-            case "token" -> {
+            case RPCConstants.REQ_TOKEN -> {
                 try { yield AuthInfoUtils.getAccessToken(); }
                 catch (Exception e) { yield null; }
             }
