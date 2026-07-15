@@ -1,5 +1,6 @@
 package cn.com.mfish.sys.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.DictCategory;
 import cn.com.mfish.sys.api.remote.RemoteDictCategoryService;
@@ -29,27 +30,27 @@ public class RemoteDictCategoryFallback implements FallbackFactory<RemoteDictCat
         return new RemoteDictCategoryService() {
             @Override
             public Result<List<DictCategory>> queryByIds(String origin, String ids) {
-                return Result.fail("错误:查询树形字典列表出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询树形字典列表出错"));
             }
 
             @Override
             public Result<List<DictCategory>> queryTreeByCode(String origin, String code, String direction) {
-                return Result.fail("错误:查询字典树出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询字典树出错"));
             }
 
             @Override
             public Result<List<DictCategory>> queryListByCode(String origin, String code, String direction) {
-                return Result.fail("错误:查询字典树列表出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询字典树列表出错"));
             }
 
             @Override
             public Result<List<DictCategory>> queryTreeById(String origin, String id, String direction) {
-                return Result.fail("错误:查询字典树出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询字典树出错"));
             }
 
             @Override
             public Result<List<DictCategory>> queryListById(String origin, String id, String direction) {
-                return Result.fail("错误:查询字典树列表出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询字典树列表出错"));
             }
         };
     }

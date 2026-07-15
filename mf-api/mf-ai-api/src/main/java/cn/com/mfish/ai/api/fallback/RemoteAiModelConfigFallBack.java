@@ -4,6 +4,7 @@ import cn.com.mfish.ai.api.entity.AiModelConfig;
 import cn.com.mfish.ai.api.remote.RemoteAiModelConfigService;
 import cn.com.mfish.ai.api.req.ReqAiModelConfig;
 import cn.com.mfish.ai.api.vo.AiModelConfigVo;
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -33,12 +34,12 @@ public class RemoteAiModelConfigFallBack implements FallbackFactory<RemoteAiMode
         return new RemoteAiModelConfigService() {
             @Override
             public Result<PageResult<AiModelConfigVo>> queryPageList(String origin, ReqAiModelConfig reqAiModelConfig, ReqPage reqPage) {
-                return Result.fail("错误:查询分页列表失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询分页列表失败"));
             }
 
             @Override
             public Result<List<AiModelConfig>> queryList(String origin, ReqAiModelConfig reqAiModelConfig) {
-                return Result.fail("错误:查询列表失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询列表失败"));
             }
         };
     }

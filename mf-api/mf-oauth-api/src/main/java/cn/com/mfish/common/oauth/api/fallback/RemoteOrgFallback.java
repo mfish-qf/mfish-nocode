@@ -1,5 +1,6 @@
 package cn.com.mfish.common.oauth.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -32,27 +33,27 @@ public class RemoteOrgFallback implements FallbackFactory<RemoteOrgService> {
         return new RemoteOrgService() {
             @Override
             public Result<List<SsoOrg>> queryById(String origin, String ids) {
-                return Result.fail("错误:根据ID获取组织列表失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:根据ID获取组织列表失败"));
             }
 
             @Override
             public Result<List<SsoOrg>> queryByFixCode(String origin, String code, String direction) {
-                return Result.fail("错误:根据编码获取组织树失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:根据编码获取组织树失败"));
             }
 
             @Override
             public Result<PageResult<UserInfo>> queryUserByCode(String origin, String code, String account, String nickname, String phone, ReqPage reqPage) {
-                return Result.fail("错误:根据编码获取组织下用户失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:根据编码获取组织下用户失败"));
             }
 
             @Override
             public Result<List<String>> getOrgIdsByFixCode(String origin, String tenantId, String codes, String direction) {
-                return Result.fail("错误:根据固定编码获取各级组织id失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:根据固定编码获取各级组织id失败"));
             }
 
             @Override
             public Result<List<String>> getOrgIdsById(String origin, String tenantId, String orgIds, String direction) {
-                return Result.fail("错误:根据组织id获取各级组织id失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:根据组织id获取各级组织id失败"));
             }
         };
     }
