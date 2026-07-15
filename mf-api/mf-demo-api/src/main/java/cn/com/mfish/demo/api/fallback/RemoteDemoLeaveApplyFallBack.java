@@ -1,6 +1,7 @@
 package cn.com.mfish.demo.api.fallback;
 
 import cn.com.mfish.common.core.entity.WorkflowCompleteResult;
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.demo.api.remote.RemoteDemoLeaveApplyService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +28,17 @@ public class RemoteDemoLeaveApplyFallBack implements FallbackFactory<RemoteDemoL
         return new RemoteDemoLeaveApplyService() {
             @Override
             public Result<String> approved(String origin, String prefix, String id, WorkflowCompleteResult result) {
-                return Result.fail("错误:请假审批通过回调接口异常");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:请假审批通过回调接口异常"));
             }
 
             @Override
             public Result<String> rejected(String origin, String prefix, String id, WorkflowCompleteResult result) {
-                return Result.fail("错误:请假审批拒绝回调接口异常");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:请假审批拒绝回调接口异常"));
             }
 
             @Override
             public Result<String> canceled(String origin, String prefix, String id, WorkflowCompleteResult result) {
-                return Result.fail("错误:请假审批取消回调接口异常");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:请假审批取消回调接口异常"));
             }
         };
     }

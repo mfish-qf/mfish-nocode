@@ -1,5 +1,6 @@
 package cn.com.mfish.common.oauth.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.remote.RemoteRoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +29,12 @@ public class RemoteRoleFallback implements FallbackFactory<RemoteRoleService> {
         return new RemoteRoleService() {
             @Override
             public Result<List<String>> getRoleIdsByCode(String origin, String tenantId, String codes) {
-                return Result.fail("错误:获取角色id失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取角色id失败"));
             }
 
             @Override
             public Result<List<String>> getRoleUsers(String origin, String tenantId, String codes) {
-                return Result.fail("错误:获取用户id失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户id失败"));
             }
         };
     }

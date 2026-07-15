@@ -1,5 +1,6 @@
 package cn.com.mfish.common.oauth.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoMenu;
 import cn.com.mfish.common.oauth.api.remote.RemoteMenuService;
@@ -30,17 +31,17 @@ public class RemoteMenuFallback implements FallbackFactory<RemoteMenuService> {
         return new RemoteMenuService() {
             @Override
             public Result<List<SsoMenu>> queryMenuTree(String origin, ReqSsoMenu reqSsoMenu) {
-                return Result.fail("错误:查询菜单树失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询菜单树失败"));
             }
 
             @Override
             public Result<SsoMenu> add(String origin, SsoMenu ssoMenu) {
-                return Result.fail("错误:保存菜单失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:保存菜单失败"));
             }
 
             @Override
             public Result<Boolean> routeExist(String origin, String routePath, String parentId) {
-                return Result.fail("错误:路由判断失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:路由判断失败"));
             }
         };
     }

@@ -1,5 +1,6 @@
 package cn.com.mfish.common.scheduler.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.scheduler.api.remote.RemoteSchedulerService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,6 @@ public class RemoteSchedulerFallBack implements FallbackFactory<RemoteSchedulerS
     @Override
     public RemoteSchedulerService create(Throwable cause) {
         log.error("错误:调度接口调用异常", cause);
-        return (origin, jobLog) -> Result.fail(false, "错误:回调状态失败" + cause.getMessage());
+        return (origin, jobLog) -> Result.fail(false, FeignFallbackHelper.resolveErrorMsg(cause, "错误:回调状态失败"));
     }
 }

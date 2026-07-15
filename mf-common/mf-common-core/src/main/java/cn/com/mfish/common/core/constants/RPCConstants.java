@@ -14,6 +14,10 @@ public class RPCConstants {
      * 内部请求
      */
     public static final String INNER = "inner";
+    /**
+     * AI工具调用请求（非内部请求，需校验权限）
+     */
+    public static final String AI = "ai";
 
     /**
      * 当前请求租户ID
@@ -34,4 +38,19 @@ public class RPCConstants {
      * 验证码校验异常
      */
     public static final String REQ_CHECK_CAPTCHA_EXCEPTION = "req-check-captcha-exception";
+
+    // ===== ToolContext 内部参数 key（用于AI工具上下文传递，不暴露给LLM）=====
+
+    /**
+     * ToolContext key：访问令牌（对应 Authorization header）
+     */
+    public static final String REQ_TOKEN = "token";
+    /**
+     * ToolContext key：Servlet请求上下文（RequestAttributes）
+     */
+    public static final String REQ_REQUEST_ATTRIBUTES = "requestAttributes";
+    /**
+     * ToolContext key：WebFlux请求上下文（ServerWebExchange）
+     */
+    public static final String REQ_SERVER_WEB_EXCHANGE = "serverWebExchange";
 }

@@ -1,5 +1,6 @@
 package cn.com.mfish.common.storage.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.common.storage.api.remote.RemoteStorageService;
@@ -29,12 +30,12 @@ public class RemoteStorageFallBack implements FallbackFactory<RemoteStorageServi
         return new RemoteStorageService() {
             @Override
             public Result<StorageInfo> queryByKey(String origin, String fileKey) {
-                return Result.fail("错误:根据Key获取文件信息失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:根据Key获取文件信息失败"));
             }
 
             @Override
             public Result<Boolean> logicDelete(String origin, String id) {
-                return Result.fail("错误:逻辑删除文件失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:逻辑删除文件失败"));
             }
 
             @Override

@@ -1,5 +1,6 @@
 package cn.com.mfish.sys.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
@@ -36,32 +37,32 @@ public class RemoteDbConnectFallback implements FallbackFactory<RemoteDbConnectS
         return new RemoteDbConnectService() {
             @Override
             public Result<PageResult<DbConnect>> queryPageList(String origin, ReqDbConnect reqDbConnect, ReqPage reqPage) {
-                return Result.fail("错误:查询数据库连接列表出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询数据库连接列表出错"));
             }
 
             @Override
             public Result<DbConnect> queryById(String origin, String id) {
-                return Result.fail("错误:查询数据库连接信息出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询数据库连接信息出错"));
             }
 
             @Override
             public Result<PageResult<TableInfo>> getTableList(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
-                return Result.fail("错误:查询数据库表列表出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询数据库表列表出错"));
             }
 
             @Override
             public Result<PageResult<FieldInfo>> getFieldList(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
-                return Result.fail("错误:查询表字段列表出错");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询表字段列表出错"));
             }
 
             @Override
             public Result<MetaHeaderDataTable> getDataTable(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
-                return Result.fail("错误:查询表数据失败");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:查询表数据失败"));
             }
 
             @Override
             public Result<List<MetaDataHeader>> getDataHeaders(String origin, String connectId, String tableSchema, String tableName, ReqPage reqPage) {
-                return Result.fail("错误:获取表列头失败");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取表列头失败"));
             }
         };
     }

@@ -1,5 +1,6 @@
 package cn.com.mfish.sys.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.Dict;
 import cn.com.mfish.sys.api.entity.DictItem;
@@ -32,12 +33,13 @@ public class RemoteDictFallback implements FallbackFactory<RemoteDictService> {
         return new RemoteDictService() {
             @Override
             public Result<List<DictItem>> queryByCode(String origin, String dictCode) {
-                return Result.fail("查询字典项失败");
+                // 从 FeignException 响应体中解析真实的业务错误消息（如"错误:该用户无此操作权限"）
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "查询字典项失败"));
             }
 
             @Override
             public Result<List<Dict>> queryList(String origin, ReqDict reqDict) {
-                return Result.fail("查询字典列表失败");
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "查询字典列表失败"));
             }
         };
     }

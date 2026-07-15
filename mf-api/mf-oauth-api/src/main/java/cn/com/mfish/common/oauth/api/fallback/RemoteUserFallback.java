@@ -1,5 +1,6 @@
 package cn.com.mfish.common.oauth.api.fallback;
 
+import cn.com.mfish.common.core.utils.FeignFallbackHelper;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
@@ -34,52 +35,52 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
         return new RemoteUserService() {
             @Override
             public Result<UserInfoVo> getUserInfo(String origin, String token) {
-                return Result.fail("错误:获取用户失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户失败"));
             }
 
             @Override
             public Result<UserInfo> getUserById(String origin, String id) {
-                return Result.fail("错误:通过ID获取用户失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:通过ID获取用户失败"));
             }
 
             @Override
             public Result<UserInfo> getUserByAccount(String origin, String account) {
-                return Result.fail("错误:通过账号获取用户失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:通过账号获取用户失败"));
             }
 
             @Override
             public Result<List<UserRole>> getRoles(String origin, String userId, String clientId) {
-                return Result.fail("错误:获取角色信息失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取角色信息失败"));
             }
 
             @Override
             public Result<Set<String>> getPermissions(String origin, String userId, String clientId) {
-                return Result.fail("错误:获取按钮权限失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取按钮权限失败"));
             }
 
             @Override
             public Result<List<TenantVo>> getTenants(String origin, String userId) {
-                return Result.fail("错误:获取租户失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取租户失败"));
             }
 
             @Override
             public Result<List<SsoOrg>> getOrgs(String origin, String userId, String direction) {
-                return Result.fail("错误:获取用户组织失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户组织失败"));
             }
 
             @Override
             public Result<List<String>> getOrgIds(String origin, String userId, String tenantId, String direction) {
-                return Result.fail("错误:获取用户组织ID失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户组织ID失败"));
             }
 
             @Override
             public Result<List<String>> getUserIdsByAccounts(String origin, String accounts) {
-                return Result.fail("错误:获取用户ID失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户ID失败"));
             }
 
             @Override
             public Result<List<UserInfo>> getUsersByAccount(String origin, String accounts) {
-                return Result.fail("错误:获取用户信息失败" + cause.getMessage());
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户信息失败"));
             }
         };
     }
