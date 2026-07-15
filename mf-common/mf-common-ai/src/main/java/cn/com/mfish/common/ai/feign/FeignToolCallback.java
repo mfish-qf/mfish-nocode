@@ -264,8 +264,18 @@ public class FeignToolCallback implements ToolCallback {
             Object result = method.invoke(feignProxy, args);
             return convertResult(result);
         } catch (Exception e) {
-            log.error("[Feign工具] 调用失败: {} input={}", toolName, toolInput, e);
-            return JSON.toJSONString(Map.of("error", e.getMessage() != null ? e.getMessage() : "工具调用异常"));
+            // method.invoke 反射调用时，目标方法抛出的异常会被包装成 InvocationTargetException
+            // 直接取 e.getMessage() 只能拿到外层包装信息（通常为 null），拿不到业务异常的真实消息
+            // 需要解包取出真正的 cause，才能把"错误:该用户无此操作权限"等业务提示透传给 LLM
+            Throwable cause = e;
+            while (cause instanceof java.lang.reflect.InvocationTargetException
+                    || cause instanceof java.lang.reflect.UndeclaredThrowableException) {
+                if (cause.getCause() == null) break;
+                cause = cause.getCause();
+            }
+            String msg = cause.getMessage() != null ? cause.getMessage() : "工具调用异常";
+            log.error("[Feign工具] 调用失败: {} input={}", toolName, toolInput, cause);
+            return JSON.toJSONString(Map.of("error", msg));
         } finally {
             if (servletInjected) {
                 RequestContextHolder.resetRequestAttributes();
@@ -345,7 +355,9 @@ public class FeignToolCallback implements ToolCallback {
         if (result == null) return "{\"success\":true,\"data\":null}";
         if (result instanceof Result<?> r) {
             if (r.isSuccess()) return JSON.toJSONString(r.getData());
-            return JSON.toJSONString(Map.of("error", r.getMsg() != null ? r.getMsg() : "操作失败", "code", r.getCode()));
+            // 微服务场景下Feign降级返回Result.fail（而非抛异常），此处提取msg返回给LLM
+            // 返回格式与异常路径（catch块）保持一致：{"error": msg}
+            return JSON.toJSONString(Map.of("error", r.getMsg() != null ? r.getMsg() : "操作失败"));
         }
         return JSON.toJSONString(result);
     }
