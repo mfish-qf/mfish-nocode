@@ -2,9 +2,9 @@ package cn.com.mfish.ai.agent;
 
 import cn.com.mfish.ai.service.LlmModelRouter;
 import cn.com.mfish.common.ai.client.IClientAssistant;
+import cn.com.mfish.common.ai.engine.ApiToolEngine;
 import cn.com.mfish.common.ai.entity.AiRequest;
 import cn.com.mfish.common.ai.entity.ChatResponseVo;
-import cn.com.mfish.common.ai.feign.FeignToolRegistry;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
@@ -46,12 +46,12 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 public abstract class BaseAssistant implements IClientAssistant {
     private final ChatMemory chatMemory;
     private final LlmModelRouter llmModelRouter;
-    protected final FeignToolRegistry feignToolRegistry;
+    protected final ApiToolEngine apiToolEngine;
 
-    public BaseAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, FeignToolRegistry feignToolRegistry) {
+    public BaseAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, ApiToolEngine apiToolEngine) {
         this.llmModelRouter = llmModelRouter;
         this.chatMemory = chatMemory;
-        this.feignToolRegistry = feignToolRegistry;
+        this.apiToolEngine = apiToolEngine;
     }
 
     /**
@@ -83,12 +83,18 @@ public abstract class BaseAssistant implements IClientAssistant {
     protected Map<String, Object> buildToolContext() {
         String userId = AuthInfoUtils.getCurrentUserId();
         String tenantId = AuthInfoUtils.getCurrentTenantId();
+        // 在请求线程捕获 token，供 HttpToolCallback/FeignToolCallback 在工具执行线程复用
+        // token 不带 "Bearer " 前缀，由各 ToolCallback 在注入 header 时按需添加
+        String accessToken = AuthInfoUtils.getAccessToken();
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServerWebExchange serverWebExchange = ServletUtils.getExchange();
         Map<String, Object> toolContextMap = new HashMap<>();
         toolContextMap.put(RPCConstants.REQ_USER_ID, userId != null ? userId : "");
         toolContextMap.put(RPCConstants.REQ_TENANT_ID, tenantId != null ? tenantId : AuthInfoUtils.SUPER_TENANT_ID);
         toolContextMap.put(RPCConstants.REQ_ORIGIN, RPCConstants.AI);
+        if (accessToken != null && !accessToken.isEmpty()) {
+            toolContextMap.put(RPCConstants.REQ_TOKEN, accessToken);
+        }
         if (requestAttributes != null) {
             toolContextMap.put(RPCConstants.REQ_REQUEST_ATTRIBUTES, requestAttributes);
         }
@@ -99,21 +105,32 @@ public abstract class BaseAssistant implements IClientAssistant {
     }
 
     /**
-     * 基于Feign工具的流式聊天模板方法
+     * 基于工具的流式聊天模板方法
      * <p>
      * 封装ToolContext构建、ChatClient请求构建、流式降级等公共逻辑，
-     * 子类只需提供serviceId即可。
+     * 子类只需提供serviceId即可。工具来源由 ApiToolEngine 聚合（Feign / HTTP / MCP 等）。
+     * </p>
+     * <p>
+     * 系统提示词中注入工具使用规则，减少 LLM 幻觉工具名的概率：
+     * <ol>
+     *     <li>只能使用提供的工具，不能虚构工具名</li>
+     *     <li>先分析用户意图，再选择最合适的工具</li>
+     *     <li>工具调用失败时根据错误信息调整参数或选择其他工具</li>
+     * </ol>
+     * </p>
      *
      * @param sessionId 会话id
      * @param prompt    提示词
-     * @param serviceId 服务ID，用于从FeignToolRegistry获取对应的ToolCallbackProvider
+     * @param serviceId 服务ID，用于从ApiToolEngine获取对应的ToolCallbackProvider
      * @return 流式聊天响应
      */
     protected Flux<ChatResponse> chatWithTools(String sessionId, String prompt, String serviceId) {
-        ToolCallbackProvider toolProvider = feignToolRegistry.getToolCallbackProvider(serviceId);
+        ToolCallbackProvider toolProvider = apiToolEngine.getToolCallbackProvider(serviceId);
         Map<String, Object> toolContextMap = buildToolContext();
+        // 构建工具使用提示词，减少LLM幻觉
+        String toolHint = buildToolUsageHint(toolProvider);
         ChatClient.ChatClientRequestSpec requestSpec = this.getChatClient().prompt()
-                .system("你必须先调用工具，再基于工具结果回答问题")
+                .system(getSystemPrompt() + "\n\n" + toolHint)
                 .user(prompt)
                 .advisors(a -> a.param(CONVERSATION_ID, sessionId))
                 .tools(toolProvider)
@@ -127,6 +144,33 @@ public abstract class BaseAssistant implements IClientAssistant {
                             .subscribeOn(Schedulers.boundedElastic())
                             .flux();
                 });
+    }
+
+    /**
+     * 构建工具使用提示词，帮助LLM理解可用工具，减少幻觉
+     */
+    private String buildToolUsageHint(ToolCallbackProvider toolProvider) {
+        org.springframework.ai.tool.ToolCallback[] callbacks = toolProvider.getToolCallbacks();
+        if (callbacks == null || callbacks.length == 0) {
+            return "## 工具使用规则\n当前没有可用的工具，请直接根据你的知识回答用户问题。";
+        }
+        StringBuilder sb = new StringBuilder("## 工具使用规则\n");
+        sb.append("你只能使用以下工具，不能虚构任何工具名：\n");
+        for (org.springframework.ai.tool.ToolCallback tc : callbacks) {
+            String name = tc.getToolDefinition().name();
+            String desc = tc.getToolDefinition().description();
+            sb.append("- ").append(name);
+            if (desc != null && !desc.isEmpty()) {
+                sb.append(": ").append(desc);
+            }
+            sb.append("\n");
+        }
+        sb.append("\n调用规则：\n");
+        sb.append("1. 先分析用户意图，从上述工具列表中选择最合适的一个\n");
+        sb.append("2. 只能使用上述列表中的工具名，不要构造新的工具名\n");
+        sb.append("3. 如果没有合适的工具，直接用你的知识回答\n");
+        sb.append("4. 工具调用失败时，根据返回的错误信息调整参数或选择其他工具\n");
+        return sb.toString();
     }
 
     /**

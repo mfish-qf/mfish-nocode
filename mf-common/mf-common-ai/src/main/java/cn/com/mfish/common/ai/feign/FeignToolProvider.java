@@ -1,10 +1,11 @@
 package cn.com.mfish.common.ai.feign;
 
+import cn.com.mfish.common.ai.provider.ToolProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.ApplicationContext;
-import org.springframework.ai.tool.ToolCallback;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,40 +14,56 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Feign接口扫描器
+ * Feign工具提供者 —— 实现 {@link ToolProvider}，对接 {@link cn.com.mfish.common.ai.engine.ApiToolEngine}
  * <p>
- * 在所有单例Bean初始化完成后，扫描Spring上下文中所有@FeignClient注解的Bean，
- * 为每个public方法创建FeignToolCallback，按服务ID分组注册到FeignToolRegistry。
+ * 在所有单例 Bean 初始化完成后，扫描 Spring 上下文中所有 @FeignClient 注解的 Bean，
+ * 为每个 public 方法创建 {@link FeignToolCallback}，按服务ID分组返回。
+ * </p>
  * <p>
- * 开发人员只需在mf-api模块下新增Feign接口，启动后自动生成对应的Spring AI Tool，零代码。
+ * 保留原有 {@code FeignToolScanner} 的扫描逻辑，但不再直接注册到 FeignToolRegistry，
+ * 而是通过 {@link ToolProvider} 接口统一暴露给 ApiToolEngine 聚合。
+ * </p>
  *
  * @author: mfish
  * @date: 2026/07/15
  */
 @Slf4j
-public class FeignToolScanner implements SmartInitializingSingleton {
+public class FeignToolProvider implements ToolProvider, SmartInitializingSingleton {
 
     private final ApplicationContext applicationContext;
-    private final FeignToolRegistry registry;
+    /**
+     * 缓存扫描结果，供 ApiToolEngine 在 initialize() 时拉取
+     */
+    private volatile Map<String, List<ToolCallback>> cachedTools;
 
-    public FeignToolScanner(ApplicationContext applicationContext, FeignToolRegistry registry) {
+    public FeignToolProvider(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.registry = registry;
+    }
+
+    @Override
+    public String getType() {
+        return "feign";
+    }
+
+    @Override
+    public Map<String, List<ToolCallback>> discoverTools() {
+        if (cachedTools == null) {
+            // 理论上 afterSingletonsInstantiated 已先行调用，此处兜底
+            scanAndCache();
+        }
+        return cachedTools;
     }
 
     @Override
     public void afterSingletonsInstantiated() {
-        scanAndRegister();
+        scanAndCache();
     }
 
     /**
-     * 扫描所有@FeignClient Bean，为每个方法生成ToolCallback并注册
+     * 扫描所有 @FeignClient Bean，为每个方法生成 ToolCallback 并缓存
      */
-    private void scanAndRegister() {
-        // serviceId → 工具列表
+    private void scanAndCache() {
         Map<String, List<ToolCallback>> toolsMap = new HashMap<>();
-
-        // 获取所有带@FeignClient注解的Bean
         Map<String, Object> feignBeans = applicationContext.getBeansWithAnnotation(FeignClient.class);
 
         for (Map.Entry<String, Object> entry : feignBeans.entrySet()) {
@@ -69,11 +86,9 @@ public class FeignToolScanner implements SmartInitializingSingleton {
 
             List<ToolCallback> callbacks = new ArrayList<>();
             for (Method method : feignInterface.getDeclaredMethods()) {
-                // 跳过非public方法
                 if (!java.lang.reflect.Modifier.isPublic(method.getModifiers())) {
                     continue;
                 }
-                // 跳过Object方法
                 if (method.getDeclaringClass() == Object.class) {
                     continue;
                 }
@@ -89,36 +104,27 @@ public class FeignToolScanner implements SmartInitializingSingleton {
             }
 
             if (!callbacks.isEmpty()) {
-                // 同一serviceId可能有多个FeignClient，追加到已有列表
                 toolsMap.computeIfAbsent(serviceId, k -> new ArrayList<>()).addAll(callbacks);
             }
         }
 
-        // 批量注册
-        for (Map.Entry<String, List<ToolCallback>> entry : toolsMap.entrySet()) {
-            registry.register(entry.getKey(), entry.getValue());
-        }
-
-        log.info("[Feign工具扫描] 扫描完成，共注册 {} 个服务的工具", toolsMap.size());
+        cachedTools = toolsMap;
+        log.info("[Feign工具扫描] 扫描完成，共发现 {} 个服务的工具", toolsMap.size());
     }
 
     /**
-     * 从Feign代理对象中提取原始接口类型
-     * Feign代理通常是JDK动态代理，通过AopProxyUtils或直接遍历接口获取
+     * 从 Feign 代理对象中提取原始接口类型
      */
     private Class<?> getFeignInterface(Object feignProxy) {
         Class<?> proxyClass = feignProxy.getClass();
-        // JDK动态代理：遍历接口找到带@FeignClient注解的
         for (Class<?> iface : proxyClass.getInterfaces()) {
             if (iface.isAnnotationPresent(FeignClient.class)) {
                 return iface;
             }
         }
-        // 非代理对象本身可能就是带注解的接口（如某些Feign实现）
         if (proxyClass.isAnnotationPresent(FeignClient.class)) {
             return proxyClass;
         }
-        // 尝试通过AopProxyUtils获取目标类
         try {
             Class<?> targetClass = org.springframework.aop.framework.AopProxyUtils.ultimateTargetClass(feignProxy);
             if (targetClass.isAnnotationPresent(FeignClient.class)) {
