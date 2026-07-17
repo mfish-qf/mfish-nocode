@@ -1967,8 +1967,9 @@ DROP TABLE IF EXISTS `ai_model_config`;
 CREATE TABLE `ai_model_config`  (
                                     `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
                                     `tenant_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
-                                    `provider` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '提供者: openai/ollama/deepseek/zhipuai/anthropic',
+                                    `provider` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '提供者: openai/ollama/deepseek/zhipuai/anthropic等',
                                     `model_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模型名称: gpt-4o, qwen3:8b, deepseek-v3 等',
+                                    `protocol` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '接入协议:openai/ollama/deepseek/anthropic',
                                     `api_key` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'API密钥(加密存储)',
                                     `base_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'API基础地址',
                                     `max_tokens` int NULL DEFAULT 4096 COMMENT '最大token数',
