@@ -1,5 +1,6 @@
 package cn.com.mfish.ai.agent;
 
+import cn.com.mfish.ai.service.FileParseService;
 import cn.com.mfish.ai.service.LlmModelRouter;
 import cn.com.mfish.common.ai.client.IClientAssistant;
 import cn.com.mfish.common.ai.engine.ApiToolEngine;
@@ -17,6 +18,7 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.server.ServerWebExchange;
@@ -26,6 +28,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -50,6 +53,13 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
     private final ChatMemory chatMemory;
     private final LlmModelRouter llmModelRouter;
     protected final ApiToolEngine apiToolEngine;
+
+    /**
+     * 文件解析服务：用于根据AiRequest.fileIds获取文件内容并注入提示词
+     * 采用字段注入避免修改所有子类构造函数
+     */
+    @Autowired
+    protected FileParseService fileParseService;
 
     public BaseAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, ApiToolEngine apiToolEngine) {
         this.llmModelRouter = llmModelRouter;
@@ -268,12 +278,26 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
 
     /**
      * 聊天返回id
+     * <p>
+     * 若请求携带fileIds，会先通过FileParseService从文件服务获取文件内容，
+     * 将其拼接到用户提示词前，再交由子类chat(sessionId, prompt)处理。
      *
      * @return 聊天信息
      */
     @Override
     public Flux<ChatResponseVo> chat(AiRequest aiRequest) {
-        return chat(aiRequest.getSessionId(), aiRequest.getMessage().getContent())
+        String prompt = aiRequest.getMessage().getContent();
+        List<String> fileIds = aiRequest.getFileIds();
+        if (fileIds != null && !fileIds.isEmpty()) {
+            String fileContents = fileParseService.loadFileContents(fileIds);
+            if (StringUtils.isNotEmpty(fileContents)) {
+                prompt = "以下是用户上传的文件内容，请基于文件内容进行分析：\n\n"
+                        + fileContents
+                        + "\n用户问题：" + prompt;
+            }
+        }
+        final String finalPrompt = prompt;
+        return chat(aiRequest.getSessionId(), finalPrompt)
                 .filter(resp -> "STOP".equals(Objects.requireNonNull(resp.getResult()).getMetadata().getFinishReason())
                         || StringUtils.isNotEmpty(resp.getResult().getOutput().getText()))
                 .map(resp -> new ChatResponseVo().setId(aiRequest.getId())

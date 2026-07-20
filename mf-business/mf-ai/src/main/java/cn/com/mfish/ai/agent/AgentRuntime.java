@@ -1,5 +1,6 @@
 package cn.com.mfish.ai.agent;
 
+import cn.com.mfish.ai.service.FileParseService;
 import cn.com.mfish.ai.service.LlmModelRouter;
 import cn.com.mfish.common.ai.agent.EventBus;
 import cn.com.mfish.common.ai.agent.TenantContext;
@@ -10,6 +11,7 @@ import cn.com.mfish.common.ai.entity.EventType;
 import cn.com.mfish.common.ai.entity.PlanStep;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
@@ -48,11 +50,14 @@ public class AgentRuntime {
     private final Planner planner;
     private final Executor executor;
     private final LlmModelRouter llmModelRouter;
+    private final FileParseService fileParseService;
 
-    public AgentRuntime(Planner planner, Executor executor, LlmModelRouter llmModelRouter) {
+    public AgentRuntime(Planner planner, Executor executor, LlmModelRouter llmModelRouter,
+                        FileParseService fileParseService) {
         this.planner = planner;
         this.executor = executor;
         this.llmModelRouter = llmModelRouter;
+        this.fileParseService = fileParseService;
     }
 
     /**
@@ -67,11 +72,16 @@ public class AgentRuntime {
      * 需要用快照构建 ToolContext 和 ChatClient。
      * </p>
      * <p>
+     * 文件解析：若请求携带 fileIds，在请求线程同步加载文件内容（Feign 调用 mf-storage），
+     * 拼接到用户提示词前。必须在请求线程执行，因为 Feign 的 BearerTokenInterceptor 依赖
+     * RequestContextHolder 中继令牌，异步线程拿不到。
+     * </p>
+     * <p>
      * 所有返回的 {@link ChatResponseVo} 的 id 字段填充为 {@link AiRequest#getId()}，
      * 与普通聊天返回结构保持一致，前端可按 id 关联请求与响应。
      * </p>
      *
-     * @param aiRequest AI请求参数（含 id/sessionId/message）
+     * @param aiRequest AI请求参数（含 id/sessionId/message/fileIds）
      * @return 聊天响应流（与普通聊天统一结构）
      */
     public Flux<ChatResponseVo> run(AiRequest aiRequest) {
@@ -84,11 +94,39 @@ public class AgentRuntime {
         // 在请求线程捕获租户上下文快照，供异步编排使用
         TenantContext tenantContext = captureTenantContext();
 
+        // 文件解析必须在请求线程执行：Feign BearerTokenInterceptor 依赖 RequestContextHolder
+        prompt = resolveFileContents(prompt, aiRequest.getFileIds());
+
         // 后台启动编排流程
         runOrchestration(sessionId, prompt, eventBus, tenantContext);
 
         // 返回事件流供前端订阅
         return eventBus.asFlux();
+    }
+
+    /**
+     * 加载文件内容并拼接到提示词前
+     * <p>
+     * 若 fileIds 为空或全部加载失败，返回原始 prompt。
+     * 文件内容加载失败时记录日志但不阻断流程，降级为纯文本对话。
+     * </p>
+     *
+     * @param prompt  原始用户提示词
+     * @param fileIds 文件fileKey列表
+     * @return 拼接后的提示词
+     */
+    private String resolveFileContents(String prompt, List<String> fileIds) {
+        if (fileIds == null || fileIds.isEmpty()) {
+            return prompt;
+        }
+        String fileContents = fileParseService.loadFileContents(fileIds);
+        if (StringUtils.isEmpty(fileContents)) {
+            log.warn("[AgentRuntime] 文件内容加载为空 fileIds={}", fileIds);
+            return prompt;
+        }
+        return "以下是用户上传的文件内容，请基于文件内容进行分析：\n\n"
+                + fileContents
+                + "\n用户需求：" + prompt;
     }
 
     /**

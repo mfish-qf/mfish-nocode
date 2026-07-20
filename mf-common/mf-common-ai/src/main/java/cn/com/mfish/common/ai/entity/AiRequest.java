@@ -3,6 +3,8 @@ package cn.com.mfish.common.ai.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @description: Ai请求
  * @author: mfish
@@ -17,4 +19,6 @@ public class AiRequest {
     private String sessionId;
     @Schema(description = "消息")
     private AiMessage message;
+    @Schema(description = "文件ID列表(文件fileKey集合，AI将获取文件内容并解析)")
+    private List<String> fileIds;
 }
