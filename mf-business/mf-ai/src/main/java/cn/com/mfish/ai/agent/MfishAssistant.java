@@ -58,6 +58,6 @@ public class MfishAssistant extends BaseAssistant {
 
     @Override
     public String getPath() {
-        return "/ai/agent/chat";
+        return "/ai/assist/chat";
     }
 }

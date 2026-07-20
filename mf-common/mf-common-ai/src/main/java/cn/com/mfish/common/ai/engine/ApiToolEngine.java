@@ -6,8 +6,11 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -132,6 +135,32 @@ public class ApiToolEngine {
     }
 
     /**
+     * 聚合多个微服务的全部工具
+     * <p>
+     * 用于自主规划+多轮工具调用场景：Executor 按计划步骤指定的服务集合，
+     * 一次性聚合这些服务的全部工具供 LLM 选择。
+     * 同名工具会按 serviceId 顺序去重（先注册的保留）。
+     * </p>
+     *
+     * @param serviceIds 微服务ID集合
+     * @return 聚合后的工具列表
+     */
+    private List<ToolCallback> getToolCallbacks(Collection<String> serviceIds) {
+        if (serviceIds == null || serviceIds.isEmpty()) {
+            return List.of();
+        }
+        // 用 LinkedHashMap 按 tool name 去重，保留首次出现的版本
+        Map<String, ToolCallback> dedup = new LinkedHashMap<>();
+        for (String sid : serviceIds) {
+            for (ToolCallback tc : getToolCallbacks(sid)) {
+                String name = tc.getToolDefinition().name();
+                dedup.putIfAbsent(name, tc);
+            }
+        }
+        return new ArrayList<>(dedup.values());
+    }
+
+    /**
      * 获取指定服务的 ToolCallbackProvider（Spring AI 2.0 推荐方式）
      * <p>
      * 通过 {@code .tools(apiToolEngine.getToolCallbackProvider(serviceId))} 传入 ChatClient。
@@ -142,5 +171,19 @@ public class ApiToolEngine {
      */
     public ToolCallbackProvider getToolCallbackProvider(String serviceId) {
         return ToolCallbackProvider.from(getToolCallbacks(serviceId));
+    }
+
+    /**
+     * 聚合多个微服务的工具为 ToolCallbackProvider
+     * <p>
+     * 用于自主规划场景：Executor 按计划步骤指定的服务集合聚合工具，
+     * 同名工具按 serviceId 顺序去重。
+     * </p>
+     *
+     * @param serviceIds 微服务ID集合
+     * @return ToolCallbackProvider，无匹配时返回空 Provider
+     */
+    public ToolCallbackProvider getToolCallbackProvider(Set<String> serviceIds) {
+        return ToolCallbackProvider.from(getToolCallbacks(serviceIds));
     }
 }

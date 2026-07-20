@@ -5,6 +5,7 @@ import cn.com.mfish.common.ai.client.IClientAssistant;
 import cn.com.mfish.common.ai.engine.ApiToolEngine;
 import cn.com.mfish.common.ai.entity.AiRequest;
 import cn.com.mfish.common.ai.entity.ChatResponseVo;
+import cn.com.mfish.common.ai.agent.ToolCapable;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
@@ -23,9 +24,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 
@@ -43,7 +46,7 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
  * @date: 2025/8/22
  */
 @Slf4j
-public abstract class BaseAssistant implements IClientAssistant {
+public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
     private final ChatMemory chatMemory;
     private final LlmModelRouter llmModelRouter;
     protected final ApiToolEngine apiToolEngine;
@@ -66,6 +69,19 @@ public abstract class BaseAssistant implements IClientAssistant {
      */
     protected ChatClient getChatClient() {
         String tenantId = llmModelRouter.currentTenantId();
+        return getChatClient(tenantId);
+    }
+
+    /**
+     * 按指定租户ID构建 ChatClient
+     * <p>
+     * 用于异步编排场景：请求线程捕获租户ID后传入，避免在异步线程调用 currentTenantId() 失败。
+     * </p>
+     *
+     * @param tenantId 租户ID
+     * @return 该租户对应的 ChatClient
+     */
+    protected ChatClient getChatClient(String tenantId) {
         return ChatClient.builder(llmModelRouter.getChatModel(tenantId))
                 .defaultSystem(getSystemPrompt())
                 .defaultAdvisors(new SimpleLoggerAdvisor(),
@@ -88,6 +104,34 @@ public abstract class BaseAssistant implements IClientAssistant {
         String accessToken = AuthInfoUtils.getAccessToken();
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServerWebExchange serverWebExchange = ServletUtils.getExchange();
+        return buildToolContextFromSnapshot(tenantId, userId, accessToken,
+                requestAttributes, serverWebExchange);
+    }
+
+    /**
+     * 从预捕获的租户上下文快照构建工具上下文
+     * <p>
+     * 用于异步编排场景：请求线程先捕获 {@link cn.com.mfish.common.ai.agent.TenantContext}，
+     * 异步线程调用此方法构建 ToolContext，避免直接调用 AuthInfoUtils。
+     * </p>
+     *
+     * @param ctx 租户上下文快照
+     * @return 工具上下文Map
+     */
+    protected Map<String, Object> buildToolContext(cn.com.mfish.common.ai.agent.TenantContext ctx) {
+        String tenantId = ctx != null ? ctx.getTenantId() : null;
+        String userId = ctx != null ? ctx.getUserId() : null;
+        String accessToken = ctx != null ? ctx.getAccessToken() : null;
+        Object reqAttr = ctx != null ? ctx.getRequestAttributes() : null;
+        Object exchange = ctx != null ? ctx.getServerWebExchange() : null;
+        return buildToolContextFromSnapshot(tenantId, userId, accessToken, reqAttr, exchange);
+    }
+
+    /**
+     * 从快照字段组装工具上下文 Map
+     */
+    private Map<String, Object> buildToolContextFromSnapshot(String tenantId, String userId, String accessToken,
+                                                             Object requestAttributes, Object serverWebExchange) {
         Map<String, Object> toolContextMap = new HashMap<>();
         toolContextMap.put(RPCConstants.REQ_USER_ID, userId != null ? userId : "");
         toolContextMap.put(RPCConstants.REQ_TENANT_ID, tenantId != null ? tenantId : AuthInfoUtils.SUPER_TENANT_ID);
@@ -95,20 +139,59 @@ public abstract class BaseAssistant implements IClientAssistant {
         if (accessToken != null && !accessToken.isEmpty()) {
             toolContextMap.put(RPCConstants.REQ_TOKEN, accessToken);
         }
-        if (requestAttributes != null) {
-            toolContextMap.put(RPCConstants.REQ_REQUEST_ATTRIBUTES, requestAttributes);
+        if (requestAttributes instanceof RequestAttributes ra) {
+            toolContextMap.put(RPCConstants.REQ_REQUEST_ATTRIBUTES, ra);
         }
-        if (serverWebExchange != null) {
-            toolContextMap.put(RPCConstants.REQ_SERVER_WEB_EXCHANGE, serverWebExchange);
+        if (serverWebExchange instanceof ServerWebExchange swe) {
+            toolContextMap.put(RPCConstants.REQ_SERVER_WEB_EXCHANGE, swe);
         }
         return toolContextMap;
     }
 
     /**
-     * 基于工具的流式聊天模板方法
+     * 基于工具的流式聊天模板方法（单服务重载）
      * <p>
-     * 封装ToolContext构建、ChatClient请求构建、流式降级等公共逻辑，
-     * 子类只需提供serviceId即可。工具来源由 ApiToolEngine 聚合（Feign / HTTP / MCP 等）。
+     * 子类常用入口：传入单个 serviceId，内部委托给 {@link #chatWithTools(String, String, Set)}。
+     * </p>
+     *
+     * @param sessionId 会话id
+     * @param prompt    提示词
+     * @param serviceId 服务ID
+     * @return 流式聊天响应
+     */
+    protected Flux<ChatResponse> chatWithTools(String sessionId, String prompt, String serviceId) {
+        return chatWithTools(sessionId, prompt, Collections.singleton(serviceId));
+    }
+
+    /**
+     * 基于工具的流式聊天模板方法（多服务聚合重载）
+     * <p>
+     * 自主规划场景下，Executor 按计划步骤指定的服务集合调用此方法。
+     * 内部从 ApiToolEngine 聚合对应服务的工具，供 LLM 选择。
+     * </p>
+     * <p>
+     * 本重载从当前请求线程获取租户信息，适用于同步请求链路。
+     * 异步编排场景请使用 {@link #chatWithTools(String, String, Set, cn.com.mfish.common.ai.agent.TenantContext)}。
+     * </p>
+     *
+     * @param sessionId  会话id
+     * @param prompt    提示词
+     * @param serviceIds 需要聚合工具的微服务ID集合
+     * @return 流式聊天响应
+     */
+    @Override
+    public Flux<ChatResponse> chatWithTools(String sessionId, String prompt, Set<String> serviceIds) {
+        return chatWithTools(sessionId, prompt, serviceIds, null);
+    }
+
+    /**
+     * 基于工具的流式聊天模板方法（带租户上下文重载）
+     * <p>
+     * 异步编排场景下专用：请求线程先捕获 {@link cn.com.mfish.common.ai.agent.TenantContext} 快照，
+     * 异步线程用此快照构建 ChatClient 和 ToolContext，避免调用 AuthInfoUtils 时拿不到 RequestAttributes。
+     * </p>
+     * <p>
+     * 当 {@code tenantContext} 为 null 时，回退到从当前线程获取租户信息（兼容同步请求链路）。
      * </p>
      * <p>
      * 系统提示词中注入工具使用规则，减少 LLM 幻觉工具名的概率：
@@ -119,17 +202,27 @@ public abstract class BaseAssistant implements IClientAssistant {
      * </ol>
      * </p>
      *
-     * @param sessionId 会话id
-     * @param prompt    提示词
-     * @param serviceId 服务ID，用于从ApiToolEngine获取对应的ToolCallbackProvider
+     * @param sessionId       会话id
+     * @param prompt          提示词
+     * @param serviceIds      需要聚合工具的微服务ID集合
+     * @param tenantContext   请求线程捕获的租户上下文快照，null 表示从当前线程获取
      * @return 流式聊天响应
      */
-    protected Flux<ChatResponse> chatWithTools(String sessionId, String prompt, String serviceId) {
-        ToolCallbackProvider toolProvider = apiToolEngine.getToolCallbackProvider(serviceId);
-        Map<String, Object> toolContextMap = buildToolContext();
+    @Override
+    public Flux<ChatResponse> chatWithTools(String sessionId, String prompt, Set<String> serviceIds,
+                                            cn.com.mfish.common.ai.agent.TenantContext tenantContext) {
+        ToolCallbackProvider toolProvider = apiToolEngine.getToolCallbackProvider(serviceIds);
+        Map<String, Object> toolContextMap = tenantContext != null
+                ? buildToolContext(tenantContext)
+                : buildToolContext();
+        // 按租户上下文构建 ChatClient，避免在异步线程调用 currentTenantId()
+        String tenantId = tenantContext != null && tenantContext.getTenantId() != null
+                ? tenantContext.getTenantId()
+                : llmModelRouter.currentTenantId();
+        ChatClient chatClient = getChatClient(tenantId);
         // 构建工具使用提示词，减少LLM幻觉
         String toolHint = buildToolUsageHint(toolProvider);
-        ChatClient.ChatClientRequestSpec requestSpec = this.getChatClient().prompt()
+        ChatClient.ChatClientRequestSpec requestSpec = chatClient.prompt()
                 .system(getSystemPrompt() + "\n\n" + toolHint)
                 .user(prompt)
                 .advisors(a -> a.param(CONVERSATION_ID, sessionId))

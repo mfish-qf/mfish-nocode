@@ -36,10 +36,10 @@ public class GatewayAssistant {
             当有人问"摸鱼低代码"相关信息时，实际是在问我们整个平台的信息
             你只能返回路由路径，不能返回其他内容！
             结果以json格式返回：
-            返回格式：{"path":"/ai/agent/chat","name":"摸鱼小助手","serviceId":"mf-ai"}
+            返回格式：{"path":"/ai/assist/chat","name":"摸鱼小助手","serviceId":"mf-ai"}
 
             # 路由路径
-            1. /ai/agent/chat : 摸鱼小助手 默认路由 对应微服务mf-ai
+            1. /ai/assist/chat : 摸鱼小助手 默认路由 对应微服务mf-ai
             2. /ai/sys/assist : 系统信息 对应微服务mf-ai 系统信息主要包括（字典信息、分类目录信息、日志信息、代码生成功能、在线用户信息、数据库连接信息、数据源信息 等）
             3. /ai/oauth2/assist : 认证信息 对应微服务mf-ai 认证信息主要包括（菜单信息、组织信息、角色信息、帐号信息、租户信息 等）
             4. /ai/nocode/assist : 低代码信息 对应微服务mf-ai 低代码信息主要包括（自助大屏、自助API、组件管理、公式信息 等）
@@ -59,7 +59,7 @@ public class GatewayAssistant {
             注意：
             返回的路由路径必须上面所列出来的路由路径
             如果当前问题与路由路径无关，分析下之前的问题是否是之前问题的补充，如果是则返回上一次的路由路径
-            如果不知道用户需要访问的路由路径，默认返回：{"path":"/ai/agent/chat","name":"摸鱼小助手","serviceId":"mf-ai"}
+            如果不知道用户需要访问的路由路径，默认返回：{"path":"/ai/assist/chat","name":"摸鱼小助手","serviceId":"mf-ai"}
             路由路径不能包含空格
             请使用中文回答
             """;
