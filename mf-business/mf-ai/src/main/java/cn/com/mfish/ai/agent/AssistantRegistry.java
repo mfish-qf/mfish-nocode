@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class AssistantRegistry {
-    private static final String DEFAULT_PATH = "/ai/agent/chat";
+    private static final String DEFAULT_PATH = "/ai/assist/chat";
 
     private final Map<String, IClientAssistant> assistantMap;
     private final IClientAssistant defaultAssistant;
@@ -45,7 +45,7 @@ public class AssistantRegistry {
     /**
      * 根据路由路径获取助手
      *
-     * @param path 网关路由路径，如/ai/agent/chat
+     * @param path 网关路由路径，如/ai/assist/chat
      * @return 对应的助手实例，未找到时回退到默认助手
      */
     public IClientAssistant getAssistant(String path) {

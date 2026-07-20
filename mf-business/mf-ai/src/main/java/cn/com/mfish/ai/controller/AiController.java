@@ -19,7 +19,7 @@ import reactor.core.publisher.Flux;
  */
 @Tag(name = "摸鱼小助手")
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/assist")
 @RequiredArgsConstructor
 public class AiController {
     private final MfishAssistant mfishAssistant;

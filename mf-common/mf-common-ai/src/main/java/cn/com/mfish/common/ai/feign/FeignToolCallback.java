@@ -9,7 +9,9 @@ import cn.com.mfish.common.core.web.Result;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
@@ -25,11 +27,7 @@ import org.springframework.web.server.ServerWebExchange;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Feign接口方法 → Spring AI ToolCallback 适配器
@@ -56,6 +54,7 @@ public class FeignToolCallback implements ToolCallback {
 
     private final Object feignProxy;
     private final Method method;
+    @Getter
     private final String toolName;
     private final String toolDescription;
     private final List<ParamInfo> paramInfos;
@@ -82,7 +81,16 @@ public class FeignToolCallback implements ToolCallback {
     }
 
     private String buildDescription(Method method) {
-        return "调用远程接口: " + method.getName();
+        // 优先从方法上的 Swagger @Operation 注解提取描述
+        io.swagger.v3.oas.annotations.Operation op = method.getAnnotation(io.swagger.v3.oas.annotations.Operation.class);
+        if (op != null && !op.summary().isEmpty()) {
+            return op.summary();
+        }
+        if (op != null && !op.description().isEmpty()) {
+            return op.description();
+        }
+        // 兜底：方法名转可读描述（如 queryMenuTree → query menu tree）
+        return method.getName() + " (调用远程接口)";
     }
 
     /**
@@ -208,29 +216,29 @@ public class FeignToolCallback implements ToolCallback {
     private List<Field> getAllFields(Class<?> type) {
         List<Field> fields = new ArrayList<>();
         while (type != null && type != Object.class) {
-            for (Field field : type.getDeclaredFields()) fields.add(field);
+            Collections.addAll(fields, type.getDeclaredFields());
             type = type.getSuperclass();
         }
         return fields;
     }
 
     @Override
-    public ToolDefinition getToolDefinition() {
+    public @NonNull ToolDefinition getToolDefinition() {
         return toolDefinition;
     }
 
     @Override
-    public ToolMetadata getToolMetadata() {
+    public @NonNull ToolMetadata getToolMetadata() {
         return ToolMetadata.builder().build();
     }
 
     @Override
-    public String call(String toolInput) {
+    public @NonNull String call(@NonNull String toolInput) {
         return call(toolInput, null);
     }
 
     @Override
-    public String call(String toolInput, ToolContext context) {
+    public @NonNull String call(@NonNull String toolInput, ToolContext context) {
         // 恢复请求上下文：将请求线程的上下文传播到工具执行线程
         // Servlet: RequestContextHolder → BearerTokenInterceptor 读取头部
         // WebFlux: ServletUtils.EXCHANGE_HOLDER → AuthInfoUtils 兜底读取头部
@@ -290,7 +298,7 @@ public class FeignToolCallback implements ToolCallback {
      * 从 ToolContext 中提取指定类型的值
      */
     private <T> T extractFromContext(ToolContext context, String key, Class<T> type) {
-        if (context == null || context.getContext() == null) return null;
+        if (context == null) return null;
         Object value = context.getContext().get(key);
         return type.isInstance(value) ? type.cast(value) : null;
     }
@@ -300,7 +308,7 @@ public class FeignToolCallback implements ToolCallback {
      */
     private Object resolveInternalValue(String key, ToolContext context) {
         // 优先从 ToolContext 获取
-        if (context != null && context.getContext() != null && context.getContext().containsKey(key)) {
+        if (context != null && context.getContext().containsKey(key)) {
             return context.getContext().get(key);
         }
         // 兜底：从 RequestContextHolder（已由上方注入）获取
@@ -362,7 +370,4 @@ public class FeignToolCallback implements ToolCallback {
         return JSON.toJSONString(result);
     }
 
-    public String getToolName() {
-        return toolName;
-    }
 }

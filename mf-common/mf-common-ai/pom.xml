@@ -53,6 +53,16 @@
             <groupId>cn.com.mfish</groupId>
             <artifactId>mf-ai-api</artifactId>
         </dependency>
+        <!-- WebClient：HttpToolProvider 调用目标服务 REST 接口 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!--
+            注意：HttpToolProvider 微服务模式通过反射调用 DiscoveryClient（spring-cloud-commons），
+            但不直接依赖，避免单实例模式（mf-start-boot）因 classpath 缺失该类而 NoClassDefFoundError。
+            微服务模式下 DiscoveryClient 由 mf-common-cloud → spring-cloud-starter-alibaba-nacos-discovery 自动提供。
+        -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring</artifactId>

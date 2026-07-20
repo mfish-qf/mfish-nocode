@@ -1,7 +1,7 @@
 package cn.com.mfish.ai.agent;
 
 import cn.com.mfish.ai.service.LlmModelRouter;
-import cn.com.mfish.common.ai.feign.FeignToolRegistry;
+import cn.com.mfish.common.ai.engine.ApiToolEngine;
 import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 /**
  * @description: 调度中心助手
  * <p>
- * 工具自动从FeignToolRegistry获取：所有@FeignClient(value=SCHEDULER_SERVICE)的方法
+ * 工具自动从ApiToolEngine获取：所有@FeignClient(value=SCHEDULER_SERVICE)的方法
  * 自动生成Spring AI Tool，无需手动编写@Tool方法。
  *
  * @author: mfish
@@ -24,8 +24,8 @@ import reactor.core.publisher.Flux;
 public class SchedulerAssistant extends BaseAssistant {
     private static final String DEFAULT_PROMPT = "你好，简单介绍下调度中心助手";
 
-    public SchedulerAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, FeignToolRegistry feignToolRegistry) {
-        super(chatMemory, llmModelRouter, feignToolRegistry);
+    public SchedulerAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, ApiToolEngine apiToolEngine) {
+        super(chatMemory, llmModelRouter, apiToolEngine);
     }
 
     @Override

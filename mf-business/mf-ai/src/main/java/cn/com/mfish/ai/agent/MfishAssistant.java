@@ -1,7 +1,7 @@
 package cn.com.mfish.ai.agent;
 
 import cn.com.mfish.ai.service.LlmModelRouter;
-import cn.com.mfish.common.ai.feign.FeignToolRegistry;
+import cn.com.mfish.common.ai.engine.ApiToolEngine;
 import cn.com.mfish.common.core.utils.StringUtils;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -19,8 +19,8 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 public class MfishAssistant extends BaseAssistant {
     private static final String DEFAULT_PROMPT = "你好，简单介绍下摸鱼低代码";
 
-    public MfishAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, FeignToolRegistry feignToolRegistry) {
-        super(chatMemory, llmModelRouter, feignToolRegistry);
+    public MfishAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, ApiToolEngine apiToolEngine) {
+        super(chatMemory, llmModelRouter, apiToolEngine);
     }
 
     @Override
@@ -58,6 +58,6 @@ public class MfishAssistant extends BaseAssistant {
 
     @Override
     public String getPath() {
-        return "/ai/agent/chat";
+        return "/ai/assist/chat";
     }
 }

@@ -39,11 +39,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- WebFlux替代Servlet，LLM长连接不占用线程 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
         <!-- Swagger通用配置（排除webmvc相关依赖，兼容WebFlux） -->
         <dependency>
             <groupId>cn.com.mfish</groupId>
