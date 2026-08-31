@@ -339,7 +339,7 @@ public class ExcelUtils {
             List<Map<String, String>> listMap = new ArrayList<>();
             Consumer<List<Map<String, String>>> consumer = listMap::addAll;
             PageHelperReadListener listener = new PageHelperReadListener(reqPage.getPageSize(), consumer);
-            int start = reqPage.getPageNum() > 0 ? (reqPage.getPageNum() - 1) * 10 + 1 : 1;
+            int start = reqPage.getPageNum() > 0 ? (reqPage.getPageNum() - 1) * reqPage.getPageSize() + 1 : 1;
             EasyExcel.read(stream, listener).sheet().headRowNumber(start).head(new ArrayList<>()).doRead();
             return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), listener.getTotal());
         } finally {
