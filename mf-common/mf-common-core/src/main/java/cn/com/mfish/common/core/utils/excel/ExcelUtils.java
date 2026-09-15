@@ -282,19 +282,15 @@ public class ExcelUtils {
      * @return 包含excel头信息的LinkedHashMap，键为列索引，值为列名
      */
     public static LinkedHashMap<Integer, String> readHeader(InputStream stream) {
-        try {
-            LinkedHashMap<Integer, String> listMap = new LinkedHashMap<>();
+        LinkedHashMap<Integer, String> listMap = new LinkedHashMap<>();
+        try (stream) {
             Consumer<Map<Integer, String>> consumer = listMap::putAll;
             HeadReadListener listener = new HeadReadListener(consumer);
             EasyExcel.read(stream, listener).sheet().head(new ArrayList<>()).doRead();
-            return listMap;
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                log.error("文件流关闭异常", e);
-            }
+        } catch (IOException e) {
+            log.error("文件流关闭异常", e);
         }
+        return listMap;
     }
 
     /**
@@ -335,20 +331,18 @@ public class ExcelUtils {
      * @return 返回分页数据
      */
     public static PageResult<Map<String, String>> read(InputStream stream, ReqPage reqPage) {
-        try {
-            List<Map<String, String>> listMap = new ArrayList<>();
+        List<Map<String, String>> listMap = new ArrayList<>();
+        try (stream) {
+
             Consumer<List<Map<String, String>>> consumer = listMap::addAll;
             PageHelperReadListener listener = new PageHelperReadListener(reqPage.getPageSize(), consumer);
             int start = reqPage.getPageNum() > 0 ? (reqPage.getPageNum() - 1) * reqPage.getPageSize() + 1 : 1;
             EasyExcel.read(stream, listener).sheet().headRowNumber(start).head(new ArrayList<>()).doRead();
             return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), listener.getTotal());
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                log.error("文件流关闭异常", e);
-            }
+        } catch (IOException e) {
+            log.error("文件流关闭异常", e);
         }
+        return new PageResult<>(listMap, reqPage.getPageNum(), reqPage.getPageSize(), 0);
     }
 
     /**
@@ -386,18 +380,14 @@ public class ExcelUtils {
      * @return 返回
      */
     public static List<Map<String, String>> read(InputStream stream) {
-        try {
-            List<Map<String, String>> listMap = new ArrayList<>();
+        List<Map<String, String>> listMap = new ArrayList<>();
+        try (stream) {
             Consumer<List<Map<String, String>>> consumer = listMap::addAll;
             PageHelperReadListener listener = new PageHelperReadListener(consumer);
             EasyExcel.read(stream, listener).sheet().head(new ArrayList<>()).doRead();
-            return listMap;
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                log.error("文件流关闭异常", e);
-            }
+        } catch (IOException e) {
+            log.error("文件流关闭异常", e);
         }
+        return listMap;
     }
 }
