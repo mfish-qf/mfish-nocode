@@ -201,7 +201,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import {包路径}.entity.{类名};
 import {包路径}.req.Req{类名};
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.io.IOException;
 
@@ -253,7 +253,7 @@ import {包路径}.mapper.{类名}Mapper;
 import {包路径}.req.Req{类名};
 import {包路径}.service.{类名}Service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 

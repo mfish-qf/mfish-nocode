@@ -5,7 +5,7 @@ import cn.com.mfish.demo.mapper.DemoImportExportMapper;
 import cn.com.mfish.demo.service.DemoImportExportService;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 
 import java.util.List;
 

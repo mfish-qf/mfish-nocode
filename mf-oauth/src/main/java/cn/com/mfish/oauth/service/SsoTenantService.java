@@ -6,7 +6,7 @@ import cn.com.mfish.common.oauth.api.entity.SsoTenant;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.oauth.req.ReqSsoTenant;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.util.List;
 

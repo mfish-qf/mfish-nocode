@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.workflow.api.entity.FlowableParam;
 import cn.com.mfish.common.workflow.api.entity.MfTask;
+import cn.com.mfish.common.workflow.api.enums.FlowKey;
 import cn.com.mfish.common.workflow.api.remote.RemoteWorkflowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +44,10 @@ public class WorkflowExecutionProviderImpl implements WorkflowExecutionProvider 
     public WorkflowResult startProcess(String flowKey, String businessKey,
                                        Map<String, Object> variables, String startUserId) {
         WorkflowResult result = new WorkflowResult();
-        // 直接调用 startProcess：mf-workflow 内部按 FlowKey 枚举自动补全 callback/prefix
-        //  - 枚举配了 callback（如请假流程）：补全后放 WORKFLOW_PARAM，流程结束回调业务系统更新单据状态
-        //  - 枚举未配 callback（纯自动化流程）：不放 WORKFLOW_PARAM，流程结束自然跳过回调
-        FlowableParam<String> param = new FlowableParam<String>()
-                .setKey(flowKey)
-                .setId(businessKey)
+        // 通过 FlowableParam.of 统一创建：流程key、callback/prefix 均取自 FlowKey 枚举
+        //  - 枚举配了 callback（如请假流程）：流程结束回调业务系统更新单据状态
+        //  - 枚举未配 callback（纯自动化流程）：callback 为空，流程结束自然跳过回调
+        FlowableParam<String> param = FlowableParam.of(FlowKey.getByKey(flowKey), businessKey)
                 .setStartAccount(startUserId)
                 .setParam(variables);
 

@@ -6,7 +6,7 @@ import cn.com.mfish.ai.api.vo.AiModelConfigVo;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.io.IOException;
 import java.util.List;

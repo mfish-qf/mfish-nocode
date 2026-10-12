@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import ${packageName}.entity.${entityName};
 import ${packageName}.req.Req${entityName};
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.io.IOException;
 

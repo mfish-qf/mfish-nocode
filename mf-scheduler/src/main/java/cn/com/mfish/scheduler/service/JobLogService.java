@@ -1,7 +1,7 @@
 package cn.com.mfish.scheduler.service;
 
 import cn.com.mfish.common.scheduler.api.entity.JobLog;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
  * @description: 任务日志

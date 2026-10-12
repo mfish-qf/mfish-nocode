@@ -4,7 +4,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.mapper.SysLogMapper;
 import cn.com.mfish.common.log.service.SysLogService;
 import cn.com.mfish.sys.api.entity.SysLog;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

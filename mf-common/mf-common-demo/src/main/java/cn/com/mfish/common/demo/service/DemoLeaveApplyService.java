@@ -6,7 +6,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.demo.entity.DemoLeaveApply;
 import cn.com.mfish.common.demo.req.ReqDemoLeaveApply;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.io.IOException;
 

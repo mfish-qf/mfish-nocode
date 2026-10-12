@@ -8,7 +8,7 @@ import cn.com.mfish.demo.mapper.DemoOrderDetailMapper;
 import cn.com.mfish.demo.mapper.DemoOrderMapper;
 import cn.com.mfish.demo.service.DemoOrderService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

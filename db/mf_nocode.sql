@@ -398,4 +398,32 @@ CREATE TABLE `mf_http_folder`  (
                                    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'http接口目录' ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Table structure for mf_screen_resource_img
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_resource_img`;
+CREATE TABLE `mf_screen_resource_img` (
+                                          `id` varchar(36) NOT NULL COMMENT '唯一id',
+                                          `name` varchar(100) DEFAULT NULL COMMENT '图片名称',
+                                          `remark` varchar(500) DEFAULT NULL COMMENT '图片描述',
+                                          `category` varchar(100) DEFAULT NULL COMMENT '图片分类（sys_dict_category分类id）',
+                                          `pic_key` varchar(100) DEFAULT NULL COMMENT '图片文件KEY（mf_storage存储文件key）',
+                                          `file_name` varchar(200) DEFAULT NULL COMMENT '原始文件名',
+                                          `file_type` varchar(100) DEFAULT NULL COMMENT '文件类型',
+                                          `file_size` bigint DEFAULT NULL COMMENT '文件大小(字节)',
+                                          `use_count` int DEFAULT 0 COMMENT '使用次数',
+                                          `tenant_id` varchar(36) DEFAULT NULL COMMENT '租户ID',
+                                          `audit_state` tinyint(1) DEFAULT NULL COMMENT '审核状态（NULL未发布 0待审核 1审核通过 2审核不通过）',
+                                          `del_flag` tinyint(1) DEFAULT 0 COMMENT '删除标记（0正常 1删除）',
+                                          `create_by` varchar(50) DEFAULT '' COMMENT '创建用户',
+                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                          `update_by` varchar(50) DEFAULT '' COMMENT '更新用户',
+                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                          PRIMARY KEY (`id`) USING BTREE,
+                                          INDEX `index_pic_key`(`pic_key`) USING BTREE,
+                                          INDEX `index_create_by`(`create_by`) USING BTREE,
+                                          INDEX `index_category`(`category`) USING BTREE,
+                                          INDEX `index_audit_state`(`audit_state`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='大屏图片资源信息';
+
 SET FOREIGN_KEY_CHECKS = 1;

@@ -12,7 +12,7 @@ import cn.com.mfish.sys.mapper.DictMapper;
 import cn.com.mfish.sys.api.req.ReqDict;
 import cn.com.mfish.common.sys.service.DictService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

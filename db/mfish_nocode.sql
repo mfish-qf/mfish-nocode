@@ -1150,6 +1150,7 @@ INSERT INTO `sys_dict_item` VALUES ('e100aa3c678f2bf6a4e1e24a9feee89f', 'cd33855
 INSERT INTO `sys_dict_item` VALUES ('cac0983d1430c0a7dce98bd8c01cc19c', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'ollama', 'ollama', 0, 2, '', 'blue', 0, NULL, 'admin', '2026-07-10 16:58:34', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('64a2906317754ac19c779e04ddc155de', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'deepseek', 'deepseek', 0, 3, NULL, 'cyan', 0, NULL, 'admin', '2026-07-10 16:58:49', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('76faf36cc4e459171c273fa833e79ff4', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'anthropic', 'anthropic', 0, 4, NULL, 'pink', 0, NULL, 'admin', '2026-07-10 16:59:22', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('9f3c1a7d2e5b4a8c6f0d1e2a3b4c5d6e', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'orcarouter', 'orcarouter', 0, 5, NULL, 'gold', 0, 'OrcaRouter 路由网关', 'admin', '2026-08-15 00:00:00', '', NULL);
 
 -- ----------------------------
 -- Table structure for sys_log
@@ -1248,7 +1249,7 @@ INSERT INTO `sys_dict_category` VALUES ('57edf426cf8dcab91f92667b0fd8376b', '4d5
 INSERT INTO `sys_dict_category` VALUES ('58e6efc0b6a6441cf0a8081520085ccd', 'a1c2ae510d0676d51b4313591d0d3c97', NULL, '官方', '000050000100002', 3, NULL, NULL, 2, 'admin', '2025-03-19 15:36:21', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('6577e71c515e8014297ac7a9b2fb17af', '926abe03a1935946b43fdcc031c9d3c8', 'iPhone', '苹果', '0000200007', 2, NULL, NULL, 2, 'admin', '2024-03-14 14:38:23', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('688f4f25303f6ce601c99cc30db7dd5b', 'aaf0612479eaffe56b8c3b2af7d3cb8f', NULL, '选项', '000040000500002', 3, 'carbon:list-dropdown', NULL, 1, 'admin', '2025-03-17 15:23:28', 'admin', '2025-07-02 17:43:53');
-INSERT INTO `sys_dict_category` VALUES ('69d2a8f8396fb6866be7e5e97de0e908', '9f2aec31293bbb9294db416e42f168b5', NULL, '行业', '000050000300002', 3, NULL, NULL, 2, 'admin', '2025-03-19 15:40:59', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('69d2a8f8396fb6866be7e5e97de0e908', '9f2aec31293bbb9294db416e42f168b5', NULL, '背景', '000050000300002', 3, NULL, NULL, 2, 'admin', '2025-03-19 15:40:59', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('6fab782d03d564025274e46a8ec63668', '4d544061656fca47a6dca3896a9f94fb', NULL, '标签', '000040000200002', 3, 'ant-design:tag-outlined', '', 1, 'admin', '2024-11-18 17:38:23', 'admin', '2024-11-18 17:38:31');
 INSERT INTO `sys_dict_category` VALUES ('862f955f4ba4cb11266a22d8ef023913', 'fe72c08cf082f8f1c6efef9d28119c45', NULL, '装饰', '000040000400003', 3, 'ant-design:skin-outlined', NULL, 2, 'admin', '2024-12-27 22:24:24', NULL, NULL);
 INSERT INTO `sys_dict_category` VALUES ('8fcbb99d3e9550f5e9d30dd592a67352', 'b8726bb3b3323e3ed4039322d34dae7c', NULL, '占比图', '000040000100006', 3, 'carbon:chart-ring', NULL, 4, 'admin', '2025-01-14 17:31:09', 'admin', '2025-01-14 17:31:20');
@@ -2009,5 +2010,33 @@ CREATE TABLE `ai_mcp_server_config`  (
                                          PRIMARY KEY (`id`) USING BTREE,
                                          UNIQUE INDEX `server_name_index`(`server_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'MCP服务器配置表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mf_screen_resource_img
+-- ----------------------------
+DROP TABLE IF EXISTS `mf_screen_resource_img`;
+CREATE TABLE `mf_screen_resource_img` (
+                                          `id` varchar(36) NOT NULL COMMENT '唯一id',
+                                          `name` varchar(100) DEFAULT NULL COMMENT '图片名称',
+                                          `remark` varchar(500) DEFAULT NULL COMMENT '图片描述',
+                                          `category` varchar(100) DEFAULT NULL COMMENT '图片分类（sys_dict_category分类id）',
+                                          `pic_key` varchar(100) DEFAULT NULL COMMENT '图片文件KEY（mf_storage存储文件key）',
+                                          `file_name` varchar(200) DEFAULT NULL COMMENT '原始文件名',
+                                          `file_type` varchar(100) DEFAULT NULL COMMENT '文件类型',
+                                          `file_size` bigint DEFAULT NULL COMMENT '文件大小(字节)',
+                                          `use_count` int DEFAULT 0 COMMENT '使用次数',
+                                          `tenant_id` varchar(36) DEFAULT NULL COMMENT '租户ID',
+                                          `audit_state` tinyint(1) DEFAULT NULL COMMENT '审核状态（NULL未发布 0待审核 1审核通过 2审核不通过）',
+                                          `del_flag` tinyint(1) DEFAULT 0 COMMENT '删除标记（0正常 1删除）',
+                                          `create_by` varchar(50) DEFAULT '' COMMENT '创建用户',
+                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                          `update_by` varchar(50) DEFAULT '' COMMENT '更新用户',
+                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                          PRIMARY KEY (`id`) USING BTREE,
+                                          INDEX `index_pic_key`(`pic_key`) USING BTREE,
+                                          INDEX `index_create_by`(`create_by`) USING BTREE,
+                                          INDEX `index_category`(`category`) USING BTREE,
+                                          INDEX `index_audit_state`(`audit_state`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='大屏图片资源信息';
 
 SET FOREIGN_KEY_CHECKS = 1;

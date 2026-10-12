@@ -5,7 +5,7 @@ import cn.com.mfish.common.core.web.ReqPage;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.api.entity.DbConnect;
 import cn.com.mfish.sys.api.req.ReqDbConnect;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
  * @description: 数据库连接
