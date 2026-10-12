@@ -21,8 +21,14 @@ import lombok.Getter;
 public enum FlowKey {
     /** 未知流程 */
     UNKNOWN("unknown", null, null),
-    /** 大屏发布流程 */
-    大屏发布("screen_release", null, null),
+    /** 大屏发布流程：回调 nocode 服务更新大屏资源状态 */
+    大屏发布("screen_release",
+            "cn.com.mfish.common.nocode.api.remote.RemoteNocodeService",
+            "screenResource"),
+    /** 图片资源发布流程：回调 nocode 服务更新图片资源状态 */
+    图片资源发布("screen_image_release",
+            "cn.com.mfish.common.nocode.api.remote.RemoteNocodeService",
+            "screenResourceImg"),
     /** 请假申请发布流程：回调 demo 服务更新请假单状态 */
     请假申请发布("demo_leave_apply_release",
             "cn.com.mfish.demo.api.remote.RemoteDemoLeaveApplyService",

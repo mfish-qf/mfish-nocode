@@ -9,7 +9,7 @@ import cn.com.mfish.common.oauth.validator.TokenValidator;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
 import cn.com.mfish.storage.mapper.StorageMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

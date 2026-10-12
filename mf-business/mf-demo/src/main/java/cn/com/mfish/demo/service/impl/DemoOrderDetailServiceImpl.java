@@ -5,7 +5,7 @@ import cn.com.mfish.demo.mapper.DemoOrderDetailMapper;
 import cn.com.mfish.demo.service.DemoOrderDetailService;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 
 /**
  * @description: 销售订单明细

@@ -1,7 +1,7 @@
 package cn.com.mfish.demo.service;
 
 import cn.com.mfish.demo.entity.DemoOrderDetail;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
  * @description: 销售订单明细

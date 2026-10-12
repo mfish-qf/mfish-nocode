@@ -20,8 +20,8 @@
         <where>
             t.del_flag = 0
             <if test="reqSsoTenant.tenantType!=null">and t.tenant_type = #{reqSsoTenant.tenantType}</if>
-            <if test="reqSsoTenant.domain!=null">and t.domain = #{reqSsoTenant.domain}</if>
-            <if test="reqSsoTenant.name!=null">and t.name = #{reqSsoTenant.name}</if>
+            <if test="reqSsoTenant.domain!=null">and t.domain like concat('%',#{reqSsoTenant.domain},'%')</if>
+            <if test="reqSsoTenant.name!=null">and t.name like concat('%',#{reqSsoTenant.name},'%')</if>
         </where>
         group by t.id,t.tenant_type,t.name,t.city,t.province,t.county,t.address,t.corp_size,t.corp_years
         ,t.trade,t.status,t.logo,t.domain,t.del_flag,t.user_id,t.create_by,t.create_time,t.update_by,t.update_time

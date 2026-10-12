@@ -16,7 +16,7 @@ import cn.com.mfish.sys.mapper.CodeBuildMapper;
 import cn.com.mfish.sys.req.ReqMenuCreate;
 import cn.com.mfish.sys.service.CodeBuildService;
 import com.alibaba.fastjson2.JSON;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

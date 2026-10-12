@@ -2,7 +2,7 @@ package cn.com.mfish.scheduler.service;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.scheduler.entity.JobSubscribe;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import org.quartz.SchedulerException;
 
 import java.util.List;

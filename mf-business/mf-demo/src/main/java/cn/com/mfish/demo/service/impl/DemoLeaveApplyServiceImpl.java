@@ -16,7 +16,7 @@ import cn.com.mfish.common.workflow.api.enums.FlowKey;
 import cn.com.mfish.common.workflow.api.remote.RemoteWorkflowService;
 import cn.com.mfish.demo.mapper.DemoLeaveApplyMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -278,11 +278,8 @@ public class DemoLeaveApplyServiceImpl extends ServiceImpl<DemoLeaveApplyMapper,
     private void startProcess(DemoLeaveApply demoLeaveApply) {
         Map<String, Object> param = new HashMap<>();
         param.put("leaveDays",demoLeaveApply.getLeaveDays());
-        Result<String> result = remoteWorkflowService.startProcess(RPCConstants.INNER, new FlowableParam<String>()
-                .setKey(FlowKey.请假申请发布.toString()).setParam(param)
-                .setId(demoLeaveApply.getId())
-                .setPrefix(FlowKey.请假申请发布.getPrefix())
-                .setCallback(FlowKey.请假申请发布.getCallback()));
+        Result<String> result = remoteWorkflowService.startProcess(RPCConstants.INNER,
+                FlowableParam.of(FlowKey.请假申请发布, demoLeaveApply.getId()).setParam(param));
         if (!result.isSuccess()) {
             throw new MyRuntimeException(result.getMsg());
         }

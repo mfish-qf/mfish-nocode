@@ -1,7 +1,7 @@
 package cn.com.mfish.demo.service;
 
 import cn.com.mfish.demo.entity.DemoImportExport;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.util.List;
 

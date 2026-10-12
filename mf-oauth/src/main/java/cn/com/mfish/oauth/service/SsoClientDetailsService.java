@@ -2,7 +2,7 @@ package cn.com.mfish.oauth.service;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.oauth.entity.SsoClientDetails;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
  * @description: 客户端信息

@@ -3,7 +3,7 @@ package cn.com.mfish.common.nocode.service;
 import cn.com.mfish.common.core.entity.WorkflowCompleteResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.nocode.entity.ScreenResource;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
  * @description: 大屏资源信息

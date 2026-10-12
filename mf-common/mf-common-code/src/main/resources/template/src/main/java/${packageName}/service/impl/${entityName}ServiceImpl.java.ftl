@@ -21,7 +21,7 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 
 /**
 * @description: ${tableInfo.tableComment}

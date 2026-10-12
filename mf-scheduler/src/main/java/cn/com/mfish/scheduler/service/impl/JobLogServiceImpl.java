@@ -5,7 +5,7 @@ import cn.com.mfish.scheduler.mapper.JobLogMapper;
 import cn.com.mfish.scheduler.service.JobLogService;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 
 /**
  * @description: 任务日志

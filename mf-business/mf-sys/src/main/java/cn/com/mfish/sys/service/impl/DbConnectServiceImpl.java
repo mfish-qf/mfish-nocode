@@ -12,7 +12,7 @@ import cn.com.mfish.sys.api.req.ReqDbConnect;
 import cn.com.mfish.sys.mapper.DbConnectMapper;
 import cn.com.mfish.common.dblink.service.DbConnectService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

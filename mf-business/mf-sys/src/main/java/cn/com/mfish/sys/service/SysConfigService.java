@@ -2,7 +2,7 @@ package cn.com.mfish.sys.service;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.sys.entity.SysConfig;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.util.List;
 

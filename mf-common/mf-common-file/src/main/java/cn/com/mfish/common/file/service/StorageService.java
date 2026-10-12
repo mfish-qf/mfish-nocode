@@ -2,7 +2,7 @@ package cn.com.mfish.common.file.service;
 
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.storage.api.entity.StorageInfo;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 

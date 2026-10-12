@@ -26,30 +26,30 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>4.1.0</spring-boot.version>
-        <spring-boot-admin.version>4.1.1</spring-boot-admin.version>
-        <spring-cloud.version>2025.1.2</spring-cloud.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
+        <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
+        <spring-cloud.version>2025.1.3</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
-        <spring-ai.version>2.0.0</spring-ai.version>
-        <swagger.doc.version>3.0.3</swagger.doc.version>
-        <swagger.core.version>2.2.49</swagger.core.version>
+        <spring-ai.version>2.0.1</spring-ai.version>
+        <swagger.doc.version>3.1.1</swagger.doc.version>
+        <swagger.core.version>2.2.54</swagger.core.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <mybatis-plus.version>3.5.16</mybatis-plus.version>
-        <mybatis-spring-boot.version>4.0.1</mybatis-spring-boot.version>
+        <mybatis-plus.version>3.5.17</mybatis-plus.version>
+        <mybatis-spring-boot.version>4.1.0</mybatis-spring-boot.version>
         <pagehelper.boot.version>4.1.1</pagehelper.boot.version>
         <jsqlparser.version>5.3</jsqlparser.version>
         <druid.version>1.2.28</druid.version>
         <dynamic-ds.version>4.5.0</dynamic-ds.version>
         <commons.io.version>2.21.0</commons.io.version>
         <commons.text.version>1.15.0</commons.text.version>
-        <freemarker.version>2.3.34</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
         <fastjson.version>2.0.60</fastjson.version>
         <zxing.version>3.5.4</zxing.version>
         <wechat.version>4.8.2-20260509.102920</wechat.version>
         <aliyun-oss.version>3.18.3</aliyun-oss.version>
         <qiniu-sdk.version>7.19.0</qiniu-sdk.version>
         <rocketmq.version>2.3.5</rocketmq.version>
-        <bcprov.version>1.84</bcprov.version>
+        <bcprov.version>1.85</bcprov.version>
         <oracle.version>23.26.0.0.0</oracle.version>
         <pgsql.version>42.7.12</pgsql.version>
         <mssql.version>13.4.0.jre11</mssql.version>

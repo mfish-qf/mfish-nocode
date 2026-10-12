@@ -3,7 +3,7 @@ package cn.com.mfish.common.sys.service;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.sys.req.ReqDictItem;
 import cn.com.mfish.sys.api.entity.DictItem;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 import java.util.List;
 
