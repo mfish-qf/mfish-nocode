@@ -72,3 +72,5 @@
 /mf-common/mf-common-demo/target/
 /mf-api/mf-demo-api/target/
 /mf-api/mf-ai-api/target/
+/.workbuddy/
+/mf-business/mf-project/target/
