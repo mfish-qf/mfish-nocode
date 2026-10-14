@@ -135,28 +135,34 @@ CREATE TABLE `pm_personnel`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '团队人员与岗位档案表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for pm_dict_category 树形业务字典与功能层级分类表
--- ----------------------------
-DROP TABLE IF EXISTS `pm_dict_category`;
-CREATE TABLE `pm_dict_category`  (
-  `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
-  `parent_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '父分类id',
-  `category_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类编码',
-  `category_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类名称',
-  `tree_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分类树编码(系统自动编码,如 001、001001)',
-  `tree_level` int NULL DEFAULT NULL COMMENT '分类树层级(自动生成,1为一级分类,2为二级分类)',
-  `icon` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标',
-  `sort` int NULL DEFAULT NULL COMMENT '排序',
-  `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '删除标志(0正常 1已删除)',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_pm_dc_parent`(`parent_id`) USING BTREE,
-  INDEX `idx_pm_dc_tree_code`(`tree_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '树形业务字典与功能层级分类表' ROW_FORMAT = Dynamic;
+-- 说明: 原 pm_dict_category(树形业务字典与功能层级分类表)已废弃
+-- 分类字典统一迁移至框架 sys_dict_category(分类编码 project_management),
+-- 由 mf-sys 的 /sys/dictCategory/tree/project_management?direction=down 提供查询,
+-- 种子数据见 db/mf_system.sql 的 sys_dict_category 记录区。
+--
+-- 存量环境数据迁移(手工执行一次, 需在 pm_dict_category 仍存在时执行):
+-- 结构: 一级根节点(携带分类编码) -> 二级模块 -> 三级一级功能
+-- 1. 插入一级根节点(分类编码仅挂根节点, 与框架规范一致)
+--   INSERT INTO `sys_dict_category`
+--     (`id`, `parent_id`, `category_code`, `category_name`, `tree_code`, `tree_level`, `icon`, `sort`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`)
+--   VALUES ('dc-000', '', 'project_management', '项目管理', '00001', 1, 'project', 0, 'PM 模块与一级功能分类根节点', 'admin', NOW(), 'admin', NOW());
+-- 2. 原一级(模块)迁为二级, 挂到根节点下, category_code 置空
+--   INSERT INTO `sys_dict_category`
+--     (`id`, `parent_id`, `category_code`, `category_name`, `tree_code`, `tree_level`, `icon`, `sort`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`)
+--   SELECT `id`, 'dc-000', '', `category_name`,
+--     CONCAT('00001', LPAD(SUBSTR(`tree_code`,1,3),5,'0')),
+--     2, `icon`, IFNULL(`sort`,0), `remark`, 'admin', NOW(), 'admin', NOW()
+--   FROM `pm_dict_category` WHERE `del_flag` = 0 AND `tree_level` = 1;
+-- 3. 原二级(一级功能)迁为三级, 挂到对应模块下, category_code 置空
+--   INSERT INTO `sys_dict_category`
+--     (`id`, `parent_id`, `category_code`, `category_name`, `tree_code`, `tree_level`, `icon`, `sort`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`)
+--   SELECT c.`id`, p.`id`, '', c.`category_name`,
+--     CONCAT('00001', LPAD(SUBSTR(p.`tree_code`,1,3),5,'0'), LPAD(SUBSTR(c.`tree_code`,4,3),5,'0')),
+--     3, c.`icon`, IFNULL(c.`sort`,0), c.`remark`, 'admin', NOW(), 'admin', NOW()
+--   FROM `pm_dict_category` c JOIN `pm_dict_category` p ON c.`parent_id` = p.`id`
+--   WHERE c.`del_flag` = 0 AND c.`tree_level` = 2;
+--   DROP TABLE IF EXISTS `pm_dict_category`;
+-- (tree_code 由 3 位分段转换为框架 5 位分段, 如 001->00001, 001002->0000100002)
 
 -- ----------------------------
 -- Table structure for pm_schedule_config 排期日历全局规则配置表(单行配置)
@@ -312,40 +318,5 @@ INSERT INTO `pm_iteration_test_node` VALUES ('tn-v20-1', 'iter-v2.0', '首批转
 INSERT INTO `pm_iteration_test_node` VALUES ('tn-v20-2', 'iter-v2.0', '全量提测 (全景功能验收)', '2026-11-10', '全量集成测试与准出评估', 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_iteration_test_node` VALUES ('tn-v21-1', 'iter-v2.1', '冲刺唯一转测', '2026-10-22', 'UI细节与移动端适配冒烟准入', 0, NULL, '', NOW(), '', NOW());
 
--- ----------------------------
--- Records of pm_dict_category 初始树形字典(6大一级模块 + 27项二级功能)
--- ----------------------------
-INSERT INTO `pm_dict_category` VALUES ('dc-001', NULL, 'FORM_ENGINE', '低代码表单引擎', '001', 1, 'form', 1, 0, '动态表单渲染核心引擎与校验体系', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-001-01', 'dc-001', 'FORM_WIDGETS', '表单核心控件库', '001001', 2, 'appstore', 1, 0, '包含输入、下拉、日期、上传等40+基础控件', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-001-02', 'dc-001', 'FORM_VALIDATOR', '动态校验规则器', '001002', 2, 'check-circle', 2, 0, '正则表达式、远程异步校验、函数表达式联动校验', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-001-03', 'dc-001', 'FORM_LINKAGE', '字段生命周期与联动显隐', '001003', 2, 'fork', 3, 0, '值监听变动、级联显示/隐藏、只读/可编辑状态联动', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-001-04', 'dc-001', 'FORM_CONTAINER', '分步向导与多Tab容器', '001004', 2, 'layout', 4, 0, '复杂长表单分页、折叠面板与弹窗嵌入容器', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-001-05', 'dc-001', 'FORM_GRID_LAYOUT', '栅格流式排版设计', '001005', 2, 'table', 5, 0, '24栅格自适应拖拽与多端响应式断点', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-002', NULL, 'WORKFLOW_CENTER', '工作流与审批中心', '002', 1, 'branches', 2, 0, 'BPMN2.0 流程编排与中国式复杂审批流', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-002-01', 'dc-002', 'WF_DESIGNER', 'BPMN可视化流程设计器', '002001', 2, 'node-index', 1, 0, '拖拽式流程节点定义、分支网关与连线', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-002-02', 'dc-002', 'WF_APPROVAL_POLICY', '多级审批/会签/或签/加签', '002002', 2, 'usergroup-add', 2, 0, '支持按角色、主管领导、动态脚本指定审批人', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-002-03', 'dc-002', 'WF_GATEWAY_RULE', '流程分支网关与条件表达式', '002003', 2, 'apartment', 3, 0, '根据表单数值、部门、申请额度进行流转分支分流', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-002-04', 'dc-002', 'WF_REMINDER', '待办催办与超时自动升级', '002004', 2, 'bell', 4, 0, '邮件、企微、钉钉消息推送与超时自动同意/转交', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-002-05', 'dc-002', 'WF_TIMELINE_LOG', '审批历史时间轴与轨迹图', '002005', 2, 'history', 5, 0, '审批人签字意见、用印附件与历史节点回退记录', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-003', NULL, 'AUTH_TENANT', '多租户与组织权限', '003', 1, 'safety', 3, 0, 'SaaS多租户隔离、RBAC与数据行级安全', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-003-01', 'dc-003', 'TENANT_ISOLATION', '租户空间与资源物理隔离', '003001', 2, 'database', 1, 0, '多租户独立Schema/分库分表与空间配额管控', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-003-02', 'dc-003', 'RBAC_SECURITY', 'RBAC角色与按钮级权限', '003002', 2, 'key', 2, 0, '功能菜单鉴权、操作按钮显隐、字段级读写遮罩', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-003-03', 'dc-003', 'ORG_STRUCTURE', '部门层级与人员兼职矩阵', '003003', 2, 'cluster', 3, 0, '支持集团/分子公司/部门多级树与虚拟项目组', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-003-04', 'dc-003', 'SSO_INTEGRATION', '单点登录SSO与OAuth2', '003004', 2, 'login', 4, 0, '飞书、企业微信、钉钉及SAML2.0统一认证对接', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-003-05', 'dc-003', 'AUDIT_LOGGING', '操作审计与登录安全日志', '003005', 2, 'audit', 5, 0, 'IP溯源、数据前后快照比对、导出下载痕迹审计', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-004', NULL, 'DATA_OPENAPI', '数据模型与OpenAPI', '004', 1, 'api', 4, 0, '可视化建模、无代码CRUD与第三方API编排', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-004-01', 'dc-004', 'DATA_MODEL_ER', '可视化实体数据建模', '004001', 2, 'table', 1, 0, '在线创建字段、主外键关联、索引与逆向工程', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-004-02', 'dc-004', 'CRUD_GENERATOR', '标准RESTful接口自动化', '004002', 2, 'code', 2, 0, '增删改查分页排序自动生成与Swagger在线文档', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-004-03', 'dc-004', 'API_ORCHESTRATION', '第三方API连接器与数据转换', '004003', 2, 'cloud-sync', 3, 0, '入参出参映射、Token鉴权拦截、失败重试机制', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-004-04', 'dc-004', 'DATA_SOURCE_POOL', '异构数据源连接池管理', '004004', 2, 'link', 4, 0, 'MySQL, PostgreSQL, Oracle, MongoDB 连接保活', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-005', NULL, 'BI_DASHBOARD', '可视化大屏与BI报表', '005', 1, 'bar-chart', 5, 0, '全场景多维数据统计、大屏拖拽与报表导出打印', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-005-01', 'dc-005', 'ECHARTS_WIDGETS', 'ECharts多维图表控件库', '005001', 2, 'pie-chart', 1, 0, '柱折饼、散点雷达、中国地图与热力图组件', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-005-02', 'dc-005', 'DASHBOARD_CANVAS', '自由拖拽大屏画布引擎', '005002', 2, 'desktop', 2, 0, '标尺网格吸附、成组锁定、大屏全屏自适应缩放', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-005-03', 'dc-005', 'CROSS_TAB_REPORT', '复杂交叉报表与精准套打', '005003', 2, 'printer', 3, 0, '多表头合并、小计合计计算公式、PDF/Excel矢量打印', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-005-04', 'dc-005', 'DRILL_DOWN_CHART', '图表数据下钻与实时过滤联动', '005004', 2, 'fund', 4, 0, '点击饼图扇区实时过滤关联表格，支持层级穿透', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-006', NULL, 'OPEN_MARKET', '开放平台与扩展市场', '006', 1, 'shop', 6, 0, '插件生态沙箱、行业应用模版与Webhook订阅', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-006-01', 'dc-006', 'SANDBOX_PLUGIN', '自定义JS/CSS插件沙箱', '006001', 2, 'tool', 1, 0, '用户编写前端增强脚本，安全执行防XSS注入', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-006-02', 'dc-006', 'TEMPLATE_STORE', '应用模版一键克隆与市场', '006002', 2, 'cloud-download', 2, 0, '项目管理、CRM、考勤打卡、工单套件开箱即用', '', NOW(), '', NOW());
-INSERT INTO `pm_dict_category` VALUES ('dc-006-03', 'dc-006', 'WEBHOOK_EVENT', 'Webhook事件订阅与消息广播', '006003', 2, 'message', 3, 0, '需求变更、转测准入事件实时向外部系统Post通知', '', NOW(), '', NOW());
 
 SET FOREIGN_KEY_CHECKS = 1;
