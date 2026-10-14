@@ -117,7 +117,7 @@ public class TokenFilter extends OncePerRequestFilter {
         request.setAttribute(RPCConstants.REQ_TENANT_ID, tenantId);
         // 将认证信息写入SecurityContext，使Spring Security授权检查通过
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(account, null, Collections.emptyList());
+                new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return Result.ok();
     }

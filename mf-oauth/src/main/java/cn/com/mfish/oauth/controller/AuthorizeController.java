@@ -139,7 +139,9 @@ public class AuthorizeController {
             throw new MyRuntimeException("错误:请求参数校验出错");
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = !(authentication instanceof AnonymousAuthenticationToken);
+        boolean isAuthenticated = authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
         log.info(MessageFormat.format("用户:{0}登录状态:{1}",
                 authentication != null ? authentication.getPrincipal() : null, isAuthenticated));
         if (!isAuthenticated) {
