@@ -81,6 +81,17 @@ public interface PmRequirementService extends IService<PmRequirement> {
     Result<PmRequirement> getDoc(String id);
 
     /**
+     * 分页批量获取需求PRD富文本正文内容(仅返回必要字段 + prd_doc_content)
+     * 用于版本 Word 导出等需要聚合大量需求文档的场景，按给定 ID 列表分页拉取，避免一次性传输超大文本。
+     *
+     * @param ids      需求ID列表
+     * @param pageNum  页码
+     * @param pageSize 每页条数
+     * @return 分页结果(仅含 id/reqNo/module/level1Feature/prdDocContent/docLastModified/docAuthor)
+     */
+    Result<PageResult<PmRequirement>> queryDocBatch(List<String> ids, Integer pageNum, Integer pageSize);
+
+    /**
      * 保存需求PRD富文本正文内容
      *
      * @param id            需求ID

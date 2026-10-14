@@ -9,6 +9,7 @@ import cn.com.mfish.project.entity.PmRequirement;
 import cn.com.mfish.project.req.ReqBalancingPlan;
 import cn.com.mfish.project.req.ReqBatchAssign;
 import cn.com.mfish.project.req.ReqBatchIds;
+import cn.com.mfish.project.req.ReqDocBatch;
 import cn.com.mfish.project.req.ReqBatchIteration;
 import cn.com.mfish.project.req.ReqBatchReview;
 import cn.com.mfish.project.req.ReqBatchStatus;
@@ -141,6 +142,18 @@ public class RequirementController {
     public Result<PmRequirement> saveDoc(@Parameter(name = "id", description = "需求ID") @PathVariable String id,
                                          @RequestBody Map<String, String> body) {
         return requirementService.saveDoc(id, body.get("prdDocContent"), body.get("docAuthor"));
+    }
+
+    /**
+     * 分页批量获取需求PRD富文本正文内容
+     * 用于版本 Word 导出等需要聚合大量需求详细文档的场景：按给定 ID 列表分页拉取，
+     * 避免一次性传输超大文本；每页仅返回 id/reqNo/module/level1Feature/prdDocContent 等必要字段。
+     */
+    @Operation(summary = "需求管理-批量分页获取PRD文档", description = "按ID列表分页返回详细PRD文档内容")
+    @PostMapping("/doc-batch")
+    @RequiresPermissions("project:requirement:query")
+    public Result<PageResult<PmRequirement>> queryDocBatch(@Valid @RequestBody ReqDocBatch req) {
+        return requirementService.queryDocBatch(req.getIds(), req.getPageNum(), req.getPageSize());
     }
 
     /**

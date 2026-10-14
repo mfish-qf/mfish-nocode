@@ -1,7 +1,9 @@
 package cn.com.mfish.project.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -115,7 +117,16 @@ public class PmRequirement extends BaseEntity<String> {
     @Schema(description = "研发状态")
     private String status;
     @Schema(description = "详细需求PRD文档内容(类Word富文本规范与正文)")
+    @TableField(select = false, updateStrategy = FieldStrategy.NOT_NULL)
     private String prdDocContent;
+    /**
+     * 轻量派生字段(不存在于表中)：标记该需求是否已撰写详细PRD文档。
+     * 由网格查询 /doc-batch 的 SQL CASE 表达式填充，用于列表"待撰PRD"等指示器，
+     * 避免为判断有无文档而返回 prd_doc_content 大文本。
+     */
+    @Schema(description = "是否已撰写详细PRD文档(派生字段, 表中不存在)")
+    @TableField(exist = false)
+    private Boolean hasPrdDoc;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "需求详细文档最后修改时间")

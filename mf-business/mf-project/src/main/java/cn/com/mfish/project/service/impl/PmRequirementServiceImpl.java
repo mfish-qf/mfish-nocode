@@ -85,6 +85,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         String month = StringUtils.isEmpty(req.getMonth()) || "ALL".equals(req.getMonth()) ? null : req.getMonth();
         LambdaQueryWrapper<PmRequirement> wrapper = new LambdaQueryWrapper<PmRequirement>()
+                // selectGridList 为自定义 @Select SQL, @TableLogic 不会自动注入 del_flag 过滤, 需手动补上
+                .eq(PmRequirement::getDelFlag, 0)
                 // month 支持按月份代码或迭代ID匹配
                 .and(month != null && !"UNASSIGNED".equals(month), w -> w
                         .eq(PmRequirement::getMonth, month)
@@ -104,7 +106,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                         .or().like(PmRequirement::getLevel3Feature, req.getKeyword())
                         .or().like(PmRequirement::getFeatureDescription, req.getKeyword()))
                 .orderByAsc(PmRequirement::getReqNo);
-        return list(wrapper);
+        // 使用网格专用查询：刻意不包含 prd_doc_content 大文本，并派生 has_prd_doc 标记
+        return baseMapper.selectGridList(wrapper);
     }
 
     @Override
@@ -209,7 +212,14 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     @Override
     public Result<PmRequirement> getDoc(String id) {
-        PmRequirement requirement = getById(id);
+        // prd_doc_content 标记了 select=false，需在此显式查询该字段；其余仅取文档相关标识字段
+        PmRequirement requirement = lambdaQuery()
+                .select(PmRequirement::getId, PmRequirement::getReqNo, PmRequirement::getModule,
+                        PmRequirement::getLevel1Feature, PmRequirement::getLevel2Feature,
+                        PmRequirement::getPrdDocContent, PmRequirement::getDocLastModified,
+                        PmRequirement::getDocAuthor)
+                .eq(PmRequirement::getId, id)
+                .one();
         if (requirement == null) {
             return Result.fail("错误:未找到需求 " + id);
         }
@@ -237,6 +247,30 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return Result.ok(getById(id), "需求 #" + exist.getReqNo() + " 详细 PRD 文档已保存");
         }
         return Result.fail("错误:保存需求文档失败!");
+    }
+
+    @Override
+    public Result<PageResult<PmRequirement>> queryDocBatch(List<String> ids, Integer pageNum, Integer pageSize) {
+        if (ids == null || ids.isEmpty()) {
+            return Result.ok(new PageResult<>(new ArrayList<>(), 1, 10, 0L), "无数据");
+        }
+        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int size = pageSize == null || pageSize < 1 ? 50 : pageSize;
+        long total = ids.size();
+        int from = (num - 1) * size;
+        if (from >= total) {
+            return Result.ok(new PageResult<>(new ArrayList<>(), num, size, total), "无数据");
+        }
+        // 在传入 ID 列表内按页截取，再回库查询该页需求的详细文档内容，避免一次性传输超大文本
+        List<String> pageIds = ids.subList(from, (int) Math.min((long) from + size, total));
+        List<PmRequirement> list = lambdaQuery()
+                .select(PmRequirement::getId, PmRequirement::getReqNo, PmRequirement::getModule,
+                        PmRequirement::getLevel1Feature, PmRequirement::getPrdDocContent,
+                        PmRequirement::getDocLastModified, PmRequirement::getDocAuthor)
+                .in(PmRequirement::getId, pageIds)
+                .eq(PmRequirement::getDelFlag, 0)
+                .list();
+        return Result.ok(new PageResult<>(list, num, size, total), "查询成功");
     }
 
     @Override
