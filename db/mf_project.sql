@@ -109,30 +109,11 @@ CREATE TABLE `pm_iteration_test_node`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '迭代批次转测节点表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for pm_personnel 团队人员与岗位档案表
+-- 说明: 原 pm_personnel(团队人员与岗位档案表)已废弃
+-- 系统中所有人员统一通过后端 /oauth2/ssoTenant/user 接口获取(按组织与角色名称
+-- 派生 前端/后端、主管/经理/普通研发 岗位属性)，前端全局缓存于 useProjectUsers。
+-- 存量环境数据迁移(手工执行一次): DROP TABLE IF EXISTS `pm_personnel`;
 -- ----------------------------
-DROP TABLE IF EXISTS `pm_personnel`;
-CREATE TABLE `pm_personnel`  (
-  `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '姓名',
-  `display_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '显示全称(如 产品部-林晓敏 或 李博文(PMO))',
-  `role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '岗位角色编码(frontend/backend/qa/product/owner)',
-  `role_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '中文岗位名',
-  `department` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '部门',
-  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '职称头衔',
-  `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像',
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
-  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '在职状态(在职/忙碌/请假)',
-  `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '删除标志(0正常 1已删除)',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_pm_psn_role`(`role`) USING BTREE,
-  INDEX `idx_pm_psn_name`(`name`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '团队人员与岗位档案表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- 说明: 原 pm_dict_category(树形业务字典与功能层级分类表)已废弃
@@ -265,39 +246,6 @@ INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-4', '1', '2026-10-
 INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-5', '1', '2026-10-05', '国庆节黄金周', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-6', '1', '2026-10-06', '国庆节黄金周', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-7', '1', '2026-10-07', '国庆节黄金周', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
-
--- ----------------------------
--- Records of pm_personnel 初始团队人员库(25人)
--- ----------------------------
-INSERT INTO `pm_personnel` VALUES ('user-fe-01', '周伟', '周伟', 'frontend', '前端开发专家', '摸鱼大前端平台组', '高级前端专家', '👨‍💻', 'zhouwei@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-fe-02', '王敏', '王敏', 'frontend', '前端架构师', '低代码引擎核心组', '大前端资深架构师', '👩‍💻', 'wangmin@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-fe-03', '李强', '李强', 'frontend', '全栈与前端开发', '组件树与画布引擎组', '前端全栈技术骨干', '👨‍💻', 'liqiang@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-fe-04', '张晓', '张晓', 'frontend', '前端组件工程师', '交互设计与移动端组', '高级前端工程师', '👩‍💻', 'zhangxiao@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-fe-05', '赵宇', '赵宇', 'frontend', '前端可视化开发', '大屏与BI报表组', 'WebGL/ECharts专家', '👨‍💻', 'zhaoyu@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-be-01', '陈明', '陈明', 'backend', '后端架构专家', '云原生中间件与数据中心', '后端核心架构专家', '👨‍💻', 'chenming@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-be-02', '赵刚', '赵刚', 'backend', '后端中间件研发', '分布式事务与支付结算组', '资深后端开发专家', '👨‍💻', 'zhaogang@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-be-03', '孙立', '孙立', 'backend', '服务端开发工程师', '用户中心与OAuth鉴权组', '高级后端工程师', '👨‍💻', 'sunli@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-be-04', '黄浩', '黄浩', 'backend', '微服务网关研发', '微服务与API网关架构组', '首席分布式架构师', '👨‍💻', 'huanghao@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-be-05', '徐磊', '徐磊', 'backend', '分布式数据湖研发', '多租户与数据安全组', '存储与中间件高级工程师', '👨‍💻', 'xulei@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-qa-01', '张静怡', '张静怡', 'qa', 'QA测试经理', '质量保障与效能研发部', 'QA测试总监 / 测试经理', '👩‍🔬', 'zhangjingyi@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-qa-02', '王凯', '王凯', 'qa', '自动化与性能测试', '全链路集成压测组', '资深性能测试专家', '👨‍🔬', 'wangkai@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-qa-03', '刘洋', '刘洋', 'qa', '业务与多端测试', '敏捷转测与冒烟接入组', '高级测试工程师', '👨‍🔬', 'liuyang@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-qa-04', '郑洁', '郑洁', 'qa', '安全与合规测试', '安全测试与准入审计组', '安全测试分析师', '👩‍🔬', 'zhengjie@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-01', '林晓敏', '产品部-林晓敏', 'product', '产品经理 (PM)', '低代码产品部', '高级产品经理', '👩‍💼', 'linxiaomin@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-02', '赵一鸣', '信息安全部-赵一鸣', 'product', '合规与安全产品', '信息安全部', '安全合规专家', '👨‍💼', 'zhaoyiming@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-03', '刘芳', '业务运营-刘芳', 'product', '业务运营负责人', '商业化运营部', '资深运营专家', '👩‍💼', 'liufang@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-04', '钱伟', '财务中心-钱伟', 'product', '财务结算产品', '财务结算中心', '财务风控业务专家', '👨‍💼', 'qianwei@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-05', '孙涛', '大数据部-孙涛', 'product', '数据产品总监', '大数据部', '数据资产负责人', '👨‍💼', 'suntao@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-06', '周长青', '技术总监-周长青', 'product', '技术总监', '研发中心', '技术管理总监', '👨‍💼', 'zhouchangqing@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-pm-07', '李博文', '产品管理部-李博文', 'product', '项目总监', '产品管理部 (PMO)', 'PMO高级总监', '👨‍💼', 'libowen@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-01', '李博文(PMO)', '李博文(PMO)', 'owner', 'PMO技术交付总监', 'PMO项目管理办公室', '首席项目管理交付专家', '👔', 'pmo.lead@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-02', '张瀚文(资深PM)', '张瀚文(资深PM)', 'owner', '业务线资深PM负责人', '数字业务交付中心', '资深业务交付负责人', '👔', 'zhanghanwen@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-03', '黄浩(首席架构师)', '黄浩(首席架构师)', 'owner', '平台首席架构师', '集团技术委员会', '平台首席架构师', '🏛️', 'huanghao.arch@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-04', '周长青(技术总监)', '周长青(技术总监)', 'owner', '研发中心技术总监', '摸鱼研发管理中心', '研发中心技术总监', '💼', 'zhouchangqing@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-05', '陈明(架构专家)', '陈明(架构专家)', 'owner', '后端架构组长', '后端技术攻坚组', '分布式后端架构专家', '💻', 'chenming.arch@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-06', '孙涛(数据总监)', '孙涛(数据总监)', 'owner', '大数据平台总监', '数据架构治理组', '数据平台架构总监', '📊', 'suntao.data@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-07', '王敏(前端负责人)', '王敏(前端负责人)', 'owner', '大前端技术主管', '大前端工程化中心', '前端技术带头人', '💻', 'wangmin.fe@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_personnel` VALUES ('user-owner-08', '赵刚(后端主管)', '赵刚(后端主管)', 'owner', '后端服务技术主管', '服务端研发工程部', '服务端研发主管', '⚙️', 'zhaogang.be@mfish.io', '在职', 0, NULL, '', NOW(), '', NOW());
 
 -- ----------------------------
 -- Records of pm_iteration 初始迭代版本(4个)

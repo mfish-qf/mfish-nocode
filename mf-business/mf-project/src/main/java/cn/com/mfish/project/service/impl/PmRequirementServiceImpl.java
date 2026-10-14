@@ -8,12 +8,10 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.project.dto.ScheduleConfigDTO;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmIterationTestNode;
-import cn.com.mfish.project.entity.PmPersonnel;
 import cn.com.mfish.project.entity.PmRequirement;
 import cn.com.mfish.project.entity.PmRequirementHistory;
 import cn.com.mfish.project.mapper.PmIterationMapper;
 import cn.com.mfish.project.mapper.PmIterationTestNodeMapper;
-import cn.com.mfish.project.mapper.PmPersonnelMapper;
 import cn.com.mfish.project.mapper.PmRequirementHistoryMapper;
 import cn.com.mfish.project.mapper.PmRequirementMapper;
 import cn.com.mfish.project.req.BalancingPlanItem;
@@ -60,8 +58,6 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     private PmIterationMapper iterationMapper;
     @Resource
     private PmIterationTestNodeMapper testNodeMapper;
-    @Resource
-    private PmPersonnelMapper personnelMapper;
     @Resource
     private PmRequirementHistoryMapper historyMapper;
     @Resource
@@ -458,15 +454,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         String cleanFrom = PersonnelNameUtils.cleanPersonnelName(reqReassign.getFromPerson());
         String cleanTo = PersonnelNameUtils.cleanPersonnelName(reqReassign.getToPerson());
-        // 查询目标人员在系统成员库中的岗位属性
-        PmPersonnel targetMember = personnelMapper.selectOne(new LambdaQueryWrapper<PmPersonnel>()
-                .eq(PmPersonnel::getName, cleanTo)
-                .or()
-                .eq(PmPersonnel::getDisplayName, cleanTo)
-                .last("limit 1"));
-        String targetRole = targetMember != null && "backend".equals(targetMember.getRole()) ? "backend" : "frontend";
         List<String> feList = new ArrayList<>(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
         List<String> beList = new ArrayList<>(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
+        // 目标人员岗位判定：优先采用前端显式传入的角色(由统一人员缓存按组织/角色名称派生)，
+        // 其次按目标人员在原需求前后端名单中的位置推断，最后默认前端
+        // 注意：历史 pm_personnel 人员表已废弃，人员统一来自 /oauth2/ssoTenant/user
+        String targetRole;
+        if ("backend".equals(reqReassign.getRole()) || "frontend".equals(reqReassign.getRole())) {
+            targetRole = reqReassign.getRole();
+        } else {
+            boolean toInBe = beList.contains(cleanTo);
+            boolean toInFe = feList.contains(cleanTo);
+            targetRole = toInBe && !toInFe ? "backend" : "frontend";
+        }
         String newFe;
         String newBe;
         if (Boolean.TRUE.equals(reqReassign.getTransferAll())) {
