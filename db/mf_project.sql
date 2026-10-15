@@ -84,6 +84,7 @@ CREATE TABLE `pm_iteration`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `attachments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '版本相关附件 JSON 字符串 ([{fileKey,name,size,type}])，可上传多文件(图片/压缩包/文档等)',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_pm_iter_code`(`code`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '迭代版本表' ROW_FORMAT = Dynamic;

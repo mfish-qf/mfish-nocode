@@ -33,7 +33,7 @@ import java.util.List;
 @Slf4j
 @Tag(name = "迭代版本管理")
 @RestController
-@RequestMapping("/project/iteration")
+@RequestMapping("/iteration")
 public class IterationController {
 
     @Resource

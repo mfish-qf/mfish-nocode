@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Tag(name = "排期日历配置")
 @RestController
-@RequestMapping("/project/schedule-config")
+@RequestMapping("/schedule-config")
 public class ScheduleConfigController {
 
     @Resource

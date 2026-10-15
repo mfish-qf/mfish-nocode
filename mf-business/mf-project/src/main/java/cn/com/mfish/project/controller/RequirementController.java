@@ -46,7 +46,7 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "需求管理")
 @RestController
-@RequestMapping("/project/requirement")
+@RequestMapping("/requirement")
 public class RequirementController {
 
     @Resource

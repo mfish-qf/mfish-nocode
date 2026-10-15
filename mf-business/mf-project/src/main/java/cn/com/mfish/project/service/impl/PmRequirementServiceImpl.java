@@ -23,6 +23,7 @@ import cn.com.mfish.project.service.PmScheduleConfigService;
 import cn.com.mfish.project.utils.PersonnelNameUtils;
 import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
@@ -160,15 +161,27 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         verifyRequirement(requirement);
         requirement.setUpdateBy(safeGetCurrentUser());
         requirement.setUpdateTime(new Date());
-        // 归属迭代信息联动
-        syncIterationInfo(requirement, exist);
+        // 归属迭代信息联动 (前端传空串=显式清空版本，同步清空月份/发版时间/转测节点)
+        boolean versionCleared = syncIterationInfo(requirement, exist);
         // 状态流转联动开发进度
         String newStatus = StringUtils.isEmpty(requirement.getStatus()) ? exist.getStatus() : requirement.getStatus();
         Integer newProgress = requirement.getDevProgress() != null ? requirement.getDevProgress() : exist.getDevProgress();
         requirement.setDevProgress(resolveStatusProgress(newStatus, newProgress, exist.getStatus()));
         // 修改工时或开始时间时联动重算截止时间
         sanitizeRequirement(requirement, exist);
-        if (updateById(requirement)) {
+        boolean success;
+        if (versionCleared) {
+            // 清空版本时转测时间/发版时间为日期字段，updateById 默认 NOT_NULL 策略会忽略 null，
+            // 须通过 UpdateWrapper 显式 SET NULL 落库
+            LambdaUpdateWrapper<PmRequirement> clearWrapper = new LambdaUpdateWrapper<PmRequirement>()
+                    .eq(PmRequirement::getId, requirement.getId())
+                    .set(PmRequirement::getTestNodeDate, null)
+                    .set(PmRequirement::getReleaseTime, null);
+            success = update(requirement, clearWrapper);
+        } else {
+            success = updateById(requirement);
+        }
+        if (success) {
             recordHistory(requirement, "UPDATE", null, null, null, exist.getStatus(), newStatus, "更新需求 #" + exist.getReqNo());
             PmRequirement updated = getById(requirement.getId());
             return Result.ok(updated, "需求 #" + exist.getReqNo() + " 更新成功，日历排期已同步至 " + formatDate(updated.getDevEndDate()));
@@ -839,8 +852,22 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     /**
      * 归属迭代信息联动：设置月份代码与研发确认发版时间
+     *
+     * @return 是否显式清空了归属版本 (前端传空串表示清空；传 null 表示未传、保持原值)。
+     *         显式清空时会同步清空月份、发版时间与已绑定转测节点(名称类字段置空串、日期字段置 null
+     *         由调用方通过 UpdateWrapper 显式 SET NULL 落库)。
      */
-    private void syncIterationInfo(PmRequirement requirement, PmRequirement exist) {
+    private boolean syncIterationInfo(PmRequirement requirement, PmRequirement exist) {
+        // 显式清空归属版本：同步清空月份、发版时间与转测节点绑定
+        if (isEmptySent(requirement.getIterationId()) || isEmptySent(requirement.getMonth())) {
+            requirement.setIterationId("");
+            requirement.setMonth("");
+            requirement.setTestNodeId("");
+            requirement.setTestNodeName("");
+            requirement.setTestNodeDate(null);
+            requirement.setReleaseTime(null);
+            return true;
+        }
         String iterationId = StringUtils.isNotEmpty(requirement.getIterationId())
                 ? requirement.getIterationId()
                 : (exist != null ? exist.getIterationId() : null);
@@ -848,7 +875,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 ? requirement.getMonth()
                 : (exist != null ? exist.getMonth() : null);
         if (StringUtils.isEmpty(iterationId)) {
-            return;
+            return false;
         }
         PmIteration iteration = iterationMapper.selectById(iterationId);
         if (iteration == null) {
@@ -859,13 +886,21 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                     .last("limit 1"));
         }
         if (iteration == null) {
-            return;
+            return false;
         }
         requirement.setIterationId(iteration.getId());
         requirement.setMonth(iteration.getCode());
         if (iteration.getReleaseDate() != null && requirement.getReleaseTime() == null) {
             requirement.setReleaseTime(iteration.getReleaseDate());
         }
+        return false;
+    }
+
+    /**
+     * 判断前端是否显式传了"空值"(空串)。null 视为未传(保持原值)，空串视为显式清空。
+     */
+    private boolean isEmptySent(String value) {
+        return value != null && value.isEmpty();
     }
 
     /**

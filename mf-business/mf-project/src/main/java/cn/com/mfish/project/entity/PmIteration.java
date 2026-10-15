@@ -62,4 +62,6 @@ public class PmIteration extends BaseEntity<String> {
     @Schema(description = "版本中包含的多节点转测列表")
     @TableField(exist = false)
     private List<PmIterationTestNode> testNodes;
+    @Schema(description = "版本相关附件 JSON 字符串 ([{fileKey,name,size,type}])，可上传多文件(图片/压缩包/文档等)")
+    private String attachments;
 }

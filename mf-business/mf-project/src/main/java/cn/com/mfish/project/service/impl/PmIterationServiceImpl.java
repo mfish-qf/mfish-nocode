@@ -188,6 +188,13 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         List<PmIterationTestNode> existing = testNodeMapper.selectList(
                 new LambdaQueryWrapper<PmIterationTestNode>()
                         .eq(PmIterationTestNode::getIterationId, iteration.getId()));
+        // 库表中已存在的节点 id 集合(用于区分「更新已有节点」与「新增节点」)
+        Set<String> existingIds = new HashSet<>();
+        for (PmIterationTestNode existNode : existing) {
+            if (StringUtils.isNotEmpty(existNode.getId())) {
+                existingIds.add(existNode.getId());
+            }
+        }
         // 删除已移除的节点
         Set<String> incomingIds = new HashSet<>();
         for (PmIterationTestNode node : incoming) {
@@ -200,18 +207,22 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
                 testNodeMapper.deleteById(existNode.getId());
             }
         }
-        // 新增或更新节点
+        // 新增或更新节点：仅当 id 真实存在于库表时才走更新，否则一律当作新节点插入
+        // (前端在编辑页新增的节点会带 tn- 临时 id，不能误判为「更新已有记录」，否则 updateById 影响 0 行导致节点丢失)
         for (PmIterationTestNode node : incoming) {
-            if (StringUtils.isEmpty(node.getId())) {
-                node.setIterationId(iteration.getId());
-                node.setCreateBy(safeGetCurrentUser());
-                node.setCreateTime(new Date());
-                testNodeMapper.insert(node);
-            } else {
+            boolean isKnownExisting = StringUtils.isNotEmpty(node.getId())
+                    && existingIds.contains(node.getId());
+            if (isKnownExisting) {
                 node.setIterationId(iteration.getId());
                 node.setUpdateBy(safeGetCurrentUser());
                 node.setUpdateTime(new Date());
                 testNodeMapper.updateById(node);
+            } else {
+                node.setId(null);
+                node.setIterationId(iteration.getId());
+                node.setCreateBy(safeGetCurrentUser());
+                node.setCreateTime(new Date());
+                testNodeMapper.insert(node);
             }
         }
     }
