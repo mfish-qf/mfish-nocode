@@ -30,4 +30,6 @@ public class ReqPmRequirement {
     private String qaTester;
     @Schema(description = "关键词(模块/功能名模糊匹配)")
     private String keyword;
+    @Schema(description = "是否包含已归档(状态=已发布)版本的需求; 缺省/null 时仅纯汇总场景排除归档版本, 精确勾选版本场景不受影响")
+    private Boolean includeArchived;
 }

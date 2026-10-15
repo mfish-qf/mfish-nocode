@@ -70,4 +70,21 @@ public interface PmIterationService extends IService<PmIteration> {
      * @return 删除结果
      */
     Result<Boolean> deleteTestNode(String nodeId);
+
+    /**
+     * 归档迭代版本(不新增字段, 以状态"已发布"作为归档标记;
+     * 仅更新状态, 不触及子表转测节点)
+     *
+     * @param id 迭代ID
+     * @return 归档结果
+     */
+    Result<Boolean> archiveIteration(String id);
+
+    /**
+     * 取消归档迭代版本(状态回退为"进行中")
+     *
+     * @param id 迭代ID
+     * @return 取消归档结果
+     */
+    Result<Boolean> unarchiveIteration(String id);
 }

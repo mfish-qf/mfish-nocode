@@ -54,6 +54,8 @@ import java.util.Set;
 public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, PmRequirement> implements PmRequirementService {
     /** 已完成开发的状态集合(进入该状态后开发进度视为100%) */
     private static final Set<String> POST_DEV_STATUSES = Set.of("待转测", "测试中", "验收中", "已上线");
+    /** 归档标记: 版本状态为"已发布"即视为已归档(不新增字段, 复用 status) */
+    private static final String ARCHIVED_STATUS = "已发布";
 
     @Resource
     private PmIterationMapper iterationMapper;
@@ -75,12 +77,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     /**
      * 多维条件过滤查询(不分页)
+     * 归档过滤规则(以状态"已发布"作为归档标记):
+     * - 纯汇总场景(无月份/版本条件、无迭代ID、且未显式 includeArchived): 排除已归档版本的需求,
+     *   避免全部版本汇总拉回大量已归档数据;
+     * - 精确勾选场景(传 iterationId 或 includeArchived=true): 不过滤, 保证单选/多选归档版本可查
      */
     private List<PmRequirement> queryList(ReqPmRequirement req) {
         if (req == null) {
-            return list(new LambdaQueryWrapper<PmRequirement>().orderByAsc(PmRequirement::getReqNo));
+            // 无条件全量汇总: 排除已归档(状态=已发布)版本的需求
+            return list(buildSummaryWrapper());
         }
         String month = StringUtils.isEmpty(req.getMonth()) || "ALL".equals(req.getMonth()) ? null : req.getMonth();
+        boolean isSummary = month == null && StringUtils.isEmpty(req.getIterationId())
+                && !Boolean.TRUE.equals(req.getIncludeArchived());
         LambdaQueryWrapper<PmRequirement> wrapper = new LambdaQueryWrapper<PmRequirement>()
                 // selectGridList 为自定义 @Select SQL, @TableLogic 不会自动注入 del_flag 过滤, 需手动补上
                 .eq(PmRequirement::getDelFlag, 0)
@@ -103,8 +112,38 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                         .or().like(PmRequirement::getLevel3Feature, req.getKeyword())
                         .or().like(PmRequirement::getFeatureDescription, req.getKeyword()))
                 .orderByAsc(PmRequirement::getReqNo);
+        if (isSummary) {
+            excludeArchivedIterations(wrapper);
+        }
         // 使用网格专用查询：刻意不包含 prd_doc_content 大文本，并派生 has_prd_doc 标记
         return baseMapper.selectGridList(wrapper);
+    }
+
+    /**
+     * 无条件全量汇总查询条件(del_flag + 排除已归档版本 + 排序)
+     */
+    private LambdaQueryWrapper<PmRequirement> buildSummaryWrapper() {
+        return excludeArchivedIterations(new LambdaQueryWrapper<PmRequirement>()
+                .eq(PmRequirement::getDelFlag, 0)
+                .orderByAsc(PmRequirement::getReqNo));
+    }
+
+    /**
+     * 在查询条件上追加"排除已归档(状态=已发布)版本的需求"
+     * 无归档版本时不做处理, 避免生成空 not in 条件
+     */
+    private LambdaQueryWrapper<PmRequirement> excludeArchivedIterations(LambdaQueryWrapper<PmRequirement> wrapper) {
+        List<String> archivedIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                .select(PmIteration::getId)
+                .eq(PmIteration::getStatus, ARCHIVED_STATUS)
+                .eq(PmIteration::getDelFlag, 0)).stream()
+                .map(PmIteration::getId)
+                .filter(StringUtils::isNotEmpty)
+                .toList();
+        if (!archivedIds.isEmpty()) {
+            wrapper.notIn(PmRequirement::getIterationId, archivedIds);
+        }
+        return wrapper;
     }
 
     @Override

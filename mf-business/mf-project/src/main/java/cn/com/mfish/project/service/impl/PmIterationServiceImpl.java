@@ -11,6 +11,7 @@ import cn.com.mfish.project.mapper.PmIterationTestNodeMapper;
 import cn.com.mfish.project.service.PmIterationService;
 import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -141,6 +142,42 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             return Result.ok(true, "转测节点已删除!");
         }
         return Result.fail(false, "错误:删除转测节点失败!");
+    }
+
+    @Override
+    public Result<Boolean> archiveIteration(String id) {
+        return updateIterationStatus(id, "已发布", "归档");
+    }
+
+    @Override
+    public Result<Boolean> unarchiveIteration(String id) {
+        return updateIterationStatus(id, "进行中", "取消归档");
+    }
+
+    /**
+     * 归档/取消归档: 仅更新版本状态(以"已发布"作为归档标记)
+     * 刻意不走 editIteration —— 避免部分字段更新时 syncTestNodes 将转测节点清空
+     */
+    private Result<Boolean> updateIterationStatus(String id, String status, String action) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:迭代ID不能为空!");
+        }
+        PmIteration exist = getById(id);
+        if (exist == null) {
+            throw new MyRuntimeException("错误:迭代不存在!");
+        }
+        if (status.equals(exist.getStatus())) {
+            return Result.ok(true, "迭代版本已处于" + action + "状态");
+        }
+        boolean updated = update(new LambdaUpdateWrapper<PmIteration>()
+                .eq(PmIteration::getId, id)
+                .set(PmIteration::getStatus, status)
+                .set(PmIteration::getUpdateBy, safeGetCurrentUser())
+                .set(PmIteration::getUpdateTime, new Date()));
+        if (updated) {
+            return Result.ok(true, "迭代版本" + action + "成功!");
+        }
+        return Result.fail(false, "错误:迭代版本" + action + "失败!");
     }
 
     /**

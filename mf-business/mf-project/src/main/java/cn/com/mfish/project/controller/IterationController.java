@@ -114,4 +114,26 @@ public class IterationController {
     public Result<Boolean> deleteTestNode(@Parameter(name = "nodeId", description = "转测节点ID") @PathVariable String nodeId) {
         return iterationService.deleteTestNode(nodeId);
     }
+
+    /**
+     * 归档迭代版本(以状态"已发布"作为归档标记，仅更新状态不影响转测节点)
+     */
+    @Log(title = "迭代版本-归档", operateType = OperateType.UPDATE)
+    @Operation(summary = "迭代版本-归档", description = "归档后版本在版本筛选挂到归档版本下，全部版本汇总查询不再包含该版本需求")
+    @PutMapping("/archive/{id}")
+    @RequiresPermissions("project:iteration:update")
+    public Result<Boolean> archive(@Parameter(name = "id", description = "迭代ID") @PathVariable String id) {
+        return iterationService.archiveIteration(id);
+    }
+
+    /**
+     * 取消归档迭代版本(状态回退为"进行中")
+     */
+    @Log(title = "迭代版本-取消归档", operateType = OperateType.UPDATE)
+    @Operation(summary = "迭代版本-取消归档")
+    @PutMapping("/unarchive/{id}")
+    @RequiresPermissions("project:iteration:update")
+    public Result<Boolean> unarchive(@Parameter(name = "id", description = "迭代ID") @PathVariable String id) {
+        return iterationService.unarchiveIteration(id);
+    }
 }
