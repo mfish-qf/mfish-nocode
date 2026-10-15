@@ -77,10 +77,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     /**
      * 多维条件过滤查询(不分页)
-     * 归档过滤规则(以状态"已发布"作为归档标记):
-     * - 纯汇总场景(无月份/版本条件、无迭代ID、且未显式 includeArchived): 排除已归档版本的需求,
+     * 版本筛选语义(前端只传勾选的版本号 codes, 查询逻辑全部在后端):
+     * - 纯汇总(codes 为空且 includeUnassigned 非 true): 排除已归档(状态=已发布)版本的需求,
      *   避免全部版本汇总拉回大量已归档数据;
-     * - 精确勾选场景(传 iterationId 或 includeArchived=true): 不过滤, 保证单选/多选归档版本可查
+     * - 勾选版本号(单选/多选): codes → 迭代ID, iteration_id IN(ids) OR month IN(codes) 精确匹配,
+     *   不做前缀模糊匹配(勾选 v1.3.7 不会带出 v1.3.7.3), 已归档版本同样可查;
+     * - includeUnassigned: 追加"未纳入版本"(无迭代归属且月份为空)的条件, 与 codes 可叠加
      */
     private List<PmRequirement> queryList(ReqPmRequirement req) {
         if (req == null) {
@@ -88,17 +90,48 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return list(buildSummaryWrapper());
         }
         String month = StringUtils.isEmpty(req.getMonth()) || "ALL".equals(req.getMonth()) ? null : req.getMonth();
+        List<String> codes = req.getCodes() == null ? List.of()
+                : req.getCodes().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
+        boolean includeUnassigned = Boolean.TRUE.equals(req.getIncludeUnassigned());
         boolean isSummary = month == null && StringUtils.isEmpty(req.getIterationId())
-                && !Boolean.TRUE.equals(req.getIncludeArchived());
+                && codes.isEmpty() && !includeUnassigned;
         LambdaQueryWrapper<PmRequirement> wrapper = new LambdaQueryWrapper<PmRequirement>()
                 // selectGridList 为自定义 @Select SQL, @TableLogic 不会自动注入 del_flag 过滤, 需手动补上
                 .eq(PmRequirement::getDelFlag, 0)
-                // month 支持按月份代码或迭代ID匹配
+                // 旧参数 month 兼容(月份代码或迭代ID匹配)
                 .and(month != null && !"UNASSIGNED".equals(month), w -> w
                         .eq(PmRequirement::getMonth, month)
                         .or()
                         .eq(PmRequirement::getIterationId, month))
                 .eq(StringUtils.isNotEmpty(req.getIterationId()), PmRequirement::getIterationId, req.getIterationId())
+                // 勾选版本号精确查询: (iteration_id IN 版本对应的迭代ID OR month IN 版本代号)
+                // 注意: MP 嵌套 consumer 内 or() 无参会被丢弃(实测 3.5.17), 组间 OR 必须用 or(consumer),
+                // 且 consumer 内每个子组用 nested() 显式包括号, 防止 AND/OR 优先级导致语义漂移
+                .and(!codes.isEmpty() || includeUnassigned, w -> {
+                    if (!codes.isEmpty()) {
+                        // 版本代号 → 迭代ID(仅未删除迭代)
+                        List<String> iterIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                                .select(PmIteration::getId)
+                                .in(PmIteration::getCode, codes)
+                                .eq(PmIteration::getDelFlag, 0)).stream()
+                                .map(PmIteration::getId)
+                                .filter(StringUtils::isNotEmpty)
+                                .toList();
+                        w.and(x -> {
+                            if (!iterIds.isEmpty()) {
+                                x.in(PmRequirement::getIterationId, iterIds);
+                            }
+                            x.or().in(PmRequirement::getMonth, codes);
+                        });
+                    }
+                    if (includeUnassigned) {
+                        // 未纳入版本: (无迭代归属) AND (月份为空/占位), 与版本条件之间是 OR
+                        w.or(x -> x
+                                .nested(y -> y.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, ""))
+                                .nested(y -> y.isNull(PmRequirement::getMonth).or().eq(PmRequirement::getMonth, "")
+                                        .or().eq(PmRequirement::getMonth, "UNASSIGNED").or().eq(PmRequirement::getMonth, "未纳入版本")));
+                    }
+                })
                 .eq(StringUtils.isNotEmpty(req.getStatus()), PmRequirement::getStatus, req.getStatus())
                 .eq(StringUtils.isNotEmpty(req.getPriority()), PmRequirement::getPriority, req.getPriority())
                 .like(StringUtils.isNotEmpty(req.getFrontendDev()), PmRequirement::getFrontendDev, req.getFrontendDev())

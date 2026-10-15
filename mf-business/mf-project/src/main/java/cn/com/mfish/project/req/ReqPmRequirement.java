@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * @description: 核心需求查询请求参数
  * @author: mfish
@@ -30,6 +32,8 @@ public class ReqPmRequirement {
     private String qaTester;
     @Schema(description = "关键词(模块/功能名模糊匹配)")
     private String keyword;
-    @Schema(description = "是否包含已归档(状态=已发布)版本的需求; 缺省/null 时仅纯汇总场景排除归档版本, 精确勾选版本场景不受影响")
-    private Boolean includeArchived;
+    @Schema(description = "勾选的版本代号列表(单选/多选, 如 v1.3.7,v1.3.7.2); 后端按版本号精确查询(iteration_id 或 month 命中任一), 不做前缀模糊匹配")
+    private List<String> codes;
+    @Schema(description = "是否包含未纳入版本(无归属)的需求; 与 codes 可同时传入")
+    private Boolean includeUnassigned;
 }
