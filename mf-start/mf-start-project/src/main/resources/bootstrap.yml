@@ -2,7 +2,7 @@ mfish:
   version: 2.4.1
 # Tomcat
 server:
-  port: 9226
+  port: 9230
 
 # Spring
 spring:

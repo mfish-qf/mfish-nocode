@@ -412,5 +412,27 @@ INSERT INTO `sys_dict_category` VALUES ('fc74625ae4c3a53cbea0eb7bdd994a9a', '4d5
 INSERT INTO `sys_dict_category` VALUES ('fe72c08cf082f8f1c6efef9d28119c45', 'da6694b2d969e270122ad2ee1847ba5d', NULL, '装饰', '0000400004', 2, 'carbon:color-palette', NULL, 3, 'admin', '2024-11-18 17:15:41', 'admin', '2024-11-18 17:15:52');
 INSERT INTO `sys_dict_category` VALUES ('ff8792113848c4a2b03ea98d78381d7a', 'aaf0612479eaffe56b8c3b2af7d3cb8f', NULL, '所有', '000040000500001', 3, 'ant-design:ellipsis-outlined', NULL, 0, 'admin', '2025-03-17 14:42:03', 'admin', '2025-03-17 14:42:19');
 INSERT INTO `sys_dict_category` VALUES ('eb166b740e08373871fc720dc8c62dfe', 'eeaab687ec80b493ab4725977ea975b9', NULL, '列表', '000040000300003', 3, 'ant-design:ordered-list-outlined', NULL, 2, 'admin', '2026-06-04 22:58:26', 'admin', '2026-06-04 22:58:47');
+INSERT INTO `sys_dict_category` VALUES ('200026a7b3018c2e414684dd4e6e272f', '', 'project_management', '项目管理', '00006', 1, 'ant-design:product-outlined', NULL, 4, 'admin', '2026-10-13 10:44:46', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('d3e12a7b12f0267d17ab54758075cdc3', '200026a7b3018c2e414684dd4e6e272f', NULL, '基础组件', '0000600002', 2, NULL, NULL, 2, 'admin', '2026-10-13 22:52:14', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('0577e1db3f0fb484e9424babf1ddcb2e', '200026a7b3018c2e414684dd4e6e272f', NULL, '门户', '0000600003', 2, NULL, NULL, 0, 'admin', '2026-10-13 22:52:21', 'admin', '2026-10-14 09:01:58');
+INSERT INTO `sys_dict_category` VALUES ('ec312c42e01b7dd4db8c77832aa81ef6', 'd3e12a7b12f0267d17ab54758075cdc3', NULL, '网关', '000060000200001', 3, NULL, NULL, 0, 'admin', '2026-10-13 22:54:01', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('d28d28aa3c64d3dfb63cd4de7b68383f', '0577e1db3f0fb484e9424babf1ddcb2e', NULL, '首页', '000060000300001', 3, NULL, NULL, 0, 'admin', '2026-10-13 22:54:56', 'admin', '2026-10-14 09:06:29');
+INSERT INTO `sys_dict_category` VALUES ('2c255ae4cf6a777ab5a6c128ba3b66a0', '200026a7b3018c2e414684dd4e6e272f', NULL, '控制台', '0000600008', 2, '', NULL, 1, 'admin', '2026-10-14 09:01:45', 'admin', '2026-10-14 09:02:02');
+INSERT INTO `sys_dict_category` VALUES ('333f1df68b5cd8fcc816caa72f622e6d', '2c255ae4cf6a777ab5a6c128ba3b66a0', NULL, '开放中心', '000060000800001', 3, NULL, NULL, 0, 'admin', '2026-10-14 09:02:20', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('974af3b23c463615197835033fb30ebf', '2c255ae4cf6a777ab5a6c128ba3b66a0', NULL, '开发中心', '000060000800002', 3, '', NULL, 1, 'admin', '2026-10-14 09:03:47', 'admin', '2026-10-14 09:27:03');
+INSERT INTO `sys_dict_category` VALUES ('d14b594fdff3de77688bb464d1ddd355', '2c255ae4cf6a777ab5a6c128ba3b66a0', NULL, '两级同步', '000060000800003', 3, NULL, NULL, 2, 'admin', '2026-10-14 09:04:20', 'admin', '2026-10-14 09:27:07');
+INSERT INTO `sys_dict_category` VALUES ('45f89f196fe8ec22dbe80a78e1bd21e3', 'd02da5a7e89b390f1d65708f3c24367c', NULL, '角色管理', '00006000080000400003', 4, NULL, NULL, 2, 'admin', '2026-10-14 09:04:54', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('d02da5a7e89b390f1d65708f3c24367c', '2c255ae4cf6a777ab5a6c128ba3b66a0', NULL, '运营管控', '000060000800004', 3, NULL, NULL, 4, 'admin', '2026-10-14 09:04:54', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('efb5dea54f892852e710588a23a44f82', 'd02da5a7e89b390f1d65708f3c24367c', NULL, '工具箱', '00006000080000400002', 4, NULL, NULL, 0, 'admin', '2026-10-14 09:04:54', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('9ef6ddb7f88332a8a4d16064587894d2', 'd02da5a7e89b390f1d65708f3c24367c', NULL, 'MCP', '00006000080000400001', 4, NULL, NULL, 1, 'admin', '2026-10-14 09:04:54', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('2f69c92aafd369bfe7f013d4b53dcd74', '200026a7b3018c2e414684dd4e6e272f', NULL, '运营平台', '0000600009', 2, '', NULL, 3, 'admin', '2026-10-14 09:05:10', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('458cc65f0840546c218f3108869cae9f', 'b4552fb8d9a50dc9e7ec185e450c98b3', NULL, '全链路监控', '00006000090000100001', 4, NULL, NULL, 0, 'admin', '2026-10-14 09:05:17', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('b4552fb8d9a50dc9e7ec185e450c98b3', '2f69c92aafd369bfe7f013d4b53dcd74', NULL, '数据看板', '000060000900001', 3, NULL, NULL, 1, 'admin', '2026-10-14 09:05:17', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('c8dd165528de1afdc88d6a60c54e5c6f', 'b4552fb8d9a50dc9e7ec185e450c98b3', NULL, '运营分析', '00006000090000100002', 4, NULL, NULL, 1, 'admin', '2026-10-14 09:05:17', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('89b0f7bb762df81acb7d8220ce247381', '0577e1db3f0fb484e9424babf1ddcb2e', NULL, '知识库', '000060000300002', 3, '', NULL, 1, 'admin', '2026-10-14 09:06:39', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('b16345ee5251e76a5e5fccd9e0bfc0c9', '0577e1db3f0fb484e9424babf1ddcb2e', NULL, '技能广场', '000060000300003', 3, NULL, NULL, 2, 'admin', '2026-10-14 09:06:46', 'admin', '2026-10-14 09:06:52');
+INSERT INTO `sys_dict_category` VALUES ('68348e411fde2eab16b7be0ddc463a13', '0577e1db3f0fb484e9424babf1ddcb2e', NULL, '学习中心', '000060000300004', 3, NULL, NULL, 3, 'admin', '2026-10-14 09:07:07', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('6675f591bc09c7e1dbb4de6c91e79bc4', '2f69c92aafd369bfe7f013d4b53dcd74', NULL, '运维监控', '000060000900002', 3, NULL, NULL, 2, 'admin', '2026-10-14 09:48:21', NULL, NULL);
+INSERT INTO `sys_dict_category` VALUES ('ff7995738da990267db56b54e60b185d', '2c255ae4cf6a777ab5a6c128ba3b66a0', NULL, '基础管控', '000060000800005', 3, NULL, NULL, 5, 'admin', '2026-10-14 09:48:44', NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
