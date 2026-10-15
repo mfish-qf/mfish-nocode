@@ -36,7 +36,7 @@ public class ScheduleConfigController {
      */
     @Operation(summary = "排期配置-查询当前生效规则", description = "包含节假日、封版冻结日列表和调休补班工作日")
     @GetMapping
-    @RequiresPermissions("project:scheduleConfig:query")
+    @RequiresPermissions("project:requirement:query")
     public Result<ScheduleConfigDTO> getConfig() {
         return scheduleConfigService.getConfig();
     }
@@ -47,7 +47,7 @@ public class ScheduleConfigController {
     @Log(title = "排期配置-更新规则", operateType = OperateType.UPDATE)
     @Operation(summary = "排期配置-更新规则及明细")
     @PutMapping
-    @RequiresPermissions("project:scheduleConfig:update")
+    @RequiresPermissions("project:requirement:update")
     public Result<ScheduleConfigDTO> updateConfig(@RequestBody ScheduleConfigDTO config) {
         return scheduleConfigService.updateConfig(config);
     }

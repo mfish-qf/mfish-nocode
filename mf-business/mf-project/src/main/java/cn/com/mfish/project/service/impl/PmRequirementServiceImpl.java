@@ -616,13 +616,14 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         ScheduleConfigDTO config = currentConfig();
         LocalDate defaultStart = ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
-        // 维护每位人员在每个版本下的下一个可用工作日游标: key = version__personName
-        Map<String, LocalDate> personNextAvailableDate = new HashMap<>();
+        // 人员占用日历(逐日装箱, 跨版本全局共享): key = personName -> 该人员已被占用的有效工作日集合
+        Map<String, Set<LocalDate>> personBusyDates = new HashMap<>();
+        // 预填历史排期占用: 将本次重排范围之外、已有排期的需求占用登记进全局日历
+        // 语义: 若某开发人员在前序版本的任务排到了当前版本开始日之后，涉及他的新任务
+        //       将从其最早空闲日起排(而非与既有任务重叠)；无前置占用的人员仍从版本首日起排
+        prefillPersonBusyDates(targets, config, personBusyDates);
         List<PmRequirement> updatedList = new ArrayList<>();
         for (PmRequirement req : targets) {
-            String versionKey = StringUtils.isEmpty(req.getIterationId())
-                    ? (StringUtils.isEmpty(req.getMonth()) ? "default" : req.getMonth())
-                    : req.getIterationId();
             PmIteration iteration = StringUtils.isEmpty(req.getIterationId()) ? null : iterationMap.get(req.getIterationId());
             if (iteration == null && StringUtils.isNotEmpty(req.getMonth())) {
                 iteration = iterationMap.get(req.getMonth());
@@ -630,39 +631,21 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             LocalDate versionStartDate = ScheduleDateUtils.getWorkdayStartDate(
                     iteration != null && iteration.getStartDate() != null
                             ? toLocalDate(iteration.getStartDate()) : defaultStart, config);
-            // 前后端人员合并(去重)
+            // 前后端人员合并(去重, 已自动剔除"待分配/不涉及"等占位标识)
             List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
             List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
             Set<String> allDevs = new java.util.LinkedHashSet<>(feDevs);
             allDevs.addAll(beDevs);
-            // 计算当前任务的开始日期(取该组人员排期队列的最晚可用日期)
-            LocalDate taskStartDate = versionStartDate;
-            if (!allDevs.isEmpty()) {
-                LocalDate latest = versionStartDate;
-                for (String dev : allDevs) {
-                    LocalDate cursor = personNextAvailableDate.getOrDefault(versionKey + "__" + dev, versionStartDate);
-                    if (cursor.isAfter(latest)) {
-                        latest = cursor;
-                    }
-                }
-                taskStartDate = latest;
-            } else {
-                taskStartDate = personNextAvailableDate.getOrDefault(versionKey + "__UNASSIGNED", versionStartDate);
-            }
-            taskStartDate = ScheduleDateUtils.getWorkdayStartDate(taskStartDate, config);
-            // 计算工时与结束日期
+            // 工时(决定占用工作日的数量)
             BigDecimal workload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
                     ? req.getWorkload() : BigDecimal.ONE;
+            // 逐日装箱: 从版本首日起向后逐日扫描，排在所有参与人均空闲的最早可开工日
+            // 未分配人员的需求无任何人力约束，一律从版本首日起排(不再被串成一天一个)
+            LocalDate taskStartDate = findEarliestFeasibleStart(
+                    versionStartDate, allDevs, workload, config, personBusyDates);
             LocalDate taskEndDate = ScheduleDateUtils.calculateDevEndDate(taskStartDate, workload, config);
-            LocalDate nextWorkdayForDevs = ScheduleDateUtils.getNextWorkday(taskEndDate, config);
-            // 更新人员游标
-            if (!allDevs.isEmpty()) {
-                for (String dev : allDevs) {
-                    personNextAvailableDate.put(versionKey + "__" + dev, nextWorkdayForDevs);
-                }
-            } else {
-                personNextAvailableDate.put(versionKey + "__UNASSIGNED", nextWorkdayForDevs);
-            }
+            // 占用该区间内的所有有效工作日(同一人员不会被重复占用，杜绝自身任务重叠)
+            occupyDevDates(taskStartDate, taskEndDate, allDevs, config, personBusyDates);
             // 持久化新排期
             PmRequirement update = new PmRequirement();
             update.setId(req.getId());
@@ -682,10 +665,129 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("scheduledCount", targets.size());
         result.put("updatedList", updatedList);
-        return Result.ok(result, "⚡ 已根据版本起始日期，为每位开发人员按工时顺序顺延自动排期 " + targets.size() + " 项任务!");
+        return Result.ok(result, "⚡ 已按人员占用逐日装箱，从各版本开发周期首日起并行排期 " + targets.size()
+                + " 项任务(前序版本占用已参与校验，超占用人员自动顺延至最早空闲日)!");
     }
 
     // ==================== 私有辅助方法 ====================
+
+    /**
+     * 预填历史排期占用: 将本次重排范围之外、已排期需求的开发人员占用登记进全局占用日历
+     * 保证自动排期不会把新任务叠到该人员既有任务上(跨版本生效)——
+     * 若前序版本任务排到了当前版本开始日之后，涉及他的任务将顺延到其最早空闲日
+     *
+     * @param targets        本次排期目标(其旧排期将被覆盖，不参与预填)
+     * @param config         排期配置
+     * @param personBusyDates 全局人员占用日历
+     */
+    private void prefillPersonBusyDates(List<PmRequirement> targets, ScheduleConfigDTO config,
+                                        Map<String, Set<LocalDate>> personBusyDates) {
+        Set<String> targetIds = new HashSet<>();
+        targets.forEach(t -> targetIds.add(t.getId()));
+        List<PmRequirement> history = list(new LambdaQueryWrapper<PmRequirement>()
+                .isNotNull(PmRequirement::getDevStartDate)
+                .isNotNull(PmRequirement::getDevEndDate));
+        for (PmRequirement req : history) {
+            if (targetIds.contains(req.getId())) {
+                continue;
+            }
+            Set<String> devs = new java.util.LinkedHashSet<>();
+            devs.addAll(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
+            devs.addAll(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
+            if (devs.isEmpty()) {
+                continue;
+            }
+            LocalDate start = toLocalDate(req.getDevStartDate());
+            LocalDate end = toLocalDate(req.getDevEndDate());
+            if (start == null || end == null || end.isBefore(start)) {
+                continue;
+            }
+            LocalDate cursor = start;
+            while (!cursor.isAfter(end)) {
+                if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                    for (String dev : devs) {
+                        personBusyDates.computeIfAbsent(dev, k -> new HashSet<>()).add(cursor);
+                    }
+                }
+                cursor = cursor.plusDays(1);
+            }
+        }
+    }
+
+    /**
+     * 逐日装箱: 从版本首日起向后逐日扫描，返回该任务所有参与人均空闲的最早可开工日期
+     * 与"人员游标"模型的本质区别: 每个任务都从版本首日重新扫描，因此后面排到的任务可以回填前面留下的空档，
+     * 只要人员在这些日期确实空闲即可开工，各人员之间天然并行(同一天可有多人各自推进自己的任务)
+     * 人员占用日历为全局共享(跨版本)，前序版本任务的占用会参与可行性校验
+     *
+     * @param versionStartDate 版本开发周期首日(已规整为有效工作日)
+     * @param allDevs          参与该任务的人员(为空表示未分配，无人力约束)
+     * @param workload         预估工时(决定占用几个工作日)
+     * @param config           排期配置
+     * @param personBusyDates  全局人员占用日历
+     * @return 最早可开工日期
+     */
+    private LocalDate findEarliestFeasibleStart(LocalDate versionStartDate, Set<String> allDevs,
+                                                BigDecimal workload, ScheduleConfigDTO config,
+                                                Map<String, Set<LocalDate>> personBusyDates) {
+        if (versionStartDate == null) {
+            versionStartDate = ScheduleDateUtils.DEFAULT_START_DATE;
+        }
+        if (allDevs.isEmpty()) {
+            // 未分配人员的需求无任何人力约束，一律从版本首日起排
+            return versionStartDate;
+        }
+        LocalDate candidate = versionStartDate;
+        // 安全上限: 最多向后探测 3 年，杜绝异常配置下的死循环
+        LocalDate limit = versionStartDate.plusYears(3);
+        while (!candidate.isAfter(limit)) {
+            LocalDate end = ScheduleDateUtils.calculateDevEndDate(candidate, workload, config);
+            if (isRangeFree(candidate, end, allDevs, config, personBusyDates)) {
+                return candidate;
+            }
+            candidate = ScheduleDateUtils.getNextWorkday(candidate, config);
+        }
+        return versionStartDate;
+    }
+
+    /**
+     * 判断指定区间内的所有有效工作日，对全部参与人员而言是否均未被占用
+     */
+    private boolean isRangeFree(LocalDate start, LocalDate end, Set<String> allDevs,
+                                ScheduleConfigDTO config, Map<String, Set<LocalDate>> personBusyDates) {
+        LocalDate cursor = start;
+        while (!cursor.isAfter(end)) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                for (String dev : allDevs) {
+                    Set<LocalDate> busy = personBusyDates.get(dev);
+                    if (busy != null && busy.contains(cursor)) {
+                        return false;
+                    }
+                }
+            }
+            cursor = cursor.plusDays(1);
+        }
+        return true;
+    }
+
+    /**
+     * 将任务占用的有效工作日登记进全局人员占用日历
+     */
+    private void occupyDevDates(LocalDate start, LocalDate end, Set<String> allDevs,
+                                ScheduleConfigDTO config, Map<String, Set<LocalDate>> personBusyDates) {
+        if (allDevs.isEmpty()) {
+            return;
+        }
+        LocalDate cursor = start;
+        while (!cursor.isAfter(end)) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                for (String dev : allDevs) {
+                    personBusyDates.computeIfAbsent(dev, k -> new HashSet<>()).add(cursor);
+                }
+            }
+            cursor = cursor.plusDays(1);
+        }
+    }
 
     /**
      * 需求信息纠偏：工时基准、人员字段标准化、日历排期推导

@@ -18,8 +18,32 @@ public class PersonnelNameUtils {
     public static final String UNASSIGNED = "待分配";
     /** 多人分隔符 */
     public static final String SEPARATOR = "、";
+    /** 伪人员占位标识(非真实开发人员，解析与统计时应剔除) */
+    private static final List<String> PLACEHOLDER_NAMES = List.of(
+            "待分配", "待指派", "未安排", "不涉及", "❌不涉及❌", "UNASSIGNED", "无");
 
     private PersonnelNameUtils() {
+    }
+
+    /**
+     * 判断是否为伪人员占位标识(待分配/待指派/不涉及 等，非真实开发人员)
+     *
+     * @param name 名称(可为 null)
+     * @return 是否为占位符
+     */
+    public static boolean isPlaceholderName(String name) {
+        if (name == null) {
+            return true;
+        }
+        String str = name.trim();
+        if (str.isEmpty()) {
+            return true;
+        }
+        if (PLACEHOLDER_NAMES.contains(str)) {
+            return true;
+        }
+        // 兜底: 含"不涉及"或以 ❌ 包裹的标识均视为占位
+        return str.contains("不涉及") || (str.startsWith("❌") && str.endsWith("❌"));
     }
 
     /**
@@ -36,6 +60,8 @@ public class PersonnelNameUtils {
         if (str.isEmpty()) {
             return "";
         }
+        // 过滤姓名中的【】标注 (如 "邢继康【运营】" → "邢继康")，兼容未闭合的尾部括号
+        str = str.replaceAll("【[^】]*】", "").replaceAll("【[\\s\\S]*$", "").trim();
         return str.replaceAll("^[\\[\\{\\(\"'\\s\\\\]+|[\\]\\}\\)\"'\\s\\\\]+$", "").trim();
     }
 
@@ -60,7 +86,7 @@ public class PersonnelNameUtils {
         Set<String> unique = new LinkedHashSet<>();
         for (String part : parts) {
             String cleaned = cleanPersonnelName(part);
-            if (!cleaned.isEmpty() && !UNASSIGNED.equals(cleaned)) {
+            if (!cleaned.isEmpty() && !isPlaceholderName(cleaned)) {
                 unique.add(cleaned);
             }
         }

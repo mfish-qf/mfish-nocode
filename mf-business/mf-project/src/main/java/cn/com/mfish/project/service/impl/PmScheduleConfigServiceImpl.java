@@ -70,9 +70,10 @@ public class PmScheduleConfigServiceImpl extends ServiceImpl<PmScheduleConfigMap
             entity.setUpdateTime(now);
             updateById(entity);
         }
-        // 同步跳过日期明细(先删后插)
-        skippedDateMapper.delete(new LambdaQueryWrapper<PmScheduleSkippedDate>()
-                .eq(PmScheduleSkippedDate::getConfigId, CONFIG_ID));
+        // 同步跳过日期明细(先物理删后插)
+        // 注意：实体含 @TableLogic，BaseMapper.delete 会被改写为逻辑删除(UPDATE del_flag=1)，
+        // 与下面"按原 id 重新插入"发生主键冲突使整体更新失败，故使用原生物理删除。
+        skippedDateMapper.physicalDeleteByConfigId(CONFIG_ID);
         if (config.getSkippedDates() != null) {
             for (SkippedDateDTO item : config.getSkippedDates()) {
                 if (item == null || StringUtils.isEmpty(item.getDate())) {
@@ -89,9 +90,8 @@ public class PmScheduleConfigServiceImpl extends ServiceImpl<PmScheduleConfigMap
                 skippedDateMapper.insert(record);
             }
         }
-        // 同步调休补班工作日明细(先删后插)
-        makeupDateMapper.delete(new LambdaQueryWrapper<PmScheduleMakeupDate>()
-                .eq(PmScheduleMakeupDate::getConfigId, CONFIG_ID));
+        // 同步调休补班工作日明细(先物理删后插)
+        makeupDateMapper.physicalDeleteByConfigId(CONFIG_ID);
         if (config.getMakeupWorkdays() != null) {
             for (String dateStr : config.getMakeupWorkdays()) {
                 if (StringUtils.isEmpty(dateStr)) {

@@ -44,7 +44,7 @@ public class IterationController {
      */
     @Operation(summary = "迭代版本-列表查询", description = "包含各版本关联的多节点转测列表testNodes及自动解析计算的spannedMonths")
     @GetMapping("/list")
-    @RequiresPermissions("project:iteration:query")
+    @RequiresPermissions("project:requirement:query")
     public Result<List<PmIteration>> queryList() {
         return iterationService.queryList();
     }
@@ -54,7 +54,7 @@ public class IterationController {
      */
     @Operation(summary = "迭代版本-通过id或版本号查询")
     @GetMapping("/{id}")
-    @RequiresPermissions("project:iteration:query")
+    @RequiresPermissions("project:requirement:query")
     public Result<PmIteration> queryById(@Parameter(name = "id", description = "迭代ID或版本号") @PathVariable String id) {
         return iterationService.queryByIdOrCode(id);
     }

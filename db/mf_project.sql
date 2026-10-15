@@ -235,10 +235,9 @@ INSERT INTO `pm_schedule_config` VALUES ('1', 1, 0, '系统默认排期配置(�
 
 -- ----------------------------
 -- Records of pm_schedule_skipped_date 默认节假日(2026中秋+国庆黄金周)
+-- 注意: 2026年中秋节为9月25日(周五), 9/26-27为周末自动跳过
 -- ----------------------------
-INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-mid-autumn-1', '1', '2026-09-15', '中秋节假期', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-mid-autumn-2', '1', '2026-09-16', '中秋节假期', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
-INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-mid-autumn-3', '1', '2026-09-17', '中秋节假期', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
+INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-mid-autumn-1', '1', '2026-09-25', '中秋节假期', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-1', '1', '2026-10-01', '国庆节黄金周', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-2', '1', '2026-10-02', '国庆节黄金周', 'holiday', 0, 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_schedule_skipped_date` VALUES ('skip-national-3', '1', '2026-10-03', '国庆节黄金周', 'holiday', 1, 0, NULL, '', NOW(), '', NOW());
