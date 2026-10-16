@@ -92,8 +92,12 @@ public class PmRequirement extends BaseEntity<String> {
     private String month;
     @Schema(description = "归属迭代ID")
     private String iterationId;
-    @Schema(description = "研发预估工时(单位:人/天)")
+    @Schema(description = "研发预估总工时(单位:人/天,=前端+后端)")
     private BigDecimal workload;
+    @Schema(description = "前端研发工时(单位:人/天)")
+    private BigDecimal frontendWorkload;
+    @Schema(description = "后端研发工时(单位:人/天)")
+    private BigDecimal backendWorkload;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "开发开始日期")

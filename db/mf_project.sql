@@ -40,7 +40,9 @@ CREATE TABLE `pm_requirement`  (
   `owner` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '关联负责人',
   `month` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代/月份代码(如 2026-09 或 2026-Q4)',
   `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID',
-  `workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '研发预估工时(单位:人/天)',
+  `workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '研发预估总工时(单位:人/天,=前端+后端)',
+  `frontend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '前端研发工时(单位:人/天)',
+  `backend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '后端研发工时(单位:人/天)',
   `dev_start_date` date NULL DEFAULT NULL COMMENT '开发开始日期',
   `dev_end_date` date NULL DEFAULT NULL COMMENT '开发完成日期(根据工时与日历规则自动推导)',
   `dev_progress` int NULL DEFAULT NULL COMMENT '开发进度百分比(0-100)',
@@ -283,6 +285,13 @@ INSERT INTO `pm_iteration_test_node` VALUES ('tn-v12-2', 'iter-v1.2', '第2批�
 INSERT INTO `pm_iteration_test_node` VALUES ('tn-v20-1', 'iter-v2.0', '首批转测 (分布式引擎重构)', '2026-10-20', '后端协议与引擎高可用压测', 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_iteration_test_node` VALUES ('tn-v20-2', 'iter-v2.0', '全量提测 (全景功能验收)', '2026-11-10', '全量集成测试与准出评估', 0, NULL, '', NOW(), '', NOW());
 INSERT INTO `pm_iteration_test_node` VALUES ('tn-v21-1', 'iter-v2.1', '冲刺唯一转测', '2026-10-22', 'UI细节与移动端适配冒烟准入', 0, NULL, '', NOW(), '', NOW());
+
+-- ----------------------------
+-- 存量库增量迁移: 研发工时拆分(前端/后端)
+-- ----------------------------
+ALTER TABLE `pm_requirement`
+  ADD COLUMN `frontend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '前端研发工时(单位:人/天)' AFTER `workload`,
+  ADD COLUMN `backend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '后端研发工时(单位:人/天)' AFTER `frontend_workload`;
 
 
 SET FOREIGN_KEY_CHECKS = 1;
