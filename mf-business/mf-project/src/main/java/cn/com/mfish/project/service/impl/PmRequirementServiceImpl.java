@@ -914,12 +914,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 人员字段默认值处理：新值为空时取旧值，仍为空时取默认值，并格式化为标准展示串
+     * 人员字段默认值处理：显式传值(含空串=清空)优先，未传(null)时沿用旧值；
+     * 纯占位/空值格式化后为空串，不再回退默认值，以满足"未设置则空着、不落库 待分配/PMO/产品团队 等占位"(需求 #2)。
      */
     private String defaultPersonnel(String newValue, String oldValue, String defaultVal) {
-        String target = StringUtils.isNotEmpty(newValue) ? newValue : oldValue;
-        String formatted = PersonnelNameUtils.formatPersonnelNames(target);
-        return StringUtils.isEmpty(formatted) ? defaultVal : formatted;
+        String target = newValue != null ? newValue : oldValue;
+        return PersonnelNameUtils.formatPersonnelNames(target);
     }
 
     /**

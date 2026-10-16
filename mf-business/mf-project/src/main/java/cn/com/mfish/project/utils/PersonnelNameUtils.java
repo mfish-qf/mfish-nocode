@@ -18,6 +18,10 @@ public class PersonnelNameUtils {
     public static final String UNASSIGNED = "待分配";
     /** 多人分隔符 */
     public static final String SEPARATOR = "、";
+    /** 不涉及标记(表示本端无需开发，作为独立状态保留，不洗成待分配) */
+    public static final String NOT_INVOLVED = "不涉及";
+    /** 不涉及包裹标记 */
+    public static final String NOT_INVOLVED_WRAPPED = "❌不涉及❌";
     /** 伪人员占位标识(非真实开发人员，解析与统计时应剔除) */
     private static final List<String> PLACEHOLDER_NAMES = List.of(
             "待分配", "待指派", "未安排", "不涉及", "❌不涉及❌", "UNASSIGNED", "无");
@@ -95,15 +99,41 @@ public class PersonnelNameUtils {
     }
 
     /**
+     * 判断是否为"不涉及"语义标记(本端无需开发)，需与统计用的占位判定区分：
+     * "不涉及"是合法的独立状态(应保留展示)，而统计/排期环节通过 parsePersonnelNames 已将其剔除。
+     *
+     * @param trimmed 已 trim 的名称
+     * @return 是否为不涉及标记
+     */
+    private static boolean isNotInvolved(String trimmed) {
+        if (trimmed.isEmpty()) {
+            return false;
+        }
+        return NOT_INVOLVED.equals(trimmed) || NOT_INVOLVED_WRAPPED.equals(trimmed)
+                || trimmed.contains("不涉及");
+    }
+
+    /**
      * 人员数组格式化：将任意输入格式化为标准干净的展示串 "周伟、王敏"
+     * 注意：
+     * 1) 保留"不涉及"语义标记(本端无需开发)，不洗成"待分配"；
+     * 2) 纯粹的占位/空值统一返回空串，由调用方决定是否落库为空(需求 #2：未设置则空着)。
      *
      * @param names 人员串
-     * @return 展示串(无人时返回 待分配)
+     * @return 展示串(纯占位/空值时返回空串，而非 待分配)
      */
     public static String formatPersonnelNames(String names) {
+        if (names == null) {
+            return "";
+        }
+        String trimmed = names.trim();
+        // 保留"不涉及"语义标记(表示本端无需开发)，不洗成"待分配"
+        if (isNotInvolved(trimmed)) {
+            return NOT_INVOLVED;
+        }
         List<String> list = parsePersonnelNames(names);
         if (list.isEmpty()) {
-            return UNASSIGNED;
+            return "";
         }
         return String.join(SEPARATOR, list);
     }
