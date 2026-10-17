@@ -124,6 +124,12 @@ INSERT INTO `sys_dict` VALUES ('4a9914bd42939163ceb9c5b4002cfa66', 'HTTP请求�
 INSERT INTO `sys_dict` VALUES ('220bbd3b1dd32fd37d0abbd279a14774', '工作流任务状态', 'workflow_task_status', 0, '工作流任务状态字典', 'admin', '2025-10-10 16:27:01', 'admin', '2025-10-10 16:27:01');
 INSERT INTO `sys_dict` VALUES ('eeb27772c310addeae7c12d296521399', '工作流审批类型', 'workflow_process_key', 0, '工作流流程定义key，例如大屏发布审批是screen_release', 'admin', '2025-10-15 16:34:32', 'admin', '2025-10-15 16:34:32');
 INSERT INTO `sys_dict` VALUES ('cd338555eccf73e26e9243837d6c711e', '模型接入协议', 'ai_model_protocol', 0, 'AI模型接入的协议，比如openai协议', 'admin', '2026-07-10 16:56:59', '', NULL);
+-- 项目管理(PM)业务字典: 需求评审结果(前后端统一来源, 禁止在代码中硬编码取值)
+-- 字典项 remark 语义标记约定: flow=<评审通过后流转的目标状态>(仅"通过"类结论配置); stat=passed|pending|excluded(统计口径)
+INSERT INTO `sys_dict` VALUES ('5a033314404a4462bce17c3b43131b6d', '需求评审结果', 'pm_review_result', 0, 'PM需求评审结论字典, 驱动评审后状态流转与统计口径', 'admin', '2026-10-17 16:30:00', '', NULL);
+-- 项目管理(PM)业务字典: 需求任务状态(前后端统一来源, 禁止在代码中硬编码取值)
+-- 字典项 remark 语义标记约定: phase=pre|dev|post|terminal(生命周期阶段, pre 可被评审通过流转); progress=<进入该状态的默认开发进度>
+INSERT INTO `sys_dict` VALUES ('5bd1bbd8eb05418292425bdfdeeb9d5e', '需求任务状态', 'pm_requirement_status', 0, 'PM需求生命周期状态字典, 驱动状态流转与进度联动规则', 'admin', '2026-10-17 16:30:00', '', NULL);
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -278,6 +284,19 @@ INSERT INTO `sys_dict_item` VALUES ('cac0983d1430c0a7dce98bd8c01cc19c', 'cd33855
 INSERT INTO `sys_dict_item` VALUES ('64a2906317754ac19c779e04ddc155de', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'deepseek', 'deepseek', 0, 3, NULL, 'cyan', 0, NULL, 'admin', '2026-07-10 16:58:49', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('76faf36cc4e459171c273fa833e79ff4', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'anthropic', 'anthropic', 0, 4, NULL, 'pink', 0, NULL, 'admin', '2026-07-10 16:59:22', '', NULL);
 INSERT INTO `sys_dict_item` VALUES ('9f3c1a7d2e5b4a8c6f0d1e2a3b4c5d6e', 'cd338555eccf73e26e9243837d6c711e', 'ai_model_protocol', 'orcarouter', 'orcarouter', 0, 5, NULL, 'gold', 0, 'OrcaRouter 路由网关', 'admin', '2026-08-15 00:00:00', '', NULL);
+-- 需求评审结果(pm_review_result): 评审通过 → 自动流转到 flow 指定的状态; stat 标记统计口径
+INSERT INTO `sys_dict_item` VALUES ('5a6798acd59745cea81c8ab23addc99b', '5a033314404a4462bce17c3b43131b6d', 'pm_review_result', '评审通过', '评审通过', 0, 1, NULL, 'green', 0, 'flow=开发中;stat=passed', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('a7d8eed463754d5097754e1371300a3c', '5a033314404a4462bce17c3b43131b6d', 'pm_review_result', '补充修改', '补充修改', 0, 2, NULL, 'orange', 0, 'stat=pending', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('1ff7836a74c24ff9870f2732b4bef5e2', '5a033314404a4462bce17c3b43131b6d', 'pm_review_result', '暂缓实施', '暂缓实施', 0, 3, NULL, 'purple', 0, 'stat=excluded', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('18e0e2bb4b194bdaad200bde795ab771', '5a033314404a4462bce17c3b43131b6d', 'pm_review_result', '未通过', '未通过', 0, 4, NULL, 'red', 0, 'stat=excluded', 'admin', '2026-10-17 16:30:00', '', NULL);
+-- 需求任务状态(pm_requirement_status): phase 标记生命周期阶段(pre 可被评审通过流转); progress 标记默认开发进度; final=true 最终完成态; default 标记新建默认角色
+INSERT INTO `sys_dict_item` VALUES ('bd8ff0a830d445d4b7fc29b8ebc59128', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '待评审', '待评审', 0, 1, NULL, 'default', 0, 'phase=pre;progress=0;default=product', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('45461c7a7dbf4f4995f2f616539b3be9', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '开发中', '开发中', 0, 2, NULL, 'blue', 0, 'phase=dev;progress=30;default=admin', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('ddcdc018e94d48fab15430eda804d43f', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '待转测', '待转测', 0, 3, NULL, 'purple', 0, 'phase=post;progress=100', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('fc6f3c8293d146f19e21d5623b7868c8', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '测试中', '测试中', 0, 4, NULL, 'orange', 0, 'phase=post;progress=100', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('e9fd0bb7bb7f4880897bbf4758e3f6cd', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '验收中', '验收中', 0, 5, NULL, 'cyan', 0, 'phase=post;progress=100', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('9aab3d13b80d413995f8457f61817553', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '已上线', '已上线', 0, 6, NULL, 'green', 0, 'phase=post;progress=100;final=true', 'admin', '2026-10-17 16:30:00', '', NULL);
+INSERT INTO `sys_dict_item` VALUES ('5af0236303a541e3b7f3fe14a1baf35e', '5bd1bbd8eb05418292425bdfdeeb9d5e', 'pm_requirement_status', '已取消', '已取消', 0, 7, NULL, 'default', 0, 'phase=terminal', 'admin', '2026-10-17 16:30:00', '', NULL);
 
 -- ----------------------------
 -- Table structure for sys_log
