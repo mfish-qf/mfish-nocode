@@ -5,6 +5,8 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.project.dict.PmDictCodes;
+import cn.com.mfish.project.dict.PmDictService;
 import cn.com.mfish.project.dto.ScheduleConfigDTO;
 import cn.com.mfish.project.entity.PmDevSchedule;
 import cn.com.mfish.project.entity.PmIteration;
@@ -57,12 +59,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, PmRequirement> implements PmRequirementService {
-    /** 已完成开发的状态集合(进入该状态后开发进度视为100%) */
-    private static final Set<String> POST_DEV_STATUSES = Set.of("待转测", "测试中", "验收中", "已上线");
-    /** 尚未进入开发的状态集合(评审通过时可自动流转到"开发中") */
-    private static final Set<String> PRE_DEV_STATUSES = Set.of("待评审", "待排期");
-    /** 评审结论"通过"的标准取值(与前端 ReviewResult 类型保持一致) */
-    private static final String REVIEW_PASSED = "评审通过";
     /** 归档标记: 版本状态为"已发布"即视为已归档(不新增字段, 复用 status) */
     private static final String ARCHIVED_STATUS = "已发布";
 
@@ -76,6 +72,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     private PmScheduleConfigService scheduleConfigService;
     @Resource
     private PmDevScheduleMapper devScheduleMapper;
+    @Resource
+    private PmDictService pmDictService;
 
     @Override
     public Result<PageResult<PmRequirement>> queryPageList(ReqPmRequirement reqPmRequirement, Integer pageNum, Integer pageSize) {
@@ -215,9 +213,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         // 归属迭代信息联动(月份代码与发版时间)
         syncIterationInfo(requirement, requirement);
-        // 状态与进度默认值
+        // 状态与进度默认值(默认状态取字典中第一个开发前阶段状态, 如"待评审")
         if (StringUtils.isEmpty(requirement.getStatus())) {
-            requirement.setStatus("待评审");
+            requirement.setStatus(pmDictService.defaultStatus());
         }
         if (requirement.getDevProgress() == null) {
             requirement.setDevProgress(resolveDefaultProgress(requirement.getStatus()));
@@ -395,6 +393,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (StringUtils.isEmpty(status)) {
             throw new MyRuntimeException("错误:目标状态不能为空!");
         }
+        if (!pmDictService.isValidStatus(status)) {
+            throw new MyRuntimeException("错误:目标状态【" + status + "】不在字典 pm_requirement_status 中, 请先在字典管理中维护!");
+        }
         List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
         Date now = new Date();
         for (PmRequirement req : targets) {
@@ -458,6 +459,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (ids == null || ids.isEmpty()) {
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
         }
+        // 评审结论取值必须来自字典 pm_review_result(前后端统一字典管理, 禁止硬编码字符串)
+        if (StringUtils.isNotEmpty(reviewResult) && !pmDictService.isValidReviewResult(reviewResult)) {
+            throw new MyRuntimeException("错误:评审结论【" + reviewResult + "】不在字典 pm_review_result 中, 请先在字典管理中维护!");
+        }
         List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
         Date now = new Date();
         for (PmRequirement req : targets) {
@@ -470,12 +475,13 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             if (StringUtils.isNotEmpty(reviewNotes)) {
                 update.setReviewNotes(reviewNotes);
             }
-            // 评审通过 → 任务状态自动流转为"开发中"(仅对尚处开发前阶段的需求;
-            // 已进入研发/测试/上线, 或已取消的需求保持原状, 不被回退)
-            if (REVIEW_PASSED.equals(reviewResult)
-                    && (req.getStatus() == null || PRE_DEV_STATUSES.contains(req.getStatus()))) {
-                update.setStatus("开发中");
-                update.setDevProgress(resolveStatusProgress("开发中", req.getDevProgress(), req.getStatus()));
+            // 评审结论驱动状态流转: 字典中该结论配置了 flow 目标(如"评审通过 → 开发中"),
+            // 且需求尚处开发前阶段(字典 phase=pre)时自动流转;
+            // 已进入研发/测试/上线, 或已取消的需求保持原状, 不被回退
+            String flowTarget = pmDictService.reviewFlowTarget(reviewResult);
+            if (StringUtils.isNotEmpty(flowTarget) && pmDictService.isPreDevStatus(req.getStatus())) {
+                update.setStatus(flowTarget);
+                update.setDevProgress(resolveStatusProgress(flowTarget, req.getDevProgress(), req.getStatus()));
             }
             update.setUpdateBy(safeGetCurrentUser());
             update.setUpdateTime(now);
@@ -1507,22 +1513,27 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 状态流转联动开发进度
+     * 状态流转联动开发进度(阶段与默认进度均由字典 pm_requirement_status 驱动):
+     * - 开发后阶段(转测/测试/验收/上线): 进度置 100%
+     * - 开发前阶段(待评审): 进度归 0
+     * - 开发中: 进度为 0 时取字典默认进度; 从开发后阶段回退且已满进度 → 回退 90% 继续开发
      */
     private Integer resolveStatusProgress(String status, Integer currentProgress, String oldStatus) {
         int progress = currentProgress == null ? 0 : currentProgress;
-        if (POST_DEV_STATUSES.contains(status)) {
+        String phase = pmDictService.statusPhase(status);
+        if (PmDictCodes.PHASE_POST.equals(phase)) {
             return 100;
         }
-        if ("待评审".equals(status)) {
+        if (PmDictCodes.PHASE_PRE.equals(phase)) {
             return 0;
         }
-        if ("开发中".equals(status)) {
+        if (PmDictCodes.PHASE_DEV.equals(phase)) {
             if (progress == 0) {
-                return 30;
+                Integer preset = pmDictService.statusProgress(status);
+                return preset == null ? 0 : preset;
             }
             // 从测试等状态回退至开发中，进度回退至90%继续开发
-            if (POST_DEV_STATUSES.contains(oldStatus) && progress >= 100) {
+            if (PmDictCodes.PHASE_POST.equals(pmDictService.statusPhase(oldStatus)) && progress >= 100) {
                 return 90;
             }
         }
@@ -1530,16 +1541,11 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 创建需求时的默认进度
+     * 创建需求时的默认进度(取字典中该状态配置的默认进度, 未配置按 0)
      */
     private Integer resolveDefaultProgress(String status) {
-        if (POST_DEV_STATUSES.contains(status)) {
-            return 100;
-        }
-        if ("开发中".equals(status)) {
-            return 30;
-        }
-        return 0;
+        Integer progress = pmDictService.statusProgress(status);
+        return progress == null ? 0 : progress;
     }
 
     /**
@@ -1598,6 +1604,17 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         if (StringUtils.isEmpty(requirement.getLevel1Feature())) {
             throw new MyRuntimeException("错误:一级功能点不能为空!");
+        }
+        // 评审结论/任务状态应与字典保持一致; 存量历史脏值(如旧版"通过")仅告警不阻断, 避免历史行无法保存
+        if (StringUtils.isNotEmpty(requirement.getReviewResult()) && !pmDictService.isValidReviewResult(requirement.getReviewResult())) {
+            log.warn("需求 #{} 的评审结论【{}】不在字典 pm_review_result 中, 建议在字典管理中维护该取值",
+                    requirement.getReqNo(), requirement.getReviewResult());
+        }
+        if (StringUtils.isEmpty(requirement.getStatus())) {
+            requirement.setStatus(pmDictService.defaultStatus());
+        } else if (!pmDictService.isValidStatus(requirement.getStatus())) {
+            log.warn("需求 #{} 的任务状态【{}】不在字典 pm_requirement_status 中, 建议在字典管理中维护该取值",
+                    requirement.getReqNo(), requirement.getStatus());
         }
     }
 

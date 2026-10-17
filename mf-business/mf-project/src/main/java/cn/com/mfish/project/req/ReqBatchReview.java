@@ -21,7 +21,7 @@ public class ReqBatchReview {
     @Schema(description = "需求ID列表")
     @NotEmpty(message = "需求ID列表不能为空")
     private List<String> ids;
-    @Schema(description = "评审结果(评审通过/补充修改/暂缓实施/未通过)")
+    @Schema(description = "评审结果(取值来自字典 pm_review_result: 评审通过/补充修改/暂缓实施/未通过)")
     private String reviewResult;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
