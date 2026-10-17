@@ -59,6 +59,10 @@ import java.util.stream.Collectors;
 public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, PmRequirement> implements PmRequirementService {
     /** 已完成开发的状态集合(进入该状态后开发进度视为100%) */
     private static final Set<String> POST_DEV_STATUSES = Set.of("待转测", "测试中", "验收中", "已上线");
+    /** 尚未进入开发的状态集合(评审通过时可自动流转到"开发中") */
+    private static final Set<String> PRE_DEV_STATUSES = Set.of("待评审", "待排期");
+    /** 评审结论"通过"的标准取值(与前端 ReviewResult 类型保持一致) */
+    private static final String REVIEW_PASSED = "评审通过";
     /** 归档标记: 版本状态为"已发布"即视为已归档(不新增字段, 复用 status) */
     private static final String ARCHIVED_STATUS = "已发布";
 
@@ -466,9 +470,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             if (StringUtils.isNotEmpty(reviewNotes)) {
                 update.setReviewNotes(reviewNotes);
             }
-            // 评审通过后待评审需求自动进入开发中
-            if (reviewResult != null && reviewResult.contains("通过") && !"未通过".equals(reviewResult)
-                    && "待评审".equals(req.getStatus())) {
+            // 评审通过 → 任务状态自动流转为"开发中"(仅对尚处开发前阶段的需求;
+            // 已进入研发/测试/上线, 或已取消的需求保持原状, 不被回退)
+            if (REVIEW_PASSED.equals(reviewResult)
+                    && (req.getStatus() == null || PRE_DEV_STATUSES.contains(req.getStatus()))) {
                 update.setStatus("开发中");
                 update.setDevProgress(resolveStatusProgress("开发中", req.getDevProgress(), req.getStatus()));
             }
@@ -496,11 +501,41 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         for (PmRequirement req : targets) {
             PmRequirement update = new PmRequirement();
             update.setId(req.getId());
+            // 汇总本轮生效后的拆分工时与人员, 用于总工时(显示口径)重算
+            BigDecimal newFeWl = req.getFrontendWorkload();
+            BigDecimal newBeWl = req.getBackendWorkload();
+            String newFeDev = req.getFrontendDev();
+            String newBeDev = req.getBackendDev();
             switch (personnelType) {
-                case "frontendDev" -> update.setFrontendDev(formatted);
-                case "backendDev" -> update.setBackendDev(formatted);
+                case "frontendDev" -> {
+                    update.setFrontendDev(formatted);
+                    newFeDev = formatted;
+                }
+                case "backendDev" -> {
+                    update.setBackendDev(formatted);
+                    newBeDev = formatted;
+                }
                 case "qaTester" -> update.setQaTester(formatted);
                 default -> update.setOwner(formatted);
+            }
+            // 前后端人员变动: 按"生效人员"统一纠偏两侧工时(与 sanitizeRequirement 完全同口径)
+            // 无有效人员(空/不涉及) → 0 人天; 有人员但工时为 null 或 0(历史"不涉及"残留) → 默认 1 人天
+            // 注意: 必须两侧都纠, 否则未被指派的那一侧残留的旧值会继续污染总工时
+            if ("frontendDev".equals(personnelType) || "backendDev".equals(personnelType)) {
+                if (PersonnelNameUtils.parsePersonnelNames(newFeDev).isEmpty()) {
+                    newFeWl = BigDecimal.ZERO;
+                } else if (newFeWl == null || newFeWl.compareTo(BigDecimal.ZERO) == 0) {
+                    newFeWl = BigDecimal.ONE;
+                }
+                if (PersonnelNameUtils.parsePersonnelNames(newBeDev).isEmpty()) {
+                    newBeWl = BigDecimal.ZERO;
+                } else if (newBeWl == null || newBeWl.compareTo(BigDecimal.ZERO) == 0) {
+                    newBeWl = BigDecimal.ONE;
+                }
+                update.setFrontendWorkload(newFeWl);
+                update.setBackendWorkload(newBeWl);
+                // 总工时(仅显示口径)随拆分值实时重算: 防止批量置"不涉及/清空"后总工时残留旧值(如仍显示 2)
+                update.setWorkload(headcountTotalWorkload(newFeWl, newBeWl, newFeDev, newBeDev));
             }
             update.setUpdateBy(safeGetCurrentUser());
             update.setUpdateTime(now);
@@ -578,37 +613,33 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String newFe;
         String newBe;
         if (Boolean.TRUE.equals(reqReassign.getTransferAll())) {
-            // 独占整单转派：将整个需求完全移交给目标人员独占，原所有其他分配人员全部清空
+            // 独占整单转派：将整个需求完全移交给目标人员独占，另一端无需开发置"不涉及"，原所有其他分配人员全部清空
             if ("backend".equals(targetRole)) {
                 newBe = cleanTo;
-                newFe = PersonnelNameUtils.UNASSIGNED;
+                newFe = PersonnelNameUtils.NOT_INVOLVED;
             } else {
                 newFe = cleanTo;
-                newBe = PersonnelNameUtils.UNASSIGNED;
+                newBe = PersonnelNameUtils.NOT_INVOLVED;
             }
         } else {
-            // 角色精细化调配：彻底从原需求的前后端名单中剔除转派人
+            // 角色精细化调配：仅将"转派人"替换为"目标人"，同侧其他成员全部保留
+            // (例: 前端 A、B，A 转派给 C → 前端变为 C、B；绝非清空整侧只留 C)
             feList.removeIf(p -> p.equals(cleanFrom));
             beList.removeIf(p -> p.equals(cleanFrom));
+            feList.removeIf(p -> p.equals(cleanTo));
+            beList.removeIf(p -> p.equals(cleanTo));
             boolean wasInFe = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()).contains(cleanFrom);
             boolean wasInBe = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()).contains(cleanFrom);
             boolean isFrontendTask = "frontend".equals(reqReassign.getRole()) || (wasInFe && !wasInBe);
             boolean isBackendTask = "backend".equals(reqReassign.getRole()) || (wasInBe && !wasInFe);
-            if (isFrontendTask) {
-                feList = new ArrayList<>(List.of(cleanTo));
-                beList.removeIf(p -> p.equals(cleanTo));
-            } else if (isBackendTask) {
-                beList = new ArrayList<>(List.of(cleanTo));
-                feList.removeIf(p -> p.equals(cleanTo));
-            } else if ("backend".equals(targetRole)) {
-                beList = new ArrayList<>(List.of(cleanTo));
-                feList.removeIf(p -> p.equals(cleanTo));
+            if (isBackendTask || (!isFrontendTask && "backend".equals(targetRole))) {
+                beList.add(cleanTo);
             } else {
-                feList = new ArrayList<>(List.of(cleanTo));
-                beList.removeIf(p -> p.equals(cleanTo));
+                feList.add(cleanTo);
             }
-            newFe = feList.isEmpty() ? PersonnelNameUtils.UNASSIGNED : String.join(PersonnelNameUtils.SEPARATOR, feList);
-            newBe = beList.isEmpty() ? PersonnelNameUtils.UNASSIGNED : String.join(PersonnelNameUtils.SEPARATOR, beList);
+            // 名单为空则落空串(空=待分配)，不再落"待分配"占位词
+            newFe = feList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, feList);
+            newBe = beList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, beList);
         }
         PmRequirement update = new PmRequirement();
         update.setId(req.getId());
@@ -778,8 +809,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 feList = new ArrayList<>(List.of(cleanTo));
                 beList.removeIf(p -> p.equals(cleanTo));
             }
-            String newFe = feList.isEmpty() ? PersonnelNameUtils.UNASSIGNED : String.join(PersonnelNameUtils.SEPARATOR, feList);
-            String newBe = beList.isEmpty() ? PersonnelNameUtils.UNASSIGNED : String.join(PersonnelNameUtils.SEPARATOR, beList);
+            // 名单为空则落空串(空=待分配)，不再落"待分配"占位词
+            String newFe = feList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, feList);
+            String newBe = beList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, beList);
             PmRequirement update = new PmRequirement();
             update.setId(req.getId());
             update.setFrontendDev(newFe);
@@ -1328,26 +1360,48 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      * 严防1人天任务在甘特图上跨度达十几天、以及后续任务挤压等非理性排期
      */
     private void sanitizeRequirement(PmRequirement requirement, PmRequirement exist) {
+        // 生效人员字段(未传则沿用旧值)
+        String effFeDev = requirement.getFrontendDev() != null ? requirement.getFrontendDev()
+                : (exist != null ? exist.getFrontendDev() : null);
+        String effBeDev = requirement.getBackendDev() != null ? requirement.getBackendDev()
+                : (exist != null ? exist.getBackendDev() : null);
         // 工时拆分: 前端/后端研发工时段(任一缺失时沿用旧值)，值为"单人"工时
         BigDecimal feWorkload = requirement.getFrontendWorkload() != null ? requirement.getFrontendWorkload()
                 : (exist != null ? exist.getFrontendWorkload() : null);
         BigDecimal beWorkload = requirement.getBackendWorkload() != null ? requirement.getBackendWorkload()
                 : (exist != null ? exist.getBackendWorkload() : null);
+        // 该侧无有效人员(空或"不涉及")时, 该侧工时强制 0——前端已禁用编辑, 后端做最终保障
+        // 反向兜底: 有人员但工时为 0(历史"不涉及"残留) → 恢复默认 1 人天, 防止指派人员后总工时不更新
+        if (PersonnelNameUtils.parsePersonnelNames(effFeDev).isEmpty()) {
+            feWorkload = BigDecimal.ZERO;
+            requirement.setFrontendWorkload(BigDecimal.ZERO);
+        } else if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) == 0) {
+            feWorkload = BigDecimal.ONE;
+            requirement.setFrontendWorkload(BigDecimal.ONE);
+        }
+        if (PersonnelNameUtils.parsePersonnelNames(effBeDev).isEmpty()) {
+            beWorkload = BigDecimal.ZERO;
+            requirement.setBackendWorkload(BigDecimal.ZERO);
+        } else if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) == 0) {
+            beWorkload = BigDecimal.ONE;
+            requirement.setBackendWorkload(BigDecimal.ONE);
+        }
         // 工时基准(默认1人天)
         BigDecimal workload = requirement.getWorkload() != null ? requirement.getWorkload()
                 : (exist != null ? exist.getWorkload() : null);
         // 总工时(仅显示口径): 各角色单人工时 × 该角色人数；人数由人员字段实时解析
         if (feWorkload != null || beWorkload != null) {
-            BigDecimal headcountTotal = headcountTotalWorkload(feWorkload, beWorkload,
-                    requirement.getFrontendDev() != null ? requirement.getFrontendDev()
-                            : (exist != null ? exist.getFrontendDev() : null),
-                    requirement.getBackendDev() != null ? requirement.getBackendDev()
-                            : (exist != null ? exist.getBackendDev() : null));
+            BigDecimal headcountTotal = headcountTotalWorkload(feWorkload, beWorkload, effFeDev, effBeDev);
             if (headcountTotal.compareTo(BigDecimal.ZERO) > 0) {
                 workload = headcountTotal;
             }
         }
-        if (workload == null || workload.compareTo(BigDecimal.ZERO) <= 0) {
+        // 两侧均无有效人员(工时为 0)时总工时为 0; 其余情况保持 1 人天兜底
+        boolean noDevAtAll = feWorkload != null && beWorkload != null
+                && feWorkload.compareTo(BigDecimal.ZERO) == 0 && beWorkload.compareTo(BigDecimal.ZERO) == 0;
+        if (noDevAtAll) {
+            workload = BigDecimal.ZERO;
+        } else if (workload == null || workload.compareTo(BigDecimal.ZERO) <= 0) {
             workload = BigDecimal.ONE;
         }
         workload = workload.setScale(1, RoundingMode.HALF_UP);

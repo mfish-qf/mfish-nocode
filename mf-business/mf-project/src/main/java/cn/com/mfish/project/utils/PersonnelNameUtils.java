@@ -14,7 +14,7 @@ import java.util.Set;
  * @version: V2.4.1
  */
 public class PersonnelNameUtils {
-    /** 待分配占位符 */
+    /** 历史遗留的待分配占位符(仅用于识别与清洗旧数据，新数据一律空串=待分配，不再落库该词) */
     public static final String UNASSIGNED = "待分配";
     /** 多人分隔符 */
     public static final String SEPARATOR = "、";
