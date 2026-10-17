@@ -966,6 +966,13 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 ? devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>())
                 : devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
                         .notIn(PmDevSchedule::getReqId, targetIds));
+        // 防御: 过滤孤儿明细行(需求已删除但明细残留, 如手工清库/历史级联遗漏),
+        // 否则脏占用会永久顶后这些人员的新排期
+        Set<String> validReqIds = list(new LambdaQueryWrapper<PmRequirement>().select(PmRequirement::getId))
+                .stream().map(PmRequirement::getId).collect(Collectors.toSet());
+        scheduleRows = scheduleRows.stream()
+                .filter(row -> validReqIds.contains(row.getReqId()))
+                .toList();
         Set<String> reqsWithSchedule = new HashSet<>();
         for (PmDevSchedule row : scheduleRows) {
             if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
