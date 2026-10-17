@@ -24,7 +24,7 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
     @Select("SELECT id, req_no, module, level1_feature, level2_feature, level3_feature, feature_description, "
             + "prd_section, review_date, review_result, review_notes, vendors, priority, requester, request_date, "
             + "high_fidelity_url, change_date, change_content, pre_meeting_questions, release_time, frontend_dev, "
-            + "backend_dev, qa_tester, remarks, owner, month, iteration_id, workload, dev_start_date, dev_end_date, "
+            + "backend_dev, qa_tester, remarks, owner, month, iteration_id, workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
             + "dev_progress, test_phase, test_node_id, test_node_name, test_node_date, status, doc_last_modified, "
             + "doc_author, del_flag, remark, "
             + "CASE WHEN prd_doc_content IS NOT NULL AND CHAR_LENGTH(prd_doc_content) > 0 THEN 1 ELSE 0 END AS has_prd_doc "

@@ -6,10 +6,12 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.project.dto.ScheduleConfigDTO;
+import cn.com.mfish.project.entity.PmDevSchedule;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmIterationTestNode;
 import cn.com.mfish.project.entity.PmRequirement;
 import cn.com.mfish.project.entity.PmRequirementHistory;
+import cn.com.mfish.project.mapper.PmDevScheduleMapper;
 import cn.com.mfish.project.mapper.PmIterationMapper;
 import cn.com.mfish.project.mapper.PmIterationTestNodeMapper;
 import cn.com.mfish.project.mapper.PmRequirementHistoryMapper;
@@ -35,13 +37,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @description: 核心需求
@@ -65,6 +70,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     private PmRequirementHistoryMapper historyMapper;
     @Resource
     private PmScheduleConfigService scheduleConfigService;
+    @Resource
+    private PmDevScheduleMapper devScheduleMapper;
 
     @Override
     public Result<PageResult<PmRequirement>> queryPageList(ReqPmRequirement reqPmRequirement, Integer pageNum, Integer pageSize) {
@@ -214,6 +221,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         // 人员、工时与日历排期纠偏
         sanitizeRequirement(requirement, null);
         if (save(requirement)) {
+            // 生成排期明细(需求×人员×岗位)
+            persistScheduleRowsForReq(requirement);
             recordHistory(requirement, "INSERT", null, null, null, null, null, "创建需求 #" + requirement.getReqNo());
             return Result.ok(requirement, "需求 #" + requirement.getReqNo() + " 创建成功!");
         }
@@ -255,6 +264,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         if (success) {
             recordHistory(requirement, "UPDATE", null, null, null, exist.getStatus(), newStatus, "更新需求 #" + exist.getReqNo());
+            // 工时/人员/开始日变化后重建排期明细(钉住行保持不动)
+            rebuildScheduleForReq(requirement.getId());
             PmRequirement updated = getById(requirement.getId());
             return Result.ok(updated, "需求 #" + exist.getReqNo() + " 更新成功，日历排期已同步至 " + formatDate(updated.getDevEndDate()));
         }
@@ -269,6 +280,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             throw new MyRuntimeException("错误:需求不存在!");
         }
         if (removeById(id)) {
+            deleteScheduleRows(List.of(id));
             recordHistory(exist, "DELETE", null, null, null, exist.getStatus(), null, "删除需求 #" + exist.getReqNo());
             return Result.ok(true, "需求 #" + exist.getReqNo() + " 删除成功!");
         }
@@ -282,6 +294,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
         }
         if (removeByIds(ids)) {
+            deleteScheduleRows(ids);
             List<PmRequirement> removed = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
             for (PmRequirement req : removed) {
                 recordHistory(req, "DELETE", null, null, null, req.getStatus(), null, "批量删除需求 #" + req.getReqNo());
@@ -427,6 +440,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                     iteration == null ? "" : iteration.getId(),
                     "需求 #" + req.getReqNo() + " 划拨至版本【" + (iteration == null ? "未分配" : iteration.getCode()) + "】");
         }
+        // 版本归属变化: 同步排期明细上的 iteration_id(钉住行保持不动)
+        for (PmRequirement req : targets) {
+            rebuildScheduleForReq(req.getId());
+        }
         return Result.ok(targets.size(), "已成功将 " + targets.size() + " 项需求批量划分至版本【"
                 + (iteration == null ? "未分配" : iteration.getCode()) + "】!");
     }
@@ -491,6 +508,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             recordHistory(req, "BATCH", personnelType, currentPersonnel(req, personnelType), formatted,
                     currentPersonnel(req, personnelType), formatted,
                     "需求 #" + req.getReqNo() + " 批量指派人员【" + formatted + "】");
+        }
+        // 前后端人员变动: 重建受影响需求的排期明细(钉住行保持不动)
+        if ("frontendDev".equals(personnelType) || "backendDev".equals(personnelType)) {
+            for (PmRequirement req : targets) {
+                rebuildScheduleForReq(req.getId());
+            }
         }
         return Result.ok(targets.size(), "成功批量更新 " + targets.size() + " 项需求的人员分配!");
     }
@@ -594,6 +617,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         update.setUpdateBy(safeGetCurrentUser());
         update.setUpdateTime(new Date());
         updateById(update);
+        // 人员变动: 重建排期明细(钉住行保持不动)
+        rebuildScheduleForReq(req.getId());
         // 记录审计日志
         recordHistory(req, "REASSIGN",
                 StringUtils.isEmpty(reqReassign.getRole()) ? targetRole : reqReassign.getRole(),
@@ -626,7 +651,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         BigDecimal newTotal = reqWorkload.getWorkload();
 
         if (frontend || backend) {
-            // 按当前人员的岗位(前端/后端)写入对应工时段
+            // 按当前人员的岗位(前端/后端)写入对应工时段; 另一侧严格保持原值不臆造
+            // (历史数据无拆分时另一侧为NULL, 用差额推断会把它错误物化成0, 如总工时2.0调前端2.0→后端被清0)
             BigDecimal normalized = normalizeWorkload(newTotal);
             if (normalized == null) {
                 normalized = BigDecimal.ONE;
@@ -635,16 +661,6 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 newFe = normalized;
             } else {
                 newBe = normalized;
-            }
-            // 历史数据仅有总工时(无拆分)时，将差额保留给另一侧，保证总工时连续不丢失
-            if (curFe == null && curBe == null && curTotal.compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal remain = curTotal.subtract(normalized);
-                BigDecimal remainScaled = remain.compareTo(BigDecimal.ZERO) > 0 ? remain.setScale(1, RoundingMode.HALF_UP) : BigDecimal.ZERO;
-                if (frontend) {
-                    newBe = remainScaled;
-                } else {
-                    newFe = remainScaled;
-                }
             }
         } else {
             if (reqWorkload.getFrontendWorkload() != null) {
@@ -655,10 +671,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             }
         }
 
-        // 总工时: 存在任一拆分值时取两者之和；否则沿用传入的总工时
+        // 总工时: 存在任一拆分值时按人数加权(各角色工时×人数, 仅显示口径)；否则沿用传入的总工时
         if (newFe != null || newBe != null) {
-            BigDecimal sum = (newFe == null ? BigDecimal.ZERO : newFe).add(newBe == null ? BigDecimal.ZERO : newBe);
-            newTotal = sum.compareTo(new BigDecimal("0.1")) < 0 ? new BigDecimal("0.1") : sum.setScale(1, RoundingMode.HALF_UP);
+            newTotal = headcountTotalWorkload(newFe, newBe, req.getFrontendDev(), req.getBackendDev());
+            if (newTotal.compareTo(new BigDecimal("0.1")) < 0) {
+                newTotal = new BigDecimal("0.1");
+            }
         } else {
             newTotal = normalizeWorkload(newTotal);
             if (newTotal == null) {
@@ -667,7 +685,13 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
 
         LocalDate startDate = req.getDevStartDate() == null ? ScheduleDateUtils.DEFAULT_START_DATE : toLocalDate(req.getDevStartDate());
-        LocalDate newEndDate = ScheduleDateUtils.calculateDevEndDate(startDate, newTotal, currentConfig());
+        // 排期时长: 前后端并行推进，取两岗位单人工时的较大者(与人数/总工时无关)
+        BigDecimal feDur = positiveWorkload(newFe);
+        BigDecimal beDur = positiveWorkload(newBe);
+        BigDecimal scheduleWorkload = (feDur != null || beDur != null)
+                ? (feDur == null ? BigDecimal.ZERO : feDur).max(beDur == null ? BigDecimal.ZERO : beDur)
+                : newTotal;
+        LocalDate newEndDate = ScheduleDateUtils.calculateDevEndDate(startDate, scheduleWorkload, currentConfig());
         PmRequirement update = new PmRequirement();
         update.setId(req.getId());
         update.setWorkload(newTotal);
@@ -678,6 +702,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         update.setUpdateBy(safeGetCurrentUser());
         update.setUpdateTime(new Date());
         updateById(update);
+        // 工时/开始日变化: 重建排期明细(钉住行保持不动)
+        rebuildScheduleForReq(req.getId());
         String scopeText = frontend ? "前端" : (backend ? "后端" : "");
         recordHistory(req, "WORKLOAD", null, null, null,
                 req.getWorkload() == null ? null : req.getWorkload().toPlainString(), newTotal.toPlainString(),
@@ -704,6 +730,26 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return null;
         }
         return workload;
+    }
+
+    /**
+     * 人员字段中的实际参与人数(剔除 待分配/不涉及 等占位名)；无有效人员时按 1 人计
+     */
+    private int personnelCount(String personnelField) {
+        List<String> names = PersonnelNameUtils.parsePersonnelNames(personnelField);
+        return names.isEmpty() ? 1 : names.size();
+    }
+
+    /**
+     * 总工时(仅显示口径) = 前端单人工时 × 前端人数 + 后端单人工时 × 后端人数。
+     * 多人并行承接同一岗位时不延长工期，总工时只用于展示，不参与排期运算。
+     */
+    private BigDecimal headcountTotalWorkload(BigDecimal feWorkload, BigDecimal beWorkload, String feDev, String beDev) {
+        BigDecimal fe = feWorkload == null ? BigDecimal.ZERO : feWorkload.max(BigDecimal.ZERO);
+        BigDecimal be = beWorkload == null ? BigDecimal.ZERO : beWorkload.max(BigDecimal.ZERO);
+        return fe.multiply(BigDecimal.valueOf(personnelCount(feDev)))
+                .add(be.multiply(BigDecimal.valueOf(personnelCount(beDev))))
+                .setScale(1, RoundingMode.HALF_UP);
     }
 
     @Override
@@ -747,6 +793,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                             + "】由【" + cleanFrom + "】调配给【" + cleanTo + "】");
             affected++;
         }
+        // 人员变动: 重建受影响需求的排期明细(钉住行保持不动)
+        for (BalancingPlanItem item : plan) {
+            rebuildScheduleForReq(item.getReqId());
+        }
         return Result.ok(affected, "⚡ 智能负载均衡调配方案已成功执行，已自动调配 " + affected + " 项需求!");
     }
 
@@ -775,10 +825,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         LocalDate defaultStart = ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
         // 人员占用日历(逐日装箱, 跨版本全局共享): key = personName -> 该人员已被占用的有效工作日集合
         Map<String, Set<LocalDate>> personBusyDates = new HashMap<>();
-        // 预填历史排期占用: 将本次重排范围之外、已有排期的需求占用登记进全局日历
-        // 语义: 若某开发人员在前序版本的任务排到了当前版本开始日之后，涉及他的新任务
-        //       将从其最早空闲日起排(而非与既有任务重叠)；无前置占用的人员仍从版本首日起排
+        // 预填历史排期占用(优先读排期明细表 pm_dev_schedule 的按人占用, 无明细的历史需求按需求级区间兜底)
         prefillPersonBusyDates(targets, config, personBusyDates);
+        // 目标任务已有排期明细中的钉住行: 重算时日期保持不动, 仅登记占用
+        Map<String, Map<String, PmDevSchedule>> pinnedByReq = loadPinnedRowsByReq(targets);
         List<PmRequirement> updatedList = new ArrayList<>();
         for (PmRequirement req : targets) {
             PmIteration iteration = StringUtils.isEmpty(req.getIterationId()) ? null : iterationMap.get(req.getIterationId());
@@ -788,51 +838,47 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             LocalDate versionStartDate = ScheduleDateUtils.getWorkdayStartDate(
                     iteration != null && iteration.getStartDate() != null
                             ? toLocalDate(iteration.getStartDate()) : defaultStart, config);
-            // 前后端人员合并(去重, 已自动剔除"待分配/不涉及"等占位标识)
+            // 前后端人员(已自动剔除"待分配/不涉及"等占位标识)
             List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
             List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
-            Set<String> allDevs = new java.util.LinkedHashSet<>(feDevs);
-            allDevs.addAll(beDevs);
-            // 工时(决定占用工作日的数量)
-            BigDecimal workload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+            // 工时: 无拆分时用总工时；有拆分时各岗位按各自单人工时并行占用
+            BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
                     ? req.getWorkload() : BigDecimal.ONE;
-            // 工时拆分: 有前后端拆分时，各岗位人员按各自工时占用工作日(同日起并行启动)
             BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
             BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
             boolean hasSplit = feWorkload != null || beWorkload != null;
+            Map<String, PmDevSchedule> pinned = pinnedByReq.getOrDefault(req.getId(), new HashMap<>());
+            // 按人逐个装箱: 每个人员从自己最早空闲日起, 按各自工时连续占用工作日(前后端/多人互不等待)
+            List<PmDevSchedule> rows = new ArrayList<>();
             if (hasSplit) {
-                workload = (feWorkload == null ? BigDecimal.ZERO : feWorkload)
-                        .add(beWorkload == null ? BigDecimal.ZERO : beWorkload);
-                if (workload.compareTo(BigDecimal.ZERO) <= 0) {
-                    workload = BigDecimal.ONE;
-                }
-            }
-            LocalDate taskStartDate;
-            LocalDate taskEndDate;
-            if (hasSplit) {
-                // 前后端分别装箱: 同一开工日并行启动，各自岗位人员按各自工时占用工作日
-                taskStartDate = findEarliestFeasibleStartSplit(versionStartDate, feDevs, beDevs,
-                        feWorkload, beWorkload, config, personBusyDates);
-                LocalDate feEnd = ScheduleDateUtils.calculateDevEndDate(taskStartDate,
-                        feWorkload == null ? BigDecimal.ZERO : feWorkload, config);
-                LocalDate beEnd = ScheduleDateUtils.calculateDevEndDate(taskStartDate,
-                        beWorkload == null ? BigDecimal.ZERO : beWorkload, config);
-                taskEndDate = feEnd.isAfter(beEnd) ? feEnd : beEnd;
                 if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
-                    occupyDevDates(taskStartDate, feEnd, new java.util.LinkedHashSet<>(feDevs), config, personBusyDates);
+                    for (String person : feDevs) {
+                        packScheduleRow(req, person, "frontend", feWorkload, versionStartDate, config, personBusyDates, pinned, rows);
+                    }
                 }
                 if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
-                    occupyDevDates(taskStartDate, beEnd, new java.util.LinkedHashSet<>(beDevs), config, personBusyDates);
+                    for (String person : beDevs) {
+                        packScheduleRow(req, person, "backend", beWorkload, versionStartDate, config, personBusyDates, pinned, rows);
+                    }
                 }
             } else {
-                // 逐日装箱: 从版本首日起向后逐日扫描，排在所有参与人均空闲的最早可开工日
-                // 未分配人员的需求无任何人力约束，一律从版本首日起排(不再被串成一天一个)
-                taskStartDate = findEarliestFeasibleStart(versionStartDate, allDevs, workload, config, personBusyDates);
-                taskEndDate = ScheduleDateUtils.calculateDevEndDate(taskStartDate, workload, config);
-                // 占用该区间内的所有有效工作日(同一人员不会被重复占用，杜绝自身任务重叠)
-                occupyDevDates(taskStartDate, taskEndDate, allDevs, config, personBusyDates);
+                for (String person : mergeDevs(feDevs, beDevs)) {
+                    String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
+                            : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
+                    packScheduleRow(req, person, role, totalWorkload, versionStartDate, config, personBusyDates, pinned, rows);
+                }
             }
-            // 持久化新排期
+            // 需求整体区间: 两岗位均无有效人员/工时时段落版本首日(1人天占位), 否则取所有任务行 min/max
+            LocalDate taskStartDate;
+            LocalDate taskEndDate;
+            if (rows.isEmpty()) {
+                taskStartDate = versionStartDate;
+                taskEndDate = ScheduleDateUtils.calculateDevEndDate(taskStartDate, BigDecimal.ONE, config);
+            } else {
+                taskStartDate = rows.stream().map(r -> toLocalDate(r.getDevStartDate())).min(LocalDate::compareTo).orElse(versionStartDate);
+                taskEndDate = rows.stream().map(r -> toLocalDate(r.getDevEndDate())).max(LocalDate::compareTo).orElse(taskStartDate);
+            }
+            // 持久化新排期: 需求整体区间 + 排期明细(钉住行原样保留, 其余删除后按人重建)
             PmRequirement update = new PmRequirement();
             update.setId(req.getId());
             update.setDevStartDate(toDate(taskStartDate));
@@ -840,6 +886,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             update.setUpdateBy(safeGetCurrentUser());
             update.setUpdateTime(new Date());
             updateById(update);
+            replaceScheduleRows(req.getId(), rows);
             PmRequirement updated = getById(req.getId());
             updatedList.add(updated);
             recordHistory(req, "SCHEDULE", null, null, null,
@@ -848,11 +895,17 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                     "自动排期: 需求 #" + req.getReqNo() + " 排期至 "
                             + ScheduleDateUtils.FORMATTER.format(taskStartDate) + " ~ " + ScheduleDateUtils.FORMATTER.format(taskEndDate));
         }
+        // 同一人员任务顺序seq: 跨需求按开始日全局重排(升序即执行顺序)
+        Set<String> scheduledPersons = new HashSet<>();
+        for (PmRequirement req : targets) {
+            scheduledPersons.addAll(personsOf(req));
+        }
+        reassignSeq(scheduledPersons);
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("scheduledCount", targets.size());
         result.put("updatedList", updatedList);
-        return Result.ok(result, "⚡ 已按人员占用逐日装箱，从各版本开发周期首日起并行排期 " + targets.size()
-                + " 项任务(前序版本占用已参与校验，超占用人员自动顺延至最早空闲日)!");
+        return Result.ok(result, "⚡ 已按人员工作量逐日装箱并生成排期明细 " + targets.size()
+                + " 项需求(前后端各自独立起算, 钉住任务保持不动, 可一键重算)!");
     }
 
     // ==================== 私有辅助方法 ====================
@@ -870,11 +923,30 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                                         Map<String, Set<LocalDate>> personBusyDates) {
         Set<String> targetIds = new HashSet<>();
         targets.forEach(t -> targetIds.add(t.getId()));
+        // 1. 排期明细(按人精确占用): 本次重排范围之外的全部明细行, 逐人逐日登记
+        List<PmDevSchedule> scheduleRows = targetIds.isEmpty()
+                ? devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>())
+                : devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                        .notIn(PmDevSchedule::getReqId, targetIds));
+        Set<String> reqsWithSchedule = new HashSet<>();
+        for (PmDevSchedule row : scheduleRows) {
+            if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
+                continue;
+            }
+            reqsWithSchedule.add(row.getReqId());
+            LocalDate start = toLocalDate(row.getDevStartDate());
+            LocalDate end = toLocalDate(row.getDevEndDate());
+            if (end.isBefore(start)) {
+                continue;
+            }
+            occupyDevDates(start, end, Set.of(row.getPersonName()), config, personBusyDates);
+        }
+        // 2. 兜底(迁移兼容): 尚无排期明细的历史需求, 按需求级区间占用(粗粒度, 首跑后排期明细即接管)
         List<PmRequirement> history = list(new LambdaQueryWrapper<PmRequirement>()
                 .isNotNull(PmRequirement::getDevStartDate)
                 .isNotNull(PmRequirement::getDevEndDate));
         for (PmRequirement req : history) {
-            if (targetIds.contains(req.getId())) {
+            if (targetIds.contains(req.getId()) || reqsWithSchedule.contains(req.getId())) {
                 continue;
             }
             Set<String> devs = new java.util.LinkedHashSet<>();
@@ -898,6 +970,282 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 cursor = cursor.plusDays(1);
             }
         }
+    }
+
+    /**
+     * 单个人员任务装箱: 钉住行日期保持不动(仅登记占用), 其余从该人员最早空闲日起按工时连续占用
+     */
+    private void packScheduleRow(PmRequirement req, String person, String role, BigDecimal workload,
+                                 LocalDate versionStartDate, ScheduleConfigDTO config,
+                                 Map<String, Set<LocalDate>> personBusyDates,
+                                 Map<String, PmDevSchedule> pinned, List<PmDevSchedule> rows) {
+        PmDevSchedule pin = pinned.get(person + "|" + role);
+        if (pin != null) {
+            LocalDate pinStart = toLocalDate(pin.getDevStartDate());
+            LocalDate pinEnd = toLocalDate(pin.getDevEndDate());
+            if (pinEnd != null && !pinEnd.isBefore(pinStart)) {
+                occupyDevDates(pinStart, pinEnd, Set.of(person), config, personBusyDates);
+            }
+            pin.setReqNo(req.getReqNo());
+            pin.setIterationId(req.getIterationId());
+            rows.add(pin);
+            return;
+        }
+        LocalDate start = findEarliestFeasibleStart(versionStartDate, Set.of(person), workload, config, personBusyDates);
+        LocalDate end = ScheduleDateUtils.calculateDevEndDate(start, workload, config);
+        occupyDevDates(start, end, Set.of(person), config, personBusyDates);
+        PmDevSchedule row = new PmDevSchedule();
+        row.setReqId(req.getId());
+        row.setReqNo(req.getReqNo());
+        row.setIterationId(req.getIterationId());
+        row.setPersonName(person);
+        row.setDevRole(role);
+        row.setWorkload(workload);
+        row.setDevStartDate(toDate(start));
+        row.setDevEndDate(toDate(end));
+        row.setIsPinned(false);
+        rows.add(row);
+    }
+
+    /**
+     * 查询指定需求的钉住排期行: key = personName|devRole
+     */
+    private Map<String, PmDevSchedule> loadPinnedRows(String reqId) {
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .eq(PmDevSchedule::getReqId, reqId)
+                .eq(PmDevSchedule::getIsPinned, true));
+        Map<String, PmDevSchedule> map = new HashMap<>();
+        rows.forEach(r -> map.put(r.getPersonName() + "|" + r.getDevRole(), r));
+        return map;
+    }
+
+    /**
+     * 批量查询目标需求的钉住排期行: reqId -> (personName|devRole -> row)
+     */
+    private Map<String, Map<String, PmDevSchedule>> loadPinnedRowsByReq(List<PmRequirement> targets) {
+        Map<String, Map<String, PmDevSchedule>> result = new HashMap<>();
+        if (targets.isEmpty()) {
+            return result;
+        }
+        List<String> ids = targets.stream().map(PmRequirement::getId).toList();
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getReqId, ids)
+                .eq(PmDevSchedule::getIsPinned, true));
+        for (PmDevSchedule row : rows) {
+            result.computeIfAbsent(row.getReqId(), k -> new HashMap<>())
+                    .put(row.getPersonName() + "|" + row.getDevRole(), row);
+        }
+        return result;
+    }
+
+    /**
+     * 替换某需求的排期明细: 带 ID 的行为钉住保留行(更新), 其余旧行物理删除, 新行插入
+     */
+    private void replaceScheduleRows(String reqId, List<PmDevSchedule> rows) {
+        List<PmDevSchedule> existing = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .eq(PmDevSchedule::getReqId, reqId));
+        Set<String> keepIds = rows.stream()
+                .map(PmDevSchedule::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        List<String> removeIds = existing.stream()
+                .map(PmDevSchedule::getId)
+                .filter(id -> !keepIds.contains(id))
+                .toList();
+        if (!removeIds.isEmpty()) {
+            // 物理删除: 本表重算即全量替换, 不走逻辑删除(无@TableLogic拦截)
+            devScheduleMapper.delete(new LambdaQueryWrapper<PmDevSchedule>()
+                    .in(PmDevSchedule::getId, removeIds));
+        }
+        Date now = new Date();
+        String currentUser = safeGetCurrentUser();
+        for (PmDevSchedule row : rows) {
+            if (row.getId() != null) {
+                row.setUpdateBy(currentUser);
+                row.setUpdateTime(now);
+                devScheduleMapper.updateById(row);
+            } else {
+                row.setCreateBy(currentUser);
+                row.setCreateTime(now);
+                devScheduleMapper.insert(row);
+            }
+        }
+    }
+
+    /**
+     * 同一人员任务顺序seq: 跨需求按开始日全局重排(升序即执行顺序)
+     */
+    private void reassignSeq(Set<String> persons) {
+        if (persons == null || persons.isEmpty()) {
+            return;
+        }
+        List<PmDevSchedule> all = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getPersonName, persons));
+        Map<String, List<PmDevSchedule>> byPerson = new HashMap<>();
+        all.forEach(r -> byPerson.computeIfAbsent(r.getPersonName(), k -> new ArrayList<>()).add(r));
+        for (List<PmDevSchedule> personRows : byPerson.values()) {
+            personRows.sort(Comparator
+                    .comparing((PmDevSchedule r) -> toLocalDate(r.getDevStartDate()))
+                    .thenComparing(r -> r.getReqNo() == null ? 0 : r.getReqNo()));
+            int seq = 1;
+            for (PmDevSchedule row : personRows) {
+                if (row.getSeq() == null || !row.getSeq().equals(seq)) {
+                    row.setSeq(seq);
+                    devScheduleMapper.updateById(row);
+                }
+                seq++;
+            }
+        }
+    }
+
+    /**
+     * 需求全部开发人员(前后端合并去重)
+     */
+    private Set<String> personsOf(PmRequirement req) {
+        Set<String> persons = new HashSet<>();
+        persons.addAll(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
+        persons.addAll(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
+        return persons;
+    }
+
+    /**
+     * 前后端人员合并去重(保持前端优先顺序)
+     */
+    private List<String> mergeDevs(List<String> feDevs, List<String> beDevs) {
+        Set<String> merged = new java.util.LinkedHashSet<>(feDevs);
+        merged.addAll(beDevs);
+        return new ArrayList<>(merged);
+    }
+
+    /**
+     * 按需求当前状态重建排期明细(单条编辑/人员调配/工时调整后调用):
+     * 已有排期的需求才重建(无排期的不凭空生成), 钉住行保持不动
+     */
+    private void rebuildScheduleForReq(String reqId) {
+        PmRequirement req = getById(reqId);
+        if (req == null || req.getDevStartDate() == null) {
+            return;
+        }
+        ScheduleConfigDTO config = currentConfig();
+        Map<String, PmDevSchedule> pinned = loadPinnedRows(reqId);
+        List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
+        List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
+        BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
+        BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
+        BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+                ? req.getWorkload() : BigDecimal.ONE;
+        boolean hasSplit = feWorkload != null || beWorkload != null;
+        LocalDate baseStart = toLocalDate(req.getDevStartDate());
+        List<PmDevSchedule> rows = new ArrayList<>();
+        if (hasSplit) {
+            if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : feDevs) {
+                    rows.add(buildScheduleRow(req, person, "frontend", feWorkload, baseStart, config, pinned));
+                }
+            }
+            if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : beDevs) {
+                    rows.add(buildScheduleRow(req, person, "backend", beWorkload, baseStart, config, pinned));
+                }
+            }
+        } else {
+            for (String person : mergeDevs(feDevs, beDevs)) {
+                String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
+                        : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
+                rows.add(buildScheduleRow(req, person, role, totalWorkload, baseStart, config, pinned));
+            }
+        }
+        replaceScheduleRows(reqId, rows);
+        reassignSeq(personsOf(req));
+        // 钉住行可能超出原需求区间: 用全部明细行回刷需求整体起止日
+        if (!rows.isEmpty()) {
+            LocalDate min = rows.stream().map(r -> toLocalDate(r.getDevStartDate())).min(LocalDate::compareTo).orElse(null);
+            LocalDate max = rows.stream().map(r -> toLocalDate(r.getDevEndDate())).max(LocalDate::compareTo).orElse(null);
+            if (min != null && max != null) {
+                PmRequirement rangeUpdate = new PmRequirement();
+                rangeUpdate.setId(reqId);
+                rangeUpdate.setDevStartDate(toDate(min));
+                rangeUpdate.setDevEndDate(toDate(max));
+                rangeUpdate.setUpdateTime(new Date());
+                updateById(rangeUpdate);
+            }
+        }
+    }
+
+    /**
+     * 新建需求落库后生成排期明细(无竞争, 各人员从需求开始日起算)
+     */
+    private void persistScheduleRowsForReq(PmRequirement req) {
+        ScheduleConfigDTO config = currentConfig();
+        LocalDate baseStart = req.getDevStartDate() != null
+                ? toLocalDate(req.getDevStartDate())
+                : ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
+        List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
+        List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
+        BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
+        BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
+        BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+                ? req.getWorkload() : BigDecimal.ONE;
+        boolean hasSplit = feWorkload != null || beWorkload != null;
+        List<PmDevSchedule> rows = new ArrayList<>();
+        if (hasSplit) {
+            if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : feDevs) {
+                    rows.add(buildScheduleRow(req, person, "frontend", feWorkload, baseStart, config, new HashMap<>()));
+                }
+            }
+            if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : beDevs) {
+                    rows.add(buildScheduleRow(req, person, "backend", beWorkload, baseStart, config, new HashMap<>()));
+                }
+            }
+        } else {
+            for (String person : mergeDevs(feDevs, beDevs)) {
+                String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
+                        : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
+                rows.add(buildScheduleRow(req, person, role, totalWorkload, baseStart, config, new HashMap<>()));
+            }
+        }
+        replaceScheduleRows(req.getId(), rows);
+        reassignSeq(personsOf(req));
+    }
+
+    /**
+     * 构建单条排期明细(无装箱竞争场景: 从基准日开始日顺延到有效工作日, 按工时推导完成日)
+     */
+    private PmDevSchedule buildScheduleRow(PmRequirement req, String person, String role, BigDecimal workload,
+                                           LocalDate baseStart, ScheduleConfigDTO config,
+                                           Map<String, PmDevSchedule> pinned) {
+        PmDevSchedule pin = pinned.get(person + "|" + role);
+        if (pin != null) {
+            pin.setReqNo(req.getReqNo());
+            pin.setIterationId(req.getIterationId());
+            return pin;
+        }
+        LocalDate start = ScheduleDateUtils.getWorkdayStartDate(baseStart, config);
+        LocalDate end = ScheduleDateUtils.calculateDevEndDate(start, workload, config);
+        PmDevSchedule row = new PmDevSchedule();
+        row.setReqId(req.getId());
+        row.setReqNo(req.getReqNo());
+        row.setIterationId(req.getIterationId());
+        row.setPersonName(person);
+        row.setDevRole(role);
+        row.setWorkload(workload);
+        row.setDevStartDate(toDate(start));
+        row.setDevEndDate(toDate(end));
+        row.setIsPinned(false);
+        return row;
+    }
+
+    /**
+     * 级联清理需求的排期明细(需求删除时调用)
+     */
+    private void deleteScheduleRows(List<String> reqIds) {
+        if (reqIds == null || reqIds.isEmpty()) {
+            return;
+        }
+        devScheduleMapper.delete(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getReqId, reqIds));
     }
 
     /**
@@ -929,50 +1277,6 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         while (!candidate.isAfter(limit)) {
             LocalDate end = ScheduleDateUtils.calculateDevEndDate(candidate, workload, config);
             if (isRangeFree(candidate, end, allDevs, config, personBusyDates)) {
-                return candidate;
-            }
-            candidate = ScheduleDateUtils.getNextWorkday(candidate, config);
-        }
-        return versionStartDate;
-    }
-
-    /**
-     * 前后端分工时装箱: 从版本首日起向后逐日扫描，返回同一开工日——
-     * 前端人员可按前端工时、后端人员可按后端工时分别连续占用工作日的最早可开工日
-     */
-    private LocalDate findEarliestFeasibleStartSplit(LocalDate versionStartDate, List<String> feDevs, List<String> beDevs,
-                                                     BigDecimal feWorkload, BigDecimal beWorkload,
-                                                     ScheduleConfigDTO config,
-                                                     Map<String, Set<LocalDate>> personBusyDates) {
-        if (versionStartDate == null) {
-            versionStartDate = ScheduleDateUtils.DEFAULT_START_DATE;
-        }
-        Set<String> allDevs = new java.util.LinkedHashSet<>(feDevs);
-        allDevs.addAll(beDevs);
-        if (allDevs.isEmpty()) {
-            // 未分配人员的需求无任何人力约束，一律从版本首日起排
-            return versionStartDate;
-        }
-        Set<String> feSet = new java.util.LinkedHashSet<>(feDevs);
-        Set<String> beSet = new java.util.LinkedHashSet<>(beDevs);
-        LocalDate candidate = versionStartDate;
-        // 安全上限: 最多向后探测 3 年，杜绝异常配置下的死循环
-        LocalDate limit = versionStartDate.plusYears(3);
-        while (!candidate.isAfter(limit)) {
-            boolean feasible = true;
-            if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0 && !feSet.isEmpty()) {
-                LocalDate feEnd = ScheduleDateUtils.calculateDevEndDate(candidate, feWorkload, config);
-                if (!isRangeFree(candidate, feEnd, feSet, config, personBusyDates)) {
-                    feasible = false;
-                }
-            }
-            if (feasible && beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0 && !beSet.isEmpty()) {
-                LocalDate beEnd = ScheduleDateUtils.calculateDevEndDate(candidate, beWorkload, config);
-                if (!isRangeFree(candidate, beEnd, beSet, config, personBusyDates)) {
-                    feasible = false;
-                }
-            }
-            if (feasible) {
                 return candidate;
             }
             candidate = ScheduleDateUtils.getNextWorkday(candidate, config);
@@ -1024,7 +1328,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      * 严防1人天任务在甘特图上跨度达十几天、以及后续任务挤压等非理性排期
      */
     private void sanitizeRequirement(PmRequirement requirement, PmRequirement exist) {
-        // 工时拆分: 前端/后端研发工时段(任一缺失时沿用旧值)，总工时为两者之和
+        // 工时拆分: 前端/后端研发工时段(任一缺失时沿用旧值)，值为"单人"工时
         BigDecimal feWorkload = requirement.getFrontendWorkload() != null ? requirement.getFrontendWorkload()
                 : (exist != null ? exist.getFrontendWorkload() : null);
         BigDecimal beWorkload = requirement.getBackendWorkload() != null ? requirement.getBackendWorkload()
@@ -1032,11 +1336,15 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         // 工时基准(默认1人天)
         BigDecimal workload = requirement.getWorkload() != null ? requirement.getWorkload()
                 : (exist != null ? exist.getWorkload() : null);
+        // 总工时(仅显示口径): 各角色单人工时 × 该角色人数；人数由人员字段实时解析
         if (feWorkload != null || beWorkload != null) {
-            BigDecimal splitSum = (feWorkload == null ? BigDecimal.ZERO : feWorkload)
-                    .add(beWorkload == null ? BigDecimal.ZERO : beWorkload);
-            if (splitSum.compareTo(BigDecimal.ZERO) > 0) {
-                workload = splitSum;
+            BigDecimal headcountTotal = headcountTotalWorkload(feWorkload, beWorkload,
+                    requirement.getFrontendDev() != null ? requirement.getFrontendDev()
+                            : (exist != null ? exist.getFrontendDev() : null),
+                    requirement.getBackendDev() != null ? requirement.getBackendDev()
+                            : (exist != null ? exist.getBackendDev() : null));
+            if (headcountTotal.compareTo(BigDecimal.ZERO) > 0) {
+                workload = headcountTotal;
             }
         }
         if (workload == null || workload.compareTo(BigDecimal.ZERO) <= 0) {
@@ -1054,16 +1362,22 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         LocalDate startDate = requirement.getDevStartDate() != null ? toLocalDate(requirement.getDevStartDate())
                 : (exist != null && exist.getDevStartDate() != null ? toLocalDate(exist.getDevStartDate())
                 : ScheduleDateUtils.DEFAULT_START_DATE);
+        // 排期时长口径: 前后端并行推进，取两岗位单人工时的较大者(与人数/总工时无关)
+        BigDecimal feDur = positiveWorkload(feWorkload);
+        BigDecimal beDur = positiveWorkload(beWorkload);
+        BigDecimal scheduleWorkload = (feDur != null || beDur != null)
+                ? (feDur == null ? BigDecimal.ZERO : feDur).max(beDur == null ? BigDecimal.ZERO : beDur)
+                : workload;
         // 截止日期推导：未指定、或实际跨度异常远大于合理工时时必须校正
         LocalDate endDate = requirement.getDevEndDate() != null ? toLocalDate(requirement.getDevEndDate())
                 : (exist != null && exist.getDevEndDate() != null ? toLocalDate(exist.getDevEndDate()) : null);
         if (endDate == null) {
-            endDate = ScheduleDateUtils.calculateDevEndDate(startDate, workload, currentConfig());
+            endDate = ScheduleDateUtils.calculateDevEndDate(startDate, scheduleWorkload, currentConfig());
         } else {
             long rawSpanDays = ScheduleDateUtils.calculateDays(startDate, endDate);
-            long reasonableSpan = Math.max(4, Math.round(workload.doubleValue() * 2.5 + 2));
+            long reasonableSpan = Math.max(4, Math.round(scheduleWorkload.doubleValue() * 2.5 + 2));
             if (rawSpanDays > reasonableSpan) {
-                endDate = ScheduleDateUtils.calculateDevEndDate(startDate, workload, currentConfig());
+                endDate = ScheduleDateUtils.calculateDevEndDate(startDate, scheduleWorkload, currentConfig());
             }
         }
         requirement.setDevStartDate(toDate(startDate));

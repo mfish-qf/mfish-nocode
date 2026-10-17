@@ -68,6 +68,35 @@ CREATE TABLE `pm_requirement`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '核心需求表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for pm_dev_schedule 研发排期明细表(需求×人员×岗位)
+-- 由自动排期引擎生成, 支持一键重算; 单行可钉住(is_pinned), 重算时保持不动
+-- ----------------------------
+DROP TABLE IF EXISTS `pm_dev_schedule`;
+CREATE TABLE `pm_dev_schedule`  (
+  `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+  `req_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '需求ID',
+  `req_no` int NULL DEFAULT NULL COMMENT '需求序号(冗余, 便于排序展示)',
+  `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID',
+  `person_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开发人员姓名',
+  `dev_role` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '岗位: frontend前端/backend后端/fullstack全栈(未拆分工时)',
+  `workload` decimal(5, 1) NOT NULL DEFAULT 1.0 COMMENT '该人员在本需求上的工时(人/天)',
+  `seq` int NOT NULL DEFAULT 0 COMMENT '同一人员任务顺序(升序即执行顺序, 重算后按开始日重排)',
+  `dev_start_date` date NOT NULL COMMENT '任务开始日(有效工作日)',
+  `dev_end_date` date NOT NULL COMMENT '任务完成日(按工时与日历跳过规则推导)',
+  `is_pinned` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否钉住: 1=一键重算时保持不动',
+  `pin_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '钉住原因/备注(拖拽调期时自动记录)',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_dev_schedule_req`(`req_id`) USING BTREE,
+  INDEX `idx_dev_schedule_person`(`person_name`, `dev_role`) USING BTREE,
+  INDEX `idx_dev_schedule_iteration`(`iteration_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '研发排期明细表(需求×人员×岗位, 支持钉住与拖拽调期)' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for pm_iteration 迭代版本表
 -- ----------------------------
 DROP TABLE IF EXISTS `pm_iteration`;
@@ -292,6 +321,47 @@ INSERT INTO `pm_iteration_test_node` VALUES ('tn-v21-1', 'iter-v2.1', '冲刺唯
 ALTER TABLE `pm_requirement`
   ADD COLUMN `frontend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '前端研发工时(单位:人/天)' AFTER `workload`,
   ADD COLUMN `backend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '后端研发工时(单位:人/天)' AFTER `frontend_workload`;
+
+-- ----------------------------
+-- 存量库增量迁移: 回退前后端起始两列(改为独立排期表 pm_dev_schedule)
+-- 注意: 仅当此前执行过"前后端分离排期(各自独立起算日)"两列迁移时需要;
+--       全新库建表脚本已不含该两列, 无需执行(取消下面注释即可)
+-- ----------------------------
+-- ALTER TABLE `pm_requirement`
+--   DROP COLUMN `frontend_dev_start_date`,
+--   DROP COLUMN `backend_dev_start_date`;
+
+-- ----------------------------
+-- 存量库增量迁移: 研发排期明细表(需求×人员×岗位)
+-- 注意: 本表重算/删除均走物理删除, 无 del_flag 列
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `pm_dev_schedule`  (
+  `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一ID',
+  `req_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '需求ID',
+  `req_no` int NULL DEFAULT NULL COMMENT '需求序号(冗余, 便于排序展示)',
+  `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID',
+  `person_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开发人员姓名',
+  `dev_role` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '岗位: frontend前端/backend后端/fullstack全栈(未拆分工时)',
+  `workload` decimal(5, 1) NOT NULL DEFAULT 1.0 COMMENT '该人员在本需求上的工时(人/天)',
+  `seq` int NOT NULL DEFAULT 0 COMMENT '同一人员任务顺序(升序即执行顺序, 重算后按开始日重排)',
+  `dev_start_date` date NOT NULL COMMENT '任务开始日(有效工作日)',
+  `dev_end_date` date NOT NULL COMMENT '任务完成日(按工时与日历跳过规则推导)',
+  `is_pinned` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否钉住: 1=一键重算时保持不动',
+  `pin_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '钉住原因/备注(拖拽调期时自动记录)',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_dev_schedule_req`(`req_id`) USING BTREE,
+  INDEX `idx_dev_schedule_person`(`person_name`, `dev_role`) USING BTREE,
+  INDEX `idx_dev_schedule_iteration`(`iteration_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '研发排期明细表(需求×人员×岗位, 支持钉住与拖拽调期)' ROW_FORMAT = Dynamic;
+
+-- 若此前执行过含 del_flag 列的旧版迁移, 取消下面注释执行(先清残留再删列):
+-- DELETE FROM `pm_dev_schedule` WHERE `del_flag` = 1;
+-- ALTER TABLE `pm_dev_schedule` DROP COLUMN `del_flag`;
 
 
 SET FOREIGN_KEY_CHECKS = 1;
