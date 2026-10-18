@@ -86,12 +86,14 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     /**
      * 多维条件过滤查询(不分页)
-     * 版本筛选语义(前端只传勾选的版本号 codes, 查询逻辑全部在后端):
-     * - 纯汇总(codes 为空且 includeUnassigned 非 true): 排除已归档(状态=已发布)版本的需求,
+     * 版本筛选语义(前端传勾选的版本 iterationIds, 查询逻辑全部在后端):
+     * - 纯汇总(iterationIds/codes 为空且 includeUnassigned 非 true): 排除已归档(状态=已发布)版本的需求,
      *   避免全部版本汇总拉回大量已归档数据;
-     * - 勾选版本号(单选/多选): codes → 迭代ID, iteration_id IN(ids) OR month IN(codes) 精确匹配,
+     * - 勾选版本(单选/多选): 优先按 iterationIds → iteration_id IN(ids) 精确匹配,
      *   不做前缀模糊匹配(勾选 v1.3.7 不会带出 v1.3.7.3), 已归档版本同样可查;
-     * - includeUnassigned: 追加"未纳入版本"(无迭代归属且月份为空)的条件, 与 codes 可叠加
+     *   同版本号多版本并存时按主键区分不串台; 老数据无 iteration_id 时按 month IN(选中版本代号) 回退;
+     * - codes(旧参数兼容): 版本代号 → 迭代ID, iteration_id IN(ids) OR month IN(codes);
+     * - includeUnassigned: 追加"未纳入版本"(无迭代归属且月份为空)的条件, 可与版本条件叠加
      */
     private List<PmRequirement> queryList(ReqPmRequirement req) {
         if (req == null) {
@@ -101,9 +103,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String month = StringUtils.isEmpty(req.getMonth()) || "ALL".equals(req.getMonth()) ? null : req.getMonth();
         List<String> codes = req.getCodes() == null ? List.of()
                 : req.getCodes().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
+        // 勾选的版本ID列表(优先于 codes): 同版本号多版本并存时按主键精确区分, 避免串台
+        List<String> iterationIds = req.getIterationIds() == null ? List.of()
+                : req.getIterationIds().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
         boolean includeUnassigned = Boolean.TRUE.equals(req.getIncludeUnassigned());
         boolean isSummary = month == null && StringUtils.isEmpty(req.getIterationId())
-                && codes.isEmpty() && !includeUnassigned;
+                && codes.isEmpty() && iterationIds.isEmpty() && !includeUnassigned;
         LambdaQueryWrapper<PmRequirement> wrapper = new LambdaQueryWrapper<PmRequirement>()
                 // selectGridList 为自定义 @Select SQL, @TableLogic 不会自动注入 del_flag 过滤, 需手动补上
                 .eq(PmRequirement::getDelFlag, 0)
@@ -113,10 +118,41 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                         .or()
                         .eq(PmRequirement::getIterationId, month))
                 .eq(StringUtils.isNotEmpty(req.getIterationId()), PmRequirement::getIterationId, req.getIterationId())
-                // 勾选版本号精确查询: (iteration_id IN 版本对应的迭代ID OR month IN 版本代号)
+                // 勾选版本精确查询(优先按版本ID):
+                // - iterationIds: iteration_id IN(版本ID) 精确命中, 同版本号多版本不串台;
+                //   老数据无 iteration_id 时按 month IN(选中版本的代号) 回退(代号由版本ID反查, 仅回退选中版本)
+                // - codes(旧参数兼容): 版本代号 → 迭代ID(仅未删除迭代)
                 // 注意: MP 嵌套 consumer 内 or() 无参会被丢弃(实测 3.5.17), 组间 OR 必须用 or(consumer),
                 // 且 consumer 内每个子组用 nested() 显式包括号, 防止 AND/OR 优先级导致语义漂移
-                .and(!codes.isEmpty() || includeUnassigned, w -> {
+                .and(!codes.isEmpty() || !iterationIds.isEmpty() || includeUnassigned, w -> {
+                    if (!iterationIds.isEmpty()) {
+                        // 版本ID → 代号(仅未删除迭代), 供无 iteration_id 的老数据回退匹配
+                        List<String> iterCodes = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                                .select(PmIteration::getId, PmIteration::getCode)
+                                .in(PmIteration::getId, iterationIds)
+                                .eq(PmIteration::getDelFlag, 0)).stream()
+                                .map(PmIteration::getCode)
+                                .filter(StringUtils::isNotEmpty)
+                                .toList();
+                        // 现存版本ID集合: 识别孤儿 iteration_id(引用了已删除/从未存在的版本, 如旧版前端临时 id 落库)
+                        List<String> existingIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                                .select(PmIteration::getId)
+                                .eq(PmIteration::getDelFlag, 0)).stream()
+                                .map(PmIteration::getId)
+                                .filter(StringUtils::isNotEmpty)
+                                .toList();
+                        w.and(x -> {
+                            x.in(PmRequirement::getIterationId, iterationIds);
+                            // 老数据/孤儿数据回退: 无迭代归属或其指向的版本已不存在, 且月份代号命中选中版本
+                            // (仅当能反查到代号时才追加, 避免空 in)
+                            if (!iterCodes.isEmpty()) {
+                                x.or(y -> y
+                                        .nested(z -> z.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, "")
+                                                .or().notIn(PmRequirement::getIterationId, existingIds.isEmpty() ? List.of("__nonexistent__") : existingIds))
+                                        .in(PmRequirement::getMonth, iterCodes));
+                            }
+                        });
+                    }
                     if (!codes.isEmpty()) {
                         // 版本代号 → 迭代ID(仅未删除迭代)
                         List<String> iterIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
@@ -840,24 +876,37 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Map<String, Object>> autoSchedule(List<String> ids) {
-        // 筛选待排期需求
-        List<PmRequirement> targets = (ids == null || ids.isEmpty())
-                ? list(new LambdaQueryWrapper<PmRequirement>().orderByAsc(PmRequirement::getReqNo))
-                : list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids).orderByAsc(PmRequirement::getReqNo));
-        if (targets.isEmpty()) {
-            Map<String, Object> empty = new HashMap<>();
-            empty.put("scheduledCount", 0);
-            empty.put("updatedList", new ArrayList<>());
-            return Result.ok(empty, "无待排期需求!");
-        }
-        // 迭代版本起始日期映射(支持按ID与版本号查找)
+    public Result<Map<String, Object>> autoSchedule(List<String> iterationIds) {
+        // 迭代版本起始日期映射(支持按ID与版本号查找): 版本解析与归档判定均依赖, 需先构建
         Map<String, PmIteration> iterationMap = new HashMap<>();
         for (PmIteration iteration : iterationMapper.selectList(new LambdaQueryWrapper<>())) {
             iterationMap.put(iteration.getId(), iteration);
             if (StringUtils.isNotEmpty(iteration.getCode())) {
                 iterationMap.put(iteration.getCode(), iteration);
             }
+        }
+        // 排期范围两种口径:
+        // 1) 未显式传版本(顶部未选版本, 或只选了非归档版本): 未归档版本的需求统一排期(不按选中版本单独排), 已归档版本不参与
+        // 2) 显式传版本(顶部选中了归档版本): 只排这些版本的需求(含归档版本, 用于针对性重排历史版本)
+        Set<String> scopeVersionIds = iterationIds == null ? new HashSet<>()
+                : iterationIds.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
+        boolean scoped = !scopeVersionIds.isEmpty();
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().orderByAsc(PmRequirement::getReqNo))
+                .stream()
+                .filter(req -> {
+                    PmIteration iteration = resolveIterationForReq(req, iterationMap);
+                    if (scoped) {
+                        return iteration != null && scopeVersionIds.contains(iteration.getId());
+                    }
+                    return iteration == null || !ARCHIVED_STATUS.equals(iteration.getStatus());
+                })
+                .collect(Collectors.toList());
+        if (targets.isEmpty()) {
+            Map<String, Object> empty = new HashMap<>();
+            empty.put("scheduledCount", 0);
+            empty.put("updatedList", new ArrayList<>());
+            empty.put("scheduleRows", new ArrayList<>());
+            return Result.ok(empty, scoped ? "无待排期需求(选中版本下没有需求)!" : "无待排期需求(已归档版本不参与自动排期)!");
         }
         ScheduleConfigDTO config = currentConfig();
         LocalDate defaultStart = ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
@@ -868,11 +917,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         // 目标任务已有排期明细中的钉住行: 重算时日期保持不动, 仅登记占用
         Map<String, Map<String, PmDevSchedule>> pinnedByReq = loadPinnedRowsByReq(targets);
         List<PmRequirement> updatedList = new ArrayList<>();
+        // 本次重建后的排期明细(含钉住行): 随响应返回, 前端无需再查一次明细接口
+        List<PmDevSchedule> scheduleRows = new ArrayList<>();
         for (PmRequirement req : targets) {
-            PmIteration iteration = StringUtils.isEmpty(req.getIterationId()) ? null : iterationMap.get(req.getIterationId());
-            if (iteration == null && StringUtils.isNotEmpty(req.getMonth())) {
-                iteration = iterationMap.get(req.getMonth());
-            }
+            PmIteration iteration = resolveIterationForReq(req, iterationMap);
             LocalDate versionStartDate = ScheduleDateUtils.getWorkdayStartDate(
                     iteration != null && iteration.getStartDate() != null
                             ? toLocalDate(iteration.getStartDate()) : defaultStart, config);
@@ -925,6 +973,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             update.setUpdateTime(new Date());
             updateById(update);
             replaceScheduleRows(req.getId(), rows);
+            scheduleRows.addAll(rows);
             PmRequirement updated = getById(req.getId());
             updatedList.add(updated);
             recordHistory(req, "SCHEDULE", null, null, null,
@@ -942,11 +991,24 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("scheduledCount", targets.size());
         result.put("updatedList", updatedList);
+        result.put("scheduleRows", scheduleRows);
         return Result.ok(result, "⚡ 已按人员工作量逐日装箱并生成排期明细 " + targets.size()
                 + " 项需求(前后端各自独立起算, 钉住任务保持不动, 可一键重算)!");
     }
 
     // ==================== 私有辅助方法 ====================
+
+    /**
+     * 解析需求归属的迭代版本: iterationId 优先, 为空时回退 month(版本号)
+     * 排期主循环与全局排期的归档剔除共用同一解析口径, 避免两处判断漂移
+     */
+    private PmIteration resolveIterationForReq(PmRequirement req, Map<String, PmIteration> iterationMap) {
+        PmIteration iteration = StringUtils.isEmpty(req.getIterationId()) ? null : iterationMap.get(req.getIterationId());
+        if (iteration == null && StringUtils.isNotEmpty(req.getMonth())) {
+            iteration = iterationMap.get(req.getMonth());
+        }
+        return iteration;
+    }
 
     /**
      * 预填历史排期占用: 将本次重排范围之外、已排期需求的开发人员占用登记进全局占用日历
@@ -1220,11 +1282,34 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     /**
      * 新建需求落库后生成排期明细(无竞争, 各人员从需求开始日起算)
      */
+    /**
+     * 解析排期基准开始日(与 autoSchedule 口径一致):
+     * - 需求自带 devStartDate 时优先使用；
+     * - 否则取归属版本(iterationId → month)的开发周期首日——导入未排期的需求应从版本起始日开始，
+     *   而不是落到硬编码默认日期(会导致任务全部堆在默认月份, 超出历史版本周期)；
+     * - 找不到归属版本时才兜底默认日期。
+     */
+    private LocalDate resolveScheduleBaseStart(PmRequirement req, ScheduleConfigDTO config) {
+        if (req.getDevStartDate() != null) {
+            return toLocalDate(req.getDevStartDate());
+        }
+        PmIteration iteration = null;
+        if (StringUtils.isNotEmpty(req.getIterationId())) {
+            iteration = iterationMapper.selectById(req.getIterationId());
+        }
+        if (iteration == null && StringUtils.isNotEmpty(req.getMonth())) {
+            iteration = iterationMapper.selectOne(new LambdaQueryWrapper<PmIteration>()
+                    .eq(PmIteration::getCode, req.getMonth()).last("limit 1"));
+        }
+        if (iteration != null && iteration.getStartDate() != null) {
+            return ScheduleDateUtils.getWorkdayStartDate(toLocalDate(iteration.getStartDate()), config);
+        }
+        return ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
+    }
+
     private void persistScheduleRowsForReq(PmRequirement req) {
         ScheduleConfigDTO config = currentConfig();
-        LocalDate baseStart = req.getDevStartDate() != null
-                ? toLocalDate(req.getDevStartDate())
-                : ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
+        LocalDate baseStart = resolveScheduleBaseStart(req, config);
         List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
         List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
         BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());

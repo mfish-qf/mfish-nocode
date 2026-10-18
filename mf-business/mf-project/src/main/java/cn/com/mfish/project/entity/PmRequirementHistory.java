@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @Schema(description = "pm_requirement_history对象 需求调配与状态流转审计日志")
 public class PmRequirementHistory extends BaseEntity<String> {
     @Schema(description = "唯一ID")
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "需求ID")

@@ -26,7 +26,7 @@ import java.util.Date;
 @Schema(description = "pm_schedule_makeup_date对象 排期日历调休补班工作日")
 public class PmScheduleMakeupDate extends BaseEntity<String> {
     @Schema(description = "唯一ID")
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "所属配置ID")

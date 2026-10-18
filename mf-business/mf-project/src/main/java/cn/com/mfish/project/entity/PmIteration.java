@@ -28,7 +28,7 @@ import java.util.List;
 @Schema(description = "pm_iteration对象 迭代版本")
 public class PmIteration extends BaseEntity<String> {
     @Schema(description = "唯一ID")
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "版本号/代号(如 v1.1、2026-09B)")

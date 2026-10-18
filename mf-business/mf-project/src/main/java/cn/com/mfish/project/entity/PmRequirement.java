@@ -29,7 +29,7 @@ import java.util.Date;
 @Schema(description = "pm_requirement对象 核心需求")
 public class PmRequirement extends BaseEntity<String> {
     @Schema(description = "唯一ID")
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "序号(自动递增)")

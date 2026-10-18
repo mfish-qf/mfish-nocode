@@ -26,7 +26,7 @@ import java.util.Date;
 @Schema(description = "pm_iteration_test_node对象 迭代批次转测节点")
 public class PmIterationTestNode extends BaseEntity<String> {
     @Schema(description = "唯一ID")
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "所属迭代ID")

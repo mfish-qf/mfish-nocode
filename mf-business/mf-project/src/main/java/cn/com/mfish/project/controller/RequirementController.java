@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.project.entity.PmRequirement;
+import cn.com.mfish.project.req.ReqAutoSchedule;
 import cn.com.mfish.project.req.ReqBalancingPlan;
 import cn.com.mfish.project.req.ReqBatchAssign;
 import cn.com.mfish.project.req.ReqBatchIds;
@@ -275,7 +276,7 @@ public class RequirementController {
     @Operation(summary = "需求管理-智能自动日历排期编排")
     @PostMapping("/auto-schedule")
     @RequiresPermissions("project:requirement:update")
-    public Result<Map<String, Object>> autoSchedule(@RequestBody(required = false) ReqBatchIds req) {
-        return requirementService.autoSchedule(req == null ? null : req.getIds());
+    public Result<Map<String, Object>> autoSchedule(@RequestBody(required = false) ReqAutoSchedule req) {
+        return requirementService.autoSchedule(req == null ? null : req.getIterationIds());
     }
 }

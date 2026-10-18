@@ -34,6 +34,8 @@ public class ReqPmRequirement {
     private String keyword;
     @Schema(description = "勾选的版本代号列表(单选/多选, 如 v1.3.7,v1.3.7.2); 后端按版本号精确查询(iteration_id 或 month 命中任一), 不做前缀模糊匹配")
     private List<String> codes;
+    @Schema(description = "勾选的版本ID列表(单选/多选); 优先于 codes, 同版本号多版本并存时按ID精确区分, 不会串台")
+    private List<String> iterationIds;
     @Schema(description = "是否包含未纳入版本(无归属)的需求; 与 codes 可同时传入")
     private Boolean includeUnassigned;
 }

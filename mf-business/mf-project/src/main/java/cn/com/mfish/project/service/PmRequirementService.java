@@ -185,10 +185,14 @@ public interface PmRequirementService extends IService<PmRequirement> {
 
     /**
      * 智能自动日历排期编排：按人员分组合并任务，遵循工作日及节假日跳过规则，
-     * 实现任务紧凑首尾串行排期
+     * 实现任务紧凑首尾串行排期。
+     * 排期范围两种口径：
+     * 1) 未传版本(顶部未选版本或只选了非归档版本)：未归档版本的需求统一排期(不按选中版本单独排)，已归档版本不参与；
+     * 2) 显式传版本(顶部选中了归档版本)：只排这些版本的需求(含归档版本，用于针对性重排历史版本)。
+     * 响应除排期数量与更新后的需求外，一并返回重建后的排期明细(含钉住行)，前端无需再查明细接口
      *
-     * @param ids 需求ID列表(为空时对全部需求排期)
-     * @return 排期结果(含排期数量与更新后的列表)
+     * @param iterationIds 需排期的版本ID列表(前端仅在选中已归档版本时传入，为空时统一排期未归档版本的需求)
+     * @return 排期结果(含排期数量、更新后的需求列表与重建后的排期明细)
      */
-    Result<Map<String, Object>> autoSchedule(List<String> ids);
+    Result<Map<String, Object>> autoSchedule(List<String> iterationIds);
 }

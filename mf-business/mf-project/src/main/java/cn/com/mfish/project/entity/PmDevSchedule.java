@@ -28,7 +28,7 @@ import java.util.Date;
 @Schema(description = "pm_dev_schedule对象 研发排期明细(需求×人员×岗位)")
 public class PmDevSchedule extends BaseEntity<String> {
     @Schema(description = "唯一ID")
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "需求ID")

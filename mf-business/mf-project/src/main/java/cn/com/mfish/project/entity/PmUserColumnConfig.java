@@ -21,8 +21,8 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "pm_user_column_config对象 用户表格列配置")
 public class PmUserColumnConfig extends BaseEntity<String> {
-    @Schema(description = "唯一ID(雪花)")
-    @TableId(type = IdType.ASSIGN_ID)
+    @Schema(description = "唯一ID(UUID)")
+    @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
     @Schema(description = "所属用户ID(当前登录人员)")

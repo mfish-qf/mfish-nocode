@@ -6,8 +6,10 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmIterationTestNode;
+import cn.com.mfish.project.entity.PmRequirement;
 import cn.com.mfish.project.mapper.PmIterationMapper;
 import cn.com.mfish.project.mapper.PmIterationTestNodeMapper;
+import cn.com.mfish.project.mapper.PmRequirementMapper;
 import cn.com.mfish.project.service.PmIterationService;
 import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -36,6 +38,8 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
 
     @Resource
     private PmIterationTestNodeMapper testNodeMapper;
+    @Resource
+    private PmRequirementMapper requirementMapper;
 
     @Override
     public Result<List<PmIteration>> queryList() {
@@ -103,6 +107,12 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         PmIteration iteration = getById(id);
         if (iteration == null) {
             throw new MyRuntimeException("错误:迭代不存在!");
+        }
+        // 已绑定需求的版本不允许删除：避免需求失去版本归属成为孤儿
+        long boundReqCount = requirementMapper.selectCount(new LambdaQueryWrapper<PmRequirement>()
+                .eq(PmRequirement::getIterationId, id));
+        if (boundReqCount > 0) {
+            throw new MyRuntimeException("错误:该版本已绑定 " + boundReqCount + " 条需求, 不允许删除!");
         }
         if (removeById(id)) {
             testNodeMapper.delete(new LambdaQueryWrapper<PmIterationTestNode>()
@@ -190,14 +200,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         if (StringUtils.isEmpty(iteration.getCode())) {
             throw new MyRuntimeException("错误:迭代版本号不能为空!");
         }
-        // 版本号唯一性校验
-        PmIteration duplicate = getOne(new LambdaQueryWrapper<PmIteration>()
-                .eq(PmIteration::getCode, iteration.getCode())
-                .ne(StringUtils.isNotEmpty(iteration.getId()), PmIteration::getId, iteration.getId())
-                .last("limit 1"));
-        if (duplicate != null) {
-            throw new MyRuntimeException("错误:迭代版本号已存在，不能重复提交!");
-        }
+        // 版本号(code)允许重复: 多个相同版本号可并存, 增改一律以主键 id 操作, 不做版本号唯一性校验
     }
 
     /**
