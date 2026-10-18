@@ -1384,18 +1384,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         BigDecimal beWorkload = requirement.getBackendWorkload() != null ? requirement.getBackendWorkload()
                 : (exist != null ? exist.getBackendWorkload() : null);
         // 该侧无有效人员(空或"不涉及")时, 该侧工时强制 0——前端已禁用编辑, 后端做最终保障
-        // 反向兜底: 有人员但工时为 0(历史"不涉及"残留) → 恢复默认 1 人天, 防止指派人员后总工时不更新
+        // 反向兜底: 有人员但工时为 null(如批量导入未带工时列)或 0(历史"不涉及"残留) → 恢复默认 1 人天,
+        // 防止导入(1前端+1后端)后总工时不按人数合计(应为 2 而非 1), 与 batchAssign 纠偏口径完全一致
         if (PersonnelNameUtils.parsePersonnelNames(effFeDev).isEmpty()) {
             feWorkload = BigDecimal.ZERO;
             requirement.setFrontendWorkload(BigDecimal.ZERO);
-        } else if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) == 0) {
+        } else if (feWorkload == null || feWorkload.compareTo(BigDecimal.ZERO) == 0) {
             feWorkload = BigDecimal.ONE;
             requirement.setFrontendWorkload(BigDecimal.ONE);
         }
         if (PersonnelNameUtils.parsePersonnelNames(effBeDev).isEmpty()) {
             beWorkload = BigDecimal.ZERO;
             requirement.setBackendWorkload(BigDecimal.ZERO);
-        } else if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) == 0) {
+        } else if (beWorkload == null || beWorkload.compareTo(BigDecimal.ZERO) == 0) {
             beWorkload = BigDecimal.ONE;
             requirement.setBackendWorkload(BigDecimal.ONE);
         }
