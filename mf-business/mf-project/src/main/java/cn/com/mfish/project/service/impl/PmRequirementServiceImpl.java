@@ -1610,8 +1610,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (StringUtils.isEmpty(requirement.getModule())) {
             throw new MyRuntimeException("错误:需求所属模块不能为空!");
         }
-        if (StringUtils.isEmpty(requirement.getLevel1Feature())) {
-            throw new MyRuntimeException("错误:一级功能点不能为空!");
+        // 一级功能点允许为空(批量导入常只带序号/模块/功能点描述)，功能点描述为必填
+        if (StringUtils.isEmpty(requirement.getFeatureDescription())) {
+            throw new MyRuntimeException("错误:功能点描述不能为空!");
         }
         // 评审结论/任务状态应与字典保持一致; 存量历史脏值(如旧版"通过")仅告警不阻断, 避免历史行无法保存
         if (StringUtils.isNotEmpty(requirement.getReviewResult()) && !pmDictService.isValidReviewResult(requirement.getReviewResult())) {
