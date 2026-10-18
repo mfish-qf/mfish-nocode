@@ -910,10 +910,11 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         ScheduleConfigDTO config = currentConfig();
         LocalDate defaultStart = ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
-        // 人员占用日历(逐日装箱, 跨版本全局共享): key = personName -> 该人员已被占用的有效工作日集合
-        Map<String, Set<LocalDate>> personBusyDates = new HashMap<>();
+        // 人员容量日历(逐日装箱, 跨版本全局共享): key = personName -> (日期 -> 已用人天)
+        // 每人每天容量 1 人天: 工时不足 1 天的多个任务可共享同一天(如 0.2+0.3+0.3=0.8 全排当天), 不再整日互斥
+        Map<String, Map<LocalDate, BigDecimal>> personDayUsage = new HashMap<>();
         // 预填历史排期占用(优先读排期明细表 pm_dev_schedule 的按人占用, 无明细的历史需求按需求级区间兜底)
-        prefillPersonBusyDates(targets, config, personBusyDates);
+        prefillPersonBusyDates(targets, config, personDayUsage);
         // 目标任务已有排期明细中的钉住行: 重算时日期保持不动, 仅登记占用
         Map<String, Map<String, PmDevSchedule>> pinnedByReq = loadPinnedRowsByReq(targets);
         List<PmRequirement> updatedList = new ArrayList<>();
@@ -939,19 +940,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             if (hasSplit) {
                 if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
                     for (String person : feDevs) {
-                        packScheduleRow(req, person, "frontend", feWorkload, versionStartDate, config, personBusyDates, pinned, rows);
+                        packScheduleRow(req, person, "frontend", feWorkload, versionStartDate, config, personDayUsage, pinned, rows);
                     }
                 }
                 if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
                     for (String person : beDevs) {
-                        packScheduleRow(req, person, "backend", beWorkload, versionStartDate, config, personBusyDates, pinned, rows);
+                        packScheduleRow(req, person, "backend", beWorkload, versionStartDate, config, personDayUsage, pinned, rows);
                     }
                 }
             } else {
                 for (String person : mergeDevs(feDevs, beDevs)) {
                     String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
                             : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
-                    packScheduleRow(req, person, role, totalWorkload, versionStartDate, config, personBusyDates, pinned, rows);
+                    packScheduleRow(req, person, role, totalWorkload, versionStartDate, config, personDayUsage, pinned, rows);
                 }
             }
             // 需求整体区间: 两岗位均无有效人员/工时时段落版本首日(1人天占位), 否则取所有任务行 min/max
@@ -1017,10 +1018,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      *
      * @param targets        本次排期目标(其旧排期将被覆盖，不参与预填)
      * @param config         排期配置
-     * @param personBusyDates 全局人员占用日历
+     * @param personDayUsage 全局人员容量日历(人 -> 日期 -> 已用人天)
      */
     private void prefillPersonBusyDates(List<PmRequirement> targets, ScheduleConfigDTO config,
-                                        Map<String, Set<LocalDate>> personBusyDates) {
+                                        Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
         Set<String> targetIds = new HashSet<>();
         targets.forEach(t -> targetIds.add(t.getId()));
         // 1. 排期明细(按人精确占用): 本次重排范围之外的全部明细行, 逐人逐日登记
@@ -1046,7 +1047,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             if (end.isBefore(start)) {
                 continue;
             }
-            occupyDevDates(start, end, Set.of(row.getPersonName()), config, personBusyDates);
+            // 按该行工时摊入区间各有效工作日(工时缺失时整日占满), 保留同日剩余容量供小任务共享
+            spreadRowLoad(row.getPersonName(), start, end, row.getWorkload(), config, personDayUsage);
         }
         // 2. 兜底(迁移兼容): 尚无排期明细的历史需求, 按需求级区间占用(粗粒度, 首跑后排期明细即接管)
         List<PmRequirement> history = list(new LambdaQueryWrapper<PmRequirement>()
@@ -1071,7 +1073,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             while (!cursor.isAfter(end)) {
                 if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
                     for (String dev : devs) {
-                        personBusyDates.computeIfAbsent(dev, k -> new HashSet<>()).add(cursor);
+                        // 粗粒度兜底: 无明细时按整日占满(容量记满 1), 首跑后排期明细即接管为精确摊入
+                        personDayUsage.computeIfAbsent(dev, k -> new HashMap<>())
+                                .merge(cursor, BigDecimal.ONE, BigDecimal::max);
                     }
                 }
                 cursor = cursor.plusDays(1);
@@ -1080,27 +1084,30 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 单个人员任务装箱: 钉住行日期保持不动(仅登记占用), 其余从该人员最早空闲日起按工时连续占用
+     * 单个人员任务装箱: 钉住行日期保持不动(仅按工时登记占用),
+     * 其余从该人员最早可行日起做容量装箱——每人每天容量 1 人天,
+     * 工时不足 1 天的任务优先填入当天剩余容量(多个小任务可共享同一天), 当天装不下才顺延
      */
     private void packScheduleRow(PmRequirement req, String person, String role, BigDecimal workload,
                                  LocalDate versionStartDate, ScheduleConfigDTO config,
-                                 Map<String, Set<LocalDate>> personBusyDates,
+                                 Map<String, Map<LocalDate, BigDecimal>> personDayUsage,
                                  Map<String, PmDevSchedule> pinned, List<PmDevSchedule> rows) {
         PmDevSchedule pin = pinned.get(person + "|" + role);
         if (pin != null) {
             LocalDate pinStart = toLocalDate(pin.getDevStartDate());
             LocalDate pinEnd = toLocalDate(pin.getDevEndDate());
             if (pinEnd != null && !pinEnd.isBefore(pinStart)) {
-                occupyDevDates(pinStart, pinEnd, Set.of(person), config, personBusyDates);
+                BigDecimal pinLoad = positiveWorkload(pin.getWorkload()) != null ? pin.getWorkload() : workload;
+                spreadRowLoad(person, pinStart, pinEnd, pinLoad, config, personDayUsage);
             }
             pin.setReqNo(req.getReqNo());
             pin.setIterationId(req.getIterationId());
             rows.add(pin);
             return;
         }
-        LocalDate start = findEarliestFeasibleStart(versionStartDate, Set.of(person), workload, config, personBusyDates);
-        LocalDate end = ScheduleDateUtils.calculateDevEndDate(start, workload, config);
-        occupyDevDates(start, end, Set.of(person), config, personBusyDates);
+        LocalDate start = findEarliestFeasibleStart(versionStartDate, person, workload, config, personDayUsage);
+        // 容量装箱: 从 start 起逐日消耗剩余容量(每天至多 1), 返回任务实际触达的最后一天
+        LocalDate end = applyTaskLoad(person, start, workload, config, personDayUsage);
         PmDevSchedule row = new PmDevSchedule();
         row.setReqId(req.getId());
         row.setReqNo(req.getReqNo());
@@ -1379,25 +1386,26 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 逐日装箱: 从版本首日起向后逐日扫描，返回该任务所有参与人均空闲的最早可开工日期
+     * 逐日装箱(容量模型): 从版本首日起向后逐日扫描，返回该人员剩余容量足以容纳整个任务的最早可开工日期
+     * 每人每天容量 1 人天: 工时不足 1 天的多个任务可共享同一天(如 0.2+0.3+0.3 全排当天)，装不下才顺延
      * 与"人员游标"模型的本质区别: 每个任务都从版本首日重新扫描，因此后面排到的任务可以回填前面留下的空档，
-     * 只要人员在这些日期确实空闲即可开工，各人员之间天然并行(同一天可有多人各自推进自己的任务)
-     * 人员占用日历为全局共享(跨版本)，前序版本任务的占用会参与可行性校验
+     * 只要人员在这些日期确实有剩余容量即可开工，各人员之间天然并行(同一天可有多人各自推进自己的任务)
+     * 容量日历为全局共享(跨版本)，前序版本任务的占用会参与可行性校验
      *
      * @param versionStartDate 版本开发周期首日(已规整为有效工作日)
-     * @param allDevs          参与该任务的人员(为空表示未分配，无人力约束)
-     * @param workload         预估工时(决定占用几个工作日)
+     * @param person           任务人员(为空白表示未分配，无人力约束)
+     * @param workload         预估工时(单人)
      * @param config           排期配置
-     * @param personBusyDates  全局人员占用日历
+     * @param personDayUsage   全局人员容量日历(人 -> 日期 -> 已用人天)
      * @return 最早可开工日期
      */
-    private LocalDate findEarliestFeasibleStart(LocalDate versionStartDate, Set<String> allDevs,
+    private LocalDate findEarliestFeasibleStart(LocalDate versionStartDate, String person,
                                                 BigDecimal workload, ScheduleConfigDTO config,
-                                                Map<String, Set<LocalDate>> personBusyDates) {
+                                                Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
         if (versionStartDate == null) {
             versionStartDate = ScheduleDateUtils.DEFAULT_START_DATE;
         }
-        if (allDevs.isEmpty()) {
+        if (StringUtils.isEmpty(person)) {
             // 未分配人员的需求无任何人力约束，一律从版本首日起排
             return versionStartDate;
         }
@@ -1405,8 +1413,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         // 安全上限: 最多向后探测 3 年，杜绝异常配置下的死循环
         LocalDate limit = versionStartDate.plusYears(3);
         while (!candidate.isAfter(limit)) {
-            LocalDate end = ScheduleDateUtils.calculateDevEndDate(candidate, workload, config);
-            if (isRangeFree(candidate, end, allDevs, config, personBusyDates)) {
+            if (canFitFrom(person, candidate, workload, config, personDayUsage)) {
                 return candidate;
             }
             candidate = ScheduleDateUtils.getNextWorkday(candidate, config);
@@ -1415,39 +1422,93 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 判断指定区间内的所有有效工作日，对全部参与人员而言是否均未被占用
+     * 容量试算(不改日历): 从 start 起逐有效工作日消耗剩余容量(每天至多 1 人天)，
+     * 模拟任务能否在有限天数内完整放下
      */
-    private boolean isRangeFree(LocalDate start, LocalDate end, Set<String> allDevs,
-                                ScheduleConfigDTO config, Map<String, Set<LocalDate>> personBusyDates) {
+    private boolean canFitFrom(String person, LocalDate start, BigDecimal workload,
+                               ScheduleConfigDTO config, Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        BigDecimal remaining = positiveWorkload(workload) != null ? workload : BigDecimal.ONE;
+        Map<LocalDate, BigDecimal> usage = personDayUsage.getOrDefault(person, new HashMap<>());
         LocalDate cursor = start;
-        while (!cursor.isAfter(end)) {
+        // 安全上限: 3 年内的有效工作日远超任何合法工时所需
+        LocalDate limit = start.plusYears(3);
+        boolean firstDay = true;
+        while (!cursor.isAfter(limit)) {
             if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
-                for (String dev : allDevs) {
-                    Set<LocalDate> busy = personBusyDates.get(dev);
-                    if (busy != null && busy.contains(cursor)) {
-                        return false;
-                    }
+                BigDecimal used = usage.getOrDefault(cursor, BigDecimal.ZERO);
+                BigDecimal available = BigDecimal.ONE.subtract(used).max(BigDecimal.ZERO);
+                // 首日必须实际获得容量, 杜绝任务"虚挂"在零剩余容量的日期上(跨出无占用的空天头)
+                if (firstDay && available.compareTo(BigDecimal.ZERO) <= 0) {
+                    return false;
+                }
+                remaining = remaining.subtract(available);
+                if (remaining.compareTo(BigDecimal.ZERO) <= 0) {
+                    return true;
+                }
+                firstDay = false;
+            }
+            cursor = cursor.plusDays(1);
+        }
+        return false;
+    }
+
+    /**
+     * 容量登记: 从 start 起逐有效工作日消耗剩余容量(每天至多 1 人天)，直至任务工时耗尽，
+     * 返回任务实际触达的最后一天(容量充裕时 = ceil(workload) 个工作日，首日有占用时顺延)
+     */
+    private LocalDate applyTaskLoad(String person, LocalDate start, BigDecimal workload,
+                                    ScheduleConfigDTO config, Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        BigDecimal remaining = positiveWorkload(workload) != null ? workload : BigDecimal.ONE;
+        Map<LocalDate, BigDecimal> usage = personDayUsage.computeIfAbsent(person, k -> new HashMap<>());
+        LocalDate cursor = start;
+        LocalDate lastTouched = start;
+        LocalDate limit = start.plusYears(3);
+        while (!cursor.isAfter(limit) && remaining.compareTo(BigDecimal.ZERO) > 0) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                BigDecimal used = usage.getOrDefault(cursor, BigDecimal.ZERO);
+                BigDecimal available = BigDecimal.ONE.subtract(used).max(BigDecimal.ZERO);
+                if (available.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal take = available.min(remaining);
+                    usage.put(cursor, used.add(take));
+                    remaining = remaining.subtract(take);
+                    lastTouched = cursor;
                 }
             }
             cursor = cursor.plusDays(1);
         }
-        return true;
+        return lastTouched;
     }
 
     /**
-     * 将任务占用的有效工作日登记进全局人员占用日历
+     * 固定区间占用登记(钉住行/历史明细行): 将工时均摊到区间内各有效工作日，
+     * 保留同日剩余容量供后续小任务共享；工时缺失时按整日占满处理
      */
-    private void occupyDevDates(LocalDate start, LocalDate end, Set<String> allDevs,
-                                ScheduleConfigDTO config, Map<String, Set<LocalDate>> personBusyDates) {
-        if (allDevs.isEmpty()) {
+    private void spreadRowLoad(String person, LocalDate start, LocalDate end, BigDecimal workload,
+                               ScheduleConfigDTO config, Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        if (StringUtils.isEmpty(person) || start == null || end == null || end.isBefore(start)) {
             return;
         }
+        // 统计区间内有效工作日数
+        int workdays = 0;
         LocalDate cursor = start;
         while (!cursor.isAfter(end)) {
             if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
-                for (String dev : allDevs) {
-                    personBusyDates.computeIfAbsent(dev, k -> new HashSet<>()).add(cursor);
-                }
+                workdays++;
+            }
+            cursor = cursor.plusDays(1);
+        }
+        if (workdays == 0) {
+            return;
+        }
+        // 无工时(历史脏数据)按整日占满; 有工时则均摊(单日任务摊入值=工时, 与逐日装箱口径一致)
+        BigDecimal perDay = positiveWorkload(workload) != null
+                ? workload.divide(BigDecimal.valueOf(workdays), 4, java.math.RoundingMode.HALF_UP)
+                : BigDecimal.ONE;
+        Map<LocalDate, BigDecimal> usage = personDayUsage.computeIfAbsent(person, k -> new HashMap<>());
+        cursor = start;
+        while (!cursor.isAfter(end)) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                usage.merge(cursor, perDay, BigDecimal::add);
             }
             cursor = cursor.plusDays(1);
         }
