@@ -997,6 +997,107 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 + " 项需求(前后端各自独立起算, 钉住任务保持不动, 可一键重算)!");
     }
 
+    // ==================== 回收站(逻辑删除需求的恢复与彻底删除) ====================
+
+    @Override
+    public Result<PageResult<PmRequirement>> listDeleted(Integer pageNum, Integer pageSize) {
+        // 自定义 @Select 直接查 del_flag=1, 不受 @TableLogic 过滤影响; 已按删除时间倒序(新删在前)
+        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int size = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        PageHelper.startPage(num, size);
+        List<PmRequirement> deleted = baseMapper.selectDeletedList();
+        return Result.ok(new PageResult<>(deleted), "回收站列表-查询成功!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> restore(String id) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:需求ID不能为空!");
+        }
+        // 仅回收站内(del_flag=1)可恢复: 原生 UPDATE 带 del_flag=1 条件, 重复恢复返回 0 行
+        int restored = baseMapper.restoreDeleted(id, safeGetCurrentUser());
+        if (restored <= 0) {
+            throw new MyRuntimeException("错误:需求不存在或已恢复!");
+        }
+        PmRequirement req = baseMapper.selectById(id);
+        recordHistory(req, "RESTORE", null, null, null, null, null,
+                "从回收站恢复需求 #" + (req != null ? req.getReqNo() : id));
+        return Result.ok(true, "需求 #" + (req != null ? req.getReqNo() : id) + " 已恢复!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> restoreBatch(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        List<String> validIds = ids.stream().filter(StringUtils::isNotEmpty).distinct().toList();
+        if (validIds.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        int count = 0;
+        for (String id : validIds) {
+            if (baseMapper.restoreDeleted(id, safeGetCurrentUser()) > 0) {
+                count++;
+            }
+        }
+        if (count == 0) {
+            throw new MyRuntimeException("错误:选中需求均不存在或已恢复!");
+        }
+        return Result.ok(count, "已成功恢复 " + count + " 项需求!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> deletePermanently(String id) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:需求ID不能为空!");
+        }
+        // 物理删除前取快照(删后查不到), 用于历史记录描述
+        PmRequirement exist = baseMapper.selectById(id);
+        purgeRelatedRows(id);
+        if (baseMapper.physicalDeleteById(id) <= 0) {
+            throw new MyRuntimeException("错误:需求不存在或已被彻底删除!");
+        }
+        if (exist != null) {
+            recordHistory(exist, "PURGE", null, null, null, null, null,
+                    "彻底删除需求 #" + exist.getReqNo() + "(不可恢复)");
+        }
+        return Result.ok(true, "需求 #" + (exist != null ? exist.getReqNo() : id) + " 已彻底删除!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> deletePermanentlyBatch(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        List<String> validIds = ids.stream().filter(StringUtils::isNotEmpty).distinct().toList();
+        if (validIds.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        int count = 0;
+        for (String id : validIds) {
+            purgeRelatedRows(id);
+            if (baseMapper.physicalDeleteById(id) > 0) {
+                count++;
+            }
+        }
+        if (count == 0) {
+            throw new MyRuntimeException("错误:选中需求均不存在或已被彻底删除!");
+        }
+        return Result.ok(count, "已成功彻底删除 " + count + " 项需求!");
+    }
+
+    /**
+     * 彻底删除前的级联清理: 排期明细与审计日志物理删除(两者其一有 @TableLogic, MP 删除只会软删, 故走原生 DELETE)
+     */
+    private void purgeRelatedRows(String reqId) {
+        devScheduleMapper.physicalDeleteByReqId(reqId);
+        historyMapper.physicalDeleteByReqId(reqId);
+    }
+
     // ==================== 私有辅助方法 ====================
 
     /**

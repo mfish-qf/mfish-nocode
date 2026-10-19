@@ -195,4 +195,43 @@ public interface PmRequirementService extends IService<PmRequirement> {
      * @return 排期结果(含排期数量、更新后的需求列表与重建后的排期明细)
      */
     Result<Map<String, Object>> autoSchedule(List<String> iterationIds);
+
+    /**
+     * 回收站: 查询全部已逻辑删除(del_flag=1)的需求，按删除时间倒序
+     *
+     * @return 已删除需求列表
+     */
+    Result<PageResult<PmRequirement>> listDeleted(Integer pageNum, Integer pageSize);
+
+    /**
+     * 从回收站恢复单条需求(del_flag 置回 0)，恢复后重新出现在正常列表中
+     *
+     * @param id 需求ID
+     * @return 恢复结果
+     */
+    Result<Boolean> restore(String id);
+
+    /**
+     * 从回收站批量恢复需求
+     *
+     * @param ids 需求ID列表
+     * @return 恢复成功的数量
+     */
+    Result<Integer> restoreBatch(List<String> ids);
+
+    /**
+     * 彻底删除单条需求(物理删除，含排期明细与审计日志级联清理，数据不可恢复)
+     *
+     * @param id 需求ID
+     * @return 删除结果
+     */
+    Result<Boolean> deletePermanently(String id);
+
+    /**
+     * 彻底删除批量需求(物理删除，含排期明细与审计日志级联清理，数据不可恢复)
+     *
+     * @param ids 需求ID列表
+     * @return 删除成功的数量
+     */
+    Result<Integer> deletePermanentlyBatch(List<String> ids);
 }

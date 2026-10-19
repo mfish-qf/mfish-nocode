@@ -279,4 +279,39 @@ public class RequirementController {
     public Result<Map<String, Object>> autoSchedule(@RequestBody(required = false) ReqAutoSchedule req) {
         return requirementService.autoSchedule(req == null ? null : req.getIterationIds());
     }
+
+    /**
+     * 回收站: 查询全部已逻辑删除(del_flag=1)的需求，按删除时间倒序
+     */
+    @Log(title = "需求管理-回收站列表", operateType = OperateType.QUERY)
+    @Operation(summary = "需求管理-回收站已删除需求列表(分页, 最新删除在前)")
+    @GetMapping("/deleted")
+    @RequiresPermissions("project:requirement:query")
+    public Result<PageResult<PmRequirement>> listDeleted(
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return requirementService.listDeleted(pageNum, pageSize);
+    }
+
+    /**
+     * 回收站: 批量恢复需求(单条传单元素列表即可)，恢复后重新出现在正常列表
+     */
+    @Log(title = "需求管理-回收站恢复", operateType = OperateType.UPDATE)
+    @Operation(summary = "需求管理-从回收站恢复需求")
+    @PostMapping("/restore")
+    @RequiresPermissions("project:requirement:update")
+    public Result<Integer> restore(@Valid @RequestBody ReqBatchIds req) {
+        return requirementService.restoreBatch(req.getIds());
+    }
+
+    /**
+     * 回收站: 批量彻底删除需求(物理删除，含排期明细与审计日志级联清理，数据不可恢复)
+     */
+    @Log(title = "需求管理-回收站彻底删除", operateType = OperateType.DELETE)
+    @Operation(summary = "需求管理-彻底删除需求(物理删除不可恢复)")
+    @PostMapping("/permanent-delete")
+    @RequiresPermissions("project:requirement:delete")
+    public Result<Integer> deletePermanently(@Valid @RequestBody ReqBatchIds req) {
+        return requirementService.deletePermanentlyBatch(req.getIds());
+    }
 }
