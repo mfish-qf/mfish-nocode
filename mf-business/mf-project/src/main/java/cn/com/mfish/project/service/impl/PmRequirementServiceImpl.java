@@ -933,7 +933,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return Result.ok(empty, scoped ? "无待排期需求(选中版本下没有需求)!" : "无待排期需求(已归档版本不参与自动排期)!");
         }
         ScheduleConfigDTO config = currentConfig();
-        LocalDate defaultStart = ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
+        // 未纳入版本(无归属版本)需求起点: 取所有版本中最大的截至日期(排在所有版本工作之后)
+        LocalDate defaultStart = resolveDefaultScheduleStart(config);
         // 人员容量日历(逐日装箱, 跨版本全局共享): key = personName -> (日期 -> 已用人天)
         // 每人每天容量 1 人天: 工时不足 1 天的多个任务可共享同一天(如 0.2+0.3+0.3=0.8 全排当天), 不再整日互斥
         Map<String, Map<LocalDate, BigDecimal>> personDayUsage = new HashMap<>();
@@ -1436,7 +1437,20 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (iteration != null && iteration.getStartDate() != null) {
             return ScheduleDateUtils.getWorkdayStartDate(toLocalDate(iteration.getStartDate()), config);
         }
-        return ScheduleDateUtils.getWorkdayStartDate(ScheduleDateUtils.DEFAULT_START_DATE, config);
+        // 无归属版本(未纳入版本): 起点取所有版本中最大的截至日期, 而非硬编码默认日期
+        return resolveDefaultScheduleStart(config);
+    }
+
+    /**
+     * 未纳入版本(无归属版本)需求的排期兜底起点: 取所有版本中最大的截至日期(endDate),
+     * 使无归属任务排在所有版本工作之后, 而不是落到硬编码默认日期(2026-09-08, 会挤占各版本正常排期)。
+     * 所有版本均无截至日期时回退 DEFAULT_START_DATE。
+     */
+    private LocalDate resolveDefaultScheduleStart(ScheduleConfigDTO config) {
+        Date maxEnd = iterationMapper.selectMaxEndDate();
+        // 取所有版本中最大的截至日期, 再加一天, 排到版本期之外(避免与最后一天版本任务同日)
+        LocalDate base = (maxEnd != null ? toLocalDate(maxEnd) : ScheduleDateUtils.DEFAULT_START_DATE).plusDays(1);
+        return ScheduleDateUtils.getWorkdayStartDate(base, config);
     }
 
     private void persistScheduleRowsForReq(PmRequirement req) {
