@@ -194,7 +194,7 @@ public interface PmRequirementService extends IService<PmRequirement> {
      * @param iterationIds 需排期的版本ID列表(前端仅在选中已归档版本时传入，为空时统一排期未归档版本的需求)
      * @return 排期结果(含排期数量、更新后的需求列表与重建后的排期明细)
      */
-    Result<Map<String, Object>> autoSchedule(List<String> iterationIds);
+    Result<Map<String, Object>> autoSchedule(List<String> iterationIds, boolean includeUnassigned);
 
     /**
      * 回收站: 查询全部已逻辑删除(del_flag=1)的需求，按删除时间倒序

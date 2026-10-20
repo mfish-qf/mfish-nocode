@@ -277,7 +277,8 @@ public class RequirementController {
     @PostMapping("/auto-schedule")
     @RequiresPermissions("project:requirement:update")
     public Result<Map<String, Object>> autoSchedule(@RequestBody(required = false) ReqAutoSchedule req) {
-        return requirementService.autoSchedule(req == null ? null : req.getIterationIds());
+        return requirementService.autoSchedule(req == null ? null : req.getIterationIds(),
+                req != null && Boolean.TRUE.equals(req.getIncludeUnassigned()));
     }
 
     /**

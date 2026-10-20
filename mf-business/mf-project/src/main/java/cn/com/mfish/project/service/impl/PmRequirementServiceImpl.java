@@ -898,7 +898,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Map<String, Object>> autoSchedule(List<String> iterationIds) {
+    public Result<Map<String, Object>> autoSchedule(List<String> iterationIds, boolean includeUnassigned) {
         // 迭代版本起始日期映射(支持按ID与版本号查找): 版本解析与归档判定均依赖, 需先构建
         Map<String, PmIteration> iterationMap = new HashMap<>();
         for (PmIteration iteration : iterationMapper.selectList(new LambdaQueryWrapper<>())) {
@@ -908,8 +908,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             }
         }
         // 排期范围两种口径:
-        // 1) 未显式传版本(顶部未选版本, 或只选了非归档版本): 未归档版本的需求统一排期(不按选中版本单独排), 已归档版本不参与
-        // 2) 显式传版本(顶部选中了归档版本): 只排这些版本的需求(含归档版本, 用于针对性重排历史版本)
+        // 1) 未显式传版本(顶部未选版本, 或只选了非归档版本): 未归档版本的需求统一排期(不按选中版本单独排), 已归档版本不参与;
+        //    该口径下无归属版本的需求(iteration==null)本就包含在内
+        // 2) 显式传版本(顶部选中了归档版本): 只排这些版本的需求(含归档版本, 用于针对性重排历史版本);
+        //    无归属版本的需求无ID可传, 由 includeUnassigned 特殊标识声明是否合并排期
         Set<String> scopeVersionIds = iterationIds == null ? new HashSet<>()
                 : iterationIds.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
         boolean scoped = !scopeVersionIds.isEmpty();
@@ -918,7 +920,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 .filter(req -> {
                     PmIteration iteration = resolveIterationForReq(req, iterationMap);
                     if (scoped) {
-                        return iteration != null && scopeVersionIds.contains(iteration.getId());
+                        return iteration == null ? includeUnassigned : scopeVersionIds.contains(iteration.getId());
                     }
                     return iteration == null || !ARCHIVED_STATUS.equals(iteration.getStatus());
                 })
