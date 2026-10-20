@@ -198,6 +198,28 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
+     * 按版本筛选条件解析需求ID列表(复用 queryList 的版本过滤语义, 供排期明细等下游聚合查询复用)
+     * 仅透传版本筛选字段, 其余状态/人员/关键词过滤一律留空, 故结果即"当前版本视图下的全部需求ID"
+     *
+     * @param iterationIds      勾选的版本ID列表(为空/null 表示纯汇总/ALL)
+     * @param includeUnassigned 是否叠加"未纳入版本"
+     * @return 命中的需求ID列表
+     */
+    @Override
+    public List<String> listReqIdsBySelection(List<String> iterationIds, Boolean includeUnassigned) {
+        ReqPmRequirement req = new ReqPmRequirement();
+        if (iterationIds != null) {
+            req.setIterationIds(iterationIds.stream()
+                    .filter(StringUtils::isNotEmpty)
+                    .map(String::trim)
+                    .distinct()
+                    .toList());
+        }
+        req.setIncludeUnassigned(Boolean.TRUE.equals(includeUnassigned));
+        return queryList(req).stream().map(PmRequirement::getId).toList();
+    }
+
+    /**
      * 无条件全量汇总查询条件(del_flag + 排除已归档版本 + 排序)
      */
     private LambdaQueryWrapper<PmRequirement> buildSummaryWrapper() {

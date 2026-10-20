@@ -234,4 +234,14 @@ public interface PmRequirementService extends IService<PmRequirement> {
      * @return 删除成功的数量
      */
     Result<Integer> deletePermanentlyBatch(List<String> ids);
+
+    /**
+     * 按版本筛选条件解析需求ID列表(供排期明细等下游按版本聚合查询复用, 避免前端回传大量需求UUID)
+     * 版本筛选语义与 queryList 完全一致(含老数据 month 回退、未纳入版本、ALL 排除已归档)
+     *
+     * @param iterationIds      勾选的版本ID列表(为空/null 表示纯汇总/ALL)
+     * @param includeUnassigned 是否叠加"未纳入版本"
+     * @return 命中的需求ID列表
+     */
+    List<String> listReqIdsBySelection(List<String> iterationIds, Boolean includeUnassigned);
 }

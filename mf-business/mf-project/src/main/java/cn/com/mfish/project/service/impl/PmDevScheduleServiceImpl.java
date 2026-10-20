@@ -10,6 +10,7 @@ import cn.com.mfish.project.mapper.PmRequirementMapper;
 import cn.com.mfish.project.req.ReqDevScheduleAdjust;
 import cn.com.mfish.project.req.ReqDevSchedulePin;
 import cn.com.mfish.project.service.PmDevScheduleService;
+import cn.com.mfish.project.service.PmRequirementService;
 import cn.com.mfish.project.service.PmScheduleConfigService;
 import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -38,6 +39,8 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
     private PmScheduleConfigService scheduleConfigService;
     @Resource
     private PmRequirementMapper requirementMapper;
+    @Resource
+    private PmRequirementService requirementService;
 
     @Override
     public Result<List<PmDevSchedule>> listByReqIds(List<String> reqIds) {
@@ -50,6 +53,14 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
                 .orderByAsc(PmDevSchedule::getSeq)
                 .orderByAsc(PmDevSchedule::getDevStartDate));
         return Result.ok(list, "排期明细-查询成功!");
+    }
+
+    @Override
+    public Result<List<PmDevSchedule>> listBySelection(List<String> iterationIds, Boolean includeUnassigned) {
+        // 复用需求查询的版本过滤语义解析需求ID, 再按ID聚合排期明细
+        // 前端不再回传大量需求UUID; 版本筛选口径(老数据month回退/未纳入版本/ALL排除已归档)与需求列表完全一致
+        List<String> reqIds = requirementService.listReqIdsBySelection(iterationIds, includeUnassigned);
+        return listByReqIds(reqIds);
     }
 
     @Override

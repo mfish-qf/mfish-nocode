@@ -7,18 +7,17 @@ import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
 import cn.com.mfish.project.entity.PmDevSchedule;
 import cn.com.mfish.project.req.ReqDevScheduleAdjust;
 import cn.com.mfish.project.req.ReqDevSchedulePin;
+import cn.com.mfish.project.req.ReqDevScheduleQuery;
 import cn.com.mfish.project.service.PmDevScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -39,14 +38,15 @@ public class DevScheduleController {
     private PmDevScheduleService devScheduleService;
 
     /**
-     * 按需求ID批量查询排期明细(甘特图/日历按人铺期数据源)
+     * 按版本筛选条件查询排期明细(甘特图/日历按人铺期数据源)
+     * POST body 传参: 仅传版本筛选条件(iterationIds/includeUnassigned), 由后端复用需求查询解析需求ID后聚合排期,
+     * 前端无需回传大量需求UUID; 版本过滤口径与需求列表完全一致
      */
-    @Operation(summary = "排期明细-按需求批量查询", description = "一行=需求×人员×岗位, 含起止日/工时/顺序/钉住状态")
-    @GetMapping
+    @Operation(summary = "排期明细-按版本筛选查询", description = "一行=需求×人员×岗位, 含起止日/工时/顺序/钉住状态")
+    @PostMapping
     @RequiresPermissions("project:requirement:query")
-    public Result<List<PmDevSchedule>> listByReqIds(
-            @Parameter(name = "reqIds", description = "需求ID列表(逗号分隔)") @RequestParam(required = false) List<String> reqIds) {
-        return devScheduleService.listByReqIds(reqIds);
+    public Result<List<PmDevSchedule>> listBySelection(@Valid @RequestBody ReqDevScheduleQuery req) {
+        return devScheduleService.listBySelection(req.getIterationIds(), req.getIncludeUnassigned());
     }
 
     /**

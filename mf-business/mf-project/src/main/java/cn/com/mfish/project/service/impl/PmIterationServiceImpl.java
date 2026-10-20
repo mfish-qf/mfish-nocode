@@ -3,6 +3,7 @@ package cn.com.mfish.project.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmIterationTestNode;
@@ -15,6 +16,7 @@ import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,12 @@ import java.util.Set;
 @Service
 public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIteration> implements PmIterationService {
 
+    /**
+     * 归档/发布标记: 版本状态为"已发布"即视为已归档(不新增字段, 复用 status)
+     * 与 PmRequirementServiceImpl.ARCHIVED_STATUS 约定一致
+     */
+    private static final String ARCHIVED_STATUS = "已发布";
+
     @Resource
     private PmIterationTestNodeMapper testNodeMapper;
     @Resource
@@ -49,6 +57,21 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             fillIterationDetails(iteration);
         }
         return Result.ok(list, "迭代版本-查询成功!");
+    }
+
+    @Override
+    public Result<PageResult<PmIteration>> queryPageList(Integer pageNum, Integer pageSize) {
+        // 分页参数兜底(与回收站 listDeleted 同口径): 页码<1 按 1, 每页<1 按 10
+        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int size = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        // 排序与 queryList 保持一致(研发开始时间倒序), 保证第 1 页即当前全量列表最新的若干条
+        PageHelper.startPage(num, size);
+        List<PmIteration> list = list(new LambdaQueryWrapper<PmIteration>()
+                .orderByDesc(PmIteration::getStartDate));
+        for (PmIteration iteration : list) {
+            fillIterationDetails(iteration);
+        }
+        return Result.ok(new PageResult<>(list), "迭代版本-查询成功!");
     }
 
     @Override
@@ -107,6 +130,10 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         PmIteration iteration = getById(id);
         if (iteration == null) {
             throw new MyRuntimeException("错误:迭代不存在!");
+        }
+        // 已发布(含归档)的版本不允许删除: 发布记录需留存作为版本追溯, 与前端隐藏删除入口双向兜底
+        if (ARCHIVED_STATUS.equals(iteration.getStatus())) {
+            throw new MyRuntimeException("错误:已发布的版本不允许删除!");
         }
         // 已绑定需求的版本不允许删除：避免需求失去版本归属成为孤儿
         long boundReqCount = requirementMapper.selectCount(new LambdaQueryWrapper<PmRequirement>()

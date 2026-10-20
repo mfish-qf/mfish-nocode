@@ -25,6 +25,16 @@ public interface PmDevScheduleService extends IService<PmDevSchedule> {
     Result<List<PmDevSchedule>> listByReqIds(List<String> reqIds);
 
     /**
+     * 按版本筛选条件查询排期明细(供甘特图/日历按人铺期)
+     * 不再由前端回传需求ID列表, 改为传版本筛选条件, 后端复用需求查询解析需求ID后聚合排期
+     *
+     * @param iterationIds      勾选的版本ID列表(为空/null 表示纯汇总/ALL)
+     * @param includeUnassigned 是否叠加"未纳入版本"
+     * @return 排期明细列表(按需求序号、人员内顺序升序)
+     */
+    Result<List<PmDevSchedule>> listBySelection(List<String> iterationIds, Boolean includeUnassigned);
+
+    /**
      * 拖拽调期: 更新任务开始日并按工时重算完成日
      * 自动钉住该行(避免被一键重算覆盖)；与本人其他任务工期重叠时拒绝
      *

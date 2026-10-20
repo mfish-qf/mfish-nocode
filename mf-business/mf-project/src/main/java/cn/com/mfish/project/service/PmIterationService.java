@@ -1,5 +1,6 @@
 package cn.com.mfish.project.service;
 
+import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmIterationTestNode;
@@ -21,6 +22,15 @@ public interface PmIterationService extends IService<PmIteration> {
      * @return 迭代列表
      */
     Result<List<PmIteration>> queryList();
+
+    /**
+     * 分页查询迭代列表(版本管理弹窗无限滚动用, 默认每页10条, 按研发开始时间倒序取最新)
+     *
+     * @param pageNum  页码(默认1, 小于1按1处理)
+     * @param pageSize 每页条数(默认10, 小于1按10处理)
+     * @return 分页后的迭代列表(含转测节点与跨月标签)
+     */
+    Result<PageResult<PmIteration>> queryPageList(Integer pageNum, Integer pageSize);
 
     /**
      * 通过id或版本号查询迭代详情
