@@ -3,7 +3,6 @@ package cn.com.mfish.gateway.filter;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.utils.http.EscapeUtil;
 import cn.com.mfish.common.core.config.XssProperties;
-import io.netty.buffer.ByteBufAllocator;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,7 +11,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -91,21 +89,28 @@ public class XssFilter implements GlobalFilter, Ordered {
             @NotNull
             @Override
             public Flux<DataBuffer> getBody() {
-                Flux<DataBuffer> body = super.getBody();
-                return body.map(dataBuffer -> {
-                    byte[] content = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(content);
-                    DataBufferUtils.release(dataBuffer);
-                    String bodyStr = new String(content, StandardCharsets.UTF_8);
-                    // 防xss攻击过滤
-                    bodyStr = EscapeUtil.clean(bodyStr).trim();
-                    // 转成字节
-                    byte[] bytes = bodyStr.getBytes();
-                    NettyDataBufferFactory nettyDataBufferFactory = new NettyDataBufferFactory(ByteBufAllocator.DEFAULT);
-                    DataBuffer buffer = nettyDataBufferFactory.allocateBuffer(bytes.length);
-                    buffer.write(bytes);
-                    return buffer;
-                });
+                // 注意：request body 可能被 Netty 切成多个 DataBuffer 下发。
+                // 必须先用 DataBufferUtils.join 聚合成完整字节流，再整体按 UTF-8 解码；
+                // 否则多字节中文字符一旦跨越分片边界，逐片 new String(..., UTF_8) 会把跨边界
+                // 的字符解码成非法序列并替换为 U+FFFD，表现为中文乱码
+                // （如「竞赛名单列表」→「竞赛?单列表」局部损坏）。
+                return DataBufferUtils.join(super.getBody())
+                        .map(joined -> {
+                            byte[] content = new byte[joined.readableByteCount()];
+                            joined.read(content);
+                            DataBufferUtils.release(joined);
+                            String bodyStr = new String(content, StandardCharsets.UTF_8);
+                            // 防xss攻击过滤
+                            bodyStr = EscapeUtil.clean(bodyStr).trim();
+                            // 转成字节：必须显式指定 UTF-8，禁止依赖 JVM 默认字符集(getBytes())
+                            byte[] bytes = bodyStr.getBytes(StandardCharsets.UTF_8);
+                            DataBuffer buffer = exchange.getResponse().bufferFactory().allocateBuffer(bytes.length);
+                            buffer.write(bytes);
+                            return buffer;
+                        })
+                        .switchIfEmpty(Mono.defer(() ->
+                                Mono.just(exchange.getResponse().bufferFactory().allocateBuffer(0))))
+                        .flux();
             }
 
             @NotNull
