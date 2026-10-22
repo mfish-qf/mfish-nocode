@@ -6,6 +6,8 @@ import lombok.Data;
 
 /**
  * @description: 快捷人员调配请求参数
+ * fromPerson 为空串表示「从空槽位分配」: 该侧原本无开发人员(未分配/不涉及),
+ * 服务层 removeIf 空串无副作用, 直接将目标人员加入对应侧名单, 用于甘特图「分配」场景
  * @author: mfish
  * @date: 2026-10-12
  * @version: V2.4.1
@@ -16,8 +18,7 @@ public class ReqReassign {
     @Schema(description = "需求ID")
     @NotBlank(message = "需求ID不能为空")
     private String reqId;
-    @Schema(description = "原人员")
-    @NotBlank(message = "原人员不能为空")
+    @Schema(description = "原人员(为空表示从空槽位分配: 该侧原本未指派开发人员, 直接加入目标人员)")
     private String fromPerson;
     @Schema(description = "目标人员")
     @NotBlank(message = "目标人员不能为空")
