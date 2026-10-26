@@ -263,6 +263,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         verifyRequirement(requirement);
         Date now = new Date();
+        requirement.setTenantId(resolveTenantId(requirement));
         requirement.setCreateBy(safeGetCurrentUser());
         requirement.setCreateTime(now);
         // 未传序号时自动生成递增 req_no
@@ -302,6 +303,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         verifyRequirement(requirement);
         requirement.setUpdateBy(safeGetCurrentUser());
         requirement.setUpdateTime(new Date());
+        // 租户ID 由库内已有值兜底, 前端不传, 防止误清空(依赖 MP NOT_NULL 策略 + 此处显式赋值双保险)
+        requirement.setTenantId(exist.getTenantId());
         // 归属迭代信息联动 (前端传空串=显式清空版本，同步清空月份/发版时间/转测节点)
         boolean versionCleared = syncIterationInfo(requirement, exist);
         // 状态流转联动开发进度
@@ -1244,6 +1247,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         row.setDevStartDate(toDate(start));
         row.setDevEndDate(toDate(end));
         row.setIsPinned(false);
+        row.setTenantId(resolveTenantId(req));
         rows.add(row);
     }
 
@@ -1510,6 +1514,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         row.setDevStartDate(toDate(start));
         row.setDevEndDate(toDate(end));
         row.setIsPinned(false);
+        row.setTenantId(resolveTenantId(req));
         return row;
     }
 
@@ -1867,6 +1872,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             history.setOldValue(oldValue);
             history.setNewValue(newValue);
             history.setDetail(detail);
+            history.setTenantId(resolveTenantId(req));
             history.setCreateBy(safeGetCurrentUser());
             history.setCreateTime(new Date());
             historyMapper.insert(history);
@@ -1954,5 +1960,27 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             log.warn("获取当前登录用户失败: {}", e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * 安全获取当前租户ID(无请求上下文时返回空, 不抛异常)
+     */
+    private String safeGetCurrentTenantId() {
+        try {
+            return AuthInfoUtils.getCurrentTenantId();
+        } catch (Exception e) {
+            log.warn("获取当前租户ID失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 解析排期明细/审计日志应归属的租户ID: 优先取需求实体上的 tenantId, 缺失时回退当前登录租户
+     */
+    private String resolveTenantId(PmRequirement req) {
+        if (req != null && StringUtils.isNotEmpty(req.getTenantId())) {
+            return req.getTenantId();
+        }
+        return safeGetCurrentTenantId();
     }
 }

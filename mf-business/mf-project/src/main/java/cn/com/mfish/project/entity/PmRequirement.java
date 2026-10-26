@@ -32,6 +32,9 @@ public class PmRequirement extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
+    @Schema(description = "租户ID(多租户隔离)")
+    @TableField("tenant_id")
+    private String tenantId;
     @Schema(description = "序号(自动递增)")
     private Integer reqNo;
     @Schema(description = "模块")

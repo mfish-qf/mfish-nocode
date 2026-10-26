@@ -4,7 +4,10 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.DataScope;
+import cn.com.mfish.common.oauth.annotation.DataScopes;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.project.entity.PmRequirement;
 import cn.com.mfish.project.req.ReqAutoSchedule;
 import cn.com.mfish.project.req.ReqBalancingPlan;
@@ -58,6 +61,11 @@ public class RequirementController {
      * 支持按 month、iterationId、status、priority、人员、关键词模糊匹配(模块/功能名)分页检索
      */
     @Operation(summary = "需求管理-分页列表查询", description = "支持按月份、迭代、状态、优先级、人员、关键词多维过滤")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @GetMapping("/list")
     @RequiresPermissions("project:requirement:query")
     public Result<PageResult<PmRequirement>> queryPageList(ReqPmRequirement reqPmRequirement,
@@ -70,6 +78,11 @@ public class RequirementController {
      * 全量不分页查询需求列表(甘特图看板实时联动)
      */
     @Operation(summary = "需求管理-全量列表查询", description = "不分页返回全部需求(甘特图看板联动)")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @GetMapping("/all")
     @RequiresPermissions("project:requirement:query")
     public Result<List<PmRequirement>> queryAll(ReqPmRequirement reqPmRequirement) {
@@ -84,6 +97,11 @@ public class RequirementController {
      * 通过id查询需求详情
      */
     @Operation(summary = "需求管理-通过id查询")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @GetMapping("/{id}")
     @RequiresPermissions("project:requirement:query")
     public Result<PmRequirement> queryById(@Parameter(name = "id", description = "需求ID") @PathVariable String id) {
@@ -127,6 +145,11 @@ public class RequirementController {
      * 获取需求PRD富文本正文内容
      */
     @Operation(summary = "需求管理-获取PRD文档")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @GetMapping("/{id}/doc")
     @RequiresPermissions("project:requirement:query")
     public Result<PmRequirement> getDoc(@Parameter(name = "id", description = "需求ID") @PathVariable String id) {
@@ -151,6 +174,11 @@ public class RequirementController {
      * 避免一次性传输超大文本；每页仅返回 id/reqNo/module/level1Feature/prdDocContent 等必要字段。
      */
     @Operation(summary = "需求管理-批量分页获取PRD文档", description = "按ID列表分页返回详细PRD文档内容")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @PostMapping("/doc-batch")
     @RequiresPermissions("project:requirement:query")
     public Result<PageResult<PmRequirement>> queryDocBatch(@Valid @RequestBody ReqDocBatch req) {
@@ -274,6 +302,11 @@ public class RequirementController {
      */
     @Log(title = "需求管理-智能自动排期", operateType = OperateType.UPDATE)
     @Operation(summary = "需求管理-智能自动日历排期编排")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @PostMapping("/auto-schedule")
     @RequiresPermissions("project:requirement:update")
     public Result<Map<String, Object>> autoSchedule(@RequestBody(required = false) ReqAutoSchedule req) {
@@ -286,6 +319,11 @@ public class RequirementController {
      */
     @Log(title = "需求管理-回收站列表", operateType = OperateType.QUERY)
     @Operation(summary = "需求管理-回收站已删除需求列表(分页, 最新删除在前)")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @GetMapping("/deleted")
     @RequiresPermissions("project:requirement:query")
     public Result<PageResult<PmRequirement>> listDeleted(

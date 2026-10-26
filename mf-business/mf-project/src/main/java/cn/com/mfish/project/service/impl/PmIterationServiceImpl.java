@@ -93,6 +93,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
     public Result<PmIteration> addIteration(PmIteration iteration) {
         verifyIteration(iteration);
         Date now = new Date();
+        iteration.setTenantId(safeGetCurrentTenantId());
         iteration.setCreateBy(safeGetCurrentUser());
         iteration.setCreateTime(now);
         if (save(iteration)) {
@@ -116,6 +117,8 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         verifyIteration(iteration);
         iteration.setUpdateBy(safeGetCurrentUser());
         iteration.setUpdateTime(new Date());
+        // 租户ID 由库内已有值兜底, 前端不传, 防止误清空
+        iteration.setTenantId(exist.getTenantId());
         if (updateById(iteration)) {
             syncTestNodes(iteration);
             fillIterationDetails(iteration);
@@ -160,6 +163,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             throw new MyRuntimeException("错误:转测节点名称与转测时间不能为空!");
         }
         node.setIterationId(iterationId);
+        node.setTenantId(safeGetCurrentTenantId());
         node.setCreateBy(safeGetCurrentUser());
         node.setCreateTime(new Date());
         if (testNodeMapper.insert(node) > 0) {
@@ -287,6 +291,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             } else {
                 node.setId(null);
                 node.setIterationId(iteration.getId());
+                node.setTenantId(safeGetCurrentTenantId());
                 node.setCreateBy(safeGetCurrentUser());
                 node.setCreateTime(new Date());
                 testNodeMapper.insert(node);
@@ -304,6 +309,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         for (PmIterationTestNode node : nodes) {
             node.setId(null);
             node.setIterationId(iterationId);
+            node.setTenantId(safeGetCurrentTenantId());
             node.setCreateBy(safeGetCurrentUser());
             node.setCreateTime(new Date());
             testNodeMapper.insert(node);
@@ -329,6 +335,18 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             return StringUtils.isEmpty(userId) ? AuthInfoUtils.getCurrentAccount() : userId;
         } catch (Exception e) {
             log.warn("获取当前登录用户失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 安全获取当前租户ID(无请求上下文时返回空, 不抛异常)
+     */
+    private String safeGetCurrentTenantId() {
+        try {
+            return AuthInfoUtils.getCurrentTenantId();
+        } catch (Exception e) {
+            log.warn("获取当前租户ID失败: {}", e.getMessage());
             return null;
         }
     }

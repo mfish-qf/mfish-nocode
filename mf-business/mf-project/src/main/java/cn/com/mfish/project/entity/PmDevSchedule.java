@@ -2,6 +2,7 @@ package cn.com.mfish.project.entity;
 
 import cn.com.mfish.common.core.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,6 +32,9 @@ public class PmDevSchedule extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
+    @Schema(description = "租户ID(多租户隔离)")
+    @TableField("tenant_id")
+    private String tenantId;
     @Schema(description = "需求ID")
     private String reqId;
     @Schema(description = "需求序号(冗余, 便于排序展示)")

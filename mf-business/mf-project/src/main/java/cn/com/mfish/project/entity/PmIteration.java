@@ -31,6 +31,9 @@ public class PmIteration extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
+    @Schema(description = "租户ID(多租户隔离)")
+    @TableField("tenant_id")
+    private String tenantId;
     @Schema(description = "版本号/代号(如 v1.1、2026-09B)")
     private String code;
     @Schema(description = "迭代名称")

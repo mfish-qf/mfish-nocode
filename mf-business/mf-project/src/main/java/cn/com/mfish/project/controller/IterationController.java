@@ -4,7 +4,10 @@ import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.DataScope;
+import cn.com.mfish.common.oauth.annotation.DataScopes;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmIterationTestNode;
 import cn.com.mfish.project.service.PmIterationService;
@@ -44,6 +47,10 @@ public class IterationController {
      * 查询迭代列表(包含各版本关联的多节点转测列表及自动解析计算的跨月标签)
      */
     @Operation(summary = "迭代版本-列表查询", description = "包含各版本关联的多节点转测列表testNodes及自动解析计算的spannedMonths")
+    @DataScopes({
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration_test_node", type = DataScopeType.Tenant)
+    })
     @GetMapping("/list")
     @RequiresPermissions("project:requirement:query")
     public Result<List<PmIteration>> queryList() {
@@ -54,6 +61,10 @@ public class IterationController {
      * 分页查询迭代列表(版本管理弹窗无限滚动: 默认每页10条, 按研发开始时间倒序取最新)
      */
     @Operation(summary = "迭代版本-分页查询", description = "按研发开始时间倒序分页返回, 供版本管理弹窗滚动加载")
+    @DataScopes({
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration_test_node", type = DataScopeType.Tenant)
+    })
     @GetMapping("/page")
     @RequiresPermissions("project:requirement:query")
     public Result<PageResult<PmIteration>> queryPageList(
@@ -66,6 +77,10 @@ public class IterationController {
      * 通过id或版本号查询迭代详情
      */
     @Operation(summary = "迭代版本-通过id或版本号查询")
+    @DataScopes({
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration_test_node", type = DataScopeType.Tenant)
+    })
     @GetMapping("/{id}")
     @RequiresPermissions("project:requirement:query")
     public Result<PmIteration> queryById(@Parameter(name = "id", description = "迭代ID或版本号") @PathVariable String id) {

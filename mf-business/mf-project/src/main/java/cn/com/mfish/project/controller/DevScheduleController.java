@@ -3,7 +3,10 @@ package cn.com.mfish.project.controller;
 import cn.com.mfish.common.core.enums.OperateType;
 import cn.com.mfish.common.core.web.Result;
 import cn.com.mfish.common.log.annotation.Log;
+import cn.com.mfish.common.oauth.annotation.DataScope;
+import cn.com.mfish.common.oauth.annotation.DataScopes;
 import cn.com.mfish.common.oauth.annotation.RequiresPermissions;
+import cn.com.mfish.common.oauth.common.DataScopeType;
 import cn.com.mfish.project.entity.PmDevSchedule;
 import cn.com.mfish.project.req.ReqDevScheduleAdjust;
 import cn.com.mfish.project.req.ReqDevSchedulePin;
@@ -43,6 +46,11 @@ public class DevScheduleController {
      * 前端无需回传大量需求UUID; 版本过滤口径与需求列表完全一致
      */
     @Operation(summary = "排期明细-按版本筛选查询", description = "一行=需求×人员×岗位, 含起止日/工时/顺序/钉住状态")
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @PostMapping
     @RequiresPermissions("project:requirement:query")
     public Result<List<PmDevSchedule>> listBySelection(@Valid @RequestBody ReqDevScheduleQuery req) {
