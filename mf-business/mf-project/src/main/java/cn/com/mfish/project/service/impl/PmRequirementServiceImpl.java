@@ -1872,7 +1872,6 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             history.setOldValue(oldValue);
             history.setNewValue(newValue);
             history.setDetail(detail);
-            history.setTenantId(resolveTenantId(req));
             history.setCreateBy(safeGetCurrentUser());
             history.setCreateTime(new Date());
             historyMapper.insert(history);

@@ -163,7 +163,6 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             throw new MyRuntimeException("错误:转测节点名称与转测时间不能为空!");
         }
         node.setIterationId(iterationId);
-        node.setTenantId(safeGetCurrentTenantId());
         node.setCreateBy(safeGetCurrentUser());
         node.setCreateTime(new Date());
         if (testNodeMapper.insert(node) > 0) {
@@ -291,7 +290,6 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             } else {
                 node.setId(null);
                 node.setIterationId(iteration.getId());
-                node.setTenantId(safeGetCurrentTenantId());
                 node.setCreateBy(safeGetCurrentUser());
                 node.setCreateTime(new Date());
                 testNodeMapper.insert(node);
@@ -309,7 +307,6 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
         for (PmIterationTestNode node : nodes) {
             node.setId(null);
             node.setIterationId(iterationId);
-            node.setTenantId(safeGetCurrentTenantId());
             node.setCreateBy(safeGetCurrentUser());
             node.setCreateTime(new Date());
             testNodeMapper.insert(node);
