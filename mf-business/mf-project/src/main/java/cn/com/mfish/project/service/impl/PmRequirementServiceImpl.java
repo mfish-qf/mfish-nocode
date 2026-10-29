@@ -772,6 +772,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 PersonnelNameUtils.parsePersonnelNames(newFe), feNameId);
         List<String> newBeIds = PersonnelIdUtils.idsForNames(
                 PersonnelNameUtils.parsePersonnelNames(newBe), beNameId);
+        // 兜底补齐: 名单中仍残留 null 的姓名(历史脏数据 / 前端未传 toPersonId)按「租户+姓名」二次解析,
+        // 避免落库 null 导致排期按姓名兜底或错位; 仅能唯一命中的姓名才填充, 否则保持 null(排期按姓名处理)。
+        backfillUnresolvedIds(req.getTenantId(), PersonnelNameUtils.parsePersonnelNames(newFe), newFeIds);
+        backfillUnresolvedIds(req.getTenantId(), PersonnelNameUtils.parsePersonnelNames(newBe), newBeIds);
         PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, newFeIds);
         PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, newBeIds);
         update.setUpdateBy(safeGetCurrentUser());
@@ -2263,5 +2267,31 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             log.warn("按姓名解析用户ID失败, 已按姓名兜底: {}", names, e);
         }
         return result;
+    }
+
+    /**
+     * 将名单中 id 仍为 null 的姓名按「租户+姓名」解析补齐(就地修改 ids 列表)。
+     * 与 {@link #alignPersonnelIds} 的解析口径一致: 仅填充能唯一命中的者, 歧义/未命中保持 null(排期按姓名处理)。
+     * 用于 reassign 等"手工重建 id 数组"的场景, 防止历史脏数据或前端漏传 toPersonId 导致落库 null。
+     */
+    private void backfillUnresolvedIds(String tenantId, List<String> names, List<String> ids) {
+        if (names == null || ids == null || names.size() != ids.size() || StringUtils.isEmpty(tenantId)) {
+            return;
+        }
+        List<String> unresolved = new ArrayList<>();
+        for (int i = 0; i < names.size(); i++) {
+            if (ids.get(i) == null) {
+                unresolved.add(names.get(i));
+            }
+        }
+        if (unresolved.isEmpty()) {
+            return;
+        }
+        Map<String, String> resolved = resolveNamesToIds(tenantId, unresolved);
+        for (int i = 0; i < names.size(); i++) {
+            if (ids.get(i) == null) {
+                ids.set(i, resolved.get(names.get(i)));
+            }
+        }
     }
 }
