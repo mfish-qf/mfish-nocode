@@ -12,6 +12,7 @@ import cn.com.mfish.project.req.ReqDevSchedulePin;
 import cn.com.mfish.project.service.PmDevScheduleService;
 import cn.com.mfish.project.service.PmRequirementService;
 import cn.com.mfish.project.service.PmScheduleConfigService;
+import cn.com.mfish.project.utils.PersonnelIdUtils;
 import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
@@ -58,7 +59,7 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
     @Override
     public Result<List<PmDevSchedule>> listBySelection(List<String> iterationIds, Boolean includeUnassigned) {
         // 复用需求查询的版本过滤语义解析需求ID, 再按ID聚合排期明细
-        // 前端不再回传大量需求UUID; 版本筛选口径(老数据month回退/未纳入版本/ALL排除已归档)与需求列表完全一致
+        // 前端不再回传大量需求UUID; 版本筛选口径(按 iteration_id 精确匹配/未纳入版本/ALL排除已归档)与需求列表完全一致
         List<String> reqIds = requirementService.listReqIdsBySelection(iterationIds, includeUnassigned);
         return listByReqIds(reqIds);
     }
@@ -131,11 +132,20 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
 
     /**
      * 判断新排期区间与同一人员其他排期明细是否存在有效工作日重叠
+     * <p>
+     * 身份感知: 行带 personId 时按账号匹配(彻底区分同租户同名两人); 行无 personId(历史姓名行)
+     * 时按姓名匹配且限定 person_id 为 null, 避免误并把另一个同名但已账号化的人当成重叠。
      */
     private boolean hasOverlap(PmDevSchedule row, LocalDate newStart, LocalDate newEnd, ScheduleConfigDTO config) {
-        List<PmDevSchedule> others = list(new LambdaQueryWrapper<PmDevSchedule>()
-                .eq(PmDevSchedule::getPersonName, row.getPersonName())
-                .ne(PmDevSchedule::getId, row.getId()));
+        LambdaQueryWrapper<PmDevSchedule> q = new LambdaQueryWrapper<PmDevSchedule>()
+                .ne(PmDevSchedule::getId, row.getId());
+        if (StringUtils.isNotEmpty(row.getPersonId())) {
+            q.eq(PmDevSchedule::getPersonId, row.getPersonId());
+        } else {
+            q.eq(PmDevSchedule::getPersonName, row.getPersonName())
+                    .isNull(PmDevSchedule::getPersonId);
+        }
+        List<PmDevSchedule> others = list(q);
         for (PmDevSchedule other : others) {
             if (other.getDevStartDate() == null || other.getDevEndDate() == null) {
                 continue;

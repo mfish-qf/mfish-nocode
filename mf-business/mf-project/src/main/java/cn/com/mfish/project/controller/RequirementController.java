@@ -58,9 +58,9 @@ public class RequirementController {
 
     /**
      * 分页多维过滤查询需求列表
-     * 支持按 month、iterationId、status、priority、人员、关键词模糊匹配(模块/功能名)分页检索
+     * 支持按 iterationId、status、priority、人员、关键词模糊匹配(模块/功能名)分页检索
      */
-    @Operation(summary = "需求管理-分页列表查询", description = "支持按月份、迭代、状态、优先级、人员、关键词多维过滤")
+    @Operation(summary = "需求管理-分页列表查询", description = "支持按迭代版本、状态、优先级、人员、关键词多维过滤")
     @DataScopes({
             @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
             @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
@@ -237,7 +237,7 @@ public class RequirementController {
     @PutMapping("/batch/assign")
     @RequiresPermissions("project:requirement:update")
     public Result<Integer> batchAssign(@Valid @RequestBody ReqBatchAssign req) {
-        return requirementService.batchAssign(req.getIds(), req.getPersonnelType(), req.getNames());
+        return requirementService.batchAssign(req.getIds(), req.getPersonnelType(), req.getNames(), req.getUserIds());
     }
 
     /**

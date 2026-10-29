@@ -34,12 +34,15 @@ CREATE TABLE `pm_requirement`  (
   `pre_meeting_questions` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '会前提出疑问/意见',
   `release_time` date NULL DEFAULT NULL COMMENT '研发确认发版时间',
   `frontend_dev` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '前端人员',
+  `frontend_dev_ids` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '前端人员用户ID列表(JSON数组, 与frontend_dev按索引对齐, null表示该位未匹配到账号)',
   `backend_dev` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '后端人员',
+  `backend_dev_ids` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '后端人员用户ID列表(JSON数组, 与backend_dev按索引对齐, null表示该位未匹配到账号)',
   `qa_tester` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '测试人员',
+  `qa_tester_ids` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '测试人员用户ID列表(JSON数组, 与qa_tester按索引对齐, null表示该位未匹配到账号)',
   `remarks` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注\\疑问',
   `owner` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '关联负责人',
-  `month` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代/月份代码(如 2026-09 或 2026-Q4)',
-  `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID',
+  `owner_ids` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '关联负责人用户ID列表(JSON数组, 与owner按索引对齐, null表示该位未匹配到账号)',
+  `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID(版本号由该ID关联 pm_iteration.code 派生, 不冗余存储)',
   `workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '研发预估总工时(单位:人/天,=前端+后端)',
   `frontend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '前端研发工时(单位:人/天)',
   `backend_workload` decimal(5, 1) NULL DEFAULT NULL COMMENT '后端研发工时(单位:人/天)',
@@ -55,7 +58,6 @@ CREATE TABLE `pm_requirement`  (
   `doc_last_modified` datetime NULL DEFAULT NULL COMMENT '需求详细文档最后修改时间',
   `doc_author` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '需求详细文档编写人',
   `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '删除标志(0正常 1已删除)',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `tenant_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '租户ID(多租户隔离)',
   `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
@@ -64,7 +66,6 @@ CREATE TABLE `pm_requirement`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_pm_req_tenant`(`tenant_id`) USING BTREE,
   INDEX `idx_pm_req_no`(`req_no`) USING BTREE,
-  INDEX `idx_pm_req_month`(`month`) USING BTREE,
   INDEX `idx_pm_req_iteration`(`iteration_id`) USING BTREE,
   INDEX `idx_pm_req_status`(`status`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '核心需求表' ROW_FORMAT = Dynamic;
@@ -80,6 +81,7 @@ CREATE TABLE `pm_dev_schedule`  (
   `req_no` int NULL DEFAULT NULL COMMENT '需求序号(冗余, 便于排序展示)',
   `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID',
   `person_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开发人员姓名',
+  `person_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '开发人员用户ID(排期身份主键, 为空表示未匹配到账号则按姓名兜底)',
   `dev_role` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '岗位: frontend前端/backend后端/fullstack全栈(未拆分工时)',
   `workload` decimal(5, 1) NOT NULL DEFAULT 1.0 COMMENT '该人员在本需求上的工时(人/天)',
   `seq` int NOT NULL DEFAULT 0 COMMENT '同一人员任务顺序(升序即执行顺序, 重算后按开始日重排)',
@@ -97,6 +99,7 @@ CREATE TABLE `pm_dev_schedule`  (
   INDEX `idx_dev_schedule_tenant`(`tenant_id`) USING BTREE,
   INDEX `idx_dev_schedule_req`(`req_id`) USING BTREE,
   INDEX `idx_dev_schedule_person`(`person_name`, `dev_role`) USING BTREE,
+  INDEX `idx_dev_schedule_person_id`(`person_id`) USING BTREE,
   INDEX `idx_dev_schedule_iteration`(`iteration_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '研发排期明细表(需求×人员×岗位, 支持钉住与拖拽调期)' ROW_FORMAT = Dynamic;
 
@@ -347,6 +350,7 @@ CREATE TABLE IF NOT EXISTS `pm_dev_schedule`  (
   `req_no` int NULL DEFAULT NULL COMMENT '需求序号(冗余, 便于排序展示)',
   `iteration_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '归属迭代ID',
   `person_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开发人员姓名',
+  `person_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '开发人员用户ID(排期身份主键, 为空表示未匹配到账号则按姓名兜底)',
   `dev_role` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '岗位: frontend前端/backend后端/fullstack全栈(未拆分工时)',
   `workload` decimal(5, 1) NOT NULL DEFAULT 1.0 COMMENT '该人员在本需求上的工时(人/天)',
   `seq` int NOT NULL DEFAULT 0 COMMENT '同一人员任务顺序(升序即执行顺序, 重算后按开始日重排)',
@@ -364,6 +368,7 @@ CREATE TABLE IF NOT EXISTS `pm_dev_schedule`  (
   INDEX `idx_dev_schedule_tenant`(`tenant_id`) USING BTREE,
   INDEX `idx_dev_schedule_req`(`req_id`) USING BTREE,
   INDEX `idx_dev_schedule_person`(`person_name`, `dev_role`) USING BTREE,
+  INDEX `idx_dev_schedule_person_id`(`person_id`) USING BTREE,
   INDEX `idx_dev_schedule_iteration`(`iteration_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '研发排期明细表(需求×人员×岗位, 支持钉住与拖拽调期)' ROW_FORMAT = Dynamic;
 

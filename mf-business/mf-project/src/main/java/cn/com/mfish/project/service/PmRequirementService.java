@@ -22,8 +22,8 @@ public interface PmRequirementService extends IService<PmRequirement> {
 
     /**
      * 分页多维过滤查询需求列表
-     * 支持按 month、iterationId、status、priority、人员(frontendDev/backendDev/qaTester)、
-     * 关键词模糊匹配(模块/功能名)分页检索
+     * 支持按 iterationId、status、priority、人员(frontendDev/backendDev/qaTester)、
+     * 关键词模糊匹配(模块/功能名)分页检索; 版本号由 iteration_id -> pm_iteration.code 派生返回
      *
      * @param reqPmRequirement 查询参数
      * @param pageNum           页码
@@ -144,9 +144,10 @@ public interface PmRequirementService extends IService<PmRequirement> {
      * @param ids            需求ID列表
      * @param personnelType 人员类型(frontendDev/backendDev/qaTester/owner)
      * @param names         人员姓名串
+     * @param userIds       人员用户ID列表(与 names 解析出的姓名按索引对齐, 未匹配位为 null; 长度不一致时整组忽略)
      * @return 更新结果
      */
-    Result<Integer> batchAssign(List<String> ids, String personnelType, String names);
+    Result<Integer> batchAssign(List<String> ids, String personnelType, String names, List<String> userIds);
 
     /**
      * 批量绑定转测节点
@@ -237,7 +238,7 @@ public interface PmRequirementService extends IService<PmRequirement> {
 
     /**
      * 按版本筛选条件解析需求ID列表(供排期明细等下游按版本聚合查询复用, 避免前端回传大量需求UUID)
-     * 版本筛选语义与 queryList 完全一致(含老数据 month 回退、未纳入版本、ALL 排除已归档)
+     * 版本筛选语义与 queryList 完全一致(按 iteration_id 精确匹配、未纳入版本、ALL 排除已归档)
      *
      * @param iterationIds      勾选的版本ID列表(为空/null 表示纯汇总/ALL)
      * @param includeUnassigned 是否叠加"未纳入版本"

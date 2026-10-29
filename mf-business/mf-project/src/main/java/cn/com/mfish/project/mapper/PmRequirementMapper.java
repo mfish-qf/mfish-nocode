@@ -26,11 +26,17 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
     @Select("SELECT id, req_no, module, level1_feature, level2_feature, level3_feature, feature_description, "
             + "prd_section, review_date, review_result, review_notes, vendors, priority, requester, request_date, "
             + "high_fidelity_url, change_date, change_content, pre_meeting_questions, release_time, frontend_dev, "
-            + "backend_dev, qa_tester, remarks, owner, month, iteration_id, workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
+            // month(版本号)为派生列: 由 iteration_id 关联 pm_iteration.code 取得, 库表不再存该字段。
+            // 用相关标量子查询而非 LEFT JOIN —— 后者会让 id/del_flag/status/create_time 等裸列名在两表中均存在,
+            // 触发 MySQL "Column 'xxx' is ambiguous"(含 MP 注入的 del_flag 条件与 @DataScope 注入的 tenant_id)。
+            + "backend_dev, qa_tester, remarks, owner, iteration_id, "
+            + "(SELECT pi.code FROM pm_iteration pi WHERE pi.id = pm_requirement.iteration_id AND pi.del_flag = 0) AS month, "
+            + "workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
             + "dev_progress, test_phase, test_node_id, test_node_name, test_node_date, status, doc_last_modified, "
-            + "doc_author, del_flag, remark, "
+            + "doc_author, del_flag, "
             + "CASE WHEN prd_doc_content IS NOT NULL AND CHAR_LENGTH(prd_doc_content) > 0 THEN 1 ELSE 0 END AS has_prd_doc "
-            + "FROM pm_requirement ${ew.customSqlSegment}")
+            + "FROM pm_requirement "
+            + "${ew.customSqlSegment}")
     List<PmRequirement> selectGridList(@Param(Constants.WRAPPER) com.baomidou.mybatisplus.core.conditions.Wrapper<PmRequirement> wrapper);
 
     /**
@@ -40,11 +46,14 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
     @Select("SELECT id, req_no, module, level1_feature, level2_feature, level3_feature, feature_description, "
             + "prd_section, review_date, review_result, review_notes, vendors, priority, requester, request_date, "
             + "high_fidelity_url, change_date, change_content, pre_meeting_questions, release_time, frontend_dev, "
-            + "backend_dev, qa_tester, remarks, owner, month, iteration_id, workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
+            + "backend_dev, qa_tester, remarks, owner, iteration_id, "
+            + "(SELECT pi.code FROM pm_iteration pi WHERE pi.id = pm_requirement.iteration_id AND pi.del_flag = 0) AS month, "
+            + "workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
             + "dev_progress, test_phase, test_node_id, test_node_name, test_node_date, status, doc_last_modified, "
-            + "doc_author, create_by, create_time, update_by, update_time, del_flag, remark, "
+            + "doc_author, create_by, create_time, update_by, update_time, del_flag, "
             + "CASE WHEN prd_doc_content IS NOT NULL AND CHAR_LENGTH(prd_doc_content) > 0 THEN 1 ELSE 0 END AS has_prd_doc "
-            + "FROM pm_requirement WHERE del_flag = 1 "
+            + "FROM pm_requirement "
+            + "WHERE del_flag = 1 "
             + "ORDER BY COALESCE(update_time, create_time) DESC, req_no DESC")
     List<PmRequirement> selectDeletedList();
 

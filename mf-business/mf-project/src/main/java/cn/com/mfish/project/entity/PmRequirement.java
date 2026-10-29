@@ -83,15 +83,24 @@ public class PmRequirement extends BaseEntity<String> {
     private Date releaseTime;
     @Schema(description = "前端人员")
     private String frontendDev;
+    @Schema(description = "前端人员用户ID列表(JSON数组, 与frontendDev按索引对齐; 对应位为null表示未匹配到账号)")
+    private String frontendDevIds;
     @Schema(description = "后端人员")
     private String backendDev;
+    @Schema(description = "后端人员用户ID列表(JSON数组, 与backendDev按索引对齐; 对应位为null表示未匹配到账号)")
+    private String backendDevIds;
     @Schema(description = "测试人员")
     private String qaTester;
+    @Schema(description = "测试人员用户ID列表(JSON数组, 与qaTester按索引对齐; 对应位为null表示未匹配到账号)")
+    private String qaTesterIds;
     @Schema(description = "备注\\疑问")
     private String remarks;
     @Schema(description = "关联负责人")
     private String owner;
-    @Schema(description = "归属迭代/月份代码(如 2026-09 或 2026-Q4)")
+    @Schema(description = "关联负责人用户ID列表(JSON数组, 与owner按索引对齐; 对应位为null表示未匹配到账号)")
+    private String ownerIds;
+    @Schema(description = "版本号(派生自 iteration_id -> pm_iteration.code, 不落库)")
+    @TableField(exist = false)
     private String month;
     @Schema(description = "归属迭代ID")
     private String iterationId;
@@ -143,6 +152,4 @@ public class PmRequirement extends BaseEntity<String> {
     @Schema(description = "删除标志(0正常 1已删除)")
     @TableLogic
     private Integer delFlag;
-    @Schema(description = "备注")
-    private String remark;
 }

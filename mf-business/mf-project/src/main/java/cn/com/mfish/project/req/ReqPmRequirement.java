@@ -16,7 +16,7 @@ import java.util.List;
 @Accessors(chain = true)
 @Schema(description = "核心需求查询请求参数")
 public class ReqPmRequirement {
-    @Schema(description = "归属迭代/月份代码(如 2026-09)")
+    @Schema(description = "已废弃: 版本号改由 iteration_id -> pm_iteration.code 派生返回, 不再作为查询参数使用")
     private String month;
     @Schema(description = "归属迭代ID")
     private String iterationId;
@@ -32,7 +32,7 @@ public class ReqPmRequirement {
     private String qaTester;
     @Schema(description = "关键词(模块/功能名模糊匹配)")
     private String keyword;
-    @Schema(description = "勾选的版本代号列表(单选/多选, 如 v1.3.7,v1.3.7.2); 后端按版本号精确查询(iteration_id 或 month 命中任一), 不做前缀模糊匹配")
+    @Schema(description = "勾选的版本代号列表(单选/多选, 如 v1.3.7,v1.3.7.2); 后端按版本号转化为 iteration_id 精确查询, 不做前缀模糊匹配")
     private List<String> codes;
     @Schema(description = "勾选的版本ID列表(单选/多选); 优先于 codes, 同版本号多版本并存时按ID精确区分, 不会串台")
     private List<String> iterationIds;

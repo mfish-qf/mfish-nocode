@@ -25,6 +25,8 @@ public class BalancingPlanItem {
     @Schema(description = "目标人员")
     @NotBlank(message = "目标人员不能为空")
     private String toPerson;
+    @Schema(description = "目标人员用户ID(账号化: 区分同租户同名人员; 不传则该位退回按姓名排期)")
+    private String toPersonId;
     @Schema(description = "岗位角色(frontend前端/backend后端)")
     @NotBlank(message = "岗位角色不能为空")
     private String role;

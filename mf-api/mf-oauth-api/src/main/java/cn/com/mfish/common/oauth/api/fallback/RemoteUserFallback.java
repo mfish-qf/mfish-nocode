@@ -7,6 +7,7 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -81,6 +82,11 @@ public class RemoteUserFallback implements FallbackFactory<RemoteUserService> {
             @Override
             public Result<List<UserInfo>> getUsersByAccount(String origin, String accounts) {
                 return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:获取用户信息失败"));
+            }
+
+            @Override
+            public Result<List<UserIdResolveVo>> resolveTenantUserIds(String origin, String tenantId, List<String> names) {
+                return Result.fail(FeignFallbackHelper.resolveErrorMsg(cause, "错误:解析用户ID失败"));
             }
         };
     }

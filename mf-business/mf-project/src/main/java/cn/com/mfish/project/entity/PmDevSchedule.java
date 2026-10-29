@@ -43,6 +43,8 @@ public class PmDevSchedule extends BaseEntity<String> {
     private String iterationId;
     @Schema(description = "开发人员姓名")
     private String personName;
+    @Schema(description = "开发人员用户ID(排期身份主键; 为空表示姓名未能匹配到账号, 由排期引擎降级为按姓名处理)")
+    private String personId;
     @Schema(description = "岗位: frontend前端 / backend后端 / fullstack全栈(未拆分工时)")
     private String devRole;
     @Schema(description = "该人员在本需求上的工时(人/天)")

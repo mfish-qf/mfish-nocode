@@ -15,6 +15,7 @@ import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.OnlineUser;
@@ -429,6 +430,28 @@ public class SsoUserController {
     @InnerUser
     public Result<List<UserInfo>> getUsersByAccount(@Parameter(name = "accounts", description = "帐号名称") @PathVariable String accounts) {
         return Result.ok(ssoUserService.getUsersByAccounts(List.of(accounts.split(","))), "获取用户信息成功");
+    }
+
+    /**
+     * 按「租户 + 姓名」解析用户ID(内部接口)
+     * <p>
+     * 用于批量导入这类只有姓名的场景。租户内多人同名一律判为 AMBIGUOUS, 不随机挑选,
+     * 由调用方降级为按姓名处理, 避免把排期挂到错误的同名同事名下。
+     *
+     * @param tenantId 租户ID, 为空时取当前请求所属租户
+     * @param names    姓名列表
+     * @return 与入参顺序一致的解析结果
+     */
+    @Operation(summary = "按租户+姓名解析用户ID(内部接口)")
+    @PostMapping("/tenantUserIds")
+    @InnerUser
+    public Result<List<UserIdResolveVo>> resolveTenantUserIds(
+            @Parameter(name = "tenantId", description = "租户ID") @RequestParam(value = "tenantId", required = false) String tenantId,
+            @RequestBody List<String> names) {
+        if (StringUtils.isEmpty(tenantId)) {
+            tenantId = AuthInfoUtils.getCurrentTenantId();
+        }
+        return Result.ok(ssoUserService.resolveTenantUserIds(tenantId, names), "解析用户ID成功");
     }
 
     /**

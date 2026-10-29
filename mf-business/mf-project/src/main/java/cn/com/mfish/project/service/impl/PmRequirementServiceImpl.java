@@ -3,8 +3,12 @@ package cn.com.mfish.project.service.impl;
 import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
+import cn.com.mfish.common.oauth.annotation.DataScope;
+import cn.com.mfish.common.oauth.common.DataScopeUtils;
 import cn.com.mfish.project.dict.PmDictCodes;
 import cn.com.mfish.project.dict.PmDictService;
 import cn.com.mfish.project.dto.ScheduleConfigDTO;
@@ -24,6 +28,7 @@ import cn.com.mfish.project.req.ReqReassign;
 import cn.com.mfish.project.req.ReqWorkload;
 import cn.com.mfish.project.service.PmRequirementService;
 import cn.com.mfish.project.service.PmScheduleConfigService;
+import cn.com.mfish.project.utils.PersonnelIdUtils;
 import cn.com.mfish.project.utils.PersonnelNameUtils;
 import cn.com.mfish.project.utils.ScheduleDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -74,6 +79,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     private PmDevScheduleMapper devScheduleMapper;
     @Resource
     private PmDictService pmDictService;
+    @Resource
+    private cn.com.mfish.common.oauth.api.remote.RemoteUserService remoteUserService;
 
     @Override
     public Result<PageResult<PmRequirement>> queryPageList(ReqPmRequirement reqPmRequirement, Integer pageNum, Integer pageSize) {
@@ -89,69 +96,39 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      * 版本筛选语义(前端传勾选的版本 iterationIds, 查询逻辑全部在后端):
      * - 纯汇总(iterationIds/codes 为空且 includeUnassigned 非 true): 排除已归档(状态=已发布)版本的需求,
      *   避免全部版本汇总拉回大量已归档数据;
-     * - 勾选版本(单选/多选): 优先按 iterationIds → iteration_id IN(ids) 精确匹配,
+     * - 勾选版本(单选/多选): 按 iterationIds → iteration_id IN(ids) 精确匹配,
      *   不做前缀模糊匹配(勾选 v1.3.7 不会带出 v1.3.7.3), 已归档版本同样可查;
-     *   同版本号多版本并存时按主键区分不串台; 老数据无 iteration_id 时按 month IN(选中版本代号) 回退;
-     * - codes(旧参数兼容): 版本代号 → 迭代ID, iteration_id IN(ids) OR month IN(codes);
-     * - includeUnassigned: 追加"未纳入版本"(无迭代归属且月份为空)的条件, 可与版本条件叠加
+     * - codes(旧参数兼容): 版本代号 → 迭代ID, iteration_id IN(ids);
+     * - includeUnassigned: 追加"未纳入版本"(无迭代归属)的条件, 可与版本条件叠加。
+     * 版本号统一由 iteration_id -> pm_iteration.code 派生返回(需求表不再冗余存储 month 列)。
      */
     private List<PmRequirement> queryList(ReqPmRequirement req) {
         if (req == null) {
             // 无条件全量汇总: 排除已归档(状态=已发布)版本的需求
             return list(buildSummaryWrapper());
         }
-        String month = StringUtils.isEmpty(req.getMonth()) || "ALL".equals(req.getMonth()) ? null : req.getMonth();
         List<String> codes = req.getCodes() == null ? List.of()
                 : req.getCodes().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
         // 勾选的版本ID列表(优先于 codes): 同版本号多版本并存时按主键精确区分, 避免串台
         List<String> iterationIds = req.getIterationIds() == null ? List.of()
                 : req.getIterationIds().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
         boolean includeUnassigned = Boolean.TRUE.equals(req.getIncludeUnassigned());
-        boolean isSummary = month == null && StringUtils.isEmpty(req.getIterationId())
+        boolean isSummary = StringUtils.isEmpty(req.getIterationId())
                 && codes.isEmpty() && iterationIds.isEmpty() && !includeUnassigned;
         LambdaQueryWrapper<PmRequirement> wrapper = new LambdaQueryWrapper<PmRequirement>()
                 // selectGridList 为自定义 @Select SQL, @TableLogic 不会自动注入 del_flag 过滤, 需手动补上
                 .eq(PmRequirement::getDelFlag, 0)
-                // 旧参数 month 兼容(月份代码或迭代ID匹配)
-                .and(month != null && !"UNASSIGNED".equals(month), w -> w
-                        .eq(PmRequirement::getMonth, month)
-                        .or()
-                        .eq(PmRequirement::getIterationId, month))
                 .eq(StringUtils.isNotEmpty(req.getIterationId()), PmRequirement::getIterationId, req.getIterationId())
                 // 勾选版本精确查询(优先按版本ID):
                 // - iterationIds: iteration_id IN(版本ID) 精确命中, 同版本号多版本不串台;
-                //   老数据无 iteration_id 时按 month IN(选中版本的代号) 回退(代号由版本ID反查, 仅回退选中版本)
                 // - codes(旧参数兼容): 版本代号 → 迭代ID(仅未删除迭代)
                 // 注意: MP 嵌套 consumer 内 or() 无参会被丢弃(实测 3.5.17), 组间 OR 必须用 or(consumer),
                 // 且 consumer 内每个子组用 nested() 显式包括号, 防止 AND/OR 优先级导致语义漂移
                 .and(!codes.isEmpty() || !iterationIds.isEmpty() || includeUnassigned, w -> {
+                    boolean appended = false;
                     if (!iterationIds.isEmpty()) {
-                        // 版本ID → 代号(仅未删除迭代), 供无 iteration_id 的老数据回退匹配
-                        List<String> iterCodes = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
-                                .select(PmIteration::getId, PmIteration::getCode)
-                                .in(PmIteration::getId, iterationIds)
-                                .eq(PmIteration::getDelFlag, 0)).stream()
-                                .map(PmIteration::getCode)
-                                .filter(StringUtils::isNotEmpty)
-                                .toList();
-                        // 现存版本ID集合: 识别孤儿 iteration_id(引用了已删除/从未存在的版本, 如旧版前端临时 id 落库)
-                        List<String> existingIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
-                                .select(PmIteration::getId)
-                                .eq(PmIteration::getDelFlag, 0)).stream()
-                                .map(PmIteration::getId)
-                                .filter(StringUtils::isNotEmpty)
-                                .toList();
-                        w.and(x -> {
-                            x.in(PmRequirement::getIterationId, iterationIds);
-                            // 老数据/孤儿数据回退: 无迭代归属或其指向的版本已不存在, 且月份代号命中选中版本
-                            // (仅当能反查到代号时才追加, 避免空 in)
-                            if (!iterCodes.isEmpty()) {
-                                x.or(y -> y
-                                        .nested(z -> z.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, "")
-                                                .or().notIn(PmRequirement::getIterationId, existingIds.isEmpty() ? List.of("__nonexistent__") : existingIds))
-                                        .in(PmRequirement::getMonth, iterCodes));
-                            }
-                        });
+                        w.in(PmRequirement::getIterationId, iterationIds);
+                        appended = true;
                     }
                     if (!codes.isEmpty()) {
                         // 版本代号 → 迭代ID(仅未删除迭代)
@@ -162,19 +139,34 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                                 .map(PmIteration::getId)
                                 .filter(StringUtils::isNotEmpty)
                                 .toList();
-                        w.and(x -> {
-                            if (!iterIds.isEmpty()) {
-                                x.in(PmRequirement::getIterationId, iterIds);
+                        if (!iterIds.isEmpty()) {
+                            if (appended) {
+                                w.or(x -> x.in(PmRequirement::getIterationId, iterIds));
+                            } else {
+                                w.in(PmRequirement::getIterationId, iterIds);
+                                appended = true;
                             }
-                            x.or().in(PmRequirement::getMonth, codes);
-                        });
+                        }
                     }
                     if (includeUnassigned) {
-                        // 未纳入版本: (无迭代归属) AND (月份为空/占位), 与版本条件之间是 OR
-                        w.or(x -> x
-                                .nested(y -> y.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, ""))
-                                .nested(y -> y.isNull(PmRequirement::getMonth).or().eq(PmRequirement::getMonth, "")
-                                        .or().eq(PmRequirement::getMonth, "UNASSIGNED").or().eq(PmRequirement::getMonth, "未纳入版本")));
+                        // 未纳入版本: 无迭代归属(null/空) 或 指向已删除版本(孤儿) 的需求, 与版本条件之间是 OR
+                        List<String> existingIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                                .select(PmIteration::getId)
+                                .eq(PmIteration::getDelFlag, 0)).stream()
+                                .map(PmIteration::getId)
+                                .filter(StringUtils::isNotEmpty)
+                                .toList();
+                        if (appended) {
+                            w.or(x -> x
+                                    .nested(y -> y.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, ""))
+                                    .or().notIn(PmRequirement::getIterationId,
+                                            existingIds.isEmpty() ? List.of("__nonexistent__") : existingIds));
+                        } else {
+                            w.and(x -> x
+                                    .nested(y -> y.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, ""))
+                                    .or().notIn(PmRequirement::getIterationId,
+                                            existingIds.isEmpty() ? List.of("__nonexistent__") : existingIds));
+                        }
                     }
                 })
                 .eq(StringUtils.isNotEmpty(req.getStatus()), PmRequirement::getStatus, req.getStatus())
@@ -252,6 +244,11 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (requirement == null) {
             return Result.fail("错误:未找到需求 " + id);
         }
+        // 版本号由 iteration_id -> pm_iteration.code 派生填充(需求表不再冗余存储 month 列)
+        if (StringUtils.isNotEmpty(requirement.getIterationId())) {
+            PmIteration iteration = iterationMapper.selectById(requirement.getIterationId());
+            requirement.setMonth(iteration != null ? iteration.getCode() : null);
+        }
         return Result.ok(requirement, "需求-查询成功!");
     }
 
@@ -279,6 +276,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (requirement.getDevProgress() == null) {
             requirement.setDevProgress(resolveDefaultProgress(requirement.getStatus()));
         }
+        // 人员账号化: 保证姓名串与用户ID数组按索引对齐(点选ID优先, 仅有姓名时按租户解析)
+        alignPersonnelIds(requirement);
         // 人员、工时与日历排期纠偏
         sanitizeRequirement(requirement, null);
         if (save(requirement)) {
@@ -311,17 +310,40 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String newStatus = StringUtils.isEmpty(requirement.getStatus()) ? exist.getStatus() : requirement.getStatus();
         Integer newProgress = requirement.getDevProgress() != null ? requirement.getDevProgress() : exist.getDevProgress();
         requirement.setDevProgress(resolveStatusProgress(newStatus, newProgress, exist.getStatus()));
+        // 人员账号化: 保证姓名串与用户ID数组按索引对齐
+        alignPersonnelIds(requirement);
         // 修改工时或开始时间时联动重算截止时间
         sanitizeRequirement(requirement, exist);
+        // 收集「姓名串已清空」的角色: MP updateById 默认 NOT_NULL 策略会跳过 null 的 setXxxIds(null),
+        // 导致旧ID数组残留并与新姓名串错位(虽被"长度不一致即退回姓名"安全阀兜住不会错挂, 但会留下脏数据),
+        // 与 batchAssign / reassign 保持同一口径 —— 用 UpdateWrapper 显式 SET NULL 落库
+        LambdaUpdateWrapper<PmRequirement> personnelNullWrapper = null;
+        for (String role : PersonnelIdUtils.allRoles()) {
+            if (!PersonnelNameUtils.parsePersonnelNames(PersonnelIdUtils.namesOfRole(requirement, role)).isEmpty()) {
+                continue;
+            }
+            if (personnelNullWrapper == null) {
+                personnelNullWrapper = new LambdaUpdateWrapper<PmRequirement>()
+                        .eq(PmRequirement::getId, requirement.getId());
+            }
+            switch (role) {
+                case PersonnelIdUtils.ROLE_FRONTEND -> personnelNullWrapper.set(PmRequirement::getFrontendDevIds, null);
+                case PersonnelIdUtils.ROLE_BACKEND -> personnelNullWrapper.set(PmRequirement::getBackendDevIds, null);
+                case PersonnelIdUtils.ROLE_QA -> personnelNullWrapper.set(PmRequirement::getQaTesterIds, null);
+                default -> personnelNullWrapper.set(PmRequirement::getOwnerIds, null);
+            }
+        }
         boolean success;
         if (versionCleared) {
             // 清空版本时转测时间/发版时间为日期字段，updateById 默认 NOT_NULL 策略会忽略 null，
             // 须通过 UpdateWrapper 显式 SET NULL 落库
-            LambdaUpdateWrapper<PmRequirement> clearWrapper = new LambdaUpdateWrapper<PmRequirement>()
-                    .eq(PmRequirement::getId, requirement.getId())
-                    .set(PmRequirement::getTestNodeDate, null)
+            LambdaUpdateWrapper<PmRequirement> clearWrapper = personnelNullWrapper != null ? personnelNullWrapper
+                    : new LambdaUpdateWrapper<PmRequirement>().eq(PmRequirement::getId, requirement.getId());
+            clearWrapper.set(PmRequirement::getTestNodeDate, null)
                     .set(PmRequirement::getReleaseTime, null);
             success = update(requirement, clearWrapper);
+        } else if (personnelNullWrapper != null) {
+            success = update(requirement, personnelNullWrapper);
         } else {
             success = updateById(requirement);
         }
@@ -495,7 +517,6 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             PmRequirement update = new PmRequirement();
             update.setId(req.getId());
             update.setIterationId(iteration == null ? "" : iteration.getId());
-            update.setMonth(iteration == null ? "" : iteration.getCode());
             if (iteration != null && iteration.getReleaseDate() != null) {
                 update.setReleaseTime(iteration.getReleaseDate());
             }
@@ -555,7 +576,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Integer> batchAssign(List<String> ids, String personnelType, String names) {
+    public Result<Integer> batchAssign(List<String> ids, String personnelType, String names, List<String> userIds) {
         if (ids == null || ids.isEmpty()) {
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
         }
@@ -563,6 +584,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             throw new MyRuntimeException("错误:人员类型不合法，仅支持 frontendDev/backendDev/qaTester/owner!");
         }
         String formatted = PersonnelNameUtils.formatPersonnelNames(names);
+        // 账号化: 提交的ID列表必须与姓名串解析结果严格等长才可信, 否则整组忽略(退回按姓名排期)
+        List<String> alignedIds = PersonnelIdUtils.alignIds(
+                PersonnelNameUtils.parsePersonnelNames(formatted), userIds);
         List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
         Date now = new Date();
         for (PmRequirement req : targets) {
@@ -576,14 +600,23 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             switch (personnelType) {
                 case "frontendDev" -> {
                     update.setFrontendDev(formatted);
+                    // 同步落库用户ID, 供排期引擎按账号区分同名人员(不可对齐时写入 null, 自动退回姓名)
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, alignedIds);
                     newFeDev = formatted;
                 }
                 case "backendDev" -> {
                     update.setBackendDev(formatted);
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, alignedIds);
                     newBeDev = formatted;
                 }
-                case "qaTester" -> update.setQaTester(formatted);
-                default -> update.setOwner(formatted);
+                case "qaTester" -> {
+                    update.setQaTester(formatted);
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_QA, alignedIds);
+                }
+                default -> {
+                    update.setOwner(formatted);
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_OWNER, alignedIds);
+                }
             }
             // 前后端人员变动: 按"生效人员"统一纠偏两侧工时(与 sanitizeRequirement 完全同口径)
             // 无有效人员(空/不涉及) → 0 人天; 有人员但工时为 null 或 0(历史"不涉及"残留) → 默认 1 人天
@@ -606,7 +639,20 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             }
             update.setUpdateBy(safeGetCurrentUser());
             update.setUpdateTime(now);
-            updateById(update);
+            // 不可对齐(旧前端未传ID/全为占位名)时必须显式清空旧ID数组:
+            // MP updateById 默认 NOT_NULL 策略会跳过 null 值, 若仅 set null 则旧ID残留,
+            // 与新姓名串错位 → 排期会把工时计到另一个人头上。故用 wrapper 强制 SET NULL。
+            LambdaUpdateWrapper<PmRequirement> uw = new LambdaUpdateWrapper<PmRequirement>()
+                    .eq(PmRequirement::getId, req.getId());
+            if (alignedIds.isEmpty()) {
+                switch (personnelType) {
+                    case "frontendDev" -> uw.set(PmRequirement::getFrontendDevIds, null);
+                    case "backendDev" -> uw.set(PmRequirement::getBackendDevIds, null);
+                    case "qaTester" -> uw.set(PmRequirement::getQaTesterIds, null);
+                    default -> uw.set(PmRequirement::getOwnerIds, null);
+                }
+            }
+            update(update, uw);
             recordHistory(req, "BATCH", personnelType, currentPersonnel(req, personnelType), formatted,
                     currentPersonnel(req, personnelType), formatted,
                     "需求 #" + req.getReqNo() + " 批量指派人员【" + formatted + "】");
@@ -712,9 +758,35 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         update.setId(req.getId());
         update.setFrontendDev(newFe);
         update.setBackendDev(newBe);
+        // 账号化: 姓名串变动时同步重建ID数组, 否则旧ID会错位挂到新人员名下
+        // (例: 前端["张三"]/ID["u1"] 转派给李四 → 姓名["李四"] 而 ID 仍["u1"], 排期将按 u1 计到李四头上)
+        // 留任成员沿用其原有ID(不重新解析, 避免同名歧义); 新加入成员采用前端传入的确切 userId
+        Map<String, String> feNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_FRONTEND);
+        Map<String, String> beNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_BACKEND);
+        String toId = reqReassign.getToPersonId();
+        if (StringUtils.isNotEmpty(cleanTo) && StringUtils.isNotEmpty(toId)) {
+            feNameId.put(cleanTo, toId);
+            beNameId.put(cleanTo, toId);
+        }
+        List<String> newFeIds = PersonnelIdUtils.idsForNames(
+                PersonnelNameUtils.parsePersonnelNames(newFe), feNameId);
+        List<String> newBeIds = PersonnelIdUtils.idsForNames(
+                PersonnelNameUtils.parsePersonnelNames(newBe), beNameId);
+        PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, newFeIds);
+        PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, newBeIds);
         update.setUpdateBy(safeGetCurrentUser());
         update.setUpdateTime(new Date());
-        updateById(update);
+        // 名单清空时 ID 数组必须一并显式清空: MP updateById 默认 NOT_NULL 会跳过 null 值,
+        // 残留ID会与新姓名串错位(虽被"长度不一致即退回姓名"安全阀兜住, 但会留下脏数据)
+        LambdaUpdateWrapper<PmRequirement> reassignUw = new LambdaUpdateWrapper<PmRequirement>()
+                .eq(PmRequirement::getId, req.getId());
+        if (newFeIds.isEmpty()) {
+            reassignUw.set(PmRequirement::getFrontendDevIds, null);
+        }
+        if (newBeIds.isEmpty()) {
+            reassignUw.set(PmRequirement::getBackendDevIds, null);
+        }
+        update(update, reassignUw);
         // 人员变动: 重建排期明细(钉住行保持不动)
         rebuildScheduleForReq(req.getId());
         // 记录审计日志
@@ -883,9 +955,39 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             update.setId(req.getId());
             update.setFrontendDev(newFe);
             update.setBackendDev(newBe);
+            // 账号化: 与 reassign 同口径 —— 留任成员沿用原有ID(不重新解析, 避免同名歧义),
+            // 新加入成员采用前端传入的确切 userId, 保证ID数组与姓名串同序、不错位
+            Map<String, String> feNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_FRONTEND);
+            Map<String, String> beNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_BACKEND);
+            String toId = item.getToPersonId();
+            if (StringUtils.isNotEmpty(cleanTo) && StringUtils.isNotEmpty(toId)) {
+                feNameId.put(cleanTo, toId);
+                beNameId.put(cleanTo, toId);
+            }
+            List<String> finalFeIds = PersonnelIdUtils.idsForNames(
+                    PersonnelNameUtils.parsePersonnelNames(newFe), feNameId);
+            List<String> finalBeIds = PersonnelIdUtils.idsForNames(
+                    PersonnelNameUtils.parsePersonnelNames(newBe), beNameId);
+            PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, finalFeIds);
+            PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, finalBeIds);
             update.setUpdateBy(safeGetCurrentUser());
             update.setUpdateTime(new Date());
-            updateById(update);
+            // 某侧名单被清空时 ID 数组必须一并显式清空: MP updateById 默认 NOT_NULL 会跳过 null,
+            // 残留ID会与新姓名串错位(虽被"长度不一致即退回姓名"安全阀兜住, 但会留下脏数据)
+            // 与 reassign / batchAssign 保持同一口径
+            if (finalFeIds.isEmpty() || finalBeIds.isEmpty()) {
+                LambdaUpdateWrapper<PmRequirement> balancingUw = new LambdaUpdateWrapper<PmRequirement>()
+                        .eq(PmRequirement::getId, req.getId());
+                if (finalFeIds.isEmpty()) {
+                    balancingUw.set(PmRequirement::getFrontendDevIds, null);
+                }
+                if (finalBeIds.isEmpty()) {
+                    balancingUw.set(PmRequirement::getBackendDevIds, null);
+                }
+                update(update, balancingUw);
+            } else {
+                updateById(update);
+            }
             recordHistory(req, "BALANCING", item.getRole(), cleanFrom, cleanTo,
                     req.getFrontendDev() + " / " + req.getBackendDev(), newFe + " / " + newBe,
                     "负载均衡: 需求 #" + req.getReqNo() + "【" + (StringUtils.isEmpty(item.getReqTitle()) ? "" : item.getReqTitle())
@@ -936,9 +1038,13 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return Result.ok(empty, scoped ? "无待排期需求(选中版本下没有需求)!" : "无待排期需求(已归档版本不参与自动排期)!");
         }
         ScheduleConfigDTO config = currentConfig();
+        // 自愈: 回填历史排期行中 person_id 为 null、但现已能按(需求+角色+姓名)唯一解析出 userId 的行,
+        // 避免同一人被算成"姓名身份"与"账号身份"两个独立个体, 导致容量上限翻倍/重叠检查失效。
+        // 随每次自动排期渐进收敛(首次跑即处理全部可解析历史行)。
+        selfHealPersonIds(targets);
         // 未纳入版本(无归属版本)需求起点: 取所有版本中最大的截至日期(排在所有版本工作之后)
         LocalDate defaultStart = resolveDefaultScheduleStart(config);
-        // 人员容量日历(逐日装箱, 跨版本全局共享): key = personName -> (日期 -> 已用人天)
+        // 人员容量日历(逐日装箱, 跨版本全局共享): key = identity(personId 优先) -> (日期 -> 已用人天)
         // 每人每天容量 1 人天: 工时不足 1 天的多个任务可共享同一天(如 0.2+0.3+0.3=0.8 全排当天), 不再整日互斥
         Map<String, Map<LocalDate, BigDecimal>> personDayUsage = new HashMap<>();
         // 预填历史排期占用(优先读排期明细表 pm_dev_schedule 的按人占用, 无明细的历史需求按需求级区间兜底)
@@ -1141,6 +1247,45 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
+     * 自愈回填: 将本次目标需求下 person_id 为 null、但现已能按「需求 + 角色 + 姓名」唯一解析出
+     * 用户ID的排期行反向补写 person_id。随每次自动排期渐进收敛, 防止同名人员被拆成两个容量个体。
+     * 解析不到 / 角色无独立ID数组(如 fullstack)的行保持 null, 排期时按姓名处理。
+     *
+     * @param targets 本次排期目标
+     */
+    private void selfHealPersonIds(List<PmRequirement> targets) {
+        if (targets == null || targets.isEmpty()) {
+            return;
+        }
+        List<String> reqIds = targets.stream().map(PmRequirement::getId).toList();
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getReqId, reqIds));
+        if (rows.isEmpty()) {
+            return;
+        }
+        Map<String, PmRequirement> reqMap = targets.stream()
+                .collect(Collectors.toMap(PmRequirement::getId, r -> r));
+        Date now = new Date();
+        String user = safeGetCurrentUser();
+        for (PmDevSchedule row : rows) {
+            if (row.getPersonId() != null) {
+                continue;
+            }
+            PmRequirement req = reqMap.get(row.getReqId());
+            if (req == null) {
+                continue;
+            }
+            String pid = PersonnelIdUtils.personIdForName(req, row.getDevRole(), row.getPersonName());
+            if (pid != null) {
+                row.setPersonId(pid);
+                row.setUpdateBy(user);
+                row.setUpdateTime(now);
+                devScheduleMapper.updateById(row);
+            }
+        }
+    }
+
+    /**
      * 预填历史排期占用: 将本次重排范围之外、已排期需求的开发人员占用登记进全局占用日历
      * 保证自动排期不会把新任务叠到该人员既有任务上(跨版本生效)——
      * 若前序版本任务排到了当前版本开始日之后，涉及他的任务将顺延到其最早空闲日
@@ -1177,7 +1322,61 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 continue;
             }
             // 按该行工时摊入区间各有效工作日(工时缺失时整日占满), 保留同日剩余容量供小任务共享
-            spreadRowLoad(row.getPersonName(), start, end, row.getWorkload(), config, personDayUsage);
+            // 账号化: 容量日历 key 统一走 identityKey(personId 优先, 缺则姓名), 与 packScheduleRow 完全一致
+            spreadRowLoad(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()),
+                    start, end, row.getWorkload(), config, personDayUsage);
+        }
+        // 1.5 跨租户共享人员占用: 同一 person_id 可能归属多个租户(同一个人跨租户协作),
+        //     其空闲度须全局合并——否则两租户会在同一时段各自排他(不可能同时出现在两处)。
+        //     仅对"本租户已存在占用记录"的人员向外查其所属其他租户的占用并并入同一容量键;
+        //     单体户人员无其他租户行、零影响。该占用仅用于后台排期计算, 不对外展示、不暴露他租户内容。
+        //     临时清空 DataScopeUtils.context 使下方查询绕过 @DataScope(SelectInterceptor 在 context 为 null 时直接放行),
+        //     finally 中立即还原, 不影响其余查询与整体租户隔离。
+        Set<String> scopedPersonIds = scheduleRows.stream()
+                .map(PmDevSchedule::getPersonId)
+                .filter(id -> id != null && !id.isBlank())
+                .collect(Collectors.toSet());
+        // 还要纳入"即将被排期"的人员: 否则共享人员首次在某租户排期、而他租户已占用时会漏算其全局占用
+        for (PmRequirement req : targets) {
+            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev())) {
+                String id = PersonnelIdUtils.personIdForName(req, "frontend", name);
+                if (id != null && !id.isBlank()) {
+                    scopedPersonIds.add(id);
+                }
+            }
+            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getBackendDev())) {
+                String id = PersonnelIdUtils.personIdForName(req, "backend", name);
+                if (id != null && !id.isBlank()) {
+                    scopedPersonIds.add(id);
+                }
+            }
+        }
+        if (!scopedPersonIds.isEmpty()) {
+            String currentTenant = AuthInfoUtils.getCurrentTenantId();
+            List<DataScope> savedScope = DataScopeUtils.context.get();
+            DataScopeUtils.context.remove();
+            try {
+                List<PmDevSchedule> crossRows =
+                        devScheduleMapper.selectCrossTenantByPersonIds(scopedPersonIds, currentTenant);
+                for (PmDevSchedule row : crossRows) {
+                    if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
+                        continue;
+                    }
+                    LocalDate start = toLocalDate(row.getDevStartDate());
+                    LocalDate end = toLocalDate(row.getDevEndDate());
+                    if (start == null || end == null || end.isBefore(start)) {
+                        continue;
+                    }
+                    spreadRowLoad(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()),
+                            start, end, row.getWorkload(), config, personDayUsage);
+                }
+            } finally {
+                if (savedScope != null) {
+                    DataScopeUtils.context.set(savedScope);
+                } else {
+                    DataScopeUtils.context.remove();
+                }
+            }
         }
         // 2. 兜底(迁移兼容): 尚无排期明细的历史需求, 按需求级区间占用(粗粒度, 首跑后排期明细即接管)
         List<PmRequirement> history = list(new LambdaQueryWrapper<PmRequirement>()
@@ -1187,10 +1386,18 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             if (targetIds.contains(req.getId()) || reqsWithSchedule.contains(req.getId())) {
                 continue;
             }
-            Set<String> devs = new java.util.LinkedHashSet<>();
-            devs.addAll(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
-            devs.addAll(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
-            if (devs.isEmpty()) {
+            // 账号化: 容量键统一走 identityKey(personId 优先, 缺则姓名), 与明细路径/排期装箱完全一致,
+            // 即使 @DataScope 上下文缺失也不会让跨租户同名人员互相占用(杜绝此前按姓名串做键的隐患)
+            Set<String> devKeys = new java.util.LinkedHashSet<>();
+            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev())) {
+                devKeys.add(PersonnelIdUtils.identityKey(
+                        PersonnelIdUtils.personIdForName(req, "frontend", name), name));
+            }
+            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getBackendDev())) {
+                devKeys.add(PersonnelIdUtils.identityKey(
+                        PersonnelIdUtils.personIdForName(req, "backend", name), name));
+            }
+            if (devKeys.isEmpty()) {
                 continue;
             }
             LocalDate start = toLocalDate(req.getDevStartDate());
@@ -1201,9 +1408,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             LocalDate cursor = start;
             while (!cursor.isAfter(end)) {
                 if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
-                    for (String dev : devs) {
+                    for (String key : devKeys) {
                         // 粗粒度兜底: 无明细时按整日占满(容量记满 1), 首跑后排期明细即接管为精确摊入
-                        personDayUsage.computeIfAbsent(dev, k -> new HashMap<>())
+                        personDayUsage.computeIfAbsent(key, k -> new HashMap<>())
                                 .merge(cursor, BigDecimal.ONE, BigDecimal::max);
                     }
                 }
@@ -1221,27 +1428,32 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                                  LocalDate versionStartDate, ScheduleConfigDTO config,
                                  Map<String, Map<LocalDate, BigDecimal>> personDayUsage,
                                  Map<String, PmDevSchedule> pinned, List<PmDevSchedule> rows) {
-        PmDevSchedule pin = pinned.get(person + "|" + role);
+        // 账号化身份键: personId 优先, 缺则退回姓名(与 prefillPersonBusyDates 同一口径)
+        String personId = PersonnelIdUtils.personIdForName(req, role, person);
+        String identity = PersonnelIdUtils.identityKey(personId, person);
+        PmDevSchedule pin = pinned.get(identity + "|" + role);
         if (pin != null) {
             LocalDate pinStart = toLocalDate(pin.getDevStartDate());
             LocalDate pinEnd = toLocalDate(pin.getDevEndDate());
             if (pinEnd != null && !pinEnd.isBefore(pinStart)) {
                 BigDecimal pinLoad = positiveWorkload(pin.getWorkload()) != null ? pin.getWorkload() : workload;
-                spreadRowLoad(person, pinStart, pinEnd, pinLoad, config, personDayUsage);
+                spreadRowLoad(identity, pinStart, pinEnd, pinLoad, config, personDayUsage);
             }
             pin.setReqNo(req.getReqNo());
             pin.setIterationId(req.getIterationId());
             rows.add(pin);
             return;
         }
-        LocalDate start = findEarliestFeasibleStart(versionStartDate, person, workload, config, personDayUsage);
+        LocalDate start = findEarliestFeasibleStart(versionStartDate, identity, workload, config, personDayUsage);
         // 容量装箱: 从 start 起逐日消耗剩余容量(每天至多 1), 返回任务实际触达的最后一天
-        LocalDate end = applyTaskLoad(person, start, workload, config, personDayUsage);
+        LocalDate end = applyTaskLoad(identity, start, workload, config, personDayUsage);
         PmDevSchedule row = new PmDevSchedule();
         row.setReqId(req.getId());
         row.setReqNo(req.getReqNo());
         row.setIterationId(req.getIterationId());
         row.setPersonName(person);
+        // 账号化身份: 取不到(userId未匹配到账号或两套字段不同步)时留空, 排期引擎自动按姓名兜底
+        row.setPersonId(personId);
         row.setDevRole(role);
         row.setWorkload(workload);
         row.setDevStartDate(toDate(start));
@@ -1252,19 +1464,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 查询指定需求的钉住排期行: key = personName|devRole
+     * 查询指定需求的钉住排期行: key = identity|devRole
      */
     private Map<String, PmDevSchedule> loadPinnedRows(String reqId) {
         List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
                 .eq(PmDevSchedule::getReqId, reqId)
                 .eq(PmDevSchedule::getIsPinned, true));
         Map<String, PmDevSchedule> map = new HashMap<>();
-        rows.forEach(r -> map.put(r.getPersonName() + "|" + r.getDevRole(), r));
+        rows.forEach(r -> map.put(PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()) + "|" + r.getDevRole(), r));
         return map;
     }
 
     /**
-     * 批量查询目标需求的钉住排期行: reqId -> (personName|devRole -> row)
+     * 批量查询目标需求的钉住排期行: reqId -> (identity|devRole -> row)
      */
     private Map<String, Map<String, PmDevSchedule>> loadPinnedRowsByReq(List<PmRequirement> targets) {
         Map<String, Map<String, PmDevSchedule>> result = new HashMap<>();
@@ -1277,7 +1489,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 .eq(PmDevSchedule::getIsPinned, true));
         for (PmDevSchedule row : rows) {
             result.computeIfAbsent(row.getReqId(), k -> new HashMap<>())
-                    .put(row.getPersonName() + "|" + row.getDevRole(), row);
+                    .put(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()) + "|" + row.getDevRole(), row);
         }
         return result;
     }
@@ -1326,7 +1538,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         List<PmDevSchedule> all = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
                 .in(PmDevSchedule::getPersonName, persons));
         Map<String, List<PmDevSchedule>> byPerson = new HashMap<>();
-        all.forEach(r -> byPerson.computeIfAbsent(r.getPersonName(), k -> new ArrayList<>()).add(r));
+        // 按身份键(personId 优先)分组: 同租户同名但不同人的任务各自独立排序, 不会被误并
+        all.forEach(r -> byPerson.computeIfAbsent(
+                PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()), k -> new ArrayList<>()).add(r));
         for (List<PmDevSchedule> personRows : byPerson.values()) {
             personRows.sort(Comparator
                     .comparing((PmDevSchedule r) -> toLocalDate(r.getDevStartDate()))
@@ -1496,7 +1710,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     private PmDevSchedule buildScheduleRow(PmRequirement req, String person, String role, BigDecimal workload,
                                            LocalDate baseStart, ScheduleConfigDTO config,
                                            Map<String, PmDevSchedule> pinned) {
-        PmDevSchedule pin = pinned.get(person + "|" + role);
+        String roleId = PersonnelIdUtils.personIdForName(req, role, person);
+        // 钉住行必须按身份键(personId 优先)匹配, 与 loadPinnedRows / packScheduleRow 同一口径:
+        // 若按姓名查, 人员一旦账号化(identity=userId ≠ 姓名)就会查不到 → 钉住行被丢弃并重新排期
+        PmDevSchedule pin = pinned.get(PersonnelIdUtils.identityKey(roleId, person) + "|" + role);
         if (pin != null) {
             pin.setReqNo(req.getReqNo());
             pin.setIterationId(req.getIterationId());
@@ -1509,6 +1726,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         row.setReqNo(req.getReqNo());
         row.setIterationId(req.getIterationId());
         row.setPersonName(person);
+        // 账号化身份(含 fullstack 的两侧归并): 取不到时留空, 排期引擎自动按姓名兜底
+        row.setPersonId(roleId);
         row.setDevRole(role);
         row.setWorkload(workload);
         row.setDevStartDate(toDate(start));
@@ -1765,10 +1984,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      *         由调用方通过 UpdateWrapper 显式 SET NULL 落库)。
      */
     private boolean syncIterationInfo(PmRequirement requirement, PmRequirement exist) {
-        // 显式清空归属版本：同步清空月份、发版时间与转测节点绑定
-        if (isEmptySent(requirement.getIterationId()) || isEmptySent(requirement.getMonth())) {
+        // 显式清空归属版本：同步清空发版时间与转测节点绑定(版本号由 iteration_id 派生, 无需单独清空)
+        if (isEmptySent(requirement.getIterationId())) {
             requirement.setIterationId("");
-            requirement.setMonth("");
             requirement.setTestNodeId("");
             requirement.setTestNodeName("");
             requirement.setTestNodeDate(null);
@@ -1778,25 +1996,20 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String iterationId = StringUtils.isNotEmpty(requirement.getIterationId())
                 ? requirement.getIterationId()
                 : (exist != null ? exist.getIterationId() : null);
-        String month = StringUtils.isNotEmpty(requirement.getMonth())
-                ? requirement.getMonth()
-                : (exist != null ? exist.getMonth() : null);
         if (StringUtils.isEmpty(iterationId)) {
             return false;
         }
         PmIteration iteration = iterationMapper.selectById(iterationId);
         if (iteration == null) {
+            // 兼容前端可能传入版本代号而非主键ID
             iteration = iterationMapper.selectOne(new LambdaQueryWrapper<PmIteration>()
                     .eq(PmIteration::getCode, iterationId)
-                    .or()
-                    .eq(PmIteration::getCode, month)
                     .last("limit 1"));
         }
         if (iteration == null) {
             return false;
         }
         requirement.setIterationId(iteration.getId());
-        requirement.setMonth(iteration.getCode());
         if (iteration.getReleaseDate() != null && requirement.getReleaseTime() == null) {
             requirement.setReleaseTime(iteration.getReleaseDate());
         }
@@ -1981,5 +2194,74 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return req.getTenantId();
         }
         return safeGetCurrentTenantId();
+    }
+
+    // ==================== 人员账号化: 姓名串 与 用户ID数组 的索引对齐 ====================
+
+    /**
+     * 保证「姓名串」与「用户ID数组」按索引对齐, 贯穿新建/编辑/批量导入三条写入路径:
+     * <ol>
+     *   <li>前端点选人员时提交的ID是唯一准确来源(点击那一刻才知道是哪个同名的人), 长度对齐即信任</li>
+     *   <li>ID缺失或与姓名长度不一致时(批量导入只有姓名), 按「租户 + 姓名」解析回填</li>
+     *   <li>解析不到 / 租户内多人同名一律留 null, 排期时自动降级为按姓名处理</li>
+     * </ol>
+     * 解析是尽力而为的能力: 远程调用失败仅记录告警, 不阻断需求落库。
+     *
+     * @param req 需求(须已确定 tenantId)
+     */
+    private void alignPersonnelIds(PmRequirement req) {
+        if (req == null) {
+            return;
+        }
+        String tenantId = req.getTenantId();
+        for (String role : PersonnelIdUtils.allRoles()) {
+            List<String> names = PersonnelNameUtils.parsePersonnelNames(PersonnelIdUtils.namesOfRole(req, role));
+            if (names.isEmpty()) {
+                PersonnelIdUtils.setIdsOfRole(req, role, null);
+                continue;
+            }
+            List<String> existIds = PersonnelIdUtils.parseIds(PersonnelIdUtils.idsOfRole(req, role));
+            if (!existIds.isEmpty() && existIds.size() == names.size()) {
+                // 前端已提交且与当前姓名列表对齐 —— 拒绝二次解析, 避免把点选结果改错
+                continue;
+            }
+            List<String> resolved = new ArrayList<>();
+            if (StringUtils.isEmpty(tenantId)) {
+                names.forEach(n -> resolved.add(null));
+            } else {
+                Map<String, String> nameToId = resolveNamesToIds(tenantId, names);
+                names.forEach(n -> resolved.add(nameToId.get(n)));
+            }
+            PersonnelIdUtils.setIdsOfRole(req, role, resolved);
+        }
+    }
+
+    /**
+     * 按「租户 + 姓名」解析用户ID(仅采用唯一命中)
+     *
+     * @param tenantId 租户ID
+     * @param names    姓名列表
+     * @return 姓名 → 用户ID(未命中/歧义的值为 null)
+     */
+    private Map<String, String> resolveNamesToIds(String tenantId, List<String> names) {
+        Map<String, String> result = new HashMap<>();
+        names.forEach(n -> result.put(n, null));
+        if (names.isEmpty() || remoteUserService == null) {
+            return result;
+        }
+        try {
+            Result<List<UserIdResolveVo>> ret = remoteUserService
+                    .resolveTenantUserIds(RPCConstants.INNER, tenantId, new ArrayList<>(names));
+            List<UserIdResolveVo> vos = (ret == null || ret.getData() == null) ? List.of() : ret.getData();
+            for (UserIdResolveVo vo : vos) {
+                if (vo != null && vo.isResolved()) {
+                    result.put(vo.getName(), vo.getUserId());
+                }
+            }
+        } catch (Exception e) {
+            // 降级: 排期按姓名处理, 不影响需求本身的保存
+            log.warn("按姓名解析用户ID失败, 已按姓名兜底: {}", names, e);
+        }
+        return result;
     }
 }

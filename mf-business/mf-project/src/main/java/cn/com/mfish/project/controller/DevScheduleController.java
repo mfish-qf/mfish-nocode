@@ -62,6 +62,9 @@ public class DevScheduleController {
      */
     @Log(title = "排期明细-拖拽调期", operateType = OperateType.UPDATE)
     @Operation(summary = "排期明细-拖拽调期", description = "与本人其他任务重叠时拒绝; 调期后自动钉住")
+    // 拖拽调期内部的 hasOverlap 按 person_name 查"同人员其他排期", 必须限定租户,
+    // 否则会跨租户读到同名人员造成误判/泄漏(tenant_id 字段在此路径此前未生效)
+    @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
     @PutMapping("/adjust")
     @RequiresPermissions("project:requirement:update")
     public Result<PmDevSchedule> adjust(@Valid @RequestBody ReqDevScheduleAdjust req) {
@@ -73,6 +76,8 @@ public class DevScheduleController {
      */
     @Log(title = "排期明细-钉住切换", operateType = OperateType.UPDATE)
     @Operation(summary = "排期明细-钉住/取消钉住", description = "钉住后一键重算保持不动")
+    // 与 adjust 保持一致: 该路径同样可能扩展按 person_name 的查询, 统一加租户隔离防御
+    @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
     @PutMapping("/pin")
     @RequiresPermissions("project:requirement:update")
     public Result<PmDevSchedule> togglePin(@Valid @RequestBody ReqDevSchedulePin req) {

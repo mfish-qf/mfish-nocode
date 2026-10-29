@@ -24,4 +24,6 @@ public class ReqBatchAssign {
     private String personnelType;
     @Schema(description = "人员姓名串(如 周伟、王敏，多个以、分隔)")
     private String names;
+    @Schema(description = "人员用户ID列表(与 names 解析出的姓名按索引对齐; 未匹配到账号的位传 null。长度不一致时整组忽略, 该角色退回按姓名排期)")
+    private List<String> userIds;
 }

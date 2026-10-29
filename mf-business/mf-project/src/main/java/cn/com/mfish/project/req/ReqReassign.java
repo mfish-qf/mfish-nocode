@@ -23,6 +23,8 @@ public class ReqReassign {
     @Schema(description = "目标人员")
     @NotBlank(message = "目标人员不能为空")
     private String toPerson;
+    @Schema(description = "目标人员用户ID(账号化: 点选人员时已知的确切 userId, 用于区分同租户同名人员; 不传则该位退回按姓名排期)")
+    private String toPersonId;
     @Schema(description = "岗位角色(frontend前端/backend后端)")
     private String role;
     @Schema(description = "是否独占整单转派(true将整个需求移交目标开发人员)")
