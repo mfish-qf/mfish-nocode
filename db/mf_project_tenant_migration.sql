@@ -30,8 +30,8 @@ ALTER TABLE `pm_iteration`            ADD INDEX `idx_pm_iter_tenant`(`tenant_id`
 
 -- 3) 回填历史数据（务必替换 <TENANT_ID> 为实际租户 ID）
 --    多租户环境若为不同租户的历史数据，请按各自归属分别 UPDATE。
-UPDATE `pm_requirement`          SET `tenant_id` = '<TENANT_ID>' WHERE `tenant_id` IS NULL OR `tenant_id` = '';
-UPDATE `pm_dev_schedule`         SET `tenant_id` = '<TENANT_ID>' WHERE `tenant_id` IS NULL OR `tenant_id` = '';
-UPDATE `pm_iteration`            SET `tenant_id` = '<TENANT_ID>' WHERE `tenant_id` IS NULL OR `tenant_id` = '';
+UPDATE `pm_requirement`          SET `tenant_id` = 'a90dc8fdfb63b73102cfdb6a5d52dc5e' WHERE `tenant_id` IS NULL OR `tenant_id` = '';
+UPDATE `pm_dev_schedule`         SET `tenant_id` = 'a90dc8fdfb63b73102cfdb6a5d52dc5e' WHERE `tenant_id` IS NULL OR `tenant_id` = '';
+UPDATE `pm_iteration`            SET `tenant_id` = 'a90dc8fdfb63b73102cfdb6a5d52dc5e' WHERE `tenant_id` IS NULL OR `tenant_id` = '';
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -27,12 +27,25 @@ ALTER TABLE `pm_dev_schedule`
 ALTER TABLE `pm_dev_schedule` ADD INDEX `idx_dev_schedule_person_id` (`person_id`);
 
 -- -----------------------------------------------------------------------------
--- Part B. 数据回填(必须走应用层, 不能在 SQL 里直连 sso 表)
+-- Part B. 数据回填(两条路线, 二选一)
 --
--- 原因: 「姓名 -> 用户ID」必须遵守「租户内唯一命中才采用」的规则,
---       而租户归属需要 user -> sso_org_user -> sso_org 的 org_code 前缀判定,
---       且歧义(租户内多人同名)必须在应用层被识别并跳过。用纯 SQL 回填容易把
---       排期静默挂到另一个同名同事名下。
+-- 路线 A(推荐, 口径最权威): 走应用层
+--   原因: 「姓名 -> 用户ID」必须遵守「租户内唯一命中才采用」的规则, 而租户归属
+--         需要 user -> sso_org_user -> sso_org 的关联判定, 歧义(租户内多人同名)
+--         必须在应用层被识别并跳过, 避免把排期静默挂到另一个同名同事名下。
+--   步骤:
+--     1) 回填需求表 *_ids: 对每个需求按角色解析姓名 -> id 数组
+--        (走内部接口 POST /user/tenantUserIds, tenantId 取该需求的 tenant_id)
+--        规则: RESOLVED 落 id; UNRESOLVED / AMBIGUOUS 落 NULL
+--     2) 回填排期明细 person_id: 通过 req_id 关联到需求, 按 dev_role 找到对应角色的
+--        姓名数组, 用 person_name 在其中的下标取同位置的 *_ids 值
+--        (这一步也可不手工执行 —— 下一次重算/自愈会按 Phase 3 的自愈逻辑自动补齐)
+--
+-- 路线 B(纯 SQL, 适合一次性批量初始化, 从简): db/mf_project_person_id_backfill.sql
+--   脚本从简: 人名视为全局唯一, 直接按 sso_user.nickname(退化 account) 全局匹配,
+--   不做租户/角色/歧义判定; 多人按 [、,，\s/]+ 拆分并按原序对齐拼成 JSON 数组。
+--   前提假设: 全库人名不重复。若实际存在跨租户同名, 路线 B 会命中错误的人 ——
+--   此时请用路线 A(应用层, 带租户内唯一命中判定)。
 --
 -- 推荐顺序:
 --   1) 回填需求表的 *_ids: 对每个需求按角色解析姓名 -> id 数组

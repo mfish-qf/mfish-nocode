@@ -122,6 +122,11 @@ public class RequirementController {
     /**
      * 更新需求(修改工时或开始时间时联动重算截止时间)
      */
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @Log(title = "需求管理-编辑", operateType = OperateType.UPDATE)
     @Operation(summary = "需求管理-编辑")
     @PutMapping
@@ -133,6 +138,11 @@ public class RequirementController {
     /**
      * 通过id逻辑删除需求
      */
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @Log(title = "需求管理-通过id删除", operateType = OperateType.DELETE)
     @Operation(summary = "需求管理-通过id删除")
     @DeleteMapping("/{id}")
@@ -159,6 +169,11 @@ public class RequirementController {
     /**
      * 保存需求PRD富文本正文内容
      */
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @Log(title = "需求管理-保存PRD文档", operateType = OperateType.UPDATE)
     @Operation(summary = "需求管理-保存PRD文档")
     @PutMapping("/{id}/doc")
@@ -335,6 +350,11 @@ public class RequirementController {
     /**
      * 回收站: 批量恢复需求(单条传单元素列表即可)，恢复后重新出现在正常列表
      */
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @Log(title = "需求管理-回收站恢复", operateType = OperateType.UPDATE)
     @Operation(summary = "需求管理-从回收站恢复需求")
     @PostMapping("/restore")
@@ -346,6 +366,11 @@ public class RequirementController {
     /**
      * 回收站: 批量彻底删除需求(物理删除，含排期明细与审计日志级联清理，数据不可恢复)
      */
+    @DataScopes({
+            @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
+            @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
+    })
     @Log(title = "需求管理-回收站彻底删除", operateType = OperateType.DELETE)
     @Operation(summary = "需求管理-彻底删除需求(物理删除不可恢复)")
     @PostMapping("/permanent-delete")

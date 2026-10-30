@@ -92,6 +92,7 @@ public class IterationController {
      * 编辑迭代版本(包含子表转测节点的新增与删除同步)
      */
     @Log(title = "迭代版本-编辑", operateType = OperateType.UPDATE)
+    @DataScope(table = "pm_iteration", type = DataScopeType.Tenant)
     @Operation(summary = "迭代版本-编辑")
     @PutMapping
     @RequiresPermissions("project:iteration:update")
@@ -102,6 +103,7 @@ public class IterationController {
     /**
      * 删除迭代版本
      */
+    @DataScope(table = "pm_iteration", type = DataScopeType.Tenant)
     @Log(title = "迭代版本-删除", operateType = OperateType.DELETE)
     @Operation(summary = "迭代版本-通过id删除")
     @DeleteMapping("/{id}")

@@ -378,13 +378,18 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (ids == null || ids.isEmpty()) {
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
         }
-        if (removeByIds(ids)) {
-            deleteScheduleRows(ids);
-            List<PmRequirement> removed = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        // 仅操作本租户需求: 按ID列表过滤出归属当前租户的主键, 跨租户ID直接剔除
+        List<String> ownIds = filterOwnTenantIds(ids);
+        if (ownIds.isEmpty()) {
+            return Result.ok(true, "未命中本租户需求, 无数据可删除!");
+        }
+        if (removeByIds(ownIds)) {
+            deleteScheduleRows(ownIds);
+            List<PmRequirement> removed = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ownIds));
             for (PmRequirement req : removed) {
                 recordHistory(req, "DELETE", null, null, null, req.getStatus(), null, "批量删除需求 #" + req.getReqNo());
             }
-            return Result.ok(true, "已成功批量删除 " + ids.size() + " 项需求!");
+            return Result.ok(true, "已成功批量删除 " + ownIds.size() + " 项需求!");
         }
         return Result.fail(false, "错误:需求-批量删除失败!");
     }
@@ -1153,6 +1158,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (StringUtils.isEmpty(id)) {
             throw new MyRuntimeException("错误:需求ID不能为空!");
         }
+        // 仅恢复本租户需求: 先取快照校验归属租户, 杜绝跨租户恢复
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        PmRequirement raw = baseMapper.selectById(id);
+        if (raw == null || !tenantId.equals(raw.getTenantId())) {
+            throw new MyRuntimeException("错误:需求不存在或已恢复!");
+        }
         // 仅回收站内(del_flag=1)可恢复: 原生 UPDATE 带 del_flag=1 条件, 重复恢复返回 0 行
         int restored = baseMapper.restoreDeleted(id, safeGetCurrentUser());
         if (restored <= 0) {
@@ -1174,8 +1185,14 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (validIds.isEmpty()) {
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
         }
+        // 仅恢复本租户需求: 校验归属租户, 跳过非本租户/已删除记录
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
         int count = 0;
         for (String id : validIds) {
+            PmRequirement raw = baseMapper.selectById(id);
+            if (raw == null || !tenantId.equals(raw.getTenantId())) {
+                continue;
+            }
             if (baseMapper.restoreDeleted(id, safeGetCurrentUser()) > 0) {
                 count++;
             }
@@ -1192,17 +1209,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (StringUtils.isEmpty(id)) {
             throw new MyRuntimeException("错误:需求ID不能为空!");
         }
-        // 物理删除前取快照(删后查不到), 用于历史记录描述
+        // 物理删除前取快照(删后查不到)并校验归属租户, 杜绝跨租户物理删除
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
         PmRequirement exist = baseMapper.selectById(id);
+        if (exist == null || !tenantId.equals(exist.getTenantId())) {
+            throw new MyRuntimeException("错误:需求不存在或已被彻底删除!");
+        }
         purgeRelatedRows(id);
         if (baseMapper.physicalDeleteById(id) <= 0) {
             throw new MyRuntimeException("错误:需求不存在或已被彻底删除!");
         }
-        if (exist != null) {
-            recordHistory(exist, "PURGE", null, null, null, null, null,
-                    "彻底删除需求 #" + exist.getReqNo() + "(不可恢复)");
-        }
-        return Result.ok(true, "需求 #" + (exist != null ? exist.getReqNo() : id) + " 已彻底删除!");
+        recordHistory(exist, "PURGE", null, null, null, null, null,
+                "彻底删除需求 #" + exist.getReqNo() + "(不可恢复)");
+        return Result.ok(true, "需求 #" + exist.getReqNo() + " 已彻底删除!");
     }
 
     @Override
@@ -1215,8 +1234,14 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (validIds.isEmpty()) {
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
         }
+        // 仅彻底删除本租户需求: 校验归属租户, 跳过非本租户/已删除记录
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
         int count = 0;
         for (String id : validIds) {
+            PmRequirement exist = baseMapper.selectById(id);
+            if (exist == null || !tenantId.equals(exist.getTenantId())) {
+                continue;
+            }
             purgeRelatedRows(id);
             if (baseMapper.physicalDeleteById(id) > 0) {
                 count++;
@@ -1234,6 +1259,22 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     private void purgeRelatedRows(String reqId) {
         devScheduleMapper.physicalDeleteByReqId(reqId);
         historyMapper.physicalDeleteByReqId(reqId);
+    }
+
+    /**
+     * 仅保留「属于当前租户」的需求ID：从入参列表中过滤出本租户真实存在的主键。
+     * 写操作（批量删除/彻底删除/恢复）在按ID直接操作前必须过此筛，杜绝跨租户误删/误改。
+     */
+    private List<String> filterOwnTenantIds(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        List<PmRequirement> owned = list(new LambdaQueryWrapper<PmRequirement>()
+                .select(PmRequirement::getId)
+                .in(PmRequirement::getId, ids)
+                .eq(PmRequirement::getTenantId, tenantId));
+        return owned.stream().map(PmRequirement::getId).toList();
     }
 
     // ==================== 私有辅助方法 ====================

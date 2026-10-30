@@ -1,6 +1,7 @@
 package cn.com.mfish.project.service.impl;
 
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.project.dto.ScheduleConfigDTO;
 import cn.com.mfish.project.entity.PmDevSchedule;
@@ -125,8 +126,10 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
             return Result.ok(0, "无排期明细需要清理!");
         }
         // 本表不走逻辑删除(@TableLogic已移除): delete 直接物理删除, 避免重算堆积幽灵行
+        // 物理删除前限定本租户, 防止跨租户排期明细被误清
         int count = baseMapper.delete(new LambdaQueryWrapper<PmDevSchedule>()
-                .in(PmDevSchedule::getReqId, reqIds));
+                .in(PmDevSchedule::getReqId, reqIds)
+                .eq(PmDevSchedule::getTenantId, AuthInfoUtils.getCurrentTenantId()));
         return Result.ok(count, "已清理 " + count + " 条排期明细!");
     }
 
