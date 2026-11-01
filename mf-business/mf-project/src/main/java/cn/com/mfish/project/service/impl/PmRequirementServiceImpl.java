@@ -296,7 +296,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             throw new MyRuntimeException("错误:需求ID不能为空!");
         }
         PmRequirement exist = getById(requirement.getId());
-        if (exist == null) {
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
             throw new MyRuntimeException("错误:需求不存在!");
         }
         verifyRequirement(requirement);
@@ -361,7 +361,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> delete(String id) {
         PmRequirement exist = getById(id);
-        if (exist == null) {
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
             throw new MyRuntimeException("错误:需求不存在!");
         }
         if (removeById(id)) {
@@ -414,7 +414,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     @Transactional(rollbackFor = Exception.class)
     public Result<PmRequirement> saveDoc(String id, String prdDocContent, String docAuthor) {
         PmRequirement exist = getById(id);
-        if (exist == null) {
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
             throw new MyRuntimeException("错误:未找到需求 " + id);
         }
         PmRequirement update = new PmRequirement();
@@ -1159,8 +1159,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             throw new MyRuntimeException("错误:需求ID不能为空!");
         }
         // 仅恢复本租户需求: 先取快照校验归属租户, 杜绝跨租户恢复
+        // 注意: 回收站内的需求 del_flag=1, 普通 selectById 受 @TableLogic 过滤查不到, 必须用含删除行的查询
         String tenantId = AuthInfoUtils.getCurrentTenantId();
-        PmRequirement raw = baseMapper.selectById(id);
+        PmRequirement raw = baseMapper.selectByIdIncludeDeleted(id);
         if (raw == null || !tenantId.equals(raw.getTenantId())) {
             throw new MyRuntimeException("错误:需求不存在或已恢复!");
         }
@@ -1189,7 +1190,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String tenantId = AuthInfoUtils.getCurrentTenantId();
         int count = 0;
         for (String id : validIds) {
-            PmRequirement raw = baseMapper.selectById(id);
+            // 回收站内需求 del_flag=1, 需用含删除行的查询, 否则 selectById 受 @TableLogic 过滤查不到
+            PmRequirement raw = baseMapper.selectByIdIncludeDeleted(id);
             if (raw == null || !tenantId.equals(raw.getTenantId())) {
                 continue;
             }
@@ -1210,8 +1212,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             throw new MyRuntimeException("错误:需求ID不能为空!");
         }
         // 物理删除前取快照(删后查不到)并校验归属租户, 杜绝跨租户物理删除
+        // 回收站内需求 del_flag=1, 需用含删除行的查询, 否则 selectById 受 @TableLogic 过滤查不到
         String tenantId = AuthInfoUtils.getCurrentTenantId();
-        PmRequirement exist = baseMapper.selectById(id);
+        PmRequirement exist = baseMapper.selectByIdIncludeDeleted(id);
         if (exist == null || !tenantId.equals(exist.getTenantId())) {
             throw new MyRuntimeException("错误:需求不存在或已被彻底删除!");
         }
@@ -1238,7 +1241,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String tenantId = AuthInfoUtils.getCurrentTenantId();
         int count = 0;
         for (String id : validIds) {
-            PmRequirement exist = baseMapper.selectById(id);
+            // 回收站内需求 del_flag=1, 需用含删除行的查询, 否则 selectById 受 @TableLogic 过滤查不到
+            PmRequirement exist = baseMapper.selectByIdIncludeDeleted(id);
             if (exist == null || !tenantId.equals(exist.getTenantId())) {
                 continue;
             }

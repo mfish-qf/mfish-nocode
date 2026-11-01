@@ -111,7 +111,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
             throw new MyRuntimeException("错误:迭代ID不能为空!");
         }
         PmIteration exist = getById(iteration.getId());
-        if (exist == null) {
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
             throw new MyRuntimeException("错误:迭代不存在!");
         }
         verifyIteration(iteration);
@@ -131,7 +131,7 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> deleteIteration(String id) {
         PmIteration iteration = getById(id);
-        if (iteration == null) {
+        if (iteration == null || !AuthInfoUtils.getCurrentTenantId().equals(iteration.getTenantId())) {
             throw new MyRuntimeException("错误:迭代不存在!");
         }
         // 已发布(含归档)的版本不允许删除: 发布记录需留存作为版本追溯, 与前端隐藏删除入口双向兜底

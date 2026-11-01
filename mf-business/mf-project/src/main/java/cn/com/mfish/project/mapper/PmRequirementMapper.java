@@ -58,6 +58,13 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
     List<PmRequirement> selectDeletedList();
 
     /**
+     * 按主键查询(含已逻辑删除 del_flag=1 的行): 用于回收站恢复/彻底删除前的归属与存在性校验。
+     * 自定义 @Select 不走 @TableLogic 自动过滤(del_flag=0)，否则回收站内的需求永远查不到。
+     */
+    @Select("SELECT id, req_no, tenant_id, del_flag FROM pm_requirement WHERE id = #{id}")
+    PmRequirement selectByIdIncludeDeleted(@Param("id") String id);
+
+    /**
      * 从回收站恢复需求: 将 del_flag 置回 0(原生 UPDATE, 否则 @TableLogic 会自动追加 del_flag=0 条件导致 0 行受影响)
      * 带 del_flag=1 条件防并发重复恢复; 记录恢复操作人与时间
      */
