@@ -77,7 +77,14 @@ public class RequirementController {
     /**
      * 全量不分页查询需求列表(甘特图看板实时联动)
      */
-    @Operation(summary = "需求管理-全量列表查询", description = "不分页返回全部需求(甘特图看板联动)")
+    /**
+     * AI/内存安全阀：/all 无过滤全量 dump 时的最大行数。
+     * 防止 AI 一次性拉取数万行需求回灌 LLM 上下文撑爆 TPM；
+     * 前端看板/甘特图均按版本或状态过滤，正常数据量远小于此上限，不会触顶。
+     */
+    private static final int MAX_ALL_ROWS = 2000;
+
+    @Operation(summary = "需求管理-全量列表查询", description = "不分页返回全部需求(甘特图看板联动), 受 MAX_ALL_ROWS 安全上限约束")
     @DataScopes({
             @DataScope(table = "pm_requirement", type = DataScopeType.Tenant),
             @DataScope(table = "pm_iteration", type = DataScopeType.Tenant),
@@ -86,7 +93,7 @@ public class RequirementController {
     @GetMapping("/all")
     @RequiresPermissions("project:requirement:query")
     public Result<List<PmRequirement>> queryAll(ReqPmRequirement reqPmRequirement) {
-        Result<PageResult<PmRequirement>> pageResult = requirementService.queryPageList(reqPmRequirement, 1, 100000);
+        Result<PageResult<PmRequirement>> pageResult = requirementService.queryPageList(reqPmRequirement, 1, MAX_ALL_ROWS);
         if (pageResult.getData() == null) {
             return Result.fail("错误:需求列表-查询失败!");
         }

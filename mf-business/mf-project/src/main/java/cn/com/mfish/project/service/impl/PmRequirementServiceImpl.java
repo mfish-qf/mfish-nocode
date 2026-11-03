@@ -6,6 +6,7 @@ import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.common.core.constants.RPCConstants;
 import cn.com.mfish.common.core.web.PageResult;
 import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.annotation.DataScope;
 import cn.com.mfish.common.oauth.common.DataScopeUtils;
@@ -223,6 +224,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     /**
      * 在查询条件上追加"排除已归档(状态=已发布)版本的需求"
      * 无归档版本时不做处理, 避免生成空 not in 条件
+     * <p>
+     * 注意：不能简单写成 {@code notIn(iterationId, archivedIds)}。SQL 三值逻辑下
+     * {@code NULL NOT IN (...)} 的结果是 UNKNOWN(非 TRUE)，会把「未纳入版本」(iteration_id 为 NULL)
+     * 的需求一并排除——AI 创建需求时若不传 iterationId 落库即为 NULL，就会出现
+     * "全部版本查不到、勾选未纳入版本才查得到"的现象。
+     * 因此用括号把条件包成一组：属于非归档版本 OR 无归属(NULL/空串)。
      */
     private LambdaQueryWrapper<PmRequirement> excludeArchivedIterations(LambdaQueryWrapper<PmRequirement> wrapper) {
         List<String> archivedIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
@@ -233,7 +240,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 .filter(StringUtils::isNotEmpty)
                 .toList();
         if (!archivedIds.isEmpty()) {
-            wrapper.notIn(PmRequirement::getIterationId, archivedIds);
+            wrapper.and(w -> w
+                    .notIn(PmRequirement::getIterationId, archivedIds)
+                    .or().isNull(PmRequirement::getIterationId)
+                    .or().eq(PmRequirement::getIterationId, ""));
         }
         return wrapper;
     }
@@ -260,12 +270,33 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         verifyRequirement(requirement);
         Date now = new Date();
-        requirement.setTenantId(resolveTenantId(requirement));
+        // 租户强制取当前会话，绝不信任请求体传入的 tenantId：
+        // AI 工具/导入请求可能误带 tenantId=1(系统默认/超级租户)，曾导致需求落到错误租户，
+        // 当前租户下因 @DataScope 过滤而完全查不到。取不到会话租户时宁可失败，也不能落脏租户。
+        String currentTenantId = safeGetCurrentTenantId();
+        if (StringUtils.isEmpty(currentTenantId)) {
+            throw new MyRuntimeException("错误:未获取到当前租户信息, 无法创建需求!");
+        }
+        requirement.setTenantId(currentTenantId);
         requirement.setCreateBy(safeGetCurrentUser());
         requirement.setCreateTime(now);
         // 未传序号时自动生成递增 req_no
         if (requirement.getReqNo() == null) {
             requirement.setReqNo(nextReqNo());
+        }
+        // 提出人/提出日期兜底：AI 创建时经常省略这两个字段(仅靠提示词不可靠)，
+        // 后端统一按当前登录用户姓名与当天补齐；用户显式传值时尊重显式值。
+        if (StringUtils.isEmpty(requirement.getRequester())) {
+            requirement.setRequester(resolveCurrentUserName());
+        }
+        if (requirement.getRequestDate() == null) {
+            requirement.setRequestDate(now);
+        }
+        // AI/接口创建时常常完全不传 iterationId(为 null)，统一按「未纳入版本」归一为空串：
+        // 前端新建显式传 ""，两者行为保持一致；也避免 NULL 在汇总查询的 NOT IN 条件下被 SQL 三值逻辑漏掉。
+        // 注意只在新增时归一，编辑时 null 表示"保持原值"，不能改。
+        if (requirement.getIterationId() == null) {
+            requirement.setIterationId("");
         }
         // 归属迭代信息联动(月份代码与发版时间)
         syncIterationInfo(requirement, requirement);
@@ -275,6 +306,11 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         if (requirement.getDevProgress() == null) {
             requirement.setDevProgress(resolveDefaultProgress(requirement.getStatus()));
+        }
+        // 优先级兜底：AI 创建时常省略 priority(仅靠提示词不可靠)，且历史上默认口径曾为「中」，
+        // 用户明确要求默认「高」。后端统一默认「高」，与前端手动新建默认值(高)保持一致；用户显式传值时尊重显式值。
+        if (StringUtils.isEmpty(requirement.getPriority())) {
+            requirement.setPriority("高");
         }
         // 人员账号化: 保证姓名串与用户ID数组按索引对齐(点选ID优先, 仅有姓名时按租户解析)
         alignPersonnelIds(requirement);
@@ -2236,7 +2272,42 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 解析排期明细/审计日志应归属的租户ID: 优先取需求实体上的 tenantId, 缺失时回退当前登录租户
+     * 解析当前登录用户姓名(nickname)，用于新建需求时兜底「需求提出人」。
+     * 单实例/AI 工具调用下 req-user-id 可能为空而只有 req-account，因此先按账号查、再按用户ID兜底。
+     * 查询失败不阻断保存，返回 null 由 sanitizeRequirement 归一为空串。
+     */
+    private String resolveCurrentUserName() {
+        if (remoteUserService == null) {
+            return null;
+        }
+        try {
+            String account = AuthInfoUtils.getCurrentAccount();
+            String userId = AuthInfoUtils.getCurrentUserId();
+            UserInfo info = null;
+            if (StringUtils.isNotEmpty(account)) {
+                Result<UserInfo> ret = remoteUserService.getUserByAccount(RPCConstants.INNER, account);
+                info = ret == null ? null : ret.getData();
+            }
+            if ((info == null || StringUtils.isEmpty(info.getNickname())) && StringUtils.isNotEmpty(userId)) {
+                Result<UserInfo> ret = remoteUserService.getUserById(RPCConstants.INNER, userId);
+                UserInfo byId = ret == null ? null : ret.getData();
+                if (byId != null && StringUtils.isNotEmpty(byId.getNickname())) {
+                    info = byId;
+                }
+            }
+            return info == null ? null : info.getNickname();
+        } catch (Exception e) {
+            log.warn("获取当前用户姓名失败, 需求提出人留空: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 解析排期明细/审计日志应归属的租户ID: 取需求实体(已持久化)上的 tenantId, 缺失时回退当前登录租户。
+     * <p>
+     * 注意：本方法<b>仅用于排期行等从已有需求继承租户的内部场景</b>，其入参来自数据库而非外部请求。
+     * 新增需求入口(add)必须使用 {@link #safeGetCurrentTenantId()} 强制覆盖，
+     * 绝不能信任请求体传入的 tenantId(AI 工具曾误传 1=超级租户)。
      */
     private String resolveTenantId(PmRequirement req) {
         if (req != null && StringUtils.isNotEmpty(req.getTenantId())) {

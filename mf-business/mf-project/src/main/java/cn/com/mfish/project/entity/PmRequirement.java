@@ -32,7 +32,7 @@ public class PmRequirement extends BaseEntity<String> {
     @TableId(type = IdType.ASSIGN_UUID)
     @Accessors(chain = true)
     private String id;
-    @Schema(description = "租户ID(多租户隔离)")
+    @Schema(description = "租户ID(多租户隔离, 内部字段: 由后端按当前登录租户强制写入, 严禁在请求中传入)")
     @TableField("tenant_id")
     private String tenantId;
     @Schema(description = "序号(自动递增)")
@@ -61,11 +61,11 @@ public class PmRequirement extends BaseEntity<String> {
     private String vendors;
     @Schema(description = "优先级")
     private String priority;
-    @Schema(description = "需求提出人")
+    @Schema(description = "需求提出人(留空时后端自动填当前登录用户姓名)")
     private String requester;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "需求提出日期")
+    @Schema(description = "需求提出日期(留空时后端自动填当天)")
     private Date requestDate;
     @Schema(description = "高保真图(URL或图示说明)")
     private String highFidelityUrl;
