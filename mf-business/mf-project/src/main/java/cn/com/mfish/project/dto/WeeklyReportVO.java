@@ -63,6 +63,27 @@ public class WeeklyReportVO {
         private int transferredToTest;
         @Schema(description = "完成率(0-1, 两位小数)")
         private double completionRate;
+        @Schema(description = "版本管理周期开始日(yyyy-MM-dd, 可能为空)")
+        private String startDate;
+        @Schema(description = "版本管理周期结束日(yyyy-MM-dd, 可能为空)")
+        private String endDate;
+        @Schema(description = "本周该版本下被排期(落在[本周一,本周日])的功能点清单(按需求聚合, 已去噪的短功能名)。"
+                + "为空表示本周该版本无排期任务(版本仍需作为一条出现在本周工作中, 但不写'本周主要完成')")
+        private List<WeekFeature> weekFeatures;
+        @Schema(description = "本周该版本涉及工时合计(人天, 该版本所有本周排期行工时累加)")
+        private BigDecimal weekWorkload;
+    }
+
+    @Data
+    @Accessors(chain = true)
+    @Schema(description = "本周排期涉及的功能点(已按需求聚合, 去噪短名, 不含模块前缀与空段斜杠)")
+    public static class WeekFeature {
+        @Schema(description = "功能点名称(去噪短名, 如 负载感知路由 / 运营监测分析)")
+        private String featureName;
+        @Schema(description = "是否已转测(处于转测/测试/验收/上线阶段)")
+        private boolean transferredToTest;
+        @Schema(description = "当前进度百分比(0-100)")
+        private int progress;
     }
 
     @Data

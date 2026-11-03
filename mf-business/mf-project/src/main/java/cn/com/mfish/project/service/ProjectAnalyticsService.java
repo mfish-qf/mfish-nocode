@@ -4,8 +4,10 @@ import cn.com.mfish.project.dict.PmDictCodes;
 import cn.com.mfish.project.dict.PmDictService;
 import cn.com.mfish.project.dto.ProjectProgressVO;
 import cn.com.mfish.project.dto.WeeklyReportVO;
+import cn.com.mfish.project.entity.PmDevSchedule;
 import cn.com.mfish.project.entity.PmIteration;
 import cn.com.mfish.project.entity.PmRequirement;
+import cn.com.mfish.project.mapper.PmDevScheduleMapper;
 import cn.com.mfish.project.mapper.PmIterationMapper;
 import cn.com.mfish.project.mapper.PmRequirementMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -21,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +48,11 @@ public class ProjectAnalyticsService {
     @Resource
     private PmIterationMapper iterationMapper;
     @Resource
+    private PmDevScheduleMapper devScheduleMapper;
+    @Resource
     private PmDictService pmDictService;
+
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * 获取按月份聚焦的项目进度汇总
@@ -232,6 +240,11 @@ public class ProjectAnalyticsService {
                 .filter(r -> r.getIterationId() != null && weekIterIds.contains(r.getIterationId()))
                 .collect(Collectors.toList());
 
+        // 本周排期：取排期计划表(pm_dev_schedule)中落在[本周一,本周日]的行，按需求聚合。
+        // 仅作为"本周工作"的事实依据：已在本周前完成(排期结束日<本周一)的需求不会出现，从而自然排除历史工作。
+        Map<String, List<PmDevSchedule>> schedByReq = buildWeekScheduleMap(reqs, weekStartDt,
+                java.sql.Date.valueOf(weekEnd));
+
         List<WeeklyReportVO.IterationWeekly> iterVOs = new ArrayList<>();
         List<WeeklyReportVO.RequirementBrief> active = new ArrayList<>();
         BigDecimal totalActiveWorkload = BigDecimal.ZERO;
@@ -242,6 +255,9 @@ public class ProjectAnalyticsService {
             int total = inIter.size();
             int done = 0;
             int transferred = 0;
+            // 本周该版本下被排期的功能点(按需求聚合)：只统计本周有排期行的需求，一条需求=一个功能点
+            List<WeeklyReportVO.WeekFeature> weekFeatures = new ArrayList<>();
+            BigDecimal weekWorkload = BigDecimal.ZERO;
             for (PmRequirement r : inIter) {
                 int prog = progressOf(r);
                 if (prog >= 100) {
@@ -256,6 +272,22 @@ public class ProjectAnalyticsService {
                         totalActiveWorkload = totalActiveWorkload.add(r.getWorkload());
                     }
                 }
+                // 本周排期功能点：该需求本周有排期行才纳入
+                List<PmDevSchedule> rows = schedByReq.get(r.getId());
+                if (rows != null && !rows.isEmpty()) {
+                    BigDecimal w = rows.stream().map(PmDevSchedule::getWorkload)
+                            .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    weekWorkload = weekWorkload.add(w);
+                    weekFeatures.add(new WeeklyReportVO.WeekFeature()
+                            .setFeatureName(featureName(r))
+                            .setTransferredToTest(isTransferredToTest(r))
+                            .setProgress(prog));
+                }
+            }
+            // 本周功能点按涉及工时(功能点粒度近似用进度无关, 这里按出现顺序即可)——为控制 token, 单版本上限 40 个
+            final int MAX_FEAT = 40;
+            if (weekFeatures.size() > MAX_FEAT) {
+                weekFeatures = new ArrayList<>(weekFeatures.subList(0, MAX_FEAT));
             }
             double rate = total == 0 ? 0d : Math.round((double) done / total * 100.0) / 100.0;
             iterVOs.add(new WeeklyReportVO.IterationWeekly()
@@ -266,7 +298,11 @@ public class ProjectAnalyticsService {
                     .setRequirementTotal(total)
                     .setRequirementDone(done)
                     .setTransferredToTest(transferred)
-                    .setCompletionRate(rate));
+                    .setCompletionRate(rate)
+                    .setStartDate(it.getStartDate() != null ? DATE_FMT.format(it.getStartDate().toInstant().atZone(zone).toLocalDate()) : null)
+                    .setEndDate(it.getEndDate() != null ? DATE_FMT.format(it.getEndDate().toInstant().atZone(zone).toLocalDate()) : null)
+                    .setWeekFeatures(weekFeatures)
+                    .setWeekWorkload(weekWorkload));
         }
 
         // 进行中需求按计划完成日期升序(最紧急在前), 上限 150 条, 防止 token 爆炸
@@ -281,7 +317,7 @@ public class ProjectAnalyticsService {
             active = new ArrayList<>(active.subList(0, MAX_ACTIVE));
         }
 
-        // 下周计划：由"未结束(非终止阶段)且完成率<100%"的迭代推导
+        // 下周计划：由"未结束(非终止阶段)且完成率<100%"的迭代推导(保证本周工作涉及的版本下周仍会列出)
         List<String> nextWeekPlan = new ArrayList<>();
         for (WeeklyReportVO.IterationWeekly it : iterVOs) {
             String phase = pmDictService.statusPhase(it.getStatus());
@@ -302,6 +338,29 @@ public class ProjectAnalyticsService {
                 .setWorkload(new WeeklyReportVO.WorkloadSummary()
                         .setTotalPersonDays(totalActiveWorkload)
                         .setActiveRequirementCount(active.size()));
+    }
+
+    /**
+     * 构建"本周排期"映射：取排期计划表(pm_dev_schedule)中落在[本周一,本周日]的行，按需求ID聚合。
+     * 只统计本周实际排了期的工作，已在本周前完成(排期结束日<本周一)的需求不会出现，从而自然排除历史工作。
+     */
+    private Map<String, List<PmDevSchedule>> buildWeekScheduleMap(List<PmRequirement> reqs,
+                                                                 Date weekStartDt, Date weekEndDt) {
+        List<String> reqIds = reqs.stream().map(PmRequirement::getId)
+                .filter(Objects::nonNull).collect(Collectors.toList());
+        if (reqIds.isEmpty()) {
+            return Map.of();
+        }
+        List<PmDevSchedule> schedules = devScheduleMapper.selectList(
+                new LambdaQueryWrapper<PmDevSchedule>()
+                        .select(PmDevSchedule::getReqId, PmDevSchedule::getWorkload,
+                                PmDevSchedule::getDevStartDate, PmDevSchedule::getDevEndDate)
+                        .in(PmDevSchedule::getReqId, reqIds)
+                        .le(PmDevSchedule::getDevStartDate, weekEndDt)
+                        .ge(PmDevSchedule::getDevEndDate, weekStartDt));
+        return schedules.stream()
+                .filter(s -> s.getReqId() != null)
+                .collect(Collectors.groupingBy(PmDevSchedule::getReqId));
     }
 
     private int progressOf(PmRequirement r) {
@@ -333,20 +392,52 @@ public class ProjectAnalyticsService {
     }
 
     private String reqName(PmRequirement r) {
-        StringBuilder sb = new StringBuilder();
-        if (r.getModule() != null && !r.getModule().isEmpty()) {
-            sb.append(r.getModule()).append(" ");
+        List<String> parts = new ArrayList<>();
+        if (r.getModule() != null && !r.getModule().trim().isEmpty()) {
+            parts.add(r.getModule().trim());
         }
         Stream.of(r.getLevel1Feature(), r.getLevel2Feature(), r.getLevel3Feature())
-                .filter(f -> f != null && !f.isEmpty())
-                .forEach(f -> sb.append(f).append("/"));
-        String base = sb.toString().replaceAll("/$", "").trim();
-        if (r.getFeatureDescription() != null && !r.getFeatureDescription().isEmpty()) {
-            String desc = r.getFeatureDescription().length() > 40
-                    ? r.getFeatureDescription().substring(0, 40) + "…" : r.getFeatureDescription();
+                .filter(f -> f != null && !f.trim().isEmpty())
+                .forEach(f -> parts.add(f.trim()));
+        String base = String.join("/", parts);
+        if (r.getFeatureDescription() != null && !r.getFeatureDescription().trim().isEmpty()) {
+            String desc = r.getFeatureDescription().trim();
+            desc = desc.length() > 40 ? desc.substring(0, 40) + "…" : desc;
             base = base.isEmpty() ? desc : base + " - " + desc;
         }
         return base.isEmpty() ? "(未命名需求)" : base;
+    }
+
+    /**
+     * 取"去噪短功能名"：优先取最具体且非纯动作词的功能点层级(三级→二级→一级)，
+     * 去掉尾部 --数字定制 噪声(如 "负载感知路由--163定制"→"负载感知路由")。
+     * 用于周报"本周主要完成/主要包括"列举，避免输出 "模块/一级/二级/三级" 长路径与空段斜杠。
+     */
+    private static final java.util.Set<String> GENERIC_ACTION =
+            java.util.Set.of("新增", "修改", "优化", "调整", "完善", "修复", "删除", "配置", "查询", "列表");
+    private String featureName(PmRequirement r) {
+        String[] levels = {r.getLevel3Feature(), r.getLevel2Feature(), r.getLevel1Feature()};
+        for (String lv : levels) {
+            String s = cleanFeatureSegment(lv);
+            if (s != null && !s.isEmpty() && !GENERIC_ACTION.contains(s)) {
+                return s;
+            }
+        }
+        if (r.getFeatureDescription() != null && !r.getFeatureDescription().trim().isEmpty()) {
+            String desc = r.getFeatureDescription().trim();
+            return desc.length() > 40 ? desc.substring(0, 40) + "…" : desc;
+        }
+        return "(未命名功能)";
+    }
+
+    private String cleanFeatureSegment(String s) {
+        if (s == null) {
+            return null;
+        }
+        s = s.trim();
+        // 去掉尾部 --数字定制 噪声(数据里常见 "xxx--163定制")
+        s = s.replaceAll("--\\d*定制$", "");
+        return s.trim();
     }
 
     private YearMonth parseMonth(String month) {

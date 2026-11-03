@@ -9,6 +9,7 @@ import cn.com.mfish.common.core.exception.MyRuntimeException;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -55,6 +56,11 @@ public class LlmModelRouter {
      * 串行化重建动作。读操作不获取此锁，因此重建期间读取线程仍可使用旧快照，不受阻塞。
      */
     private final ReentrantLock rebuildLock = new ReentrantLock();
+    /**
+     * 单个请求内模型调用失败后自动切换模型的最大尝试次数。
+     * 按租户 provider 列表顺序循环尝试，命中限流(429/TPM)等异常时切换到下一个模型重试。
+     */
+    private static final int MAX_FALLBACK_ATTEMPTS = 3;
 
     public LlmModelRouter(ChatModel openAiChatModel, AiModelConfigService aiModelConfigService) {
         this.openaiChatModel = openAiChatModel;
@@ -155,11 +161,13 @@ public class LlmModelRouter {
     }
 
     /**
-     * 获取指定租户的ChatModel：租户专属模型 → 全局模型 → 默认模型
+     * 获取指定租户的ChatModel。
+     * 返回的是包装了整条 fallback 链的 {@link FallbackChatModel}：单次调用会按租户 provider 列表
+     * 顺序循环尝试，遇到异常（含 TPM/429 限流）自动切换到下一个模型，最多尝试 {@link #MAX_FALLBACK_ATTEMPTS} 次。
+     * 这样所有经本方法构建的 ChatClient（助手/Planner/Skill/Gateway）都自动具备限流切换能力，无需各处单独处理。
      */
     public ChatModel getChatModel(String tenantId) {
-        List<ChatModel> list = resolveProviders(tenantId);
-        return list.isEmpty() ? openaiChatModel : list.getFirst();
+        return new FallbackChatModel(tenantId);
     }
 
     /**
@@ -221,6 +229,86 @@ public class LlmModelRouter {
         }
         log.info("[LLM路由] 调用, provider={}, model={}", provider, provider.getOptions().getModel());
         return provider;
+    }
+
+    /**
+     * 包装多个 ChatModel 的路由模型：单次调用按租户 provider 列表顺序(循环)尝试，
+     * 遇到任何异常（含 TPM/429 限流、网络错误）自动切换到下一个模型，最多尝试 MAX_FALLBACK_ATTEMPTS 次。
+     * 把 fallback 收敛到 ChatModel 这一层后，所有经 LlmModelRouter.getChatModel 构建的 ChatClient 自动受益，
+     * 无需在 BaseAssistant / Planner / Skill / Gateway 各处分别写重试逻辑。
+     */
+    private class FallbackChatModel implements ChatModel {
+        private final String tenantId;
+
+        FallbackChatModel(String tenantId) {
+            this.tenantId = tenantId;
+        }
+
+        /** 解析该租户的可用模型链；空时回退到注入的默认 openaiChatModel，再无则抛明确异常 */
+        private List<ChatModel> providers() {
+            List<ChatModel> list = resolveProviders(tenantId);
+            if (!list.isEmpty()) {
+                return list;
+            }
+            if (openaiChatModel != null) {
+                return List.of(openaiChatModel);
+            }
+            throw new MyRuntimeException("未配置任何可用模型(租户=" + tenantId + ")");
+        }
+
+        private String safeModelName(ChatModel p) {
+            try {
+                Object m = p.getOptions().getModel();
+                return m == null ? p.getClass().getSimpleName() : String.valueOf(m);
+            } catch (Exception e) {
+                return p.getClass().getSimpleName();
+            }
+        }
+
+        @Override
+        public ChatOptions getOptions() {
+            try {
+                List<ChatModel> list = providers();
+                return list.isEmpty() ? null : list.get(0).getOptions();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        public ChatResponse call(Prompt prompt) {
+            List<ChatModel> providers = providers();
+            Throwable last = null;
+            for (int attempt = 0; attempt < MAX_FALLBACK_ATTEMPTS; attempt++) {
+                ChatModel p = providers.get(attempt % providers.size());
+                try {
+                    return p.call(prompt);
+                } catch (Throwable ex) {
+                    last = ex;
+                    log.warn("[LLM路由] 模型[{}]调用失败(第{}/{}次)，自动切换下一个模型重试",
+                            safeModelName(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
+                }
+            }
+            throw new MyRuntimeException("模型调用全部失败，已尝试" + MAX_FALLBACK_ATTEMPTS + "次", last);
+        }
+
+        @Override
+        public Flux<ChatResponse> stream(Prompt prompt) {
+            List<ChatModel> providers = providers();
+            return tryStream(prompt, 0, providers);
+        }
+
+        private Flux<ChatResponse> tryStream(Prompt prompt, int attempt, List<ChatModel> providers) {
+            if (attempt >= MAX_FALLBACK_ATTEMPTS) {
+                return Flux.error(new MyRuntimeException("模型流式调用全部失败，已尝试" + MAX_FALLBACK_ATTEMPTS + "次"));
+            }
+            ChatModel p = providers.get(attempt % providers.size());
+            return p.stream(prompt).onErrorResume(ex -> {
+                log.warn("[LLM路由] 模型[{}]流式调用失败(第{}/{}次)，自动切换下一个模型重试",
+                        safeModelName(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
+                return tryStream(prompt, attempt + 1, providers);
+            });
+        }
     }
 
 }
