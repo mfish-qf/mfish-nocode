@@ -25,7 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * LLM多模型路由服务
  * <p>
- * 按租户维度路由：数据库中 tenantId 为空的配置属于全局模型，作为未配置专属模型租户的兜底；
+ * 按租户维度路由：优先使用各租户在 ai_model_config 表中配置的启用模型；
+ * 租户未配置任何模型时，回退到 Spring AI 默认 ChatModel（openaiChatModel，单实例来自 yml、微服务来自 nacos 配置）。
  * 每个租户拥有独立的ChatModel列表，按sortOrder决定fallback优先级。
  * <p>
  * 创建性能优化：通过配置签名缓存已构建的ChatModel，重建时仅构建新增/变更的配置，
@@ -171,14 +172,14 @@ public class LlmModelRouter {
     }
 
     /**
-     * 解析租户可用的provider链：优先租户专属，为空则回退全局
+     * 解析租户可用的provider链：优先返回该租户在 ai_model_config 表中配置的启用模型；
+     * 若租户未配置任何模型，返回空列表，由上层 {@link FallbackChatModel#providers()} 回退到
+     * Spring AI 默认 ChatModel（openaiChatModel，单实例来自 yml、微服务来自 nacos 配置）。
+     * 不再使用 tenant_id='1' 的数据库“全局配置”做跨租户兜底，避免租户间模型互相可见。
      */
     private List<ChatModel> resolveProviders(String tenantId) {
         Map<String, List<ChatModel>> snapshot = tenantProviders;
         List<ChatModel> list = snapshot.get(tenantId);
-        if (list == null || list.isEmpty()) {
-            list = snapshot.get(AuthInfoUtils.SUPER_TENANT_ID);
-        }
         return list == null ? List.of() : list;
     }
 
