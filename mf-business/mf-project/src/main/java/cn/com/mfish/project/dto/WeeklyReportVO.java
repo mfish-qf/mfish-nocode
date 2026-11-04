@@ -13,6 +13,8 @@ import java.util.List;
  * 的紧凑结构，不含任何 PRD 文本/人员大字段，从源头压低 AI 分析的 token 消耗。
  * 数据口径与人工编写的周报一致：版本号→迭代 code/name；功能点→需求名称；
  * "已转测"→需求处于转测/测试/验收/上线阶段(progress=100%)；"当前进度"→完成率/开发进度。
+ * ★ 两个口径不可混用：weekCompletedFeatures / weekOngoingFeatures 只含 pm_dev_schedule 落在本周的排期需求，
+ * 用于"本周主要完成/推进"；scopeThemes 是该版本全部需求的内容主题，用于"主要包括"的归纳总结。
  * @author: mfish
  * @date: 2026-11-03
  * @version: V2.4.1
@@ -70,6 +72,15 @@ public class WeeklyReportVO {
         @Schema(description = "本周该版本下被排期(落在[本周一,本周日])的功能点清单(按需求聚合, 已去噪的短功能名)。"
                 + "为空表示本周该版本无排期任务(版本仍需作为一条出现在本周工作中, 但不写'本周主要完成')")
         private List<WeekFeature> weekFeatures;
+        @Schema(description = "本周排期需求中「已完成/已转测」的功能点短名(去重, 上限20)。"
+                + "仅来自 pm_dev_schedule 落在本周的排期, 供 AI 写'本周主要完成'")
+        private List<String> weekCompletedFeatures;
+        @Schema(description = "本周排期需求中「仍在开发中」的功能点短名(去重, 上限20)。"
+                + "仅来自 pm_dev_schedule 落在本周的排期, 供 AI 写'本周主要推进'")
+        private List<String> weekOngoingFeatures;
+        @Schema(description = "版本整体内容主题: 由该版本【全部需求】(不限本周排期)按 模块·一级功能 聚合去重后"
+                + "按需求数降序取前12个, 供 AI 归纳总结'主要包括'。注意与本周功能点是两个不同口径, 不能互相替代")
+        private List<String> scopeThemes;
         @Schema(description = "本周该版本涉及工时合计(人天, 该版本所有本周排期行工时累加)")
         private BigDecimal weekWorkload;
     }

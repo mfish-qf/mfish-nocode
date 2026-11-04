@@ -54,6 +54,12 @@ public class ProjectAnalyticsService {
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /** 单版本「本周完成/本周推进」功能点短名上限，控制返回体 token */
+    private static final int MAX_WEEK_FEATURES = 20;
+
+    /** 单版本「整体内容主题」上限，控制返回体 token */
+    private static final int MAX_SCOPE_THEMES = 12;
+
     /**
      * 获取按月份聚焦的项目进度汇总
      *
@@ -174,9 +180,11 @@ public class ProjectAnalyticsService {
     }
 
     /**
-     * 获取本周(周一~周日, 北京时间)项目周报汇总
-     * 返回各迭代版本进度 + 进行中需求明细(进度<100%, 上限150) + 下周计划,
-     * 供 AI 按"本周工作/下周工作"格式生成周报，从源头压低 token 消耗。
+     * 获取本周(周一~周日, 北京时间)项目周报汇总。
+     * 两个关键口径严格分离，供 AI 分别写"本周主要完成"与"主要包括"：
+     * 1) weekCompletedFeatures / weekOngoingFeatures：仅来自 pm_dev_schedule 落在[本周一,本周日]的排期需求；
+     * 2) scopeThemes：该版本全部需求按模块·一级功能聚合的内容主题(不限本周排期)。
+     * 返回各迭代版本进度 + 进行中需求明细(进度<100%, 上限150) + 下周计划, 从源头压低 token 消耗。
      *
      * @return 紧凑的周报视图
      */
@@ -257,6 +265,10 @@ public class ProjectAnalyticsService {
             int transferred = 0;
             // 本周该版本下被排期的功能点(按需求聚合)：只统计本周有排期行的需求，一条需求=一个功能点
             List<WeeklyReportVO.WeekFeature> weekFeatures = new ArrayList<>();
+            // 「本周主要完成 / 本周主要推进」两个口径都只来自 pm_dev_schedule 落在本周的排期需求，
+            // 由后端直接分组，避免 AI 自行判断状态把"待评审"写成"已完成"。
+            LinkedHashSet<String> weekCompleted = new LinkedHashSet<>();
+            LinkedHashSet<String> weekOngoing = new LinkedHashSet<>();
             BigDecimal weekWorkload = BigDecimal.ZERO;
             for (PmRequirement r : inIter) {
                 int prog = progressOf(r);
@@ -278,10 +290,19 @@ public class ProjectAnalyticsService {
                     BigDecimal w = rows.stream().map(PmDevSchedule::getWorkload)
                             .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
                     weekWorkload = weekWorkload.add(w);
+                    String fname = featureName(r);
                     weekFeatures.add(new WeeklyReportVO.WeekFeature()
-                            .setFeatureName(featureName(r))
+                            .setFeatureName(fname)
                             .setTransferredToTest(isTransferredToTest(r))
                             .setProgress(prog));
+                    boolean finished = prog >= 100 || isTransferredToTest(r);
+                    if (finished) {
+                        if (weekCompleted.size() < MAX_WEEK_FEATURES) {
+                            weekCompleted.add(fname);
+                        }
+                    } else if (weekOngoing.size() < MAX_WEEK_FEATURES) {
+                        weekOngoing.add(fname);
+                    }
                 }
             }
             // 本周功能点按涉及工时(功能点粒度近似用进度无关, 这里按出现顺序即可)——为控制 token, 单版本上限 40 个
@@ -289,6 +310,9 @@ public class ProjectAnalyticsService {
             if (weekFeatures.size() > MAX_FEAT) {
                 weekFeatures = new ArrayList<>(weekFeatures.subList(0, MAX_FEAT));
             }
+            // 「主要包括」用的是整个版本的内容(全部需求按模块·一级功能聚合), 与本周排期无关，
+            // 避免周报里出现"本周主要完成X，主要包括X"这种同义反复。
+            List<String> scopeThemes = buildScopeThemes(inIter);
             double rate = total == 0 ? 0d : Math.round((double) done / total * 100.0) / 100.0;
             iterVOs.add(new WeeklyReportVO.IterationWeekly()
                     .setId(it.getId())
@@ -302,6 +326,9 @@ public class ProjectAnalyticsService {
                     .setStartDate(it.getStartDate() != null ? DATE_FMT.format(it.getStartDate().toInstant().atZone(zone).toLocalDate()) : null)
                     .setEndDate(it.getEndDate() != null ? DATE_FMT.format(it.getEndDate().toInstant().atZone(zone).toLocalDate()) : null)
                     .setWeekFeatures(weekFeatures)
+                    .setWeekCompletedFeatures(new ArrayList<>(weekCompleted))
+                    .setWeekOngoingFeatures(new ArrayList<>(weekOngoing))
+                    .setScopeThemes(scopeThemes)
                     .setWeekWorkload(weekWorkload));
         }
 
@@ -409,9 +436,9 @@ public class ProjectAnalyticsService {
     }
 
     /**
-     * 取"去噪短功能名"：优先取最具体且非纯动作词的功能点层级(三级→二级→一级)，
-     * 去掉尾部 --数字定制 噪声(如 "负载感知路由--163定制"→"负载感知路由")。
-     * 用于周报"本周主要完成/主要包括"列举，避免输出 "模块/一级/二级/三级" 长路径与空段斜杠。
+     * 取"去噪短功能名"：优先取最具体的功能点层级(三级→二级→一级)，再退到功能描述、模块。
+     * 会剔除数据里的 "/" 等纯符号占位段与 "新增/修改" 等纯动作词，并去掉 "--163定制" 尾部噪声，
+     * 避免周报出现 "竞赛保障、/、我的项目" 这类脏值。
      */
     private static final java.util.Set<String> GENERIC_ACTION =
             java.util.Set.of("新增", "修改", "优化", "调整", "完善", "修复", "删除", "配置", "查询", "列表");
@@ -419,25 +446,73 @@ public class ProjectAnalyticsService {
         String[] levels = {r.getLevel3Feature(), r.getLevel2Feature(), r.getLevel1Feature()};
         for (String lv : levels) {
             String s = cleanFeatureSegment(lv);
-            if (s != null && !s.isEmpty() && !GENERIC_ACTION.contains(s)) {
+            if (s != null) {
                 return s;
             }
         }
-        if (r.getFeatureDescription() != null && !r.getFeatureDescription().trim().isEmpty()) {
-            String desc = r.getFeatureDescription().trim();
+        String desc = cleanFeatureSegment(r.getFeatureDescription());
+        if (desc != null) {
             return desc.length() > 40 ? desc.substring(0, 40) + "…" : desc;
         }
-        return "(未命名功能)";
+        String module = cleanFeatureSegment(r.getModule());
+        return module != null ? module : "(未命名功能)";
+    }
+
+    /**
+     * 版本整体内容主题：由该版本【全部需求】(不限本周排期)按「模块·一级功能」聚合，
+     * 按覆盖需求数降序取前 MAX_SCOPE_THEMES 个。供 AI 归纳"主要包括"，
+     * 与"本周主要完成"(仅本周排期需求)严格区分，避免两句罗列同一批功能点。
+     */
+    private List<String> buildScopeThemes(List<PmRequirement> inIter) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (PmRequirement r : inIter) {
+            String module = cleanFeatureSegment(r.getModule());
+            String level = firstValidLevel(r.getLevel1Feature(), r.getLevel2Feature(), r.getLevel3Feature());
+            String theme;
+            if (module != null && level != null && !module.equals(level)) {
+                theme = module + "·" + level;
+            } else {
+                theme = module != null ? module : level;
+            }
+            if (theme != null) {
+                counts.merge(theme, 1, Integer::sum);
+            }
+        }
+        return counts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(MAX_SCOPE_THEMES)
+                .map(e -> {
+                    String t = e.getKey();
+                    return t.length() > 24 ? t.substring(0, 24) + "…" : t;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /** 取第一个有效层级(一级→二级→三级)：某级的 "/" 占位会自动跳过并降级取下一层 */
+    private String firstValidLevel(String... levels) {
+        for (String lv : levels) {
+            String s = cleanFeatureSegment(lv);
+            if (s != null) {
+                return s;
+            }
+        }
+        return null;
     }
 
     private String cleanFeatureSegment(String s) {
         if (s == null) {
             return null;
         }
-        s = s.trim();
-        // 去掉尾部 --数字定制 噪声(数据里常见 "xxx--163定制")
-        s = s.replaceAll("--\\d*定制$", "");
-        return s.trim();
+        // 去掉尾部 --数字定制 噪声(数据里常见 "负载感知路由--163定制")
+        s = s.replaceAll("--\\d*定制\\s*$", "").trim();
+        if (s.isEmpty()) {
+            return null;
+        }
+        // 库里 level2/level3 大量用 "/" "-" 等纯符号占位；纯动作词也不是功能名，一律丢弃
+        if (s.matches("[^\\p{L}\\p{N}]+") || GENERIC_ACTION.contains(s)) {
+            return null;
+        }
+        return s;
     }
 
     private YearMonth parseMonth(String month) {
