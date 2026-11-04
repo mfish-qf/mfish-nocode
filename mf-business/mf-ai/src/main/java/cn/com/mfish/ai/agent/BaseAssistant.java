@@ -310,12 +310,16 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
             });
 
             chat(sessionId, finalPrompt)
-                    // 只保留有文本内容的响应（STOP 空响应在最后统一发射）
-                    .filter(resp -> StringUtils.isNotEmpty(
-                            Objects.requireNonNull(resp.getResult()).getOutput().getText()))
+                    // 只保留有文本内容的响应（STOP 空响应在最后统一发射）。
+                    // usage-only / 工具调用等中间 chunk 可能没有 output 或 metadata，
+                    // 直接取会 NPE 触发 sink.error，把整段回复掐断，这里逐层判空跳过。
+                    .filter(resp -> resp != null && resp.getResult() != null
+                            && resp.getResult().getOutput() != null
+                            && StringUtils.isNotEmpty(resp.getResult().getOutput().getText()))
                     .map(resp -> new ChatResponseVo().setId(messageId)
                             .setContent(resp.getResult().getOutput().getText())
-                            .setFinishReason(resp.getResult().getMetadata().getFinishReason()))
+                            .setFinishReason(resp.getResult().getMetadata() != null
+                                    ? resp.getResult().getMetadata().getFinishReason() : null))
                     .subscribe(
                             sink::next,
                             sink::error,

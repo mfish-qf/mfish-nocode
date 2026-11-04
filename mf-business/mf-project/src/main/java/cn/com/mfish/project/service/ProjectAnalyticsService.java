@@ -355,6 +355,25 @@ public class ProjectAnalyticsService {
             }
         }
 
+        // 下周工作正文由后端按固定汉字编号拼成成品句，直接交给 AI 照抄。
+        // 曾把「一是/二是」的简写交给模型自行编号，结果模型把斜杠当成条目分隔符，
+        // 输出成 "一是开展A/开展B/开展C"；从源头拼好可彻底消除这类格式漂移。
+        StringBuilder nextWeekText = new StringBuilder("研发方面，");
+        if (nextWeekPlan.isEmpty()) {
+            nextWeekText.append("暂无明确下周计划。");
+        } else {
+            String[] numerals = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
+                    "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"};
+            for (int i = 0; i < nextWeekPlan.size(); i++) {
+                if (i > 0) {
+                    nextWeekText.append("；");
+                }
+                String no = i < numerals.length ? numerals[i] : String.valueOf(i + 1);
+                nextWeekText.append(no).append("是").append(nextWeekPlan.get(i));
+            }
+            nextWeekText.append("。");
+        }
+
         return new WeeklyReportVO()
                 .setWeekStart(weekStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .setWeekEnd(weekEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
@@ -362,6 +381,7 @@ public class ProjectAnalyticsService {
                 .setIterations(iterVOs)
                 .setActiveRequirements(active)
                 .setNextWeekPlan(nextWeekPlan)
+                .setNextWeekPlanText(nextWeekText.toString())
                 .setWorkload(new WeeklyReportVO.WorkloadSummary()
                         .setTotalPersonDays(totalActiveWorkload)
                         .setActiveRequirementCount(active.size()));

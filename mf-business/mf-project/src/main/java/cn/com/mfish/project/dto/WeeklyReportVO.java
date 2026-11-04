@@ -42,6 +42,10 @@ public class WeeklyReportVO {
     @Schema(description = "下周工作重点(由进行中/规划中迭代推导, 供AI组织'下周工作'条目)")
     private List<String> nextWeekPlan;
 
+    @Schema(description = "下周工作正文成品: 后端已按「研发方面，一是开展X相关需求开发工作；二是开展Y…。」"
+            + "逐条编号拼好, AI 必须逐字照抄, 严禁自行拼接、重新编号或用斜杠 / 分隔条目")
+    private String nextWeekPlanText;
+
     @Schema(description = "工作量概览(仅统计进行中需求)")
     private WorkloadSummary workload;
 
