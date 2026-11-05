@@ -13,7 +13,6 @@ import cn.com.mfish.common.ai.entity.PlanStep;
 import cn.com.mfish.common.ai.frontend.FrontendActionHolder;
 import cn.com.mfish.common.ai.frontend.FrontendActionTool;
 import cn.com.mfish.common.core.constants.RPCConstants;
-import cn.com.mfish.common.core.constants.ServiceConstants;
 import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.ServletUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -69,10 +68,33 @@ public class ToolRuntime {
         return apiToolEngine.getToolCallbackProvider(serviceIds);
     }
 
+    /**
+     * chat 模式（垂直助手）按主服务收敛工具范围。
+     *
+     * <p>旧实现先 {@code getExtendedServiceIds()} 把所有非 mf-* 扩展服务（全部 skill-* / MCP / frontend）
+     * 注入，再叠加所有 guide 的 requires，等于每个垂直助手都加载全平台工具（实测 290 个）。
+     * 现只保留：主服务 + frontend + requires 命中主服务的 guide（及其依赖），
+     * 既保证该业务域能读到操作指南、能完成前端联动，又不引入无关服务。</p>
+     */
     public Set<String> resolveAssistantServiceIds(String mainServiceId) {
-        Set<String> serviceIds = new HashSet<>();
-        serviceIds.add(mainServiceId);
-        serviceIds.addAll(apiToolEngine.getExtendedServiceIds(ServiceConstants.MfService.allServiceIds()));
+        Set<String> serviceIds = new LinkedHashSet<>();
+        if (mainServiceId != null && !mainServiceId.isEmpty()) {
+            serviceIds.add(mainServiceId);
+        }
+        serviceIds.add(FrontendActionTool.FRONTEND_SERVICE_ID);
+        SkillCapabilityEngine skillEngine = skillCapabilityEngineProvider.getIfAvailable();
+        if (skillEngine != null) {
+            for (String skillServiceId : collectAllSkillServiceIds()) {
+                String skillCode = skillServiceId.substring("skill-".length());
+                List<String> requires = skillEngine.getGuideRequires("skill." + skillCode);
+                // 命中的 guide 要；未声明 requires 的纯工具型 skill 也要（每个仅 1 个工具，代价很低）；
+                // 声明了 requires 但指向别的主服务的 guide 不要，避免把无关业务服务工具带进来。
+                if (requires == null || requires.isEmpty() || requires.contains(mainServiceId)) {
+                    serviceIds.add(skillServiceId);
+                }
+            }
+        }
+        // 只合并已选中 guide 的 requires（本方法此时仅含相关 guide）
         mergeGuideRequiresInto(serviceIds);
         return serviceIds;
     }
@@ -83,30 +105,111 @@ public class ToolRuntime {
         return resolved;
     }
 
+    /**
+     * 合并一份计划里所有步骤最终装配好的 serviceIds，供「通用助手单步对话」使用。
+     *
+     * <p>{@link #enrichPlanServiceIds(AgentPlan)} 已为每一步补齐 guide 依赖（requires），
+     * 这里把各步结果求并集；只要最终非空就补上 frontend（指南里常含 frontend.navigate / refresh，
+     * 与垂直助手的 resolveAssistantServiceIds 口径一致），让通用助手既能读指南也能执行前端联动。</p>
+     *
+     * <p>若计划本身为空（如「讲个笑话」这类无需工具的纯对话，Planner 返回 steps: []），
+     * 返回空集，调用方应据此退化为纯对话、零工具注入。</p>
+     */
+    public Set<String> collectPlanServiceIds(cn.com.mfish.common.ai.entity.AgentPlan plan) {
+        Set<String> merged = new LinkedHashSet<>();
+        if (plan == null || plan.getSteps() == null) {
+            return merged;
+        }
+        for (cn.com.mfish.common.ai.entity.PlanStep step : plan.getSteps()) {
+            if (step.getServiceIds() != null) {
+                merged.addAll(step.getServiceIds());
+            }
+        }
+        if (!merged.isEmpty()) {
+            merged.add(FrontendActionTool.FRONTEND_SERVICE_ID);
+        }
+        return merged;
+    }
+
+    /**
+     * 规划后处理：保留 Planner 按问题选出的 step.serviceIds，只补齐「本步选中 guide」声明的依赖服务。
+     *
+     * <p>旧实现无条件把「所有 skill-* 服务」和「所有 guide 的 requires」合并进每一步，
+     * 把 LLM 的筛选结果完全冲掉，导致每步都注入全量工具（实测 290 个 / 22 个 serviceId）。
+     * 现改为按步精准装配；仅当 LLM 没给出任何有效 serviceId 时才回退全量并告警，
+     * 避免出现「一个工具都没有、步骤无法执行」。</p>
+     */
     public void enrichPlanServiceIds(AgentPlan plan) {
         if (plan == null || plan.getSteps() == null || plan.getSteps().isEmpty()) {
             return;
         }
-        Set<String> allSkillServiceIds = collectAllSkillServiceIds();
+        // 有效 serviceId 同时来自工具注册表与能力注册表（两者可能不完全重合）
+        Set<String> knownServiceIds = new HashSet<>(apiToolEngine.getAllServiceIds());
+        List<ActionDefinition> actions = capabilityEngine.getAvailableActions();
+        if (actions != null) {
+            for (ActionDefinition action : actions) {
+                if (action.getServiceId() != null) {
+                    knownServiceIds.add(action.getServiceId());
+                }
+            }
+        }
         SkillCapabilityEngine skillEngine = skillCapabilityEngineProvider.getIfAvailable();
+        Set<String> allSkillServiceIds = collectAllSkillServiceIds();
         for (PlanStep step : plan.getSteps()) {
-            Set<String> merged = step.getServiceIds() != null
-                    ? new LinkedHashSet<>(step.getServiceIds())
-                    : new LinkedHashSet<>();
-            merged.addAll(allSkillServiceIds);
+            Set<String> merged = new LinkedHashSet<>();
+            if (step.getServiceIds() != null) {
+                for (String serviceId : step.getServiceIds()) {
+                    if (serviceId != null && knownServiceIds.contains(serviceId)) {
+                        merged.add(serviceId);
+                    }
+                }
+            }
+            if (merged.isEmpty()) {
+                log.warn("[ToolRuntime] 步骤未给出有效 serviceIds，回退全量工具, step={}, raw={}",
+                        step.getDescription(), step.getServiceIds());
+                merged.addAll(knownServiceIds);
+            }
             if (skillEngine != null) {
-                for (String serviceId : allSkillServiceIds) {
+                // 反查补 guide：本步用到某业务服务时，自动带上 requires 命中它的操作指南。
+                // 防止 LLM 只写了 mf-project 却漏写 skill-project-management，导致读不到指南、
+                // 前面调好的周报格式规则失效。只用 mf-* 匹配（frontend 是几乎所有 guide 的
+                // 通用依赖，拿它匹配会把所有 guide 又拉回来，等于没收缩）。
+                Set<String> businessIds = new HashSet<>();
+                for (String id : merged) {
+                    if (id.startsWith("mf-")) {
+                        businessIds.add(id);
+                    }
+                }
+                if (!businessIds.isEmpty()) {
+                    for (String skillServiceId : allSkillServiceIds) {
+                        String skillCode = skillServiceId.substring("skill-".length());
+                        List<String> requires = skillEngine.getGuideRequires("skill." + skillCode);
+                        if (requires != null && requires.stream()
+                                .anyMatch(r -> r.startsWith("mf-") && businessIds.contains(r))) {
+                            merged.add(skillServiceId);
+                        }
+                    }
+                }
+                // 只合并「本步最终选中的」 guide 的 requires
+                for (String serviceId : new ArrayList<>(merged)) {
+                    if (!serviceId.startsWith("skill-")) {
+                        continue;
+                    }
                     String skillCode = serviceId.substring("skill-".length());
                     List<String> requires = skillEngine.getGuideRequires("skill." + skillCode);
                     if (requires != null && !requires.isEmpty()) {
                         merged.addAll(requires);
-                        log.info("[ToolRuntime] merge guide requires skill={} requires={} serviceIds={}",
-                                skillCode, requires, merged);
+                        log.info("[ToolRuntime] 合并选中 guide 依赖 skill={} requires={}", skillCode, requires);
                     }
                 }
             }
             step.setServiceIds(new ArrayList<>(merged));
         }
+        log.info("[ToolRuntime] 规划服务集合装配完成 steps={}, 每步 serviceIds 数={}",
+                plan.getSteps().size(),
+                plan.getSteps().stream()
+                        .map(s -> s.getServiceIds() == null ? 0 : s.getServiceIds().size())
+                        .toList());
     }
 
     public TenantContext captureTenantContext() {

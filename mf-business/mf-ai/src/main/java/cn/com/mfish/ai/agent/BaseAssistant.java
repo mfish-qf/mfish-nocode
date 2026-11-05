@@ -127,21 +127,54 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
     }
 
     /**
-     * 带扩展工具的流式聊天模板方法（主服务 + MCP/Skill 扩展工具 + guide 依赖业务服务）
+     * 无工具纯对话流式聊天（零工具注入）。
      * <p>
-     * 在垂直助手中使用：除了主服务（如 mf-sys）的 Feign 工具外，还聚合所有 MCP 工具和 Skill 工具，
-     * 让用户在路由到垂直助手时也能调用 MCP 服务器和提示词级 Skill 能力。
+     * 用于「用户问题无需任何平台工具即可回答」的场景（如讲笑话、问候、通用知识问答），
+     * 避免把几百个业务工具塞进上下文。双流降级逻辑与 {@link #chatWithTools} 一致。
+     * </p>
+     *
+     * @param sessionId       会话id
+     * @param prompt         提示词
+     * @param tenantContext  请求线程捕获的租户上下文快照，null 表示从当前线程获取
+     * @return 流式聊天响应
+     */
+    protected Flux<ChatResponse> chatNoTools(String sessionId, String prompt,
+                                             cn.com.mfish.common.ai.agent.TenantContext tenantContext) {
+        String tenantId = tenantContext != null && tenantContext.getTenantId() != null
+                ? tenantContext.getTenantId()
+                : llmModelRouter.currentTenantId();
+        ChatClient chatClient = getChatClient(tenantId);
+        if (log.isInfoEnabled()) {
+            log.info("[BaseAssistant] chatNoTools sessionId={} (纯对话，无工具)", sessionId);
+        }
+        return chatClient.prompt()
+                .user(prompt)
+                .advisors(a -> a.param(CONVERSATION_ID, sessionId))
+                .stream()
+                .chatResponse()
+                .onErrorResume(e -> {
+                    log.warn("无工具流式调用失败，降级为非流式调用: {}", e.getMessage());
+                    return Mono.fromCallable(() -> chatClient.prompt()
+                                    .user(prompt)
+                                    .advisors(a -> a.param(CONVERSATION_ID, sessionId))
+                                    .call()
+                                    .chatResponse())
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .flux();
+                });
+    }
+
+    /**
+     * 带扩展工具的流式聊天模板方法（按主服务收敛后的工具集）
+     * <p>
+     * 在垂直助手中使用：{@code ToolRuntime.resolveAssistantServiceIds(mainServiceId)} 只注入
+     * 「主服务 + frontend + requires 命中该主服务的 guide（及其依赖）」，
+     * 不再聚合全平台的 MCP / Skill / 其它业务服务工具（旧实现每助手约 290 个）。
      * </p>
      * <p>
-     * 扩展工具集合 = ApiToolEngine 中所有已注册 serviceId - 标准微服务ID（MfService.allServiceIds()），
-     * 即排除 mf-* 后剩余的 MCP 服务器名和 skill-* 前缀的 serviceId。
-     * </p>
-     * <p>
-     * <b>guide 依赖合并</b>：扩展集合中可能包含 guide 类型 Skill（如 skill-leave-apply），
-     * 这类 Skill 在 frontmatter 中通过 requires 声明了依赖的业务服务（如 mf-demo）。
-     * 本方法会扫描扩展集合中的 skill-* 服务，读取其 requires 并合并到 serviceIds，
-     * 使 LLM 在调用 guide skill 获取指南后，能继续调用指南引用的业务工具完成实际操作。
-     * 此逻辑与 Planner.mergeGuideRequires 对齐，保证 chat 模式与 agent 模式工具可见性一致。
+     * guide 类型 Skill 在 frontmatter 通过 requires 声明依赖的业务服务（如 mf-demo）。
+     * 选中相关 guide 后合并其 requires，使 LLM 读取指南后仍能调用指南引用的业务工具完成实际操作，
+     * 与 agent 模式 Planner + enrichPlanServiceIds 的按步装配口径一致。
      * </p>
      *
      * @param sessionId      会话id

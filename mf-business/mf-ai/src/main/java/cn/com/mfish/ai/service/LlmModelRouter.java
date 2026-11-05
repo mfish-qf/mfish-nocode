@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -53,6 +54,11 @@ public class LlmModelRouter {
      * 被发布到快照的ChatModel对象即使后续从缓存移除，也不影响正在使用它的请求（它们持有对象引用）。
      */
     private final Map<String, ChatModel> modelCache = new HashMap<>();
+    /**
+     * ChatModel → 脱敏后的 apiKey 快照，与 tenantProviders 一起重建并 volatile 发布。
+     * 仅供日志使用，便于确认「本次任务实际调用了哪个模型、用的哪把 key」，绝不存明文。
+     */
+    private volatile Map<ChatModel, String> maskedKeys = Map.of();
     /**
      * 串行化重建动作。读操作不获取此锁，因此重建期间读取线程仍可使用旧快照，不受阻塞。
      */
@@ -95,6 +101,7 @@ public class LlmModelRouter {
         try {
             List<AiModelConfig> configs = aiModelConfigService.queryList(new ReqAiModelConfig().setEnabled(1));
             Map<String, List<ChatModel>> newMap = new HashMap<>();
+            Map<ChatModel, String> newMaskedKeys = new HashMap<>();
             Set<String> usedSignatures = new HashSet<>();
             if (configs != null) {
                 for (AiModelConfig config : configs) {
@@ -108,12 +115,16 @@ public class LlmModelRouter {
                     try {
                         // 签名命中缓存则复用已构建的ChatModel，避免重复创建昂贵的HTTP客户端
                         ChatModel chatModel = modelCache.computeIfAbsent(signature, k -> buildModel(config));
+                        String maskedKey = maskApiKey(config.getApiKey());
+                        newMaskedKeys.put(chatModel, maskedKey);
                         newMap.computeIfAbsent(config.getTenantId(), k -> new ArrayList<>()).add(chatModel);
-                        log.info("[LLM路由] 注册: tenant={}, protocol={}, provider={}, model={}",
-                                config.getTenantId(), config.getProtocol(), config.getProvider(), config.getModelName());
+                        log.info("[LLM路由] 注册: tenant={}, protocol={}, provider={}, model={}, key={}",
+                                config.getTenantId(), config.getProtocol(), config.getProvider(),
+                                config.getModelName(), maskedKey);
                     } catch (Exception e) {
-                        log.error("[LLM路由] 注册失败: tenant={}, protocol={}, provider={}, model={}",
-                                config.getTenantId(), config.getProtocol(), config.getProvider(), config.getModelName(), e);
+                        log.error("[LLM路由] 注册失败: tenant={}, protocol={}, provider={}, model={}, key={}",
+                                config.getTenantId(), config.getProtocol(), config.getProvider(),
+                                config.getModelName(), maskApiKey(config.getApiKey()), e);
                     }
                 }
             }
@@ -124,6 +135,7 @@ public class LlmModelRouter {
             }
             // 清理不再使用的缓存项，释放已删除配置占用的资源
             modelCache.keySet().retainAll(usedSignatures);
+            maskedKeys = Map.copyOf(newMaskedKeys);
             tenantProviders = Map.copyOf(snapshot);
             if (snapshot.isEmpty()) {
                 log.warn("[LLM路由] 数据库无启用的模型配置");
@@ -147,6 +159,42 @@ public class LlmModelRouter {
     private String signatureOf(AiModelConfig config) {
         return config.getProtocol() + "|" + config.getModelName() + "|" + config.getBaseUrl()
                 + "|" + config.getApiKey() + "|" + config.getMaxTokens() + "|" + config.getTemperature();
+    }
+
+    /**
+     * 脱敏 apiKey：只保留前 4 与后 4 位，中间统一打码；短 key 全打码。
+     * 仅用于日志，任何情况下都不输出完整密钥。
+     */
+    private static String maskApiKey(String key) {
+        if (key == null || key.isBlank()) {
+            return "<none>";
+        }
+        String v = key.trim();
+        if (v.length() <= 8) {
+            return "****";
+        }
+        return v.substring(0, 4) + "****" + v.substring(v.length() - 4);
+    }
+
+    /** 安全取模型名（getOptions 可能抛异常或返回空） */
+    private static String safeModelName(ChatModel p) {
+        if (p == null) {
+            return "<null>";
+        }
+        try {
+            Object m = p.getOptions().getModel();
+            return m == null ? p.getClass().getSimpleName() : String.valueOf(m);
+        } catch (Exception e) {
+            return p.getClass().getSimpleName();
+        }
+    }
+
+    /**
+     * 日志用的模型描述：模型名 + 脱敏 key。
+     * 绝不打印 ChatModel / ChatOptions 对象本身（其 toString 可能带出完整 apiKey）。
+     */
+    private String modelDesc(ChatModel p) {
+        return safeModelName(p) + " [key=" + maskedKeys.getOrDefault(p, "<unknown>") + "]";
     }
 
     /**
@@ -203,7 +251,7 @@ public class LlmModelRouter {
         ChatModel provider = getProvider(index, model, providers);
         return provider.stream(prompt)
                 .onErrorResume(ex -> {
-                    log.warn("[LLM路由] 提供者{}流式调用失败，尝试fallback", provider, ex);
+                    log.warn("[LLM路由] 模型 {} 流式调用失败，尝试 fallback", modelDesc(provider), ex);
                     return tryStreamChain(prompt, index + 1, model, providers);
                 });
     }
@@ -213,7 +261,7 @@ public class LlmModelRouter {
         return Mono.fromCallable(() -> provider.call(prompt))
                 .subscribeOn(Schedulers.boundedElastic())
                 .onErrorResume(ex -> {
-                    log.warn("[LLM路由] 提供者{}同步调用失败，尝试fallback", provider, ex);
+                    log.warn("[LLM路由] 模型 {} 同步调用失败，尝试 fallback", modelDesc(provider), ex);
                     return tryCallChain(prompt, index + 1, model, providers);
                 });
     }
@@ -228,7 +276,7 @@ public class LlmModelRouter {
         } else {
             provider = providers.stream().filter(p -> Objects.equals(p.getOptions().getModel(), model)).findFirst().orElseGet(() -> providers.get(index));
         }
-        log.info("[LLM路由] 调用, provider={}, model={}", provider, provider.getOptions().getModel());
+        log.info("[LLM路由] 调用模型 {}", modelDesc(provider));
         return provider;
     }
 
@@ -257,15 +305,6 @@ public class LlmModelRouter {
             throw new MyRuntimeException("未配置任何可用模型(租户=" + tenantId + ")");
         }
 
-        private String safeModelName(ChatModel p) {
-            try {
-                Object m = p.getOptions().getModel();
-                return m == null ? p.getClass().getSimpleName() : String.valueOf(m);
-            } catch (Exception e) {
-                return p.getClass().getSimpleName();
-            }
-        }
-
         @Override
         public ChatOptions getOptions() {
             try {
@@ -283,11 +322,13 @@ public class LlmModelRouter {
             for (int attempt = 0; attempt < MAX_FALLBACK_ATTEMPTS; attempt++) {
                 ChatModel p = providers.get(attempt % providers.size());
                 try {
+                    log.info("[LLM路由] 调用模型 {} mode=call attempt={}/{}",
+                            modelDesc(p), attempt + 1, MAX_FALLBACK_ATTEMPTS);
                     return p.call(prompt);
                 } catch (Throwable ex) {
                     last = ex;
-                    log.warn("[LLM路由] 模型[{}]调用失败(第{}/{}次)，自动切换下一个模型重试",
-                            safeModelName(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
+                    log.warn("[LLM路由] 模型 {} 调用失败(第{}/{}次)，自动切换下一个模型重试",
+                            modelDesc(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
                 }
             }
             throw new MyRuntimeException("模型调用全部失败，已尝试" + MAX_FALLBACK_ATTEMPTS + "次", last);
@@ -304,11 +345,54 @@ public class LlmModelRouter {
                 return Flux.error(new MyRuntimeException("模型流式调用全部失败，已尝试" + MAX_FALLBACK_ATTEMPTS + "次"));
             }
             ChatModel p = providers.get(attempt % providers.size());
-            return p.stream(prompt).onErrorResume(ex -> {
-                log.warn("[LLM路由] 模型[{}]流式调用失败(第{}/{}次)，自动切换下一个模型重试",
-                        safeModelName(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
-                return tryStream(prompt, attempt + 1, providers);
-            });
+            log.info("[LLM路由] 调用模型 {} mode=stream attempt={}/{}",
+                    modelDesc(p), attempt + 1, MAX_FALLBACK_ATTEMPTS);
+            AtomicBoolean emitted = new AtomicBoolean(false);
+            return p.stream(prompt)
+                    .doOnNext(r -> emitted.set(true))
+                    .onErrorResume(ex -> {
+                        // OpenAI 兼容网关的 SSE chunk 若不返回 model 字段，Spring AI 2.0.1 的
+                        // ChunkMerger.chunkToChatCompletion 会强制调用 chunk.model()（JsonField.getRequired）
+                        // 抛 OpenAIInvalidDataException("model is not set")。这是响应格式问题，
+                        // 重试同一模型或换模型都不会变好，只会白跑多次 LLM 调用。
+                        if (isMissingModelChunk(ex)) {
+                            if (emitted.get()) {
+                                // 已下发过 token：再降级非流式会把完整答案追加一遍造成重复，
+                                // 直接以已收到的内容收尾（缺 model 的通常是尾部 usage / DONE chunk）。
+                                log.warn("[LLM路由] 模型 {} 流式响应尾部缺少 model 字段，已有内容正常收尾",
+                                        modelDesc(p));
+                                return Flux.empty();
+                            }
+                            // 首个 chunk 就失败、尚未下发任何内容：同一模型降级非流式，保证模型不被换掉
+                            log.warn("[LLM路由] 模型 {} 流式响应缺少 model 字段(网关不合规)，降级为同一模型非流式调用",
+                                    modelDesc(p));
+                            return Mono.fromCallable(() -> p.call(prompt))
+                                    .subscribeOn(Schedulers.boundedElastic())
+                                    .flux()
+                                    .onErrorResume(fallbackEx -> {
+                                        log.warn("[LLM路由] 模型 {} 非流式降级也失败，切换下一个模型重试",
+                                                modelDesc(p), fallbackEx);
+                                        return tryStream(prompt, attempt + 1, providers);
+                                    });
+                        }
+                        log.warn("[LLM路由] 模型 {} 流式调用失败(第{}/{}次)，自动切换下一个模型重试",
+                                modelDesc(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
+                        return tryStream(prompt, attempt + 1, providers);
+                    });
+        }
+
+        /**
+         * 判断是否为「OpenAI 兼容网关流式 chunk 缺 model 字段」这类响应格式异常。
+         * 用类名字符串匹配，避免在本模块引入官方 openai-java SDK 的编译期依赖。
+         */
+        private boolean isMissingModelChunk(Throwable ex) {
+            for (Throwable cur = ex; cur != null; cur = cur.getCause()) {
+                if ("com.openai.errors.OpenAIInvalidDataException".equals(cur.getClass().getName())
+                        && String.valueOf(cur.getMessage()).contains("model is not set")) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
