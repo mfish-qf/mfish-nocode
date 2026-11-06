@@ -19,9 +19,29 @@ import java.util.List;
 public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
 
     /**
+     * 研发起止时间列：实时关联排期明细，按同一 req_id 聚合最早开始 / 最晚结束。
+     * 列表查询与回收站查询共用，保证前端看到的口径完全一致；无明细时为 NULL。
+     */
+    String SCHEDULE_RANGE_COLUMNS =
+            "(SELECT MIN(ds.dev_start_date) FROM pm_dev_schedule ds WHERE ds.req_id = pm_requirement.id) AS dev_start_date, "
+                    + "(SELECT MAX(ds.dev_end_date) FROM pm_dev_schedule ds WHERE ds.req_id = pm_requirement.id) AS dev_end_date, ";
+
+    /**
      * 网格列表查询：返回需求全部基础字段(刻意排除 prd_doc_content 大文本)，
      * 并通过 CASE 表达式派生 has_prd_doc 标记(是否已撰写详细文档)，用于"待撰PRD"等指示器。
      * 配合 PageHelper 分页，WHERE/ORDER BY 由 MP 条件构造器 ${ew.customSqlSegment} 注入。
+     *
+     * <p>【pm_requirement 已无 dev_start_date / dev_end_date 列】这两个别名由实时关联
+     * pm_dev_schedule 按同一 req_id 取 MIN(dev_start_date) / MAX(dev_end_date) 得出：
+     * 一个需求可拆成多个人员×岗位任务，需求整体区间即最早开始 ~ 最晚结束。
+     * 无排期明细时返回 NULL(前端显示 '-')。PmRequirement 实体对应字段标注
+     * {@code @TableField(exist = false)}，只承接查询结果、不参与任何 INSERT/UPDATE。</p>
+     *
+     * <p>用相关标量子查询而非 LEFT JOIN：避免 id/del_flag/tenant_id 等裸列名歧义（与 month 列同一手法）。
+     * RequirementController 上声明了 @DataScope(table="pm_dev_schedule")，SelectInterceptor 会把此处表名
+     * 改写为 (select * from pm_dev_schedule where tenant_id=...) 并保留别名 ds，自动完成租户隔离；
+     * 子查询里的 pm_requirement.id 因表名后紧跟 '.' 会被 END_KEYWORD 守卫跳过，仍正确引用外层表。
+     * pm_dev_schedule 已有 idx_dev_schedule_req(req_id) 索引，列表最多 2000 行也只是索引查找。</p>
      */
     @Select("SELECT id, req_no, module, level1_feature, level2_feature, level3_feature, feature_description, "
             + "prd_section, review_date, review_result, review_notes, vendors, priority, requester, request_date, "
@@ -31,7 +51,8 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
             // 触发 MySQL "Column 'xxx' is ambiguous"(含 MP 注入的 del_flag 条件与 @DataScope 注入的 tenant_id)。
             + "backend_dev, qa_tester, remarks, owner, iteration_id, "
             + "(SELECT pi.code FROM pm_iteration pi WHERE pi.id = pm_requirement.iteration_id AND pi.del_flag = 0) AS month, "
-            + "workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
+            + "workload, frontend_workload, backend_workload, "
+            + SCHEDULE_RANGE_COLUMNS
             + "dev_progress, test_phase, test_node_id, test_node_name, test_node_date, status, doc_last_modified, "
             + "doc_author, del_flag, "
             + "CASE WHEN prd_doc_content IS NOT NULL AND CHAR_LENGTH(prd_doc_content) > 0 THEN 1 ELSE 0 END AS has_prd_doc "
@@ -48,7 +69,8 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
             + "high_fidelity_url, change_date, change_content, pre_meeting_questions, release_time, frontend_dev, "
             + "backend_dev, qa_tester, remarks, owner, iteration_id, "
             + "(SELECT pi.code FROM pm_iteration pi WHERE pi.id = pm_requirement.iteration_id AND pi.del_flag = 0) AS month, "
-            + "workload, frontend_workload, backend_workload, dev_start_date, dev_end_date, "
+            + "workload, frontend_workload, backend_workload, "
+            + SCHEDULE_RANGE_COLUMNS
             + "dev_progress, test_phase, test_node_id, test_node_name, test_node_date, status, doc_last_modified, "
             + "doc_author, create_by, create_time, update_by, update_time, del_flag, "
             + "CASE WHEN prd_doc_content IS NOT NULL AND CHAR_LENGTH(prd_doc_content) > 0 THEN 1 ELSE 0 END AS has_prd_doc "

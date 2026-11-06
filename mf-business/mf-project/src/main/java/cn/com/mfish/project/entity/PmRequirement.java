@@ -110,13 +110,20 @@ public class PmRequirement extends BaseEntity<String> {
     private BigDecimal frontendWorkload;
     @Schema(description = "后端研发工时(单位:人/天)")
     private BigDecimal backendWorkload;
+    // ===== 研发起止时间：数据库列已删除，仅作为「关联查询」的纯传输字段 =====
+    // pm_requirement 不再存这两个日期；列表/回收站查询由 PmRequirementMapper.SCHEDULE_RANGE_COLUMNS
+    // 关联 pm_dev_schedule 按 req_id 取 MIN(dev_start_date)/MAX(dev_end_date) 后映射到本字段。
+    // @TableField(exist=false) 让 MP 的 insert/updateById/selectList/条件构造器完全不生成这两列，
+    // 而自定义 @Select 的结果列仍能按驼峰自动映射进来(与 month / hasPrdDoc 同一机制)。
+    @TableField(exist = false)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "开发开始日期")
+    @Schema(description = "研发开始日期(关联排期明细聚合, 非数据库列)")
     private Date devStartDate;
+    @TableField(exist = false)
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "开发完成日期(根据工时与日历规则自动推导)")
+    @Schema(description = "研发结束日期(关联排期明细聚合, 非数据库列)")
     private Date devEndDate;
     @Schema(description = "开发进度百分比(0-100)")
     private Integer devProgress;

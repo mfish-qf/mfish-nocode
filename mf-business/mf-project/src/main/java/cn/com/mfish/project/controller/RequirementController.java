@@ -116,7 +116,7 @@ public class RequirementController {
     }
 
     /**
-     * 创建需求(若未传序号自动生成递增req_no，根据工时与日历规则自动推导dev_end_date)
+     * 创建需求(若未传序号自动生成递增req_no；研发起止时间由 pm_dev_schedule 明细关联聚合，不落需求表)
      */
     @Log(title = "需求管理-添加", operateType = OperateType.INSERT)
     @Operation(summary = "需求管理-添加")
@@ -282,7 +282,7 @@ public class RequirementController {
     }
 
     /**
-     * 修改需求工时，并根据日历跳过规则自动重新计算更新 dev_end_date
+     * 修改需求工时，并重建排期明细(研发结束时间由明细 MAX 聚合得出)
      */
     @Log(title = "需求管理-工时微调", operateType = OperateType.UPDATE)
     @Operation(summary = "需求管理-调整预估工时")

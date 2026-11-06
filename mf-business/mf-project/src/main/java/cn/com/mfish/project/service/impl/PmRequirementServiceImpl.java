@@ -259,7 +259,40 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             PmIteration iteration = iterationMapper.selectById(requirement.getIterationId());
             requirement.setMonth(iteration != null ? iteration.getCode() : null);
         }
+        // 研发起止时间同样为关联派生字段，单条查询也补齐，保证与列表口径一致
+        fillScheduleRange(requirement);
         return Result.ok(requirement, "需求-查询成功!");
+    }
+
+    /**
+     * 需求表已删除 dev_start_date / dev_end_date 列：单条查询按 req_id 关联排期明细
+     * 取 MIN(dev_start_date) / MAX(dev_end_date) 填回纯传输字段，口径与列表接口一致。
+     */
+    private void fillScheduleRange(PmRequirement req) {
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .select(PmDevSchedule::getDevStartDate, PmDevSchedule::getDevEndDate)
+                .eq(PmDevSchedule::getReqId, req.getId()));
+        LocalDate min = null;
+        LocalDate max = null;
+        for (PmDevSchedule row : rows) {
+            if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
+                continue;
+            }
+            LocalDate s = toLocalDate(row.getDevStartDate());
+            LocalDate e = toLocalDate(row.getDevEndDate());
+            if (min == null || s.isBefore(min)) {
+                min = s;
+            }
+            if (max == null || e.isAfter(max)) {
+                max = e;
+            }
+        }
+        if (min != null) {
+            req.setDevStartDate(java.sql.Date.valueOf(min));
+        }
+        if (max != null) {
+            req.setDevEndDate(java.sql.Date.valueOf(max));
+        }
     }
 
     @Override
@@ -388,7 +421,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             // 工时/人员/开始日变化后重建排期明细(钉住行保持不动)
             rebuildScheduleForReq(requirement.getId());
             PmRequirement updated = getById(requirement.getId());
-            return Result.ok(updated, "需求 #" + exist.getReqNo() + " 更新成功，日历排期已同步至 " + formatDate(updated.getDevEndDate()));
+            return Result.ok(updated, "需求 #" + exist.getReqNo() + " 更新成功，日历排期已同步");
         }
         return Result.fail(requirement, "错误:需求-编辑失败!");
     }
@@ -899,32 +932,23 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             }
         }
 
-        LocalDate startDate = req.getDevStartDate() == null ? ScheduleDateUtils.DEFAULT_START_DATE : toLocalDate(req.getDevStartDate());
-        // 排期时长: 前后端并行推进，取两岗位单人工时的较大者(与人数/总工时无关)
-        BigDecimal feDur = positiveWorkload(newFe);
-        BigDecimal beDur = positiveWorkload(newBe);
-        BigDecimal scheduleWorkload = (feDur != null || beDur != null)
-                ? (feDur == null ? BigDecimal.ZERO : feDur).max(beDur == null ? BigDecimal.ZERO : beDur)
-                : newTotal;
-        LocalDate newEndDate = ScheduleDateUtils.calculateDevEndDate(startDate, scheduleWorkload, currentConfig());
+        // 需求表已无日期列：这里只更新工时，研发起止时间由 pm_dev_schedule 明细聚合得出
         PmRequirement update = new PmRequirement();
         update.setId(req.getId());
         update.setWorkload(newTotal);
         update.setFrontendWorkload(newFe);
         update.setBackendWorkload(newBe);
-        update.setDevStartDate(toDate(startDate));
-        update.setDevEndDate(toDate(newEndDate));
         update.setUpdateBy(safeGetCurrentUser());
         update.setUpdateTime(new Date());
         updateById(update);
-        // 工时/开始日变化: 重建排期明细(钉住行保持不动)
+        // 工时变化: 重建排期明细(钉住行保持不动)，结束日随之重新聚合
         rebuildScheduleForReq(req.getId());
         String scopeText = frontend ? "前端" : (backend ? "后端" : "");
         recordHistory(req, "WORKLOAD", null, null, null,
                 req.getWorkload() == null ? null : req.getWorkload().toPlainString(), newTotal.toPlainString(),
-                "需求 #" + req.getReqNo() + " " + scopeText + "预估工时调整为 " + newTotal + " 人/天，日历排期同步至 " + ScheduleDateUtils.FORMATTER.format(newEndDate));
+                "需求 #" + req.getReqNo() + " " + scopeText + "预估工时调整为 " + newTotal + " 人/天，日历排期已同步");
         return Result.ok(getById(req.getId()), "已将需求 #" + req.getReqNo() + scopeText + "预估工时调整为 "
-                + newTotal + " 人/天，日历排期已同步至 " + ScheduleDateUtils.FORMATTER.format(newEndDate));
+                + newTotal + " 人/天，日历排期已同步");
     }
 
     /**
@@ -1065,6 +1089,12 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         Set<String> scopeVersionIds = iterationIds == null ? new HashSet<>()
                 : iterationIds.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
         boolean scoped = !scopeVersionIds.isEmpty();
+        // 排期优先级：转测时间靠前的需求先装箱(先占用人员更早的空闲日，保证临近转测的需求优先排完)，
+        // 同一转测日再按需求编号升序；未绑定转测节点(testNodeDate 为空)的排在最后。
+        // 必须在 Java 侧排序：若改用 SQL orderByAsc(test_node_date)，MySQL 会把 NULL 排在最前，
+        // 导致「没有转测时间约束」的需求反而抢占了有明确转测日期需求的早期产能。
+        Comparator<LocalDate> testNodeDateOrder = Comparator.nullsLast(Comparator.naturalOrder());
+        Comparator<Integer> reqNoOrder = Comparator.nullsLast(Comparator.naturalOrder());
         List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().orderByAsc(PmRequirement::getReqNo))
                 .stream()
                 .filter(req -> {
@@ -1074,6 +1104,10 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                     }
                     return iteration == null || !ARCHIVED_STATUS.equals(iteration.getStatus());
                 })
+                .sorted(Comparator.<PmRequirement, LocalDate>comparing(
+                                req -> req.getTestNodeDate() == null ? null : toLocalDate(req.getTestNodeDate()),
+                                testNodeDateOrder)
+                        .thenComparing(PmRequirement::getReqNo, reqNoOrder))
                 .collect(Collectors.toList());
         if (targets.isEmpty()) {
             Map<String, Object> empty = new HashMap<>();
@@ -1081,6 +1115,14 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             empty.put("updatedList", new ArrayList<>());
             empty.put("scheduleRows", new ArrayList<>());
             return Result.ok(empty, scoped ? "无待排期需求(选中版本下没有需求)!" : "无待排期需求(已归档版本不参与自动排期)!");
+        }
+        if (log.isInfoEnabled()) {
+            long withTestNode = targets.stream().filter(r -> r.getTestNodeDate() != null).count();
+            String head = targets.stream().limit(5)
+                    .map(r -> "#" + r.getReqNo() + "(" + formatDate(r.getTestNodeDate()) + ")")
+                    .collect(Collectors.joining(" > "));
+            log.info("[自动排期] 排序口径=转测时间升序→需求编号升序(无转测时间排末尾), 待排={}, 有转测时间={}, 前5={}",
+                    targets.size(), withTestNode, head);
         }
         ScheduleConfigDTO config = currentConfig();
         // 自愈: 回填历史排期行中 person_id 为 null、但现已能按(需求+角色+姓名)唯一解析出 userId 的行,
@@ -1144,20 +1186,18 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 taskStartDate = rows.stream().map(r -> toLocalDate(r.getDevStartDate())).min(LocalDate::compareTo).orElse(versionStartDate);
                 taskEndDate = rows.stream().map(r -> toLocalDate(r.getDevEndDate())).max(LocalDate::compareTo).orElse(taskStartDate);
             }
-            // 持久化新排期: 需求整体区间 + 排期明细(钉住行原样保留, 其余删除后按人重建)
-            PmRequirement update = new PmRequirement();
-            update.setId(req.getId());
-            update.setDevStartDate(toDate(taskStartDate));
-            update.setDevEndDate(toDate(taskEndDate));
-            update.setUpdateBy(safeGetCurrentUser());
-            update.setUpdateTime(new Date());
-            updateById(update);
+            // 持久化新排期: 只写排期明细(钉住行原样保留, 其余删除后按人重建)。
+            // 需求表已无日期列，整体区间由 pm_dev_schedule 的 MIN/MAX 关联查询得出。
             replaceScheduleRows(req.getId(), rows);
             scheduleRows.addAll(rows);
             PmRequirement updated = getById(req.getId());
+            // 把本次算出的整体区间填进纯传输字段(@TableField(exist=false))，
+            // 供前端 autoScheduleAllRequirements 按 id 原地 merge 后立即显示，不落库
+            updated.setDevStartDate(toDate(taskStartDate));
+            updated.setDevEndDate(toDate(taskEndDate));
             updatedList.add(updated);
             recordHistory(req, "SCHEDULE", null, null, null,
-                    formatDate(req.getDevStartDate()) + "~" + formatDate(req.getDevEndDate()),
+                    "(由排期明细聚合)",
                     ScheduleDateUtils.FORMATTER.format(taskStartDate) + "~" + ScheduleDateUtils.FORMATTER.format(taskEndDate),
                     "自动排期: 需求 #" + req.getReqNo() + " 排期至 "
                             + ScheduleDateUtils.FORMATTER.format(taskStartDate) + " ~ " + ScheduleDateUtils.FORMATTER.format(taskEndDate));
@@ -1463,45 +1503,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 }
             }
         }
-        // 2. 兜底(迁移兼容): 尚无排期明细的历史需求, 按需求级区间占用(粗粒度, 首跑后排期明细即接管)
-        List<PmRequirement> history = list(new LambdaQueryWrapper<PmRequirement>()
-                .isNotNull(PmRequirement::getDevStartDate)
-                .isNotNull(PmRequirement::getDevEndDate));
-        for (PmRequirement req : history) {
-            if (targetIds.contains(req.getId()) || reqsWithSchedule.contains(req.getId())) {
-                continue;
-            }
-            // 账号化: 容量键统一走 identityKey(personId 优先, 缺则姓名), 与明细路径/排期装箱完全一致,
-            // 即使 @DataScope 上下文缺失也不会让跨租户同名人员互相占用(杜绝此前按姓名串做键的隐患)
-            Set<String> devKeys = new java.util.LinkedHashSet<>();
-            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev())) {
-                devKeys.add(PersonnelIdUtils.identityKey(
-                        PersonnelIdUtils.personIdForName(req, "frontend", name), name));
-            }
-            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getBackendDev())) {
-                devKeys.add(PersonnelIdUtils.identityKey(
-                        PersonnelIdUtils.personIdForName(req, "backend", name), name));
-            }
-            if (devKeys.isEmpty()) {
-                continue;
-            }
-            LocalDate start = toLocalDate(req.getDevStartDate());
-            LocalDate end = toLocalDate(req.getDevEndDate());
-            if (start == null || end == null || end.isBefore(start)) {
-                continue;
-            }
-            LocalDate cursor = start;
-            while (!cursor.isAfter(end)) {
-                if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
-                    for (String key : devKeys) {
-                        // 粗粒度兜底: 无明细时按整日占满(容量记满 1), 首跑后排期明细即接管为精确摊入
-                        personDayUsage.computeIfAbsent(key, k -> new HashMap<>())
-                                .merge(cursor, BigDecimal.ONE, BigDecimal::max);
-                    }
-                }
-                cursor = cursor.plusDays(1);
-            }
-        }
+        // 注：pm_requirement 已删除 dev_start_date / dev_end_date，
+        // 不再有「按需求级区间占用」的迁移兜底；所有占用一律来自 pm_dev_schedule 明细。
     }
 
     /**
@@ -1666,7 +1669,15 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      */
     private void rebuildScheduleForReq(String reqId) {
         PmRequirement req = getById(reqId);
-        if (req == null || req.getDevStartDate() == null) {
+        if (req == null) {
+            return;
+        }
+        // 已有排期明细才重建(无明细的需求不凭空生成)。
+        // 旧实现用 dev_start_date 非空当作「已排期」代理，但该列是快照且几乎恒有值，判断不准；
+        // 现在研发起止时间统一由 pm_dev_schedule 派生，这里也直接以明细是否存在为准。
+        Long rowCount = devScheduleMapper.selectCount(new LambdaQueryWrapper<PmDevSchedule>()
+                .eq(PmDevSchedule::getReqId, reqId));
+        if (rowCount == null || rowCount == 0) {
             return;
         }
         ScheduleConfigDTO config = currentConfig();
@@ -1678,7 +1689,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
                 ? req.getWorkload() : BigDecimal.ONE;
         boolean hasSplit = feWorkload != null || beWorkload != null;
-        LocalDate baseStart = toLocalDate(req.getDevStartDate());
+        // 基准日以归属版本的开始时间为准(与 autoSchedule 一致)，不再读需求表 dev_start_date 快照
+        LocalDate baseStart = resolveScheduleBaseStart(req, config);
         List<PmDevSchedule> rows = new ArrayList<>();
         if (hasSplit) {
             if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
@@ -1700,35 +1712,25 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         replaceScheduleRows(reqId, rows);
         reassignSeq(personsOf(req));
-        // 钉住行可能超出原需求区间: 用全部明细行回刷需求整体起止日
-        if (!rows.isEmpty()) {
-            LocalDate min = rows.stream().map(r -> toLocalDate(r.getDevStartDate())).min(LocalDate::compareTo).orElse(null);
-            LocalDate max = rows.stream().map(r -> toLocalDate(r.getDevEndDate())).max(LocalDate::compareTo).orElse(null);
-            if (min != null && max != null) {
-                PmRequirement rangeUpdate = new PmRequirement();
-                rangeUpdate.setId(reqId);
-                rangeUpdate.setDevStartDate(toDate(min));
-                rangeUpdate.setDevEndDate(toDate(max));
-                rangeUpdate.setUpdateTime(new Date());
-                updateById(rangeUpdate);
-            }
-        }
+        // 需求整体起止日不再回写需求表：列表接口按 req_id 关联明细取 MIN/MAX，天然跟随本次重建。
     }
 
     /**
      * 新建需求落库后生成排期明细(无竞争, 各人员从需求开始日起算)
      */
     /**
-     * 解析排期基准开始日(与 autoSchedule 口径一致):
-     * - 需求自带 devStartDate 时优先使用；
-     * - 否则取归属版本(iterationId → month)的开发周期首日——导入未排期的需求应从版本起始日开始，
-     *   而不是落到硬编码默认日期(会导致任务全部堆在默认月份, 超出历史版本周期)；
-     * - 找不到归属版本时才兜底默认日期。
+     * 解析排期基准开始日 —— 唯一口径：以版本管理中该需求的归属版本 startDate 为准，
+     * 与 autoSchedule(1122 行) 的 versionStartDate 同源（iterationId → month/code 解析顺序一致；
+     * autoSchedule 在循环内用预构建 iterationMap 避免 N+1，这里单条调用直接查库）。
+     *
+     * <p>【pm_requirement.dev_start_date 列已删除】研发起止时间统一由 pm_dev_schedule 明细
+     * MIN/MAX 派生(见 PmRequirementMapper.SCHEDULE_RANGE_COLUMNS)，排期起点只认版本开始时间，
+     * 不再存在「按快照排 vs 按版本首日排」两套口径。</p>
+     *
+     * <p>归属版本解析顺序：iterationId → month(code) → 无归属版本时取所有版本最大截至日 + 1，
+     * 使未纳入版本的任务排在所有版本工作之后，而不是落到硬编码默认日挤占正常排期。</p>
      */
     private LocalDate resolveScheduleBaseStart(PmRequirement req, ScheduleConfigDTO config) {
-        if (req.getDevStartDate() != null) {
-            return toLocalDate(req.getDevStartDate());
-        }
         PmIteration iteration = null;
         if (StringUtils.isNotEmpty(req.getIterationId())) {
             iteration = iterationMapper.selectById(req.getIterationId());
@@ -2020,30 +2022,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (beWorkload != null) {
             requirement.setBackendWorkload(beWorkload.max(BigDecimal.ZERO).setScale(1, RoundingMode.HALF_UP));
         }
-        // 开始日期(默认基准开始日期)
-        LocalDate startDate = requirement.getDevStartDate() != null ? toLocalDate(requirement.getDevStartDate())
-                : (exist != null && exist.getDevStartDate() != null ? toLocalDate(exist.getDevStartDate())
-                : ScheduleDateUtils.DEFAULT_START_DATE);
-        // 排期时长口径: 前后端并行推进，取两岗位单人工时的较大者(与人数/总工时无关)
-        BigDecimal feDur = positiveWorkload(feWorkload);
-        BigDecimal beDur = positiveWorkload(beWorkload);
-        BigDecimal scheduleWorkload = (feDur != null || beDur != null)
-                ? (feDur == null ? BigDecimal.ZERO : feDur).max(beDur == null ? BigDecimal.ZERO : beDur)
-                : workload;
-        // 截止日期推导：未指定、或实际跨度异常远大于合理工时时必须校正
-        LocalDate endDate = requirement.getDevEndDate() != null ? toLocalDate(requirement.getDevEndDate())
-                : (exist != null && exist.getDevEndDate() != null ? toLocalDate(exist.getDevEndDate()) : null);
-        if (endDate == null) {
-            endDate = ScheduleDateUtils.calculateDevEndDate(startDate, scheduleWorkload, currentConfig());
-        } else {
-            long rawSpanDays = ScheduleDateUtils.calculateDays(startDate, endDate);
-            long reasonableSpan = Math.max(4, Math.round(scheduleWorkload.doubleValue() * 2.5 + 2));
-            if (rawSpanDays > reasonableSpan) {
-                endDate = ScheduleDateUtils.calculateDevEndDate(startDate, scheduleWorkload, currentConfig());
-            }
-        }
-        requirement.setDevStartDate(toDate(startDate));
-        requirement.setDevEndDate(toDate(endDate));
+        // 研发起止时间不再由本表推导/存储：pm_requirement 已删除 dev_start_date/dev_end_date，
+        // 前端显示值由列表接口关联 pm_dev_schedule 聚合 MIN/MAX 得出，排期基准日取 pm_iteration.start_date。
         // 人员字段标准化
         requirement.setFrontendDev(defaultPersonnel(requirement.getFrontendDev(), exist == null ? null : exist.getFrontendDev(), PersonnelNameUtils.UNASSIGNED));
         requirement.setBackendDev(defaultPersonnel(requirement.getBackendDev(), exist == null ? null : exist.getBackendDev(), PersonnelNameUtils.UNASSIGNED));

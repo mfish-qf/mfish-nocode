@@ -21,6 +21,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -107,12 +108,13 @@ public class ProjectAnalyticsService {
         List<PmRequirement> allReqs = requirementMapper.selectList(
                 new LambdaQueryWrapper<PmRequirement>()
                         .select(PmRequirement::getId, PmRequirement::getIterationId,
-                                PmRequirement::getStatus, PmRequirement::getDevEndDate,
-                                PmRequirement::getWorkload)
+                                PmRequirement::getStatus, PmRequirement::getWorkload)
                         .eq(PmRequirement::getDelFlag, 0));
         List<PmRequirement> reqs = allReqs.stream()
                 .filter(r -> r.getIterationId() != null && monthIterationIds.contains(r.getIterationId()))
                 .collect(Collectors.toList());
+        // 需求表已无 dev_end_date：计划完成日由排期明细 MAX 聚合回填到纯传输字段
+        fillScheduleEndDate(reqs);
 
         // 状态字典：value -> label（按字典顺序保证输出稳定）
         Map<String, String> statusLabel = new LinkedHashMap<>();
@@ -200,12 +202,13 @@ public class ProjectAnalyticsService {
         List<PmRequirement> reqs = requirementMapper.selectList(
                 new LambdaQueryWrapper<PmRequirement>()
                         .select(PmRequirement::getId, PmRequirement::getIterationId,
-                                PmRequirement::getStatus, PmRequirement::getDevEndDate,
+                                PmRequirement::getStatus,
                                 PmRequirement::getDevProgress, PmRequirement::getWorkload,
                                 PmRequirement::getModule, PmRequirement::getLevel1Feature,
                                 PmRequirement::getLevel2Feature, PmRequirement::getLevel3Feature,
                                 PmRequirement::getFeatureDescription)
                         .eq(PmRequirement::getDelFlag, 0));
+        fillScheduleEndDate(reqs);
 
         Map<String, String> statusLabel = new LinkedHashMap<>();
         for (var item : pmDictService.items(PmDictCodes.REQUIREMENT_STATUS)) {
@@ -408,6 +411,31 @@ public class ProjectAnalyticsService {
         return schedules.stream()
                 .filter(s -> s.getReqId() != null)
                 .collect(Collectors.groupingBy(PmDevSchedule::getReqId));
+    }
+
+    /**
+     * pm_requirement 已删除 dev_end_date 列：统计所需的「计划完成日」由 pm_dev_schedule
+     * 按 req_id 取 MAX(dev_end_date)，回填到 PmRequirement 的纯传输字段
+     * ({@code @TableField(exist = false)})，与列表接口 SCHEDULE_RANGE_COLUMNS 口径一致。
+     * 一次查询覆盖本批全部需求，避免逐条子查询。
+     */
+    private void fillScheduleEndDate(List<PmRequirement> reqs) {
+        if (reqs == null || reqs.isEmpty()) {
+            return;
+        }
+        Map<String, Date> maxEndByReq = new HashMap<>();
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(
+                new LambdaQueryWrapper<PmDevSchedule>()
+                        .select(PmDevSchedule::getReqId, PmDevSchedule::getDevEndDate)
+                        .isNotNull(PmDevSchedule::getDevEndDate));
+        for (PmDevSchedule row : rows) {
+            if (row.getReqId() == null || row.getDevEndDate() == null) {
+                continue;
+            }
+            maxEndByReq.merge(row.getReqId(), row.getDevEndDate(),
+                    (a, b) -> a.compareTo(b) >= 0 ? a : b);
+        }
+        reqs.forEach(r -> r.setDevEndDate(maxEndByReq.get(r.getId())));
     }
 
     private int progressOf(PmRequirement r) {

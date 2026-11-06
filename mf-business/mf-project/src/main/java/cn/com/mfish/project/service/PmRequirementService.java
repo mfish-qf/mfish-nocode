@@ -41,7 +41,7 @@ public interface PmRequirementService extends IService<PmRequirement> {
     Result<PmRequirement> queryById(String id);
 
     /**
-     * 创建需求(若未传序号自动生成递增req_no，根据工时与日历规则自动推导dev_end_date)
+     * 创建需求(若未传序号自动生成递增req_no；研发起止时间由 pm_dev_schedule 明细关联聚合，不落需求表)
      *
      * @param requirement 需求对象
      * @return 添加结果
@@ -169,7 +169,7 @@ public interface PmRequirementService extends IService<PmRequirement> {
     Result<PmRequirement> reassign(ReqReassign reqReassign);
 
     /**
-     * 修改需求工时，并根据日历跳过规则自动重新计算更新 dev_end_date
+     * 修改需求工时，并重建排期明细(研发结束时间由明细 MAX 聚合得出)
      *
      * @param reqWorkload 工时调整参数
      * @return 更新结果

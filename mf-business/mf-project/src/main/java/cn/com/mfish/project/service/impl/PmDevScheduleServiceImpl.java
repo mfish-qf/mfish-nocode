@@ -5,9 +5,7 @@ import cn.com.mfish.common.core.utils.AuthInfoUtils;
 import cn.com.mfish.common.core.utils.StringUtils;
 import cn.com.mfish.project.dto.ScheduleConfigDTO;
 import cn.com.mfish.project.entity.PmDevSchedule;
-import cn.com.mfish.project.entity.PmRequirement;
 import cn.com.mfish.project.mapper.PmDevScheduleMapper;
-import cn.com.mfish.project.mapper.PmRequirementMapper;
 import cn.com.mfish.project.req.ReqDevScheduleAdjust;
 import cn.com.mfish.project.req.ReqDevSchedulePin;
 import cn.com.mfish.project.service.PmDevScheduleService;
@@ -39,8 +37,6 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
 
     @Resource
     private PmScheduleConfigService scheduleConfigService;
-    @Resource
-    private PmRequirementMapper requirementMapper;
     @Resource
     private PmRequirementService requirementService;
 
@@ -97,7 +93,7 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
         if (!updateById(row)) {
             return Result.fail("错误:排期调期失败!");
         }
-        refreshRequirementRange(row.getReqId());
+        // 需求整体起止日由列表接口按 req_id 关联 pm_dev_schedule 取 MIN/MAX，无需再回写需求表
         return Result.ok(row, "已调整至 " + ScheduleDateUtils.FORMATTER.format(newStart)
                 + " ~ " + ScheduleDateUtils.FORMATTER.format(newEnd) + "(已自动钉住)!");
     }
@@ -173,41 +169,6 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
             }
         }
         return false;
-    }
-
-    /**
-     * 调期后同步需求整体区间(dev_start_date/dev_end_date = 各人员任务 min/max)
-     */
-    private void refreshRequirementRange(String reqId) {
-        List<PmDevSchedule> rows = list(new LambdaQueryWrapper<PmDevSchedule>()
-                .eq(PmDevSchedule::getReqId, reqId));
-        if (rows.isEmpty()) {
-            return;
-        }
-        LocalDate min = null;
-        LocalDate max = null;
-        for (PmDevSchedule r : rows) {
-            if (r.getDevStartDate() == null || r.getDevEndDate() == null) {
-                continue;
-            }
-            LocalDate s = toLocalDate(r.getDevStartDate());
-            LocalDate e = toLocalDate(r.getDevEndDate());
-            if (min == null || s.isBefore(min)) {
-                min = s;
-            }
-            if (max == null || e.isAfter(max)) {
-                max = e;
-            }
-        }
-        if (min == null || max == null) {
-            return;
-        }
-        PmRequirement update = new PmRequirement();
-        update.setId(reqId);
-        update.setDevStartDate(java.sql.Date.valueOf(min));
-        update.setDevEndDate(java.sql.Date.valueOf(max));
-        update.setUpdateTime(new Date());
-        requirementMapper.updateById(update);
     }
 
     private LocalDate toLocalDate(Date date) {

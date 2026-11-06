@@ -36,10 +36,10 @@ public class ProjectProgressVO {
     @Schema(description = "需求状态分布: 状态名称 -> 数量(按字典顺序)")
     private Map<String, Integer> statusDistribution;
 
-    @Schema(description = "本月计划交付需求数(dev_end_date 落在统计月内)")
+    @Schema(description = "本月计划交付需求数(排期明细 MAX(dev_end_date) 落在统计月内)")
     private int monthlyDeliveries;
 
-    @Schema(description = "已逾期未完成需求数(dev_end_date 早于当前时间且进度<100%)")
+    @Schema(description = "已逾期未完成需求数(排期明细 MAX(dev_end_date) 早于当前时间且进度<100%)")
     private int overdueRequirements;
 
     @Schema(description = "总预估工时(人天)")
