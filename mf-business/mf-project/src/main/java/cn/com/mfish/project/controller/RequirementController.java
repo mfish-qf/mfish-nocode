@@ -237,6 +237,17 @@ public class RequirementController {
     }
 
     /**
+     * 批量设置评审日期(仅更新评审日期, 不改动评审结论与状态流转)
+     */
+    @Log(title = "需求管理-批量设置评审日期", operateType = OperateType.UPDATE)
+    @Operation(summary = "需求管理-批量设置评审日期")
+    @PutMapping("/batch/review-date")
+    @RequiresPermissions("project:requirement:update")
+    public Result<Integer> batchUpdateReviewDate(@Valid @RequestBody ReqBatchReview req) {
+        return requirementService.batchUpdateReviewDate(req.getIds(), req.getReviewDate());
+    }
+
+    /**
      * 批量分配前端/后端/测试人员
      */
     @Log(title = "需求管理-批量指派人员", operateType = OperateType.UPDATE)

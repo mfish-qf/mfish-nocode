@@ -139,6 +139,15 @@ public interface PmRequirementService extends IService<PmRequirement> {
     Result<Integer> batchUpdateReview(List<String> ids, String reviewResult, java.util.Date reviewDate, String reviewNotes);
 
     /**
+     * 批量设置评审日期(仅更新评审日期, 不改动评审结论与状态流转)
+     *
+     * @param ids        需求ID列表
+     * @param reviewDate 评审日期
+     * @return 更新结果
+     */
+    Result<Integer> batchUpdateReviewDate(List<String> ids, java.util.Date reviewDate);
+
+    /**
      * 批量分配前端/后端/测试人员
      *
      * @param ids            需求ID列表

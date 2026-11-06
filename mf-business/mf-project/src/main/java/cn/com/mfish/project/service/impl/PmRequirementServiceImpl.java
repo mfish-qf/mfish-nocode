@@ -650,6 +650,30 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchUpdateReviewDate(List<String> ids, Date reviewDate) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        if (reviewDate == null) {
+            throw new MyRuntimeException("错误:评审日期不能为空!");
+        }
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            update.setReviewDate(reviewDate);
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            updateById(update);
+            recordHistory(req, "BATCH", null, null, null, null, null,
+                    "需求 #" + req.getReqNo() + " 评审日期更新为【" + reviewDate + "】");
+        }
+        return Result.ok(targets.size(), "成功批量更新 " + targets.size() + " 项需求的评审日期!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<Integer> batchAssign(List<String> ids, String personnelType, String names, List<String> userIds) {
         if (ids == null || ids.isEmpty()) {
             throw new MyRuntimeException("错误:需求ID列表不能为空!");
