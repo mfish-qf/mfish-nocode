@@ -1,6 +1,7 @@
 package cn.com.mfish.ai.agent;
 
 import cn.com.mfish.ai.service.LlmModelRouter;
+import cn.com.mfish.ai.runtime.ToolRuntime;
 import cn.com.mfish.common.ai.engine.ApiToolEngine;
 import cn.com.mfish.common.core.utils.StringUtils;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -15,8 +16,10 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 /**
  * @description: 摸鱼小助手配置
  * <p>
- * 作为通用助手，可调用所有已注册工具（含 Skill 提示词级技能 + 各业务服务接口），
- * 系统会自动将所有 ToolCallback 注入到对话中，LLM 据此自主决策是否调用工具。
+ * 作为通用助手，可调用所有已注册工具（含 Skill 提示词级技能 + 各业务服务接口）。
+ * 但为避免每次都把 500+ 工具塞进上下文，改为先让 {@link Planner} 按用户问题筛选出
+ * 真正相关的服务集合：纯闲聊/笑话/问候等无需工具的问题返回空集，退化为零工具纯对话；
+ * 需要操作平台的问题只注入对应服务的工具，工具量通常从 500 降到几十个。
  * </p>
  *
  * @author: mfish
@@ -26,8 +29,12 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 public class MfishAssistant extends BaseAssistant {
     private static final String DEFAULT_PROMPT = "你好，简单介绍下摸鱼低代码";
 
-    public MfishAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, ApiToolEngine apiToolEngine) {
+    private final Planner planner;
+
+    public MfishAssistant(ChatMemory chatMemory, LlmModelRouter llmModelRouter, ApiToolEngine apiToolEngine,
+                          Planner planner) {
         super(chatMemory, llmModelRouter, apiToolEngine);
+        this.planner = planner;
     }
 
     @Override
@@ -103,8 +110,9 @@ public class MfishAssistant extends BaseAssistant {
     /**
      * 聊天
      * <p>
-     * 摸鱼小助手作为通用助手，动态获取所有已注册工具（含 Skill + 各业务服务），
-     * 注入到对话中供 LLM 自主调用。无工具时退化为纯对话模式。
+     * 摸鱼小助手作为通用助手，先让 {@link Planner} 按用户问题筛选出真正相关的服务集合，
+     * 再只注入这些服务的工具（通常从 500 降到几十个，纯闲聊/笑话则零工具纯对话），
+     * 避免每句话都把全平台工具塞进上下文。规划失败兜底仍会回退到全量（与旧行为一致，保正确）。
      * </p>
      *
      * @param sessionId 会话id
@@ -113,18 +121,18 @@ public class MfishAssistant extends BaseAssistant {
      */
     @Override
     public Flux<ChatResponse> chat(String sessionId, String prompt) {
-        if (StringUtils.isEmpty(prompt.trim())) {
-            prompt = DEFAULT_PROMPT;
-        }
-        // 获取所有已注册工具的 serviceId（含 skill-* 和 mf-*），让 LLM 能看到全部工具
-        Set<String> allServiceIds = toolRuntime.getAllServiceIds();
-        if (allServiceIds.isEmpty()) {
-            // 无工具注册时退化为纯对话（如启动初期工具尚未发现）
-            return this.getChatClient().prompt().user(prompt)
-                    .advisors(a -> a.param(CONVERSATION_ID, sessionId))
-                    .stream().chatResponse();
-        }
-        return chatWithTools(sessionId, prompt, allServiceIds);
+        final String finalPrompt = StringUtils.isEmpty(prompt.trim()) ? DEFAULT_PROMPT : prompt;
+        // 在请求线程捕获租户上下文（AuthInfoUtils 不支持异步），后续异步规划/对话均复用此快照
+        cn.com.mfish.common.ai.agent.TenantContext tenantContext = toolRuntime.captureTenantContext();
+        return planner.plan(sessionId, finalPrompt, tenantContext)
+                .flatMapMany(plan -> {
+                    Set<String> serviceIds = toolRuntime.collectPlanServiceIds(plan);
+                    if (serviceIds.isEmpty()) {
+                        // 无需任何平台工具：零工具纯对话，彻底不注入业务工具
+                        return chatNoTools(sessionId, finalPrompt, tenantContext);
+                    }
+                    return chatWithTools(sessionId, finalPrompt, serviceIds, tenantContext);
+                });
     }
 
     @Override

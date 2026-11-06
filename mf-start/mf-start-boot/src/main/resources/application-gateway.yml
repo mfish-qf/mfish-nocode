@@ -16,3 +16,5 @@ gateway:
       packageName: cn.com.mfish.ai
     - path: /workflow
       packageName: cn.com.mfish.workflow
+    - path: /project
+      packageName: cn.com.mfish.project

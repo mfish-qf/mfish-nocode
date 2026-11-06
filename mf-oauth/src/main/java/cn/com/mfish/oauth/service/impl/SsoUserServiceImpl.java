@@ -13,6 +13,7 @@ import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.common.OauthUtils;
 import cn.com.mfish.common.oauth.entity.OnlineUser;
@@ -355,6 +356,66 @@ public class SsoUserServiceImpl extends ServiceImpl<SsoUserMapper, SsoUser> impl
     @Override
     public List<UserInfo> getUsersByAccounts(List<String> accounts) {
         return baseMapper.getUsersByAccounts(accounts);
+    }
+
+    /**
+     * 按「租户 + 姓名(nickname)」解析用户ID
+     * <p>
+     * 解析不猜测: 唯一命中才采用, 多人同名一律判为 AMBIGUOUS 交由调用方降级。
+     * 查询异常只会降级为 UNRESOLVED, 不阻断上游导入流程。
+     *
+     * @param tenantId 租户ID
+     * @param names    姓名列表
+     * @return 与入参顺序一致的解析结果
+     */
+    @Override
+    public List<UserIdResolveVo> resolveTenantUserIds(String tenantId, List<String> names) {
+        List<UserIdResolveVo> result = new ArrayList<>();
+        if (names == null || names.isEmpty()) {
+            return result;
+        }
+        if (StringUtils.isEmpty(tenantId)) {
+            names.forEach(name -> result.add(new UserIdResolveVo().setName(name).setStatus(UserIdResolveVo.UNRESOLVED)));
+            return result;
+        }
+        List<String> uniqueNames = names.stream()
+                .filter(StringUtils::isNotEmpty)
+                .map(String::trim)
+                .distinct()
+                .toList();
+        // nickname -> 命中的用户ID集合(已去重)
+        Map<String, Set<String>> hits = new HashMap<>();
+        if (!uniqueNames.isEmpty()) {
+            try {
+                List<UserIdResolveVo> rows = baseMapper.getUsersByNicknames(tenantId, uniqueNames);
+                if (rows != null) {
+                    rows.forEach(row -> {
+                        if (row == null || StringUtils.isEmpty(row.getUserId())) {
+                            return;
+                        }
+                        hits.computeIfAbsent(row.getName(), k -> new LinkedHashSet<>()).add(row.getUserId());
+                    });
+                }
+            } catch (Exception e) {
+                // 解析是尽力而为的能力, 失败不阻断业务, 全部降级为未解析
+                log.error("按姓名解析用户ID失败, tenantId:{}", tenantId, e);
+            }
+        }
+        for (String name : names) {
+            String key = name == null ? null : name.trim();
+            Set<String> ids = StringUtils.isEmpty(key) ? null : hits.get(key);
+            UserIdResolveVo vo = new UserIdResolveVo().setName(key);
+            if (ids == null || ids.isEmpty()) {
+                vo.setStatus(UserIdResolveVo.UNRESOLVED);
+            } else if (ids.size() == 1) {
+                vo.setUserId(ids.iterator().next()).setStatus(UserIdResolveVo.RESOLVED);
+            } else {
+                vo.setStatus(UserIdResolveVo.AMBIGUOUS);
+                log.warn("租户内多人同名, 不自动选定: {} 命中{}个候选用户", key, ids.size());
+            }
+            result.add(vo);
+        }
+        return result;
     }
 
     /**

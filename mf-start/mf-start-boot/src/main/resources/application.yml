@@ -47,8 +47,8 @@ spring:
           max-wait: -1ms
   servlet:
     multipart:
-      # 单个文件大小
-      max-file-size: 20MB
+      # 单个文件大小（版本附件等支持到 100MB，预留余量）
+      max-file-size: 200MB
       # 设置总上传的文件大小
       max-request-size: 1200MB
   datasource:

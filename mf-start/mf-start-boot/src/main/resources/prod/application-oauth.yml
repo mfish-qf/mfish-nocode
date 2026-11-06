@@ -7,7 +7,11 @@ security:
   # 防止XSS攻击
   xss:
     enabled: true
+    # PRD 详细文档为富文本(HTML)内容, 经认证用户在内置编辑器中编写,
+    # 若走 XSS 标签过滤会被剥成纯文本导致格式丢失, 故排除该文档保存端点
+    # (注: GET 查询本就被方法白名单排除, 此处仅需覆盖 PUT 保存)
     excludeUrls:
+      - /project/requirement/*/doc
 spring:
   thymeleaf:
     cache: false

@@ -1,0 +1,2417 @@
+package cn.com.mfish.project.service.impl;
+
+import cn.com.mfish.common.core.exception.MyRuntimeException;
+import cn.com.mfish.common.core.utils.AuthInfoUtils;
+import cn.com.mfish.common.core.utils.StringUtils;
+import cn.com.mfish.common.core.constants.RPCConstants;
+import cn.com.mfish.common.core.web.PageResult;
+import cn.com.mfish.common.core.web.Result;
+import cn.com.mfish.common.oauth.api.entity.UserInfo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
+import cn.com.mfish.common.oauth.annotation.DataScope;
+import cn.com.mfish.common.oauth.common.DataScopeUtils;
+import cn.com.mfish.project.dict.PmDictCodes;
+import cn.com.mfish.project.dict.PmDictService;
+import cn.com.mfish.project.dto.ScheduleConfigDTO;
+import cn.com.mfish.project.entity.PmDevSchedule;
+import cn.com.mfish.project.entity.PmIteration;
+import cn.com.mfish.project.entity.PmIterationTestNode;
+import cn.com.mfish.project.entity.PmRequirement;
+import cn.com.mfish.project.entity.PmRequirementHistory;
+import cn.com.mfish.project.mapper.PmDevScheduleMapper;
+import cn.com.mfish.project.mapper.PmIterationMapper;
+import cn.com.mfish.project.mapper.PmIterationTestNodeMapper;
+import cn.com.mfish.project.mapper.PmRequirementHistoryMapper;
+import cn.com.mfish.project.mapper.PmRequirementMapper;
+import cn.com.mfish.project.req.BalancingPlanItem;
+import cn.com.mfish.project.req.ReqPmRequirement;
+import cn.com.mfish.project.req.ReqReassign;
+import cn.com.mfish.project.req.ReqWorkload;
+import cn.com.mfish.project.service.PmRequirementService;
+import cn.com.mfish.project.service.PmScheduleConfigService;
+import cn.com.mfish.project.utils.PersonnelIdUtils;
+import cn.com.mfish.project.utils.PersonnelNameUtils;
+import cn.com.mfish.project.utils.ScheduleDateUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * @description: 核心需求
+ * @author: mfish
+ * @date: 2026-10-12
+ * @version: V2.4.1
+ */
+@Slf4j
+@Service
+public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, PmRequirement> implements PmRequirementService {
+    /** 归档标记: 版本状态为"已发布"即视为已归档(不新增字段, 复用 status) */
+    private static final String ARCHIVED_STATUS = "已发布";
+
+    @Resource
+    private PmIterationMapper iterationMapper;
+    @Resource
+    private PmIterationTestNodeMapper testNodeMapper;
+    @Resource
+    private PmRequirementHistoryMapper historyMapper;
+    @Resource
+    private PmScheduleConfigService scheduleConfigService;
+    @Resource
+    private PmDevScheduleMapper devScheduleMapper;
+    @Resource
+    private PmDictService pmDictService;
+    @Resource
+    private cn.com.mfish.common.oauth.api.remote.RemoteUserService remoteUserService;
+
+    @Override
+    public Result<PageResult<PmRequirement>> queryPageList(ReqPmRequirement reqPmRequirement, Integer pageNum, Integer pageSize) {
+        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int size = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        PageHelper.startPage(num, size);
+        List<PmRequirement> list = queryList(reqPmRequirement);
+        return Result.ok(new PageResult<>(list), "需求列表-查询成功!");
+    }
+
+    /**
+     * 多维条件过滤查询(不分页)
+     * 版本筛选语义(前端传勾选的版本 iterationIds, 查询逻辑全部在后端):
+     * - 纯汇总(iterationIds/codes 为空且 includeUnassigned 非 true): 排除已归档(状态=已发布)版本的需求,
+     *   避免全部版本汇总拉回大量已归档数据;
+     * - 勾选版本(单选/多选): 按 iterationIds → iteration_id IN(ids) 精确匹配,
+     *   不做前缀模糊匹配(勾选 v1.3.7 不会带出 v1.3.7.3), 已归档版本同样可查;
+     * - codes(旧参数兼容): 版本代号 → 迭代ID, iteration_id IN(ids);
+     * - includeUnassigned: 追加"未纳入版本"(无迭代归属)的条件, 可与版本条件叠加。
+     * 版本号统一由 iteration_id -> pm_iteration.code 派生返回(需求表不再冗余存储 month 列)。
+     */
+    private List<PmRequirement> queryList(ReqPmRequirement req) {
+        if (req == null) {
+            // 无条件全量汇总: 排除已归档(状态=已发布)版本的需求
+            return list(buildSummaryWrapper());
+        }
+        List<String> codes = req.getCodes() == null ? List.of()
+                : req.getCodes().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
+        // 勾选的版本ID列表(优先于 codes): 同版本号多版本并存时按主键精确区分, 避免串台
+        List<String> iterationIds = req.getIterationIds() == null ? List.of()
+                : req.getIterationIds().stream().filter(StringUtils::isNotEmpty).map(String::trim).distinct().toList();
+        boolean includeUnassigned = Boolean.TRUE.equals(req.getIncludeUnassigned());
+        boolean isSummary = StringUtils.isEmpty(req.getIterationId())
+                && codes.isEmpty() && iterationIds.isEmpty() && !includeUnassigned;
+        LambdaQueryWrapper<PmRequirement> wrapper = new LambdaQueryWrapper<PmRequirement>()
+                // selectGridList 为自定义 @Select SQL, @TableLogic 不会自动注入 del_flag 过滤, 需手动补上
+                .eq(PmRequirement::getDelFlag, 0)
+                .eq(StringUtils.isNotEmpty(req.getIterationId()), PmRequirement::getIterationId, req.getIterationId())
+                // 勾选版本精确查询(优先按版本ID):
+                // - iterationIds: iteration_id IN(版本ID) 精确命中, 同版本号多版本不串台;
+                // - codes(旧参数兼容): 版本代号 → 迭代ID(仅未删除迭代)
+                // 注意: MP 嵌套 consumer 内 or() 无参会被丢弃(实测 3.5.17), 组间 OR 必须用 or(consumer),
+                // 且 consumer 内每个子组用 nested() 显式包括号, 防止 AND/OR 优先级导致语义漂移
+                .and(!codes.isEmpty() || !iterationIds.isEmpty() || includeUnassigned, w -> {
+                    boolean appended = false;
+                    if (!iterationIds.isEmpty()) {
+                        w.in(PmRequirement::getIterationId, iterationIds);
+                        appended = true;
+                    }
+                    if (!codes.isEmpty()) {
+                        // 版本代号 → 迭代ID(仅未删除迭代)
+                        List<String> iterIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                                .select(PmIteration::getId)
+                                .in(PmIteration::getCode, codes)
+                                .eq(PmIteration::getDelFlag, 0)).stream()
+                                .map(PmIteration::getId)
+                                .filter(StringUtils::isNotEmpty)
+                                .toList();
+                        if (!iterIds.isEmpty()) {
+                            if (appended) {
+                                w.or(x -> x.in(PmRequirement::getIterationId, iterIds));
+                            } else {
+                                w.in(PmRequirement::getIterationId, iterIds);
+                                appended = true;
+                            }
+                        }
+                    }
+                    if (includeUnassigned) {
+                        // 未纳入版本: 无迭代归属(null/空) 或 指向已删除版本(孤儿) 的需求, 与版本条件之间是 OR
+                        List<String> existingIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                                .select(PmIteration::getId)
+                                .eq(PmIteration::getDelFlag, 0)).stream()
+                                .map(PmIteration::getId)
+                                .filter(StringUtils::isNotEmpty)
+                                .toList();
+                        if (appended) {
+                            w.or(x -> x
+                                    .nested(y -> y.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, ""))
+                                    .or().notIn(PmRequirement::getIterationId,
+                                            existingIds.isEmpty() ? List.of("__nonexistent__") : existingIds));
+                        } else {
+                            w.and(x -> x
+                                    .nested(y -> y.isNull(PmRequirement::getIterationId).or().eq(PmRequirement::getIterationId, ""))
+                                    .or().notIn(PmRequirement::getIterationId,
+                                            existingIds.isEmpty() ? List.of("__nonexistent__") : existingIds));
+                        }
+                    }
+                })
+                .eq(StringUtils.isNotEmpty(req.getStatus()), PmRequirement::getStatus, req.getStatus())
+                .eq(StringUtils.isNotEmpty(req.getPriority()), PmRequirement::getPriority, req.getPriority())
+                .like(StringUtils.isNotEmpty(req.getFrontendDev()), PmRequirement::getFrontendDev, req.getFrontendDev())
+                .like(StringUtils.isNotEmpty(req.getBackendDev()), PmRequirement::getBackendDev, req.getBackendDev())
+                .like(StringUtils.isNotEmpty(req.getQaTester()), PmRequirement::getQaTester, req.getQaTester())
+                // 关键词模糊匹配(模块/功能名)
+                .and(StringUtils.isNotEmpty(req.getKeyword()), w -> w
+                        .like(PmRequirement::getModule, req.getKeyword())
+                        .or().like(PmRequirement::getLevel1Feature, req.getKeyword())
+                        .or().like(PmRequirement::getLevel2Feature, req.getKeyword())
+                        .or().like(PmRequirement::getLevel3Feature, req.getKeyword())
+                        .or().like(PmRequirement::getFeatureDescription, req.getKeyword()))
+                .orderByAsc(PmRequirement::getReqNo);
+        if (isSummary) {
+            excludeArchivedIterations(wrapper);
+        }
+        // 使用网格专用查询：刻意不包含 prd_doc_content 大文本，并派生 has_prd_doc 标记
+        return baseMapper.selectGridList(wrapper);
+    }
+
+    /**
+     * 按版本筛选条件解析需求ID列表(复用 queryList 的版本过滤语义, 供排期明细等下游聚合查询复用)
+     * 仅透传版本筛选字段, 其余状态/人员/关键词过滤一律留空, 故结果即"当前版本视图下的全部需求ID"
+     *
+     * @param iterationIds      勾选的版本ID列表(为空/null 表示纯汇总/ALL)
+     * @param includeUnassigned 是否叠加"未纳入版本"
+     * @return 命中的需求ID列表
+     */
+    @Override
+    public List<String> listReqIdsBySelection(List<String> iterationIds, Boolean includeUnassigned) {
+        ReqPmRequirement req = new ReqPmRequirement();
+        if (iterationIds != null) {
+            req.setIterationIds(iterationIds.stream()
+                    .filter(StringUtils::isNotEmpty)
+                    .map(String::trim)
+                    .distinct()
+                    .toList());
+        }
+        req.setIncludeUnassigned(Boolean.TRUE.equals(includeUnassigned));
+        return queryList(req).stream().map(PmRequirement::getId).toList();
+    }
+
+    /**
+     * 无条件全量汇总查询条件(del_flag + 排除已归档版本 + 排序)
+     */
+    private LambdaQueryWrapper<PmRequirement> buildSummaryWrapper() {
+        return excludeArchivedIterations(new LambdaQueryWrapper<PmRequirement>()
+                .eq(PmRequirement::getDelFlag, 0)
+                .orderByAsc(PmRequirement::getReqNo));
+    }
+
+    /**
+     * 在查询条件上追加"排除已归档(状态=已发布)版本的需求"
+     * 无归档版本时不做处理, 避免生成空 not in 条件
+     * <p>
+     * 注意：不能简单写成 {@code notIn(iterationId, archivedIds)}。SQL 三值逻辑下
+     * {@code NULL NOT IN (...)} 的结果是 UNKNOWN(非 TRUE)，会把「未纳入版本」(iteration_id 为 NULL)
+     * 的需求一并排除——AI 创建需求时若不传 iterationId 落库即为 NULL，就会出现
+     * "全部版本查不到、勾选未纳入版本才查得到"的现象。
+     * 因此用括号把条件包成一组：属于非归档版本 OR 无归属(NULL/空串)。
+     */
+    private LambdaQueryWrapper<PmRequirement> excludeArchivedIterations(LambdaQueryWrapper<PmRequirement> wrapper) {
+        List<String> archivedIds = iterationMapper.selectList(new LambdaQueryWrapper<PmIteration>()
+                .select(PmIteration::getId)
+                .eq(PmIteration::getStatus, ARCHIVED_STATUS)
+                .eq(PmIteration::getDelFlag, 0)).stream()
+                .map(PmIteration::getId)
+                .filter(StringUtils::isNotEmpty)
+                .toList();
+        if (!archivedIds.isEmpty()) {
+            wrapper.and(w -> w
+                    .notIn(PmRequirement::getIterationId, archivedIds)
+                    .or().isNull(PmRequirement::getIterationId)
+                    .or().eq(PmRequirement::getIterationId, ""));
+        }
+        return wrapper;
+    }
+
+    @Override
+    public Result<PmRequirement> queryById(String id) {
+        PmRequirement requirement = getById(id);
+        if (requirement == null) {
+            return Result.fail("错误:未找到需求 " + id);
+        }
+        // 版本号由 iteration_id -> pm_iteration.code 派生填充(需求表不再冗余存储 month 列)
+        if (StringUtils.isNotEmpty(requirement.getIterationId())) {
+            PmIteration iteration = iterationMapper.selectById(requirement.getIterationId());
+            requirement.setMonth(iteration != null ? iteration.getCode() : null);
+        }
+        // 研发起止时间同样为关联派生字段，单条查询也补齐，保证与列表口径一致
+        fillScheduleRange(requirement);
+        return Result.ok(requirement, "需求-查询成功!");
+    }
+
+    /**
+     * 需求表已删除 dev_start_date / dev_end_date 列：单条查询按 req_id 关联排期明细
+     * 取 MIN(dev_start_date) / MAX(dev_end_date) 填回纯传输字段，口径与列表接口一致。
+     */
+    private void fillScheduleRange(PmRequirement req) {
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .select(PmDevSchedule::getDevStartDate, PmDevSchedule::getDevEndDate)
+                .eq(PmDevSchedule::getReqId, req.getId()));
+        LocalDate min = null;
+        LocalDate max = null;
+        for (PmDevSchedule row : rows) {
+            if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
+                continue;
+            }
+            LocalDate s = toLocalDate(row.getDevStartDate());
+            LocalDate e = toLocalDate(row.getDevEndDate());
+            if (min == null || s.isBefore(min)) {
+                min = s;
+            }
+            if (max == null || e.isAfter(max)) {
+                max = e;
+            }
+        }
+        if (min != null) {
+            req.setDevStartDate(java.sql.Date.valueOf(min));
+        }
+        if (max != null) {
+            req.setDevEndDate(java.sql.Date.valueOf(max));
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<PmRequirement> add(PmRequirement requirement) {
+        if (requirement == null) {
+            throw new MyRuntimeException("错误:需求对象不能为空!");
+        }
+        verifyRequirement(requirement);
+        Date now = new Date();
+        // 租户强制取当前会话，绝不信任请求体传入的 tenantId：
+        // AI 工具/导入请求可能误带 tenantId=1(系统默认/超级租户)，曾导致需求落到错误租户，
+        // 当前租户下因 @DataScope 过滤而完全查不到。取不到会话租户时宁可失败，也不能落脏租户。
+        String currentTenantId = safeGetCurrentTenantId();
+        if (StringUtils.isEmpty(currentTenantId)) {
+            throw new MyRuntimeException("错误:未获取到当前租户信息, 无法创建需求!");
+        }
+        requirement.setTenantId(currentTenantId);
+        requirement.setCreateBy(safeGetCurrentUser());
+        requirement.setCreateTime(now);
+        // 未传序号时自动生成递增 req_no
+        if (requirement.getReqNo() == null) {
+            requirement.setReqNo(nextReqNo());
+        }
+        // 提出人/提出日期兜底：AI 创建时经常省略这两个字段(仅靠提示词不可靠)，
+        // 后端统一按当前登录用户姓名与当天补齐；用户显式传值时尊重显式值。
+        if (StringUtils.isEmpty(requirement.getRequester())) {
+            requirement.setRequester(resolveCurrentUserName());
+        }
+        if (requirement.getRequestDate() == null) {
+            requirement.setRequestDate(now);
+        }
+        // AI/接口创建时常常完全不传 iterationId(为 null)，统一按「未纳入版本」归一为空串：
+        // 前端新建显式传 ""，两者行为保持一致；也避免 NULL 在汇总查询的 NOT IN 条件下被 SQL 三值逻辑漏掉。
+        // 注意只在新增时归一，编辑时 null 表示"保持原值"，不能改。
+        if (requirement.getIterationId() == null) {
+            requirement.setIterationId("");
+        }
+        // 归属迭代信息联动(月份代码与发版时间)
+        syncIterationInfo(requirement, requirement);
+        // 状态与进度默认值(默认状态取字典中第一个开发前阶段状态, 如"待评审")
+        if (StringUtils.isEmpty(requirement.getStatus())) {
+            requirement.setStatus(pmDictService.defaultStatus());
+        }
+        if (requirement.getDevProgress() == null) {
+            requirement.setDevProgress(resolveDefaultProgress(requirement.getStatus()));
+        }
+        // 优先级兜底：AI 创建时常省略 priority(仅靠提示词不可靠)，且历史上默认口径曾为「中」，
+        // 用户明确要求默认「高」。后端统一默认「高」，与前端手动新建默认值(高)保持一致；用户显式传值时尊重显式值。
+        if (StringUtils.isEmpty(requirement.getPriority())) {
+            requirement.setPriority("高");
+        }
+        // 人员账号化: 保证姓名串与用户ID数组按索引对齐(点选ID优先, 仅有姓名时按租户解析)
+        alignPersonnelIds(requirement);
+        // 人员、工时与日历排期纠偏
+        sanitizeRequirement(requirement, null);
+        if (save(requirement)) {
+            // 生成排期明细(需求×人员×岗位)
+            persistScheduleRowsForReq(requirement);
+            recordHistory(requirement, "INSERT", null, null, null, null, null, "创建需求 #" + requirement.getReqNo());
+            return Result.ok(requirement, "需求 #" + requirement.getReqNo() + " 创建成功!");
+        }
+        return Result.fail(requirement, "错误:需求-添加失败!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<PmRequirement> edit(PmRequirement requirement) {
+        if (requirement == null || StringUtils.isEmpty(requirement.getId())) {
+            throw new MyRuntimeException("错误:需求ID不能为空!");
+        }
+        PmRequirement exist = getById(requirement.getId());
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
+            throw new MyRuntimeException("错误:需求不存在!");
+        }
+        verifyRequirement(requirement);
+        requirement.setUpdateBy(safeGetCurrentUser());
+        requirement.setUpdateTime(new Date());
+        // 租户ID 由库内已有值兜底, 前端不传, 防止误清空(依赖 MP NOT_NULL 策略 + 此处显式赋值双保险)
+        requirement.setTenantId(exist.getTenantId());
+        // 归属迭代信息联动 (前端传空串=显式清空版本，同步清空月份/发版时间/转测节点)
+        boolean versionCleared = syncIterationInfo(requirement, exist);
+        // 状态流转联动开发进度
+        String newStatus = StringUtils.isEmpty(requirement.getStatus()) ? exist.getStatus() : requirement.getStatus();
+        Integer newProgress = requirement.getDevProgress() != null ? requirement.getDevProgress() : exist.getDevProgress();
+        requirement.setDevProgress(resolveStatusProgress(newStatus, newProgress, exist.getStatus()));
+        // 人员账号化: 保证姓名串与用户ID数组按索引对齐
+        alignPersonnelIds(requirement);
+        // 修改工时或开始时间时联动重算截止时间
+        sanitizeRequirement(requirement, exist);
+        // 收集「姓名串已清空」的角色: MP updateById 默认 NOT_NULL 策略会跳过 null 的 setXxxIds(null),
+        // 导致旧ID数组残留并与新姓名串错位(虽被"长度不一致即退回姓名"安全阀兜住不会错挂, 但会留下脏数据),
+        // 与 batchAssign / reassign 保持同一口径 —— 用 UpdateWrapper 显式 SET NULL 落库
+        LambdaUpdateWrapper<PmRequirement> personnelNullWrapper = null;
+        for (String role : PersonnelIdUtils.allRoles()) {
+            if (!PersonnelNameUtils.parsePersonnelNames(PersonnelIdUtils.namesOfRole(requirement, role)).isEmpty()) {
+                continue;
+            }
+            if (personnelNullWrapper == null) {
+                personnelNullWrapper = new LambdaUpdateWrapper<PmRequirement>()
+                        .eq(PmRequirement::getId, requirement.getId());
+            }
+            switch (role) {
+                case PersonnelIdUtils.ROLE_FRONTEND -> personnelNullWrapper.set(PmRequirement::getFrontendDevIds, null);
+                case PersonnelIdUtils.ROLE_BACKEND -> personnelNullWrapper.set(PmRequirement::getBackendDevIds, null);
+                case PersonnelIdUtils.ROLE_QA -> personnelNullWrapper.set(PmRequirement::getQaTesterIds, null);
+                default -> personnelNullWrapper.set(PmRequirement::getOwnerIds, null);
+            }
+        }
+        boolean success;
+        if (versionCleared) {
+            // 清空版本时转测时间/发版时间为日期字段，updateById 默认 NOT_NULL 策略会忽略 null，
+            // 须通过 UpdateWrapper 显式 SET NULL 落库
+            LambdaUpdateWrapper<PmRequirement> clearWrapper = personnelNullWrapper != null ? personnelNullWrapper
+                    : new LambdaUpdateWrapper<PmRequirement>().eq(PmRequirement::getId, requirement.getId());
+            clearWrapper.set(PmRequirement::getTestNodeDate, null)
+                    .set(PmRequirement::getReleaseTime, null);
+            success = update(requirement, clearWrapper);
+        } else if (personnelNullWrapper != null) {
+            success = update(requirement, personnelNullWrapper);
+        } else {
+            success = updateById(requirement);
+        }
+        if (success) {
+            recordHistory(requirement, "UPDATE", null, null, null, exist.getStatus(), newStatus, "更新需求 #" + exist.getReqNo());
+            // 工时/人员/开始日变化后重建排期明细(钉住行保持不动)
+            rebuildScheduleForReq(requirement.getId());
+            PmRequirement updated = getById(requirement.getId());
+            return Result.ok(updated, "需求 #" + exist.getReqNo() + " 更新成功，日历排期已同步");
+        }
+        return Result.fail(requirement, "错误:需求-编辑失败!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> delete(String id) {
+        PmRequirement exist = getById(id);
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
+            throw new MyRuntimeException("错误:需求不存在!");
+        }
+        if (removeById(id)) {
+            deleteScheduleRows(List.of(id));
+            recordHistory(exist, "DELETE", null, null, null, exist.getStatus(), null, "删除需求 #" + exist.getReqNo());
+            return Result.ok(true, "需求 #" + exist.getReqNo() + " 删除成功!");
+        }
+        return Result.fail(false, "错误:需求-删除失败!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> deleteBatch(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        // 仅操作本租户需求: 按ID列表过滤出归属当前租户的主键, 跨租户ID直接剔除
+        List<String> ownIds = filterOwnTenantIds(ids);
+        if (ownIds.isEmpty()) {
+            return Result.ok(true, "未命中本租户需求, 无数据可删除!");
+        }
+        if (removeByIds(ownIds)) {
+            deleteScheduleRows(ownIds);
+            List<PmRequirement> removed = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ownIds));
+            for (PmRequirement req : removed) {
+                recordHistory(req, "DELETE", null, null, null, req.getStatus(), null, "批量删除需求 #" + req.getReqNo());
+            }
+            return Result.ok(true, "已成功批量删除 " + ownIds.size() + " 项需求!");
+        }
+        return Result.fail(false, "错误:需求-批量删除失败!");
+    }
+
+    @Override
+    public Result<PmRequirement> getDoc(String id) {
+        // prd_doc_content 标记了 select=false，需在此显式查询该字段；其余仅取文档相关标识字段
+        PmRequirement requirement = lambdaQuery()
+                .select(PmRequirement::getId, PmRequirement::getReqNo, PmRequirement::getModule,
+                        PmRequirement::getLevel1Feature, PmRequirement::getLevel2Feature,
+                        PmRequirement::getPrdDocContent, PmRequirement::getDocLastModified,
+                        PmRequirement::getDocAuthor)
+                .eq(PmRequirement::getId, id)
+                .one();
+        if (requirement == null) {
+            return Result.fail("错误:未找到需求 " + id);
+        }
+        return Result.ok(requirement, "获取需求 #" + requirement.getReqNo() + " 文档成功!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<PmRequirement> saveDoc(String id, String prdDocContent, String docAuthor) {
+        PmRequirement exist = getById(id);
+        if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
+            throw new MyRuntimeException("错误:未找到需求 " + id);
+        }
+        PmRequirement update = new PmRequirement();
+        update.setId(id);
+        update.setPrdDocContent(prdDocContent);
+        update.setDocLastModified(new Date());
+        update.setDocAuthor(StringUtils.isEmpty(docAuthor)
+                ? (StringUtils.isEmpty(exist.getDocAuthor()) ? exist.getRequester() : exist.getDocAuthor())
+                : docAuthor);
+        update.setUpdateBy(safeGetCurrentUser());
+        update.setUpdateTime(new Date());
+        if (updateById(update)) {
+            recordHistory(exist, "DOC", null, null, null, null, null, "保存需求 #" + exist.getReqNo() + " PRD详细文档");
+            return Result.ok(getById(id), "需求 #" + exist.getReqNo() + " 详细 PRD 文档已保存");
+        }
+        return Result.fail("错误:保存需求文档失败!");
+    }
+
+    @Override
+    public Result<PageResult<PmRequirement>> queryDocBatch(List<String> ids, Integer pageNum, Integer pageSize) {
+        if (ids == null || ids.isEmpty()) {
+            return Result.ok(new PageResult<>(new ArrayList<>(), 1, 10, 0L), "无数据");
+        }
+        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int size = pageSize == null || pageSize < 1 ? 50 : pageSize;
+        long total = ids.size();
+        int from = (num - 1) * size;
+        if (from >= total) {
+            return Result.ok(new PageResult<>(new ArrayList<>(), num, size, total), "无数据");
+        }
+        // 在传入 ID 列表内按页截取，再回库查询该页需求的详细文档内容，避免一次性传输超大文本
+        List<String> pageIds = ids.subList(from, (int) Math.min((long) from + size, total));
+        List<PmRequirement> list = lambdaQuery()
+                .select(PmRequirement::getId, PmRequirement::getReqNo, PmRequirement::getModule,
+                        PmRequirement::getLevel1Feature, PmRequirement::getPrdDocContent,
+                        PmRequirement::getDocLastModified, PmRequirement::getDocAuthor)
+                .in(PmRequirement::getId, pageIds)
+                .eq(PmRequirement::getDelFlag, 0)
+                .list();
+        return Result.ok(new PageResult<>(list, num, size, total), "查询成功");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<List<PmRequirement>> batchCreate(List<PmRequirement> requirements) {
+        if (requirements == null || requirements.isEmpty()) {
+            throw new MyRuntimeException("错误:导入列表不能为空!");
+        }
+        List<PmRequirement> created = new ArrayList<>();
+        for (PmRequirement item : requirements) {
+            item.setId(null);
+            add(item);
+            created.add(item);
+        }
+        return Result.ok(created, "成功批量导入 " + created.size() + " 项需求!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchUpdateStatus(List<String> ids, String status) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        if (StringUtils.isEmpty(status)) {
+            throw new MyRuntimeException("错误:目标状态不能为空!");
+        }
+        if (!pmDictService.isValidStatus(status)) {
+            throw new MyRuntimeException("错误:目标状态【" + status + "】不在字典 pm_requirement_status 中, 请先在字典管理中维护!");
+        }
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            update.setStatus(status);
+            update.setDevProgress(resolveStatusProgress(status, req.getDevProgress(), req.getStatus()));
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            updateById(update);
+            recordHistory(req, "STATUS", null, null, null, req.getStatus(), status,
+                    "需求 #" + req.getReqNo() + " 状态流转: " + req.getStatus() + " ➔ " + status);
+        }
+        return Result.ok(targets.size(), "已成功将 " + targets.size() + " 项需求状态批量更新为【" + status + "】!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchUpdateIteration(List<String> ids, String iterationId) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        PmIteration iteration = StringUtils.isEmpty(iterationId) ? null
+                : iterationMapper.selectById(iterationId);
+        if (iteration == null && StringUtils.isNotEmpty(iterationId)) {
+            // 支持按版本号匹配
+            iteration = iterationMapper.selectOne(new LambdaQueryWrapper<PmIteration>()
+                    .eq(PmIteration::getCode, iterationId).last("limit 1"));
+        }
+        if (iteration == null && StringUtils.isNotEmpty(iterationId)) {
+            throw new MyRuntimeException("错误:目标迭代不存在!");
+        }
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            update.setIterationId(iteration == null ? "" : iteration.getId());
+            if (iteration != null && iteration.getReleaseDate() != null) {
+                update.setReleaseTime(iteration.getReleaseDate());
+            }
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            updateById(update);
+            recordHistory(req, "BATCH", null, null, null, req.getIterationId(),
+                    iteration == null ? "" : iteration.getId(),
+                    "需求 #" + req.getReqNo() + " 划拨至版本【" + (iteration == null ? "未分配" : iteration.getCode()) + "】");
+        }
+        // 版本归属变化: 同步排期明细上的 iteration_id(钉住行保持不动)
+        for (PmRequirement req : targets) {
+            rebuildScheduleForReq(req.getId());
+        }
+        return Result.ok(targets.size(), "已成功将 " + targets.size() + " 项需求批量划分至版本【"
+                + (iteration == null ? "未分配" : iteration.getCode()) + "】!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchUpdateReview(List<String> ids, String reviewResult, Date reviewDate, String reviewNotes) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        // 评审结论取值必须来自字典 pm_review_result(前后端统一字典管理, 禁止硬编码字符串)
+        if (StringUtils.isNotEmpty(reviewResult) && !pmDictService.isValidReviewResult(reviewResult)) {
+            throw new MyRuntimeException("错误:评审结论【" + reviewResult + "】不在字典 pm_review_result 中, 请先在字典管理中维护!");
+        }
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            update.setReviewResult(reviewResult);
+            if (reviewDate != null) {
+                update.setReviewDate(reviewDate);
+            }
+            if (StringUtils.isNotEmpty(reviewNotes)) {
+                update.setReviewNotes(reviewNotes);
+            }
+            // 评审结论驱动状态流转: 字典中该结论配置了 flow 目标(如"评审通过 → 开发中"),
+            // 且需求尚处开发前阶段(字典 phase=pre)时自动流转;
+            // 已进入研发/测试/上线, 或已取消的需求保持原状, 不被回退
+            String flowTarget = pmDictService.reviewFlowTarget(reviewResult);
+            if (StringUtils.isNotEmpty(flowTarget) && pmDictService.isPreDevStatus(req.getStatus())) {
+                update.setStatus(flowTarget);
+                update.setDevProgress(resolveStatusProgress(flowTarget, req.getDevProgress(), req.getStatus()));
+            }
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            updateById(update);
+            recordHistory(req, "BATCH", null, null, null, req.getReviewResult(), reviewResult,
+                    "需求 #" + req.getReqNo() + " 评审结论更新为【" + reviewResult + "】");
+        }
+        return Result.ok(targets.size(), "成功批量更新 " + targets.size() + " 项需求的评审结论!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchUpdateReviewDate(List<String> ids, Date reviewDate) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        if (reviewDate == null) {
+            throw new MyRuntimeException("错误:评审日期不能为空!");
+        }
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            update.setReviewDate(reviewDate);
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            updateById(update);
+            recordHistory(req, "BATCH", null, null, null, null, null,
+                    "需求 #" + req.getReqNo() + " 评审日期更新为【" + reviewDate + "】");
+        }
+        return Result.ok(targets.size(), "成功批量更新 " + targets.size() + " 项需求的评审日期!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchAssign(List<String> ids, String personnelType, String names, List<String> userIds) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        if (!List.of("frontendDev", "backendDev", "qaTester", "owner").contains(personnelType)) {
+            throw new MyRuntimeException("错误:人员类型不合法，仅支持 frontendDev/backendDev/qaTester/owner!");
+        }
+        String formatted = PersonnelNameUtils.formatPersonnelNames(names);
+        // 账号化: 提交的ID列表必须与姓名串解析结果严格等长才可信, 否则整组忽略(退回按姓名排期)
+        List<String> alignedIds = PersonnelIdUtils.alignIds(
+                PersonnelNameUtils.parsePersonnelNames(formatted), userIds);
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            // 汇总本轮生效后的拆分工时与人员, 用于总工时(显示口径)重算
+            BigDecimal newFeWl = req.getFrontendWorkload();
+            BigDecimal newBeWl = req.getBackendWorkload();
+            String newFeDev = req.getFrontendDev();
+            String newBeDev = req.getBackendDev();
+            switch (personnelType) {
+                case "frontendDev" -> {
+                    update.setFrontendDev(formatted);
+                    // 同步落库用户ID, 供排期引擎按账号区分同名人员(不可对齐时写入 null, 自动退回姓名)
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, alignedIds);
+                    newFeDev = formatted;
+                }
+                case "backendDev" -> {
+                    update.setBackendDev(formatted);
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, alignedIds);
+                    newBeDev = formatted;
+                }
+                case "qaTester" -> {
+                    update.setQaTester(formatted);
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_QA, alignedIds);
+                }
+                default -> {
+                    update.setOwner(formatted);
+                    PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_OWNER, alignedIds);
+                }
+            }
+            // 前后端人员变动: 按"生效人员"统一纠偏两侧工时(与 sanitizeRequirement 完全同口径)
+            // 无有效人员(空/不涉及) → 0 人天; 有人员但工时为 null 或 0(历史"不涉及"残留) → 默认 1 人天
+            // 注意: 必须两侧都纠, 否则未被指派的那一侧残留的旧值会继续污染总工时
+            if ("frontendDev".equals(personnelType) || "backendDev".equals(personnelType)) {
+                if (PersonnelNameUtils.parsePersonnelNames(newFeDev).isEmpty()) {
+                    newFeWl = BigDecimal.ZERO;
+                } else if (newFeWl == null || newFeWl.compareTo(BigDecimal.ZERO) == 0) {
+                    newFeWl = BigDecimal.ONE;
+                }
+                if (PersonnelNameUtils.parsePersonnelNames(newBeDev).isEmpty()) {
+                    newBeWl = BigDecimal.ZERO;
+                } else if (newBeWl == null || newBeWl.compareTo(BigDecimal.ZERO) == 0) {
+                    newBeWl = BigDecimal.ONE;
+                }
+                update.setFrontendWorkload(newFeWl);
+                update.setBackendWorkload(newBeWl);
+                // 总工时(仅显示口径)随拆分值实时重算: 防止批量置"不涉及/清空"后总工时残留旧值(如仍显示 2)
+                update.setWorkload(headcountTotalWorkload(newFeWl, newBeWl, newFeDev, newBeDev));
+            }
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            // 不可对齐(旧前端未传ID/全为占位名)时必须显式清空旧ID数组:
+            // MP updateById 默认 NOT_NULL 策略会跳过 null 值, 若仅 set null 则旧ID残留,
+            // 与新姓名串错位 → 排期会把工时计到另一个人头上。故用 wrapper 强制 SET NULL。
+            LambdaUpdateWrapper<PmRequirement> uw = new LambdaUpdateWrapper<PmRequirement>()
+                    .eq(PmRequirement::getId, req.getId());
+            if (alignedIds.isEmpty()) {
+                switch (personnelType) {
+                    case "frontendDev" -> uw.set(PmRequirement::getFrontendDevIds, null);
+                    case "backendDev" -> uw.set(PmRequirement::getBackendDevIds, null);
+                    case "qaTester" -> uw.set(PmRequirement::getQaTesterIds, null);
+                    default -> uw.set(PmRequirement::getOwnerIds, null);
+                }
+            }
+            update(update, uw);
+            recordHistory(req, "BATCH", personnelType, currentPersonnel(req, personnelType), formatted,
+                    currentPersonnel(req, personnelType), formatted,
+                    "需求 #" + req.getReqNo() + " 批量指派人员【" + formatted + "】");
+        }
+        // 前后端人员变动: 重建受影响需求的排期明细(钉住行保持不动)
+        if ("frontendDev".equals(personnelType) || "backendDev".equals(personnelType)) {
+            for (PmRequirement req : targets) {
+                rebuildScheduleForReq(req.getId());
+            }
+        }
+        return Result.ok(targets.size(), "成功批量更新 " + targets.size() + " 项需求的人员分配!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchBindTestNode(List<String> ids, String nodeId) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        PmIterationTestNode node = StringUtils.isEmpty(nodeId) ? null : testNodeMapper.selectById(nodeId);
+        if (node == null && StringUtils.isNotEmpty(nodeId)) {
+            throw new MyRuntimeException("错误:转测节点不存在!");
+        }
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
+        Date now = new Date();
+        for (PmRequirement req : targets) {
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            if (node == null) {
+                update.setTestNodeId("");
+                update.setTestNodeName("");
+                update.setTestNodeDate(null);
+            } else {
+                update.setTestNodeId(node.getId());
+                update.setTestNodeName(node.getName());
+                update.setTestNodeDate(node.getNodeDate());
+                update.setTestPhase(node.getName());
+            }
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(now);
+            updateById(update);
+            recordHistory(req, "BATCH", null, null, null, req.getTestNodeId(), node == null ? "" : node.getId(),
+                    "需求 #" + req.getReqNo() + " 绑定转测节点【" + (node == null ? "解绑" : node.getName()) + "】");
+        }
+        return Result.ok(targets.size(), "已成功将 " + targets.size() + " 项需求批量绑定至【"
+                + (node == null ? "解绑" : node.getName()) + "】!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<PmRequirement> reassign(ReqReassign reqReassign) {
+        PmRequirement req = getById(reqReassign.getReqId());
+        if (req == null) {
+            throw new MyRuntimeException("错误:需求 " + reqReassign.getReqId() + " 不存在!");
+        }
+        String cleanFrom = PersonnelNameUtils.cleanPersonnelName(reqReassign.getFromPerson());
+        String cleanTo = PersonnelNameUtils.cleanPersonnelName(reqReassign.getToPerson());
+        List<String> feList = new ArrayList<>(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
+        List<String> beList = new ArrayList<>(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
+        // 目标人员岗位判定：优先采用前端显式传入的角色(由统一人员缓存按组织/角色名称派生)，
+        // 其次按目标人员在原需求前后端名单中的位置推断，最后默认前端
+        // 注意：历史 pm_personnel 人员表已废弃，人员统一来自 /oauth2/ssoTenant/user
+        String targetRole;
+        if ("backend".equals(reqReassign.getRole()) || "frontend".equals(reqReassign.getRole())) {
+            targetRole = reqReassign.getRole();
+        } else {
+            boolean toInBe = beList.contains(cleanTo);
+            boolean toInFe = feList.contains(cleanTo);
+            targetRole = toInBe && !toInFe ? "backend" : "frontend";
+        }
+        String newFe;
+        String newBe;
+        if (Boolean.TRUE.equals(reqReassign.getTransferAll())) {
+            // 独占整单转派：将整个需求完全移交给目标人员独占，另一端无需开发置"不涉及"，原所有其他分配人员全部清空
+            if ("backend".equals(targetRole)) {
+                newBe = cleanTo;
+                newFe = PersonnelNameUtils.NOT_INVOLVED;
+            } else {
+                newFe = cleanTo;
+                newBe = PersonnelNameUtils.NOT_INVOLVED;
+            }
+        } else {
+            // 角色精细化调配：仅将"转派人"替换为"目标人"，同侧其他成员全部保留
+            // (例: 前端 A、B，A 转派给 C → 前端变为 C、B；绝非清空整侧只留 C)
+            feList.removeIf(p -> p.equals(cleanFrom));
+            beList.removeIf(p -> p.equals(cleanFrom));
+            feList.removeIf(p -> p.equals(cleanTo));
+            beList.removeIf(p -> p.equals(cleanTo));
+            boolean wasInFe = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()).contains(cleanFrom);
+            boolean wasInBe = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()).contains(cleanFrom);
+            boolean isFrontendTask = "frontend".equals(reqReassign.getRole()) || (wasInFe && !wasInBe);
+            boolean isBackendTask = "backend".equals(reqReassign.getRole()) || (wasInBe && !wasInFe);
+            if (isBackendTask || (!isFrontendTask && "backend".equals(targetRole))) {
+                beList.add(cleanTo);
+            } else {
+                feList.add(cleanTo);
+            }
+            // 名单为空则落空串(空=待分配)，不再落"待分配"占位词
+            newFe = feList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, feList);
+            newBe = beList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, beList);
+        }
+        PmRequirement update = new PmRequirement();
+        update.setId(req.getId());
+        update.setFrontendDev(newFe);
+        update.setBackendDev(newBe);
+        // 账号化: 姓名串变动时同步重建ID数组, 否则旧ID会错位挂到新人员名下
+        // (例: 前端["张三"]/ID["u1"] 转派给李四 → 姓名["李四"] 而 ID 仍["u1"], 排期将按 u1 计到李四头上)
+        // 留任成员沿用其原有ID(不重新解析, 避免同名歧义); 新加入成员采用前端传入的确切 userId
+        Map<String, String> feNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_FRONTEND);
+        Map<String, String> beNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_BACKEND);
+        String toId = reqReassign.getToPersonId();
+        if (StringUtils.isNotEmpty(cleanTo) && StringUtils.isNotEmpty(toId)) {
+            feNameId.put(cleanTo, toId);
+            beNameId.put(cleanTo, toId);
+        }
+        List<String> newFeIds = PersonnelIdUtils.idsForNames(
+                PersonnelNameUtils.parsePersonnelNames(newFe), feNameId);
+        List<String> newBeIds = PersonnelIdUtils.idsForNames(
+                PersonnelNameUtils.parsePersonnelNames(newBe), beNameId);
+        // 兜底补齐: 名单中仍残留 null 的姓名(历史脏数据 / 前端未传 toPersonId)按「租户+姓名」二次解析,
+        // 避免落库 null 导致排期按姓名兜底或错位; 仅能唯一命中的姓名才填充, 否则保持 null(排期按姓名处理)。
+        backfillUnresolvedIds(req.getTenantId(), PersonnelNameUtils.parsePersonnelNames(newFe), newFeIds);
+        backfillUnresolvedIds(req.getTenantId(), PersonnelNameUtils.parsePersonnelNames(newBe), newBeIds);
+        PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, newFeIds);
+        PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, newBeIds);
+        update.setUpdateBy(safeGetCurrentUser());
+        update.setUpdateTime(new Date());
+        // 名单清空时 ID 数组必须一并显式清空: MP updateById 默认 NOT_NULL 会跳过 null 值,
+        // 残留ID会与新姓名串错位(虽被"长度不一致即退回姓名"安全阀兜住, 但会留下脏数据)
+        LambdaUpdateWrapper<PmRequirement> reassignUw = new LambdaUpdateWrapper<PmRequirement>()
+                .eq(PmRequirement::getId, req.getId());
+        if (newFeIds.isEmpty()) {
+            reassignUw.set(PmRequirement::getFrontendDevIds, null);
+        }
+        if (newBeIds.isEmpty()) {
+            reassignUw.set(PmRequirement::getBackendDevIds, null);
+        }
+        update(update, reassignUw);
+        // 人员变动: 重建排期明细(钉住行保持不动)
+        rebuildScheduleForReq(req.getId());
+        // 记录审计日志
+        recordHistory(req, "REASSIGN",
+                StringUtils.isEmpty(reqReassign.getRole()) ? targetRole : reqReassign.getRole(),
+                cleanFrom, cleanTo, req.getFrontendDev() + " / " + req.getBackendDev(), newFe + " / " + newBe,
+                Boolean.TRUE.equals(reqReassign.getTransferAll())
+                        ? "需求 #" + req.getReqNo() + " 整单转派给【" + cleanTo + "】独占承接"
+                        : "需求 #" + req.getReqNo() + " 的【" + ("backend".equals(reqReassign.getRole()) ? "后端" : "前端")
+                        + "任务】从【" + cleanFrom + "】转派给【" + cleanTo + "】");
+        return Result.ok(getById(req.getId()), Boolean.TRUE.equals(reqReassign.getTransferAll())
+                ? "已将需求 #" + req.getReqNo() + " 整单转派给【" + cleanTo + "】独占承接（原负责人已全部清除）"
+                : "已将需求 #" + req.getReqNo() + " 的【" + ("backend".equals(reqReassign.getRole()) ? "后端" : "前端")
+                + "任务】从【" + cleanFrom + "】成功转派给【" + cleanTo + "】");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<PmRequirement> updateWorkload(ReqWorkload reqWorkload) {
+        PmRequirement req = getById(reqWorkload.getReqId());
+        if (req == null) {
+            throw new MyRuntimeException("错误:需求 " + reqWorkload.getReqId() + " 不存在!");
+        }
+        String devType = reqWorkload.getDevType();
+        boolean frontend = "frontend".equalsIgnoreCase(devType);
+        boolean backend = "backend".equalsIgnoreCase(devType);
+        BigDecimal curFe = req.getFrontendWorkload();
+        BigDecimal curBe = req.getBackendWorkload();
+        BigDecimal curTotal = req.getWorkload() == null ? BigDecimal.ZERO : req.getWorkload();
+        BigDecimal newFe = curFe;
+        BigDecimal newBe = curBe;
+        BigDecimal newTotal = reqWorkload.getWorkload();
+
+        if (frontend || backend) {
+            // 按当前人员的岗位(前端/后端)写入对应工时段; 另一侧严格保持原值不臆造
+            // (历史数据无拆分时另一侧为NULL, 用差额推断会把它错误物化成0, 如总工时2.0调前端2.0→后端被清0)
+            BigDecimal normalized = normalizeWorkload(newTotal);
+            if (normalized == null) {
+                normalized = BigDecimal.ONE;
+            }
+            if (frontend) {
+                newFe = normalized;
+            } else {
+                newBe = normalized;
+            }
+        } else {
+            if (reqWorkload.getFrontendWorkload() != null) {
+                newFe = normalizeWorkload(reqWorkload.getFrontendWorkload());
+            }
+            if (reqWorkload.getBackendWorkload() != null) {
+                newBe = normalizeWorkload(reqWorkload.getBackendWorkload());
+            }
+        }
+
+        // 总工时: 存在任一拆分值时按人数加权(各角色工时×人数, 仅显示口径)；否则沿用传入的总工时
+        if (newFe != null || newBe != null) {
+            newTotal = headcountTotalWorkload(newFe, newBe, req.getFrontendDev(), req.getBackendDev());
+            if (newTotal.compareTo(new BigDecimal("0.1")) < 0) {
+                newTotal = new BigDecimal("0.1");
+            }
+        } else {
+            newTotal = normalizeWorkload(newTotal);
+            if (newTotal == null) {
+                newTotal = BigDecimal.ONE;
+            }
+        }
+
+        // 需求表已无日期列：这里只更新工时，研发起止时间由 pm_dev_schedule 明细聚合得出
+        PmRequirement update = new PmRequirement();
+        update.setId(req.getId());
+        update.setWorkload(newTotal);
+        update.setFrontendWorkload(newFe);
+        update.setBackendWorkload(newBe);
+        update.setUpdateBy(safeGetCurrentUser());
+        update.setUpdateTime(new Date());
+        updateById(update);
+        // 工时变化: 重建排期明细(钉住行保持不动)，结束日随之重新聚合
+        rebuildScheduleForReq(req.getId());
+        String scopeText = frontend ? "前端" : (backend ? "后端" : "");
+        recordHistory(req, "WORKLOAD", null, null, null,
+                req.getWorkload() == null ? null : req.getWorkload().toPlainString(), newTotal.toPlainString(),
+                "需求 #" + req.getReqNo() + " " + scopeText + "预估工时调整为 " + newTotal + " 人/天，日历排期已同步");
+        return Result.ok(getById(req.getId()), "已将需求 #" + req.getReqNo() + scopeText + "预估工时调整为 "
+                + newTotal + " 人/天，日历排期已同步");
+    }
+
+    /**
+     * 工时应力量化: 最小0.1人天, 保留1位小数
+     */
+    private BigDecimal normalizeWorkload(BigDecimal workload) {
+        if (workload == null) {
+            return null;
+        }
+        return workload.max(new BigDecimal("0.1")).setScale(1, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 有效工时段(正数)才参与拆分装箱；0/负数/缺失返回 null
+     */
+    private BigDecimal positiveWorkload(BigDecimal workload) {
+        if (workload == null || workload.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
+        return workload;
+    }
+
+    /**
+     * 人员字段中的实际参与人数(剔除 待分配/不涉及 等占位名)；无有效人员时按 1 人计
+     */
+    private int personnelCount(String personnelField) {
+        List<String> names = PersonnelNameUtils.parsePersonnelNames(personnelField);
+        return names.isEmpty() ? 1 : names.size();
+    }
+
+    /**
+     * 总工时(仅显示口径) = 前端单人工时 × 前端人数 + 后端单人工时 × 后端人数。
+     * 多人并行承接同一岗位时不延长工期，总工时只用于展示，不参与排期运算。
+     */
+    private BigDecimal headcountTotalWorkload(BigDecimal feWorkload, BigDecimal beWorkload, String feDev, String beDev) {
+        BigDecimal fe = feWorkload == null ? BigDecimal.ZERO : feWorkload.max(BigDecimal.ZERO);
+        BigDecimal be = beWorkload == null ? BigDecimal.ZERO : beWorkload.max(BigDecimal.ZERO);
+        return fe.multiply(BigDecimal.valueOf(personnelCount(feDev)))
+                .add(be.multiply(BigDecimal.valueOf(personnelCount(beDev))))
+                .setScale(1, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> batchBalancing(List<BalancingPlanItem> plan) {
+        if (plan == null || plan.isEmpty()) {
+            return Result.ok(0, "调配方案为空!");
+        }
+        int affected = 0;
+        for (BalancingPlanItem item : plan) {
+            PmRequirement req = getById(item.getReqId());
+            if (req == null) {
+                log.warn("负载均衡调配跳过，需求不存在: {}", item.getReqId());
+                continue;
+            }
+            String cleanFrom = PersonnelNameUtils.cleanPersonnelName(item.getFromPerson());
+            String cleanTo = PersonnelNameUtils.cleanPersonnelName(item.getToPerson());
+            List<String> feList = new ArrayList<>(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
+            List<String> beList = new ArrayList<>(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
+            feList.removeIf(p -> p.equals(cleanFrom));
+            beList.removeIf(p -> p.equals(cleanFrom));
+            if ("backend".equals(item.getRole())) {
+                beList = new ArrayList<>(List.of(cleanTo));
+                feList.removeIf(p -> p.equals(cleanTo));
+            } else {
+                feList = new ArrayList<>(List.of(cleanTo));
+                beList.removeIf(p -> p.equals(cleanTo));
+            }
+            // 名单为空则落空串(空=待分配)，不再落"待分配"占位词
+            String newFe = feList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, feList);
+            String newBe = beList.isEmpty() ? "" : String.join(PersonnelNameUtils.SEPARATOR, beList);
+            PmRequirement update = new PmRequirement();
+            update.setId(req.getId());
+            update.setFrontendDev(newFe);
+            update.setBackendDev(newBe);
+            // 账号化: 与 reassign 同口径 —— 留任成员沿用原有ID(不重新解析, 避免同名歧义),
+            // 新加入成员采用前端传入的确切 userId, 保证ID数组与姓名串同序、不错位
+            Map<String, String> feNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_FRONTEND);
+            Map<String, String> beNameId = PersonnelIdUtils.nameToIdMap(req, PersonnelIdUtils.ROLE_BACKEND);
+            String toId = item.getToPersonId();
+            if (StringUtils.isNotEmpty(cleanTo) && StringUtils.isNotEmpty(toId)) {
+                feNameId.put(cleanTo, toId);
+                beNameId.put(cleanTo, toId);
+            }
+            List<String> finalFeIds = PersonnelIdUtils.idsForNames(
+                    PersonnelNameUtils.parsePersonnelNames(newFe), feNameId);
+            List<String> finalBeIds = PersonnelIdUtils.idsForNames(
+                    PersonnelNameUtils.parsePersonnelNames(newBe), beNameId);
+            PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_FRONTEND, finalFeIds);
+            PersonnelIdUtils.setIdsOfRole(update, PersonnelIdUtils.ROLE_BACKEND, finalBeIds);
+            update.setUpdateBy(safeGetCurrentUser());
+            update.setUpdateTime(new Date());
+            // 某侧名单被清空时 ID 数组必须一并显式清空: MP updateById 默认 NOT_NULL 会跳过 null,
+            // 残留ID会与新姓名串错位(虽被"长度不一致即退回姓名"安全阀兜住, 但会留下脏数据)
+            // 与 reassign / batchAssign 保持同一口径
+            if (finalFeIds.isEmpty() || finalBeIds.isEmpty()) {
+                LambdaUpdateWrapper<PmRequirement> balancingUw = new LambdaUpdateWrapper<PmRequirement>()
+                        .eq(PmRequirement::getId, req.getId());
+                if (finalFeIds.isEmpty()) {
+                    balancingUw.set(PmRequirement::getFrontendDevIds, null);
+                }
+                if (finalBeIds.isEmpty()) {
+                    balancingUw.set(PmRequirement::getBackendDevIds, null);
+                }
+                update(update, balancingUw);
+            } else {
+                updateById(update);
+            }
+            recordHistory(req, "BALANCING", item.getRole(), cleanFrom, cleanTo,
+                    req.getFrontendDev() + " / " + req.getBackendDev(), newFe + " / " + newBe,
+                    "负载均衡: 需求 #" + req.getReqNo() + "【" + (StringUtils.isEmpty(item.getReqTitle()) ? "" : item.getReqTitle())
+                            + "】由【" + cleanFrom + "】调配给【" + cleanTo + "】");
+            affected++;
+        }
+        // 人员变动: 重建受影响需求的排期明细(钉住行保持不动)
+        for (BalancingPlanItem item : plan) {
+            rebuildScheduleForReq(item.getReqId());
+        }
+        return Result.ok(affected, "⚡ 智能负载均衡调配方案已成功执行，已自动调配 " + affected + " 项需求!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Map<String, Object>> autoSchedule(List<String> iterationIds, boolean includeUnassigned) {
+        // 迭代版本起始日期映射(支持按ID与版本号查找): 版本解析与归档判定均依赖, 需先构建
+        Map<String, PmIteration> iterationMap = new HashMap<>();
+        for (PmIteration iteration : iterationMapper.selectList(new LambdaQueryWrapper<>())) {
+            iterationMap.put(iteration.getId(), iteration);
+            if (StringUtils.isNotEmpty(iteration.getCode())) {
+                iterationMap.put(iteration.getCode(), iteration);
+            }
+        }
+        // 排期范围两种口径:
+        // 1) 未显式传版本(顶部未选版本, 或只选了非归档版本): 未归档版本的需求统一排期(不按选中版本单独排), 已归档版本不参与;
+        //    该口径下无归属版本的需求(iteration==null)本就包含在内
+        // 2) 显式传版本(顶部选中了归档版本): 只排这些版本的需求(含归档版本, 用于针对性重排历史版本);
+        //    无归属版本的需求无ID可传, 由 includeUnassigned 特殊标识声明是否合并排期
+        Set<String> scopeVersionIds = iterationIds == null ? new HashSet<>()
+                : iterationIds.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
+        boolean scoped = !scopeVersionIds.isEmpty();
+        // 排期优先级：转测时间靠前的需求先装箱(先占用人员更早的空闲日，保证临近转测的需求优先排完)，
+        // 同一转测日再按需求编号升序；未绑定转测节点(testNodeDate 为空)的排在最后。
+        // 必须在 Java 侧排序：若改用 SQL orderByAsc(test_node_date)，MySQL 会把 NULL 排在最前，
+        // 导致「没有转测时间约束」的需求反而抢占了有明确转测日期需求的早期产能。
+        Comparator<LocalDate> testNodeDateOrder = Comparator.nullsLast(Comparator.naturalOrder());
+        Comparator<Integer> reqNoOrder = Comparator.nullsLast(Comparator.naturalOrder());
+        List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().orderByAsc(PmRequirement::getReqNo))
+                .stream()
+                .filter(req -> {
+                    PmIteration iteration = resolveIterationForReq(req, iterationMap);
+                    if (scoped) {
+                        return iteration == null ? includeUnassigned : scopeVersionIds.contains(iteration.getId());
+                    }
+                    return iteration == null || !ARCHIVED_STATUS.equals(iteration.getStatus());
+                })
+                .sorted(Comparator.<PmRequirement, LocalDate>comparing(
+                                req -> req.getTestNodeDate() == null ? null : toLocalDate(req.getTestNodeDate()),
+                                testNodeDateOrder)
+                        .thenComparing(PmRequirement::getReqNo, reqNoOrder))
+                .collect(Collectors.toList());
+        if (targets.isEmpty()) {
+            Map<String, Object> empty = new HashMap<>();
+            empty.put("scheduledCount", 0);
+            empty.put("updatedList", new ArrayList<>());
+            empty.put("scheduleRows", new ArrayList<>());
+            return Result.ok(empty, scoped ? "无待排期需求(选中版本下没有需求)!" : "无待排期需求(已归档版本不参与自动排期)!");
+        }
+        if (log.isInfoEnabled()) {
+            long withTestNode = targets.stream().filter(r -> r.getTestNodeDate() != null).count();
+            String head = targets.stream().limit(5)
+                    .map(r -> "#" + r.getReqNo() + "(" + formatDate(r.getTestNodeDate()) + ")")
+                    .collect(Collectors.joining(" > "));
+            log.info("[自动排期] 排序口径=转测时间升序→需求编号升序(无转测时间排末尾), 待排={}, 有转测时间={}, 前5={}",
+                    targets.size(), withTestNode, head);
+        }
+        ScheduleConfigDTO config = currentConfig();
+        // 自愈: 回填历史排期行中 person_id 为 null、但现已能按(需求+角色+姓名)唯一解析出 userId 的行,
+        // 避免同一人被算成"姓名身份"与"账号身份"两个独立个体, 导致容量上限翻倍/重叠检查失效。
+        // 随每次自动排期渐进收敛(首次跑即处理全部可解析历史行)。
+        selfHealPersonIds(targets);
+        // 未纳入版本(无归属版本)需求起点: 取所有版本中最大的截至日期(排在所有版本工作之后)
+        LocalDate defaultStart = resolveDefaultScheduleStart(config);
+        // 人员容量日历(逐日装箱, 跨版本全局共享): key = identity(personId 优先) -> (日期 -> 已用人天)
+        // 每人每天容量 1 人天: 工时不足 1 天的多个任务可共享同一天(如 0.2+0.3+0.3=0.8 全排当天), 不再整日互斥
+        Map<String, Map<LocalDate, BigDecimal>> personDayUsage = new HashMap<>();
+        // 预填历史排期占用(优先读排期明细表 pm_dev_schedule 的按人占用, 无明细的历史需求按需求级区间兜底)
+        prefillPersonBusyDates(targets, config, personDayUsage);
+        // 目标任务已有排期明细中的钉住行: 重算时日期保持不动, 仅登记占用
+        Map<String, Map<String, PmDevSchedule>> pinnedByReq = loadPinnedRowsByReq(targets);
+        List<PmRequirement> updatedList = new ArrayList<>();
+        // 本次重建后的排期明细(含钉住行): 随响应返回, 前端无需再查一次明细接口
+        List<PmDevSchedule> scheduleRows = new ArrayList<>();
+        for (PmRequirement req : targets) {
+            PmIteration iteration = resolveIterationForReq(req, iterationMap);
+            LocalDate versionStartDate = ScheduleDateUtils.getWorkdayStartDate(
+                    iteration != null && iteration.getStartDate() != null
+                            ? toLocalDate(iteration.getStartDate()) : defaultStart, config);
+            // 前后端人员(已自动剔除"待分配/不涉及"等占位标识)
+            List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
+            List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
+            // 工时: 无拆分时用总工时；有拆分时各岗位按各自单人工时并行占用
+            BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+                    ? req.getWorkload() : BigDecimal.ONE;
+            BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
+            BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
+            boolean hasSplit = feWorkload != null || beWorkload != null;
+            Map<String, PmDevSchedule> pinned = pinnedByReq.getOrDefault(req.getId(), new HashMap<>());
+            // 按人逐个装箱: 每个人员从自己最早空闲日起, 按各自工时连续占用工作日(前后端/多人互不等待)
+            List<PmDevSchedule> rows = new ArrayList<>();
+            if (hasSplit) {
+                if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                    for (String person : feDevs) {
+                        packScheduleRow(req, person, "frontend", feWorkload, versionStartDate, config, personDayUsage, pinned, rows);
+                    }
+                }
+                if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                    for (String person : beDevs) {
+                        packScheduleRow(req, person, "backend", beWorkload, versionStartDate, config, personDayUsage, pinned, rows);
+                    }
+                }
+            } else {
+                for (String person : mergeDevs(feDevs, beDevs)) {
+                    String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
+                            : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
+                    packScheduleRow(req, person, role, totalWorkload, versionStartDate, config, personDayUsage, pinned, rows);
+                }
+            }
+            // 需求整体区间: 两岗位均无有效人员/工时时段落版本首日(1人天占位), 否则取所有任务行 min/max
+            LocalDate taskStartDate;
+            LocalDate taskEndDate;
+            if (rows.isEmpty()) {
+                taskStartDate = versionStartDate;
+                taskEndDate = ScheduleDateUtils.calculateDevEndDate(taskStartDate, BigDecimal.ONE, config);
+            } else {
+                taskStartDate = rows.stream().map(r -> toLocalDate(r.getDevStartDate())).min(LocalDate::compareTo).orElse(versionStartDate);
+                taskEndDate = rows.stream().map(r -> toLocalDate(r.getDevEndDate())).max(LocalDate::compareTo).orElse(taskStartDate);
+            }
+            // 持久化新排期: 只写排期明细(钉住行原样保留, 其余删除后按人重建)。
+            // 需求表已无日期列，整体区间由 pm_dev_schedule 的 MIN/MAX 关联查询得出。
+            replaceScheduleRows(req.getId(), rows);
+            scheduleRows.addAll(rows);
+            PmRequirement updated = getById(req.getId());
+            // 把本次算出的整体区间填进纯传输字段(@TableField(exist=false))，
+            // 供前端 autoScheduleAllRequirements 按 id 原地 merge 后立即显示，不落库
+            updated.setDevStartDate(toDate(taskStartDate));
+            updated.setDevEndDate(toDate(taskEndDate));
+            updatedList.add(updated);
+            recordHistory(req, "SCHEDULE", null, null, null,
+                    "(由排期明细聚合)",
+                    ScheduleDateUtils.FORMATTER.format(taskStartDate) + "~" + ScheduleDateUtils.FORMATTER.format(taskEndDate),
+                    "自动排期: 需求 #" + req.getReqNo() + " 排期至 "
+                            + ScheduleDateUtils.FORMATTER.format(taskStartDate) + " ~ " + ScheduleDateUtils.FORMATTER.format(taskEndDate));
+        }
+        // 同一人员任务顺序seq: 跨需求按开始日全局重排(升序即执行顺序)
+        Set<String> scheduledPersons = new HashSet<>();
+        for (PmRequirement req : targets) {
+            scheduledPersons.addAll(personsOf(req));
+        }
+        reassignSeq(scheduledPersons);
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("scheduledCount", targets.size());
+        result.put("updatedList", updatedList);
+        result.put("scheduleRows", scheduleRows);
+        return Result.ok(result, "⚡ 已按人员工作量逐日装箱并生成排期明细 " + targets.size()
+                + " 项需求(前后端各自独立起算, 钉住任务保持不动, 可一键重算)!");
+    }
+
+    // ==================== 回收站(逻辑删除需求的恢复与彻底删除) ====================
+
+    @Override
+    public Result<PageResult<PmRequirement>> listDeleted(Integer pageNum, Integer pageSize) {
+        // 自定义 @Select 直接查 del_flag=1, 不受 @TableLogic 过滤影响; 已按删除时间倒序(新删在前)
+        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int size = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        PageHelper.startPage(num, size);
+        List<PmRequirement> deleted = baseMapper.selectDeletedList();
+        return Result.ok(new PageResult<>(deleted), "回收站列表-查询成功!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> restore(String id) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:需求ID不能为空!");
+        }
+        // 仅恢复本租户需求: 先取快照校验归属租户, 杜绝跨租户恢复
+        // 注意: 回收站内的需求 del_flag=1, 普通 selectById 受 @TableLogic 过滤查不到, 必须用含删除行的查询
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        PmRequirement raw = baseMapper.selectByIdIncludeDeleted(id);
+        if (raw == null || !tenantId.equals(raw.getTenantId())) {
+            throw new MyRuntimeException("错误:需求不存在或已恢复!");
+        }
+        // 仅回收站内(del_flag=1)可恢复: 原生 UPDATE 带 del_flag=1 条件, 重复恢复返回 0 行
+        int restored = baseMapper.restoreDeleted(id, safeGetCurrentUser());
+        if (restored <= 0) {
+            throw new MyRuntimeException("错误:需求不存在或已恢复!");
+        }
+        PmRequirement req = baseMapper.selectById(id);
+        recordHistory(req, "RESTORE", null, null, null, null, null,
+                "从回收站恢复需求 #" + (req != null ? req.getReqNo() : id));
+        return Result.ok(true, "需求 #" + (req != null ? req.getReqNo() : id) + " 已恢复!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> restoreBatch(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        List<String> validIds = ids.stream().filter(StringUtils::isNotEmpty).distinct().toList();
+        if (validIds.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        // 仅恢复本租户需求: 校验归属租户, 跳过非本租户/已删除记录
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        int count = 0;
+        for (String id : validIds) {
+            // 回收站内需求 del_flag=1, 需用含删除行的查询, 否则 selectById 受 @TableLogic 过滤查不到
+            PmRequirement raw = baseMapper.selectByIdIncludeDeleted(id);
+            if (raw == null || !tenantId.equals(raw.getTenantId())) {
+                continue;
+            }
+            if (baseMapper.restoreDeleted(id, safeGetCurrentUser()) > 0) {
+                count++;
+            }
+        }
+        if (count == 0) {
+            throw new MyRuntimeException("错误:选中需求均不存在或已恢复!");
+        }
+        return Result.ok(count, "已成功恢复 " + count + " 项需求!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> deletePermanently(String id) {
+        if (StringUtils.isEmpty(id)) {
+            throw new MyRuntimeException("错误:需求ID不能为空!");
+        }
+        // 物理删除前取快照(删后查不到)并校验归属租户, 杜绝跨租户物理删除
+        // 回收站内需求 del_flag=1, 需用含删除行的查询, 否则 selectById 受 @TableLogic 过滤查不到
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        PmRequirement exist = baseMapper.selectByIdIncludeDeleted(id);
+        if (exist == null || !tenantId.equals(exist.getTenantId())) {
+            throw new MyRuntimeException("错误:需求不存在或已被彻底删除!");
+        }
+        purgeRelatedRows(id);
+        if (baseMapper.physicalDeleteById(id) <= 0) {
+            throw new MyRuntimeException("错误:需求不存在或已被彻底删除!");
+        }
+        recordHistory(exist, "PURGE", null, null, null, null, null,
+                "彻底删除需求 #" + exist.getReqNo() + "(不可恢复)");
+        return Result.ok(true, "需求 #" + exist.getReqNo() + " 已彻底删除!");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> deletePermanentlyBatch(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        List<String> validIds = ids.stream().filter(StringUtils::isNotEmpty).distinct().toList();
+        if (validIds.isEmpty()) {
+            throw new MyRuntimeException("错误:需求ID列表不能为空!");
+        }
+        // 仅彻底删除本租户需求: 校验归属租户, 跳过非本租户/已删除记录
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        int count = 0;
+        for (String id : validIds) {
+            // 回收站内需求 del_flag=1, 需用含删除行的查询, 否则 selectById 受 @TableLogic 过滤查不到
+            PmRequirement exist = baseMapper.selectByIdIncludeDeleted(id);
+            if (exist == null || !tenantId.equals(exist.getTenantId())) {
+                continue;
+            }
+            purgeRelatedRows(id);
+            if (baseMapper.physicalDeleteById(id) > 0) {
+                count++;
+            }
+        }
+        if (count == 0) {
+            throw new MyRuntimeException("错误:选中需求均不存在或已被彻底删除!");
+        }
+        return Result.ok(count, "已成功彻底删除 " + count + " 项需求!");
+    }
+
+    /**
+     * 彻底删除前的级联清理: 排期明细与审计日志物理删除(两者其一有 @TableLogic, MP 删除只会软删, 故走原生 DELETE)
+     */
+    private void purgeRelatedRows(String reqId) {
+        devScheduleMapper.physicalDeleteByReqId(reqId);
+        historyMapper.physicalDeleteByReqId(reqId);
+    }
+
+    /**
+     * 仅保留「属于当前租户」的需求ID：从入参列表中过滤出本租户真实存在的主键。
+     * 写操作（批量删除/彻底删除/恢复）在按ID直接操作前必须过此筛，杜绝跨租户误删/误改。
+     */
+    private List<String> filterOwnTenantIds(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        String tenantId = AuthInfoUtils.getCurrentTenantId();
+        List<PmRequirement> owned = list(new LambdaQueryWrapper<PmRequirement>()
+                .select(PmRequirement::getId)
+                .in(PmRequirement::getId, ids)
+                .eq(PmRequirement::getTenantId, tenantId));
+        return owned.stream().map(PmRequirement::getId).toList();
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    /**
+     * 解析需求归属的迭代版本: iterationId 优先, 为空时回退 month(版本号)
+     * 排期主循环与全局排期的归档剔除共用同一解析口径, 避免两处判断漂移
+     */
+    private PmIteration resolveIterationForReq(PmRequirement req, Map<String, PmIteration> iterationMap) {
+        PmIteration iteration = StringUtils.isEmpty(req.getIterationId()) ? null : iterationMap.get(req.getIterationId());
+        if (iteration == null && StringUtils.isNotEmpty(req.getMonth())) {
+            iteration = iterationMap.get(req.getMonth());
+        }
+        return iteration;
+    }
+
+    /**
+     * 自愈回填: 将本次目标需求下 person_id 为 null、但现已能按「需求 + 角色 + 姓名」唯一解析出
+     * 用户ID的排期行反向补写 person_id。随每次自动排期渐进收敛, 防止同名人员被拆成两个容量个体。
+     * 解析不到 / 角色无独立ID数组(如 fullstack)的行保持 null, 排期时按姓名处理。
+     *
+     * @param targets 本次排期目标
+     */
+    private void selfHealPersonIds(List<PmRequirement> targets) {
+        if (targets == null || targets.isEmpty()) {
+            return;
+        }
+        List<String> reqIds = targets.stream().map(PmRequirement::getId).toList();
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getReqId, reqIds));
+        if (rows.isEmpty()) {
+            return;
+        }
+        Map<String, PmRequirement> reqMap = targets.stream()
+                .collect(Collectors.toMap(PmRequirement::getId, r -> r));
+        Date now = new Date();
+        String user = safeGetCurrentUser();
+        for (PmDevSchedule row : rows) {
+            if (row.getPersonId() != null) {
+                continue;
+            }
+            PmRequirement req = reqMap.get(row.getReqId());
+            if (req == null) {
+                continue;
+            }
+            String pid = PersonnelIdUtils.personIdForName(req, row.getDevRole(), row.getPersonName());
+            if (pid != null) {
+                row.setPersonId(pid);
+                row.setUpdateBy(user);
+                row.setUpdateTime(now);
+                devScheduleMapper.updateById(row);
+            }
+        }
+    }
+
+    /**
+     * 预填历史排期占用: 将本次重排范围之外、已排期需求的开发人员占用登记进全局占用日历
+     * 保证自动排期不会把新任务叠到该人员既有任务上(跨版本生效)——
+     * 若前序版本任务排到了当前版本开始日之后，涉及他的任务将顺延到其最早空闲日
+     *
+     * @param targets        本次排期目标(其旧排期将被覆盖，不参与预填)
+     * @param config         排期配置
+     * @param personDayUsage 全局人员容量日历(人 -> 日期 -> 已用人天)
+     */
+    private void prefillPersonBusyDates(List<PmRequirement> targets, ScheduleConfigDTO config,
+                                        Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        Set<String> targetIds = new HashSet<>();
+        targets.forEach(t -> targetIds.add(t.getId()));
+        // 1. 排期明细(按人精确占用): 本次重排范围之外的全部明细行, 逐人逐日登记
+        List<PmDevSchedule> scheduleRows = targetIds.isEmpty()
+                ? devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>())
+                : devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                        .notIn(PmDevSchedule::getReqId, targetIds));
+        // 防御: 过滤孤儿明细行(需求已删除但明细残留, 如手工清库/历史级联遗漏),
+        // 否则脏占用会永久顶后这些人员的新排期
+        Set<String> validReqIds = list(new LambdaQueryWrapper<PmRequirement>().select(PmRequirement::getId))
+                .stream().map(PmRequirement::getId).collect(Collectors.toSet());
+        scheduleRows = scheduleRows.stream()
+                .filter(row -> validReqIds.contains(row.getReqId()))
+                .toList();
+        Set<String> reqsWithSchedule = new HashSet<>();
+        for (PmDevSchedule row : scheduleRows) {
+            if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
+                continue;
+            }
+            reqsWithSchedule.add(row.getReqId());
+            LocalDate start = toLocalDate(row.getDevStartDate());
+            LocalDate end = toLocalDate(row.getDevEndDate());
+            if (end.isBefore(start)) {
+                continue;
+            }
+            // 按该行工时摊入区间各有效工作日(工时缺失时整日占满), 保留同日剩余容量供小任务共享
+            // 账号化: 容量日历 key 统一走 identityKey(personId 优先, 缺则姓名), 与 packScheduleRow 完全一致
+            spreadRowLoad(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()),
+                    start, end, row.getWorkload(), config, personDayUsage);
+        }
+        // 1.5 跨租户共享人员占用: 同一 person_id 可能归属多个租户(同一个人跨租户协作),
+        //     其空闲度须全局合并——否则两租户会在同一时段各自排他(不可能同时出现在两处)。
+        //     仅对"本租户已存在占用记录"的人员向外查其所属其他租户的占用并并入同一容量键;
+        //     单体户人员无其他租户行、零影响。该占用仅用于后台排期计算, 不对外展示、不暴露他租户内容。
+        //     临时清空 DataScopeUtils.context 使下方查询绕过 @DataScope(SelectInterceptor 在 context 为 null 时直接放行),
+        //     finally 中立即还原, 不影响其余查询与整体租户隔离。
+        Set<String> scopedPersonIds = scheduleRows.stream()
+                .map(PmDevSchedule::getPersonId)
+                .filter(id -> id != null && !id.isBlank())
+                .collect(Collectors.toSet());
+        // 还要纳入"即将被排期"的人员: 否则共享人员首次在某租户排期、而他租户已占用时会漏算其全局占用
+        for (PmRequirement req : targets) {
+            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev())) {
+                String id = PersonnelIdUtils.personIdForName(req, "frontend", name);
+                if (id != null && !id.isBlank()) {
+                    scopedPersonIds.add(id);
+                }
+            }
+            for (String name : PersonnelNameUtils.parsePersonnelNames(req.getBackendDev())) {
+                String id = PersonnelIdUtils.personIdForName(req, "backend", name);
+                if (id != null && !id.isBlank()) {
+                    scopedPersonIds.add(id);
+                }
+            }
+        }
+        if (!scopedPersonIds.isEmpty()) {
+            String currentTenant = AuthInfoUtils.getCurrentTenantId();
+            List<DataScope> savedScope = DataScopeUtils.context.get();
+            DataScopeUtils.context.remove();
+            try {
+                List<PmDevSchedule> crossRows =
+                        devScheduleMapper.selectCrossTenantByPersonIds(scopedPersonIds, currentTenant);
+                for (PmDevSchedule row : crossRows) {
+                    if (row.getDevStartDate() == null || row.getDevEndDate() == null) {
+                        continue;
+                    }
+                    LocalDate start = toLocalDate(row.getDevStartDate());
+                    LocalDate end = toLocalDate(row.getDevEndDate());
+                    if (start == null || end == null || end.isBefore(start)) {
+                        continue;
+                    }
+                    spreadRowLoad(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()),
+                            start, end, row.getWorkload(), config, personDayUsage);
+                }
+            } finally {
+                if (savedScope != null) {
+                    DataScopeUtils.context.set(savedScope);
+                } else {
+                    DataScopeUtils.context.remove();
+                }
+            }
+        }
+        // 注：pm_requirement 已删除 dev_start_date / dev_end_date，
+        // 不再有「按需求级区间占用」的迁移兜底；所有占用一律来自 pm_dev_schedule 明细。
+    }
+
+    /**
+     * 单个人员任务装箱: 钉住行日期保持不动(仅按工时登记占用),
+     * 其余从该人员最早可行日起做容量装箱——每人每天容量 1 人天,
+     * 工时不足 1 天的任务优先填入当天剩余容量(多个小任务可共享同一天), 当天装不下才顺延
+     */
+    private void packScheduleRow(PmRequirement req, String person, String role, BigDecimal workload,
+                                 LocalDate versionStartDate, ScheduleConfigDTO config,
+                                 Map<String, Map<LocalDate, BigDecimal>> personDayUsage,
+                                 Map<String, PmDevSchedule> pinned, List<PmDevSchedule> rows) {
+        // 账号化身份键: personId 优先, 缺则退回姓名(与 prefillPersonBusyDates 同一口径)
+        String personId = PersonnelIdUtils.personIdForName(req, role, person);
+        String identity = PersonnelIdUtils.identityKey(personId, person);
+        PmDevSchedule pin = pinned.get(identity + "|" + role);
+        if (pin != null) {
+            LocalDate pinStart = toLocalDate(pin.getDevStartDate());
+            LocalDate pinEnd = toLocalDate(pin.getDevEndDate());
+            if (pinEnd != null && !pinEnd.isBefore(pinStart)) {
+                BigDecimal pinLoad = positiveWorkload(pin.getWorkload()) != null ? pin.getWorkload() : workload;
+                spreadRowLoad(identity, pinStart, pinEnd, pinLoad, config, personDayUsage);
+            }
+            pin.setReqNo(req.getReqNo());
+            pin.setIterationId(req.getIterationId());
+            rows.add(pin);
+            return;
+        }
+        LocalDate start = findEarliestFeasibleStart(versionStartDate, identity, workload, config, personDayUsage);
+        // 容量装箱: 从 start 起逐日消耗剩余容量(每天至多 1), 返回任务实际触达的最后一天
+        LocalDate end = applyTaskLoad(identity, start, workload, config, personDayUsage);
+        PmDevSchedule row = new PmDevSchedule();
+        row.setReqId(req.getId());
+        row.setReqNo(req.getReqNo());
+        row.setIterationId(req.getIterationId());
+        row.setPersonName(person);
+        // 账号化身份: 取不到(userId未匹配到账号或两套字段不同步)时留空, 排期引擎自动按姓名兜底
+        row.setPersonId(personId);
+        row.setDevRole(role);
+        row.setWorkload(workload);
+        row.setDevStartDate(toDate(start));
+        row.setDevEndDate(toDate(end));
+        row.setIsPinned(false);
+        row.setTenantId(resolveTenantId(req));
+        rows.add(row);
+    }
+
+    /**
+     * 查询指定需求的钉住排期行: key = identity|devRole
+     */
+    private Map<String, PmDevSchedule> loadPinnedRows(String reqId) {
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .eq(PmDevSchedule::getReqId, reqId)
+                .eq(PmDevSchedule::getIsPinned, true));
+        Map<String, PmDevSchedule> map = new HashMap<>();
+        rows.forEach(r -> map.put(PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()) + "|" + r.getDevRole(), r));
+        return map;
+    }
+
+    /**
+     * 批量查询目标需求的钉住排期行: reqId -> (identity|devRole -> row)
+     */
+    private Map<String, Map<String, PmDevSchedule>> loadPinnedRowsByReq(List<PmRequirement> targets) {
+        Map<String, Map<String, PmDevSchedule>> result = new HashMap<>();
+        if (targets.isEmpty()) {
+            return result;
+        }
+        List<String> ids = targets.stream().map(PmRequirement::getId).toList();
+        List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getReqId, ids)
+                .eq(PmDevSchedule::getIsPinned, true));
+        for (PmDevSchedule row : rows) {
+            result.computeIfAbsent(row.getReqId(), k -> new HashMap<>())
+                    .put(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()) + "|" + row.getDevRole(), row);
+        }
+        return result;
+    }
+
+    /**
+     * 替换某需求的排期明细: 带 ID 的行为钉住保留行(更新), 其余旧行物理删除, 新行插入
+     */
+    private void replaceScheduleRows(String reqId, List<PmDevSchedule> rows) {
+        List<PmDevSchedule> existing = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .eq(PmDevSchedule::getReqId, reqId));
+        Set<String> keepIds = rows.stream()
+                .map(PmDevSchedule::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        List<String> removeIds = existing.stream()
+                .map(PmDevSchedule::getId)
+                .filter(id -> !keepIds.contains(id))
+                .toList();
+        if (!removeIds.isEmpty()) {
+            // 物理删除: 本表重算即全量替换, 不走逻辑删除(无@TableLogic拦截)
+            devScheduleMapper.delete(new LambdaQueryWrapper<PmDevSchedule>()
+                    .in(PmDevSchedule::getId, removeIds));
+        }
+        Date now = new Date();
+        String currentUser = safeGetCurrentUser();
+        for (PmDevSchedule row : rows) {
+            if (row.getId() != null) {
+                row.setUpdateBy(currentUser);
+                row.setUpdateTime(now);
+                devScheduleMapper.updateById(row);
+            } else {
+                row.setCreateBy(currentUser);
+                row.setCreateTime(now);
+                devScheduleMapper.insert(row);
+            }
+        }
+    }
+
+    /**
+     * 同一人员任务顺序seq: 跨需求按开始日全局重排(升序即执行顺序)
+     */
+    private void reassignSeq(Set<String> persons) {
+        if (persons == null || persons.isEmpty()) {
+            return;
+        }
+        List<PmDevSchedule> all = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getPersonName, persons));
+        Map<String, List<PmDevSchedule>> byPerson = new HashMap<>();
+        // 按身份键(personId 优先)分组: 同租户同名但不同人的任务各自独立排序, 不会被误并
+        all.forEach(r -> byPerson.computeIfAbsent(
+                PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()), k -> new ArrayList<>()).add(r));
+        for (List<PmDevSchedule> personRows : byPerson.values()) {
+            personRows.sort(Comparator
+                    .comparing((PmDevSchedule r) -> toLocalDate(r.getDevStartDate()))
+                    .thenComparing(r -> r.getReqNo() == null ? 0 : r.getReqNo()));
+            int seq = 1;
+            for (PmDevSchedule row : personRows) {
+                if (row.getSeq() == null || !row.getSeq().equals(seq)) {
+                    row.setSeq(seq);
+                    devScheduleMapper.updateById(row);
+                }
+                seq++;
+            }
+        }
+    }
+
+    /**
+     * 需求全部开发人员(前后端合并去重)
+     */
+    private Set<String> personsOf(PmRequirement req) {
+        Set<String> persons = new HashSet<>();
+        persons.addAll(PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev()));
+        persons.addAll(PersonnelNameUtils.parsePersonnelNames(req.getBackendDev()));
+        return persons;
+    }
+
+    /**
+     * 前后端人员合并去重(保持前端优先顺序)
+     */
+    private List<String> mergeDevs(List<String> feDevs, List<String> beDevs) {
+        Set<String> merged = new java.util.LinkedHashSet<>(feDevs);
+        merged.addAll(beDevs);
+        return new ArrayList<>(merged);
+    }
+
+    /**
+     * 按需求当前状态重建排期明细(单条编辑/人员调配/工时调整后调用):
+     * 已有排期的需求才重建(无排期的不凭空生成), 钉住行保持不动
+     */
+    private void rebuildScheduleForReq(String reqId) {
+        PmRequirement req = getById(reqId);
+        if (req == null) {
+            return;
+        }
+        // 已有排期明细才重建(无明细的需求不凭空生成)。
+        // 旧实现用 dev_start_date 非空当作「已排期」代理，但该列是快照且几乎恒有值，判断不准；
+        // 现在研发起止时间统一由 pm_dev_schedule 派生，这里也直接以明细是否存在为准。
+        Long rowCount = devScheduleMapper.selectCount(new LambdaQueryWrapper<PmDevSchedule>()
+                .eq(PmDevSchedule::getReqId, reqId));
+        if (rowCount == null || rowCount == 0) {
+            return;
+        }
+        ScheduleConfigDTO config = currentConfig();
+        Map<String, PmDevSchedule> pinned = loadPinnedRows(reqId);
+        List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
+        List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
+        BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
+        BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
+        BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+                ? req.getWorkload() : BigDecimal.ONE;
+        boolean hasSplit = feWorkload != null || beWorkload != null;
+        // 基准日以归属版本的开始时间为准(与 autoSchedule 一致)，不再读需求表 dev_start_date 快照
+        LocalDate baseStart = resolveScheduleBaseStart(req, config);
+        List<PmDevSchedule> rows = new ArrayList<>();
+        if (hasSplit) {
+            if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : feDevs) {
+                    rows.add(buildScheduleRow(req, person, "frontend", feWorkload, baseStart, config, pinned));
+                }
+            }
+            if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : beDevs) {
+                    rows.add(buildScheduleRow(req, person, "backend", beWorkload, baseStart, config, pinned));
+                }
+            }
+        } else {
+            for (String person : mergeDevs(feDevs, beDevs)) {
+                String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
+                        : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
+                rows.add(buildScheduleRow(req, person, role, totalWorkload, baseStart, config, pinned));
+            }
+        }
+        replaceScheduleRows(reqId, rows);
+        reassignSeq(personsOf(req));
+        // 需求整体起止日不再回写需求表：列表接口按 req_id 关联明细取 MIN/MAX，天然跟随本次重建。
+    }
+
+    /**
+     * 新建需求落库后生成排期明细(无竞争, 各人员从需求开始日起算)
+     */
+    /**
+     * 解析排期基准开始日 —— 唯一口径：以版本管理中该需求的归属版本 startDate 为准，
+     * 与 autoSchedule(1122 行) 的 versionStartDate 同源（iterationId → month/code 解析顺序一致；
+     * autoSchedule 在循环内用预构建 iterationMap 避免 N+1，这里单条调用直接查库）。
+     *
+     * <p>【pm_requirement.dev_start_date 列已删除】研发起止时间统一由 pm_dev_schedule 明细
+     * MIN/MAX 派生(见 PmRequirementMapper.SCHEDULE_RANGE_COLUMNS)，排期起点只认版本开始时间，
+     * 不再存在「按快照排 vs 按版本首日排」两套口径。</p>
+     *
+     * <p>归属版本解析顺序：iterationId → month(code) → 无归属版本时取所有版本最大截至日 + 1，
+     * 使未纳入版本的任务排在所有版本工作之后，而不是落到硬编码默认日挤占正常排期。</p>
+     */
+    private LocalDate resolveScheduleBaseStart(PmRequirement req, ScheduleConfigDTO config) {
+        PmIteration iteration = null;
+        if (StringUtils.isNotEmpty(req.getIterationId())) {
+            iteration = iterationMapper.selectById(req.getIterationId());
+        }
+        if (iteration == null && StringUtils.isNotEmpty(req.getMonth())) {
+            iteration = iterationMapper.selectOne(new LambdaQueryWrapper<PmIteration>()
+                    .eq(PmIteration::getCode, req.getMonth()).last("limit 1"));
+        }
+        if (iteration != null && iteration.getStartDate() != null) {
+            return ScheduleDateUtils.getWorkdayStartDate(toLocalDate(iteration.getStartDate()), config);
+        }
+        // 无归属版本(未纳入版本): 起点取所有版本中最大的截至日期, 而非硬编码默认日期
+        return resolveDefaultScheduleStart(config);
+    }
+
+    /**
+     * 未纳入版本(无归属版本)需求的排期兜底起点: 取所有版本中最大的截至日期(endDate),
+     * 使无归属任务排在所有版本工作之后, 而不是落到硬编码默认日期(2026-09-08, 会挤占各版本正常排期)。
+     * 所有版本均无截至日期时回退 DEFAULT_START_DATE。
+     */
+    private LocalDate resolveDefaultScheduleStart(ScheduleConfigDTO config) {
+        Date maxEnd = iterationMapper.selectMaxEndDate();
+        // 取所有版本中最大的截至日期, 再加一天, 排到版本期之外(避免与最后一天版本任务同日)
+        LocalDate base = (maxEnd != null ? toLocalDate(maxEnd) : ScheduleDateUtils.DEFAULT_START_DATE).plusDays(1);
+        return ScheduleDateUtils.getWorkdayStartDate(base, config);
+    }
+
+    private void persistScheduleRowsForReq(PmRequirement req) {
+        ScheduleConfigDTO config = currentConfig();
+        LocalDate baseStart = resolveScheduleBaseStart(req, config);
+        List<String> feDevs = PersonnelNameUtils.parsePersonnelNames(req.getFrontendDev());
+        List<String> beDevs = PersonnelNameUtils.parsePersonnelNames(req.getBackendDev());
+        BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
+        BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
+        BigDecimal totalWorkload = (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+                ? req.getWorkload() : BigDecimal.ONE;
+        boolean hasSplit = feWorkload != null || beWorkload != null;
+        List<PmDevSchedule> rows = new ArrayList<>();
+        if (hasSplit) {
+            if (feWorkload != null && feWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : feDevs) {
+                    rows.add(buildScheduleRow(req, person, "frontend", feWorkload, baseStart, config, new HashMap<>()));
+                }
+            }
+            if (beWorkload != null && beWorkload.compareTo(BigDecimal.ZERO) > 0) {
+                for (String person : beDevs) {
+                    rows.add(buildScheduleRow(req, person, "backend", beWorkload, baseStart, config, new HashMap<>()));
+                }
+            }
+        } else {
+            for (String person : mergeDevs(feDevs, beDevs)) {
+                String role = feDevs.contains(person) && !beDevs.contains(person) ? "frontend"
+                        : (beDevs.contains(person) && !feDevs.contains(person) ? "backend" : "fullstack");
+                rows.add(buildScheduleRow(req, person, role, totalWorkload, baseStart, config, new HashMap<>()));
+            }
+        }
+        replaceScheduleRows(req.getId(), rows);
+        reassignSeq(personsOf(req));
+    }
+
+    /**
+     * 构建单条排期明细(无装箱竞争场景: 从基准日开始日顺延到有效工作日, 按工时推导完成日)
+     */
+    private PmDevSchedule buildScheduleRow(PmRequirement req, String person, String role, BigDecimal workload,
+                                           LocalDate baseStart, ScheduleConfigDTO config,
+                                           Map<String, PmDevSchedule> pinned) {
+        String roleId = PersonnelIdUtils.personIdForName(req, role, person);
+        // 钉住行必须按身份键(personId 优先)匹配, 与 loadPinnedRows / packScheduleRow 同一口径:
+        // 若按姓名查, 人员一旦账号化(identity=userId ≠ 姓名)就会查不到 → 钉住行被丢弃并重新排期
+        PmDevSchedule pin = pinned.get(PersonnelIdUtils.identityKey(roleId, person) + "|" + role);
+        if (pin != null) {
+            pin.setReqNo(req.getReqNo());
+            pin.setIterationId(req.getIterationId());
+            return pin;
+        }
+        LocalDate start = ScheduleDateUtils.getWorkdayStartDate(baseStart, config);
+        LocalDate end = ScheduleDateUtils.calculateDevEndDate(start, workload, config);
+        PmDevSchedule row = new PmDevSchedule();
+        row.setReqId(req.getId());
+        row.setReqNo(req.getReqNo());
+        row.setIterationId(req.getIterationId());
+        row.setPersonName(person);
+        // 账号化身份(含 fullstack 的两侧归并): 取不到时留空, 排期引擎自动按姓名兜底
+        row.setPersonId(roleId);
+        row.setDevRole(role);
+        row.setWorkload(workload);
+        row.setDevStartDate(toDate(start));
+        row.setDevEndDate(toDate(end));
+        row.setIsPinned(false);
+        row.setTenantId(resolveTenantId(req));
+        return row;
+    }
+
+    /**
+     * 级联清理需求的排期明细(需求删除时调用)
+     */
+    private void deleteScheduleRows(List<String> reqIds) {
+        if (reqIds == null || reqIds.isEmpty()) {
+            return;
+        }
+        devScheduleMapper.delete(new LambdaQueryWrapper<PmDevSchedule>()
+                .in(PmDevSchedule::getReqId, reqIds));
+    }
+
+    /**
+     * 逐日装箱(容量模型): 从版本首日起向后逐日扫描，返回该人员剩余容量足以容纳整个任务的最早可开工日期
+     * 每人每天容量 1 人天: 工时不足 1 天的多个任务可共享同一天(如 0.2+0.3+0.3 全排当天)，装不下才顺延
+     * 与"人员游标"模型的本质区别: 每个任务都从版本首日重新扫描，因此后面排到的任务可以回填前面留下的空档，
+     * 只要人员在这些日期确实有剩余容量即可开工，各人员之间天然并行(同一天可有多人各自推进自己的任务)
+     * 容量日历为全局共享(跨版本)，前序版本任务的占用会参与可行性校验
+     *
+     * @param versionStartDate 版本开发周期首日(已规整为有效工作日)
+     * @param person           任务人员(为空白表示未分配，无人力约束)
+     * @param workload         预估工时(单人)
+     * @param config           排期配置
+     * @param personDayUsage   全局人员容量日历(人 -> 日期 -> 已用人天)
+     * @return 最早可开工日期
+     */
+    private LocalDate findEarliestFeasibleStart(LocalDate versionStartDate, String person,
+                                                BigDecimal workload, ScheduleConfigDTO config,
+                                                Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        if (versionStartDate == null) {
+            versionStartDate = ScheduleDateUtils.DEFAULT_START_DATE;
+        }
+        if (StringUtils.isEmpty(person)) {
+            // 未分配人员的需求无任何人力约束，一律从版本首日起排
+            return versionStartDate;
+        }
+        LocalDate candidate = versionStartDate;
+        // 安全上限: 最多向后探测 3 年，杜绝异常配置下的死循环
+        LocalDate limit = versionStartDate.plusYears(3);
+        while (!candidate.isAfter(limit)) {
+            if (canFitFrom(person, candidate, workload, config, personDayUsage)) {
+                return candidate;
+            }
+            candidate = ScheduleDateUtils.getNextWorkday(candidate, config);
+        }
+        return versionStartDate;
+    }
+
+    /**
+     * 容量试算(不改日历): 从 start 起逐有效工作日消耗剩余容量(每天至多 1 人天)，
+     * 模拟任务能否在有限天数内完整放下
+     */
+    private boolean canFitFrom(String person, LocalDate start, BigDecimal workload,
+                               ScheduleConfigDTO config, Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        BigDecimal remaining = positiveWorkload(workload) != null ? workload : BigDecimal.ONE;
+        Map<LocalDate, BigDecimal> usage = personDayUsage.getOrDefault(person, new HashMap<>());
+        LocalDate cursor = start;
+        // 安全上限: 3 年内的有效工作日远超任何合法工时所需
+        LocalDate limit = start.plusYears(3);
+        boolean firstDay = true;
+        while (!cursor.isAfter(limit)) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                BigDecimal used = usage.getOrDefault(cursor, BigDecimal.ZERO);
+                BigDecimal available = BigDecimal.ONE.subtract(used).max(BigDecimal.ZERO);
+                // 首日必须实际获得容量, 杜绝任务"虚挂"在零剩余容量的日期上(跨出无占用的空天头)
+                if (firstDay && available.compareTo(BigDecimal.ZERO) <= 0) {
+                    return false;
+                }
+                remaining = remaining.subtract(available);
+                if (remaining.compareTo(BigDecimal.ZERO) <= 0) {
+                    return true;
+                }
+                firstDay = false;
+            }
+            cursor = cursor.plusDays(1);
+        }
+        return false;
+    }
+
+    /**
+     * 容量登记: 从 start 起逐有效工作日消耗剩余容量(每天至多 1 人天)，直至任务工时耗尽，
+     * 返回任务实际触达的最后一天(容量充裕时 = ceil(workload) 个工作日，首日有占用时顺延)
+     */
+    private LocalDate applyTaskLoad(String person, LocalDate start, BigDecimal workload,
+                                    ScheduleConfigDTO config, Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        BigDecimal remaining = positiveWorkload(workload) != null ? workload : BigDecimal.ONE;
+        Map<LocalDate, BigDecimal> usage = personDayUsage.computeIfAbsent(person, k -> new HashMap<>());
+        LocalDate cursor = start;
+        LocalDate lastTouched = start;
+        LocalDate limit = start.plusYears(3);
+        while (!cursor.isAfter(limit) && remaining.compareTo(BigDecimal.ZERO) > 0) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                BigDecimal used = usage.getOrDefault(cursor, BigDecimal.ZERO);
+                BigDecimal available = BigDecimal.ONE.subtract(used).max(BigDecimal.ZERO);
+                if (available.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal take = available.min(remaining);
+                    usage.put(cursor, used.add(take));
+                    remaining = remaining.subtract(take);
+                    lastTouched = cursor;
+                }
+            }
+            cursor = cursor.plusDays(1);
+        }
+        return lastTouched;
+    }
+
+    /**
+     * 固定区间占用登记(钉住行/历史明细行): 将工时均摊到区间内各有效工作日，
+     * 保留同日剩余容量供后续小任务共享；工时缺失时按整日占满处理
+     */
+    private void spreadRowLoad(String person, LocalDate start, LocalDate end, BigDecimal workload,
+                               ScheduleConfigDTO config, Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        if (StringUtils.isEmpty(person) || start == null || end == null || end.isBefore(start)) {
+            return;
+        }
+        // 统计区间内有效工作日数
+        int workdays = 0;
+        LocalDate cursor = start;
+        while (!cursor.isAfter(end)) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                workdays++;
+            }
+            cursor = cursor.plusDays(1);
+        }
+        if (workdays == 0) {
+            return;
+        }
+        // 无工时(历史脏数据)按整日占满; 有工时则均摊(单日任务摊入值=工时, 与逐日装箱口径一致)
+        BigDecimal perDay = positiveWorkload(workload) != null
+                ? workload.divide(BigDecimal.valueOf(workdays), 4, java.math.RoundingMode.HALF_UP)
+                : BigDecimal.ONE;
+        Map<LocalDate, BigDecimal> usage = personDayUsage.computeIfAbsent(person, k -> new HashMap<>());
+        cursor = start;
+        while (!cursor.isAfter(end)) {
+            if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                usage.merge(cursor, perDay, BigDecimal::add);
+            }
+            cursor = cursor.plusDays(1);
+        }
+    }
+
+    /**
+     * 需求信息纠偏：工时基准、人员字段标准化、日历排期推导
+     * 严防1人天任务在甘特图上跨度达十几天、以及后续任务挤压等非理性排期
+     */
+    private void sanitizeRequirement(PmRequirement requirement, PmRequirement exist) {
+        // 生效人员字段(未传则沿用旧值)
+        String effFeDev = requirement.getFrontendDev() != null ? requirement.getFrontendDev()
+                : (exist != null ? exist.getFrontendDev() : null);
+        String effBeDev = requirement.getBackendDev() != null ? requirement.getBackendDev()
+                : (exist != null ? exist.getBackendDev() : null);
+        // 工时拆分: 前端/后端研发工时段(任一缺失时沿用旧值)，值为"单人"工时
+        BigDecimal feWorkload = requirement.getFrontendWorkload() != null ? requirement.getFrontendWorkload()
+                : (exist != null ? exist.getFrontendWorkload() : null);
+        BigDecimal beWorkload = requirement.getBackendWorkload() != null ? requirement.getBackendWorkload()
+                : (exist != null ? exist.getBackendWorkload() : null);
+        // 该侧无有效人员(空或"不涉及")时, 该侧工时强制 0——前端已禁用编辑, 后端做最终保障
+        // 反向兜底: 有人员但工时为 null(如批量导入未带工时列)或 0(历史"不涉及"残留) → 恢复默认 1 人天,
+        // 防止导入(1前端+1后端)后总工时不按人数合计(应为 2 而非 1), 与 batchAssign 纠偏口径完全一致
+        if (PersonnelNameUtils.parsePersonnelNames(effFeDev).isEmpty()) {
+            feWorkload = BigDecimal.ZERO;
+            requirement.setFrontendWorkload(BigDecimal.ZERO);
+        } else if (feWorkload == null || feWorkload.compareTo(BigDecimal.ZERO) == 0) {
+            feWorkload = BigDecimal.ONE;
+            requirement.setFrontendWorkload(BigDecimal.ONE);
+        }
+        if (PersonnelNameUtils.parsePersonnelNames(effBeDev).isEmpty()) {
+            beWorkload = BigDecimal.ZERO;
+            requirement.setBackendWorkload(BigDecimal.ZERO);
+        } else if (beWorkload == null || beWorkload.compareTo(BigDecimal.ZERO) == 0) {
+            beWorkload = BigDecimal.ONE;
+            requirement.setBackendWorkload(BigDecimal.ONE);
+        }
+        // 工时基准(默认1人天)
+        BigDecimal workload = requirement.getWorkload() != null ? requirement.getWorkload()
+                : (exist != null ? exist.getWorkload() : null);
+        // 总工时(仅显示口径): 各角色单人工时 × 该角色人数；人数由人员字段实时解析
+        if (feWorkload != null || beWorkload != null) {
+            BigDecimal headcountTotal = headcountTotalWorkload(feWorkload, beWorkload, effFeDev, effBeDev);
+            if (headcountTotal.compareTo(BigDecimal.ZERO) > 0) {
+                workload = headcountTotal;
+            }
+        }
+        // 两侧均无有效人员(工时为 0)时总工时为 0; 其余情况保持 1 人天兜底
+        boolean noDevAtAll = feWorkload != null && beWorkload != null
+                && feWorkload.compareTo(BigDecimal.ZERO) == 0 && beWorkload.compareTo(BigDecimal.ZERO) == 0;
+        if (noDevAtAll) {
+            workload = BigDecimal.ZERO;
+        } else if (workload == null || workload.compareTo(BigDecimal.ZERO) <= 0) {
+            workload = BigDecimal.ONE;
+        }
+        workload = workload.setScale(1, RoundingMode.HALF_UP);
+        requirement.setWorkload(workload);
+        if (feWorkload != null) {
+            requirement.setFrontendWorkload(feWorkload.max(BigDecimal.ZERO).setScale(1, RoundingMode.HALF_UP));
+        }
+        if (beWorkload != null) {
+            requirement.setBackendWorkload(beWorkload.max(BigDecimal.ZERO).setScale(1, RoundingMode.HALF_UP));
+        }
+        // 研发起止时间不再由本表推导/存储：pm_requirement 已删除 dev_start_date/dev_end_date，
+        // 前端显示值由列表接口关联 pm_dev_schedule 聚合 MIN/MAX 得出，排期基准日取 pm_iteration.start_date。
+        // 人员字段标准化
+        requirement.setFrontendDev(defaultPersonnel(requirement.getFrontendDev(), exist == null ? null : exist.getFrontendDev(), PersonnelNameUtils.UNASSIGNED));
+        requirement.setBackendDev(defaultPersonnel(requirement.getBackendDev(), exist == null ? null : exist.getBackendDev(), PersonnelNameUtils.UNASSIGNED));
+        requirement.setQaTester(defaultPersonnel(requirement.getQaTester(), exist == null ? null : exist.getQaTester(), PersonnelNameUtils.UNASSIGNED));
+        requirement.setOwner(defaultPersonnel(requirement.getOwner(), exist == null ? null : exist.getOwner(), "PMO"));
+        requirement.setRequester(defaultPersonnel(requirement.getRequester(), exist == null ? null : exist.getRequester(), "产品团队"));
+    }
+
+    /**
+     * 人员字段默认值处理：显式传值(含空串=清空)优先，未传(null)时沿用旧值；
+     * 纯占位/空值格式化后为空串，不再回退默认值，以满足"未设置则空着、不落库 待分配/PMO/产品团队 等占位"(需求 #2)。
+     */
+    private String defaultPersonnel(String newValue, String oldValue, String defaultVal) {
+        String target = newValue != null ? newValue : oldValue;
+        return PersonnelNameUtils.formatPersonnelNames(target);
+    }
+
+    /**
+     * 归属迭代信息联动：设置月份代码与研发确认发版时间
+     *
+     * @return 是否显式清空了归属版本 (前端传空串表示清空；传 null 表示未传、保持原值)。
+     *         显式清空时会同步清空月份、发版时间与已绑定转测节点(名称类字段置空串、日期字段置 null
+     *         由调用方通过 UpdateWrapper 显式 SET NULL 落库)。
+     */
+    private boolean syncIterationInfo(PmRequirement requirement, PmRequirement exist) {
+        // 显式清空归属版本：同步清空发版时间与转测节点绑定(版本号由 iteration_id 派生, 无需单独清空)
+        if (isEmptySent(requirement.getIterationId())) {
+            requirement.setIterationId("");
+            requirement.setTestNodeId("");
+            requirement.setTestNodeName("");
+            requirement.setTestNodeDate(null);
+            requirement.setReleaseTime(null);
+            return true;
+        }
+        String iterationId = StringUtils.isNotEmpty(requirement.getIterationId())
+                ? requirement.getIterationId()
+                : (exist != null ? exist.getIterationId() : null);
+        if (StringUtils.isEmpty(iterationId)) {
+            return false;
+        }
+        PmIteration iteration = iterationMapper.selectById(iterationId);
+        if (iteration == null) {
+            // 兼容前端可能传入版本代号而非主键ID
+            iteration = iterationMapper.selectOne(new LambdaQueryWrapper<PmIteration>()
+                    .eq(PmIteration::getCode, iterationId)
+                    .last("limit 1"));
+        }
+        if (iteration == null) {
+            return false;
+        }
+        requirement.setIterationId(iteration.getId());
+        if (iteration.getReleaseDate() != null && requirement.getReleaseTime() == null) {
+            requirement.setReleaseTime(iteration.getReleaseDate());
+        }
+        return false;
+    }
+
+    /**
+     * 判断前端是否显式传了"空值"(空串)。null 视为未传(保持原值)，空串视为显式清空。
+     */
+    private boolean isEmptySent(String value) {
+        return value != null && value.isEmpty();
+    }
+
+    /**
+     * 状态流转联动开发进度(阶段与默认进度均由字典 pm_requirement_status 驱动):
+     * - 开发后阶段(转测/测试/验收/上线): 进度置 100%
+     * - 开发前阶段(待评审): 进度归 0
+     * - 开发中: 进度为 0 时取字典默认进度; 从开发后阶段回退且已满进度 → 回退 90% 继续开发
+     */
+    private Integer resolveStatusProgress(String status, Integer currentProgress, String oldStatus) {
+        int progress = currentProgress == null ? 0 : currentProgress;
+        String phase = pmDictService.statusPhase(status);
+        if (PmDictCodes.PHASE_POST.equals(phase)) {
+            return 100;
+        }
+        if (PmDictCodes.PHASE_PRE.equals(phase)) {
+            return 0;
+        }
+        if (PmDictCodes.PHASE_DEV.equals(phase)) {
+            if (progress == 0) {
+                Integer preset = pmDictService.statusProgress(status);
+                return preset == null ? 0 : preset;
+            }
+            // 从测试等状态回退至开发中，进度回退至90%继续开发
+            if (PmDictCodes.PHASE_POST.equals(pmDictService.statusPhase(oldStatus)) && progress >= 100) {
+                return 90;
+            }
+        }
+        return progress;
+    }
+
+    /**
+     * 创建需求时的默认进度(取字典中该状态配置的默认进度, 未配置按 0)
+     */
+    private Integer resolveDefaultProgress(String status) {
+        Integer progress = pmDictService.statusProgress(status);
+        return progress == null ? 0 : progress;
+    }
+
+    /**
+     * 生成下一个递增序号 req_no
+     */
+    private Integer nextReqNo() {
+        PmRequirement max = getOne(new LambdaQueryWrapper<PmRequirement>()
+                .orderByDesc(PmRequirement::getReqNo)
+                .last("limit 1"));
+        return max == null || max.getReqNo() == null ? 1 : max.getReqNo() + 1;
+    }
+
+    /**
+     * 记录需求审计日志
+     */
+    private void recordHistory(PmRequirement req, String actionType, String role, String fromPerson, String toPerson,
+                               String oldValue, String newValue, String detail) {
+        try {
+            PmRequirementHistory history = new PmRequirementHistory();
+            history.setReqId(req.getId());
+            history.setReqNo(req.getReqNo());
+            history.setActionType(actionType);
+            history.setRole(role);
+            history.setFromPerson(fromPerson);
+            history.setToPerson(toPerson);
+            history.setOldValue(oldValue);
+            history.setNewValue(newValue);
+            history.setDetail(detail);
+            history.setCreateBy(safeGetCurrentUser());
+            history.setCreateTime(new Date());
+            historyMapper.insert(history);
+        } catch (Exception e) {
+            // 审计日志失败不影响主流程
+            log.error("记录需求审计日志失败: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * 获取需求上对应人员类型的当前值
+     */
+    private String currentPersonnel(PmRequirement req, String personnelType) {
+        return switch (personnelType) {
+            case "frontendDev" -> req.getFrontendDev();
+            case "backendDev" -> req.getBackendDev();
+            case "qaTester" -> req.getQaTester();
+            default -> req.getOwner();
+        };
+    }
+
+    /**
+     * 校验需求必填信息
+     */
+    private void verifyRequirement(PmRequirement requirement) {
+        if (StringUtils.isEmpty(requirement.getModule())) {
+            throw new MyRuntimeException("错误:需求所属模块不能为空!");
+        }
+        // 一级功能点允许为空(批量导入常只带序号/模块/功能点描述)，功能点描述为必填
+        if (StringUtils.isEmpty(requirement.getFeatureDescription())) {
+            throw new MyRuntimeException("错误:功能点描述不能为空!");
+        }
+        // 评审结论/任务状态应与字典保持一致; 存量历史脏值(如旧版"通过")仅告警不阻断, 避免历史行无法保存
+        if (StringUtils.isNotEmpty(requirement.getReviewResult()) && !pmDictService.isValidReviewResult(requirement.getReviewResult())) {
+            log.warn("需求 #{} 的评审结论【{}】不在字典 pm_review_result 中, 建议在字典管理中维护该取值",
+                    requirement.getReqNo(), requirement.getReviewResult());
+        }
+        if (StringUtils.isEmpty(requirement.getStatus())) {
+            requirement.setStatus(pmDictService.defaultStatus());
+        } else if (!pmDictService.isValidStatus(requirement.getStatus())) {
+            log.warn("需求 #{} 的任务状态【{}】不在字典 pm_requirement_status 中, 建议在字典管理中维护该取值",
+                    requirement.getReqNo(), requirement.getStatus());
+        }
+    }
+
+    /**
+     * 获取当前排期配置
+     */
+    private ScheduleConfigDTO currentConfig() {
+        return scheduleConfigService.getConfigData();
+    }
+
+    /**
+     * Date 转 LocalDate(兼容 java.sql.Date)
+     */
+    private LocalDate toLocalDate(Date date) {
+        if (date instanceof java.sql.Date sqlDate) {
+            return sqlDate.toLocalDate();
+        }
+        return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * LocalDate 转 Date
+     */
+    private Date toDate(LocalDate localDate) {
+        return java.sql.Date.valueOf(localDate);
+    }
+
+    /**
+     * 格式化日期为 yyyy-MM-dd
+     */
+    private String formatDate(Date date) {
+        return date == null ? "" : ScheduleDateUtils.FORMATTER.format(toLocalDate(date));
+    }
+
+    /**
+     * 安全获取当前登录用户ID(无请求上下文时返回空)
+     */
+    private String safeGetCurrentUser() {
+        try {
+            String userId = AuthInfoUtils.getCurrentUserId();
+            return StringUtils.isEmpty(userId) ? AuthInfoUtils.getCurrentAccount() : userId;
+        } catch (Exception e) {
+            log.warn("获取当前登录用户失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 安全获取当前租户ID(无请求上下文时返回空, 不抛异常)
+     */
+    private String safeGetCurrentTenantId() {
+        try {
+            return AuthInfoUtils.getCurrentTenantId();
+        } catch (Exception e) {
+            log.warn("获取当前租户ID失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 解析当前登录用户姓名(nickname)，用于新建需求时兜底「需求提出人」。
+     * 单实例/AI 工具调用下 req-user-id 可能为空而只有 req-account，因此先按账号查、再按用户ID兜底。
+     * 查询失败不阻断保存，返回 null 由 sanitizeRequirement 归一为空串。
+     */
+    private String resolveCurrentUserName() {
+        if (remoteUserService == null) {
+            return null;
+        }
+        try {
+            String account = AuthInfoUtils.getCurrentAccount();
+            String userId = AuthInfoUtils.getCurrentUserId();
+            UserInfo info = null;
+            if (StringUtils.isNotEmpty(account)) {
+                Result<UserInfo> ret = remoteUserService.getUserByAccount(RPCConstants.INNER, account);
+                info = ret == null ? null : ret.getData();
+            }
+            if ((info == null || StringUtils.isEmpty(info.getNickname())) && StringUtils.isNotEmpty(userId)) {
+                Result<UserInfo> ret = remoteUserService.getUserById(RPCConstants.INNER, userId);
+                UserInfo byId = ret == null ? null : ret.getData();
+                if (byId != null && StringUtils.isNotEmpty(byId.getNickname())) {
+                    info = byId;
+                }
+            }
+            return info == null ? null : info.getNickname();
+        } catch (Exception e) {
+            log.warn("获取当前用户姓名失败, 需求提出人留空: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 解析排期明细/审计日志应归属的租户ID: 取需求实体(已持久化)上的 tenantId, 缺失时回退当前登录租户。
+     * <p>
+     * 注意：本方法<b>仅用于排期行等从已有需求继承租户的内部场景</b>，其入参来自数据库而非外部请求。
+     * 新增需求入口(add)必须使用 {@link #safeGetCurrentTenantId()} 强制覆盖，
+     * 绝不能信任请求体传入的 tenantId(AI 工具曾误传 1=超级租户)。
+     */
+    private String resolveTenantId(PmRequirement req) {
+        if (req != null && StringUtils.isNotEmpty(req.getTenantId())) {
+            return req.getTenantId();
+        }
+        return safeGetCurrentTenantId();
+    }
+
+    // ==================== 人员账号化: 姓名串 与 用户ID数组 的索引对齐 ====================
+
+    /**
+     * 保证「姓名串」与「用户ID数组」按索引对齐, 贯穿新建/编辑/批量导入三条写入路径:
+     * <ol>
+     *   <li>前端点选人员时提交的ID是唯一准确来源(点击那一刻才知道是哪个同名的人), 长度对齐即信任</li>
+     *   <li>ID缺失或与姓名长度不一致时(批量导入只有姓名), 按「租户 + 姓名」解析回填</li>
+     *   <li>解析不到 / 租户内多人同名一律留 null, 排期时自动降级为按姓名处理</li>
+     * </ol>
+     * 解析是尽力而为的能力: 远程调用失败仅记录告警, 不阻断需求落库。
+     *
+     * @param req 需求(须已确定 tenantId)
+     */
+    private void alignPersonnelIds(PmRequirement req) {
+        if (req == null) {
+            return;
+        }
+        String tenantId = req.getTenantId();
+        for (String role : PersonnelIdUtils.allRoles()) {
+            List<String> names = PersonnelNameUtils.parsePersonnelNames(PersonnelIdUtils.namesOfRole(req, role));
+            if (names.isEmpty()) {
+                PersonnelIdUtils.setIdsOfRole(req, role, null);
+                continue;
+            }
+            List<String> existIds = PersonnelIdUtils.parseIds(PersonnelIdUtils.idsOfRole(req, role));
+            if (!existIds.isEmpty() && existIds.size() == names.size()) {
+                // 前端已提交且与当前姓名列表对齐 —— 拒绝二次解析, 避免把点选结果改错
+                continue;
+            }
+            List<String> resolved = new ArrayList<>();
+            if (StringUtils.isEmpty(tenantId)) {
+                names.forEach(n -> resolved.add(null));
+            } else {
+                Map<String, String> nameToId = resolveNamesToIds(tenantId, names);
+                names.forEach(n -> resolved.add(nameToId.get(n)));
+            }
+            PersonnelIdUtils.setIdsOfRole(req, role, resolved);
+        }
+    }
+
+    /**
+     * 按「租户 + 姓名」解析用户ID(仅采用唯一命中)
+     *
+     * @param tenantId 租户ID
+     * @param names    姓名列表
+     * @return 姓名 → 用户ID(未命中/歧义的值为 null)
+     */
+    private Map<String, String> resolveNamesToIds(String tenantId, List<String> names) {
+        Map<String, String> result = new HashMap<>();
+        names.forEach(n -> result.put(n, null));
+        if (names.isEmpty() || remoteUserService == null) {
+            return result;
+        }
+        try {
+            Result<List<UserIdResolveVo>> ret = remoteUserService
+                    .resolveTenantUserIds(RPCConstants.INNER, tenantId, new ArrayList<>(names));
+            List<UserIdResolveVo> vos = (ret == null || ret.getData() == null) ? List.of() : ret.getData();
+            for (UserIdResolveVo vo : vos) {
+                if (vo != null && vo.isResolved()) {
+                    result.put(vo.getName(), vo.getUserId());
+                }
+            }
+        } catch (Exception e) {
+            // 降级: 排期按姓名处理, 不影响需求本身的保存
+            log.warn("按姓名解析用户ID失败, 已按姓名兜底: {}", names, e);
+        }
+        return result;
+    }
+
+    /**
+     * 将名单中 id 仍为 null 的姓名按「租户+姓名」解析补齐(就地修改 ids 列表)。
+     * 与 {@link #alignPersonnelIds} 的解析口径一致: 仅填充能唯一命中的者, 歧义/未命中保持 null(排期按姓名处理)。
+     * 用于 reassign 等"手工重建 id 数组"的场景, 防止历史脏数据或前端漏传 toPersonId 导致落库 null。
+     */
+    private void backfillUnresolvedIds(String tenantId, List<String> names, List<String> ids) {
+        if (names == null || ids == null || names.size() != ids.size() || StringUtils.isEmpty(tenantId)) {
+            return;
+        }
+        List<String> unresolved = new ArrayList<>();
+        for (int i = 0; i < names.size(); i++) {
+            if (ids.get(i) == null) {
+                unresolved.add(names.get(i));
+            }
+        }
+        if (unresolved.isEmpty()) {
+            return;
+        }
+        Map<String, String> resolved = resolveNamesToIds(tenantId, unresolved);
+        for (int i = 0; i < names.size(); i++) {
+            if (ids.get(i) == null) {
+                ids.set(i, resolved.get(names.get(i)));
+            }
+        }
+    }
+}

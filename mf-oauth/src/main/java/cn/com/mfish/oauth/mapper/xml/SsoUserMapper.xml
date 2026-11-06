@@ -258,4 +258,19 @@
             #{account}
         </foreach>
     </select>
+    <!-- 按租户 + 姓名(nickname)精确匹配用户: 租户归属复用统一 orgFilter, 同属多个组织的重复行由 distinct 收敛 -->
+    <select id="getUsersByNicknames" resultType="cn.com.mfish.common.oauth.api.vo.UserIdResolveVo">
+        select distinct u.nickname as name, u.id as userId
+        from sso_user u
+        inner join sso_org_user ou on ou.user_id = u.id
+        inner join sso_org o on o.id = ou.org_id
+        <include refid="orgFilter"/>
+        <where>
+            u.del_flag = 0
+            and u.nickname in
+            <foreach collection="nicknames" item="name" open="(" separator="," close=")">
+                #{name}
+            </foreach>
+        </where>
+    </select>
 </mapper>

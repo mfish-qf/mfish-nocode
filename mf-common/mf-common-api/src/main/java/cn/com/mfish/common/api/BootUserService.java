@@ -8,6 +8,7 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.remote.RemoteUserService;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.service.SsoUserService;
 import org.springframework.stereotype.Service;
@@ -84,5 +85,13 @@ public class BootUserService implements RemoteUserService {
     @Override
     public Result<List<UserInfo>> getUsersByAccount(String origin, String accounts) {
         return Result.ok(ssoUserService.getUsersByAccounts(List.of(accounts.split(","))), "获取用户信息成功");
+    }
+
+    @Override
+    public Result<List<UserIdResolveVo>> resolveTenantUserIds(String origin, String tenantId, List<String> names) {
+        if (StringUtils.isEmpty(tenantId)) {
+            tenantId = AuthInfoUtils.getCurrentTenantId();
+        }
+        return Result.ok(ssoUserService.resolveTenantUserIds(tenantId, names), "解析用户ID成功");
     }
 }

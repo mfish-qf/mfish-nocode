@@ -127,21 +127,54 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
     }
 
     /**
-     * 带扩展工具的流式聊天模板方法（主服务 + MCP/Skill 扩展工具 + guide 依赖业务服务）
+     * 无工具纯对话流式聊天（零工具注入）。
      * <p>
-     * 在垂直助手中使用：除了主服务（如 mf-sys）的 Feign 工具外，还聚合所有 MCP 工具和 Skill 工具，
-     * 让用户在路由到垂直助手时也能调用 MCP 服务器和提示词级 Skill 能力。
+     * 用于「用户问题无需任何平台工具即可回答」的场景（如讲笑话、问候、通用知识问答），
+     * 避免把几百个业务工具塞进上下文。双流降级逻辑与 {@link #chatWithTools} 一致。
+     * </p>
+     *
+     * @param sessionId       会话id
+     * @param prompt         提示词
+     * @param tenantContext  请求线程捕获的租户上下文快照，null 表示从当前线程获取
+     * @return 流式聊天响应
+     */
+    protected Flux<ChatResponse> chatNoTools(String sessionId, String prompt,
+                                             cn.com.mfish.common.ai.agent.TenantContext tenantContext) {
+        String tenantId = tenantContext != null && tenantContext.getTenantId() != null
+                ? tenantContext.getTenantId()
+                : llmModelRouter.currentTenantId();
+        ChatClient chatClient = getChatClient(tenantId);
+        if (log.isInfoEnabled()) {
+            log.info("[BaseAssistant] chatNoTools sessionId={} (纯对话，无工具)", sessionId);
+        }
+        return chatClient.prompt()
+                .user(prompt)
+                .advisors(a -> a.param(CONVERSATION_ID, sessionId))
+                .stream()
+                .chatResponse()
+                .onErrorResume(e -> {
+                    log.warn("无工具流式调用失败，降级为非流式调用: {}", e.getMessage());
+                    return Mono.fromCallable(() -> chatClient.prompt()
+                                    .user(prompt)
+                                    .advisors(a -> a.param(CONVERSATION_ID, sessionId))
+                                    .call()
+                                    .chatResponse())
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .flux();
+                });
+    }
+
+    /**
+     * 带扩展工具的流式聊天模板方法（按主服务收敛后的工具集）
+     * <p>
+     * 在垂直助手中使用：{@code ToolRuntime.resolveAssistantServiceIds(mainServiceId)} 只注入
+     * 「主服务 + frontend + requires 命中该主服务的 guide（及其依赖）」，
+     * 不再聚合全平台的 MCP / Skill / 其它业务服务工具（旧实现每助手约 290 个）。
      * </p>
      * <p>
-     * 扩展工具集合 = ApiToolEngine 中所有已注册 serviceId - 标准微服务ID（MfService.allServiceIds()），
-     * 即排除 mf-* 后剩余的 MCP 服务器名和 skill-* 前缀的 serviceId。
-     * </p>
-     * <p>
-     * <b>guide 依赖合并</b>：扩展集合中可能包含 guide 类型 Skill（如 skill-leave-apply），
-     * 这类 Skill 在 frontmatter 中通过 requires 声明了依赖的业务服务（如 mf-demo）。
-     * 本方法会扫描扩展集合中的 skill-* 服务，读取其 requires 并合并到 serviceIds，
-     * 使 LLM 在调用 guide skill 获取指南后，能继续调用指南引用的业务工具完成实际操作。
-     * 此逻辑与 Planner.mergeGuideRequires 对齐，保证 chat 模式与 agent 模式工具可见性一致。
+     * guide 类型 Skill 在 frontmatter 通过 requires 声明依赖的业务服务（如 mf-demo）。
+     * 选中相关 guide 后合并其 requires，使 LLM 读取指南后仍能调用指南引用的业务工具完成实际操作，
+     * 与 agent 模式 Planner + enrichPlanServiceIds 的按步装配口径一致。
      * </p>
      *
      * @param sessionId      会话id
@@ -231,7 +264,13 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
                 .stream()
                 .chatResponse()
                 .onErrorResume(e -> {
-                    log.warn("流式调用失败，降级为非流式调用: {}", e.getMessage());
+                    // 这是流式链路的最终兜底：Spring AI 的流式 chunk 合并不合规时（如网关下发的
+                    // tool_calls delta 缺 index），由 LlmModelRouter 主动把异常冒泡到这里。
+                    // 非流式 call() 不经过 ChunkMerger，且会由 ToolCallingAdvisor 完整执行工具循环
+                    // （adviseCall 里的 while(isToolCall)），因此能真正拿到工具结果与最终答案，
+                    // 而不是只留下一句「正在查询中」就结束。
+                    log.warn("流式调用失败，降级为非流式完整重跑(含工具执行循环): {} - {}",
+                            e.getClass().getSimpleName(), e.getMessage());
                     return Mono.fromCallable(() -> requestSpec.call().chatResponse())
                             .subscribeOn(Schedulers.boundedElastic())
                             .flux();
@@ -309,17 +348,42 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
                         .setContent(json));
             });
 
+            // 记录上游是否给过正式结束信号（finishReason=STOP），用于识别「无异常静默断流」：
+            // 若流自然结束却从没收到过 STOP，说明上游（网关/服务商）提前关闭了连接，
+            // 此时前端只会看到半截文本。留日志便于定位，且不改变下发行为（不影响正常流式体验）。
+            java.util.concurrent.atomic.AtomicBoolean stopReceived =
+                    new java.util.concurrent.atomic.AtomicBoolean(false);
             chat(sessionId, finalPrompt)
-                    // 只保留有文本内容的响应（STOP 空响应在最后统一发射）
-                    .filter(resp -> StringUtils.isNotEmpty(
-                            Objects.requireNonNull(resp.getResult()).getOutput().getText()))
+                    // 在文本过滤之前记录结束信号：最后一个 STOP chunk 通常没有文本内容，
+                    // 放在 filter 之后会被丢掉，导致每次正常回复都误报「疑似截断」。
+                    // 只要上游给过任意非空 finishReason 就认为本轮正常收尾（不同网关大小写/取值不一）。
+                    .doOnNext(resp -> {
+                        if (resp != null && resp.getResult() != null
+                                && resp.getResult().getMetadata() != null
+                                && StringUtils.isNotEmpty(resp.getResult().getMetadata().getFinishReason())) {
+                            stopReceived.set(true);
+                        }
+                    })
+                    // 只保留有文本内容的响应（STOP 空响应在最后统一发射）。
+                    // usage-only / 工具调用等中间 chunk 可能没有 output 或 metadata，
+                    // 直接取会 NPE 触发 sink.error，把整段回复掐断，这里逐层判空跳过。
+                    .filter(resp -> resp != null && resp.getResult() != null
+                            && resp.getResult().getOutput() != null
+                            && StringUtils.isNotEmpty(resp.getResult().getOutput().getText()))
                     .map(resp -> new ChatResponseVo().setId(messageId)
                             .setContent(resp.getResult().getOutput().getText())
-                            .setFinishReason(resp.getResult().getMetadata().getFinishReason()))
+                            .setFinishReason(resp.getResult().getMetadata() != null
+                                    ? resp.getResult().getMetadata().getFinishReason() : null))
                     .subscribe(
                             sink::next,
                             sink::error,
                             () -> {
+                                if (!stopReceived.get()) {
+                                    log.warn("[BaseAssistant] 上游流自然结束但未收到 STOP 信号，"
+                                                    + "回复可能被截断 sessionId={}（若网关 SSE 不合规，"
+                                                    + "LlmModelRouter 会自动探测并改用非流式）",
+                                            sessionId);
+                                }
                                 // 主流完成：注销 emitter
                                 toolRuntime.unregisterFrontendEmitter(sessionId);
                                 // 下发延迟的 refresh 操作（文本之后、STOP 之前）

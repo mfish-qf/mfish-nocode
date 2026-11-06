@@ -17,6 +17,7 @@
         <module>mf-consume</module>
         <module>mf-ai</module>
         <module>mf-workflow</module>
+        <module>mf-project</module>
     </modules>
 
     <properties>

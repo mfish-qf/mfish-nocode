@@ -85,11 +85,15 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-        <!-- bootstrap 启动器 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
+        <!--
+          注意：这里不能引入 spring-cloud-starter-bootstrap(legacy bootstrap)。
+          一旦开启 legacy bootstrap，Spring Cloud 刷新配置时会走 LegacyContextRefresher：
+          它会在进程内临时起一个完整的 SpringApplication 重建 bootstrap 上下文再 close 掉，
+          而 SCA 的 NacosConfigManager/NacosServiceManager 是 JVM 级静态单例，
+          该临时上下文的创建与销毁会拖垮共享的 Nacos gRPC 连接（Client not connected / UNHEALTHY），
+          导致网关 lb:// 实例解析失败、接口返回 500，必须重启才恢复。
+          现代写法：直接用 bootstrap.yml(已重命名为 application.yml) 中的 spring.config.import 拉取 Nacos 配置。
+        -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-loadbalancer</artifactId>
