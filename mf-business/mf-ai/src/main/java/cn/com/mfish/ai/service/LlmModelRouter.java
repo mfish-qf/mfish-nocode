@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -68,6 +68,13 @@ public class LlmModelRouter {
      * 按租户 provider 列表顺序循环尝试，命中限流(429/TPM)等异常时切换到下一个模型重试。
      */
     private static final int MAX_FALLBACK_ATTEMPTS = 3;
+    /**
+     * 流式响应不合规的 ChatModel（网关/服务商返回的 SSE chunk 缺 model / tool_calls.index 等必填字段）。
+     * 一旦探测到，该模型后续一律走非流式 call()：非流式是单个完整 ChatCompletion 对象，
+     * 不经过 ChunkMerger，从根上消除「输出一半就结束」「工具调用丢失」。
+     * 用身份集合（模型实例来自 modelCache，长期复用）；模型配置变更会重建实例，自动重新探测。
+     */
+    private final Set<ChatModel> streamIncompatibleModels = ConcurrentHashMap.newKeySet();
 
     public LlmModelRouter(ChatModel openAiChatModel, AiModelConfigService aiModelConfigService) {
         this.openaiChatModel = openAiChatModel;
@@ -251,6 +258,14 @@ public class LlmModelRouter {
         ChatModel provider = getProvider(index, model, providers);
         return provider.stream(prompt)
                 .onErrorResume(ex -> {
+                    // 网关/服务商下发的 chunk 格式不合规（缺 model / tool_calls.index 等）时，
+                    // 换任何模型都会同样失败，直接把错误交给调用方（如外部 OpenAI 兼容客户端可自行重试），
+                    // 不再白跑 fallback 链、也不把截断的流伪装成正常结束。
+                    if (isMissingRequiredChunkField(ex)) {
+                        log.warn("[LLM路由] 模型 {} 流式 chunk 格式不合规，不切换模型直接返回错误: {}",
+                                modelDesc(provider), ex.getMessage());
+                        return Flux.error(ex);
+                    }
                     log.warn("[LLM路由] 模型 {} 流式调用失败，尝试 fallback", modelDesc(provider), ex);
                     return tryStreamChain(prompt, index + 1, model, providers);
                 });
@@ -345,35 +360,34 @@ public class LlmModelRouter {
                 return Flux.error(new MyRuntimeException("模型流式调用全部失败，已尝试" + MAX_FALLBACK_ATTEMPTS + "次"));
             }
             ChatModel p = providers.get(attempt % providers.size());
+            // 已被探测为「流式 chunk 不合规」的模型：直接走非流式 call()。
+            // 非流式返回的是单个完整 ChatCompletion 对象，不经过 ChunkMerger，
+            // 从根上杜绝缺 model / index 导致的半途抛错、答案截断、工具调用丢失。
+            // Spring AI 的 ToolCallingAdvisor 基于聚合响应递归处理工具调用，
+            // 因此 stream() 返回单个 ChatResponse 时，工具循环依然完整可用。
+            if (streamIncompatibleModels.contains(p)) {
+                log.info("[LLM路由] 模型 {} 流式不合规(已探测)，改用非流式调用", modelDesc(p));
+                return callAsFlux(p, prompt, attempt, providers);
+            }
             log.info("[LLM路由] 调用模型 {} mode=stream attempt={}/{}",
                     modelDesc(p), attempt + 1, MAX_FALLBACK_ATTEMPTS);
-            AtomicBoolean emitted = new AtomicBoolean(false);
             return p.stream(prompt)
-                    .doOnNext(r -> emitted.set(true))
                     .onErrorResume(ex -> {
-                        // OpenAI 兼容网关的 SSE chunk 若不返回 model 字段，Spring AI 2.0.1 的
-                        // ChunkMerger.chunkToChatCompletion 会强制调用 chunk.model()（JsonField.getRequired）
-                        // 抛 OpenAIInvalidDataException("model is not set")。这是响应格式问题，
-                        // 重试同一模型或换模型都不会变好，只会白跑多次 LLM 调用。
-                        if (isMissingModelChunk(ex)) {
-                            if (emitted.get()) {
-                                // 已下发过 token：再降级非流式会把完整答案追加一遍造成重复，
-                                // 直接以已收到的内容收尾（缺 model 的通常是尾部 usage / DONE chunk）。
-                                log.warn("[LLM路由] 模型 {} 流式响应尾部缺少 model 字段，已有内容正常收尾",
-                                        modelDesc(p));
-                                return Flux.empty();
+                        // OpenAI 兼容网关/服务商的 SSE chunk 缺必填字段（model / tool_calls.index 等）时，
+                        // Spring AI 2.0.1 的 ChunkMerger 强读 JsonField.getRequired 抛
+                        // OpenAIInvalidDataException("xxx is not set")。
+                        // 【关键】绝不能 Flux.empty() 「优雅收尾」：bufferUntil 缓存的一整批 chunk
+                        // 要等 mergeChunks / chunkToChatCompletion 才解析，缺字段时整批内容（含
+                        // tool_calls）全丢；且「只有尾部 usage/DONE chunk 缺字段」是错的假设——
+                        // 普通文本 chunk 也逐个走 chunk.model()，中间任意一个缺字段就半途抛错，
+                        // 表现正是「输出一半就结束」。
+                        // 首次探测即标记该模型，并就地改用非流式完整重跑；换模型重试无效（同一网关不合规）。
+                        if (isMissingRequiredChunkField(ex)) {
+                            if (streamIncompatibleModels.add(p)) {
+                                log.warn("[LLM路由] 模型 {} 流式 chunk 格式不合规({})，已标记，后续请求改用非流式调用",
+                                        modelDesc(p), ex.getMessage());
                             }
-                            // 首个 chunk 就失败、尚未下发任何内容：同一模型降级非流式，保证模型不被换掉
-                            log.warn("[LLM路由] 模型 {} 流式响应缺少 model 字段(网关不合规)，降级为同一模型非流式调用",
-                                    modelDesc(p));
-                            return Mono.fromCallable(() -> p.call(prompt))
-                                    .subscribeOn(Schedulers.boundedElastic())
-                                    .flux()
-                                    .onErrorResume(fallbackEx -> {
-                                        log.warn("[LLM路由] 模型 {} 非流式降级也失败，切换下一个模型重试",
-                                                modelDesc(p), fallbackEx);
-                                        return tryStream(prompt, attempt + 1, providers);
-                                    });
+                            return callAsFlux(p, prompt, attempt, providers);
                         }
                         log.warn("[LLM路由] 模型 {} 流式调用失败(第{}/{}次)，自动切换下一个模型重试",
                                 modelDesc(p), attempt + 1, MAX_FALLBACK_ATTEMPTS, ex);
@@ -382,18 +396,36 @@ public class LlmModelRouter {
         }
 
         /**
-         * 判断是否为「OpenAI 兼容网关流式 chunk 缺 model 字段」这类响应格式异常。
-         * 用类名字符串匹配，避免在本模块引入官方 openai-java SDK 的编译期依赖。
+         * 把同步 call() 包装成单元素 Flux，用于绕开不合规的流式 chunk 解析。
+         * 工具调用由上层 ToolCallingAdvisor 基于聚合响应递归执行，不依赖这里是否流式。
          */
-        private boolean isMissingModelChunk(Throwable ex) {
-            for (Throwable cur = ex; cur != null; cur = cur.getCause()) {
-                if ("com.openai.errors.OpenAIInvalidDataException".equals(cur.getClass().getName())
-                        && String.valueOf(cur.getMessage()).contains("model is not set")) {
-                    return true;
-                }
-            }
-            return false;
+        private Flux<ChatResponse> callAsFlux(ChatModel p, Prompt prompt, int attempt, List<ChatModel> providers) {
+            return Mono.fromCallable(() -> p.call(prompt))
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .flux()
+                    .onErrorResume(ex -> {
+                        log.warn("[LLM路由] 模型 {} 非流式调用失败，切换下一个模型重试", modelDesc(p), ex);
+                        return tryStream(prompt, attempt + 1, providers);
+                    });
         }
+
+    }
+
+    /**
+     * 判断是否为「OpenAI 兼容网关/服务商流式 chunk 缺必填字段」这类响应格式异常。
+     * 典型如 OpenAIInvalidDataException("model is not set") / ("index is not set") 等——
+     * 均由 ChunkMerger 强制读取 JsonField.getRequired 引发。只要消息含 "is not set"
+     * 即判定为「网关/服务商不合规、缺字段」，统一降级处理，不浪费模型切换重试。
+     * 用类名字符串匹配，避免在本模块引入官方 openai-java SDK 的编译期依赖。
+     */
+    private static boolean isMissingRequiredChunkField(Throwable ex) {
+        for (Throwable cur = ex; cur != null; cur = cur.getCause()) {
+            if ("com.openai.errors.OpenAIInvalidDataException".equals(cur.getClass().getName())
+                    && String.valueOf(cur.getMessage()).contains("is not set")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

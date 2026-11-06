@@ -264,7 +264,13 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
                 .stream()
                 .chatResponse()
                 .onErrorResume(e -> {
-                    log.warn("流式调用失败，降级为非流式调用: {}", e.getMessage());
+                    // 这是流式链路的最终兜底：Spring AI 的流式 chunk 合并不合规时（如网关下发的
+                    // tool_calls delta 缺 index），由 LlmModelRouter 主动把异常冒泡到这里。
+                    // 非流式 call() 不经过 ChunkMerger，且会由 ToolCallingAdvisor 完整执行工具循环
+                    // （adviseCall 里的 while(isToolCall)），因此能真正拿到工具结果与最终答案，
+                    // 而不是只留下一句「正在查询中」就结束。
+                    log.warn("流式调用失败，降级为非流式完整重跑(含工具执行循环): {} - {}",
+                            e.getClass().getSimpleName(), e.getMessage());
                     return Mono.fromCallable(() -> requestSpec.call().chatResponse())
                             .subscribeOn(Schedulers.boundedElastic())
                             .flux();
@@ -342,7 +348,22 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
                         .setContent(json));
             });
 
+            // 记录上游是否给过正式结束信号（finishReason=STOP），用于识别「无异常静默断流」：
+            // 若流自然结束却从没收到过 STOP，说明上游（网关/服务商）提前关闭了连接，
+            // 此时前端只会看到半截文本。留日志便于定位，且不改变下发行为（不影响正常流式体验）。
+            java.util.concurrent.atomic.AtomicBoolean stopReceived =
+                    new java.util.concurrent.atomic.AtomicBoolean(false);
             chat(sessionId, finalPrompt)
+                    // 在文本过滤之前记录结束信号：最后一个 STOP chunk 通常没有文本内容，
+                    // 放在 filter 之后会被丢掉，导致每次正常回复都误报「疑似截断」。
+                    // 只要上游给过任意非空 finishReason 就认为本轮正常收尾（不同网关大小写/取值不一）。
+                    .doOnNext(resp -> {
+                        if (resp != null && resp.getResult() != null
+                                && resp.getResult().getMetadata() != null
+                                && StringUtils.isNotEmpty(resp.getResult().getMetadata().getFinishReason())) {
+                            stopReceived.set(true);
+                        }
+                    })
                     // 只保留有文本内容的响应（STOP 空响应在最后统一发射）。
                     // usage-only / 工具调用等中间 chunk 可能没有 output 或 metadata，
                     // 直接取会 NPE 触发 sink.error，把整段回复掐断，这里逐层判空跳过。
@@ -357,6 +378,12 @@ public abstract class BaseAssistant implements IClientAssistant, ToolCapable {
                             sink::next,
                             sink::error,
                             () -> {
+                                if (!stopReceived.get()) {
+                                    log.warn("[BaseAssistant] 上游流自然结束但未收到 STOP 信号，"
+                                                    + "回复可能被截断 sessionId={}（若网关 SSE 不合规，"
+                                                    + "LlmModelRouter 会自动探测并改用非流式）",
+                                            sessionId);
+                                }
                                 // 主流完成：注销 emitter
                                 toolRuntime.unregisterFrontendEmitter(sessionId);
                                 // 下发延迟的 refresh 操作（文本之后、STOP 之前）
