@@ -115,6 +115,8 @@
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
         <result property="orgNames" column="orgNames"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+        <result property="roleCodes" column="roleCodes"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <resultMap id="ssoUserMap" type="cn.com.mfish.common.oauth.entity.SsoUser">
         <result property="roleIds" column="roleIds"
@@ -125,6 +127,8 @@
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
         <result property="orgNames" column="orgNames"
                 typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
+        <result property="roleCodes" column="roleCodes"
+                typeHandler="cn.com.mfish.oauth.handler.StrToListTypeHandler"/>
     </resultMap>
     <sql id="selectUser">
         select u.id,u.account,u.phone,u.email,u.password,u.old_password,u.nickname,u.head_img_url
@@ -132,7 +136,8 @@
         ,u.create_time,u.update_by,u.update_time
          , GROUP_CONCAT(DISTINCT role_id) roleIds, GROUP_CONCAT(DISTINCT org_id) orgIds
         ,GROUP_CONCAT(DISTINCT role_name) roleNames, GROUP_CONCAT(DISTINCT org_name) orgNames
-        from (select u.*, ou.org_id, ur.role_id,o.org_name,r.role_name
+        ,GROUP_CONCAT(DISTINCT role_code) roleCodes
+        from (select u.*, ou.org_id, ur.role_id,o.org_name,r.role_name,r.role_code
         from sso_user u
         left join sso_org_user ou on ou.user_id = u.id
         <choose>
@@ -148,7 +153,7 @@
         left join sso_user_role ur on u.id = ur.user_id
         left join sso_role r on r.id = ur.role_id and r.del_flag = 0 and r.status = 0
         union
-        select u.*, ou.org_id, sor.role_id,o.org_name,r.role_name
+        select u.*, ou.org_id, sor.role_id,o.org_name,r.role_name,r.role_code
         from sso_user u
         join sso_org_user ou on ou.user_id = u.id
         join sso_org o on o.id = ou.org_id
