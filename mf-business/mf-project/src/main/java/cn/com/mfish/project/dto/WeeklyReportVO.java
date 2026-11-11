@@ -13,8 +13,12 @@ import java.util.List;
  * 的紧凑结构，不含任何 PRD 文本/人员大字段，从源头压低 AI 分析的 token 消耗。
  * 数据口径与人工编写的周报一致：版本号→迭代 code/name；功能点→需求名称；
  * "已转测"→需求处于转测/测试/验收/上线阶段(progress=100%)；"当前进度"→完成率/开发进度。
- * ★ 两个口径不可混用：weekCompletedFeatures / weekOngoingFeatures 只含 pm_dev_schedule 落在本周的排期需求，
- * 用于"本周主要完成/推进"；scopeThemes 是该版本全部需求的内容主题，用于"主要包括"的归纳总结。
+ * ★ 三个口径不可混用：weekCompletedFeatures / weekOngoingFeatures 只含 pm_dev_schedule 落在本周的排期需求，
+ * 用于"本周主要工作"；scopeThemes 是该版本全部需求的内容主题，用于"主要包括"的归纳总结。
+ * ★ 归纳素材（V2.5.0 新增，V2.5.1 增强）：weekFeatures[].featurePath + description =
+ * 本周排期需求的「一级>二级>三级功能路径 + 功能描述」；scopeDescriptions = 版本全部需求按主题分组后，
+ * 每组按功能路径聚合的「功能路径 + 功能描述」，供 AI 结合层级结构与实际内容做语义归纳
+ * （而非罗列一/二/三级功能点短名）。短名清单仅保留用于结构判定（是否有本周排期、是否转测、进度）。
  * @author: mfish
  * @date: 2026-11-03
  * @version: V2.4.1
@@ -85,6 +89,11 @@ public class WeeklyReportVO {
         @Schema(description = "版本整体内容主题: 由该版本【全部需求】(不限本周排期)按 模块·一级功能 聚合去重后"
                 + "按需求数降序取前12个, 供 AI 归纳总结'主要包括'。注意与本周功能点是两个不同口径, 不能互相替代")
         private List<String> scopeThemes;
+        @Schema(description = "★ '主要包括'归纳素材: 版本【全部需求】按「模块·一级功能」主题分组,"
+                + "每组再按「一级>二级>三级」功能路径去重并取前2条, "
+                + "格式 '主题｜功能路径：功能描述摘要；功能路径：功能描述摘要…', 按主题需求数降序最多6条。"
+                + "AI 须结合功能层级结构与描述归纳出方向/主题, 严禁把 scopeThemes 或功能点短名去符号后直接罗列")
+        private List<String> scopeDescriptions;
         @Schema(description = "本周该版本涉及工时合计(人天, 该版本所有本周排期行工时累加)")
         private BigDecimal weekWorkload;
     }
@@ -95,6 +104,12 @@ public class WeeklyReportVO {
     public static class WeekFeature {
         @Schema(description = "功能点名称(去噪短名, 如 负载感知路由 / 运营监测分析)")
         private String featureName;
+        @Schema(description = "★ '本周主要工作'归纳素材: 该需求的【一级>二级>三级功能路径】(去噪短名, 可能为空),"
+                + "供 AI 判断能力归属")
+        private String featurePath;
+        @Schema(description = "★ '本周主要工作'归纳素材: 该需求的【功能点描述】清洗摘要(压平换行/空白, 最长180字)。"
+                + "AI 须结合 featurePath 与本字段做语义归纳总结, 严禁把 featureName 短名用顿号直接罗列一遍")
+        private String description;
         @Schema(description = "是否已转测(处于转测/测试/验收/上线阶段)")
         private boolean transferredToTest;
         @Schema(description = "当前进度百分比(0-100)")

@@ -288,7 +288,7 @@ public class ToolRuntime {
         sb.append("3. 没有合适工具时，直接回答用户。\n");
         sb.append("4. 工具调用失败时，根据错误信息调整参数或选择其他工具。\n");
         if (hasSkill && hasFrontend) {
-            sb.append("5. 【强制】如果工具列表中包含 skill.* 开头的工具，且用户需求属于该 skill 对应的领域（如请假、代码生成），\n");
+            sb.append("5. 【强制】如果工具列表中包含 skill.* 开头的工具，且用户需求属于该 skill 对应的领域（如输出本周周报、请假、代码生成），\n");
             sb.append("   必须优先调用 skill 工具获取操作指南。获取指南后，必须立即按指南中的步骤顺序逐个调用对应工具\n");
             sb.append("   （包括 frontend.navigate 路由跳转、frontend.refresh 页面刷新等前端操作工具），\n");
             sb.append("   严禁仅返回指南内容而不执行，严禁跳过任何前端操作步骤。\n");

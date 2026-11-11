@@ -61,6 +61,21 @@ public class ProjectAnalyticsService {
     /** 单版本「整体内容主题」上限，控制返回体 token */
     private static final int MAX_SCOPE_THEMES = 12;
 
+    /** 本周排期需求「功能描述」摘要长度上限(字)：本周排期需求通常 <30 条，给足归纳素材 */
+    private static final int MAX_WEEK_DESC_LEN = 180;
+
+    /** 「一级>二级>三级」功能路径长度上限(字) */
+    private static final int MAX_FEATURE_PATH_LEN = 40;
+
+    /** 版本整体内容「功能描述」摘要长度上限(字) */
+    private static final int MAX_SCOPE_DESC_LEN = 70;
+
+    /** 单版本「整体内容描述素材」主题数上限，控制返回体 token */
+    private static final int MAX_SCOPE_DESC_ITEMS = 6;
+
+    /** 每个主题下保留的功能路径条目数上限（同一路径只取信息量最大的一条描述） */
+    private static final int MAX_SCOPE_ITEMS_PER_THEME = 2;
+
     /**
      * 获取按月份聚焦的项目进度汇总
      *
@@ -183,9 +198,12 @@ public class ProjectAnalyticsService {
 
     /**
      * 获取本周(周一~周日, 北京时间)项目周报汇总。
-     * 两个关键口径严格分离，供 AI 分别写"本周主要完成"与"主要包括"：
-     * 1) weekCompletedFeatures / weekOngoingFeatures：仅来自 pm_dev_schedule 落在[本周一,本周日]的排期需求；
-     * 2) scopeThemes：该版本全部需求按模块·一级功能聚合的内容主题(不限本周排期)。
+     * 结构口径与归纳素材口径严格分离，供 AI 分别写"本周主要工作"与"主要包括"：
+     * 1) weekCompletedFeatures / weekOngoingFeatures：仅来自 pm_dev_schedule 落在[本周一,本周日]的排期需求，
+     *    用于判定"本周有无排期/是否转测"及结构，不再作为正文的功能点清单；
+     * 2) weekFeatures[].featurePath + description：本周排期需求的「一级>二级>三级功能路径 + 功能描述摘要」，供 AI 归纳"本周主要工作"；
+     * 3) scopeThemes：该版本全部需求按模块·一级功能聚合的内容主题(不限本周排期)；
+     * 4) scopeDescriptions：该版本全部需求按主题分组、再按功能路径聚合的「功能路径 + 功能描述」，供 AI 归纳"主要包括"。
      * 返回各迭代版本进度 + 进行中需求明细(进度<100%, 上限150) + 下周计划, 从源头压低 token 消耗。
      *
      * @return 紧凑的周报视图
@@ -296,6 +314,8 @@ public class ProjectAnalyticsService {
                     String fname = featureName(r);
                     weekFeatures.add(new WeeklyReportVO.WeekFeature()
                             .setFeatureName(fname)
+                            .setFeaturePath(featurePath(r))
+                            .setDescription(cleanDescription(r.getFeatureDescription(), MAX_WEEK_DESC_LEN))
                             .setTransferredToTest(isTransferredToTest(r))
                             .setProgress(prog));
                     boolean finished = prog >= 100 || isTransferredToTest(r);
@@ -308,14 +328,17 @@ public class ProjectAnalyticsService {
                     }
                 }
             }
-            // 本周功能点按涉及工时(功能点粒度近似用进度无关, 这里按出现顺序即可)——为控制 token, 单版本上限 40 个
-            final int MAX_FEAT = 40;
+            // 本周功能点按出现顺序保留——每条现带功能描述摘要(最多180字), 为控制 token 单版本上限 24 个
+            final int MAX_FEAT = 24;
             if (weekFeatures.size() > MAX_FEAT) {
                 weekFeatures = new ArrayList<>(weekFeatures.subList(0, MAX_FEAT));
             }
             // 「主要包括」用的是整个版本的内容(全部需求按模块·一级功能聚合), 与本周排期无关，
             // 避免周报里出现"本周主要完成X，主要包括X"这种同义反复。
             List<String> scopeThemes = buildScopeThemes(inIter);
+            // 「主要包括」的归纳素材：按主题取功能描述代表，让 AI 依据"做了什么"归纳方向，
+            // 而不是把 scopeThemes 的 模块·一级功能 去掉点号后罗列一遍
+            List<String> scopeDescriptions = buildScopeDescriptions(inIter);
             double rate = total == 0 ? 0d : Math.round((double) done / total * 100.0) / 100.0;
             iterVOs.add(new WeeklyReportVO.IterationWeekly()
                     .setId(it.getId())
@@ -332,6 +355,7 @@ public class ProjectAnalyticsService {
                     .setWeekCompletedFeatures(new ArrayList<>(weekCompleted))
                     .setWeekOngoingFeatures(new ArrayList<>(weekOngoing))
                     .setScopeThemes(scopeThemes)
+                    .setScopeDescriptions(scopeDescriptions)
                     .setWeekWorkload(weekWorkload));
         }
 
@@ -514,14 +538,7 @@ public class ProjectAnalyticsService {
     private List<String> buildScopeThemes(List<PmRequirement> inIter) {
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (PmRequirement r : inIter) {
-            String module = cleanFeatureSegment(r.getModule());
-            String level = firstValidLevel(r.getLevel1Feature(), r.getLevel2Feature(), r.getLevel3Feature());
-            String theme;
-            if (module != null && level != null && !module.equals(level)) {
-                theme = module + "·" + level;
-            } else {
-                theme = module != null ? module : level;
-            }
+            String theme = themeKey(r);
             if (theme != null) {
                 counts.merge(theme, 1, Integer::sum);
             }
@@ -534,6 +551,96 @@ public class ProjectAnalyticsService {
                     return t.length() > 24 ? t.substring(0, 24) + "…" : t;
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 「主要包括」的归纳素材：按「模块·一级功能」主题分组，每组再按
+     * 「一级&gt;二级&gt;三级」功能路径去重（同路径取信息量最大的一条描述），
+     * 取前 MAX_SCOPE_ITEMS_PER_THEME 条，格式
+     * "主题｜功能路径：描述摘要；功能路径：描述摘要…"。
+     * 这样 AI 同时拿到**功能层级结构**与**实际做了什么**，才能归纳出方向，
+     * 而不是把 theme / 短名去掉符号后罗列。
+     */
+    private List<String> buildScopeDescriptions(List<PmRequirement> inIter) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        // 主题 -> (功能路径 -> 该路径下信息量最大的功能描述摘要)
+        Map<String, Map<String, String>> descByPath = new LinkedHashMap<>();
+        for (PmRequirement r : inIter) {
+            String theme = themeKey(r);
+            if (theme == null) {
+                continue;
+            }
+            counts.merge(theme, 1, Integer::sum);
+            String desc = cleanDescription(r.getFeatureDescription(), MAX_SCOPE_DESC_LEN);
+            if (desc.isEmpty()) {
+                continue;
+            }
+            descByPath.computeIfAbsent(theme, k -> new LinkedHashMap<>())
+                    .merge(featurePath(r), desc, (a, b) -> a.length() >= b.length() ? a : b);
+        }
+        return counts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .filter(t -> descByPath.containsKey(t) && !descByPath.get(t).isEmpty())
+                .limit(MAX_SCOPE_DESC_ITEMS)
+                .map(t -> {
+                    String body = descByPath.get(t).entrySet().stream()
+                            .limit(MAX_SCOPE_ITEMS_PER_THEME)
+                            .map(e -> e.getKey().isEmpty() ? e.getValue() : e.getKey() + "：" + e.getValue())
+                            .collect(Collectors.joining("；"));
+                    return t + "｜" + body;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 功能路径「一级&gt;二级&gt;三级」：逐级去噪（跳过 "/" 占位、纯动作词、--数字定制 噪声），
+     * 相邻重复层级去重。供 AI 归纳时判断能力归属，用 "&gt;" 而非 "/" 连接，
+     * 避免与数据里本身含斜杠的二级功能名（如 "应用/智能体/模型监控日志"）混淆。
+     */
+    private String featurePath(PmRequirement r) {
+        List<String> segs = new ArrayList<>();
+        for (String lv : new String[]{r.getLevel1Feature(), r.getLevel2Feature(), r.getLevel3Feature()}) {
+            String s = cleanFeatureSegment(lv);
+            if (s != null && (segs.isEmpty() || !s.equals(segs.get(segs.size() - 1)))) {
+                segs.add(s);
+            }
+        }
+        if (segs.isEmpty()) {
+            return "";
+        }
+        String path = String.join(">", segs);
+        return path.length() > MAX_FEATURE_PATH_LEN
+                ? path.substring(0, MAX_FEATURE_PATH_LEN) + "…" : path;
+    }
+
+    /** 主题键：模块·一级功能（与 buildScopeThemes 共用，保证两套口径顺序一致） */
+    private String themeKey(PmRequirement r) {
+        String module = cleanFeatureSegment(r.getModule());
+        String level = firstValidLevel(r.getLevel1Feature(), r.getLevel2Feature(), r.getLevel3Feature());
+        if (module != null && level != null && !module.equals(level)) {
+            return module + "·" + level;
+        }
+        return module != null ? module : level;
+    }
+
+    /**
+     * 功能描述清洗：压平真实换行与字面 "\n"、压缩连续空白，再按 maxLen 截断。
+     * 保留 "1. / 1.1" 等条目编号（AI 归纳时可自行忽略），不强行剥离以免误伤
+     * "1.3.8版本""30个字符" 这类内容中的数字。
+     */
+    private String cleanDescription(String raw, int maxLen) {
+        if (raw == null) {
+            return "";
+        }
+        String s = raw.replace("\\n", " ").replace('\n', ' ').replace('\r', ' ')
+                .replaceAll("[\\t\\u00A0]+", " ")
+                .replaceAll("\\s{2,}", " ")
+                .trim();
+        if (s.isEmpty()) {
+            return "";
+        }
+        return s.length() > maxLen ? s.substring(0, maxLen) + "…" : s;
     }
 
     /** 取第一个有效层级(一级→二级→三级)：某级的 "/" 占位会自动跳过并降级取下一层 */
