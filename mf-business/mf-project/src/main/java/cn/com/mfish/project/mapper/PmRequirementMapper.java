@@ -87,6 +87,16 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
     PmRequirement selectByIdIncludeDeleted(@Param("id") String id);
 
     /**
+     * 按主键查询 PRD 详细文档(含已逻辑删除 del_flag=1 的行): 供回收站查看已删除需求的详细文档。
+     * 自定义 @Select 不走 @TableLogic 自动过滤(del_flag=0)，否则回收站内的需求永远查不到；
+     * 显式带 tenant_id 防止跨租户读取；仅取文档相关字段，避免拉取大宽表。
+     */
+    @Select("SELECT id, req_no, module, level1_feature, level2_feature, prd_doc_content, "
+            + "doc_last_modified, doc_author FROM pm_requirement "
+            + "WHERE id = #{id} AND tenant_id = #{tenantId}")
+    PmRequirement selectDocByIdIncludeDeleted(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    /**
      * 从回收站恢复需求: 将 del_flag 置回 0(原生 UPDATE, 否则 @TableLogic 会自动追加 del_flag=0 条件导致 0 行受影响)
      * 带 del_flag=1 条件防并发重复恢复; 记录恢复操作人与时间
      */

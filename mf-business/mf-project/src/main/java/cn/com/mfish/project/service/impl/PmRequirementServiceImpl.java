@@ -474,6 +474,11 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 .eq(PmRequirement::getId, id)
                 .one();
         if (requirement == null) {
+            // 回收站内已逻辑删除(del_flag=1)的需求会被 @TableLogic 从上面的查询中过滤掉，
+            // 改走自定义 @Select 绕过逻辑删除(显式带 tenant_id 防跨租户)，供回收站只读查看详细文档。
+            requirement = baseMapper.selectDocByIdIncludeDeleted(id, AuthInfoUtils.getCurrentTenantId());
+        }
+        if (requirement == null) {
             return Result.fail("错误:未找到需求 " + id);
         }
         return Result.ok(requirement, "获取需求 #" + requirement.getReqNo() + " 文档成功!");
@@ -776,27 +781,38 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         }
         List<PmRequirement> targets = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ids));
         Date now = new Date();
+        String operator = safeGetCurrentUser();
         for (PmRequirement req : targets) {
-            PmRequirement update = new PmRequirement();
-            update.setId(req.getId());
             if (node == null) {
-                update.setTestNodeId("");
-                update.setTestNodeName("");
-                update.setTestNodeDate(null);
+                // 解绑：MyBatis-Plus 默认 NOT_NULL 策略下 updateById 会**跳过 null 字段**，
+                // 若只用实体 setTestNodeDate(null)，日期会残留在库里，列表「转测节点与时间」列
+                // 因 testNodeDate 仍有值而继续显示旧绑定。必须用 UpdateWrapper 显式 SET ... = NULL，
+                // 同时清掉绑定分支会写入的 testPhase，保证解绑后四个字段全部干净。
+                update(new LambdaUpdateWrapper<PmRequirement>()
+                        .eq(PmRequirement::getId, req.getId())
+                        .set(PmRequirement::getTestNodeId, null)
+                        .set(PmRequirement::getTestNodeName, null)
+                        .set(PmRequirement::getTestNodeDate, null)
+                        .set(PmRequirement::getTestPhase, null)
+                        .set(PmRequirement::getUpdateBy, operator)
+                        .set(PmRequirement::getUpdateTime, now));
             } else {
+                PmRequirement update = new PmRequirement();
+                update.setId(req.getId());
                 update.setTestNodeId(node.getId());
                 update.setTestNodeName(node.getName());
                 update.setTestNodeDate(node.getNodeDate());
                 update.setTestPhase(node.getName());
+                update.setUpdateBy(operator);
+                update.setUpdateTime(now);
+                updateById(update);
             }
-            update.setUpdateBy(safeGetCurrentUser());
-            update.setUpdateTime(now);
-            updateById(update);
             recordHistory(req, "BATCH", null, null, null, req.getTestNodeId(), node == null ? "" : node.getId(),
                     "需求 #" + req.getReqNo() + " 绑定转测节点【" + (node == null ? "解绑" : node.getName()) + "】");
         }
-        return Result.ok(targets.size(), "已成功将 " + targets.size() + " 项需求批量绑定至【"
-                + (node == null ? "解绑" : node.getName()) + "】!");
+        return node == null
+                ? Result.ok(targets.size(), "已成功取消 " + targets.size() + " 项需求的转测节点绑定!")
+                : Result.ok(targets.size(), "已成功将 " + targets.size() + " 项需求批量绑定至【" + node.getName() + "】!");
     }
 
     @Override
