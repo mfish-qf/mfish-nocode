@@ -433,6 +433,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (exist == null || !AuthInfoUtils.getCurrentTenantId().equals(exist.getTenantId())) {
             throw new MyRuntimeException("错误:需求不存在!");
         }
+        stampDeleteAudit(List.of(id));
         if (removeById(id)) {
             deleteScheduleRows(List.of(id));
             recordHistory(exist, "DELETE", null, null, null, exist.getStatus(), null, "删除需求 #" + exist.getReqNo());
@@ -452,15 +453,38 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         if (ownIds.isEmpty()) {
             return Result.ok(true, "未命中本租户需求, 无数据可删除!");
         }
+        // 逻辑删除前先取快照：removeByIds 之后 @TableLogic 会过滤掉这些行，list 查不到，
+        // 原实现把 list 放在删除后导致批量删除的 DELETE 审计记录全部丢失，一并修正。
+        List<PmRequirement> removed = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ownIds));
+        stampDeleteAudit(ownIds);
         if (removeByIds(ownIds)) {
             deleteScheduleRows(ownIds);
-            List<PmRequirement> removed = list(new LambdaQueryWrapper<PmRequirement>().in(PmRequirement::getId, ownIds));
             for (PmRequirement req : removed) {
                 recordHistory(req, "DELETE", null, null, null, req.getStatus(), null, "批量删除需求 #" + req.getReqNo());
             }
             return Result.ok(true, "已成功批量删除 " + ownIds.size() + " 项需求!");
         }
         return Result.fail(false, "错误:需求-批量删除失败!");
+    }
+
+    /**
+     * 逻辑删除前写入操作人与时间。
+     * MP 的 removeById/removeByIds 只执行 SET del_flag=1，而 BaseEntity 的 updateBy/updateTime
+     * 没有自动填充（edit 里是手动 set 的），不显式写会让回收站「删除信息」显示
+     * 「未知操作人 / 时间未知」。优先写当前用户姓名，远程用户服务不可用时回退账号/用户ID。
+     */
+    private void stampDeleteAudit(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        String operator = resolveCurrentUserName();
+        if (StringUtils.isEmpty(operator)) {
+            operator = safeGetCurrentUser();
+        }
+        update(new LambdaUpdateWrapper<PmRequirement>()
+                .in(PmRequirement::getId, ids)
+                .set(PmRequirement::getUpdateBy, operator)
+                .set(PmRequirement::getUpdateTime, new Date()));
     }
 
     @Override

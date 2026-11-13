@@ -72,7 +72,16 @@ public interface PmRequirementMapper extends BaseMapper<PmRequirement> {
             + "workload, frontend_workload, backend_workload, "
             + SCHEDULE_RANGE_COLUMNS
             + "dev_progress, test_phase, test_node_id, test_node_name, test_node_date, status, doc_last_modified, "
-            + "doc_author, create_by, create_time, update_by, update_time, del_flag, "
+            + "doc_author, create_by, create_time, "
+            // 历史数据删除时未写 update_by/update_time(逻辑删除只置 del_flag)，用最新一条 DELETE 审计日志兜底，
+            // 避免回收站「删除信息」显示「未知操作人 / 时间未知」。新数据以主表实写值为准。
+            + "COALESCE(pm_requirement.update_by, (SELECT h.create_by FROM pm_requirement_history h "
+            + "  WHERE h.req_id = pm_requirement.id AND h.action_type = 'DELETE' "
+            + "  ORDER BY h.create_time DESC, h.id DESC LIMIT 1)) AS update_by, "
+            + "COALESCE(pm_requirement.update_time, (SELECT h.create_time FROM pm_requirement_history h "
+            + "  WHERE h.req_id = pm_requirement.id AND h.action_type = 'DELETE' "
+            + "  ORDER BY h.create_time DESC, h.id DESC LIMIT 1)) AS update_time, "
+            + "del_flag, "
             + "CASE WHEN prd_doc_content IS NOT NULL AND CHAR_LENGTH(prd_doc_content) > 0 THEN 1 ELSE 0 END AS has_prd_doc "
             + "FROM pm_requirement "
             + "WHERE del_flag = 1 "
