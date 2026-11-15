@@ -53,8 +53,21 @@ public class AuthorizationAspect {
             return joinPoint.proceed();
         }
 
+        // ★ 同步(Servlet)路径：权限校验必须先于业务执行。
+        //   旧实现无条件先 joinPoint.proceed() 再 checkAuthorization()，无权限时抛异常也拦不住写入：
+        //   业务已提交、Service 层事务早已结束，异常只把响应改成失败，数据却真的落库了
+        //   （典型症状：无 project:requirement:insert 权限的账号经 AI 工具调用仍能创建需求）。
+        //   用方法声明的返回类型判断是否响应式，避免为了判断类型而提前执行同步业务。
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Class<?> returnType = signature.getMethod().getReturnType();
+        boolean reactive = Mono.class.isAssignableFrom(returnType) || Flux.class.isAssignableFrom(returnType);
+        if (!reactive) {
+            checkAuthorization(joinPoint);
+            return joinPoint.proceed();
+        }
+
         Object result = joinPoint.proceed();
-        // 响应式返回值：将权限校验推迟到boundedElastic线程执行
+        // 响应式返回值：proceed() 只构建 Mono/Flux、尚未触发业务；将权限校验推迟到boundedElastic线程执行
         // 关键：用defer而非fromCallable+then，确保权限校验与业务Mono在同一个subscribeOn调度内执行
         // .then()会在上游Mono完成后才订阅下游，此时wrapper的finally已清理dataScope，导致断链
         // defer在订阅时同步执行lambda，权限校验和业务Mono订阅在同一个wrapper.run()内完成，finally不会在中间执行
