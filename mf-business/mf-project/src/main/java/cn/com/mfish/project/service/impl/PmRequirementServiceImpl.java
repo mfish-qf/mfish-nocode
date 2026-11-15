@@ -50,10 +50,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -1200,8 +1202,13 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         Map<String, Map<LocalDate, BigDecimal>> personDayUsage = new HashMap<>();
         // 预填历史排期占用(优先读排期明细表 pm_dev_schedule 的按人占用, 无明细的历史需求按需求级区间兜底)
         prefillPersonBusyDates(targets, config, personDayUsage);
-        // 目标任务已有排期明细中的钉住行: 重算时日期保持不动, 仅登记占用
+        // 目标任务已有排期明细中的钉住行
         Map<String, Map<String, PmDevSchedule>> pinnedByReq = loadPinnedRowsByReq(targets);
+        // ★ 钉住行必须先于所有普通任务装箱: 保持其开始日不动, 结束日按工时容量重算。
+        //   旧实现「原样保留钉住行整段区间」, 会把拖拽时被拉长的畸形周期(1 人天挂 7 个工作日)
+        //   原封不动带进重算结果, 并按工时均摊成每天 0.14 人天的幽灵占用, 越算越散。
+        //   与拖拽 adjust 同一口径后, 一键重算即可把碎片周期收敛回工时对应的合理长度。
+        schedulePinnedRows(pinnedByReq, config, personDayUsage);
         List<PmRequirement> updatedList = new ArrayList<>();
         // 本次重建后的排期明细(含钉住行): 随响应返回, 前端无需再查一次明细接口
         List<PmDevSchedule> scheduleRows = new ArrayList<>();
@@ -1250,7 +1257,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 taskStartDate = rows.stream().map(r -> toLocalDate(r.getDevStartDate())).min(LocalDate::compareTo).orElse(versionStartDate);
                 taskEndDate = rows.stream().map(r -> toLocalDate(r.getDevEndDate())).max(LocalDate::compareTo).orElse(taskStartDate);
             }
-            // 持久化新排期: 只写排期明细(钉住行原样保留, 其余删除后按人重建)。
+            // 持久化新排期: 只写排期明细(钉住行保留开始日并按工时重算周期, 其余删除后按人重建)。
             // 需求表已无日期列，整体区间由 pm_dev_schedule 的 MIN/MAX 关联查询得出。
             replaceScheduleRows(req.getId(), rows);
             scheduleRows.addAll(rows);
@@ -1272,12 +1279,16 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             scheduledPersons.addAll(personsOf(req));
         }
         reassignSeq(scheduledPersons);
+        // ★ 一键重算会物理删除重建非钉住行、并清空钉住行说明, 旧实现从不重算 remark,
+        //   导致重算后「周期因其它任务挤占而拉长」的提示全部消失(2026-11-15 用户实测)。
+        //   在全部需求装箱完成后按最终区间统一重算, 口径与拖拽 adjust §5 完全一致。
+        refreshScheduleRemarks(scheduleRows, config);
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("scheduledCount", targets.size());
         result.put("updatedList", updatedList);
         result.put("scheduleRows", scheduleRows);
         return Result.ok(result, "⚡ 已按人员工作量逐日装箱并生成排期明细 " + targets.size()
-                + " 项需求(前后端各自独立起算, 钉住任务保持不动, 可一键重算)!");
+                + " 项需求(前后端各自独立起算, 钉住任务保持开始日并按工时重算周期)!");
     }
 
     // ==================== 回收站(逻辑删除需求的恢复与彻底删除) ====================
@@ -1572,7 +1583,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 单个人员任务装箱: 钉住行日期保持不动(仅按工时登记占用),
+     * 单个人员任务装箱: 钉住行保持开始日、结束日已在 schedulePinnedRows 按工时容量重算,
      * 其余从该人员最早可行日起做容量装箱——每人每天容量 1 人天,
      * 工时不足 1 天的任务优先填入当天剩余容量(多个小任务可共享同一天), 当天装不下才顺延
      */
@@ -1585,12 +1596,8 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         String identity = PersonnelIdUtils.identityKey(personId, person);
         PmDevSchedule pin = pinned.get(identity + "|" + role);
         if (pin != null) {
-            LocalDate pinStart = toLocalDate(pin.getDevStartDate());
-            LocalDate pinEnd = toLocalDate(pin.getDevEndDate());
-            if (pinEnd != null && !pinEnd.isBefore(pinStart)) {
-                BigDecimal pinLoad = positiveWorkload(pin.getWorkload()) != null ? pin.getWorkload() : workload;
-                spreadRowLoad(identity, pinStart, pinEnd, pinLoad, config, personDayUsage);
-            }
+            // 钉住行已在 schedulePinnedRows 中完成「固定开始日 + 容量装箱重算结束日」并登记占用,
+            // 此处直接带上新区间即可, 不再重复登记(否则当天容量被双倍占用、误伤其它任务的共享)。
             pin.setReqNo(req.getReqNo());
             pin.setIterationId(req.getIterationId());
             rows.add(pin);
@@ -1647,6 +1654,182 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
+     * 装箱前优先处理目标范围内所有钉住行: **开始日保持钉住, 结束日按工时容量重算**。
+     * <p>
+     * 与拖拽 {@code PmDevScheduleServiceImpl#adjust} 同一口径: 钉住只钉「开始日」, 不钉整段周期。
+     * 每人每天 1 人天, 从锚定日起逐有效工作日吃掉剩余产能直到工时耗尽, 得到紧凑结束日并登记占用,
+     * 让其它同人员需求在随后的装箱中主动避开。按 (人员, 锚定日) 分组升序处理(先钉的先占),
+     * 同组多个钉住任务按剩余工时比例分摊当天产能, 保证同一人同一天总消耗不超过 1 人天。
+     * <p>
+     * 这样一键重算能把拖拽产生的碎片周期(如 1 人天挂 7 个工作日)收敛回工时对应的合理长度,
+     * 同时保持用户明确钉住的开始日不变, 与拖拽结果互相自洽。
+     */
+    private void schedulePinnedRows(Map<String, Map<String, PmDevSchedule>> pinnedByReq,
+                                    ScheduleConfigDTO config,
+                                    Map<String, Map<LocalDate, BigDecimal>> personDayUsage) {
+        // ★ 分组 key = (人员身份键, 钉住开始日): 同一人同一天钉住的多个任务必须按比例分摊当天产能,
+        //   与拖拽 adjust 的 pinnedGroups 完全同口径。旧实现逐行调用 applyPinnedLoad、每行都把锚定日
+        //   「强制满容量」, 导致 #4/#2429 两个 1 人天任务都排在 11-03 且各记 1.0 人天 → 当天 2.0 人天,
+        //   一键重算出现 192 个窗口违反 Hall 容量条件(2026-11-15 实测)。
+        Map<String, Map<LocalDate, List<PmDevSchedule>>> groups = new TreeMap<>();
+        for (Map<String, PmDevSchedule> byRole : pinnedByReq.values()) {
+            for (PmDevSchedule pin : byRole.values()) {
+                LocalDate anchor = toLocalDate(pin.getDevStartDate());
+                if (anchor == null) {
+                    continue;
+                }
+                String identity = PersonnelIdUtils.identityKey(pin.getPersonId(), pin.getPersonName());
+                groups.computeIfAbsent(identity, k -> new TreeMap<>())
+                        .computeIfAbsent(anchor, k -> new ArrayList<>()).add(pin);
+            }
+        }
+        BigDecimal tiny = new BigDecimal("0.000001");
+        for (Map.Entry<String, Map<LocalDate, List<PmDevSchedule>>> byPerson : groups.entrySet()) {
+            Map<LocalDate, BigDecimal> usage = personDayUsage
+                    .computeIfAbsent(byPerson.getKey(), k -> new HashMap<>());
+            for (Map.Entry<LocalDate, List<PmDevSchedule>> group : byPerson.getValue().entrySet()) {
+                LocalDate first = ScheduleDateUtils.getWorkdayStartDate(group.getKey(), config);
+                List<PmDevSchedule> pins = group.getValue();
+                Map<String, BigDecimal> remaining = new LinkedHashMap<>();
+                for (PmDevSchedule pin : pins) {
+                    remaining.put(pin.getId(), positiveWorkload(pin.getWorkload()) != null
+                            ? pin.getWorkload() : BigDecimal.ONE);
+                }
+                Map<String, LocalDate> ends = new HashMap<>();
+                LocalDate cursor = first;
+                LocalDate limit = first.plusYears(3);
+                while (!cursor.isAfter(limit)) {
+                    boolean allDone = true;
+                    for (BigDecimal rem : remaining.values()) {
+                        if (rem.compareTo(tiny) > 0) {
+                            allDone = false;
+                            break;
+                        }
+                    }
+                    if (allDone) {
+                        break;
+                    }
+                    if (!ScheduleDateUtils.isDateSkipped(cursor, config)) {
+                        // ★ 与拖拽 adjust 同口径: 锚定日也按当天剩余容量分配, 不再强制满容量 1.0
+                        //   (否则已有 prefill 占用的钉住日会凭空多出人天, 造成 Hall 容量违规)。
+                        //   钉住行的开始日仍固定为 first, 拿不满时结束日顺延, 不挤占别人产能。
+                        BigDecimal free = BigDecimal.ONE
+                                .subtract(usage.getOrDefault(cursor, BigDecimal.ZERO)).max(BigDecimal.ZERO);
+                        if (free.compareTo(BigDecimal.ZERO) > 0) {
+                            BigDecimal total = BigDecimal.ZERO;
+                            for (BigDecimal rem : remaining.values()) {
+                                if (rem.compareTo(tiny) > 0) {
+                                    total = total.add(rem.min(BigDecimal.ONE));
+                                }
+                            }
+                            for (PmDevSchedule pin : pins) {
+                                BigDecimal rem = remaining.get(pin.getId());
+                                if (rem == null || rem.compareTo(tiny) <= 0) {
+                                    continue;
+                                }
+                                BigDecimal want = rem.min(BigDecimal.ONE);
+                                BigDecimal take = total.compareTo(free) <= 0
+                                        ? want
+                                        : free.multiply(want).divide(total, 6, RoundingMode.HALF_UP);
+                                BigDecimal left = rem.subtract(take).max(BigDecimal.ZERO);
+                                remaining.put(pin.getId(), left);
+                                if (left.compareTo(tiny) <= 0) {
+                                    ends.put(pin.getId(), cursor);
+                                }
+                            }
+                            usage.merge(cursor, total.min(free), BigDecimal::add);
+                        }
+                    }
+                    cursor = cursor.plusDays(1);
+                }
+                for (PmDevSchedule pin : pins) {
+                    pin.setDevStartDate(toDate(first));
+                    pin.setDevEndDate(toDate(ends.getOrDefault(pin.getId(), cursor)));
+                    // 周期已按工时重算, 旧说明统一由 refreshScheduleRemarks 覆盖
+                    pin.setRemark(null);
+                }
+            }
+        }
+    }
+
+    /**
+     * 按最终区间重算「周期被挤占拉长」说明(与拖拽 adjust §5 同口径)。
+     * <p>
+     * 判定基准是 {@code ceil(workload)} 而非表中区间跨度; 跨度超基准时写出并行任务名单,
+     * 回到基准则显式 {@code set(remark, null)} 清掉旧说明(MP updateById 会跳过实体里的 null,
+     * 必须用 Wrapper)。伙伴只在「同一人员身份键 + 区间有公共有效工作日」中选取, 避免跨人员误报。
+     * 结果同时回写内存对象, 保证响应里的 {@code scheduleRows} 立即带上新说明。
+     */
+    private void refreshScheduleRemarks(List<PmDevSchedule> rows, ScheduleConfigDTO config) {
+        Map<String, Set<LocalDate>> daySets = new HashMap<>();
+        Map<String, String> identityOf = new HashMap<>();
+        for (PmDevSchedule r : rows) {
+            if (r.getId() == null || r.getDevStartDate() == null || r.getDevEndDate() == null) {
+                continue;
+            }
+            LocalDate s = toLocalDate(r.getDevStartDate());
+            LocalDate e = toLocalDate(r.getDevEndDate());
+            if (s == null || e == null || e.isBefore(s)) {
+                continue;
+            }
+            Set<LocalDate> ds = new HashSet<>();
+            LocalDate d = ScheduleDateUtils.getWorkdayStartDate(s, config);
+            for (int guard = 0; !d.isAfter(e) && guard < 4000; guard++) {
+                ds.add(d);
+                d = ScheduleDateUtils.getNextWorkday(d, config);
+            }
+            if (ds.isEmpty()) {
+                continue;
+            }
+            daySets.put(r.getId(), ds);
+            identityOf.put(r.getId(), PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()));
+        }
+        for (PmDevSchedule r : rows) {
+            String id = r.getId();
+            Set<LocalDate> own = id == null ? null : daySets.get(id);
+            if (own == null) {
+                continue;
+            }
+            BigDecimal load = positiveWorkload(r.getWorkload()) != null
+                    ? r.getWorkload() : BigDecimal.ONE;
+            int needDays = Math.max(1, (int) Math.ceil(load.doubleValue() - 1e-9));
+            String remark = null;
+            if (own.size() > needDays) {
+                Set<String> partners = new LinkedHashSet<>();
+                for (PmDevSchedule other : rows) {
+                    if (Objects.equals(other.getId(), id)) {
+                        continue;
+                    }
+                    Set<LocalDate> otherDays = other.getId() == null ? null : daySets.get(other.getId());
+                    if (otherDays == null
+                            || !Objects.equals(identityOf.get(id), identityOf.get(other.getId()))) {
+                        continue;
+                    }
+                    boolean overlap = false;
+                    for (LocalDate d : own) {
+                        if (otherDays.contains(d)) {
+                            overlap = true;
+                            break;
+                        }
+                    }
+                    if (overlap) {
+                        partners.add(other.getReqNo() == null ? other.getId() : "#" + other.getReqNo());
+                    }
+                }
+                remark = String.format(
+                        "周期拉长：与 %s 挤占同一时间段，多任务并行分摊每日产能导致本任务被撑长"
+                                + "（按工时 %.1f 人天本应 %d 个工作日，实际跨度 %d 个工作日）",
+                        partners.isEmpty() ? "其它并行任务" : String.join("、", partners),
+                        load.doubleValue(), needDays, own.size());
+            }
+            devScheduleMapper.update(null, new LambdaUpdateWrapper<PmDevSchedule>()
+                    .eq(PmDevSchedule::getId, id)
+                    .set(PmDevSchedule::getRemark, remark));
+            r.setRemark(remark);
+        }
+    }
+
+    /**
      * 替换某需求的排期明细: 带 ID 的行为钉住保留行(更新), 其余旧行物理删除, 新行插入
      */
     private void replaceScheduleRows(String reqId, List<PmDevSchedule> rows) {
@@ -1672,6 +1855,7 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
                 row.setUpdateBy(currentUser);
                 row.setUpdateTime(now);
                 devScheduleMapper.updateById(row);
+                // remark 统一由主循环后的 refreshScheduleRemarks 按最终区间重算并显式 set(含清 null)
             } else {
                 row.setCreateBy(currentUser);
                 row.setCreateTime(now);

@@ -35,8 +35,12 @@ public interface PmDevScheduleService extends IService<PmDevSchedule> {
     Result<List<PmDevSchedule>> listBySelection(List<String> iterationIds, Boolean includeUnassigned);
 
     /**
-     * 拖拽调期: 更新任务开始日并按工时重算完成日
-     * 自动钉住该行(避免被一键重算覆盖)；与本人其他任务工期重叠时拒绝
+     * 拖拽调期(钉住开始日 + 按工时容量逐任务装箱, 与 autoSchedule 同一口径):
+     * workload 决定区间长度基准, 表中 dev_start_date/dev_end_date 决定锚点/影响窗口/展示顺序。
+     * 每人每天 1 人天; 钉住任务(含被拖任务)按锚定日分组优先装箱, 同日锚定的按剩余工时比例分摊;
+     * 窗口内未钉住任务按原开始日顺序找最早可行日再逐日吃掉剩余产能(等长即互换、满载日顺延),
+     * 窗口外任务日期不动、占用按工时均摊登记。区间 = 首获产能日 ~ 工时耗尽日, 可还原/幂等。
+     * 同日多任务分摊导致区间被撑长的写入 remark「多任务挤占导致周期拉长」供 tooltip 展示。
      *
      * @param req 调期参数(排期明细ID + 新开始日)
      * @return 更新后的排期明细
@@ -44,7 +48,7 @@ public interface PmDevScheduleService extends IService<PmDevSchedule> {
     Result<PmDevSchedule> adjust(ReqDevScheduleAdjust req);
 
     /**
-     * 钉住/取消钉住某条排期(钉住后一键重算保持不动)
+     * 钉住/取消钉住某条排期(钉住的是开始日: 一键重算时保持开始日不动, 结束日按工时容量重算)
      *
      * @param req 钉住参数
      * @return 更新后的排期明细

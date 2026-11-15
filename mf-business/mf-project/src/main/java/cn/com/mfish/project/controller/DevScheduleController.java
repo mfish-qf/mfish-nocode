@@ -58,11 +58,14 @@ public class DevScheduleController {
     }
 
     /**
-     * 拖拽调期: 更新任务开始日并按工时重算完成日, 自动钉住
+     * 拖拽调期(钉住开始日 + 按工时容量逐任务装箱, 与一键重算同一口径):
+     * workload 决定区间长度基准, 表中起止日期决定锚点/影响窗口; 被拖任务钉在松手位置,
+     * 钉住任务按锚定日分组优先装箱, 窗口内未钉住任务按原顺序找最早可行日再逐日吃掉剩余产能
+     * (等长互换、满载日顺延, 不再切成碎片); 窗口外占用按工时均摊; 拖回可还原/幂等
      */
     @Log(title = "排期明细-拖拽调期", operateType = OperateType.UPDATE)
-    @Operation(summary = "排期明细-拖拽调期", description = "与本人其他任务重叠时拒绝; 调期后自动钉住")
-    // 拖拽调期内部的 hasOverlap 按 person_name 查"同人员其他排期", 必须限定租户,
+    @Operation(summary = "排期明细-拖拽调期", description = "钉住开始日+工时容量装箱: 等长互换、多任务挤占周期拉长记录原因、拖回可还原, 与一键重算同口径")
+    // 拖拽调期内部按 person_id/person_name 查"同人员其他排期", 必须限定租户,
     // 否则会跨租户读到同名人员造成误判/泄漏(tenant_id 字段在此路径此前未生效)
     @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
     @PutMapping("/adjust")
@@ -75,7 +78,7 @@ public class DevScheduleController {
      * 钉住/取消钉住某条排期
      */
     @Log(title = "排期明细-钉住切换", operateType = OperateType.UPDATE)
-    @Operation(summary = "排期明细-钉住/取消钉住", description = "钉住后一键重算保持不动")
+    @Operation(summary = "排期明细-钉住/取消钉住", description = "钉住的是开始日: 一键重算保持开始日不动, 结束日按工时容量重算")
     // 与 adjust 保持一致: 该路径同样可能扩展按 person_name 的查询, 统一加租户隔离防御
     @DataScope(table = "pm_dev_schedule", type = DataScopeType.Tenant)
     @PutMapping("/pin")

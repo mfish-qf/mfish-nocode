@@ -63,6 +63,6 @@ public class PmDevSchedule extends BaseEntity<String> {
     private Boolean isPinned;
     @Schema(description = "钉住原因/备注(拖拽调期时自动记录)")
     private String pinReason;
-    @Schema(description = "备注")
+    @Schema(description = "备注(多任务挤占导致周期拉长时记录原因与并行任务, 还原后清空)")
     private String remark;
 }
