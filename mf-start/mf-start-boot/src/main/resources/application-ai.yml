@@ -1,8 +1,8 @@
 spring:
   ai:
     openai:
-      api-key: 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
-      base-url: https://integrate.api.nvidia.com/v1
+      api-key: sk-or-v1-b49*****************************************135dae3b
+      base-url: https://openrouter.ai/api
       chat:
         max-tokens: 1000
         temperature: 0.7
