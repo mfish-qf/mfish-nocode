@@ -22,6 +22,7 @@
         <module>mf-start-nocode</module>
         <module>mf-start-ai</module>
         <module>mf-start-workflow</module>
+        <module>mf-start-project</module>
     </modules>
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>

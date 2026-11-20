@@ -7,6 +7,7 @@ import cn.com.mfish.common.oauth.api.entity.SsoOrg;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import cn.com.mfish.common.oauth.entity.OnlineUser;
 import cn.com.mfish.common.oauth.entity.SsoUser;
@@ -43,6 +44,22 @@ public interface SsoUserService extends IService<SsoUser> {
     List<String> getUserIdsByAccounts(List<String> accounts);
 
     List<UserInfo> getUsersByAccounts(List<String> accounts);
+
+    /**
+     * 按「租户 + 姓名(nickname)」解析用户ID
+     * <p>
+     * 用于导入等只有姓名的场景。解析规则严格不猜测:
+     * <ul>
+     *   <li>租户内唯一命中 → RESOLVED (携带 userId)</li>
+     *   <li>租户内无匹配 → UNRESOLVED</li>
+     *   <li>租户内多人同名 → AMBIGUOUS (不随机挑选, 交由调用方降级为按姓名处理)</li>
+     * </ul>
+     *
+     * @param tenantId 租户ID, 为空则全部判为 UNRESOLVED
+     * @param names    姓名列表
+     * @return 与入参顺序一致的解析结果列表
+     */
+    List<UserIdResolveVo> resolveTenantUserIds(String tenantId, List<String> names);
 
     SsoUser getUserById(String userId);
 

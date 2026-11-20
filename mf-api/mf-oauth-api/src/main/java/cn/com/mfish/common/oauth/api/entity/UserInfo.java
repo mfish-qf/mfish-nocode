@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,15 @@ import java.util.List;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class UserInfo extends BaseEntity<String> {
+    /**
+     * 显式固定序列化版本号：本类会被 Spring Session 以 JDK 序列化写入 Redis 会话，
+     * 隐式 UID 由类结构计算，一旦增删字段就会变化，导致 Redis 中旧会话反序列化
+     * 抛 InvalidClassException。此处锁定为历史隐式 UID（新增 roleCodes 字段前的值），
+     * 保证新版本仍能读取历史会话；新增字段在旧数据流中按 null 处理，属兼容变更。
+     */
+    @Serial
+    private static final long serialVersionUID = 3778694618716808509L;
+
     @Schema(description = "账号")
     private String account;
     @Schema(description = "手机号")
@@ -57,4 +67,7 @@ public class UserInfo extends BaseEntity<String> {
     @TableField(exist = false)
     @Schema(description = "角色名称列表")
     private List<String> roleNames;
+    @TableField(exist = false)
+    @Schema(description = "角色编码列表(权威角色码, 如 rd_lead/product_manager/developer 等)")
+    private List<String> roleCodes;
 }

@@ -16,8 +16,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 步骤执行器
@@ -80,6 +80,9 @@ public class Executor {
         String prompt = buildStepPrompt(step, stepIndex, plan);
 
         StringBuilder resultBuilder = new StringBuilder();
+        // 记录上游是否给过正式结束信号：工具调用会产生多轮 LLM 流，中间轮也可能带 finishReason，
+        // 仅用于诊断（区分"上游正常结束"与"上游中途断流"），不再据此提前结束订阅。
+        AtomicBoolean stopReceived = new AtomicBoolean(false);
 
         // serviceIds 可能为 null，做兜底
         Set<String> serviceIdSet = toolRuntime.resolveStepServiceIds(step.getServiceIds());
@@ -92,11 +95,20 @@ public class Executor {
                         resultBuilder.append(token);
                         eventBus.emit(EventType.TOKEN_STREAM, stepIndex, token);
                     }
+                    if (isFinished(chatResponse)) {
+                        stopReceived.set(true);
+                    }
                 })
-                .filter(this::isFinished)
-                .next()  // 取第一个 finish 信号
-                .map(chatResponse -> {
-                    String result = resultBuilder.toString();
+                // ★ 等整个流式响应自然结束再汇总。旧实现 filter(isFinished).next() 在第一个
+                // finish 信号到达时立刻 cancel 上游：多轮工具调用场景下，这会让最终答案生成到
+                // 一半被掐断，而步骤仍被标成 [完成]，正是"回复不完整"的根因。
+                .then(Mono.fromSupplier(resultBuilder::toString))
+                .map(result -> {
+                    if (!stopReceived.get()) {
+                        // 未收到 STOP 即结束 = 上游流被中途关闭，留日志便于继续定位代理/网关侧断流
+                        log.warn("[Executor] 步骤{} 流式响应未收到 STOP 即结束, 已收集 {} 字符, 结果可能被上游截断",
+                                stepIndex, result.length());
+                    }
                     step.setStatus("COMPLETED").setResult(result);
                     String summary = result.length() > 200 ? result.substring(0, 200) + "..." : result;
                     eventBus.emit(EventType.STEP_COMPLETED, stepIndex, summary);
@@ -104,28 +116,17 @@ public class Executor {
                     emitDeferredFrontendActions(eventBus, stepIndex, sessionId);
                     return result;
                 })
-                .switchIfEmpty(Mono.fromSupplier(() -> {
-                    // 没有收到 finish 信号，用已收集的结果
-                    String result = resultBuilder.toString();
-                    step.setStatus("COMPLETED").setResult(result);
-                    if (StringUtils.isNotEmpty(result)) {
-                        String summary = result.length() > 200 ? result.substring(0, 200) + "..." : result;
-                        eventBus.emit(EventType.STEP_COMPLETED, stepIndex, summary);
-                    }
-                    // 下发延迟的 refresh 操作（文本之后）
-                    emitDeferredFrontendActions(eventBus, stepIndex, sessionId);
-                    return result;
-                }))
-                .doFinally(signal -> {
-                    // 注销 emitter，防止内存泄漏
-                    toolRuntime.unregisterFrontendEmitter(sessionId);
-                    toolRuntime.clearFrontendActions(sessionId);
-                })
                 .onErrorResume(ex -> {
                     log.error("[Executor] 步骤{}执行失败", stepIndex, ex);
                     step.setStatus("FAILED").setResult(ex.getMessage());
                     eventBus.emit(EventType.ERROR, stepIndex, "步骤" + (stepIndex + 1) + "执行失败: " + ex.getMessage());
-                    return Mono.just("");
+                    // 保留已收到的文本，避免一次异常把整段回复丢掉
+                    return Mono.just(resultBuilder.toString());
+                })
+                .doFinally(signal -> {
+                    // 注销 emitter，防止内存泄漏
+                    toolRuntime.unregisterFrontendEmitter(sessionId);
+                    toolRuntime.clearFrontendActions(sessionId);
                 });
     }
 
@@ -167,23 +168,27 @@ public class Executor {
     }
 
     /**
-     * 从 ChatResponse 提取文本
+     * 从 ChatResponse 提取文本。
+     * usage-only / 工具调用等中间 chunk 可能没有 output，直接取会 NPE 打断整个流、导致结果被截断，
+     * 这里统一返回空串跳过。
      */
     private String extractText(ChatResponse chatResponse) {
-        if (chatResponse == null || chatResponse.getResult() == null) {
+        if (chatResponse == null || chatResponse.getResult() == null
+                || chatResponse.getResult().getOutput() == null) {
             return "";
         }
-        return Objects.requireNonNull(chatResponse.getResult().getOutput()).getText();
+        String text = chatResponse.getResult().getOutput().getText();
+        return text != null ? text : "";
     }
 
     /**
-     * 判断是否完成（finish_reason=stop）
+     * 判断是否收到正式结束信号（finish_reason=STOP），仅用于诊断日志。
+     * 不再用它提前终止订阅——工具调用的中间轮也可能带 STOP。
      */
     private boolean isFinished(ChatResponse chatResponse) {
-        if (chatResponse == null || chatResponse.getResult() == null) {
+        if (chatResponse == null || chatResponse.getResult() == null
+                || chatResponse.getResult().getMetadata() == null) {
             return false;
-        } else {
-            chatResponse.getResult();
         }
         return "STOP".equals(chatResponse.getResult().getMetadata().getFinishReason());
     }

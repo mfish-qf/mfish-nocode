@@ -9,11 +9,14 @@ import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.fallback.RemoteUserFallback;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.api.vo.UserInfoVo;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -131,4 +134,20 @@ public interface RemoteUserService {
      */
     @GetMapping("/user/users/{accounts}")
     Result<List<UserInfo>> getUsersByAccount(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin, @PathVariable @Parameter(name = "accounts", description = "账号") String accounts);
+
+    /**
+     * 按「租户 + 姓名」解析用户ID
+     * <p>
+     * 用于批量导入等只有姓名的场景。仅唯一命中会返回 userId,
+     * 租户内多人同名返回 AMBIGUOUS(不随机挑选), 调用方应降级为按姓名处理。
+     *
+     * @param origin   来源
+     * @param tenantId 租户id
+     * @param names    姓名列表
+     * @return 解析结果列表
+     */
+    @PostMapping("/user/tenantUserIds")
+    Result<List<UserIdResolveVo>> resolveTenantUserIds(@RequestHeader(RPCConstants.REQ_ORIGIN) String origin,
+                                                       @RequestParam("tenantId") String tenantId,
+                                                       @RequestBody List<String> names);
 }

@@ -5,6 +5,7 @@ import cn.com.mfish.common.ai.entity.EventType;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
+import reactor.util.concurrent.Queues;
 
 /**
  * 事件总线
@@ -28,8 +29,12 @@ import reactor.core.publisher.Sinks;
 @Slf4j
 public class EventBus {
 
-    /** multicast 允许多订阅者；onBackpressureBuffer 防止下游慢消费丢事件 */
-    private final Sinks.Many<ChatResponseVo> sink = Sinks.many().multicast().onBackpressureBuffer();
+    /**
+     * multicast 允许多订阅者；显式放大缓冲，避免长回复产生的大量 TOKEN_STREAM 事件溢出。
+     * tryEmitNext 在缓冲满 / 无订阅者 / 并发未串行时会返回失败并静默丢弃事件，必须检查结果。
+     */
+    private final Sinks.Many<ChatResponseVo> sink = Sinks.many().multicast()
+            .onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE * 16);
 
     /** 请求ID（来自 AiRequest.id），自动填充到所有事件的 id 字段 */
     private final String requestId;
@@ -46,16 +51,22 @@ public class EventBus {
      *
      * @param event 事件对象
      */
-    public void emit(ChatResponseVo event) {
+    public synchronized void emit(ChatResponseVo event) {
         if (event == null) return;
         if (event.getId() == null && requestId != null) {
             event.setId(requestId);
         }
         try {
-            sink.tryEmitNext(event);
+            // synchronized 保证 emit 串行（multicast sink 要求串行发布，否则 FAIL_NON_SERIALIZED）
+            Sinks.EmitResult result = sink.tryEmitNext(event);
+            if (result.isFailure()) {
+                log.warn("[EventBus] 事件发布失败: type={}, contentLen={}, result={}",
+                        event.getType(),
+                        event.getContent() != null ? event.getContent().length() : 0,
+                        result);
+            }
         } catch (Exception e) {
-            log.warn("[EventBus] 事件发布失败: type={}, content={}",
-                    event.getType(), event.getContent(), e);
+            log.warn("[EventBus] 事件发布异常: type={}", event.getType(), e);
         }
     }
 
@@ -82,10 +93,19 @@ public class EventBus {
     }
 
     /**
-     * 关闭事件流，通知下游订阅者结束
+     * 关闭事件流，通知下游订阅者结束。
+     * 与 emit 一样必须串行发布：若 tryEmitComplete 返回 FAIL_NON_SERIALIZED 而不重试，
+     * 下游永远收不到 onComplete，SSE 连接会挂住直到网关超时，表现就是"回复停在中途"。
      */
-    public void complete() {
-        sink.tryEmitComplete();
+    public synchronized void complete() {
+        Sinks.EmitResult result = sink.tryEmitComplete();
+        if (result.isFailure()) {
+            log.warn("[EventBus] 关闭事件流失败: {}, 串行重试一次", result);
+            result = sink.tryEmitComplete();
+            if (result.isFailure()) {
+                log.error("[EventBus] 关闭事件流仍失败: {}", result);
+            }
+        }
     }
 
     /**

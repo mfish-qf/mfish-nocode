@@ -44,6 +44,11 @@
         </dependency>
         <dependency>
             <groupId>cn.com.mfish</groupId>
+            <artifactId>mf-project</artifactId>
+            <version>${mfish.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.mfish</groupId>
             <artifactId>mf-nocode</artifactId>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/mf-nocode-${mfish.version}.jar</systemPath>

@@ -60,7 +60,7 @@ public class AiModelConfigController {
     @Operation(summary = "AI模型配置信息-分页列表查询", description = "AI模型配置信息-分页列表查询")
     @GetMapping
     @RequiresPermissions("ai:aiModelConfig:query")
-    @DataScope(table = "ai_model_config", type = DataScopeType.Tenant, excludes = {"tenant_id = '1'"}, superIgnore = true)
+    @DataScope(table = "ai_model_config", type = DataScopeType.Tenant, superIgnore = true)
     public Mono<Result<PageResult<AiModelConfigVo>>> queryPageList(ReqAiModelConfig reqAiModelConfig, ReqPage reqPage) {
         return Mono.fromCallable(() -> aiModelConfigService.queryPageList(reqAiModelConfig, reqPage))
                 .subscribeOn(Schedulers.boundedElastic());
@@ -142,7 +142,7 @@ public class AiModelConfigController {
     @Operation(summary = "AI模型配置信息-通过id查询")
     @GetMapping("/mask/{id}")
     @RequiresPermissions("ai:aiModelConfig:query")
-    @DataScope(table = "ai_model_config", type = DataScopeType.Tenant, excludes = {"tenant_id = '1'"}, superIgnore = true)
+    @DataScope(table = "ai_model_config", type = DataScopeType.Tenant)
     public Mono<Result<AiModelConfigVo>> queryByIdVo(@Parameter(name = "id", description = "唯一性ID") @PathVariable String id) {
         return Mono.fromCallable(() -> aiModelConfigService.queryByIdVo(id))
                 .subscribeOn(Schedulers.boundedElastic());

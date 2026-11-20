@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  * <ol>
  *   <li>传入的 tenantId 非空 → 直接使用</li>
  *   <li>请求线程上下文（{@link AuthInfoUtils#getCurrentTenantId()}）能获取 → 使用之</li>
- *   <li>都失败 → 回退到 {@link AuthInfoUtils#SUPER_TENANT_ID}（全局模型）</li>
+ *   <li>都失败 → 回退到 {@link AuthInfoUtils#SUPER_TENANT_ID}（超级租户，最终兜底到 Spring AI 默认模型）</li>
  * </ol>
  * 避免 null 传入 {@code LlmModelRouter.resolveProviders} 导致
  * {@code Map.of().get(null)} 抛 NPE。
@@ -44,7 +44,7 @@ public class SkillChatClientProviderImpl implements SkillChatClientProvider {
 
     @Override
     public ChatModel getChatModel(String tenantId) {
-        // 入参为空时尝试从请求线程解析，最终兜底为超级租户（全局模型）
+        // 入参为空时尝试从请求线程解析，最终兜底为超级租户（无专属模型时回落到 yml/nacos 默认模型）
         // 避免 null 传入 LlmModelRouter.resolveProviders 触发 Map.of().get(null) NPE
         String resolvedTenantId = resolveTenantId(tenantId);
         return llmModelRouter.getChatModel(resolvedTenantId);

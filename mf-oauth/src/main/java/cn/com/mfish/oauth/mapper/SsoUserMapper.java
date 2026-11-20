@@ -3,6 +3,7 @@ package cn.com.mfish.oauth.mapper;
 import cn.com.mfish.common.oauth.api.entity.UserInfo;
 import cn.com.mfish.common.oauth.api.entity.UserRole;
 import cn.com.mfish.common.oauth.api.vo.TenantVo;
+import cn.com.mfish.common.oauth.api.vo.UserIdResolveVo;
 import cn.com.mfish.common.oauth.entity.SsoUser;
 import cn.com.mfish.common.oauth.req.ReqSsoUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -156,4 +157,17 @@ public interface SsoUserMapper extends BaseMapper<SsoUser> {
      * @return 用户信息列表
      */
     List<UserInfo> getUsersByAccounts(@Param("accounts") List<String> accounts);
+
+    /**
+     * 按租户 + 姓名列表查询匹配到的用户(姓名, 用户ID)
+     * <p>
+     * 用于排期/需求的「姓名→用户ID」解析: 同一租户内多人同名时会返回多行(由调用方判为歧义)。
+     * 同一用户归属多个组织会产生重复行, 已用 distinct 收敛。
+     * 租户归属复用框架统一的 orgFilter(org_code 前缀限定)。
+     *
+     * @param tenantId  租户ID
+     * @param nicknames 姓名列表(nickname 精确匹配)
+     * @return 匹配到的 (name, userId) 行
+     */
+    List<UserIdResolveVo> getUsersByNicknames(@Param("tenantId") String tenantId, @Param("nicknames") List<String> nicknames);
 }
