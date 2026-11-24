@@ -1629,8 +1629,18 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
                 .eq(PmDevSchedule::getReqId, reqId)
                 .eq(PmDevSchedule::getIsPinned, true));
+        PmRequirement req = getById(reqId);
         Map<String, PmDevSchedule> map = new HashMap<>();
-        rows.forEach(r -> map.put(PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()) + "|" + r.getDevRole(), r));
+        rows.forEach(r -> {
+            // ★ 同 loadPinnedRowsByReq：钉住行只钉开始日，工时跟随需求最新值，避免工时调整后仍用旧快照
+            if (req != null) {
+                BigDecimal freshWorkload = resolveWorkloadForRole(req, r.getDevRole());
+                if (freshWorkload != null) {
+                    r.setWorkload(freshWorkload);
+                }
+            }
+            map.put(PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName()) + "|" + r.getDevRole(), r);
+        });
         return map;
     }
 
@@ -1643,14 +1653,46 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             return result;
         }
         List<String> ids = targets.stream().map(PmRequirement::getId).toList();
+        Map<String, PmRequirement> reqById = targets.stream()
+                .collect(java.util.stream.Collectors.toMap(PmRequirement::getId, r -> r, (a, b) -> a));
         List<PmDevSchedule> rows = devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>()
                 .in(PmDevSchedule::getReqId, ids)
                 .eq(PmDevSchedule::getIsPinned, true));
         for (PmDevSchedule row : rows) {
+            // ★ 钉住行只钉「开始日」，工时不应被冻结为旧值：用需求的最新工时覆盖，
+            //   否则需求工时从 0.5 调到 2.0 后，自动排期仍按钉住行快照的 0.5 装箱（#2430）。
+            PmRequirement req = reqById.get(row.getReqId());
+            if (req != null) {
+                BigDecimal freshWorkload = resolveWorkloadForRole(req, row.getDevRole());
+                if (freshWorkload != null) {
+                    row.setWorkload(freshWorkload);
+                }
+            }
             result.computeIfAbsent(row.getReqId(), k -> new HashMap<>())
                     .put(PersonnelIdUtils.identityKey(row.getPersonId(), row.getPersonName()) + "|" + row.getDevRole(), row);
         }
         return result;
+    }
+
+    /**
+     * 按岗位解析需求的最新工时（与 autoSchedule 主循环 1224-1247 同口径）：
+     * 有拆分时前端/后端各取对应单人工时，无拆分时两侧都用总工时。
+     */
+    private BigDecimal resolveWorkloadForRole(PmRequirement req, String role) {
+        BigDecimal feWorkload = positiveWorkload(req.getFrontendWorkload());
+        BigDecimal beWorkload = positiveWorkload(req.getBackendWorkload());
+        boolean hasSplit = feWorkload != null || beWorkload != null;
+        if (hasSplit) {
+            if ("frontend".equals(role)) {
+                return feWorkload;
+            }
+            if ("backend".equals(role)) {
+                return beWorkload;
+            }
+            // fullstack 等无明确岗位：有拆分时取非零拆分值之和的单人口径不存在，回退总工时
+        }
+        return (req.getWorkload() != null && req.getWorkload().compareTo(BigDecimal.ZERO) > 0)
+                ? req.getWorkload() : BigDecimal.ONE;
     }
 
     /**
