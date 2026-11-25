@@ -315,9 +315,9 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
         requirement.setTenantId(currentTenantId);
         requirement.setCreateBy(safeGetCurrentUser());
         requirement.setCreateTime(now);
-        // 未传序号时自动生成递增 req_no
+        // 未传序号时自动生成递增 req_no（按当前租户独立编号）
         if (requirement.getReqNo() == null) {
-            requirement.setReqNo(nextReqNo());
+            requirement.setReqNo(nextReqNo(currentTenantId));
         }
         // 提出人/提出日期兜底：AI 创建时经常省略这两个字段(仅靠提示词不可靠)，
         // 后端统一按当前登录用户姓名与当天补齐；用户显式传值时尊重显式值。
@@ -2415,12 +2415,19 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
     }
 
     /**
-     * 生成下一个递增序号 req_no
+     * 生成下一个递增序号 req_no（按租户独立编号）。
+     * 每个租户的需求编号各自从 1 递增、互不影响：A 租户新建需求不会让 B 租户的下一个编号跳号。
+     * 注意必须显式按 tenant_id 过滤——本方法在 Service 内部调用，不经过 Controller 的 @DataScope 切面，
+     * MP 的 getOne 不会自动加租户条件。
      */
-    private Integer nextReqNo() {
-        PmRequirement max = getOne(new LambdaQueryWrapper<PmRequirement>()
+    private Integer nextReqNo(String tenantId) {
+        LambdaQueryWrapper<PmRequirement> qw = new LambdaQueryWrapper<PmRequirement>()
                 .orderByDesc(PmRequirement::getReqNo)
-                .last("limit 1"));
+                .last("limit 1");
+        if (!StringUtils.isEmpty(tenantId)) {
+            qw.eq(PmRequirement::getTenantId, tenantId);
+        }
+        PmRequirement max = getOne(qw);
         return max == null || max.getReqNo() == null ? 1 : max.getReqNo() + 1;
     }
 
