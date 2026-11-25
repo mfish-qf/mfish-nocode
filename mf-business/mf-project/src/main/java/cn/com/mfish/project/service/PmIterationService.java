@@ -25,12 +25,12 @@ public interface PmIterationService extends IService<PmIteration> {
 
     /**
      * 分页查询迭代列表(版本管理弹窗无限滚动用, 默认每页10条, 按研发开始时间倒序取最新)
+     * 支持状态/关键字/研发起止日期/归档等后端过滤。
      *
-     * @param pageNum  页码(默认1, 小于1按1处理)
-     * @param pageSize 每页条数(默认10, 小于1按10处理)
+     * @param req 分页与过滤参数
      * @return 分页后的迭代列表(含转测节点与跨月标签)
      */
-    Result<PageResult<PmIteration>> queryPageList(Integer pageNum, Integer pageSize);
+    Result<PageResult<PmIteration>> queryPageList(cn.com.mfish.project.req.ReqIterationPage req);
 
     /**
      * 通过id或版本号查询迭代详情

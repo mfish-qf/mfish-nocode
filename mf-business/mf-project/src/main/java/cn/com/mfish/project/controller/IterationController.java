@@ -56,14 +56,12 @@ public class IterationController {
     /**
      * 分页查询迭代列表(版本管理弹窗无限滚动: 默认每页10条, 按研发开始时间倒序取最新)
      */
-    @Operation(summary = "迭代版本-分页查询", description = "按研发开始时间倒序分页返回, 供版本管理弹窗滚动加载")
+    @Operation(summary = "迭代版本-分页查询", description = "按研发开始时间倒序分页返回, 供版本管理弹窗滚动加载；支持状态/关键字/研发起止/归档后端过滤")
     @DataScope(table = "pm_iteration", type = DataScopeType.Tenant)
     @GetMapping("/page")
     @RequiresPermissions("project:requirement:query")
-    public Result<PageResult<PmIteration>> queryPageList(
-            @Parameter(name = "pageNum", description = "页码(默认1)") @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(name = "pageSize", description = "每页条数(默认10)") @RequestParam(defaultValue = "10") Integer pageSize) {
-        return iterationService.queryPageList(pageNum, pageSize);
+    public Result<PageResult<PmIteration>> queryPageList(cn.com.mfish.project.req.ReqIterationPage req) {
+        return iterationService.queryPageList(req);
     }
 
     /**

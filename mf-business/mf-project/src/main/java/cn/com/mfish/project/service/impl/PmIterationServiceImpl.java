@@ -60,14 +60,34 @@ public class PmIterationServiceImpl extends ServiceImpl<PmIterationMapper, PmIte
     }
 
     @Override
-    public Result<PageResult<PmIteration>> queryPageList(Integer pageNum, Integer pageSize) {
+    public Result<PageResult<PmIteration>> queryPageList(cn.com.mfish.project.req.ReqIterationPage req) {
         // 分页参数兜底(与回收站 listDeleted 同口径): 页码<1 按 1, 每页<1 按 10
-        int num = pageNum == null || pageNum < 1 ? 1 : pageNum;
-        int size = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        int num = req == null || req.getPageNum() == null || req.getPageNum() < 1 ? 1 : req.getPageNum();
+        int size = req == null || req.getPageSize() == null || req.getPageSize() < 1 ? 10 : req.getPageSize();
+        // 过滤条件全部在后端拼接，前端只负责传参与展示
+        LambdaQueryWrapper<PmIteration> qw = new LambdaQueryWrapper<PmIteration>();
+        if (req != null) {
+            // 状态精确过滤
+            qw.eq(StringUtils.isNotEmpty(req.getStatus()), PmIteration::getStatus, req.getStatus());
+            // 归档: 以状态"已发布"为归档标记，与前端 isArchivedIteration 同口径
+            if (Boolean.TRUE.equals(req.getArchived())) {
+                qw.eq(PmIteration::getStatus, "已发布");
+            } else if (Boolean.FALSE.equals(req.getArchived())) {
+                qw.ne(PmIteration::getStatus, "已发布");
+            }
+            // 版本代号/名称模糊搜索(code 与 name 取 OR)
+            if (StringUtils.isNotEmpty(req.getKeyword())) {
+                String kw = req.getKeyword().trim();
+                qw.and(w -> w.like(PmIteration::getCode, kw).or().like(PmIteration::getName, kw));
+            }
+            // 研发起止日期范围(按 start_date 过滤，date 列与 YYYY-MM-DD 字符串可直接比较)
+            qw.ge(StringUtils.isNotEmpty(req.getStartDateBegin()), PmIteration::getStartDate, req.getStartDateBegin());
+            qw.le(StringUtils.isNotEmpty(req.getStartDateEnd()), PmIteration::getStartDate, req.getStartDateEnd());
+        }
         // 排序与 queryList 保持一致(研发开始时间倒序), 保证第 1 页即当前全量列表最新的若干条
+        qw.orderByDesc(PmIteration::getStartDate);
         PageHelper.startPage(num, size);
-        List<PmIteration> list = list(new LambdaQueryWrapper<PmIteration>()
-                .orderByDesc(PmIteration::getStartDate));
+        List<PmIteration> list = list(qw);
         for (PmIteration iteration : list) {
             fillIterationDetails(iteration);
         }
