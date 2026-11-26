@@ -1803,6 +1803,15 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
      * 结果同时回写内存对象, 保证响应里的 {@code scheduleRows} 立即带上新说明。
      */
     private void refreshScheduleRemarks(List<PmDevSchedule> rows, ScheduleConfigDTO config) {
+        // ★ 挤占来源必须包含【本次重排范围之外】的明细（如已归档版本的历史任务）——
+        //   它们不参与重排，却已作为容量占用把本任务撑长。旧实现只扫 rows(current targets)，
+        //   remark 只列同版本几个任务，遗漏了真正占满每天的归档任务，用户看到"没插队却被拉长"。
+        //   一次性查出全部明细(受 @DataScope 租户过滤)按身份分组，只用于列举 partners，不写库。
+        Map<String, List<PmDevSchedule>> allByIdentity = new HashMap<>();
+        for (PmDevSchedule r : devScheduleMapper.selectList(new LambdaQueryWrapper<PmDevSchedule>())) {
+            String ident = PersonnelIdUtils.identityKey(r.getPersonId(), r.getPersonName());
+            allByIdentity.computeIfAbsent(ident, k -> new ArrayList<>()).add(r);
+        }
         Map<String, Set<LocalDate>> daySets = new HashMap<>();
         Map<String, String> identityOf = new HashMap<>();
         for (PmDevSchedule r : rows) {
@@ -1838,18 +1847,22 @@ public class PmRequirementServiceImpl extends ServiceImpl<PmRequirementMapper, P
             String remark = null;
             if (own.size() > needDays) {
                 Set<String> partners = new LinkedHashSet<>();
-                for (PmDevSchedule other : rows) {
-                    if (Objects.equals(other.getId(), id)) {
+                // 同身份(同人)的全部明细——含本次重排范围外的归档版本任务，才是真正的挤占来源
+                String identity = identityOf.get(id);
+                for (PmDevSchedule other : allByIdentity.getOrDefault(identity, List.of())) {
+                    if (Objects.equals(other.getId(), id)
+                            || other.getDevStartDate() == null || other.getDevEndDate() == null) {
                         continue;
                     }
-                    Set<LocalDate> otherDays = other.getId() == null ? null : daySets.get(other.getId());
-                    if (otherDays == null
-                            || !Objects.equals(identityOf.get(id), identityOf.get(other.getId()))) {
+                    LocalDate os = toLocalDate(other.getDevStartDate());
+                    LocalDate oe = toLocalDate(other.getDevEndDate());
+                    if (os == null || oe == null || oe.isBefore(os)) {
                         continue;
                     }
+                    // 区间是否与本任务任一工作日相交
                     boolean overlap = false;
                     for (LocalDate d : own) {
-                        if (otherDays.contains(d)) {
+                        if (!d.isBefore(os) && !d.isAfter(oe)) {
                             overlap = true;
                             break;
                         }

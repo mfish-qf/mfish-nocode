@@ -139,11 +139,19 @@ public class PmDevScheduleServiceImpl extends ServiceImpl<PmDevScheduleMapper, P
         //   首尾各占 0.5)会有一半留在窗口外被当作「均摊幽灵」, 拖拽把任务前移进这条链时
         //   就会叠出 0.5 人天的硬性超载(2026-11-15 实测 Hall 违规 2 个窗口)。
         //   区间互不重叠的普通任务不会被波及, 因此用户 4 个验收例子结果不变。
+        // ★ 影响窗口只纳入【与被拖任务同版本】的明细：拖拽当前版本任务不应改动其它版本
+                //   (尤其已归档版本)的排期日期。异版本明细仍在 all 中，会在步骤2作为固定占用登记，
+                //   继续约束本版本任务可拿到的产能——即"只影响同版本，但要考虑归档任务的日期占用"。
+        String dragIterationId = row.getIterationId();
         boolean expanded = true;
         while (expanded) {
             expanded = false;
             for (PmDevSchedule t : all) {
                 if (affectedIds.contains(t.getId())) {
+                    continue;
+                }
+                // 跨版本任务不参与重排（保持其排期日期不动），仅作固定占用
+                if (!java.util.Objects.equals(dragIterationId, t.getIterationId())) {
                     continue;
                 }
                 LocalDate s = (t == row) ? oldStart
